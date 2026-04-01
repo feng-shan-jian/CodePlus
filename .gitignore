@@ -1,0 +1,9 @@
+# Local configuration and generated files
+.codeplus/*
+!.codeplus/config.yaml.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+dist/
+*.egg-info/
