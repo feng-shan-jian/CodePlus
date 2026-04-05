@@ -496,9 +496,119 @@ class OpenAICompatClient(LLMClient):
         system: str = "",
         tools: list[dict[str, Any]] | None = None,
     ) -> AsyncIterator[StreamEvent]:
-        if False:
-            yield None
-        raise NotImplementedError("Implementation pending")
+        import openai as _openai
+
+        messages = build_chat_completion_messages(ensure_tool_pairing(conversation.get_messages()))
+
+        # 如果有 system 消息则插入到消息列表头部。
+        if system:
+            messages = [{"role": "system", "content": system}] + messages
+
+        kwargs: dict[str, Any] = {
+            "model": self.model,
+            "messages": messages,
+            "max_tokens": self.max_output_tokens,
+            "stream": True,
+            "stream_options": {"include_usage": True},
+        }
+        if tools:
+            kwargs["tools"] = self._convert_tools(tools)
+
+        # 用于累积 streaming tool call 的状态。Chat Completions 流按
+        # tool_calls 列表中的位置索引下发 delta，我们按索引跟踪每个进行中的调用。
+        active_calls: dict[int, dict[str, str]] = {}  # 索引 -> {id, name, args}
+        reasoning_accum = ""
+
+        try:
+            response = await self._client.chat.completions.create(**kwargs)
+            async for chunk in response:
+                if not chunk.choices:
+                    # 最后一个 chunk，只包含 usage 数据。
+                    if chunk.usage:
+                        # 部分兼容 provider 通过 prompt_tokens_details.cached_tokens
+                        # 上报 cache 命中数，大多数不上报（cache_read 保持 0）。
+                        # prompt_tokens 包含了缓存 token，需要减去以保持
+                        # input + cache_read 可加性。没有 provider 上报 creation 计数。
+                        details = getattr(
+                            chunk.usage, "prompt_tokens_details", None
+                        )
+                        cache_read = getattr(details, "cached_tokens", 0) or 0
+                        prompt_tokens = chunk.usage.prompt_tokens or 0
+                        yield StreamEnd(
+                            stop_reason="end_turn",
+                            input_tokens=max(prompt_tokens - cache_read, 0),
+                            output_tokens=chunk.usage.completion_tokens or 0,
+                            cache_read=cache_read,
+                            cache_creation=0,
+                        )
+                    continue
+
+                choice = chunk.choices[0]
+                delta = choice.delta
+
+                # --- 文本内容 ---
+                if delta and delta.content:
+                    yield TextDelta(text=delta.content)
+
+                # --- reasoning_content（DeepSeek/小米等 provider 的非标准字段）---
+                if delta:
+                    rc = getattr(delta, "reasoning_content", None)
+                    if rc:
+                        reasoning_accum += rc
+                        yield ThinkingDelta(text=rc)
+
+                # --- tool call 增量 ---
+                if delta and delta.tool_calls:
+                    for tc in delta.tool_calls:
+                        idx = tc.index
+                        if idx not in active_calls:
+                            active_calls[idx] = {"id": "", "name": "", "args": ""}
+                        call = active_calls[idx]
+
+                        if tc.id:
+                            call["id"] = tc.id
+                        if tc.function and tc.function.name:
+                            call["name"] = tc.function.name
+                            yield ToolCallStart(
+                                tool_name=call["name"],
+                                tool_id=call["id"],
+                            )
+                        if tc.function and tc.function.arguments:
+                            call["args"] += tc.function.arguments
+                            yield ToolCallDelta(text=tc.function.arguments)
+
+                # --- 结束原因 ---
+                if choice.finish_reason in ("tool_calls", "stop"):
+                    if reasoning_accum:
+                        yield ThinkingComplete(thinking=reasoning_accum, signature="")
+                        reasoning_accum = ""
+                    if choice.finish_reason == "tool_calls":
+                        for _idx, call in sorted(active_calls.items()):
+                            try:
+                                args = json.loads(call["args"]) if call["args"] else {}
+                            except json.JSONDecodeError:
+                                args = {}
+                            yield ToolCallComplete(
+                                tool_id=call["id"],
+                                tool_name=call["name"],
+                                arguments=args,
+                            )
+                        active_calls.clear()
+
+        except _openai.AuthenticationError as e:
+            raise AuthenticationError(f"Invalid API key: {e}") from e
+        except _openai.RateLimitError as e:
+            retry = None
+            if hasattr(e, "response") and e.response is not None:
+                retry = e.response.headers.get("retry-after")
+            raise RateLimitError(
+                f"Rate limited. {f'Retry after {retry}s.' if retry else 'Please wait.'}",
+                retry_after=float(retry) if retry else None,
+            ) from e
+        except _openai.APIConnectionError as e:
+            raise NetworkError(f"Network error: {e}") from e
+        except _openai.APIStatusError as e:
+            raise LLMError(f"API error ({e.status_code}): {e.message}") from e
 
 
 def create_client(config: ProviderConfig) -> LLMClient:
@@ -512,4 +622,34 @@ def create_client(config: ProviderConfig) -> LLMClient:
 
 
 async def resolve_context_window(config: ProviderConfig) -> None:
-    raise NotImplementedError("Implementation pending")
+    """context window 解析的第 2 层：对于 anthropic 协议的 provider，
+    从 {base_url}/v1/models/{model} 自动拉取一次模型的 max_input_tokens，
+    并通过 set_fetched_context_window 缓存到 ``config`` 上，这样后续
+    config.get_context_window() 调用就能直接使用、无需再次访问网络。
+
+    完全尽力而为，绝不抛出异常：非 anthropic provider、客户端构造失败
+    （例如缺少 API key）、拉取失败或超时，都会让缓存保持不变，从而让
+    get_context_window() 降级到内置映射表 / 默认值。在启动时调用是安全的——
+    阻塞时间不会超过拉取自身的超时，也不会导致崩溃。
+    """
+    # 配置中显式指定的 window 在 get_context_window() 中优先级最高，
+    # 上次调用已缓存的值也不需要重新拉取——直接跳过网络请求。
+    if config.context_window > 0 or config._fetched_context_window > 0:
+        return
+    if config.protocol != "anthropic":
+        return
+
+    try:
+        client = create_client(config)
+    except Exception:
+        return
+    fetch = getattr(client, "fetch_model_context_window", None)
+    if fetch is None:
+        return
+
+    try:
+        window = await fetch()
+    except Exception:
+        window = None
+    if window:
+        config.set_fetched_context_window(window)
