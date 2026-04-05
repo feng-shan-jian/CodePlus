@@ -336,9 +336,108 @@ class OpenAIClient(LLMClient):
         system: str = "",
         tools: list[dict[str, Any]] | None = None,
     ) -> AsyncIterator[StreamEvent]:
-        if False:
-            yield None
-        raise NotImplementedError("Implementation pending")
+        import openai as _openai
+
+        input_messages = build_openai_input(ensure_tool_pairing(conversation.get_messages()))
+
+        kwargs: dict[str, Any] = {
+            "model": self.model,
+            "input": input_messages,
+            "stream": True,
+        }
+        if system:
+            kwargs["instructions"] = system
+        if tools:
+            kwargs["tools"] = tools
+
+        current_tool_name = ""
+        current_call_id = ""
+        json_accum = ""
+        reasoning_id = ""
+        reasoning_text = ""
+
+        try:
+            response_stream = await self._client.responses.create(**kwargs)
+            async for event in response_stream:
+                if event.type == "response.output_text.delta":
+                    yield TextDelta(text=event.delta)
+                elif event.type == "response.reasoning_summary_text.delta":
+                    reasoning_text += event.delta
+                    yield ThinkingDelta(text=event.delta)
+                elif event.type == "response.reasoning_summary_text.done":
+                    yield ThinkingComplete(thinking=reasoning_text, signature=reasoning_id)
+                elif event.type == "response.function_call_arguments.delta":
+                    if not current_tool_name:
+                        current_tool_name = getattr(event, "name", "") or ""
+                        current_call_id = getattr(event, "call_id", "") or ""
+                        if current_tool_name:
+                            yield ToolCallStart(
+                                tool_name=current_tool_name,
+                                tool_id=current_call_id,
+                            )
+                    json_accum += event.delta
+                    yield ToolCallDelta(text=event.delta)
+                elif event.type == "response.function_call_arguments.done":
+                    if not current_tool_name:
+                        current_tool_name = getattr(event, "name", "") or ""
+                        current_call_id = getattr(event, "call_id", "") or ""
+                    try:
+                        args = json.loads(json_accum) if json_accum else {}
+                    except json.JSONDecodeError:
+                        args = {}
+                    yield ToolCallComplete(
+                        tool_id=current_call_id,
+                        tool_name=current_tool_name,
+                        arguments=args,
+                    )
+                    current_tool_name = ""
+                    current_call_id = ""
+                    json_accum = ""
+                elif event.type == "response.output_item.added":
+                    item = getattr(event, "item", None)
+                    if item and getattr(item, "type", "") == "function_call":
+                        current_tool_name = getattr(item, "name", "")
+                        current_call_id = getattr(item, "call_id", "")
+                        json_accum = ""
+                        yield ToolCallStart(
+                            tool_name=current_tool_name,
+                            tool_id=current_call_id,
+                        )
+                    elif item and getattr(item, "type", "") == "reasoning":
+                        reasoning_id = getattr(item, "id", "")
+                        reasoning_text = ""
+                elif event.type == "response.completed":
+                    resp = getattr(event, "response", None)
+                    usage = getattr(resp, "usage", None) if resp else None
+                    # Responses API 通过 input_tokens_details.cached_tokens
+                    # 暴露 cache 命中数，没有 creation 计数。注意这里的
+                    # input_tokens *包含*了缓存 token，所以需要减去它们，
+                    # 保持 input + cache_read 可加性，与 Anthropic 对齐。
+                    details = getattr(usage, "input_tokens_details", None)
+                    cache_read = getattr(details, "cached_tokens", 0) or 0
+                    input_tokens = getattr(usage, "input_tokens", 0) or 0
+                    yield StreamEnd(
+                        stop_reason="end_turn",
+                        input_tokens=max(input_tokens - cache_read, 0),
+                        output_tokens=getattr(usage, "output_tokens", 0) or 0,
+                        cache_read=cache_read,
+                        cache_creation=0,
+                    )
+
+        except _openai.AuthenticationError as e:
+            raise AuthenticationError(f"Invalid API key: {e}") from e
+        except _openai.RateLimitError as e:
+            retry = None
+            if hasattr(e, "response") and e.response is not None:
+                retry = e.response.headers.get("retry-after")
+            raise RateLimitError(
+                f"Rate limited. {f'Retry after {retry}s.' if retry else 'Please wait.'}",
+                retry_after=float(retry) if retry else None,
+            ) from e
+        except _openai.APIConnectionError as e:
+            raise NetworkError(f"Network error: {e}") from e
+        except _openai.APIStatusError as e:
+            raise LLMError(f"API error ({e.status_code}): {e.message}") from e
 
 
 class OpenAICompatClient(LLMClient):
@@ -366,7 +465,30 @@ class OpenAICompatClient(LLMClient):
 
     @staticmethod
     def _convert_tools(tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        raise NotImplementedError("Implementation pending")
+        """把 tool schema 转换成 Chat Completions 格式。
+
+        tool 注册表为 ``openai`` 系列输出的是 Responses API 风格的 dict::
+
+            {"type": "function", "name": "...", "description": "...",
+             "parameters": {...}}
+
+        而 Chat Completions 要求把 name/description/parameters 嵌套在
+        ``function`` 键下::
+
+            {"type": "function", "function": {"name": "...",
+             "description": "...", "parameters": {...}}}
+        """
+        converted: list[dict[str, Any]] = []
+        for t in tools:
+            converted.append({
+                "type": "function",
+                "function": {
+                    "name": t["name"],
+                    "description": t.get("description", ""),
+                    "parameters": t.get("parameters", t.get("input_schema", {})),
+                },
+            })
+        return converted
 
     async def stream(
         self,
