@@ -325,17 +325,45 @@ class TestRuleEngine:
         user_file.write_text(yaml.dump([{"rule": "Bash(git *)", "effect": "deny"}]))
         assert engine.evaluate("Bash", "git status") == "deny"
 
+    def test_missing_file_no_error(self) -> None:
+        engine = RuleEngine(
+            user_rules_path=Path("/nonexistent/path/rules.yaml"),
+            project_rules_path=Path("/also/nonexistent.yaml"),
+        )
+        assert engine.evaluate("Bash", "anything") is None
 
+    def test_append_local_rule(self) -> None:
+        tmpdir = Path(tempfile.mkdtemp())
+        local_path = tmpdir / ".codeplus" / "permissions.local.yaml"
+        engine = RuleEngine(local_rules_path=local_path)
+        engine.append_local_rule(Rule(tool_name="Bash", pattern="git commit *", effect="allow"))
+        assert local_path.exists()
+        assert engine.evaluate("Bash", "git commit -m test") == "allow"
 
 # ===========================================================================
 # 第四层：PermissionMode（权限模式）
 # ===========================================================================
 
 class TestPermissionMode:
-    pass
+    def test_default_mode(self) -> None:
+        assert mode_decide(PermissionMode.DEFAULT, "read") == "allow"
+        assert mode_decide(PermissionMode.DEFAULT, "write") == "ask"
+        assert mode_decide(PermissionMode.DEFAULT, "command") == "ask"
 
+    def test_accept_edits_mode(self) -> None:
+        assert mode_decide(PermissionMode.ACCEPT_EDITS, "read") == "allow"
+        assert mode_decide(PermissionMode.ACCEPT_EDITS, "write") == "allow"
+        assert mode_decide(PermissionMode.ACCEPT_EDITS, "command") == "ask"
 
+    def test_plan_mode(self) -> None:
+        assert mode_decide(PermissionMode.PLAN, "read") == "allow"
+        assert mode_decide(PermissionMode.PLAN, "write") == "ask"
+        assert mode_decide(PermissionMode.PLAN, "command") == "ask"
 
+    def test_bypass_mode(self) -> None:
+        assert mode_decide(PermissionMode.BYPASS, "read") == "allow"
+        assert mode_decide(PermissionMode.BYPASS, "write") == "allow"
+        assert mode_decide(PermissionMode.BYPASS, "command") == "allow"
 
     # CUSTOM and DONT_ASK modes removed — aligned to Go's 4-mode spec
 
@@ -353,16 +381,105 @@ class TestPermissionChecker:
             mode=PermissionMode.DEFAULT,
         )
 
+    def test_dangerous_command_denied(self) -> None:
+        from codeplus.tools.bash import Bash
+        tool = Bash()
+        d = self.checker.check(tool, {"command": "rm -rf /"})
+        assert d.effect == "deny"
+        assert "危险命令" in d.reason
 
+    def test_write_path_outside_sandbox_asks(self) -> None:
+        from codeplus.tools.write_file import WriteFile
+        tool = WriteFile()
+        d = self.checker.check(tool, {"file_path": "/etc/passwd", "content": "x"})
+        assert d.effect == "ask"
+        assert "沙箱" in d.reason
 
+    def test_deny_write_blocked_in_bypass_mode(self) -> None:
+        """受保护路径任何模式下都不许写，bypass 也不例外"""
+        from codeplus.tools.write_file import WriteFile
+        tool = WriteFile()
+        checker = PermissionChecker(
+            detector=DangerousCommandDetector(),
+            sandbox=PathSandbox(str(self.tmpdir)),
+            rule_engine=RuleEngine(),
+            mode=PermissionMode.BYPASS,
+        )
+        for rel in (
+            ".codeplus/permissions.local.yaml",
+            ".codeplus/config.yaml",
+            ".codeplus/skills/evil/SKILL.md",
+        ):
+            d = checker.check(tool, {"file_path": str(self.tmpdir / rel), "content": "x"})
+            assert d.effect == "deny", f"{rel} 在 bypass 下也应拒绝，实际 {d.effect}"
 
+        d = checker.check(tool, {"file_path": str(self.tmpdir / "a.txt"), "content": "x"})
+        assert d.effect != "deny"
 
+    def test_read_path_outside_sandbox_asks(self) -> None:
+        from codeplus.tools.read_file import ReadFile
+        tool = ReadFile()
+        d = self.checker.check(tool, {"file_path": "/etc/passwd"})
+        assert d.effect == "ask"
+        assert "沙箱" in d.reason
 
+    def test_read_tool_allowed_by_default_mode(self) -> None:
+        from codeplus.tools.read_file import ReadFile
+        tool = ReadFile()
+        test_file = self.tmpdir / "hello.txt"
+        test_file.write_text("hi")
+        d = self.checker.check(tool, {"file_path": str(test_file)})
+        assert d.effect == "allow"
 
+    def test_write_tool_asks_in_default_mode(self) -> None:
+        from codeplus.tools.write_file import WriteFile
+        tool = WriteFile()
+        d = self.checker.check(tool, {"file_path": str(self.tmpdir / "new.txt"), "content": "hi"})
+        assert d.effect == "ask"
 
+    def test_bash_asks_in_default_mode(self) -> None:
+        from codeplus.tools.bash import Bash
+        tool = Bash()
+        d = self.checker.check(tool, {"command": "npm test"})
+        assert d.effect == "ask"
 
+    def test_plan_mode_asks_write(self) -> None:
+        from codeplus.tools.write_file import WriteFile
+        self.checker.mode = PermissionMode.PLAN
+        tool = WriteFile()
+        d = self.checker.check(tool, {"file_path": str(self.tmpdir / "x.txt"), "content": "hi"})
+        assert d.effect == "ask"
 
+    def test_bypass_mode_allows_all(self) -> None:
+        from codeplus.tools.bash import Bash
+        self.checker.mode = PermissionMode.BYPASS
+        tool = Bash()
+        d = self.checker.check(tool, {"command": "npm test"})
+        assert d.effect == "allow"
 
+    def test_bypass_still_blocks_dangerous(self) -> None:
+        from codeplus.tools.bash import Bash
+        self.checker.mode = PermissionMode.BYPASS
+        tool = Bash()
+        d = self.checker.check(tool, {"command": "rm -rf /"})
+        assert d.effect == "deny"
+
+    def test_rule_overrides_mode(self) -> None:
+        from codeplus.tools.bash import Bash
+        tmpdir = Path(tempfile.mkdtemp())
+        rules_file = tmpdir / "rules.yaml"
+        rules_file.write_text(yaml.dump([
+            {"rule": "Bash(git *)", "effect": "allow"},
+        ]))
+        checker = PermissionChecker(
+            detector=DangerousCommandDetector(),
+            sandbox=PathSandbox(str(tmpdir)),
+            rule_engine=RuleEngine(project_rules_path=rules_file),
+            mode=PermissionMode.DEFAULT,
+        )
+        tool = Bash()
+        d = checker.check(tool, {"command": "git commit -m test"})
+        assert d.effect == "allow"
 
 # ===========================================================================
 # 集成测试：Agent + 权限系统（端到端）
