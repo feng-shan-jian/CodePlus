@@ -342,7 +342,72 @@ def build_recovery_attachment(
     state: RecoveryState | None,
     tool_schemas: list[Mapping[str, Any]] | None,
 ) -> str:
-    raise NotImplementedError("Implementation pending")
+    """渲染压缩后附件的四个小节。
+
+    没有任何值得附加的内容时返回 ""，让调用方保持摘要消息干净。
+    `tool_schemas` 应当是 agent 在下一次请求中将要发送的 schema —— 这里用其中的
+    名称和描述来提醒模型当前都接入了哪些工具。
+    """
+    sections: list[str] = []
+
+    if state is not None:
+        files = state.snapshot_files(RECOVERY_FILE_LIMIT)
+        if files:
+            buf = ["## 最近读过的文件\n",
+                   "以下快照是文件读取工具上次返回的内容。如需当前字节请重新读取。\n"]
+            for rec in files:
+                content = _truncate_by_tokens(rec.content, RECOVERY_TOKENS_PER_FILE)
+                ts = time.strftime(
+                    "%Y-%m-%dT%H:%M:%SZ", time.gmtime(rec.timestamp)
+                )
+                buf.append(f"### {rec.path}  (read {ts})\n")
+                buf.append("```\n")
+                buf.append(content)
+                if not content.endswith("\n"):
+                    buf.append("\n")
+                buf.append("```\n")
+            sections.append("".join(buf))
+
+        skills = state.snapshot_skills()
+        if skills:
+            buf = ["## 已激活的技能\n",
+                   "下列技能在本会话中被调用过，其触发条件仍然适用。\n"]
+            used = 0
+            emitted = False
+            for sk in skills:
+                body = _truncate_by_tokens(sk.body, RECOVERY_TOKENS_PER_SKILL)
+                tokens = _approx_tokens(body) + _approx_tokens(sk.name) + 8
+                if used + tokens > RECOVERY_SKILLS_BUDGET:
+                    break
+                used += tokens
+                buf.append(f"### {sk.name}\n\n{body}\n")
+                emitted = True
+            if emitted:
+                sections.append("".join(buf))
+
+    if tool_schemas:
+        buf = ["## 可用工具\n",
+               "你仍然可以调用以下工具，需要时直接发起调用即可：\n"]
+        for t in tool_schemas:
+            name = t.get("name") if isinstance(t, Mapping) else None
+            if not name:
+                continue
+            desc = t.get("description", "") if isinstance(t, Mapping) else ""
+            desc = _first_line(desc or "")
+            if desc:
+                buf.append(f"- {name} — {desc}\n")
+            else:
+                buf.append(f"- {name}\n")
+        sections.append("".join(buf))
+
+    if not sections:
+        return ""
+
+    sections.append(
+        "## 提示\n\n以上恢复的上下文是重建的。若需要原文代码、错误信息或用户原话，"
+        "请用文件读取工具重新读取，不要根据摘要猜测细节。\n"
+    )
+    return "\n".join(sections)
 
 
 def _group_messages_by_turn(messages: list[Message]) -> list[list[Message]]:
@@ -364,11 +429,63 @@ def _message_tokens(msg: Message) -> int:
 
 
 def _compute_keep_start_index(messages: list[Message]) -> int:
-    raise NotImplementedError("Implementation pending")
+    """决定压缩时尾部要原样保留多少条消息。
+
+    从尾部向头部遍历 `messages`，逐条累加 token 估算值。只要还有任一保底条件
+    未满足——累计 token 尚未达到 KEEP_RECENT_TOKENS，或保留的消息数仍少于
+    MIN_KEEP_MESSAGES——当前消息就会被纳入保留窗口；但一旦纳入下一条消息会使
+    保留总量超过 KEEP_MAX_TOKENS，遍历立即停止（这样单条超大的尾部消息就不会把
+    整个 history 都拖进窗口）。
+
+    返回第一条被保留消息的下标（keepStartIndex）。原始遍历结束后，必要时会把这个
+    下标往前挪，确保被保留的 tool_result 不会和它对应的 tool_use 被拆散——
+    参见 `_align_keep_start_to_tool_pair`。
+    """
+    n = len(messages)
+    if n == 0:
+        return 0
+
+    kept_tokens = 0
+    kept_count = 0
+    keep_start = n  # 尚未保留任何消息
+
+    for i in range(n - 1, -1, -1):
+        tok = _message_tokens(messages[i])
+
+        # 在已经保留了至少一条消息的前提下，如果纳入当前消息会突破硬上限则停止
+        # （但绝不拒绝保留最后一条消息，即使它单独就超限）。
+        if kept_count > 0 and kept_tokens + tok > KEEP_MAX_TOKENS:
+            break
+
+        kept_tokens += tok
+        kept_count += 1
+        keep_start = i
+
+        # 保底条件已满足（token 下限或消息条数下限达到其一）：
+        # 近期原文保留足够了，停止回溯。
+        if kept_tokens >= KEEP_RECENT_TOKENS or kept_count >= MIN_KEEP_MESSAGES:
+            break
+
+    return _align_keep_start_to_tool_pair(messages, keep_start)
 
 
 def _align_keep_start_to_tool_pair(messages: list[Message], keep_start: int) -> int:
-    raise NotImplementedError("Implementation pending")
+    """把 keep_start 往前挪，确保我们绝不会保留一个孤立的 tool_result。
+
+    携带 tool_results 的 user 消息，会和它前面那条发起对应 tool_uses 的 assistant
+    消息配成一对。如果 keep_start 正好落在这样一条 user 消息上，就把它往前回退到
+    （至少）配对的那条 assistant 消息，让 tool_use 与 tool_result 的配对关系保持完整。
+    宁可多保留一对，也不要只保留半对（一个模型无法归属到任何调用的悬空 tool_result）。
+    """
+    while 0 < keep_start < len(messages):
+        msg = messages[keep_start]
+        if msg.role == "user" and msg.tool_results:
+            prev = messages[keep_start - 1]
+            if prev.role == "assistant" and prev.tool_uses:
+                keep_start -= 1
+                continue
+        break
+    return keep_start
 
 
 def _prefix_too_small_to_compact(prefix: list[Message]) -> bool:
