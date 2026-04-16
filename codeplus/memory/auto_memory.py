@@ -1,0 +1,265 @@
+"""自动记忆管理器。
+
+使用独立 .md 文件 + frontmatter + MEMORY.md 索引的存储格式，
+替代旧版集中式 memories.md。每条记忆存为一个文件，MEMORY.md
+只保存索引指针。
+"""
+from __future__ import annotations
+
+import os
+import re
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+from codeplus.conversation import ConversationManager, Message
+
+# ---------------------------------------------------------------------------
+# 常量
+# ---------------------------------------------------------------------------
+
+# 记忆索引文件名
+ENTRYPOINT_NAME = "MEMORY.md"
+
+# 四种记忆类型
+VALID_TYPES = {"user", "feedback", "project", "reference"}
+
+# 记忆类型到存储目录的路由：user/feedback → 用户级，project/reference → 项目级
+_USER_LEVEL_TYPES = {"user", "feedback"}
+_PROJECT_LEVEL_TYPES = {"project", "reference"}
+
+# MEMORY.md 截断限制
+MAX_ENTRYPOINT_LINES = 200
+MAX_ENTRYPOINT_BYTES = 25_000
+
+# frontmatter 正则
+_FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+
+
+# ---------------------------------------------------------------------------
+# 路径工具函数
+# ---------------------------------------------------------------------------
+
+def get_auto_mem_path(project_root: str) -> str:
+    """返回项目级记忆目录路径：<projectRoot>/.codeplus/memory/。
+
+    保留尾部分隔符，确保前缀匹配不会误命中类似 memoryxyz 的路径。
+    支持 CODEPLUS_REMOTE_MEMORY_DIR 环境变量覆盖。
+    """
+    override = os.environ.get("CODEPLUS_REMOTE_MEMORY_DIR", "")
+    if override:
+        return override.rstrip(os.sep) + os.sep
+    abs_root = os.path.abspath(project_root)
+    return os.path.join(abs_root, ".codeplus", "memory") + os.sep
+
+
+def get_user_auto_mem_path() -> str:
+    """返回用户级记忆目录路径：~/.codeplus/memory/。
+
+    用于存储 type=user / type=feedback 的记忆，跨项目跟随用户。
+    如果 HOME 无法解析则返回空字符串。
+    """
+    try:
+        home = str(Path.home())
+    except RuntimeError:
+        return ""
+    if not home:
+        return ""
+    return os.path.join(home, ".codeplus", "memory") + os.sep
+
+
+def is_auto_mem_path(absolute_path: str, project_root: str) -> bool:
+    """检查路径是否在项目级或用户级记忆目录内。"""
+    abs_p = os.path.normpath(absolute_path) + os.sep
+    project_dir = get_auto_mem_path(project_root)
+    if project_dir and abs_p.startswith(project_dir):
+        return True
+    user_dir = get_user_auto_mem_path()
+    if user_dir and abs_p.startswith(user_dir):
+        return True
+    return False
+
+
+def ensure_memory_dir_exists(memory_dir: str) -> None:
+    """确保记忆目录存在，agent 可直接写入无需先 mkdir。"""
+    if memory_dir:
+        os.makedirs(memory_dir, exist_ok=True)
+
+
+# ---------------------------------------------------------------------------
+# Frontmatter 解析
+# ---------------------------------------------------------------------------
+
+@dataclass
+class MemoryFile:
+    """一个记忆文件的元信息。"""
+    path: str = ""
+    name: str = ""
+    description: str = ""
+    type: str = ""
+
+
+def parse_frontmatter(content: str) -> MemoryFile:
+    raise NotImplementedError("Implementation pending")
+
+
+# ---------------------------------------------------------------------------
+# MEMORY.md 截断
+# ---------------------------------------------------------------------------
+
+def _cut_to_bytes(data: bytes, limit: int) -> str:
+    """把 UTF-8 字节串截到 limit 字节以内再解码回字符串。
+
+    优先切在 limit 之前的最后一个换行处，这样留下的都是完整条目。UTF-8 里 ASCII
+    字节不会出现在多字节字符内部，直接按字节找 b"\\n" 是安全的。
+
+    整段没有换行时按字节硬切，errors="ignore" 丢掉末尾被劈开的半个字符，
+    避免解码出替换符污染索引。
+    """
+    nl = data.rfind(b"\n", 0, limit)
+    if nl > 0:
+        return data[:nl].decode("utf-8")
+    return data[:limit].decode("utf-8", errors="ignore")
+
+
+def truncate_entrypoint_content(raw: str) -> str:
+    raise NotImplementedError("Implementation pending")
+
+
+def _format_size(byte_count: int) -> str:
+    if byte_count < 1024:
+        return f"{byte_count}B"
+    elif byte_count < 1024 * 1024:
+        return f"{byte_count / 1024:.1f}KB"
+    else:
+        return f"{byte_count / (1024 * 1024):.1f}MB"
+
+
+# ---------------------------------------------------------------------------
+# 构建记忆系统提示
+# ---------------------------------------------------------------------------
+
+def build_memory_prompt(user_mem_dir: str, project_mem_dir: str) -> str:
+    raise NotImplementedError("Implementation pending")
+
+
+def _build_entrypoint_section(scope_label: str, entrypoint_path: str) -> str:
+    """读取一个 MEMORY.md 文件并格式化为系统提示段。"""
+    header = f"## {scope_label} {ENTRYPOINT_NAME} (`{entrypoint_path}`)\n"
+    try:
+        data = Path(entrypoint_path).read_text(encoding="utf-8")
+        if data.strip():
+            return header + "\n" + truncate_entrypoint_content(data)
+    except OSError:
+        pass
+    return header + f"\nThis {ENTRYPOINT_NAME} is currently empty. When you save new {scope_label.lower()}-level memories, add their pointers here."
+
+
+def _build_memory_lines(user_mem_dir: str, project_mem_dir: str) -> str:
+    raise NotImplementedError("Implementation pending")
+
+
+# ---------------------------------------------------------------------------
+# MemoryManager
+# ---------------------------------------------------------------------------
+
+class MemoryManager:
+    """管理双路径自动记忆目录（用户级 + 项目级）。
+
+    使用独立 .md 文件 + frontmatter + MEMORY.md 索引。
+    实际的写入/读取通过 agent 的 Write/Read 工具完成（参考架构），
+    此类提供系统提示构建和 /memory 斜杠命令支持。
+    """
+
+    def __init__(self, project_root: str) -> None:
+        abs_root = os.path.abspath(project_root)
+        self._project_root = abs_root
+        # 用户级：~/.codeplus/memory/ — user/feedback 类型记忆
+        self._user_mem_dir = get_user_auto_mem_path()
+        # 项目级：<projectRoot>/.codeplus/memory/ — project/reference 类型记忆
+        self._mem_dir = get_auto_mem_path(abs_root)
+        self._last_extraction_msg_count = 0
+
+    @property
+    def user_path(self) -> Path:
+        """用户级 MEMORY.md 的路径（兼容旧接口）。"""
+        if self._user_mem_dir:
+            return Path(os.path.join(self._user_mem_dir, ENTRYPOINT_NAME))
+        return Path.home() / ".codeplus" / "memory" / ENTRYPOINT_NAME
+
+    @property
+    def project_path(self) -> Path:
+        """项目级 MEMORY.md 的路径（兼容旧接口）。"""
+        return Path(os.path.join(self._mem_dir, ENTRYPOINT_NAME))
+
+    @property
+    def user_mem_dir(self) -> Path:
+        """用户级记忆目录（~/.codeplus/memory/）。"""
+        return Path(self._user_mem_dir.rstrip(os.sep)) if self._user_mem_dir else Path.home() / ".codeplus" / "memory"
+
+    @property
+    def project_mem_dir(self) -> Path:
+        """项目级记忆目录（<project>/.codeplus/memory/）。"""
+        return Path(self._mem_dir.rstrip(os.sep))
+
+    def load(self) -> str:
+        raise NotImplementedError("Implementation pending")
+
+    def load_all(self) -> list[MemoryFile]:
+        """扫描两个目录中所有 .md 文件（排除 MEMORY.md），解析 frontmatter。
+
+        用户级文件在前，项目级在后。
+        """
+        result = _load_dir(self._user_mem_dir)
+        result.extend(_load_dir(self._mem_dir))
+        return result
+
+    def get_memories(self) -> list[str]:
+        """返回所有记忆文件的单行摘要，用于 /memory list。
+
+        收集两类记忆目录下所有可解析的 .md 记忆。
+        """
+        files = self.load_all()
+        out: list[str] = []
+        for f in files:
+            type_tag = f.type if f.type else "?"
+            desc = f.description if f.description else Path(f.path).name
+            out.append(f"[{type_tag}] {f.name} — {desc}")
+        return out
+
+    def _scan_existing_memories(self) -> str:
+        raise NotImplementedError("Implementation pending")
+
+    async def extract(
+        self,
+        client: Any,
+        conversation: ConversationManager,
+        protocol: str,
+    ) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def clear(self) -> None:
+        """清除两个目录下所有 .md 文件。"""
+        _clear_dir(self._user_mem_dir)
+        _clear_dir(self._mem_dir)
+
+    def get_display_text(self) -> str:
+        raise NotImplementedError("Implementation pending")
+
+
+# ---------------------------------------------------------------------------
+# 内部辅助函数
+# ---------------------------------------------------------------------------
+
+def _load_dir(dir_path: str) -> list[MemoryFile]:
+    raise NotImplementedError("Implementation pending")
+
+
+def _extract_field(block: str, field: str) -> str:
+    """从记忆提取输出的一个 block 中提取指定字段值。"""
+    m = re.search(rf"{field}:\s*(.+?)(?:\n|$)", block)
+    return m.group(1).strip() if m else ""
+
+
+def _clear_dir(dir_path: str) -> None:
+    raise NotImplementedError("Implementation pending")
