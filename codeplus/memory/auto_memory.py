@@ -100,7 +100,33 @@ class MemoryFile:
 
 
 def parse_frontmatter(content: str) -> MemoryFile:
-    raise NotImplementedError("Implementation pending")
+    """从 YAML-ish frontmatter 中提取 name/description/type。
+
+    只读取三个已知字段，未知字段忽略。没有 frontmatter 的文件返回空字段。
+    """
+    mf = MemoryFile()
+    m = _FRONTMATTER_RE.match(content)
+    if not m:
+        return mf
+    for line in m.group(1).split("\n"):
+        colon = line.find(":")
+        if colon < 0:
+            continue
+        key = line[:colon].strip()
+        val = line[colon + 1:].strip()
+        # 去除引号
+        if len(val) >= 2 and (
+            (val.startswith('"') and val.endswith('"'))
+            or (val.startswith("'") and val.endswith("'"))
+        ):
+            val = val[1:-1]
+        if key == "name":
+            mf.name = val
+        elif key == "description":
+            mf.description = val
+        elif key == "type" and val in VALID_TYPES:
+            mf.type = val
+    return mf
 
 
 # ---------------------------------------------------------------------------
@@ -123,7 +149,44 @@ def _cut_to_bytes(data: bytes, limit: int) -> str:
 
 
 def truncate_entrypoint_content(raw: str) -> str:
-    raise NotImplementedError("Implementation pending")
+    """截断 MEMORY.md 内容，超过行数或字节限制时添加警告。
+
+    先按行截断，行是索引的天然边界。行截断之后再量字节，因为单行可以很长，
+    200 行仍然可能超出字节上限，中文条目尤其容易，一个汉字占三字节。
+    """
+    trimmed = raw.strip()
+    lines = trimmed.split("\n")
+    line_count = len(lines)
+    byte_count = len(trimmed.encode("utf-8"))
+
+    over_lines = line_count > MAX_ENTRYPOINT_LINES
+    over_bytes = byte_count > MAX_ENTRYPOINT_BYTES
+
+    if not over_lines and not over_bytes:
+        return trimmed
+
+    result = trimmed
+    if over_lines:
+        result = "\n".join(lines[:MAX_ENTRYPOINT_LINES])
+
+    result_bytes = result.encode("utf-8")
+    if len(result_bytes) > MAX_ENTRYPOINT_BYTES:
+        result = _cut_to_bytes(result_bytes, MAX_ENTRYPOINT_BYTES)
+
+    # 构建警告信息
+    if over_bytes and not over_lines:
+        reason = f"{_format_size(byte_count)} (limit: {_format_size(MAX_ENTRYPOINT_BYTES)}) — index entries are too long"
+    elif over_lines and not over_bytes:
+        reason = f"{line_count} lines (limit: {MAX_ENTRYPOINT_LINES})"
+    else:
+        reason = f"{line_count} lines and {_format_size(byte_count)}"
+
+    result += (
+        f"\n\n> WARNING: {ENTRYPOINT_NAME} is {reason}. "
+        "Only part of it was loaded. Keep index entries to one line "
+        "under ~200 chars; move detail into topic files."
+    )
+    return result
 
 
 def _format_size(byte_count: int) -> str:
@@ -140,7 +203,25 @@ def _format_size(byte_count: int) -> str:
 # ---------------------------------------------------------------------------
 
 def build_memory_prompt(user_mem_dir: str, project_mem_dir: str) -> str:
-    raise NotImplementedError("Implementation pending")
+    """构建记忆系统提示，包含行为指令和 MEMORY.md 索引内容。
+
+    组合类型化记忆行为指令 + 两个 MEMORY.md
+    的内容，生成完整的 '# auto memory' 系统提示段。
+    """
+    lines = _build_memory_lines(user_mem_dir, project_mem_dir)
+    parts = [lines]
+
+    if user_mem_dir:
+        ep_path = os.path.join(user_mem_dir, ENTRYPOINT_NAME)
+        parts.append("")
+        parts.append(_build_entrypoint_section("User-level", ep_path))
+
+    if project_mem_dir:
+        ep_path = os.path.join(project_mem_dir, ENTRYPOINT_NAME)
+        parts.append("")
+        parts.append(_build_entrypoint_section("Project-level", ep_path))
+
+    return "\n".join(parts)
 
 
 def _build_entrypoint_section(scope_label: str, entrypoint_path: str) -> str:
@@ -156,7 +237,68 @@ def _build_entrypoint_section(scope_label: str, entrypoint_path: str) -> str:
 
 
 def _build_memory_lines(user_mem_dir: str, project_mem_dir: str) -> str:
-    raise NotImplementedError("Implementation pending")
+    """构建类型化记忆的行为指令文本（不含 MEMORY.md 内容）。"""
+    dir_exists_guidance = (
+        "This directory already exists — write to it directly with the Write tool "
+        "(do not run mkdir or check for its existence)."
+    )
+
+    parts = ["# auto memory\n"]
+    parts.append(
+        "You have a persistent, file-based memory system organized into two locations by content type:\n"
+    )
+
+    if user_mem_dir:
+        parts.append(
+            f"- **User-level** (`{user_mem_dir}`) — memories with `type: user` or `type: feedback`. "
+            f"These follow you across all projects, because they describe the human or how the human likes to work. "
+            f"{dir_exists_guidance}"
+        )
+    if project_mem_dir:
+        parts.append(
+            f"- **Project-level** (`{project_mem_dir}`) — memories with `type: project` or `type: reference`. "
+            f"These belong to the current repo, can be committed for team sharing or git-ignored for personal use. "
+            f"{dir_exists_guidance}"
+        )
+
+    parts.append(
+        "\nThe `type` field in each memory file's frontmatter determines which directory it belongs to "
+        "— pick the type first, then write to the matching directory."
+    )
+    parts.append(
+        "\nYou should build up this memory system over time so that future conversations can have "
+        "a complete picture of who the user is, how they'd like to collaborate with you, what behaviors "
+        "to avoid or repeat, and the context behind the work the user gives you."
+    )
+
+    # frontmatter 格式示例
+    parts.append("\n## How to save memories\n")
+    parts.append(
+        "Saving a memory is a two-step process:\n\n"
+        "**Step 1** — write the memory to its own file (e.g., `user_role.md`, `feedback_testing.md`) "
+        "using this frontmatter format:\n\n"
+        "```markdown\n"
+        "---\n"
+        "name: {{memory name}}\n"
+        "description: {{one-line description}}\n"
+        "type: {{user, feedback, project, reference}}\n"
+        "---\n\n"
+        "{{memory content}}\n"
+        "```\n\n"
+        f"**Step 2** — add a pointer to that file in the `{ENTRYPOINT_NAME}` index in the SAME directory "
+        f"as the memory file. `{ENTRYPOINT_NAME}` is an index, not a memory — each entry should be one line, "
+        "under ~150 characters: `- [Title](file.md) — one-line hook`. It has no frontmatter. "
+        f"Never write memory content directly into `{ENTRYPOINT_NAME}`.\n\n"
+        f"- Both `{ENTRYPOINT_NAME}` files are always loaded into your conversation context"
+        f" — lines after {MAX_ENTRYPOINT_LINES} each will be truncated, so keep each index concise\n"
+        "- Keep the name, description, and type fields in memory files up-to-date with the content\n"
+        "- Organize memory semantically by topic, not chronologically\n"
+        "- Update or remove memories that turn out to be wrong or outdated\n"
+        "- Do not write duplicate memories. First check if there is an existing memory you can update "
+        "before writing a new one."
+    )
+
+    return "\n".join(parts)
 
 
 # ---------------------------------------------------------------------------
@@ -203,7 +345,19 @@ class MemoryManager:
         return Path(self._mem_dir.rstrip(os.sep))
 
     def load(self) -> str:
-        raise NotImplementedError("Implementation pending")
+        """构建完整的记忆系统提示。
+
+        确保两个目录存在后，返回包含行为指令和 MEMORY.md 索引内容的
+        '# auto memory' 段，用于注入系统提示。
+        """
+        if not self._mem_dir and not self._user_mem_dir:
+            return ""
+        # 确保目录存在
+        if self._user_mem_dir:
+            ensure_memory_dir_exists(self._user_mem_dir)
+        if self._mem_dir:
+            ensure_memory_dir_exists(self._mem_dir)
+        return build_memory_prompt(self._user_mem_dir, self._mem_dir)
 
     def load_all(self) -> list[MemoryFile]:
         """扫描两个目录中所有 .md 文件（排除 MEMORY.md），解析 frontmatter。
@@ -228,7 +382,25 @@ class MemoryManager:
         return out
 
     def _scan_existing_memories(self) -> str:
-        raise NotImplementedError("Implementation pending")
+        """扫描已有记忆文件，生成 manifest 给 LLM 做去重。"""
+        entries: list[str] = []
+        for dir_path in (self._user_mem_dir, self._mem_dir):
+            if not dir_path:
+                continue
+            d = Path(dir_path)
+            if not d.is_dir():
+                continue
+            for f in sorted(d.iterdir()):
+                if f.name == ENTRYPOINT_NAME or not f.name.endswith(".md"):
+                    continue
+                try:
+                    mf = parse_frontmatter(f.read_text(encoding="utf-8"))
+                    type_tag = mf.type or "?"
+                    desc = mf.description or f.stem
+                    entries.append(f"- [{type_tag}] {f.name}: {desc}")
+                except OSError:
+                    continue
+        return "\n".join(entries)
 
     async def extract(
         self,
