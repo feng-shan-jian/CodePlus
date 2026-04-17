@@ -408,7 +408,107 @@ class MemoryManager:
         conversation: ConversationManager,
         protocol: str,
     ) -> None:
-        raise NotImplementedError("Implementation pending")
+        """触发记忆提取。
+
+        使用裸 LLM 调用 + 结构化输出解析，发送已有记忆 manifest 做去重。
+        """
+        from codeplus.tools.base import StreamEnd, TextDelta
+
+        recent = conversation.history[self._last_extraction_msg_count:]
+        if not recent:
+            return
+
+        conv_lines: list[str] = []
+        for msg in recent:
+            if msg.role == "user" and msg.content:
+                conv_lines.append(f"[user]: {msg.content}")
+            elif msg.role == "assistant" and msg.content:
+                conv_lines.append(f"[assistant]: {msg.content}")
+        if not conv_lines:
+            return
+
+        # 扫描已有记忆做去重
+        manifest = self._scan_existing_memories()
+        manifest_section = ""
+        if manifest:
+            manifest_section = (
+                f"\n\n## Existing memory files\n\n{manifest}\n\n"
+                "Check this list before creating — update an existing file rather than creating a duplicate."
+            )
+
+        prompt = (
+            f"Analyze the conversation below and extract memories worth saving.\n\n"
+            f"For each memory, output in this exact format:\n"
+            f"MEMORY_NAME: <kebab-case-name>\n"
+            f"MEMORY_TYPE: <user|feedback|project|reference>\n"
+            f"MEMORY_DESC: <one-line description>\n"
+            f"MEMORY_BODY: <content>\n"
+            f"---\n\n"
+            f"Types:\n"
+            f"- user/feedback → save to {self._user_mem_dir}\n"
+            f"- project/reference → save to {self._mem_dir}\n\n"
+            f"What NOT to save:\n"
+            f"- Code patterns derivable from reading the project\n"
+            f"- Git history, debugging solutions\n"
+            f"- Ephemeral task details\n\n"
+            f"If nothing is worth saving, output NONE.{manifest_section}\n\n"
+            f"Conversation:\n{''.join(conv_lines)}"
+        )
+
+        extract_conv = ConversationManager()
+        extract_conv.history = [Message(role="user", content=prompt)]
+
+        collected = ""
+        try:
+            async for event in client.stream(
+                extract_conv, system="You are a memory extraction assistant."
+            ):
+                if isinstance(event, TextDelta):
+                    collected += event.text
+                elif isinstance(event, StreamEnd):
+                    pass
+        except Exception:
+            return
+
+        self._last_extraction_msg_count = len(conversation.history)
+
+        # 解析并写入记忆文件
+        if not collected or collected.strip() == "NONE" or "MEMORY_NAME:" not in collected:
+            return
+
+        blocks = [b for b in collected.split("---") if "MEMORY_NAME:" in b]
+        for block in blocks:
+            name = _extract_field(block, "MEMORY_NAME")
+            mtype = _extract_field(block, "MEMORY_TYPE") or "reference"
+            desc = _extract_field(block, "MEMORY_DESC")
+            body = _extract_field(block, "MEMORY_BODY")
+            if not name or not body:
+                continue
+            if mtype not in VALID_TYPES:
+                mtype = "reference"
+
+            # 路由到正确的目录
+            target_dir = self._user_mem_dir if mtype in _USER_LEVEL_TYPES else self._mem_dir
+            if not target_dir:
+                continue
+            ensure_memory_dir_exists(target_dir)
+
+            content = f"---\nname: {name}\ndescription: {desc}\nmetadata:\n  type: {mtype}\n---\n\n{body}\n"
+            file_path = Path(target_dir) / f"{name}.md"
+            try:
+                file_path.write_text(content, encoding="utf-8")
+            except OSError:
+                continue
+
+            # 更新 MEMORY.md 索引
+            idx_path = Path(target_dir) / ENTRYPOINT_NAME
+            idx_line = f"- [{name}]({name}.md) — {desc}\n"
+            try:
+                existing = idx_path.read_text(encoding="utf-8") if idx_path.exists() else ""
+                if f"{name}.md" not in existing:
+                    idx_path.write_text(existing + idx_line, encoding="utf-8")
+            except OSError:
+                pass
 
     def clear(self) -> None:
         """清除两个目录下所有 .md 文件。"""
@@ -416,7 +516,19 @@ class MemoryManager:
         _clear_dir(self._mem_dir)
 
     def get_display_text(self) -> str:
-        raise NotImplementedError("Implementation pending")
+        """返回记忆摘要文本（/memory 命令显示）。"""
+        memories = self.get_memories()
+        if not memories:
+            return "当前没有任何自动记忆。"
+
+        parts: list[str] = []
+        parts.append(f"记忆目录：")
+        parts.append(f"  用户级: {self._user_mem_dir}")
+        parts.append(f"  项目级: {self._mem_dir}")
+        parts.append("")
+        for line in memories:
+            parts.append(f"  {line}")
+        return "\n".join(parts)
 
 
 # ---------------------------------------------------------------------------
@@ -424,7 +536,34 @@ class MemoryManager:
 # ---------------------------------------------------------------------------
 
 def _load_dir(dir_path: str) -> list[MemoryFile]:
-    raise NotImplementedError("Implementation pending")
+    """扫描目录中的 .md 文件，解析 frontmatter 并返回 MemoryFile 列表。"""
+    if not dir_path:
+        return []
+    d = Path(dir_path)
+    if not d.is_dir():
+        return []
+
+    try:
+        entries = sorted(d.iterdir(), key=lambda p: p.name)
+    except OSError:
+        return []
+
+    result: list[MemoryFile] = []
+    for entry in entries:
+        if entry.is_dir():
+            continue
+        if entry.name == ENTRYPOINT_NAME or not entry.name.endswith(".md"):
+            continue
+        try:
+            data = entry.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        mf = parse_frontmatter(data)
+        mf.path = str(entry)
+        if not mf.name:
+            mf.name = entry.stem  # 去掉 .md 后缀
+        result.append(mf)
+    return result
 
 
 def _extract_field(block: str, field: str) -> str:
@@ -434,4 +573,19 @@ def _extract_field(block: str, field: str) -> str:
 
 
 def _clear_dir(dir_path: str) -> None:
-    raise NotImplementedError("Implementation pending")
+    """删除目录中所有 .md 文件（包括 MEMORY.md）。"""
+    if not dir_path:
+        return
+    d = Path(dir_path)
+    if not d.is_dir():
+        return
+    try:
+        for entry in d.iterdir():
+            if entry.is_dir() or not entry.name.endswith(".md"):
+                continue
+            try:
+                entry.unlink()
+            except OSError:
+                pass
+    except OSError:
+        pass
