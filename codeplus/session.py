@@ -86,7 +86,26 @@ class SessionRecord:
 
     @classmethod
     def from_jsonl(cls, line: str) -> SessionRecord | None:
-        raise NotImplementedError("Implementation pending")
+        try:
+            data = json.loads(line)
+        except json.JSONDecodeError:
+            return None
+        if not isinstance(data, dict) or "role" not in data:
+            # 旧格式（以 type 区分 user/assistant/tool_result）或损坏行安全跳过
+            return None
+        ts_raw = data.get("ts")
+        if isinstance(ts_raw, (int, float)):
+            ts = datetime.fromtimestamp(ts_raw, tz=timezone.utc)
+        else:
+            ts = datetime.now(timezone.utc)
+        return cls(
+            role=data["role"],
+            content=data.get("content", ""),
+            timestamp=ts,
+            type=data.get("type"),
+            tool_uses=data.get("tool_uses") or [],
+            tool_results=data.get("tool_results") or [],
+        )
 
     @classmethod
     def from_message(cls, message: Message) -> list[SessionRecord]:
@@ -103,7 +122,26 @@ class SessionRecord:
         ]
 
     def to_message(self) -> Message:
-        raise NotImplementedError("Implementation pending")
+        return Message(
+            role=self.role,
+            content=self.content if isinstance(self.content, str) else "",
+            tool_uses=[
+                ToolUseBlock(
+                    tool_use_id=tu.get("tool_use_id", ""),
+                    tool_name=tu.get("tool_name", ""),
+                    arguments=tu.get("arguments", {}),
+                )
+                for tu in self.tool_uses
+            ],
+            tool_results=[
+                ToolResultBlock(
+                    tool_use_id=tr.get("tool_use_id", ""),
+                    content=tr.get("content", ""),
+                    is_error=tr.get("is_error", False),
+                )
+                for tr in self.tool_results
+            ],
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -124,11 +162,47 @@ def _message_to_keep_dict(message: Message) -> dict[str, Any]:
 
 
 def make_compact_boundary(summary: str, keep: list[Message]) -> SessionRecord:
-    raise NotImplementedError("Implementation pending")
+    """构建一条 compact_boundary 记录，内联摘要和原样保留的 keep 尾部。
+
+    `keep` 是 auto_compact 原样保留的近期尾部消息，连同工具块一起内联进 boundary，
+    压缩后恢复会话时这段尾巴才不会缺掉调用链。boundary 之前的原始前缀保留在磁盘上
+    但不会被重放。
+    """
+    keep_dicts = [_message_to_keep_dict(msg) for msg in keep]
+    payload = {"summary": summary, "keep": keep_dicts}
+    return SessionRecord(
+        role="system",
+        content=payload,
+        timestamp=datetime.now(timezone.utc),
+        type=TYPE_COMPACT_BOUNDARY,
+    )
 
 
 def parse_compact_boundary(record: SessionRecord) -> tuple[str, list[Message]]:
-    raise NotImplementedError("Implementation pending")
+    """make_compact_boundary 的逆操作：返回 (summary, keep_messages)。
+
+    对遗留或格式异常的 payload 降级返回 ("", [])，确保单条损坏的 boundary
+    不会导致 resume 崩溃。
+    """
+    content = record.content
+    if not isinstance(content, dict):
+        return "", []
+    summary = content.get("summary", "")
+    keep_raw = content.get("keep", [])
+    keep_messages: list[Message] = []
+    for item in keep_raw if isinstance(keep_raw, list) else []:
+        if not isinstance(item, dict) or "role" not in item:
+            continue
+        keep_messages.append(
+            SessionRecord(
+                role=item["role"],
+                content=item.get("content", ""),
+                timestamp=record.timestamp,
+                tool_uses=item.get("tool_uses") or [],
+                tool_results=item.get("tool_results") or [],
+            ).to_message()
+        )
+    return summary, keep_messages
 
 
 # ---------------------------------------------------------------------------
@@ -143,7 +217,23 @@ RESUME_SUMMARY_PREFIX = (
 
 
 def records_to_messages(records: list[SessionRecord]) -> list[Message]:
-    raise NotImplementedError("Implementation pending")
+    """把落盘记录还原成内存中的对话消息。
+
+    每条记录对应一条消息，工具块随记录一起还原；压缩边界展开成「摘要 user 消息 +
+    原样保留的 keep 尾部」。恢复出来的历史可能含中断留下的悬空 tool_use，交由发
+    请求前的 ensure_tool_pairing 统一补齐，这里不做截断。
+    """
+    messages: list[Message] = []
+    for record in records:
+        if record.is_compact_boundary():
+            summary, keep_messages = parse_compact_boundary(record)
+            messages.append(Message(role="user", content=RESUME_SUMMARY_PREFIX + summary))
+            messages.extend(keep_messages)
+            continue
+        if record.role not in ("user", "assistant"):
+            continue
+        messages.append(record.to_message())
+    return messages
 
 
 # ---------------------------------------------------------------------------
@@ -177,7 +267,19 @@ class SessionMeta:
 
     @classmethod
     def load(cls, path: Path) -> SessionMeta | None:
-        raise NotImplementedError("Implementation pending")
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return cls(
+                id=data["id"],
+                title=data.get("title", ""),
+                summary=data.get("summary", ""),
+                message_count=data.get("message_count", 0),
+                total_tokens=data.get("total_tokens", 0),
+                created_at=datetime.fromisoformat(data["created_at"]),
+                last_active=datetime.fromisoformat(data["last_active"]),
+            )
+        except (json.JSONDecodeError, KeyError, ValueError):
+            return None
 
 
 # ---------------------------------------------------------------------------
@@ -251,7 +353,33 @@ class ResumeResult:
 async def generate_session_summary(
     client: Any, conversation: ConversationManager, protocol: str
 ) -> str:
-    raise NotImplementedError("Implementation pending")
+    from codeplus.tools.base import StreamEnd, TextDelta
+
+    recent = conversation.history[-10:]
+    if not recent:
+        return ""
+
+    summary_conv = ConversationManager()
+    summary_conv.history = [Message(role="user", content=SESSION_SUMMARY_PROMPT)]
+    for msg in recent:
+        summary_conv.history.append(msg)
+    summary_conv.history.append(
+        Message(role="user", content="请用一句话总结上面的对话内容。不要调用工具。")
+    )
+
+    collected = ""
+    try:
+        async for event in client.stream(
+            summary_conv, system=SESSION_SUMMARY_PROMPT
+        ):
+            if isinstance(event, TextDelta):
+                collected += event.text
+            elif isinstance(event, StreamEnd):
+                pass
+    except Exception:
+        return ""
+
+    return collected.strip()
 
 
 # ---------------------------------------------------------------------------
@@ -296,7 +424,52 @@ class SessionManager:
         return metas
 
     def resume(self, session_id: str) -> ResumeResult | None:
-        raise NotImplementedError("Implementation pending")
+        jsonl_path = self._sessions_dir / f"{session_id}.jsonl"
+        meta_path = self._sessions_dir / f"{session_id}.meta"
+
+        if not jsonl_path.exists():
+            return None
+
+        meta = SessionMeta.load(meta_path)
+        if meta is None:
+            return None
+
+        records: list[SessionRecord] = []
+        with open(jsonl_path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                record = SessionRecord.from_jsonl(line)
+                if record is not None:
+                    records.append(record)
+
+        # 重建压缩后的状态：仅从最后一个 compact_boundary 开始重放。
+        # 该标记之前的 record 是已被摘要过的原始前缀——保留在磁盘上供审计，
+        # 但不再重放。标记本身内联了摘要 + 原样 keep 尾部，标记之后追加的
+        # 普通消息（续写）照常重放。没有 boundary 则全量重放（兼容旧 session）。
+        last_boundary = -1
+        for i, rec in enumerate(records):
+            if rec.is_compact_boundary():
+                last_boundary = i
+        if last_boundary >= 0:
+            records = records[last_boundary:]
+
+        messages = records_to_messages(records)
+
+        file = open(jsonl_path, "a", encoding="utf-8")  # noqa: SIM115
+        session = Session(
+            session_id=session_id,
+            file=file,
+            meta=meta,
+            sessions_dir=self._sessions_dir,
+        )
+
+        return ResumeResult(
+            session=session,
+            messages=messages,
+            last_active=meta.last_active,
+        )
 
     def delete(self, session_id: str) -> bool:
         jsonl_path = self._sessions_dir / f"{session_id}.jsonl"
