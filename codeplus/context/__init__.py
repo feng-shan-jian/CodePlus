@@ -1,5 +1,5 @@
 
-from codeplus.context.window import (
+from codeplus.context.manager import (
     CompactBoundary,
     CompactCircuitBreaker,
     CompactEvent,
