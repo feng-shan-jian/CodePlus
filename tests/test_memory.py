@@ -546,14 +546,41 @@ class TestCompactBoundaryRoundTrip:
         assert contents == ["q1", "a1", "q2", "a2"]
         result.session.close()
 
+    def test_append_record_does_not_bump_message_count(self, tmp_path: Path) -> None:
+        mgr = SessionManager(str(tmp_path))
+        s = mgr.create()
+        s.append(Message(role="user", content="hi"))
+        before = s.meta.message_count
+        s.append_record(make_compact_boundary("x", []))
+        assert s.meta.message_count == before  # 边界只是一个标记，不算一轮对话
+        s.close()
 
 # =========================================================================
 # F. 会话元数据 SessionMeta
 # =========================================================================
 
 class TestSessionMeta:
-    pass
+    def test_save_and_load(self, tmp_path: Path) -> None:
+        meta = SessionMeta(
+            id="test_123",
+            title="Test session",
+            summary="A test",
+            message_count=10,
+            total_tokens=5000,
+        )
+        path = tmp_path / "test.meta"
+        meta.save(path)
 
+        loaded = SessionMeta.load(path)
+        assert loaded is not None
+        assert loaded.id == "test_123"
+        assert loaded.title == "Test session"
+        assert loaded.message_count == 10
+
+    def test_load_invalid_returns_none(self, tmp_path: Path) -> None:
+        path = tmp_path / "bad.meta"
+        path.write_text("not json", encoding="utf-8")
+        assert SessionMeta.load(path) is None
 
 # =========================================================================
 # G. 记忆管理器 MemoryManager
@@ -562,29 +589,203 @@ class TestSessionMeta:
 class TestMemoryManager:
     """Manager：独立 .md 文件 + frontmatter + MEMORY.md 索引格式。"""
 
+    def test_load_returns_prompt(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """load() 返回完整的记忆系统提示（包含行为指令），不再是空字符串。"""
+        fake_home = tmp_path / "home"
+        fake_home.mkdir()
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+        mgr = MemoryManager(str(tmp_path / "project"))
+        result = mgr.load()
+        # 即使没有记忆文件，也会返回记忆系统的行为指令
+        assert "auto memory" in result
+        assert "User-level" in result
+        assert "Project-level" in result
 
+    def test_load_includes_memory_index(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """MEMORY.md 索引内容被包含在 load() 返回的系统提示中。"""
+        fake_home = tmp_path / "home"
+        fake_home.mkdir()
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
 
+        # 创建项目级记忆目录和文件
+        project_mem_dir = tmp_path / "project" / ".codeplus" / "memory"
+        project_mem_dir.mkdir(parents=True)
+        # 写一个记忆文件
+        mem_file = project_mem_dir / "test_mem.md"
+        mem_file.write_text(
+            "---\nname: test\ndescription: a test memory\ntype: project\n---\n\ntest content\n",
+            encoding="utf-8",
+        )
+        # 写 MEMORY.md 索引
+        index_file = project_mem_dir / "MEMORY.md"
+        index_file.write_text(
+            "- [Test](test_mem.md) — a test memory\n", encoding="utf-8"
+        )
 
+        mgr = MemoryManager(str(tmp_path / "project"))
+        result = mgr.load()
+        assert "a test memory" in result
 
+    def test_load_all(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """load_all() 扫描两个目录的 .md 文件并解析 frontmatter。"""
+        fake_home = tmp_path / "home"
+        fake_home.mkdir()
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
 
+        # 用户级记忆
+        user_mem_dir = fake_home / ".codeplus" / "memory"
+        user_mem_dir.mkdir(parents=True)
+        (user_mem_dir / "user_pref.md").write_text(
+            "---\nname: coding style\ndescription: prefers spaces\ntype: user\n---\n\nprefer spaces\n",
+            encoding="utf-8",
+        )
+
+        # 项目级记忆
+        project_mem_dir = tmp_path / "project" / ".codeplus" / "memory"
+        project_mem_dir.mkdir(parents=True)
+        (project_mem_dir / "proj_db.md").write_text(
+            "---\nname: database\ndescription: uses PostgreSQL\ntype: project\n---\n\nuses PostgreSQL\n",
+            encoding="utf-8",
+        )
+
+        mgr = MemoryManager(str(tmp_path / "project"))
+        files = mgr.load_all()
+        assert len(files) == 2
+        names = [f.name for f in files]
+        assert "coding style" in names
+        assert "database" in names
+
+    def test_clear(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """clear() 删除两个目录中所有 .md 文件。"""
+        fake_home = tmp_path / "home"
+        fake_home.mkdir()
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+
+        # 创建记忆文件
+        user_mem_dir = fake_home / ".codeplus" / "memory"
+        user_mem_dir.mkdir(parents=True)
+        (user_mem_dir / "test.md").write_text("content", encoding="utf-8")
+        (user_mem_dir / "MEMORY.md").write_text("- index\n", encoding="utf-8")
+
+        project_mem_dir = tmp_path / "project" / ".codeplus" / "memory"
+        project_mem_dir.mkdir(parents=True)
+        (project_mem_dir / "test.md").write_text("content", encoding="utf-8")
+
+        mgr = MemoryManager(str(tmp_path / "project"))
+        mgr.clear()
+        assert mgr.load_all() == []
+
+    def test_get_display_text_empty(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        fake_home = tmp_path / "home"
+        fake_home.mkdir()
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+        mgr = MemoryManager(str(tmp_path / "project"))
+        assert "没有任何自动记忆" in mgr.get_display_text()
+
+    def test_get_memories(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """get_memories() 返回单行摘要列表。"""
+        fake_home = tmp_path / "home"
+        fake_home.mkdir()
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+
+        project_mem_dir = tmp_path / "project" / ".codeplus" / "memory"
+        project_mem_dir.mkdir(parents=True)
+        (project_mem_dir / "db_info.md").write_text(
+            "---\nname: db\ndescription: uses PostgreSQL\ntype: project\n---\n\ncontent\n",
+            encoding="utf-8",
+        )
+
+        mgr = MemoryManager(str(tmp_path / "project"))
+        summaries = mgr.get_memories()
+        assert len(summaries) == 1
+        assert "[project]" in summaries[0]
+        assert "db" in summaries[0]
 
 # =========================================================================
 # H. 会话注入长期记忆 inject_long_term_memory
 # =========================================================================
 
 class TestConversationInjection:
-    pass
+    def test_inject_long_term_memory(self) -> None:
+        conv = ConversationManager()
+        conv.inject_environment("env info")
+        conv.inject_long_term_memory("project rules", "user prefs")
 
+        assert len(conv.history) == 2
+        assert conv.history[0].content == "env info"
+        assert "<system-reminder>" in conv.history[1].content
+        assert "codeplusMd" in conv.history[1].content
+        assert "project rules" in conv.history[1].content
+        assert "autoMemory" in conv.history[1].content
+        assert "user prefs" in conv.history[1].content
+        assert "currentDate" in conv.history[1].content
+        assert conv.ltm_injected is True
 
+    def test_inject_idempotent(self) -> None:
+        conv = ConversationManager()
+        conv.inject_long_term_memory("rules", "mems")
+        conv.inject_long_term_memory("rules2", "mems2")
+        assert sum(1 for m in conv.history if "<system-reminder>" in m.content) == 1
 
+    def test_inject_instructions_only(self) -> None:
+        conv = ConversationManager()
+        conv.inject_long_term_memory("rules", "")
+        assert len(conv.history) == 1
+        assert "<system-reminder>" in conv.history[0].content
+        assert "codeplusMd" in conv.history[0].content
+        assert "rules" in conv.history[0].content
 
+    def test_inject_memories_only(self) -> None:
+        conv = ConversationManager()
+        conv.inject_long_term_memory("", "mems")
+        assert len(conv.history) == 1
+        assert "<system-reminder>" in conv.history[0].content
+        assert "autoMemory" in conv.history[0].content
+        assert "mems" in conv.history[0].content
 
+    def test_inject_nothing(self) -> None:
+        conv = ConversationManager()
+        conv.inject_long_term_memory("", "")
+        assert len(conv.history) == 0
+        assert conv.ltm_injected is False
 
+    def test_inject_carries_skills(self) -> None:
+        """Skill 清单跟着项目走，必须待在首条 system-reminder 里，不进 System Prompt。"""
+        conv = ConversationManager()
+        conv.inject_long_term_memory("rules", "mems", "- /pdf: fill forms")
 
+        assert len(conv.history) == 1
+        content = conv.history[0].content
+        assert "availableSkills" in content
+        assert "- /pdf: fill forms" in content
+        # 三样内容同处一条消息，位置固定，缓存前缀才稳
+        assert "rules" in content
+        assert "mems" in content
+
+    def test_inject_skills_only(self) -> None:
+        """项目可能没写 LICENSE 也没有记忆，只有 Skill 时同样要注入。"""
+        conv = ConversationManager()
+        conv.inject_long_term_memory("", "", "- /review: review code")
+
+        assert len(conv.history) == 1
+        assert "- /review: review code" in conv.history[0].content
+
+    def test_replace_history_resets_ltm(self) -> None:
+        conv = ConversationManager()
+        conv.inject_long_term_memory("rules", "mems")
+        assert conv.ltm_injected is True
+        conv.replace_history([])
+        assert conv.ltm_injected is False
 
 # =========================================================================
 # I. 记忆抽取 prompt 的构造
 # =========================================================================
 
 class TestMemoryExtraction:
-    pass
+    def test_memory_types_aligned_with_go(self, tmp_path: Path) -> None:
+        """验证四种记忆类型枚举。"""
+        from codeplus.memory.auto_memory import VALID_TYPES, _USER_LEVEL_TYPES, _PROJECT_LEVEL_TYPES
+
+        assert VALID_TYPES == {"user", "feedback", "project", "reference"}
+        assert _USER_LEVEL_TYPES == {"user", "feedback"}
+        assert _PROJECT_LEVEL_TYPES == {"project", "reference"}
