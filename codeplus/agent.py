@@ -187,9 +187,33 @@ class StreamCollector:
     async def consume(
         self, stream: AsyncIterator[StreamEvent]
     ) -> AsyncIterator[AgentEvent]:
-        if False:
-            yield None
-        raise NotImplementedError("Implementation pending")
+        async for event in stream:
+            if isinstance(event, TextDelta):
+                self.response.text += event.text
+                yield StreamText(text=event.text)
+            elif isinstance(event, ThinkingDelta):
+                yield ThinkingText(text=event.text)
+            elif isinstance(event, ThinkingComplete):
+                self.response.thinking_blocks.append(
+                    ThinkingBlock(thinking=event.thinking, signature=event.signature)
+                )
+            elif isinstance(event, ToolCallStart):
+                pass
+            elif isinstance(event, ToolCallDelta):
+                pass
+            elif isinstance(event, ToolCallComplete):
+                self.response.tool_calls.append(event)
+                yield ToolUseEvent(
+                    tool_name=event.tool_name,
+                    tool_id=event.tool_id,
+                    arguments=event.arguments,
+                )
+            elif isinstance(event, StreamEnd):
+                self.response.stop_reason = event.stop_reason
+                self.response.input_tokens = event.input_tokens
+                self.response.output_tokens = event.output_tokens
+                self.response.cache_read = event.cache_read
+                self.response.cache_creation = event.cache_creation
 
 
 # ---------------------------------------------------------------------------
@@ -328,7 +352,22 @@ class Agent:
     _plan_path_cache: Path | None = None
 
     def _get_plan_path(self) -> Path:
-        raise NotImplementedError("Implementation pending")
+        if self._plan_path_cache is not None:
+            return self._plan_path_cache
+        import random
+        import datetime
+        _ADJECTIVES = ["bold", "bright", "calm", "cool", "deep", "fair", "fast", "fine",
+                       "glad", "keen", "kind", "lean", "mild", "neat", "pure", "safe",
+                       "slim", "soft", "tall", "warm", "wise", "grand", "swift", "vivid"]
+        _NOUNS = ["sketch", "draft", "spark", "bloom", "trail", "ridge", "creek", "grove",
+                  "cliff", "cloud", "field", "forge", "frost", "haven", "pearl", "stone",
+                  "storm", "river", "tower", "delta", "flame", "orbit", "pulse", "shore"]
+        plans_dir = Path(self.work_dir) / ".codeplus" / "plans"
+        plans_dir.mkdir(parents=True, exist_ok=True)
+        ts = datetime.datetime.now().strftime("%m%d-%H%M")
+        slug = f"{random.choice(_ADJECTIVES)}-{random.choice(_NOUNS)}-{ts}"
+        self._plan_path_cache = plans_dir / f"{slug}.md"
+        return self._plan_path_cache
 
     def set_permission_mode(self, mode: PermissionMode) -> None:
         self.permission_mode = mode
