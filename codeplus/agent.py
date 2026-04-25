@@ -416,9 +416,278 @@ class Agent:
         ]
 
     async def run(self, conversation: ConversationManager) -> AsyncIterator[AgentEvent]:
-        if False:
-            yield None
-        raise NotImplementedError("Implementation pending")
+        self._current_conversation = conversation
+        env_context = build_environment_context(
+            self.work_dir, self.active_skills, self._skill_catalog, self._agent_catalog
+        )
+        conversation.inject_environment(env_context)
+
+        memory_content = self.memory_manager.load() if self.memory_manager else ""
+        conversation.inject_long_term_memory(self.instructions_content, memory_content)
+
+        if self.hook_engine:
+            ctx = self._build_hook_context("session_start")
+            await self.hook_engine.run_hooks("session_start", ctx)
+            for he in self._drain_hook_events():
+                yield he
+
+        iteration = 0
+        max_tokens_escalated = False
+        output_recoveries = 0
+
+        while True:
+            iteration += 1
+
+            if self.max_iterations > 0 and iteration > self.max_iterations:
+                yield ErrorEvent(
+                    message=f"Agent reached maximum iterations ({self.max_iterations})"
+                )
+                break
+
+            if self.hook_engine:
+                ctx = self._build_hook_context("turn_start")
+                await self.hook_engine.run_hooks("turn_start", ctx)
+                for he in self._drain_hook_events():
+                    yield he
+
+            self._consume_mailbox(conversation)
+            if self.notification_fn:
+                for note in self.notification_fn():
+                    conversation.add_system_reminder(note)
+
+            if self.hook_engine:
+                ctx = self._build_hook_context("pre_send")
+                await self.hook_engine.run_hooks("pre_send", ctx)
+                for he in self._drain_hook_events():
+                    yield he
+
+            hook_prompts = (
+                self.hook_engine.get_prompt_messages() if self.hook_engine else None
+            )
+            system = build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir)
+
+            if self.plan_mode:
+                plan_path = str(self._get_plan_path())
+                if self.permission_checker:
+                    self.permission_checker.plan_file_path = plan_path
+                plan_exists = self._get_plan_path().exists()
+                plan_reminder = build_plan_mode_reminder(
+                    plan_path, plan_exists, iteration
+                )
+                conversation.add_system_reminder(plan_reminder)
+
+            # Coordinator 模式：工具集被收窄的同时注入调度指引。
+            # 走 system-reminder 而不是替换系统提示词：长会话里开头那份约束会被淹没，
+            # 每轮追加一次才拉得回来，而且 Lead 仍然需要身份、环境、项目指令和记忆这些基础段落。
+            if self.coordinator_mode:
+                from codeplus.teams.coordinator import get_coordinator_reminder
+
+                conversation.add_system_reminder(
+                    get_coordinator_reminder(
+                        iteration,
+                        agent_catalog=self._agent_catalog_list or None,
+                    )
+                )
+
+            if self.hook_engine:
+                for note in self.hook_engine.drain_notifications():
+                    conversation.add_system_reminder(
+                        f"Hook [{note.hook_id}] {note.event}: {note.output}"
+                    )
+
+            self._announce_deferred_tools(conversation)
+
+            tools = self.registry.get_all_schemas(self.protocol)
+
+            # Layer 2: 接近 context window 上限时自动 compact
+            # Layer 1（工具结果预算）在结果入历史时已处理完，历史里的内容
+            # 就是最终大小，直接用 conversation.history 估算
+            compact_result = await auto_compact(
+                conversation,
+                self.client,
+                self.context_window,
+                self.session_dir,
+                protocol=self.protocol,
+                breaker=self.compact_breaker,
+                recovery=self.recovery_state,
+                tool_schemas=self.registry.get_all_schemas(self.protocol),
+                transcript_path=self._transcript_path,
+            )
+            if isinstance(compact_result, CompactEvent):
+                yield CompactNotification(
+                    before_tokens=compact_result.before_tokens,
+                    message=f"上下文已压缩（压缩前 {compact_result.before_tokens:,} tokens）",
+                    boundary=compact_result.boundary,
+                )
+                conversation.inject_environment(env_context)
+                mem = self.memory_manager.load() if self.memory_manager else ""
+                conversation.inject_long_term_memory(
+                    self.instructions_content, mem
+                )
+            elif isinstance(compact_result, str):
+                yield ErrorEvent(message=compact_result)
+
+            collector = StreamCollector()
+            llm_stream = self.client.stream(conversation, system=system, tools=tools)
+            async for event in collector.consume(llm_stream):
+                yield event
+
+            response = collector.response
+
+            if self.hook_engine:
+                ctx = self._build_hook_context("post_receive", message=response.text)
+                await self.hook_engine.run_hooks("post_receive", ctx)
+                for he in self._drain_hook_events():
+                    yield he
+
+            self.total_input_tokens += response.input_tokens
+            self.total_output_tokens += response.output_tokens
+            yield UsageEvent(
+                input_tokens=self.total_input_tokens,
+                output_tokens=self.total_output_tokens,
+            )
+
+            conv_thinking = [
+                ConvThinkingBlock(thinking=tb.thinking, signature=tb.signature)
+                for tb in response.thinking_blocks
+            ]
+
+            if response.stop_reason == "max_tokens":
+                if not max_tokens_escalated:
+                    self.client.set_max_output_tokens(MAX_TOKENS_CEILING)
+                    max_tokens_escalated = True
+                    if response.text:
+                        conversation.add_assistant_message(
+                            response.text, thinking_blocks=conv_thinking
+                        )
+                        conversation.add_user_message(
+                            "Output token limit hit. Resume directly from where you stopped. "
+                            "Do not apologize or repeat previous content. Pick up mid-thought if needed."
+                        )
+                    yield RetryEvent(reason="max_tokens escalation")
+                    continue
+                elif output_recoveries < MAX_OUTPUT_TOKENS_RECOVERIES:
+                    output_recoveries += 1
+                    conversation.add_assistant_message(
+                        response.text, thinking_blocks=conv_thinking
+                    )
+                    conversation.add_user_message(
+                        "Output token limit hit. Resume directly from where you stopped. "
+                        "Break remaining work into smaller pieces."
+                    )
+                    yield RetryEvent(
+                        reason=f"max_tokens recovery {output_recoveries}/{MAX_OUTPUT_TOKENS_RECOVERIES}"
+                    )
+                    continue
+            else:
+                output_recoveries = 0
+
+            if not response.tool_calls:
+                conversation.add_assistant_message(
+                    response.text, thinking_blocks=conv_thinking
+                )
+                self._loop_count += 1
+                if (
+                    self._loop_count % MEMORY_EXTRACTION_INTERVAL == 0
+                    and self.memory_manager
+                ):
+                    asyncio.ensure_future(self._extract_memories(conversation))
+                if self._consolidator is not None:
+                    asyncio.ensure_future(
+                        self._consolidator.maybe_run(self.client, conversation, self.protocol)
+                    )
+                if self.hook_engine:
+                    ctx = self._build_hook_context("turn_end")
+                    await self.hook_engine.run_hooks("turn_end", ctx)
+                    ctx = self._build_hook_context("session_end")
+                    await self.hook_engine.run_hooks("session_end", ctx)
+                    for he in self._drain_hook_events():
+                        yield he
+                if self.file_history is not None:
+                    summary = response.text[:60] + "..." if len(response.text) > 60 else response.text
+                    self.file_history.make_snapshot(len(conversation.history), summary)
+                yield LoopComplete(total_turns=iteration)
+                break
+
+            tool_uses = [
+                ToolUseBlock(
+                    tool_use_id=tc.tool_id,
+                    tool_name=tc.tool_name,
+                    arguments=tc.arguments,
+                )
+                for tc in response.tool_calls
+            ]
+            conversation.add_assistant_message(
+                response.text, tool_uses, thinking_blocks=conv_thinking
+            )
+            # 在 assistant 回复加入历史后锚定实际用量：基线（input + cache + output）
+            # 覆盖到当前位置，因此下一轮迭代顶部的 auto-compact 检查只需对
+            # 接下来追加的 tool results 做字符估算。
+            conversation.record_usage_anchor(
+                response.input_tokens,
+                response.output_tokens,
+                response.cache_read,
+                response.cache_creation,
+            )
+
+            # 溢写文件的回读结果豁免溢写：把模型刚读回来的内容再写盘换成
+            # 预览，模型就永远看不到全文，还会在「读回、溢写」之间打转
+            exempt_ids: set[str] = set()
+
+            # 收齐调用后按相邻只读批次执行；写入、命令和权限确认不能被后续读取越过。
+            tool_results: list[ToolResultBlock] = []
+            async for br in self._execute_ordered_tools(response.tool_calls):
+                if isinstance(br, PermissionRequest):
+                    yield br
+                    continue
+                content = self._maybe_persist_or_truncate(
+                    br.tool_id, br.result.output, exempt_ids
+                )
+                tool_results.append(
+                    ToolResultBlock(
+                        tool_use_id=br.tool_id,
+                        content=content,
+                        is_error=br.result.is_error,
+                        content_blocks=br.result.content_blocks,
+                    )
+                )
+                yield ToolResultEvent(
+                    tool_id=br.tool_id,
+                    tool_name=br.tool_name,
+                    output=br.result.output,
+                    is_error=br.result.is_error,
+                    elapsed=br.elapsed,
+                )
+
+            exit_plan_called = any(
+                tc.tool_name == "ExitPlanMode" for tc in response.tool_calls
+            )
+            # 聚合预算：一轮并行工具的结果落在同一条消息里，单条阈值管不住
+            # 合计超限的情况。进历史前把整批处理完，消息一出生就是终态
+            conversation.add_tool_results_message(tool_results)
+
+            # 非阻塞 memory recall：工具执行完后检查 prefetch 是否就绪
+            if self.memory_recall_task and not self._memory_recall_consumed:
+                if self.memory_recall_task.done():
+                    try:
+                        recall = self.memory_recall_task.result()
+                        if recall:
+                            conversation.add_system_reminder(recall)
+                    except Exception:
+                        pass
+                    self._memory_recall_consumed = True
+
+            if exit_plan_called:
+                yield TurnComplete(turn=iteration)
+                yield LoopComplete(total_turns=iteration)
+                break
+
+            if self.hook_engine:
+                ctx = self._build_hook_context("turn_end")
+                await self.hook_engine.run_hooks("turn_end", ctx)
+                for he in self._drain_hook_events():
+                    yield he
+            yield TurnComplete(turn=iteration)
 
 
     def _consume_mailbox(self, conversation: ConversationManager) -> None:
