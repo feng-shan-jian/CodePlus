@@ -691,7 +691,21 @@ class Agent:
 
 
     def _consume_mailbox(self, conversation: ConversationManager) -> None:
-        raise NotImplementedError("Implementation pending")
+        if not self.team_name or not self._team_manager:
+            return
+        try:
+            mailbox = self._team_manager.get_mailbox(self.team_name)
+            if mailbox is None:
+                return
+            messages = mailbox.consume(self.agent_id)
+            for msg in messages:
+                prefix = f"[Message from {msg.from_agent}]"
+                if msg.type != "text":
+                    prefix = f"[{msg.type} from {msg.from_agent}]"
+                content = f"{prefix} {msg.text}"
+                conversation.add_user_message(content)
+        except Exception as e:
+            log.debug("Mailbox consumption failed: %s", e)
 
     def _build_permission_description(self, tc: ToolCallComplete) -> str:
         """为 HITL 权限确认生成人类可读的操作描述。"""
@@ -714,9 +728,86 @@ class Agent:
     async def _execute_tool(
         self, tc: ToolCallComplete
     ) -> AsyncIterator[tuple[ToolResult, float] | PermissionRequest]:
-        if False:
-            yield None
-        raise NotImplementedError("Implementation pending")
+        tool = self.registry.get(tc.tool_name)
+        start = time.monotonic()
+
+        if tool is None:
+            # 工具名不存在只回一条错误结果，让模型自己换个工具重来，不打断循环。
+            result = ToolResult(
+                output=f"Error: unknown tool '{tc.tool_name}'", is_error=True
+            )
+            elapsed = time.monotonic() - start
+            yield result, elapsed
+            return
+
+        if not self.registry.is_enabled(tc.tool_name):
+            result = ToolResult(
+                output=f"Error: tool '{tc.tool_name}' is disabled in current mode",
+                is_error=True,
+            )
+            elapsed = time.monotonic() - start
+            yield result, elapsed
+            return
+
+        # 权限检查
+        if self.permission_checker:
+            decision = self.permission_checker.check(tool, tc.arguments)
+
+            if decision.effect == "deny":
+                result = ToolResult(
+                    output=f"Permission denied: {decision.reason}",
+                    is_error=True,
+                )
+                elapsed = time.monotonic() - start
+                yield result, elapsed
+                return
+
+            if decision.effect == "ask":
+                loop = asyncio.get_running_loop()
+                future: asyncio.Future[PermissionResponse] = loop.create_future()
+                desc = self._build_permission_description(tc)
+                # 向调用方 yield 权限请求事件，由调用方处理
+                yield PermissionRequest(
+                    tool_name=tc.tool_name,
+                    description=desc,
+                    future=future,
+                )
+                response = await future
+
+                if response == PermissionResponse.DENY:
+                    result = ToolResult(
+                        output=REJECTED_TOOL_RESULT,
+                        is_error=True,
+                    )
+                    elapsed = time.monotonic() - start
+                    yield result, elapsed
+                    return
+
+                if response == PermissionResponse.ALLOW_ALWAYS:
+                    from codeplus.permissions.rules import Rule, extract_content
+                    content = extract_content(tc.tool_name, tc.arguments)
+                    pattern = f"{content[:60]}*" if len(content) > 60 else f"{content}*"
+                    # 写入本地规则文件，规则引擎每次评估都现读现匹配，本轮之后即刻生效
+                    rule = Rule(tool_name=tc.tool_name, pattern=pattern, effect="allow")
+                    self.permission_checker.rule_engine.append_local_rule(rule)
+
+        try:
+            params = tool.params_model.model_validate(tc.arguments)
+            result = await tool.execute(params)
+        except ValidationError as e:
+            result = ToolResult(
+                output=f"Parameter validation error: {e}", is_error=True
+            )
+        except Exception as e:
+            result = ToolResult(
+                output=f"Tool execution error: {e}", is_error=True
+            )
+
+        self._record_recent_tool(tc.tool_name)
+        self._snapshot_for_recovery(tc, result)
+
+        elapsed = time.monotonic() - start
+        yield result, elapsed
 
     def _record_recent_tool(self, name: str) -> None:
         """记下刚执行完的工具名，供记忆召回的选择器参考。
@@ -735,12 +826,55 @@ class Agent:
     def _snapshot_for_recovery(
         self, tc: ToolCallComplete, result: ToolResult
     ) -> None:
-        raise NotImplementedError("Implementation pending")
+        """捕获 ReadFile 刚交给模型的内容，以便 Layer 2 压缩对话后
+        auto_compact 能重新附加这些数据。每次 ReadFile 多一次磁盘读取，
+        比从 tool 输出中反向解析行号要划算。
+        """
+        if result.is_error or tc.tool_name != "ReadFile":
+            return
+        path = tc.arguments.get("file_path") if isinstance(tc.arguments, dict) else None
+        if not path:
+            return
+        try:
+            with open(path, "r", encoding="utf-8", errors="replace") as fh:
+                content = fh.read()
+        except OSError:
+            return
+        self.recovery_state.record_file_read(path, content)
 
     async def _extract_memories(
         self, conversation: ConversationManager
     ) -> None:
-        raise NotImplementedError("Implementation pending")
+        """触发记忆提取，合并策略见类内字段注释。
+
+        当提取正在进行时，新的触发不会启动并发提取，而是标记 _pending_extraction。
+        当前提取完成后检查该标志，如果有 pending 则立即执行一次尾随提取，
+        防止多个触发器同时执行导致重复提取。
+        """
+        if not self.memory_manager:
+            return
+
+        # 合并策略：正在提取时暂存新请求，等当前提取完成后尾随执行
+        if self._extracting:
+            log.debug("[extractMemories] extraction in progress — stashing for trailing run")
+            self._pending_extraction = True
+            return
+
+        self._extracting = True
+        try:
+            await self.memory_manager.extract(
+                self.client, conversation, self.protocol
+            )
+        except Exception as e:
+            log.debug("Memory extraction failed: %s", e)
+        finally:
+            self._extracting = False
+            # 检查是否有尾随提取请求
+            if self._pending_extraction:
+                self._pending_extraction = False
+                log.debug("[extractMemories] running trailing extraction for stashed context")
+                # 递归调用自身处理尾随请求
+                await self._extract_memories(conversation)
 
     async def manual_compact(
         self, conversation: ConversationManager
@@ -749,7 +883,33 @@ class Agent:
         # （原始或已替换的）都将被丢弃。这里跳过 apply_tool_result_budget —
         # 它在主循环中的唯一目的是为 LLM 调用生成 api_conv，而本路径不需要
         # 发起看到替换结果的 LLM 调用（auto_compact 内部的摘要调用操作的是原始对话）。
-        raise NotImplementedError("Implementation pending")
+        result = await auto_compact(
+            conversation,
+            self.client,
+            self.context_window,
+            self.session_dir,
+            protocol=self.protocol,
+            manual=True,
+            breaker=self.compact_breaker,
+            recovery=self.recovery_state,
+            tool_schemas=self.registry.get_all_schemas(self.protocol),
+            transcript_path=self._transcript_path,
+        )
+        if isinstance(result, CompactEvent):
+            env_context = build_environment_context(
+            self.work_dir, self.active_skills, self._skill_catalog, self._agent_catalog
+        )
+            conversation.inject_environment(env_context)
+            memory_content = self.memory_manager.load() if self.memory_manager else ""
+            conversation.inject_long_term_memory(
+                self.instructions_content, memory_content
+            )
+            return CompactNotification(
+                before_tokens=result.before_tokens,
+                message=f"上下文已压缩（压缩前 {result.before_tokens:,} tokens）",
+                boundary=result.boundary,
+            )
+        return ErrorEvent(message=result or "压缩失败：对话历史为空或未达到压缩条件")
 
     async def run_to_completion(
         self, task: str, conversation: ConversationManager | None = None,
