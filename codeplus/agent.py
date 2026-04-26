@@ -915,12 +915,223 @@ class Agent:
         self, task: str, conversation: ConversationManager | None = None,
         event_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> str:
-        raise NotImplementedError("Implementation pending")
+        if conversation is None:
+            conversation = ConversationManager()
+
+            env_context = build_environment_context(
+                self.work_dir, self.active_skills, self._skill_catalog, self._agent_catalog
+            )
+            conversation.inject_environment(env_context)
+
+            if self.instructions_content:
+                memory_content = self.memory_manager.load() if self.memory_manager else ""
+                conversation.inject_long_term_memory(
+                    self.instructions_content, memory_content
+                )
+
+        if task:
+            conversation.add_user_message(task)
+
+        hook_prompts = (
+            self.hook_engine.get_prompt_messages() if self.hook_engine else None
+        )
+        system = build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir)
+
+        tools = self.registry.get_all_schemas(self.protocol)
+
+        log.info(
+            "[run_to_completion] agent=%s tools=%d names=%s coordinator=%s",
+            self.agent_id,
+            len(tools),
+            [t["name"] for t in tools][:10],
+            self.coordinator_mode,
+        )
+
+        last_text = ""
+
+        iteration = 0
+        while True:
+            iteration += 1
+            if self.max_iterations > 0 and iteration > self.max_iterations:
+                break
+            if self.hook_engine:
+                ctx = self._build_hook_context("turn_start")
+                await self.hook_engine.run_hooks("turn_start", ctx)
+
+            self._consume_mailbox(conversation)
+            if self.notification_fn:
+                for note in self.notification_fn():
+                    conversation.add_system_reminder(note)
+
+            compact_result = await auto_compact(
+                conversation,
+                self.client,
+                self.context_window,
+                self.session_dir,
+                protocol=self.protocol,
+                breaker=self.compact_breaker,
+                recovery=self.recovery_state,
+                tool_schemas=self.registry.get_all_schemas(self.protocol),
+                transcript_path=self._transcript_path,
+            )
+            if isinstance(compact_result, CompactEvent):
+                conversation.inject_environment(env_context)
+
+            self._announce_deferred_tools(conversation)
+
+            collector = StreamCollector()
+            llm_stream = self.client.stream(conversation, system=system, tools=tools)
+            async for _event in collector.consume(llm_stream):
+                pass
+
+            response = collector.response
+            self.total_input_tokens += response.input_tokens
+            self.total_output_tokens += response.output_tokens
+
+            if event_callback:
+                event_callback({
+                    "type": "usage",
+                    "usage": {
+                        "inputTokens": self.total_input_tokens,
+                        "outputTokens": self.total_output_tokens,
+                    },
+                })
+
+            if response.text:
+                last_text = response.text
+                if event_callback:
+                    event_callback({
+                        "type": "stream_text",
+                        "text": response.text,
+                    })
+
+            log.info(
+                "[run_to_completion] agent=%s iter=%d tool_calls=%d text_len=%d stop=%s",
+                self.agent_id, iteration, len(response.tool_calls),
+                len(response.text), response.stop_reason,
+            )
+
+            if not response.tool_calls:
+                conversation.add_assistant_message(response.text)
+                if self.file_history is not None:
+                    summary = response.text[:60] + "..." if len(response.text) > 60 else response.text
+                    self.file_history.make_snapshot(len(conversation.history), summary)
+                break
+
+            tool_uses = [
+                ToolUseBlock(
+                    tool_use_id=tc.tool_id,
+                    tool_name=tc.tool_name,
+                    arguments=tc.arguments,
+                )
+                for tc in response.tool_calls
+            ]
+            conversation.add_assistant_message(response.text, tool_uses)
+            # assistant 回复已在历史中，锚定实际用量；下一轮迭代只需对
+            # 下方追加的 tool results 做字符估算。
+            conversation.record_usage_anchor(
+                response.input_tokens,
+                response.output_tokens,
+                response.cache_read,
+                response.cache_creation,
+            )
+
+            # 溢写文件的回读结果豁免溢写：把模型刚读回来的内容再写盘换成
+            # 预览，模型就永远看不到全文，还会在「读回、溢写」之间打转
+            exempt_ids: set[str] = set()
+
+            tool_results: list[ToolResultBlock] = []
+            for tc in response.tool_calls:
+                if event_callback:
+                    event_callback({"type": "tool_use", "toolName": tc.tool_name, "args": tc.arguments})
+                result = await self._execute_tool_noninteractive(tc)
+                tool_results.append(ToolResultBlock(
+                    tool_use_id=tc.tool_id,
+                    content=result.output,
+                    is_error=result.is_error,
+                    content_blocks=result.content_blocks,
+                ))
+
+            # 聚合预算：一轮并行工具的结果落在同一条消息里，单条阈值管不住
+            # 合计超限的情况。进历史前把整批处理完，消息一出生就是终态
+            conversation.add_tool_results_message(tool_results)
+
+            if self.hook_engine:
+                ctx = self._build_hook_context("turn_end")
+                await self.hook_engine.run_hooks("turn_end", ctx)
+
+        return last_text
 
     async def _execute_tool_noninteractive(
         self, tc: ToolCallComplete
     ) -> ToolResult:
-        raise NotImplementedError("Implementation pending")
+        tool = self.registry.get(tc.tool_name)
+
+        if tool is None:
+            return ToolResult(
+                output=f"Error: unknown tool '{tc.tool_name}'", is_error=True
+            )
+
+        if not self.registry.is_enabled(tc.tool_name):
+            return ToolResult(
+                output=f"Error: tool '{tc.tool_name}' is disabled",
+                is_error=True,
+            )
+
+        if self.hook_engine:
+            file_path = self._infer_file_path(tc.arguments)
+            hook_ctx = self._build_hook_context(
+                "pre_tool_use",
+                tool_name=tc.tool_name,
+                tool_args=tc.arguments,
+                file_path=file_path,
+            )
+            rejection = await self.hook_engine.run_pre_tool_hooks(hook_ctx)
+            if rejection is not None:
+                return ToolResult(
+                    output=f"Hook rejected: {rejection.reason}",
+                    is_error=True,
+                )
+
+        if self.permission_checker:
+            decision = self.permission_checker.check(tool, tc.arguments)
+            if decision.effect == "deny":
+                return ToolResult(
+                    output=f"Permission denied: {decision.reason}",
+                    is_error=True,
+                )
+            if decision.effect == "ask":
+                if self.permission_mode == PermissionMode.BYPASS:
+                    pass  # BYPASS 模式自动批准
+                else:
+                    return ToolResult(
+                        output="Permission denied: non-interactive agent cannot prompt user",
+                        is_error=True,
+                    )
+
+        try:
+            params = tool.params_model.model_validate(tc.arguments)
+            result = await tool.execute(params)
+        except ValidationError as e:
+            result = ToolResult(
+                output=f"Parameter validation error: {e}", is_error=True
+            )
+        except Exception as e:
+            result = ToolResult(
+                output=f"Tool execution error: {e}", is_error=True
+            )
+
+        if self.hook_engine:
+            file_path = self._infer_file_path(tc.arguments)
+            hook_ctx = self._build_hook_context(
+                "post_tool_use",
+                tool_name=tc.tool_name,
+                tool_args=tc.arguments,
+                file_path=file_path,
+            )
+            await self.hook_engine.run_hooks("post_tool_use", hook_ctx)
+
+        return result
 
     def _maybe_persist_or_truncate(
         self, tool_use_id: str, text: str, exempt_ids: set[str] | None = None
