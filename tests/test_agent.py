@@ -292,16 +292,204 @@ async def test_unknown_tool_returns_error_result():
     assert all(tr.is_error and "unknown tool" in tr.output for tr in c["tool_result"])
     assert len(c["loop"]) == 1
 
+@pytest.mark.asyncio
+async def test_message_splicing():
+    """assistant 消息包含 text + 多个 tool_use；对应的 tool_result 被打包在一起。"""
+    client = MockLLMClient([
+        # 第 1 轮：一个响应里包含两次工具调用
+        [
+            TextDelta("Reading two files."),
+            ToolCallComplete("t1", "ReadFile", {"file_path": "LICENSE"}),
+            ToolCallComplete("t2", "ReadFile", {"file_path": "pyproject.toml"}),
+            StreamEnd("end_turn", input_tokens=10, output_tokens=20),
+        ],
+        # 第 2 轮：最终响应
+        [
+            TextDelta("Done."),
+            StreamEnd("end_turn", input_tokens=30, output_tokens=10),
+        ],
+    ])
+    registry = create_default_registry()
+    agent = Agent(client, registry, "anthropic", work_dir=".")
+    conv = ConversationManager()
+    conv.add_user_message("Read both files")
+
+    events = []
+    async for e in agent.run(conv):
+        events.append(e)
+
+    # 检查对话历史
+    msgs = build_anthropic_messages(conv.get_messages())
+    # env_context(user) 和 user_message 被合并为一条 → merged_user + assistant(text+2 个 tool_use) + user(2 个 tool_result) + assistant(最终响应)
+    assert len(msgs) == 4
+    assistant_msg = msgs[1]
+    assert assistant_msg["role"] == "assistant"
+    assert len(assistant_msg["content"]) == 3  # text + 2 个 tool_use
+    tool_results_msg = msgs[2]
+    assert tool_results_msg["role"] == "user"
+    assert len(tool_results_msg["content"]) == 2  # 2 个 tool_result
+    assert tool_results_msg["content"][0]["tool_use_id"] == "t1"
+    assert tool_results_msg["content"][1]["tool_use_id"] == "t2"
+
+@pytest.mark.asyncio
+async def test_multiple_read_calls():
+    """按模型给出的顺序执行多个 ReadFile 调用。"""
+    client = MockLLMClient([
+        [
+            ToolCallComplete("t1", "ReadFile", {"file_path": "LICENSE"}),
+            ToolCallComplete("t2", "ReadFile", {"file_path": "pyproject.toml"}),
+            StreamEnd("end_turn", input_tokens=10, output_tokens=20),
+        ],
+        [
+            TextDelta("Both files read."),
+            StreamEnd("end_turn", input_tokens=30, output_tokens=10),
+        ],
+    ])
+    registry = create_default_registry()
+    agent = Agent(client, registry, "anthropic", work_dir=".")
+    conv = ConversationManager()
+    conv.add_user_message("Read both")
+
+    events = []
+    async for e in agent.run(conv):
+        events.append(e)
+
+    c = _collect(events)
+    assert len(c["tool_result"]) == 2
+    # 两个都应成功（这些文件在项目根目录下存在）
+    assert all(not r.is_error for r in c["tool_result"])
+
+@pytest.mark.asyncio
+async def test_token_usage_accumulates():
+    """Usage 事件展示的是累计的 token 数量。"""
+    client = MockLLMClient([
+        [
+            TextDelta("Step 1"),
+            ToolCallComplete("t1", "ReadFile", {"file_path": "LICENSE"}),
+            StreamEnd("end_turn", input_tokens=100, output_tokens=50),
+        ],
+        [
+            TextDelta("Step 2"),
+            ToolCallComplete("t2", "ReadFile", {"file_path": "LICENSE"}),
+            StreamEnd("end_turn", input_tokens=200, output_tokens=80),
+        ],
+        [
+            TextDelta("Done."),
+            StreamEnd("end_turn", input_tokens=300, output_tokens=100),
+        ],
+    ])
+    registry = create_default_registry()
+    agent = Agent(client, registry, "anthropic", work_dir=".")
+    conv = ConversationManager()
+    conv.add_user_message("Test")
+
+    events = []
+    async for e in agent.run(conv):
+        events.append(e)
+
+    c = _collect(events)
+    assert len(c["usage"]) == 3
+    assert c["usage"][0].input_tokens == 100
+    assert c["usage"][0].output_tokens == 50
+    assert c["usage"][1].input_tokens == 300
+    assert c["usage"][1].output_tokens == 130
+    assert c["usage"][2].input_tokens == 600
+    assert c["usage"][2].output_tokens == 230
+
+@pytest.mark.asyncio
+async def test_plan_mode():
+    """通过 permission_mode 切换 plan 模式。"""
+    from codeplus.permissions import PermissionMode
+
+    registry = create_default_registry()
+    agent = Agent(MockLLMClient([]), registry, "anthropic")
+
+    agent.set_permission_mode(PermissionMode.PLAN)
+    assert agent.plan_mode is True
+
+    agent.set_permission_mode(PermissionMode.DEFAULT)
+    assert agent.plan_mode is False
+    schemas = registry.get_all_schemas()
+    names = [s["name"] for s in schemas]
+    assert "WriteFile" in names
+    assert "EditFile" in names
+    assert "Bash" in names
+
+@pytest.mark.asyncio
+async def test_plan_mode_denied_tool_returns_error():
+    """在 plan 模式下，写入类工具需要审批（effect=ask）；当用户
+    拒绝时，工具返回一个错误结果，而不会真正执行。"""
+    from codeplus.permissions import (
+        DangerousCommandDetector,
+        PathSandbox,
+        PermissionChecker,
+        PermissionMode,
+        RuleEngine,
+    )
+
+    client = MockLLMClient([
+        [
+            TextDelta("Let me write..."),
+            ToolCallComplete("t1", "WriteFile", {"file_path": "x.txt", "content": "hi"}),
+            StreamEnd("end_turn", input_tokens=10, output_tokens=20),
+        ],
+        [
+            TextDelta("OK, I can't write in plan mode."),
+            StreamEnd("end_turn", input_tokens=30, output_tokens=15),
+        ],
+    ])
+    registry = create_default_registry()
+    checker = PermissionChecker(
+        detector=DangerousCommandDetector(),
+        sandbox=PathSandbox("."),
+        rule_engine=RuleEngine(),
+        mode=PermissionMode.PLAN,
+    )
+    agent = Agent(client, registry, "anthropic", permission_checker=checker)
+    agent.set_permission_mode(PermissionMode.PLAN)
+    conv = ConversationManager()
+    conv.add_user_message("Write a file")
+
+    events = []
+    async for e in agent.run(conv):
+        events.append(e)
+        # plan 模式在写入前会询问；这里模拟用户拒绝。
+        if isinstance(e, PermissionRequest):
+            e.future.set_result(PermissionResponse.DENY)
+
+    c = _collect(events)
+    assert len(c["tool_result"]) == 1
+    assert c["tool_result"][0].is_error
+    out = c["tool_result"][0].output.lower()
+    assert "rejected" in out or "denied" in out or "拒绝" in c["tool_result"][0].output
+    assert len(c["error"]) == 0
 
 
+def test_system_prompt_normal():
+    sp = build_system_prompt()
+    assert "CodePlus" in sp
+    assert "Plan mode" not in sp
+
+def test_system_prompt_plan():
+    reminder = build_plan_mode_reminder("/tmp/plan.md", False, 1)
+    assert "Plan mode" in reminder
+    assert "MUST NOT" in reminder
+
+def test_plan_mode_sparse_reminder():
+    reminder = build_plan_mode_reminder("/tmp/plan.md", True, 8)
+    assert "Plan mode still active" in reminder
+
+def test_environment_context():
+    # 工作目录和操作系统归 System Prompt 的环境段，这里只负责每轮会变的时间
+    ctx = build_environment_context("/home/user/project")
+    assert "Current time" in ctx
+    assert "/home/user/project" not in ctx
+    assert "Operating system" not in ctx
 
 
-
-
-
-
-
-
-
+def test_system_prompt_carries_work_dir():
+    sp = build_system_prompt(work_dir="/home/user/project")
+    assert "/home/user/project" in sp
+    assert "Platform" in sp
 
 
