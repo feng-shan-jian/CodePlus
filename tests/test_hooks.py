@@ -318,14 +318,68 @@ class TestExecuteAction:
 # ---------------------------------------------------------------------------
 
 class TestLoadHooks:
-    pass
+    def test_full_config(self):
+        raw = [
+            {
+                "id": "auto-format",
+                "event": "post_tool_use",
+                "if": 'tool == "WriteFile"',
+                "action": {"type": "command", "command": "echo formatted"},
+            }
+        ]
+        hooks = load_hooks(raw)
+        assert len(hooks) == 1
+        assert hooks[0].id == "auto-format"
+        assert hooks[0].event == "post_tool_use"
+        assert hooks[0].condition is not None
 
+    def test_auto_id(self):
+        raw = [
+            {"event": "session_start", "action": {"type": "prompt", "message": "hello"}}
+        ]
+        hooks = load_hooks(raw)
+        assert hooks[0].id == "session_start_0"
 
+    def test_empty(self):
+        assert load_hooks(None) == []
+        assert load_hooks([]) == []
 
+    def test_invalid_event(self):
+        with pytest.raises(HookConfigError, match="invalid event"):
+            load_hooks([{"event": "bad_event", "action": {"type": "command", "command": "x"}}])
 
+    def test_invalid_action_type(self):
+        with pytest.raises(HookConfigError, match="invalid action type"):
+            load_hooks([{"event": "startup", "action": {"type": "bad"}}])
 
+    def test_reject_on_non_pre_tool_use(self):
+        with pytest.raises(HookConfigError, match="reject.*pre_tool_use"):
+            load_hooks([{
+                "event": "post_tool_use",
+                "action": {"type": "command", "command": "x"},
+                "reject": True,
+            }])
 
+    def test_async_on_pre_tool_use(self):
+        with pytest.raises(HookConfigError, match="async.*pre_tool_use"):
+            load_hooks([{
+                "event": "pre_tool_use",
+                "action": {"type": "command", "command": "x"},
+                "async": True,
+            }])
 
+    def test_missing_required_field(self):
+        with pytest.raises(HookConfigError, match="requires.*command"):
+            load_hooks([{"event": "startup", "action": {"type": "command"}}])
+
+        with pytest.raises(HookConfigError, match="requires.*url"):
+            load_hooks([{"event": "startup", "action": {"type": "http"}}])
+
+        with pytest.raises(HookConfigError, match="requires.*message"):
+            load_hooks([{"event": "startup", "action": {"type": "prompt"}}])
+
+        with pytest.raises(HookConfigError, match="requires.*prompt"):
+            load_hooks([{"event": "startup", "action": {"type": "agent"}}])
 
 # ---------------------------------------------------------------------------
 # HookEngine
@@ -342,13 +396,109 @@ class TestHookEngine:
         defaults.update(kwargs)
         return Hook(**defaults)
 
+    def test_find_matching_hooks(self):
+        h1 = self._make_hook(id="h1", event="post_tool_use")
+        h2 = self._make_hook(id="h2", event="pre_tool_use")
+        engine = HookEngine([h1, h2])
+        ctx = HookContext(event_name="post_tool_use")
+        matched = engine.find_matching_hooks("post_tool_use", ctx)
+        assert len(matched) == 1
+        assert matched[0].id == "h1"
 
+    def test_find_with_condition_filter(self):
+        h = self._make_hook(
+            id="h1",
+            event="post_tool_use",
+            condition=ConditionGroup(
+                conditions=[Condition("tool", "==", "WriteFile")],
+                logic="and",
+            ),
+        )
+        engine = HookEngine([h])
 
+        ctx_match = HookContext(event_name="post_tool_use", tool_name="WriteFile")
+        assert len(engine.find_matching_hooks("post_tool_use", ctx_match)) == 1
 
+        ctx_no_match = HookContext(event_name="post_tool_use", tool_name="Bash")
+        assert len(engine.find_matching_hooks("post_tool_use", ctx_no_match)) == 0
 
+    def test_once_filter(self):
+        h = self._make_hook(id="h1", once=True)
+        engine = HookEngine([h])
+        ctx = HookContext(event_name="post_tool_use")
 
+        assert len(engine.find_matching_hooks("post_tool_use", ctx)) == 1
+        h.mark_executed()
+        assert len(engine.find_matching_hooks("post_tool_use", ctx)) == 0
 
+    @pytest.mark.asyncio
+    async def test_run_pre_tool_hooks_reject(self):
+        h = self._make_hook(
+            id="block-vendor",
+            event="pre_tool_use",
+            action=Action(type="command", command="echo rejected"),
+            reject=True,
+        )
+        engine = HookEngine([h])
+        ctx = HookContext(event_name="pre_tool_use", tool_name="WriteFile")
+        result = await engine.run_pre_tool_hooks(ctx)
+        assert result is not None
+        assert isinstance(result, ToolRejectedError)
+        assert "rejected" in result.reason
 
+    @pytest.mark.asyncio
+    async def test_run_pre_tool_hooks_no_reject(self):
+        h = self._make_hook(
+            id="log-only",
+            event="pre_tool_use",
+            action=Action(type="command", command="echo ok"),
+            reject=False,
+        )
+        engine = HookEngine([h])
+        ctx = HookContext(event_name="pre_tool_use", tool_name="WriteFile")
+        result = await engine.run_pre_tool_hooks(ctx)
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_prompt_message_collection(self):
+        h = self._make_hook(
+            id="inject",
+            event="session_start",
+            action=Action(type="prompt", message="Project info here"),
+        )
+        engine = HookEngine([h])
+        ctx = HookContext(event_name="session_start")
+        await engine.run_hooks("session_start", ctx)
+        messages = engine.get_prompt_messages()
+        assert len(messages) == 1
+        assert "Project info" in messages[0]
+        assert engine.get_prompt_messages() == []
+
+    @pytest.mark.asyncio
+    async def test_error_does_not_raise(self):
+        h = self._make_hook(
+            id="bad",
+            event="post_tool_use",
+            action=Action(type="command", command="exit 1"),
+        )
+        engine = HookEngine([h])
+        ctx = HookContext(event_name="post_tool_use")
+        await engine.run_hooks("post_tool_use", ctx)
+
+    @pytest.mark.asyncio
+    async def test_async_hook_does_not_block(self):
+        # 使用短命令替代 sleep 5，避免孤立子进程导致 pytest 退出时挂起
+        h = self._make_hook(
+            id="slow",
+            event="post_tool_use",
+            action=Action(type="command", command="echo async_done"),
+            async_exec=True,
+        )
+        engine = HookEngine([h])
+        ctx = HookContext(event_name="post_tool_use")
+        await engine.run_hooks("post_tool_use", ctx)
+        # 给异步任务一点时间完成
+        await asyncio.sleep(0.1)
 
 # ---------------------------------------------------------------------------
 # Agent 循环集成
@@ -357,3 +507,59 @@ class TestHookEngine:
 class TestAgentHookIntegration:
     """验证 pre_tool_use 拒绝会导致工具调用被跳过。"""
 
+    @pytest.mark.asyncio
+    @pytest.mark.skipif(os.name == "nt", reason="rm 命令在 Windows 上不可用")
+    async def test_pre_tool_use_reject_skips_tool(self):
+        from codeplus.agent import Agent, ToolResultEvent
+        from codeplus.client import LLMClient
+        from codeplus.conversation import ConversationManager
+        from codeplus.tools import create_default_registry
+        from codeplus.tools.base import StreamEnd, StreamEvent, TextDelta, ToolCallComplete
+
+        class MockClient(LLMClient):
+            def __init__(self):
+                self._call = 0
+
+            async def stream(self, conversation, system="", tools=None):
+                self._call += 1
+                if self._call == 1:
+                    yield ToolCallComplete(
+                        tool_id="t1",
+                        tool_name="Bash",
+                        arguments={"command": "rm -rf /"},
+                    )
+                    yield StreamEnd(stop_reason="tool_use", input_tokens=10, output_tokens=5)
+                else:
+                    yield TextDelta(text="I understand, I won't do that.")
+                    yield StreamEnd(stop_reason="end_turn", input_tokens=10, output_tokens=5)
+
+        hook = Hook(
+            id="block-rm",
+            event="pre_tool_use",
+            action=Action(type="command", command="echo dangerous command blocked"),
+            condition=parse_condition('tool == "Bash" && args.command =~ /rm\\s+-rf/'),
+            reject=True,
+        )
+        engine = HookEngine([hook])
+
+        client = MockClient()
+        registry = create_default_registry()
+        conv = ConversationManager()
+        conv.add_user_message("delete everything")
+
+        agent = Agent(
+            client=client,
+            registry=registry,
+            protocol="anthropic",
+            hook_engine=engine,
+        )
+
+        events = []
+        async for event in agent.run(conv):
+            events.append(event)
+
+        tool_results = [e for e in events if isinstance(e, ToolResultEvent)]
+        assert len(tool_results) >= 1
+        rejected = tool_results[0]
+        assert rejected.is_error is True
+        assert "Hook rejected" in rejected.output
