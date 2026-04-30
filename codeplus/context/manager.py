@@ -102,12 +102,47 @@ def cleanup_tool_results(session_dir: Path) -> None:
 # Layer 1：大型工具结果落盘
 # ---------------------------------------------------------------------------
 
+def persist_tool_result(tool_use_id: str, content: str, session_dir: Path) -> Path:
+    file_path = session_dir / f"{tool_use_id}.txt"
+    try:
+        fd = os.open(str(file_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(content)
+    except FileExistsError:
+        pass
+    return file_path
+
+
+def make_persisted_preview(content: str, file_path: Path) -> str:
+    size_kb = len(content) // 1024
+    preview = content[:PREVIEW_CHARS]
+    more = "\n..." if len(content) > PREVIEW_CHARS else ""
+    return (
+        f"{PERSISTED_TAG}\n"
+        f"输出太大（{size_kb}KB），完整内容已保存到：\n"
+        f"{file_path}\n"
+        f"\n"
+        f"预览（前 2KB）：\n"
+        f"{preview}{more}\n"
+        f"</persisted-output>"
+    )
 
 
 
 
+def is_spill_readback(tool_name: str, arguments: Mapping[str, object], session_dir: Path) -> bool:
+    """判断一次工具调用是不是在读回溢写目录下的文件。
 
-
+    这类结果不做溢写：把模型刚读回来的内容再写盘换成预览，模型就永远
+    看不到全文，还会在「读回、溢写」之间打转。
+    """
+    if tool_name != "ReadFile":
+        return False
+    raw = arguments.get("file_path", "")
+    if not isinstance(raw, str) or not raw:
+        return False
+    abs_path = os.path.abspath(raw)
+    return abs_path.startswith(os.path.abspath(str(session_dir)))
 
 
 
