@@ -19,6 +19,7 @@ from codeplus.context import (
     RecoveryState,
     auto_compact,
     ensure_session_dir,
+    is_spill_readback,
 )
 from codeplus.conversation import ConversationManager, ToolResultBlock, ToolUseBlock
 from codeplus.conversation_pairing import REJECTED_TOOL_RESULT
@@ -632,7 +633,10 @@ class Agent:
 
             # 溢写文件的回读结果豁免溢写：把模型刚读回来的内容再写盘换成
             # 预览，模型就永远看不到全文，还会在「读回、溢写」之间打转
-            exempt_ids: set[str] = set()
+            exempt_ids = {
+                tc.tool_id for tc in response.tool_calls
+                if is_spill_readback(tc.tool_name, tc.arguments, self.session_dir)
+            }
 
             # 收齐调用后按相邻只读批次执行；写入、命令和权限确认不能被后续读取越过。
             tool_results: list[ToolResultBlock] = []
@@ -1038,7 +1042,10 @@ class Agent:
 
             # 溢写文件的回读结果豁免溢写：把模型刚读回来的内容再写盘换成
             # 预览，模型就永远看不到全文，还会在「读回、溢写」之间打转
-            exempt_ids: set[str] = set()
+            exempt_ids = {
+                tc.tool_id for tc in response.tool_calls
+                if is_spill_readback(tc.tool_name, tc.arguments, self.session_dir)
+            }
 
             tool_results: list[ToolResultBlock] = []
             for tc in response.tool_calls:
@@ -1047,7 +1054,7 @@ class Agent:
                 result = await self._execute_tool_noninteractive(tc)
                 tool_results.append(ToolResultBlock(
                     tool_use_id=tc.tool_id,
-                    content=result.output,
+                    content=self._maybe_persist_or_truncate(tc.tool_id, result.output, exempt_ids),
                     is_error=result.is_error,
                     content_blocks=result.content_blocks,
                 ))
@@ -1136,4 +1143,24 @@ class Agent:
     def _maybe_persist_or_truncate(
         self, tool_use_id: str, text: str, exempt_ids: set[str] | None = None
     ) -> str:
+        from codeplus.context.manager import (
+            make_persisted_preview,
+            persist_tool_result,
+        )
+
+        # 超过阈值的输出持久化到磁盘，对话里只保留预览和文件路径。
+        # 溢写文件的回读结果豁免；写盘失败会原样保留，同一块磁盘
+        # 聚合预算也不必再试，所以两种结果都标记豁免
+        if exempt_ids is not None and tool_use_id in exempt_ids:
+            return text
+        if len(text) > MAX_OUTPUT_CHARS:
+            try:
+                fp = persist_tool_result(tool_use_id, text, self.session_dir)
+            except OSError:
+                if exempt_ids is not None:
+                    exempt_ids.add(tool_use_id)
+                return text
+            if exempt_ids is not None:
+                exempt_ids.add(tool_use_id)
+            return make_persisted_preview(text, fp)
         return text
