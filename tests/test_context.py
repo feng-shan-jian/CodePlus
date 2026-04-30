@@ -20,6 +20,9 @@ from codeplus.context.manager import (
     compute_compact_threshold,
     ensure_session_dir,
     extract_summary,
+    is_spill_readback,
+    make_persisted_preview,
+    persist_tool_result,
 )
 from codeplus.conversation import (
     _CHARS_PER_TOKEN,
@@ -34,11 +37,37 @@ from codeplus.conversation import (
 # persist_tool_result
 # ---------------------------------------------------------------------------
 
+class TestPersistToolResult:
+    def test_writes_file(self, tmp_path: Path) -> None:
+        fp = persist_tool_result("toolu_001", "hello world", tmp_path)
+        assert fp.exists()
+        assert fp.read_text() == "hello world"
+
+    def test_idempotent(self, tmp_path: Path) -> None:
+        persist_tool_result("toolu_002", "first", tmp_path)
+        persist_tool_result("toolu_002", "second", tmp_path)
+        fp = tmp_path / "toolu_002.txt"
+        assert fp.read_text() == "first"
 
 # ---------------------------------------------------------------------------
 # make_persisted_preview
 # ---------------------------------------------------------------------------
 
+class TestMakePersistedPreview:
+    def test_contains_tag_and_path(self, tmp_path: Path) -> None:
+        content = "x" * 10_000
+        preview = make_persisted_preview(content, tmp_path / "test.txt")
+        assert preview.startswith(PERSISTED_TAG)
+        assert "test.txt" in preview
+        assert "</persisted-output>" in preview
+
+    def test_preview_truncated(self, tmp_path: Path) -> None:
+        content = "a" * 5_000
+        preview = make_persisted_preview(content, tmp_path / "test.txt")
+        lines = preview.split("\n")
+        preview_line = [l for l in lines if l.startswith("aaa")]
+        assert len(preview_line) == 1
+        assert len(preview_line[0]) == 2_000
 
 # ---------------------------------------------------------------------------
 # apply_tool_result_budget
@@ -49,6 +78,22 @@ from codeplus.conversation import (
 # is_spill_readback
 # ---------------------------------------------------------------------------
 
+class TestIsSpillReadback:
+    def test_readfile_inside_spill_dir(self, tmp_path: Path) -> None:
+        inside = str(tmp_path / "toolu_abc.txt")
+        assert is_spill_readback("ReadFile", {"file_path": inside}, tmp_path)
+
+    def test_readfile_outside(self, tmp_path: Path) -> None:
+        assert not is_spill_readback(
+            "ReadFile", {"file_path": str(tmp_path.parent / "main.py")}, tmp_path
+        )
+
+    def test_other_tool(self, tmp_path: Path) -> None:
+        inside = str(tmp_path / "toolu_abc.txt")
+        assert not is_spill_readback("Bash", {"file_path": inside}, tmp_path)
+
+    def test_missing_path(self, tmp_path: Path) -> None:
+        assert not is_spill_readback("ReadFile", {}, tmp_path)
 
 # ---------------------------------------------------------------------------
 # compute_compact_threshold
