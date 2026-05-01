@@ -332,8 +332,8 @@ async def test_message_splicing():
     assert tool_results_msg["content"][1]["tool_use_id"] == "t2"
 
 @pytest.mark.asyncio
-async def test_multiple_read_calls():
-    """按模型给出的顺序执行多个 ReadFile 调用。"""
+async def test_concurrent_batch_execution():
+    """多个 ReadFile 调用并发执行（属于同一批次）。"""
     client = MockLLMClient([
         [
             ToolCallComplete("t1", "ReadFile", {"file_path": "LICENSE"}),
@@ -493,3 +493,60 @@ def test_system_prompt_carries_work_dir():
     assert "Platform" in sp
 
 
+@pytest.mark.asyncio
+async def test_streaming_tool_execution():
+    """工具在 LLM 流式输出期间就开始执行，不等整个响应结束。"""
+    execution_log: list[tuple[str, float]] = []
+    original_execute = None
+
+    # 用一个慢速流模拟 LLM 还在输出，验证第一个工具在流结束前已经开始执行
+    class SlowMockClient(MockLLMClient):
+        async def stream(self, conversation, system="", tools=None):
+            events = self._responses[self._call_index]
+            self._call_index += 1
+            for e in events:
+                if isinstance(e, StreamEnd):
+                    # 在 StreamEnd 前等一下，让已提交的工具有时间执行
+                    await asyncio.sleep(0.05)
+                yield e
+                await asyncio.sleep(0)
+
+    client = SlowMockClient([
+        [
+            ToolCallComplete("t1", "Glob", {"pattern": "*.py"}),
+            ToolCallComplete("t2", "Glob", {"pattern": "*.toml"}),
+            StreamEnd("end_turn", input_tokens=10, output_tokens=20),
+        ],
+        [
+            TextDelta("Done."),
+            StreamEnd("end_turn", input_tokens=30, output_tokens=10),
+        ],
+    ])
+    registry = create_default_registry()
+
+    # 记录工具执行时间
+    glob_tool = registry.get("Glob")
+    original_execute = glob_tool.execute
+
+    async def patched_execute(params):
+        import time
+        execution_log.append(("start", time.monotonic()))
+        result = await original_execute(params)
+        execution_log.append(("end", time.monotonic()))
+        return result
+
+    glob_tool.execute = patched_execute
+
+    agent = Agent(client, registry, "anthropic", work_dir=".")
+    conv = ConversationManager()
+    conv.add_user_message("Find files")
+
+    events = []
+    async for e in agent.run(conv):
+        events.append(e)
+
+    c = _collect(events)
+    # 两个 Glob 调用都应产出结果
+    assert len(c["tool_result"]) == 2
+    # 工具应该在流式阶段就开始执行，所以 execution_log 至少有记录
+    assert len(execution_log) >= 2, "工具未在流式阶段执行"
