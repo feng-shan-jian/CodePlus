@@ -226,7 +226,7 @@ class StreamCollector:
 
 
 # ---------------------------------------------------------------------------
-# 单条工具执行结果
+# streaming 执行器 — 在 LLM streaming 期间启动 tool 执行
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -235,6 +235,38 @@ class _ToolExecResult:
     tool_name: str
     result: ToolResult
     elapsed: float
+
+
+class StreamingExecutor:
+    def __init__(self) -> None:
+        self._tasks: list[tuple[int, asyncio.Task[_ToolExecResult]]] = []
+        self._order = 0
+
+    def submit(
+        self,
+        coro: Any,
+    ) -> None:
+        task = asyncio.create_task(coro)
+        self._tasks.append((self._order, task))
+        self._order += 1
+
+    async def collect_results(self) -> list[_ToolExecResult]:
+        if not self._tasks:
+            return []
+        tasks = [t for _, t in sorted(self._tasks, key=lambda x: x[0])]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        out: list[_ToolExecResult] = []
+        for r in results:
+            if isinstance(r, Exception):
+                out.append(_ToolExecResult(
+                    tool_id="",
+                    tool_name="",
+                    result=ToolResult(output=f"Tool execution error: {r}", is_error=True),
+                    elapsed=0.0,
+                ))
+            else:
+                out.append(r)
+        return out
 
 
 # ---------------------------------------------------------------------------
@@ -529,8 +561,23 @@ class Agent:
                 yield ErrorEvent(message=compact_result)
 
             collector = StreamCollector()
+            executor = StreamingExecutor()
+            deferred_tool_calls: list[ToolCallComplete] = []
             llm_stream = self.client.stream(conversation, system=system, tools=tools)
             async for event in collector.consume(llm_stream):
+                # 流式工具执行：收到完整 tool_use 就立刻提交执行，不等整个响应结束
+                if isinstance(event, ToolUseEvent):
+                    tc = collector.response.tool_calls[-1]
+                    # 需要交互式权限确认的工具延迟到流结束后顺序执行
+                    tool = self.registry.get(tc.tool_name)
+                    needs_ask = False
+                    if tool and self.permission_checker:
+                        decision = self.permission_checker.check(tool, tc.arguments)
+                        needs_ask = decision.effect == "ask"
+                    if needs_ask:
+                        deferred_tool_calls.append(tc)
+                    else:
+                        executor.submit(self._execute_single_tool_direct(tc))
                 yield event
 
             response = collector.response
@@ -638,12 +685,11 @@ class Agent:
                 if is_spill_readback(tc.tool_name, tc.arguments, self.session_dir)
             }
 
-            # 收齐调用后按相邻只读批次执行；写入、命令和权限确认不能被后续读取越过。
+            # 收集流式执行器中已提交的工具结果（工具在 LLM 流式输出期间已开始执行）
             tool_results: list[ToolResultBlock] = []
-            async for br in self._execute_ordered_tools(response.tool_calls):
-                if isinstance(br, PermissionRequest):
-                    yield br
-                    continue
+            streaming_results = await executor.collect_results()
+
+            for br in streaming_results:
                 content = self._maybe_persist_or_truncate(
                     br.tool_id, br.result.output, exempt_ids
                 )
@@ -661,6 +707,39 @@ class Agent:
                     output=br.result.output,
                     is_error=br.result.is_error,
                     elapsed=br.elapsed,
+                )
+
+            # 需要交互式权限确认的工具，在流结束后顺序执行
+            for tc in deferred_tool_calls:
+                result: ToolResult | None = None
+                elapsed = 0.0
+
+                async for item in self._execute_tool(tc):
+                    if isinstance(item, PermissionRequest):
+                        yield item
+                    else:
+                        result, elapsed = item
+
+                if result is None:
+                    result = ToolResult(output="Error: no result from tool", is_error=True)
+
+                content = self._maybe_persist_or_truncate(
+                    tc.tool_id, result.output, exempt_ids
+                )
+                tool_results.append(
+                    ToolResultBlock(
+                        tool_use_id=tc.tool_id,
+                        content=content,
+                        is_error=result.is_error,
+                        content_blocks=result.content_blocks,
+                    )
+                )
+                yield ToolResultEvent(
+                    tool_id=tc.tool_id,
+                    tool_name=tc.tool_name,
+                    output=result.output,
+                    is_error=result.is_error,
+                    elapsed=elapsed,
                 )
 
             exit_plan_called = any(
@@ -715,23 +794,67 @@ class Agent:
         """为 HITL 权限确认生成人类可读的操作描述。"""
         return PermissionChecker.describe_tool_action(tc.tool_name, tc.arguments)
 
-    async def _execute_ordered_tools(
+    async def _execute_single_tool_direct(
+        self, tc: ToolCallComplete
+    ) -> _ToolExecResult:
+        tool = self.registry.get(tc.tool_name)
+        start = time.monotonic()
+
+        if tool is None:
+            # 工具名不存在只回一条错误结果，让模型自己换个工具重来，不打断循环。
+            return _ToolExecResult(
+                tool_id=tc.tool_id,
+                tool_name=tc.tool_name,
+                result=ToolResult(output=f"Error: unknown tool '{tc.tool_name}'", is_error=True),
+                elapsed=time.monotonic() - start,
+            )
+
+        if not self.registry.is_enabled(tc.tool_name):
+            return _ToolExecResult(
+                tool_id=tc.tool_id,
+                tool_name=tc.tool_name,
+                result=ToolResult(output=f"Error: tool '{tc.tool_name}' is disabled", is_error=True),
+                elapsed=time.monotonic() - start,
+            )
+
+        if self.permission_checker:
+            decision = self.permission_checker.check(tool, tc.arguments)
+            if decision.effect == "deny":
+                return _ToolExecResult(
+                    tool_id=tc.tool_id,
+                    tool_name=tc.tool_name,
+                    result=ToolResult(output=f"Permission denied: {decision.reason}", is_error=True),
+                    elapsed=time.monotonic() - start,
+                )
+
+        try:
+            params = tool.params_model.model_validate(tc.arguments)
+            result = await tool.execute(params)
+        except ValidationError as e:
+            result = ToolResult(output=f"Parameter validation error: {e}", is_error=True)
+        except Exception as e:
+            result = ToolResult(output=f"Tool execution error: {e}", is_error=True)
+
+        self._record_recent_tool(tc.tool_name)
+        self._snapshot_for_recovery(tc, result)
+
+        return _ToolExecResult(
+            tool_id=tc.tool_id,
+            tool_name=tc.tool_name,
+            result=result,
+            elapsed=time.monotonic() - start,
+        )
+
+
+    async def _execute_batch_parallel(
         self, calls: list[ToolCallComplete]
-    ) -> AsyncIterator[_ToolExecResult | PermissionRequest]:
-        for tc in calls:
-            async for item in self._execute_tool(tc):
-                if isinstance(item, PermissionRequest):
-                    yield item
-                else:
-                    result, elapsed = item
-                    yield _ToolExecResult(tc.tool_id, tc.tool_name, result, elapsed)
-
-
-
+    ) -> list[_ToolExecResult]:
+        tasks = [self._execute_single_tool_direct(tc) for tc in calls]
+        return list(await asyncio.gather(*tasks))
 
     async def _execute_tool(
         self, tc: ToolCallComplete
-    ) -> AsyncIterator[tuple[ToolResult, float] | PermissionRequest]:
+    ) -> AsyncIterator[tuple[ToolResult, float]]:
         tool = self.registry.get(tc.tool_name)
         start = time.monotonic()
 
@@ -1050,14 +1173,23 @@ class Agent:
             tool_results: list[ToolResultBlock] = []
             for tc in response.tool_calls:
                 if event_callback:
-                    event_callback({"type": "tool_use", "toolName": tc.tool_name, "args": tc.arguments})
+                    event_callback({
+                        "type": "tool_use",
+                        "toolName": tc.tool_name,
+                        "args": tc.arguments,
+                    })
                 result = await self._execute_tool_noninteractive(tc)
-                tool_results.append(ToolResultBlock(
-                    tool_use_id=tc.tool_id,
-                    content=self._maybe_persist_or_truncate(tc.tool_id, result.output, exempt_ids),
-                    is_error=result.is_error,
-                    content_blocks=result.content_blocks,
-                ))
+                content = self._maybe_persist_or_truncate(
+                    tc.tool_id, result.output, exempt_ids
+                )
+                tool_results.append(
+                    ToolResultBlock(
+                        tool_use_id=tc.tool_id,
+                        content=content,
+                        is_error=result.is_error,
+                        content_blocks=result.content_blocks,
+                    )
+                )
 
             # 聚合预算：一轮并行工具的结果落在同一条消息里，单条阈值管不住
             # 合计超限的情况。进历史前把整批处理完，消息一出生就是终态
