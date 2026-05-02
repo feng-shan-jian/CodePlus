@@ -18,6 +18,7 @@ from codeplus.agent import (
     ToolUseEvent,
     TurnComplete,
     UsageEvent,
+    partition_tool_calls,
 )
 from codeplus.prompts import build_environment_context, build_plan_mode_reminder, build_system_prompt
 from codeplus.client import LLMClient
@@ -332,8 +333,8 @@ async def test_message_splicing():
     assert tool_results_msg["content"][1]["tool_use_id"] == "t2"
 
 @pytest.mark.asyncio
-async def test_multiple_read_calls():
-    """按模型给出的顺序执行多个 ReadFile 调用。"""
+async def test_concurrent_batch_execution():
+    """多个 ReadFile 调用并发执行（属于同一批次）。"""
     client = MockLLMClient([
         [
             ToolCallComplete("t1", "ReadFile", {"file_path": "LICENSE"}),
@@ -464,6 +465,23 @@ async def test_plan_mode_denied_tool_returns_error():
     assert "rejected" in out or "denied" in out or "拒绝" in c["tool_result"][0].output
     assert len(c["error"]) == 0
 
+def test_partition_tool_calls():
+    """分批逻辑会把可并发执行的调用归到同一组。"""
+    from codeplus.tools.base import ToolCallComplete
+
+    calls = [
+        ToolCallComplete("1", "ReadFile", {}),
+        ToolCallComplete("2", "ReadFile", {}),
+        ToolCallComplete("3", "EditFile", {}),
+        ToolCallComplete("4", "ReadFile", {}),
+        ToolCallComplete("5", "ReadFile", {}),
+    ]
+    registry = create_default_registry()
+    batches = partition_tool_calls(calls, registry)
+    assert len(batches) == 3
+    assert batches[0].concurrent and len(batches[0].calls) == 2
+    assert not batches[1].concurrent and len(batches[1].calls) == 1
+    assert batches[2].concurrent and len(batches[2].calls) == 2
 
 def test_system_prompt_normal():
     sp = build_system_prompt()
@@ -491,5 +509,173 @@ def test_system_prompt_carries_work_dir():
     sp = build_system_prompt(work_dir="/home/user/project")
     assert "/home/user/project" in sp
     assert "Platform" in sp
+
+
+@pytest.mark.asyncio
+async def test_tools_wait_for_complete_response():
+    """模型响应收齐前不执行工具，防止半条响应产生副作用。"""
+    execution_log: list[tuple[str, float]] = []
+    original_execute = None
+
+    # 给事件循环执行机会，确认工具没有在流结束前偷偷启动。
+    class SlowMockClient(MockLLMClient):
+        async def stream(self, conversation, system="", tools=None):
+            events = self._responses[self._call_index]
+            self._call_index += 1
+            for e in events:
+                if isinstance(e, StreamEnd) and self._call_index == 1:
+                    await asyncio.sleep(0)
+                    assert execution_log == []
+                yield e
+                await asyncio.sleep(0)
+
+    client = SlowMockClient([
+        [
+            ToolCallComplete("t1", "Glob", {"pattern": "*.py"}),
+            ToolCallComplete("t2", "Glob", {"pattern": "*.toml"}),
+            StreamEnd("end_turn", input_tokens=10, output_tokens=20),
+        ],
+        [
+            TextDelta("Done."),
+            StreamEnd("end_turn", input_tokens=30, output_tokens=10),
+        ],
+    ])
+    registry = create_default_registry()
+
+    # 记录工具执行时间
+    glob_tool = registry.get("Glob")
+    original_execute = glob_tool.execute
+
+    async def patched_execute(params):
+        import time
+        execution_log.append(("start", time.monotonic()))
+        result = await original_execute(params)
+        execution_log.append(("end", time.monotonic()))
+        return result
+
+    glob_tool.execute = patched_execute
+
+    agent = Agent(client, registry, "anthropic", work_dir=".")
+    conv = ConversationManager()
+    conv.add_user_message("Find files")
+
+    events = []
+    async for e in agent.run(conv):
+        events.append(e)
+
+    c = _collect(events)
+    # 两个 Glob 调用都应产出结果
+    assert len(c["tool_result"]) == 2
+    assert len(execution_log) == 4
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("approval", [PermissionResponse.ALLOW, PermissionResponse.DENY])
+async def test_same_response_write_then_read_waits_for_permission(tmp_path, approval):
+    from codeplus.permissions import (
+        DangerousCommandDetector, PathSandbox, PermissionChecker, RuleEngine,
+    )
+
+    target = tmp_path / "created.txt"
+    calls = [
+        ToolCallComplete("write", "WriteFile", {"file_path": str(target), "content": "new value"}),
+        ToolCallComplete("read", "ReadFile", {"file_path": str(target)}),
+    ]
+    checker = PermissionChecker(DangerousCommandDetector(), PathSandbox(str(tmp_path)), RuleEngine())
+    agent = Agent(
+        MockLLMClient([[*calls, StreamEnd("tool_use")]]),
+        create_default_registry(), "anthropic", work_dir=str(tmp_path),
+        permission_checker=checker, max_iterations=1,
+    )
+    conv = ConversationManager()
+    conv.add_user_message("Create and then read the file")
+    events = []
+    async for event in agent.run(conv):
+        events.append(event)
+        if isinstance(event, PermissionRequest):
+            assert not target.exists()
+            assert not any(isinstance(e, ToolResultEvent) for e in events)
+            event.future.set_result(approval)
+
+    assert len([e for e in events if isinstance(e, PermissionRequest)]) == 1
+    results = [r for message in conv.history for r in message.tool_results]
+    assert [r.tool_use_id for r in results] == ["write", "read"]
+    assert [e.tool_id for e in events if isinstance(e, ToolResultEvent)] == ["write", "read"]
+    if approval == PermissionResponse.ALLOW:
+        assert target.read_text(encoding="utf-8") == "new value"
+        assert "new value" in results[1].content
+        assert not any(r.is_error for r in results)
+    else:
+        assert not target.exists()
+        assert all(r.is_error for r in results)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("interactive", [True, False])
+@pytest.mark.parametrize("barrier_category", ["write", "command"])
+async def test_adjacent_reads_overlap_without_crossing_mutations(tmp_path, interactive, barrier_category):
+    from pydantic import BaseModel
+    from codeplus.tools import ToolRegistry
+    from codeplus.tools.base import Tool, ToolResult
+
+    class Params(BaseModel):
+        label: str
+
+    started = {label: asyncio.Event() for label in ("a", "b", "c", "d")}
+    finished: set[str] = set()
+    state = "old"
+
+    class ReadState(Tool):
+        name = "ReadState"
+        params_model = Params
+        description = "Read shared state"
+        is_concurrency_safe = True
+
+        async def execute(self, params):
+            label = params.label
+            started[label].set()
+            peer = {"a": "b", "b": "a", "c": "d", "d": "c"}[label]
+            await asyncio.wait_for(started[peer].wait(), timeout=2)
+            # Event rendezvous proves actual overlap without wall-clock assertions.
+            assert state == ("old" if label in ("a", "b") else "new")
+            finished.add(label)
+            return ToolResult(state)
+
+    class ChangeState(Tool):
+        name = "ChangeState"
+        params_model = Params
+        description = "Change shared state"
+        category = barrier_category
+        # Some stateful tools declare this flag; category must still form a barrier.
+        is_concurrency_safe = True
+
+        async def execute(self, params):
+            nonlocal state
+            assert finished == {"a", "b"}
+            assert not started["c"].is_set() and not started["d"].is_set()
+            await asyncio.sleep(0)
+            state = "new"
+            return ToolResult("changed")
+
+    registry = ToolRegistry()
+    registry.register(ReadState())
+    registry.register(ChangeState())
+    calls = [ToolCallComplete(label, "ChangeState" if label == "write" else "ReadState", {"label": label})
+             for label in ("a", "b", "write", "c", "d")]
+    agent = Agent(MockLLMClient([[*calls, StreamEnd("tool_use")]]), registry,
+                  "anthropic", work_dir=str(tmp_path), max_iterations=1)
+    conv = ConversationManager()
+    conv.add_user_message("Read, change, then read again")
+    if interactive:
+        async for _ in agent.run(conv):
+            pass
+    else:
+        await agent.run_to_completion("Read, change, then read again", conversation=conv)
+    results = [r for message in conv.history for r in message.tool_results]
+    assert [r.tool_use_id for r in results] == ["a", "b", "write", "c", "d"]
+    assert [r.content for r in results] == ["old", "old", "changed", "new", "new"]
+    assert not any(r.is_error for r in results)
+
+
 
 
