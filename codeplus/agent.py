@@ -221,8 +221,31 @@ class StreamCollector:
 # tool 批量执行
 # ---------------------------------------------------------------------------
 
+@dataclass
+class ToolBatch:
+    concurrent: bool
+    calls: list[ToolCallComplete]
 
 
+def partition_tool_calls(
+    tool_calls: list[ToolCallComplete],
+    registry: ToolRegistry,
+) -> list[ToolBatch]:
+    batches: list[ToolBatch] = []
+    for tc in tool_calls:
+        tool = registry.get(tc.tool_name)
+        safe = (
+            tool is not None
+            and tool.is_read_only
+            and tool.is_concurrency_safe
+            and registry.is_enabled(tc.tool_name)
+        )
+
+        if safe and batches and batches[-1].concurrent:
+            batches[-1].calls.append(tc)
+        else:
+            batches.append(ToolBatch(concurrent=safe, calls=[tc]))
+    return batches
 
 
 # ---------------------------------------------------------------------------
@@ -634,7 +657,8 @@ class Agent:
             # 溢写文件的回读结果豁免溢写：把模型刚读回来的内容再写盘换成
             # 预览，模型就永远看不到全文，还会在「读回、溢写」之间打转
             exempt_ids = {
-                tc.tool_id for tc in response.tool_calls
+                tc.tool_id
+                for tc in response.tool_calls
                 if is_spill_readback(tc.tool_name, tc.arguments, self.session_dir)
             }
 
@@ -718,16 +742,82 @@ class Agent:
     async def _execute_ordered_tools(
         self, calls: list[ToolCallComplete]
     ) -> AsyncIterator[_ToolExecResult | PermissionRequest]:
-        for tc in calls:
-            async for item in self._execute_tool(tc):
-                if isinstance(item, PermissionRequest):
-                    yield item
-                else:
-                    result, elapsed = item
-                    yield _ToolExecResult(tc.tool_id, tc.tool_name, result, elapsed)
+        for batch in partition_tool_calls(calls, self.registry):
+            # 需要确认的只读工具同样在原位置等待，避免并发弹窗或绕过确认。
+            needs_ask = self.permission_checker is not None and any(
+                self.permission_checker.check(tool, tc.arguments).effect == "ask"
+                for tc in batch.calls
+                if (tool := self.registry.get(tc.tool_name)) is not None
+            )
+            if batch.concurrent and not needs_ask:
+                for result in await self._execute_batch_parallel(batch.calls):
+                    yield result
+            else:
+                for tc in batch.calls:
+                    async for item in self._execute_tool(tc):
+                        if isinstance(item, PermissionRequest):
+                            yield item
+                        else:
+                            result, elapsed = item
+                            yield _ToolExecResult(tc.tool_id, tc.tool_name, result, elapsed)
+
+    async def _execute_single_tool_direct(
+        self, tc: ToolCallComplete
+    ) -> _ToolExecResult:
+        tool = self.registry.get(tc.tool_name)
+        start = time.monotonic()
+
+        if tool is None:
+            # 工具名不存在只回一条错误结果，让模型自己换个工具重来，不打断循环。
+            return _ToolExecResult(
+                tool_id=tc.tool_id,
+                tool_name=tc.tool_name,
+                result=ToolResult(output=f"Error: unknown tool '{tc.tool_name}'", is_error=True),
+                elapsed=time.monotonic() - start,
+            )
+
+        if not self.registry.is_enabled(tc.tool_name):
+            return _ToolExecResult(
+                tool_id=tc.tool_id,
+                tool_name=tc.tool_name,
+                result=ToolResult(output=f"Error: tool '{tc.tool_name}' is disabled", is_error=True),
+                elapsed=time.monotonic() - start,
+            )
+
+        if self.permission_checker:
+            decision = self.permission_checker.check(tool, tc.arguments)
+            if decision.effect != "allow":
+                return _ToolExecResult(
+                    tool_id=tc.tool_id,
+                    tool_name=tc.tool_name,
+                    result=ToolResult(output=f"Permission denied: {decision.reason}", is_error=True),
+                    elapsed=time.monotonic() - start,
+                )
+
+        try:
+            params = tool.params_model.model_validate(tc.arguments)
+            result = await tool.execute(params)
+        except ValidationError as e:
+            result = ToolResult(output=f"Parameter validation error: {e}", is_error=True)
+        except Exception as e:
+            result = ToolResult(output=f"Tool execution error: {e}", is_error=True)
+
+        self._record_recent_tool(tc.tool_name)
+        self._snapshot_for_recovery(tc, result)
+
+        return _ToolExecResult(
+            tool_id=tc.tool_id,
+            tool_name=tc.tool_name,
+            result=result,
+            elapsed=time.monotonic() - start,
+        )
 
 
-
+    async def _execute_batch_parallel(
+        self, calls: list[ToolCallComplete]
+    ) -> list[_ToolExecResult]:
+        tasks = [self._execute_single_tool_direct(tc) for tc in calls]
+        return list(await asyncio.gather(*tasks))
 
     async def _execute_tool(
         self, tc: ToolCallComplete
@@ -1043,21 +1133,38 @@ class Agent:
             # 溢写文件的回读结果豁免溢写：把模型刚读回来的内容再写盘换成
             # 预览，模型就永远看不到全文，还会在「读回、溢写」之间打转
             exempt_ids = {
-                tc.tool_id for tc in response.tool_calls
+                tc.tool_id
+                for tc in response.tool_calls
                 if is_spill_readback(tc.tool_name, tc.arguments, self.session_dir)
             }
 
             tool_results: list[ToolResultBlock] = []
-            for tc in response.tool_calls:
-                if event_callback:
-                    event_callback({"type": "tool_use", "toolName": tc.tool_name, "args": tc.arguments})
-                result = await self._execute_tool_noninteractive(tc)
-                tool_results.append(ToolResultBlock(
-                    tool_use_id=tc.tool_id,
-                    content=self._maybe_persist_or_truncate(tc.tool_id, result.output, exempt_ids),
-                    is_error=result.is_error,
-                    content_blocks=result.content_blocks,
-                ))
+            for batch in partition_tool_calls(response.tool_calls, self.registry):
+                for tc in batch.calls:
+                    if event_callback:
+                        event_callback({
+                            "type": "tool_use",
+                            "toolName": tc.tool_name,
+                            "args": tc.arguments,
+                        })
+                if batch.concurrent:
+                    results = await asyncio.gather(*(
+                        self._execute_tool_noninteractive(tc) for tc in batch.calls
+                    ))
+                else:
+                    results = [await self._execute_tool_noninteractive(batch.calls[0])]
+                for tc, result in zip(batch.calls, results):
+                    content = self._maybe_persist_or_truncate(
+                        tc.tool_id, result.output, exempt_ids
+                    )
+                    tool_results.append(
+                        ToolResultBlock(
+                            tool_use_id=tc.tool_id,
+                            content=content,
+                            is_error=result.is_error,
+                            content_blocks=result.content_blocks,
+                        )
+                    )
 
             # 聚合预算：一轮并行工具的结果落在同一条消息里，单条阈值管不住
             # 合计超限的情况。进历史前把整批处理完，消息一出生就是终态
