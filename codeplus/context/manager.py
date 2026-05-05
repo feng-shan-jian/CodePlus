@@ -145,6 +145,44 @@ def is_spill_readback(tool_name: str, arguments: Mapping[str, object], session_d
     return abs_path.startswith(os.path.abspath(str(session_dir)))
 
 
+def apply_tool_result_budget(
+    tool_results: list[ToolResultBlock],
+    session_dir: Path,
+    exempt_ids: set[str] | None = None,
+) -> None:
+    """在一轮工具结果进入对话历史之前执行聚合预算。
+
+    整批结果的总字符数超过 AGGREGATE_CHAR_LIMIT 时，从最大的开始逐条
+    溢写到磁盘、就地替换成预览，直到总量回到限额内。消息进历史前处理完，
+    历史里的内容自此不再改动，Prompt Cache 前缀天然稳定。
+
+    exempt_ids 里的 tool_use_id 不参与溢写：溢写文件的回读结果（再溢写
+    模型就永远看不到全文），以及本轮已经单条溢写过的结果。全是豁免项时
+    接受超额。
+    """
+    exempt = exempt_ids or set()
+    total = sum(len(tr.content) for tr in tool_results)
+    if total <= AGGREGATE_CHAR_LIMIT:
+        return
+
+    # 按内容长度降序挑选：先溢写最大的，回到限额内需要动的条数最少。
+    ranked = sorted(tool_results, key=lambda tr: len(tr.content), reverse=True)
+    for tr in ranked:
+        if total <= AGGREGATE_CHAR_LIMIT:
+            break
+        if tr.tool_use_id in exempt:
+            continue
+        if len(tr.content) <= PREVIEW_CHARS:
+            # 比预览还短的结果，溢写换不回空间
+            continue
+        try:
+            fp = persist_tool_result(tr.tool_use_id, tr.content, session_dir)
+        except OSError:
+            # 写盘失败就保留原文。消息随即定型进历史，不会再有重试
+            continue
+        preview = make_persisted_preview(tr.content, fp)
+        total -= len(tr.content) - len(preview)
+        tr.content = preview
 
 
 # ---------------------------------------------------------------------------
