@@ -17,6 +17,7 @@ from codeplus.context import (
     CompactCircuitBreaker,
     CompactEvent,
     RecoveryState,
+    apply_tool_result_budget,
     auto_compact,
     ensure_session_dir,
     is_spill_readback,
@@ -692,6 +693,7 @@ class Agent:
             )
             # 聚合预算：一轮并行工具的结果落在同一条消息里，单条阈值管不住
             # 合计超限的情况。进历史前把整批处理完，消息一出生就是终态
+            apply_tool_result_budget(tool_results, self.session_dir, exempt_ids)
             conversation.add_tool_results_message(tool_results)
 
             # 非阻塞 memory recall：工具执行完后检查 prefetch 是否就绪
@@ -1168,6 +1170,7 @@ class Agent:
 
             # 聚合预算：一轮并行工具的结果落在同一条消息里，单条阈值管不住
             # 合计超限的情况。进历史前把整批处理完，消息一出生就是终态
+            apply_tool_result_budget(tool_results, self.session_dir, exempt_ids)
             conversation.add_tool_results_message(tool_results)
 
             if self.hook_engine:
