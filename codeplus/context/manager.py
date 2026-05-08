@@ -643,4 +643,129 @@ async def auto_compact(
     # 以真实 API 用量为锚点做阈值判断：current_tokens() 返回上次计费基准
     # （input + cache_read + cache_creation + output）加上锚点之后新增消息的
     # 字符估算。冷启动或刚压缩清空锚点时，退化为对整个 history 做字符估算。
-    return None
+    current = conversation.current_tokens()
+
+    if manual:
+        # 手动压缩（/compact）：直接走压缩流程，不检查阈值
+        pass
+    else:
+        # 双阈值判断：
+        # 1) 软触发线（auto margin 13K）：低于此线不需要压缩
+        soft_threshold = compute_compact_threshold(context_window, manual=False)
+        if current < soft_threshold:
+            return None
+
+        # 2) 硬触发线（manual margin 3K）：超过此线强制压缩，绕过熔断器，
+        #    因为上下文已经过于接近窗口上限，不能冒跳过的风险
+        hard_threshold = compute_compact_threshold(context_window, manual=True)
+        if current >= hard_threshold:
+            # 强制压缩路径：不检查熔断器
+            pass
+        else:
+            # 处于软硬阈值之间：走正常的熔断器保护逻辑
+            if breaker is not None and breaker.is_open():
+                return "自动压缩已熔断（连续失败 3 次），请手动处理或使用 /compact"
+
+    before_tokens = current
+
+    # 历史里的工具结果在入历史时已按预算处理为终态，history 就是实际
+    # 发送量，直接基于它计算 keep_start 和构建摘要。
+    effective_history = conversation.history
+
+    # 决定保留多少尾部消息原文。只有前缀 messages[:keep_start] 会被摘要；
+    # messages[keep_start:] 原样保留，让模型看到近期原文而非靠有损摘要复述。
+    keep_start = _compute_keep_start_index(effective_history)
+    to_summarize = effective_history[:keep_start]
+    keep_tail = effective_history[keep_start:]
+
+    # 待摘要的前缀太小时退化为不压缩——要么全部消息都落在保留窗口内
+    # （keep_start <= 0），要么摘要回收的 token 还不够摘要本身的开销。
+    if keep_start <= 0 or _prefix_too_small_to_compact(to_summarize):
+        return None
+
+    messages_for_summary = build_messages(list(to_summarize), protocol)
+
+    summary_messages: list[dict[str, Any]] = [
+        {"role": "user", "content": SUMMARY_PROMPT},
+    ]
+    summary_messages.extend(messages_for_summary)
+    summary_messages.append(
+        {"role": "user", "content": "Please provide your summary of the conversation above now. REMINDER: Do NOT call any tools — respond with plain text only."}
+    )
+
+    summary_conv = ConversationManager()
+    summary_conv.history = [
+        Message(role="user", content=SUMMARY_PROMPT),
+    ]
+    # 只摘要前缀；保留的尾部在下面重建时原样拼回。
+    for msg in to_summarize:
+        summary_conv.history.append(msg)
+    summary_conv.history.append(
+        Message(role="user", content="Please provide your summary of the conversation above now. REMINDER: Do NOT call any tools — respond with plain text only.")
+    )
+
+    max_retries = 3
+    llm_output: str | None = None
+
+    for attempt in range(max_retries):
+        try:
+            from codeplus.tools.base import StreamEnd, StreamEvent, TextDelta
+
+            collected_text = ""
+            async for event in client.stream(summary_conv, system=SUMMARY_PROMPT, tools=tool_schemas):
+                if isinstance(event, TextDelta):
+                    collected_text += event.text
+                elif isinstance(event, StreamEnd):
+                    pass
+            llm_output = collected_text
+            break
+
+        except Exception as e:
+            err_msg = str(e).lower()
+            if "prompt" in err_msg and "long" in err_msg or "too many" in err_msg:
+                groups = _group_messages_by_turn(summary_conv.history[1:-1])
+                drop_count = max(1, len(groups) // 5)
+                remaining = groups[drop_count:]
+                summary_conv.history = (
+                    [summary_conv.history[0]]
+                    + [m for g in remaining for m in g]
+                    + [summary_conv.history[-1]]
+                )
+                continue
+            if breaker is not None:
+                breaker.record_failure()
+            return f"摘要生成失败: {e}"
+
+    if llm_output is None:
+        if breaker is not None:
+            breaker.record_failure()
+        return "摘要生成失败：多次重试后仍超出上下文限制"
+
+    summary = extract_summary(llm_output)
+    attachment = build_recovery_attachment(recovery, tool_schemas)
+    # 重建 = 摘要(user) + 尾部原文。
+    new_messages = build_compact_messages(
+        summary,
+        attachment=attachment,
+        has_keep_tail=bool(keep_tail),
+        transcript_path=transcript_path,
+    )
+    new_messages = new_messages + list(keep_tail)
+
+    # replace_history 替换为重建后的对话并将用量锚点清零
+    # （baseline_tokens / anchor_count / last_input_tokens），这是必须的：
+    # 旧的 anchor_count 对应压缩前的消息列表，现在已无意义，
+    # 不清零会导致 current_tokens() 对增量的估算出错。
+    # 下一次 API 响应会基于重建后的 history 重新锚定。
+    conversation.replace_history(new_messages)
+    cleanup_tool_results(session_dir)
+
+    if breaker is not None:
+        breaker.record_success()
+
+    # 将结构化的 boundary（摘要 + 保留的尾部原文）交给 session 层，
+    # 由它持久化为一条 compact_boundary 记录。keep tail 就是拼回重建 history 的那段。
+    return CompactEvent(
+        before_tokens=before_tokens,
+        boundary=CompactBoundary(summary=summary, keep=list(keep_tail)),
+    )
