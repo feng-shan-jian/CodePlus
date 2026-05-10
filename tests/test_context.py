@@ -541,3 +541,134 @@ def _make_long_conversation(n_tail: int = 6, tail_tokens: int = 4000) -> Convers
     return conv
 
 
+@pytest.mark.asyncio
+class TestAutoCompactKeepRecent:
+    async def test_recent_messages_kept_verbatim(self, tmp_path: Path) -> None:
+        conv = _make_long_conversation()
+        # 快照记录保留窗口选中了哪些尾部消息，让断言跟随算法本身，
+        # 而不是依赖写死的数量。
+        keep_start = _compute_keep_start_index(conv.history)
+        kept_before = list(conv.history[keep_start:])
+        assert kept_before, "fixture should keep a non-empty tail"
+
+        client = _SummaryClient()
+        # 钉一个很高的锚点，使自动压缩阈值被触发。
+        conv.record_usage_anchor(input_tokens=200_000)
+
+        result = await auto_compact(
+            conv, client, context_window=200_000, session_dir=tmp_path,
+        )
+
+        # 已完成压缩。
+        from codeplus.context.manager import CompactEvent
+        assert isinstance(result, CompactEvent)
+
+        joined = "\n".join(m.content for m in conv.history)
+        # 摘要存在……
+        assert "PREFIX SUMMARY" in joined
+        # ……并且保留下来的最近原文仍是逐字原样，没有被改写进摘要里。
+        # 保留的尾部对象是同一批消息实例，被原样沿用了下来。
+        for m in kept_before:
+            assert m in conv.history
+
+    async def test_summary_only_covers_prefix(self, tmp_path: Path) -> None:
+        conv = _make_long_conversation()
+        keep_start = _compute_keep_start_index(conv.history)
+        kept_contents = {m.content for m in conv.history[keep_start:]}
+        client = _SummaryClient()
+        conv.record_usage_anchor(input_tokens=200_000)
+
+        await auto_compact(
+            conv, client, context_window=200_000, session_dir=tmp_path,
+        )
+
+        # 喂给摘要器的历史绝不能包含任何被保留的尾部消息
+        #（摘要只覆盖 messages[:keep_start]）。
+        assert client.summarized_history is not None
+        summarized_contents = {m.content for m in client.summarized_history}
+        assert not (kept_contents & summarized_contents)
+
+    async def test_tool_pair_not_split(self, tmp_path: Path) -> None:
+        conv = ConversationManager()
+        for i in range(8):
+            conv.history.append(_user(3000))
+            conv.history.append(_assistant(3000))
+        # 最近的尾部以一对 tool_use/tool_result 结尾。
+        conv.history.append(
+            Message(role="assistant", content="calling",
+                    tool_uses=[ToolUseBlock("tk", "Grep", {})])
+        )
+        conv.history.append(
+            Message(role="user", content="",
+                    tool_results=[ToolResultBlock("tk", "RESULT_DATA")])
+        )
+        conv.record_usage_anchor(input_tokens=200_000)
+        client = _SummaryClient()
+
+        await auto_compact(
+            conv, client, context_window=200_000, session_dir=tmp_path,
+        )
+
+        # 如果 tool_result 被保留下来，它对应的 tool_use 也必须一起保留。
+        result_ids = {tr.tool_use_id for m in conv.history for tr in m.tool_results}
+        use_ids = {tu.tool_use_id for m in conv.history for tu in m.tool_uses}
+        assert result_ids <= use_ids
+
+    async def test_anchor_reset_after_compact(self, tmp_path: Path) -> None:
+        conv = _make_long_conversation()
+        conv.record_usage_anchor(input_tokens=200_000)
+        assert conv.baseline_tokens > 0 and conv.anchor_count > 0
+        client = _SummaryClient()
+
+        await auto_compact(
+            conv, client, context_window=200_000, session_dir=tmp_path,
+        )
+
+        # replace_history 必须已经把过期的锚点清零。
+        assert conv.baseline_tokens == 0
+        assert conv.anchor_count == 0
+        assert conv.last_input_tokens == 0
+
+    async def test_too_few_messages_degrades_to_no_compaction(
+        self, tmp_path: Path
+    ) -> None:
+        conv = ConversationManager()
+        for i in range(3):
+            conv.history.append(
+                Message(role="user", content=f"ONLY_{i}_" + "z" * 100)
+            )
+        before = list(conv.history)
+        client = _SummaryClient()
+
+        result = await auto_compact(
+            conv, client, context_window=200_000, session_dir=tmp_path,
+            manual=True,
+        )
+
+        # 没有可摘要的内容 -> 降级处理：历史保持不变，不添加任何摘要。
+        assert result is None
+        assert conv.history == before
+        assert client.summarized_history is None
+
+    async def test_event_carries_boundary_summary_and_keep(
+        self, tmp_path: Path
+    ) -> None:
+        # 返回的 CompactEvent 必须把一个结构化的 boundary（摘要 + 精确逐字
+        # 保留的尾部）交给会话层，使其能持久化一条 compact_boundary 记录。
+        conv = _make_long_conversation()
+        keep_start = _compute_keep_start_index(conv.history)
+        kept_before = list(conv.history[keep_start:])
+        client = _SummaryClient()
+        conv.record_usage_anchor(input_tokens=200_000)
+
+        result = await auto_compact(
+            conv, client, context_window=200_000, session_dir=tmp_path,
+        )
+
+        from codeplus.context.manager import CompactEvent
+
+        assert isinstance(result, CompactEvent)
+        assert result.boundary is not None
+        assert result.boundary.summary == "PREFIX SUMMARY"
+        # 保留的尾部与原样沿用下来的内容完全一致。
+        assert result.boundary.keep == kept_before
