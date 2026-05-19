@@ -346,7 +346,36 @@ class Agent:
         self._memory_recall_consumed: bool = False
 
     def _announce_deferred_tools(self, conversation: ConversationManager) -> None:
-        return
+        """把延迟工具名清单告诉模型，只在需要的时候发。
+
+        dispatch 模式下这些工具永远不会进 tools[]，必须额外告诉模型调用要走
+        mcp_call，否则它读完 schema 也不知道从哪儿调。
+
+        这条提醒是 append 进历史的，发过一次就一直在上下文里，之后每轮再发一遍只
+        是拿同样的内容占窗口：六十来个 MCP 工具一份清单五百多 token，四十轮下来
+        就是两万多。所以只在两种情况重发，池子变了（MCP 是异步连上的，服务器也
+        可能掉线重连），或者历史里那条已经被 compact 压掉了。后者靠回扫历史发现，
+        这样就不用在 compact 那边额外挂钩子。
+        """
+        deferred_names = self.registry.get_deferred_tool_names()
+        if not deferred_names:
+            return
+
+        pool_changed = deferred_names != self._announced_deferred
+        if not pool_changed and conversation.has_reminder_containing(
+            DEFERRED_REMINDER_MARKER
+        ):
+            return
+
+        tail = " before calling them"
+        conversation.add_system_reminder(
+            DEFERRED_REMINDER_MARKER
+            + " Their schemas are NOT loaded - use ToolSearch with "
+            'query "select:<name>[,<name>...]" to load tool schemas'
+            + tail + ":\n"
+            + "\n".join(deferred_names)
+        )
+        self._announced_deferred = deferred_names
 
     @property
     def session_dir(self) -> Path:
