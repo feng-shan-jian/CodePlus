@@ -9,6 +9,7 @@ from openai import AsyncOpenAI
 
 from codeplus.config import ProviderConfig
 from codeplus.conversation import ConversationManager
+from codeplus.mcp.loading_strategy import NATIVE_TOOL_SEARCH_BETA
 from codeplus.conversation_pairing import ensure_tool_pairing
 from codeplus.serialization import (
     build_anthropic_messages,
@@ -64,14 +65,35 @@ def _mark_last_user_tail_for_cache(messages: list[dict[str, Any]]) -> None:
         return
 
 
+def needs_tool_search_beta(tools: list[dict[str, Any]]) -> bool:
+    """这批工具里有没有带 defer_loading 的。
+
+    只在真用到时才发 beta header：不认识它的端点收到会直接拒请求，而
+    dispatch / eager 两条路压根不需要它。
+    """
+    return any(t.get("defer_loading") for t in tools)
 
 
 def _mark_last_tool_for_cache(tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """返回一个浅拷贝的 tools 列表，并在最后一个非延迟 tool 上标记 cache_control。
+
+    tool schema 在多轮对话之间是稳定的，因此标记列表尾部即可缓存整个 tool block。
+    我们不直接修改调用方传入的列表，因为这些 tool schema 往往是注册表里的
+    模块级单例。
+
+    断点必须落在非延迟的工具上：带 defer_loading 的工具不允许同时带 cache_control，
+    官方端点会直接拒掉整个请求。MCP 工具是在内建工具之后注册的，所以列表尾部往往
+    正是延迟工具，必须往前找。内建工具永远不延迟，所以总能找到落点。
+    """
     if not tools:
         return tools
-    marked = list(tools)
-    marked[-1] = {**tools[-1], "cache_control": _EPHEMERAL}
-    return marked
+    for i in range(len(tools) - 1, -1, -1):
+        if tools[i].get("defer_loading"):
+            continue
+        marked = list(tools)
+        marked[i] = {**tools[i], "cache_control": _EPHEMERAL}
+        return marked
+    return tools
 
 
 class LLMError(Exception):
@@ -184,6 +206,13 @@ class AnthropicClient(LLMClient):
             }]
         if tools:
             kwargs["tools"] = _mark_last_tool_for_cache(tools)
+            # 工具带了 defer_loading 就必须带上这个 beta header，否则服务端不认
+            # 这个字段。只有官方端点会走到这里（见 mcp.loading_strategy）。
+            if needs_tool_search_beta(tools):
+                kwargs["extra_headers"] = {
+                    **kwargs.get("extra_headers", {}),
+                    "anthropic-beta": NATIVE_TOOL_SEARCH_BETA,
+                }
 
         if self.thinking:
             if _supports_adaptive_thinking(self.model):
