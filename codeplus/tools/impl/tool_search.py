@@ -5,7 +5,9 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from codeplus.tools.base import Tool, ToolResult
+from codeplus.mcp.loading_strategy import McpLoadingMode
+from codeplus.mcp.tool_wrapper import MCP_TOOL_PREFIX
+from codeplus.tools.base import TOOL_SEARCH_TOOL_NAME, Tool, ToolResult
 
 if __import__("typing").TYPE_CHECKING:
     from codeplus.tools import ToolRegistry
@@ -17,7 +19,7 @@ class ToolSearchParams(BaseModel):
 
 
 class ToolSearchTool(Tool):
-    name = "ToolSearch"
+    name = TOOL_SEARCH_TOOL_NAME
     description = (
         "Search for and load additional tools that are not immediately available. "
         "Use query 'select:<name>[,<name>...]' to load specific tools by name, "
@@ -34,14 +36,6 @@ class ToolSearchTool(Tool):
         protocol: str = "anthropic",
     ) -> None:
         self._registry = registry
-        self._protocol = protocol
-
-
-    def set_protocol(self, protocol: str) -> None:
-        """更新延迟工具 schema 使用的模型协议。
-        @param {str} protocol 当前 provider 的协议名称。
-        @returns {None} 后续搜索结果将按新协议生成 schema。
-        """
         self._protocol = protocol
 
 
@@ -77,13 +71,25 @@ class ToolSearchTool(Tool):
                 )
             )
 
-        for s in schemas:
-            if "name" in s:
-                self._registry.mark_discovered(s["name"])
+        mcp_names = [
+            s["name"] for s in schemas
+            if s.get("name", "").startswith(MCP_TOOL_PREFIX)
+        ]
+        mode = getattr(self._registry, "mcp_loading_mode", McpLoadingMode.EAGER)
 
-        return ToolResult(
-            output=(
-                f"Found {len(schemas)} tool(s). Their full schemas are now loaded:\n\n"
-                f"{json.dumps(schemas, indent=2, ensure_ascii=False)}"
+        # 官方端点：回 tool_reference，让服务端把 schema 展开进上下文。
+        # tools 数组不动，缓存前缀因此不断。
+        if mcp_names and mode is McpLoadingMode.NATIVE and self._protocol == "anthropic":
+            return ToolResult(
+                output=(
+                    f"Loaded {len(mcp_names)} tool(s): {', '.join(mcp_names)}. "
+                    f"You can call them directly now."
+                ),
+                content_blocks=[
+                    {"type": "tool_reference", "tool_name": name} for name in mcp_names
+                ],
             )
-        )
+
+        for schema in schemas:
+            self._registry.mark_discovered(schema["name"])
+        return ToolResult(output=json.dumps(schemas, indent=2, ensure_ascii=False))
