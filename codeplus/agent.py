@@ -367,7 +367,13 @@ class Agent:
         ):
             return
 
-        tail = " before calling them"
+        from codeplus.mcp.loading_strategy import McpLoadingMode
+
+        tail = (
+            ", then invoke them with the mcp_call tool"
+            if self.registry.mcp_loading_mode is McpLoadingMode.DISPATCH
+            else " before calling them"
+        )
         conversation.add_system_reminder(
             DEFERRED_REMINDER_MARKER
             + " Their schemas are NOT loaded - use ToolSearch with "
