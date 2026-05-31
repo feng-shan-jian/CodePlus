@@ -71,6 +71,13 @@ class ToolSearchTool(Tool):
                 )
             )
 
+        # 非 MCP 的延迟工具没有 mcp_call 这条入口，只能照旧标记成已发现、
+        # 让它进下一轮的 tools[]
+        for s in schemas:
+            name = s.get("name", "")
+            if name and not name.startswith(MCP_TOOL_PREFIX):
+                self._registry.mark_discovered(name)
+
         mcp_names = [
             s["name"] for s in schemas
             if s.get("name", "").startswith(MCP_TOOL_PREFIX)
@@ -90,6 +97,18 @@ class ToolSearchTool(Tool):
                 ],
             )
 
-        for schema in schemas:
-            self._registry.mark_discovered(schema["name"])
-        return ToolResult(output=json.dumps(schemas, indent=2, ensure_ascii=False))
+        # 其他端点：schema 原文给模型看，调用走 mcp_call。
+        # 这段文本落在 messages 末尾，属于追加，不影响缓存前缀。
+        suffix = ""
+        if mcp_names:
+            suffix = (
+                "\n\nTo invoke any of the tools above, call mcp_call with that tool's "
+                "full name and an `arguments` object matching its input_schema exactly, "
+                "using the same JSON types."
+            )
+        return ToolResult(
+            output=(
+                f"Found {len(schemas)} tool(s). Their full schemas are below:\n\n"
+                f"{json.dumps(schemas, indent=2, ensure_ascii=False)}{suffix}"
+            )
+        )
