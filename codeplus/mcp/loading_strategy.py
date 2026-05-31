@@ -1,4 +1,20 @@
-"""Choose eager loading or native Anthropic deferred tools."""
+"""决定 MCP 工具怎么进上下文。
+
+三条路，会话启动连上 MCP 之后定一次：
+
+    eager    —— MCP schema 总量小于上下文的 10%，全量放进 tools[]，不延迟。
+                省下来的那点上下文不值得为它承担任何额外风险。
+    native   —— 官方 Anthropic 端点。工具带 defer_loading 留在 tools[] 里但
+                服务端不给模型看，ToolSearch 回 tool_reference 让服务端展开
+                schema。tools 数组字节不变。
+    dispatch —— 其他端点（国内厂商、各类代理网关）。这些端点不支持
+                defer_loading / tool_reference，只能自己模拟：MCP 工具完全
+                不进 tools[]，走 mcp_call 统一入口。
+
+为什么要分这三条：tools 渲染在 system 之后、messages 之前，数组一变，它后面
+的整段对话历史缓存全部失效。实测 2 万 token 历史下，往 tools 末尾加一个工具
+的命中率从 99.4% 掉到 9.5%，等于把整段历史重算一遍。
+"""
 from __future__ import annotations
 
 import os
@@ -27,6 +43,7 @@ _ENV_OVERRIDE = "CODEPLUS_MCP_LOADING"
 class McpLoadingMode(str, Enum):
     EAGER = "eager"
     NATIVE = "native"
+    DISPATCH = "dispatch"
 
 
 def is_official_anthropic_endpoint(base_url: str) -> bool:
@@ -48,7 +65,7 @@ def decide_mode(
     threshold_percent: int = DEFAULT_EAGER_THRESHOLD_PERCENT,
 ) -> McpLoadingMode:
     override = os.environ.get(_ENV_OVERRIDE, "").strip().lower()
-    if override in ("eager", "native"):
+    if override in ("eager", "native", "dispatch"):
         return McpLoadingMode(override)
 
     if mcp_schema_chars <= 0:
@@ -61,7 +78,7 @@ def decide_mode(
 
     if is_official_anthropic_endpoint(base_url):
         return McpLoadingMode.NATIVE
-    return McpLoadingMode.EAGER
+    return McpLoadingMode.DISPATCH
 
 
 def measure_mcp_schema_chars(registry: ToolRegistry) -> int:
@@ -100,7 +117,7 @@ def apply_mode(registry: ToolRegistry, mode: McpLoadingMode) -> None:
     # 对象、也不需要分发入口，两个都发过去只是白占 token。这两个开关在这里算
     # 一次就固定下来，整场会话不变，不会造成 tools[] 中途抖动。
     registry.expose_tool_search = not eager
-    registry.expose_mcp_call = False
+    registry.expose_mcp_call = mode is McpLoadingMode.DISPATCH
 
 
 def decide_and_apply(
