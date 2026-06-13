@@ -118,7 +118,181 @@ class AgentTool(Tool):
         return parent_checker.rule_engine if parent_checker else RuleEngine()
 
     async def execute(self, params: BaseModel) -> ToolResult:
-        raise NotImplementedError("Implementation pending")
+        p: AgentToolParams = params  # type: ignore[assignment]
+
+        if p.team_name:
+            return await self._execute_as_teammate(p)
+
+        isolation = ""
+        if p.subagent_type:
+            defn = self._agent_loader.get(p.subagent_type)
+            if defn and defn.isolation:
+                isolation = defn.isolation
+
+        if isolation == "worktree":
+            return await self._execute_with_worktree(p)
+
+        from codeplus.agents.fork import ForkError, build_forked_messages
+        from codeplus.agents.parser import AgentDef
+        from codeplus.agents.tool_filter import clone_registry_for_fork, resolve_agent_tools
+        from codeplus.agent import Agent as AgentClass
+        from codeplus.conversation import ConversationManager
+        from codeplus.permissions import (
+            DangerousCommandDetector,
+            PathSandbox,
+            PermissionChecker,
+            PermissionMode,
+            RuleEngine,
+        )
+
+        definition: AgentDef | None = None
+        conversation: ConversationManager
+
+        # 省略 subagent_type 时的走向由 enable_fork 决定：开着走 fork（继承父对话），
+        # 关着就当成没指定类型，回退到通用 agent。这里不报错，因为模型只是没填一个
+        # 可选参数，为此中断一次调用不值得，回退到通用 agent 一样能把活干了。
+        effective_type = p.subagent_type
+        if not effective_type and not self._enable_fork:
+            effective_type = GENERAL_PURPOSE_AGENT_TYPE
+
+        if effective_type:
+            definition = self._agent_loader.get(effective_type)
+            if definition is None:
+                return ToolResult(
+                    output=f"Unknown agent type: '{effective_type}'. "
+                    f"Available types: {', '.join(t for t, _ in self._agent_loader.list_agents())}",
+                    is_error=True,
+                )
+            conversation = ConversationManager()
+        else:
+            # fork 子 Agent 不允许再次 fork，防止无限嵌套
+            if self.query_source == FORK_QUERY_SOURCE:
+                return ToolResult(
+                    output="Error: cannot fork from a forked agent. "
+                    "Use subagent_type to spawn a definition-based agent instead.",
+                    is_error=True,
+                )
+            try:
+                parent_conv = getattr(self._parent_agent, '_current_conversation', None)
+                if parent_conv is None:
+                    return ToolResult(
+                        output="Cannot fork: no active conversation in parent agent.",
+                        is_error=True,
+                    )
+                conversation = build_forked_messages(parent_conv, p.prompt)
+            except ForkError as e:
+                return ToolResult(output=str(e), is_error=True)
+
+            definition = AgentDef(
+                agent_type="fork",
+                when_to_use="Forked from parent agent",
+                system_prompt="",
+                disallowed_tools=[],
+                model="inherit",
+                max_turns=self._parent_agent.max_iterations,
+                permission_mode="bypassPermissions",
+                source="builtin",
+            )
+
+        # 选择 LLM 客户端
+        client = self._select_llm(p, definition)
+
+        # 判断是否后台运行
+        is_fork = not effective_type
+        is_background = p.run_in_background or definition.background
+        if is_fork:
+            is_background = True
+
+        # 构建子 agent 工具注册表
+        _base_registry = getattr(self._parent_agent, '_full_registry', None) or self._parent_agent.registry
+        if is_fork:
+            # fork 继承父 Agent 的完整工具池，确保子 Agent 拥有相同的工具能力，
+            # AgentTool 实例的 query_source 被标记为 fork 以拦截嵌套
+            filtered_registry = clone_registry_for_fork(_base_registry)
+        else:
+            filtered_registry = resolve_agent_tools(
+                _base_registry, definition, is_background
+            )
+
+        # 为子 agent 创建权限检查器
+        pm_str = definition.permission_mode
+        pm_enum = getattr(
+            PermissionMode,
+            PERMISSION_MODE_MAP.get(pm_str, "DEFAULT"),
+            PermissionMode.DEFAULT,
+        )
+        # 规则引擎沿用父 Agent 那一份：子 Agent 只换权限模式，
+        # 父级配置的 allow/deny/ask 规则同样约束它，不能靠派子 Agent 绕开
+        checker = PermissionChecker(
+            detector=DangerousCommandDetector(),
+            sandbox=PathSandbox(self._parent_agent.work_dir),
+            rule_engine=self._inherited_rule_engine(),
+            mode=pm_enum,
+        )
+
+        # 创建子 agent
+        sub_agent = AgentClass(
+            client=client,
+            registry=filtered_registry,
+            protocol=self._parent_agent.protocol,
+            work_dir=self._parent_agent.work_dir,
+            max_iterations=definition.max_turns,
+            permission_checker=checker,
+            context_window=self._parent_agent.context_window,
+            instructions_content=definition.system_prompt,
+            hook_engine=self._parent_agent.hook_engine,
+        )
+        sub_agent.parent_id = self._parent_agent.agent_id
+        sub_agent.trace_id = self._parent_agent.trace_id or self._parent_agent.agent_id
+
+        # 注册追踪节点
+        trace_node = self._trace_manager.create(
+            agent_type=definition.agent_type,
+            parent_id=self._parent_agent.agent_id,
+            trace_id=sub_agent.trace_id,
+        )
+        sub_agent.agent_id = trace_node.agent_id
+
+        agent_name = p.name or effective_type or f"agent-{trace_node.agent_id}"
+
+        if is_background:
+            if is_fork:
+                sub_agent._fork_conversation = conversation
+            task_id = self._task_manager.launch(
+                agent=sub_agent,
+                task="" if is_fork else p.prompt,
+                name=agent_name,
+                fork_conversation=conversation if is_fork else None,
+            )
+            return ToolResult(
+                output=f"Sub-agent launched in background.\n"
+                f"Task ID: {task_id}\n"
+                f"Agent: {agent_name}\n"
+                f"Type: {definition.agent_type}\n"
+                f"The system will notify automatically when it completes.\n"
+                f"Do NOT wait, sleep, or poll. Report the task ID to the user and move on.",
+            )
+
+        # 前台同步执行
+        try:
+            if is_fork:
+                result_text = await sub_agent.run_to_completion("", conversation)
+            else:
+                result_text = await sub_agent.run_to_completion(p.prompt)
+        except Exception as e:
+            self._trace_manager.complete(trace_node.agent_id, "failed")
+            return ToolResult(
+                output=f"Sub-agent failed: {e}", is_error=True
+            )
+
+        self._trace_manager.update(
+            trace_node.agent_id,
+            input_tokens=sub_agent.total_input_tokens,
+            output_tokens=sub_agent.total_output_tokens,
+        )
+        self._trace_manager.complete(trace_node.agent_id, "completed")
+
+        return ToolResult(output=result_text or "(sub-agent returned no output)")
 
     async def _execute_as_teammate(self, p: AgentToolParams) -> ToolResult:
         raise NotImplementedError("Implementation pending")
