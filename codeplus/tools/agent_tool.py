@@ -295,7 +295,192 @@ class AgentTool(Tool):
         return ToolResult(output=result_text or "(sub-agent returned no output)")
 
     async def _execute_as_teammate(self, p: AgentToolParams) -> ToolResult:
-        raise NotImplementedError("Implementation pending")
+        if self._team_manager is None:
+            return ToolResult(output="TeamManager not configured.", is_error=True)
+        if self._worktree_manager is None:
+            return ToolResult(output="WorktreeManager not configured for team spawn.", is_error=True)
+
+        from codeplus.agents.fork import ForkError, build_forked_messages
+        from codeplus.agents.parser import AgentDef
+        from codeplus.agents.tool_filter import build_teammate_tools
+        from codeplus.agent import Agent as AgentClass
+        from codeplus.conversation import ConversationManager
+        from codeplus.permissions import (
+            DangerousCommandDetector,
+            PathSandbox,
+            PermissionChecker,
+            PermissionMode,
+            RuleEngine,
+        )
+        from codeplus.teams.models import BackendType, TeammateInfo
+        from codeplus.teams.registry import AgentNameRegistry
+
+        # 团队不存在就顺手建一个：coordinator 模式下 TeamCreate 不在白名单里，
+        # 要求 Lead 先建团队再派人，它会卡在第一步。
+        team = self._team_manager.get_team(p.team_name)
+        if team is None:
+            team = self._team_manager.create_team(
+                name=p.team_name,
+                lead_agent_id=getattr(self._parent_agent, "agent_id", "lead"),
+            )
+
+        base_name = p.name or p.subagent_type or "worker"
+        existing_names = {m.name for m in team.members}
+        teammate_name = base_name
+        if teammate_name in existing_names:
+            counter = 2
+            while f"{base_name}-{counter}" in existing_names:
+                counter += 1
+            teammate_name = f"{base_name}-{counter}"
+
+        # 1. 加载 agent 定义
+        definition: AgentDef
+        conversation: ConversationManager | None = None
+        is_fork = False
+
+        if p.subagent_type:
+            defn = self._agent_loader.get(p.subagent_type)
+            if defn is None:
+                return ToolResult(
+                    output=f"Unknown agent type: '{p.subagent_type}'. "
+                    f"Available: {', '.join(t for t, _ in self._agent_loader.list_agents())}",
+                    is_error=True,
+                )
+            definition = defn
+        else:
+            if self._enable_fork:
+                try:
+                    parent_conv = getattr(self._parent_agent, '_current_conversation', None)
+                    if parent_conv is None:
+                        return ToolResult(output="Cannot fork: no active conversation.", is_error=True)
+                    conversation = build_forked_messages(parent_conv, p.prompt)
+                    is_fork = True
+                except ForkError as e:
+                    return ToolResult(output=str(e), is_error=True)
+
+            definition = AgentDef(
+                agent_type="teammate",
+                when_to_use="Team member",
+                system_prompt="",
+                disallowed_tools=[],
+                model="inherit",
+                max_turns=self._parent_agent.max_iterations,
+                permission_mode="bypassPermissions",
+                source="builtin",
+            )
+
+        # 2. 创建 worktree
+        wt_name = f"team-{p.team_name}/{teammate_name}"
+        try:
+            wt = await self._worktree_manager.create(wt_name, "HEAD")
+        except Exception as e:
+            return ToolResult(output=f"Failed to create worktree for teammate: {e}", is_error=True)
+
+        # 3. 选择 LLM
+        client = self._select_llm(p, definition)
+
+        # 4. 检测后端类型
+        backend = self._team_manager.detect_backend()
+
+        # 5. 构建队友的工具集
+        trace_node = self._trace_manager.create(
+            agent_type=definition.agent_type,
+            parent_id=self._parent_agent.agent_id,
+            trace_id=self._parent_agent.trace_id or self._parent_agent.agent_id,
+        )
+        agent_id = trace_node.agent_id
+
+        _has_full = getattr(self._parent_agent, '_full_registry', None) is not None
+        full_registry = getattr(self._parent_agent, '_full_registry', None) or self._parent_agent.registry
+        _full_tools = [t.name for t in full_registry.list_tools()]
+        log.info(
+            "[teammate] has_full_registry=%s full_tools=%d names=%s backend=%s def_tools=%s def_disallowed=%s",
+            _has_full, len(_full_tools), _full_tools,
+            backend.value,
+            getattr(definition, 'tools', []),
+            getattr(definition, 'disallowed_tools', []),
+        )
+        teammate_registry = build_teammate_tools(
+            parent_registry=full_registry,
+            team_manager=self._team_manager,
+            team_name=p.team_name,
+            agent_id=agent_id,
+            agent_name=teammate_name,
+            backend_type=backend.value,
+            definition=definition,
+        )
+        _tm_tools = [t.name for t in teammate_registry.list_tools()]
+        log.info("[teammate] result_tools=%d names=%s", len(_tm_tools), _tm_tools)
+
+        # 6. 创建子 agent 并附加队友专属指令
+        instructions = (definition.system_prompt or "") + TEAMMATE_ADDENDUM
+
+        # 标了 plan_mode_required 的队友以计划模式启动：只能读不能改，
+        # 写出计划交 lead 审批，通过后才切回正常权限。
+        # 规则引擎沿用父 Agent 那一份，队友在 worktree 里同样受父级规则约束
+        checker = PermissionChecker(
+            detector=DangerousCommandDetector(),
+            sandbox=PathSandbox(wt.path),
+            rule_engine=self._inherited_rule_engine(),
+            mode=PermissionMode.PLAN if p.plan_mode_required else PermissionMode.BYPASS,
+        )
+
+        sub_agent = AgentClass(
+            client=client,
+            registry=teammate_registry,
+            protocol=self._parent_agent.protocol,
+            work_dir=wt.path,
+            max_iterations=definition.max_turns,
+            permission_checker=checker,
+            context_window=self._parent_agent.context_window,
+            instructions_content=instructions,
+            hook_engine=self._parent_agent.hook_engine,
+        )
+        sub_agent.parent_id = self._parent_agent.agent_id
+        sub_agent.trace_id = self._parent_agent.trace_id or self._parent_agent.agent_id
+        sub_agent.agent_id = agent_id
+        sub_agent.team_name = p.team_name
+        sub_agent._team_manager = self._team_manager
+
+        # 7. 注册名称和成员信息
+        AgentNameRegistry.instance().register(teammate_name, agent_id)
+
+        member = TeammateInfo(
+            name=teammate_name,
+            agent_id=agent_id,
+            agent_type=definition.agent_type,
+            model=p.model or definition.model,
+            worktree_path=wt.path,
+            backend_type=backend.value,
+            is_active=True,
+            joined_at=int(time.time()),
+        )
+        self._team_manager.register_member(p.team_name, member)
+
+        # 8. 按后端类型启动队友
+        if backend in (BackendType.TMUX, BackendType.ITERM2):
+            return self._spawn_pane_teammate(
+                p, team, member, backend, wt, agent_id, teammate_name
+            )
+
+        # 进程内模式：直接用 task_manager 执行并通知结果
+        task_id = self._task_manager.launch(
+            agent=sub_agent,
+            task="" if is_fork else p.prompt,
+            name=teammate_name,
+            fork_conversation=conversation if is_fork else None,
+        )
+
+        return ToolResult(
+            output=(
+                f"Teammate '{teammate_name}' spawned in team '{p.team_name}'.\n"
+                f"Agent ID: {agent_id}\n"
+                f"Backend: {backend.value}\n"
+                f"Worktree: {wt.path}\n"
+                f"Task ID: {task_id}\n"
+                f"The system will notify when it completes."
+            )
+        )
 
 
     def _spawn_pane_teammate(
