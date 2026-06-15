@@ -487,7 +487,59 @@ class AgentTool(Tool):
         self, p: Any, team: Any, member: Any, backend: Any, wt: Any,
         agent_id: str, teammate_name: str,
     ) -> ToolResult:
-        raise NotImplementedError("Implementation pending")
+        from codeplus.teams.models import BackendType
+        from codeplus.teams.spawn import build_teammate_cli
+
+        # 外部进程通过邮箱领取初始任务：spawn 前先把任务投进队友邮箱（按队友名字为键），
+        # 新进程启动后第一次空闲轮询就能看到工作。
+        mailbox = self._team_manager.get_mailbox(p.team_name)
+        if mailbox is not None and p.prompt:
+            from codeplus.teams.mailbox import create_message
+            from codeplus.teams.spawn_inprocess import LEAD_NAME
+            mailbox.write(
+                teammate_name,
+                create_message(
+                    from_agent=LEAD_NAME,
+                    text=p.prompt,
+                ),
+            )
+
+        # 构造把本 codeplus 拉起为队友 worker 模式的命令，cd 到该队友的 worktree
+        cli_command = build_teammate_cli(p.team_name, teammate_name, wt.path)
+
+        try:
+            if backend == BackendType.TMUX:
+                from codeplus.teams.spawn_tmux import spawn_tmux_teammate
+                pane_info = spawn_tmux_teammate(
+                    team_name=p.team_name,
+                    member_name=teammate_name,
+                    cli_command=cli_command,
+                )
+                self._team_manager.register_pane_id(agent_id, pane_info.pane_id)
+            elif backend == BackendType.ITERM2:
+                from codeplus.teams.spawn_iterm2 import spawn_iterm2_teammate
+                pane_info = spawn_iterm2_teammate(
+                    team_name=p.team_name,
+                    member_name=teammate_name,
+                    cli_command=cli_command,
+                )
+                self._team_manager.register_pane_id(agent_id, pane_info.session_id)
+        except Exception as e:
+            log.warning("Pane spawn failed, falling back to in-process: %s", e)
+            return ToolResult(
+                output=f"Pane spawn failed ({e}), teammate not started. Retry or set teammate_mode to in-process.",
+                is_error=True,
+            )
+
+        return ToolResult(
+            output=(
+                f"Teammate '{teammate_name}' spawned in team '{p.team_name}'.\n"
+                f"Agent ID: {agent_id}\n"
+                f"Backend: {backend.value} (pane)\n"
+                f"Worktree: {wt.path}\n"
+                f"The teammate is running in an independent process."
+            )
+        )
 
 
     def _select_llm(
@@ -510,8 +562,151 @@ class AgentTool(Tool):
 
 
     async def _execute_with_worktree(self, p: AgentToolParams) -> ToolResult:
-        raise NotImplementedError("Implementation pending")
+        if self._worktree_manager is None:
+            return ToolResult(
+                output="Worktree isolation is not available: WorktreeManager not configured.",
+                is_error=True,
+            )
+
+        from codeplus.agents.parser import AgentDef
+        from codeplus.agents.tool_filter import resolve_agent_tools
+        from codeplus.agent import Agent as AgentClass
+        from codeplus.conversation import ConversationManager
+        from codeplus.permissions import (
+            DangerousCommandDetector,
+            PathSandbox,
+            PermissionChecker,
+            PermissionMode,
+            RuleEngine,
+        )
+        from codeplus.worktree.integration import (
+            build_worktree_notice,
+            generate_worktree_name,
+        )
+
+        definition: AgentDef | None = None
+        if p.subagent_type:
+            definition = self._agent_loader.get(p.subagent_type)
+            if definition is None:
+                return ToolResult(
+                    output=f"Unknown agent type: '{p.subagent_type}'. "
+                    f"Available types: {', '.join(t for t, _ in self._agent_loader.list_agents())}",
+                    is_error=True,
+                )
+        else:
+            definition = AgentDef(
+                agent_type="worktree-agent",
+                when_to_use="Isolated worktree agent",
+                system_prompt="",
+                disallowed_tools=[],
+                model="inherit",
+                max_turns=self._parent_agent.max_iterations,
+                permission_mode="bypassPermissions",
+                source="builtin",
+            )
+
+        wt_name = generate_worktree_name()
+        try:
+            wt = await self._worktree_manager.create(wt_name, "HEAD")
+        except Exception as e:
+            return ToolResult(
+                output=f"Failed to create worktree: {e}",
+                is_error=True,
+            )
+
+        notice = build_worktree_notice(self._parent_agent.work_dir, wt.path)
+        task = notice + "\n\n" + p.prompt
+
+        client = self._select_llm(p, definition)
+
+        _base_registry = getattr(self._parent_agent, '_full_registry', None) or self._parent_agent.registry
+        filtered_registry = resolve_agent_tools(
+            _base_registry, definition, False
+        )
+
+        pm_str = definition.permission_mode
+        pm_enum = getattr(
+            PermissionMode,
+            PERMISSION_MODE_MAP.get(pm_str, "DEFAULT"),
+            PermissionMode.DEFAULT,
+        )
+        # 规则引擎沿用父 Agent 那一份，队友在 worktree 里同样受父级规则约束
+        checker = PermissionChecker(
+            detector=DangerousCommandDetector(),
+            sandbox=PathSandbox(wt.path),
+            rule_engine=self._inherited_rule_engine(),
+            mode=pm_enum,
+        )
+
+        sub_agent = AgentClass(
+            client=client,
+            registry=filtered_registry,
+            protocol=self._parent_agent.protocol,
+            work_dir=wt.path,
+            max_iterations=definition.max_turns,
+            permission_checker=checker,
+            context_window=self._parent_agent.context_window,
+            instructions_content=definition.system_prompt,
+            hook_engine=self._parent_agent.hook_engine,
+        )
+        sub_agent.parent_id = self._parent_agent.agent_id
+        sub_agent.trace_id = self._parent_agent.trace_id or self._parent_agent.agent_id
+
+        trace_node = self._trace_manager.create(
+            agent_type=definition.agent_type,
+            parent_id=self._parent_agent.agent_id,
+            trace_id=sub_agent.trace_id,
+        )
+        sub_agent.agent_id = trace_node.agent_id
+
+        try:
+            result_text = await sub_agent.run_to_completion(task)
+        except Exception as e:
+            self._trace_manager.complete(trace_node.agent_id, "failed")
+            return ToolResult(
+                output=f"Sub-agent in worktree failed: {e}",
+                is_error=True,
+            )
+
+        self._trace_manager.update(
+            trace_node.agent_id,
+            input_tokens=sub_agent.total_input_tokens,
+            output_tokens=sub_agent.total_output_tokens,
+        )
+        self._trace_manager.complete(trace_node.agent_id, "completed")
+
+        cleanup = await self._worktree_manager.auto_cleanup(wt_name, wt.head_commit)
+        if cleanup.kept:
+            result_text = (result_text or "") + (
+                f"\n[Worktree preserved at {cleanup.path}, branch {cleanup.branch}]"
+            )
+
+        return ToolResult(output=result_text or "(sub-agent returned no output)")
 
 
     def _create_client_for_model(self, model_alias: str) -> LLMClient | None:
-        raise NotImplementedError("Implementation pending")
+        if self._provider_config is None:
+            return None
+
+        from codeplus.client import create_client
+        from codeplus.config import ProviderConfig
+
+        model_map = {
+            "haiku": "claude-haiku-4-5-20251001",
+            "sonnet": "claude-sonnet-4-6-20250514",
+            "opus": "claude-opus-4-6-20250514",
+        }
+        model_id = model_map.get(model_alias, model_alias)
+
+        config = ProviderConfig(
+            name=f"sub-{model_alias}",
+            protocol=self._provider_config.protocol,
+            base_url=self._provider_config.base_url,
+            model=model_id,
+            api_key=self._provider_config.api_key,
+            context_window=self._provider_config.context_window,
+        )
+        try:
+            return create_client(config)
+        except Exception:
+            return None
