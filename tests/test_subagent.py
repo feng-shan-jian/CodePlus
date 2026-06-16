@@ -607,37 +607,138 @@ class TestNotification:
         assert "All done!" in text
         assert "</task-notification>" in text
 
+    def test_truncate_long_result(self):
+        bg = BackgroundTask(
+            id="x",
+            name="long",
+            agent=MagicMock(),
+            task="t",
+            status="completed",
+            result="x" * 10000,
+            start_time=100.0,
+            end_time=105.0,
+        )
+        text = format_task_notification(bg)
+        assert "truncated" in text
 
+    def test_inject_notifications(self):
+        conv = ConversationManager()
+        bg1 = BackgroundTask(
+            id="t1", name="a1", agent=MagicMock(), task="t",
+            status="completed", result="r1",
+            start_time=100.0, end_time=105.0,
+        )
+        bg2 = BackgroundTask(
+            id="t2", name="a2", agent=MagicMock(), task="t",
+            status="failed", result="r2",
+            start_time=100.0, end_time=110.0,
+        )
+        inject_task_notifications(conv, [bg1, bg2])
+        assert len(conv.history) == 2
+        assert conv.history[0].role == "user"
+        assert "<task-notification>" in conv.history[0].content
+        assert "t1" in conv.history[0].content
+        assert "t2" in conv.history[1].content
 
 # =====================================================================
 # 8. 配置
 # =====================================================================
 
 class TestConfig:
-    pass
+    def test_enable_fork_default(self, tmp_path: Path):
+        from codeplus.config import load_config
+        cfg = tmp_path / "config.yaml"
+        cfg.write_text(textwrap.dedent("""\
+        providers:
+          - name: test
+            protocol: anthropic
+            base_url: https://api.example.com
+            model: claude-3
+        """))
+        config = load_config(cfg)
+        # fork 默认开着，配置里不写就是开
+        assert config.enable_fork is True
+        assert config.enable_verification_agent is False
 
+    def test_enable_fork_can_be_disabled(self, tmp_path: Path):
+        from codeplus.config import load_config
+        cfg = tmp_path / "config.yaml"
+        cfg.write_text(textwrap.dedent("""\
+        providers:
+          - name: test
+            protocol: anthropic
+            base_url: https://api.example.com
+            model: claude-3
+        enable_fork: false
+        enable_verification_agent: true
+        """))
+        config = load_config(cfg)
+        # 写 false 必须真的关掉，不能被「非零即覆盖」的合并逻辑吃掉
+        assert config.enable_fork is False
+        assert config.enable_verification_agent is True
 
 # =====================================================================
 # 9. 权限模式
 # =====================================================================
 
 class TestPermissionMode:
-    pass
+    def test_bypass_mode(self):
+        from codeplus.permissions.modes import PermissionMode, mode_decide
+        assert PermissionMode.BYPASS.value == "bypassPermissions"
+        assert mode_decide(PermissionMode.BYPASS, "read") == "allow"
+        assert mode_decide(PermissionMode.BYPASS, "write") == "allow"
+        assert mode_decide(PermissionMode.BYPASS, "command") == "allow"
 
 # =====================================================================
 # 10. AgentTool 参数
 # =====================================================================
 
 class TestAgentToolParams:
-    pass
+    def test_required_fields(self):
+        from codeplus.tools.agent_tool import AgentToolParams
+        params = AgentToolParams(prompt="do this", description="test")
+        assert params.prompt == "do this"
+        assert params.subagent_type is None
+        assert params.run_in_background is False
 
+    def test_optional_fields(self):
+        from codeplus.tools.agent_tool import AgentToolParams
+        params = AgentToolParams(
+            prompt="do",
+            description="test",
+            subagent_type="Explore",
+            model="haiku",
+            run_in_background=True,
+            name="my-agent",
+            isolation="worktree",
+        )
+        assert params.subagent_type == "Explore"
+        assert params.model == "haiku"
+        assert params.run_in_background is True
+        assert params.name == "my-agent"
+        assert params.isolation == "worktree"
 
 # =====================================================================
 # 11. Agent（run_to_completion 基础功能、agent_id、trace_id）
 # =====================================================================
 
 class TestAgentExtensions:
-    pass
+    def test_agent_has_id(self):
+        from codeplus.agent import Agent
+        client = MagicMock()
+        registry = ToolRegistry()
+        agent = Agent(client=client, registry=registry, protocol="anthropic")
+        assert agent.agent_id is not None
+        assert len(agent.agent_id) > 0
+        assert agent.parent_id is None
+        assert agent.trace_id is None
 
+    def test_agent_catalog(self):
+        from codeplus.agent import Agent
+        client = MagicMock()
+        registry = ToolRegistry()
+        agent = Agent(client=client, registry=registry, protocol="anthropic")
+        agent.set_agent_catalog("## Agents\n- Explore")
+        assert agent._agent_catalog == "## Agents\n- Explore"
 
 
