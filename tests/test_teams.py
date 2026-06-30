@@ -675,20 +675,118 @@ class TestTaskStopTool:
         team.add_member(member)
         return mgr, team, member
 
+    @pytest.mark.asyncio
+    async def test_stops_in_process_teammate(self):
+        from codeplus.tools.task_stop import TaskStopTool, TaskStopParams
 
+        mgr, _, member = self._mgr_with_member()
+        handle = MagicMock()
+        handle.done = False
+        mgr.register_inprocess_handle(member.agent_id, handle)
 
+        res = await TaskStopTool(team_manager=mgr).execute(TaskStopParams(teammate="scout"))
+        assert not res.is_error
+        handle.cancel.assert_called_once()
 
+    @pytest.mark.asyncio
+    async def test_stops_pane_teammate(self):
+        # tmux / iTerm2 的队员是独立进程，不走 in-process 句柄，
+        # 只认句柄就会漏掉这一类队员
+        from codeplus.tools.task_stop import TaskStopTool, TaskStopParams
+
+        mgr, _, member = self._mgr_with_member(backend="tmux")
+        mgr.register_pane_id(member.agent_id, "%42")
+        killed = []
+        mgr._kill_pane = lambda pane, backend: killed.append((pane, backend))
+
+        res = await TaskStopTool(team_manager=mgr).execute(TaskStopParams(teammate="scout"))
+        assert not res.is_error
+        assert killed == [("%42", "tmux")]
+
+    @pytest.mark.asyncio
+    async def test_unknown_teammate_is_an_error(self):
+        from codeplus.tools.task_stop import TaskStopTool, TaskStopParams
+
+        mgr, _, _ = self._mgr_with_member()
+        res = await TaskStopTool(team_manager=mgr).execute(TaskStopParams(teammate="ghost"))
+        assert res.is_error
+
+    @pytest.mark.asyncio
+    async def test_idle_teammate_is_not_an_error(self):
+        # 已经停下的队员再停一次不该报错，免得模型拿着报错反复重试
+        from codeplus.tools.task_stop import TaskStopTool, TaskStopParams
+
+        mgr, _, _ = self._mgr_with_member()
+        res = await TaskStopTool(team_manager=mgr).execute(TaskStopParams(teammate="scout"))
+        assert not res.is_error
+        assert "nothing to stop" in res.output
 
 
 class TestCoordinatorReminderShape:
-    pass
+    def test_reminder_matches_real_notification_format(self):
+        # 指引描述的回传格式必须和 drain 出来的一致
+        from codeplus.teams.coordinator import get_coordinator_system_prompt
 
+        p = get_coordinator_system_prompt()
+        assert "<team-notification" in p and "from=" in p
+        assert "<task_id>" not in p
+
+    def test_reminder_goes_sparse_after_first_turn(self):
+        from codeplus.teams.coordinator import get_coordinator_reminder
+
+        full = get_coordinator_reminder(1)
+        second = get_coordinator_reminder(2)
+        assert len(second) < len(full)
+        for must in ["cannot read files", "TaskStop", "from="]:
+            assert must in second
+        assert any(get_coordinator_reminder(i) == full for i in range(2, 13))
 
 
 class TestTeamFileSchema:
     """config.json 的字段格式：键名一律 camelCase。"""
 
+    def test_config_json_uses_camel_case_keys(self, tmp_dir):
+        team = AgentTeam(
+            name="squad",
+            lead_agent_id="lead",
+            config_path=str(Path(tmp_dir) / "config.json"),
+            description="d",
+        )
+        team.add_member(TeammateInfo(
+            name="alice", agent_id="a1", agent_type="worker", model="m",
+            worktree_path="/wt", backend_type="in-process",
+            is_active=False, joined_at=123,
+        ))
+        team.save()
 
+        data = json.loads(Path(team.config_path).read_text(encoding="utf-8"))
+        assert set(data) == {"name", "description", "createdAt", "leadAgentId", "members"}
+        assert set(data["members"][0]) == {
+            "agentId", "name", "agentType", "model",
+            "joinedAt", "worktreePath", "backendType", "isActive",
+        }
+        # config_path 是运行时算出来的，不该写进文件
+        assert "config_path" not in data and "configPath" not in data
+
+    def test_round_trip_keeps_fields(self, tmp_dir):
+        cfg = str(Path(tmp_dir) / "config.json")
+        team = AgentTeam(name="squad", lead_agent_id="lead", config_path=cfg, description="d")
+        team.add_member(TeammateInfo(
+            name="alice", agent_id="a1", agent_type="worker", model="m",
+            worktree_path="/wt", backend_type="in-process",
+            is_active=False, joined_at=123,
+        ))
+        team.save()
+
+        loaded = AgentTeam.load(cfg)
+        assert loaded.lead_agent_id == "lead"
+        assert loaded.description == "d"
+        assert loaded.created_at > 0
+        m = loaded.get_member("alice")
+        assert m is not None
+        assert (m.agent_id, m.agent_type, m.model, m.worktree_path,
+                m.backend_type, m.is_active, m.joined_at) == \
+               ("a1", "worker", "m", "/wt", "in-process", False, 123)
 
 # =====================================================================
 # 后台任务的 idle 回传
@@ -701,3 +799,41 @@ class TestBackgroundTaskIdleNotification:
     消息会落在一个 lead 不读的收件箱里，派活链路就断了。
     """
 
+    @pytest.mark.asyncio
+    async def test_idle_lands_in_lead_inbox(self):
+        from codeplus.agents.task_manager import TaskManager
+        from codeplus.teams.manager import TeamManager
+
+        mgr = TeamManager()
+        team = mgr.create_team("idle-notify", "lead-agent-uuid-1", description="t")
+
+        agent = MagicMock()
+        agent.agent_id = "worker-agent-id"
+        agent.team_name = team.name
+        agent._team_manager = mgr
+        agent.total_input_tokens = 0
+        agent.total_output_tokens = 0
+        agent.run_to_completion = AsyncMock(return_value="done")
+
+        task_mgr = TaskManager()
+        task_id = task_mgr.launch(agent, "do the thing", name="scout")
+        try:
+            # 第一条 idle 通知在空闲轮询之前发出，让出事件循环就能拿到
+            await asyncio.sleep(0.05)
+
+            mailbox = mgr.get_mailbox(team.name)
+            assert mailbox is not None
+
+            msgs = mailbox.consume(team.lead_agent_id)
+            assert len(msgs) == 1
+            assert msgs[0].from_agent == "scout"
+            assert "[idle]" in msgs[0].text
+
+            # LEAD_NAME 是 lead 的显示名，不是信箱键，不该有消息投到这里
+            assert mailbox.consume("lead") == []
+        finally:
+            task = task_mgr._async_tasks.get(task_id)
+            if task is not None:
+                task.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await task
