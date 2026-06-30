@@ -365,26 +365,127 @@ class TestBackendDetect:
         result = detect_backend(teammate_mode="in-process")
         assert result == BackendType.IN_PROCESS
 
+    def test_non_interactive(self):
+        # 非交互（-p）模式恒回退进程内
+        result = detect_backend(is_interactive=False)
+        assert result == BackendType.IN_PROCESS
 
+    def test_from_env_tmux(self):
+        env = self._clear_env()
+        env["TMUX"] = "/tmp/tmux-1234/default,12345,0"
+        with patch.dict(os.environ, env, clear=True):
+            assert detect_backend_from_env() == BackendType.TMUX
 
+    def test_from_env_iterm(self):
+        env = self._clear_env()
+        env["ITERM_SESSION_ID"] = "w0t0p0:ABC-123"
+        with patch.dict(os.environ, env, clear=True):
+            assert detect_backend_from_env() == BackendType.ITERM2
 
+    def test_from_env_none_is_in_process(self):
+        env = self._clear_env()
+        with patch.dict(os.environ, env, clear=True):
+            assert detect_backend_from_env() == BackendType.IN_PROCESS
 
+    def test_tmux_precedence_over_iterm(self):
+        # 同时存在时 tmux 优先
+        env = self._clear_env()
+        env["TMUX"] = "/tmp/tmux-1234/default,12345,0"
+        env["ITERM_SESSION_ID"] = "w0t0p0:ABC-123"
+        with patch.dict(os.environ, env, clear=True):
+            assert detect_backend_from_env() == BackendType.TMUX
 
+    def test_detect_backend_windows_always_in_process(self):
+        # Windows 护栏：即便环境变量指示 tmux，也一律进程内
+        env = self._clear_env()
+        env["TMUX"] = "/tmp/tmux-1234/default,12345,0"
+        with patch.dict(os.environ, env, clear=True):
+            with patch("codeplus.teams.backend_detect.sys.platform", "win32"):
+                assert detect_backend() == BackendType.IN_PROCESS
 
+    def test_detect_backend_posix_tmux(self):
+        # 非 Windows + 身处 tmux 会话 → tmux 后端
+        env = self._clear_env()
+        env["TMUX"] = "/tmp/tmux-1234/default,12345,0"
+        with patch.dict(os.environ, env, clear=True):
+            with patch("codeplus.teams.backend_detect.sys.platform", "linux"):
+                assert detect_backend() == BackendType.TMUX
 
+    def test_detect_backend_posix_no_session(self):
+        # 非 Windows 但不在任何会话里 → 进程内
+        env = self._clear_env()
+        with patch.dict(os.environ, env, clear=True):
+            with patch("codeplus.teams.backend_detect.sys.platform", "linux"):
+                assert detect_backend() == BackendType.IN_PROCESS
 
+    def test_pane_backend_posix_iterm(self):
+        # detect_pane_backend 只在已身处会话时启用窗格
+        env = self._clear_env()
+        env["ITERM_SESSION_ID"] = "w0t0p0:ABC-123"
+        with patch.dict(os.environ, env, clear=True):
+            with patch("codeplus.teams.backend_detect.sys.platform", "darwin"):
+                assert detect_pane_backend() == BackendType.ITERM2
 
+    def test_pane_backend_no_session_falls_back(self):
+        # 没有会话环境变量时静默回退进程内，而非抛异常
+        env = self._clear_env()
+        with patch.dict(os.environ, env, clear=True):
+            with patch("codeplus.teams.backend_detect.sys.platform", "linux"):
+                assert detect_pane_backend() == BackendType.IN_PROCESS
 
 # =====================================================================
 # 6. Tool Filtering（工具过滤）
 # =====================================================================
 
 class TestToolFilter:
-    pass
+    def test_teammate_coordination_tools_in_allowed(self):
+        for tool_name in TEAMMATE_COORDINATION_TOOLS:
+            assert tool_name in IN_PROCESS_TEAMMATE_ALLOWED_TOOLS
 
+    def test_coordinator_mode_tools(self):
+        # 调度必需的工具
+        assert "Agent" in COORDINATOR_MODE_ALLOWED_TOOLS
+        assert "SendMessage" in COORDINATOR_MODE_ALLOWED_TOOLS
+        assert "TaskStop" in COORDINATOR_MODE_ALLOWED_TOOLS
+        assert "SyntheticOutput" in COORDINATOR_MODE_ALLOWED_TOOLS
+        # 看代码和改代码都该派给队员
+        assert "ReadFile" not in COORDINATOR_MODE_ALLOWED_TOOLS
+        assert "Bash" not in COORDINATOR_MODE_ALLOWED_TOOLS
+        assert "Glob" not in COORDINATOR_MODE_ALLOWED_TOOLS
+        assert "Grep" not in COORDINATOR_MODE_ALLOWED_TOOLS
+        assert "WriteFile" not in COORDINATOR_MODE_ALLOWED_TOOLS
+        assert "EditFile" not in COORDINATOR_MODE_ALLOWED_TOOLS
+        # 任务表是队员之间协调用的，Lead 靠 task-notification 掌握进度
+        assert "TaskCreate" not in COORDINATOR_MODE_ALLOWED_TOOLS
+        assert "TaskList" not in COORDINATOR_MODE_ALLOWED_TOOLS
 
+    def test_coordinator_keeps_team_delete_to_avoid_lock_in(self):
+        # TeamDelete 是解除 coordinator 模式的唯一入口，
+        # 挡掉它 Lead 建完 Team 就再也退不出来
+        assert "TeamDelete" in COORDINATOR_MODE_ALLOWED_TOOLS
 
+    def test_apply_coordinator_filter(self):
+        reg = make_registry(
+            "Agent", "ReadFile", "WriteFile", "Bash", "SendMessage",
+            "TaskStop", "SyntheticOutput", "TeamCreate", "TeamDelete",
+        )
+        filtered = apply_coordinator_filter(reg)
+        names = {t.name for t in filtered.list_tools()}
+        assert "Agent" in names
+        assert "SendMessage" in names
+        assert "SyntheticOutput" in names
+        assert "TaskStop" in names
+        assert "TeamDelete" in names
+        assert "ReadFile" not in names
+        assert "Bash" not in names
+        assert "WriteFile" not in names
 
+    def test_apply_coordinator_filter_drops_mcp_tools(self):
+        # MCP 工具的返回值同样可能几千 token，要用就派队员去用
+        reg = make_registry("Agent", "mcp__github__create_issue")
+        names = {t.name for t in apply_coordinator_filter(reg).list_tools()}
+        assert "Agent" in names
+        assert "mcp__github__create_issue" not in names
 
 # =====================================================================
 # 7. Coordinator Mode（协调者模式）
@@ -402,22 +503,92 @@ class TestCoordinatorMode:
         from codeplus.agent import Agent
         return Agent.coordinator_mode.fget(agent)
 
+    def test_disabled_when_flag_off(self):
+        assert self._agent_with_teams(False, 1) is False
 
+    def test_enabled_from_the_first_turn(self):
+        # 只看配置：开了就从第一轮起生效，不等团队建起来。
+        # Agent 工具会在团队不存在时自己建，所以不必留个口子给 TeamCreate
+        assert self._agent_with_teams(True, 0) is True
+        assert self._agent_with_teams(True, 1) is True
 
+    def test_system_prompt_contains_phases(self):
+        prompt = get_coordinator_system_prompt()
+        assert "Research" in prompt
+        assert "Synthesis" in prompt
+        assert "Implementation" in prompt
+        assert "Verification" in prompt
 
+    def test_system_prompt_anti_pattern(self):
+        prompt = get_coordinator_system_prompt()
+        assert "based on your findings" in prompt.lower()
+        assert "Anti-pattern" in prompt or "BAD" in prompt
 
+    def test_system_prompt_continue_vs_spawn(self):
+        prompt = get_coordinator_system_prompt()
+        assert "Continue" in prompt
+        assert "Spawn fresh" in prompt
 
+    def test_system_prompt_task_notification(self):
+        # 指引描述的回传格式必须和 drain_lead_notifications 真正投递的一致，
+        # 否则 Lead 会照着一个不存在的字段去找队员名
+        prompt = get_coordinator_system_prompt()
+        assert "<team-notification" in prompt
+        assert "from=" in prompt
+        assert "<task_id>" not in prompt
 
+    def test_system_prompt_uses_real_subagent_type(self):
+        # CodePlus 的内建类型是 general-purpose / plan / explore，没有 worker，
+        # 提示词里写 worker 会让 Lead 调用一个不存在的类型
+        prompt = get_coordinator_system_prompt()
+        assert 'subagent_type: "worker"' not in prompt
+        assert "subagent_type `worker`" not in prompt
 
+    def test_coordinator_user_context(self):
+        ctx = get_coordinator_user_context()
+        assert "workerToolsContext" in ctx
+        assert "Workers" in ctx["workerToolsContext"]
 
 # =====================================================================
 # 8. Config Extensions（配置项扩展）
 # =====================================================================
 
 class TestConfigExtensions:
-    pass
+    def test_teammate_mode_defaults(self):
+        from codeplus.config import AppConfig
+        cfg = AppConfig(providers=[])
+        assert cfg.teammate_mode == ""
+        assert cfg.enable_coordinator_mode is False
 
+    def test_load_config_with_team_fields(self, tmp_dir):
+        from codeplus.config import load_config
+        config_path = Path(tmp_dir) / "config.yaml"
+        config_path.write_text(
+            "providers:\n"
+            "  - name: test\n"
+            "    protocol: anthropic\n"
+            "    base_url: http://localhost\n"
+            "    model: test-model\n"
+            "teammate_mode: 'in-process'\n"
+            "enable_coordinator_mode: true\n"
+        )
+        cfg = load_config(config_path)
+        assert cfg.teammate_mode == "in-process"
+        assert cfg.enable_coordinator_mode is True
 
+    def test_invalid_teammate_mode(self, tmp_dir):
+        from codeplus.config import ConfigError, load_config
+        config_path = Path(tmp_dir) / "config.yaml"
+        config_path.write_text(
+            "providers:\n"
+            "  - name: test\n"
+            "    protocol: anthropic\n"
+            "    base_url: http://localhost\n"
+            "    model: test-model\n"
+            "teammate_mode: 'invalid'\n"
+        )
+        with pytest.raises(ConfigError):
+            load_config(config_path)
 
 # =====================================================================
 # 9. Transcript Persistence（会话记录持久化）
@@ -425,17 +596,67 @@ class TestConfigExtensions:
 
 class TestTranscript:
 
-    pass
+    def test_save_and_load(self, tmp_dir):
+        from codeplus.conversation import ConversationManager
+        from codeplus.teams.transcript import load_transcript, save_transcript
 
+        conv = ConversationManager()
+        conv.add_user_message("Hello agent")
+        conv.add_assistant_message("Hello user")
+
+        with patch("codeplus.teams.models.Path.home", return_value=Path(tmp_dir)):
+            save_transcript("test-team", "agent-001", conv)
+            restored = load_transcript("test-team", "agent-001")
+
+        assert restored is not None
+        assert len(restored.history) == 2
+        assert restored.history[0].role == "user"
+        assert restored.history[0].content == "Hello agent"
+        assert restored.history[1].role == "assistant"
+
+    def test_load_nonexistent(self, tmp_dir):
+        from codeplus.teams.transcript import load_transcript
+        with patch("codeplus.teams.models.Path.home", return_value=Path(tmp_dir)):
+            result = load_transcript("no-team", "no-agent")
+        assert result is None
 
 # =====================================================================
 # 10. Agent build_system_prompt 集成测试
 # =====================================================================
 
 class TestAgentCoordinatorIntegration:
-    pass
+    def test_normal_prompt(self):
+        from codeplus.prompts import build_system_prompt, IDENTITY_SECTION
+        prompt = build_system_prompt()
+        # 验证 identity section 内容包含在 prompt 中
+        assert "CodePlus" in prompt
+        assert IDENTITY_SECTION.content[:30] in prompt
 
+    def test_coordinator_guidance_is_a_reminder_not_a_replacement(self):
+        # 调度指引每轮以 system-reminder 注入，系统提示词本身不受影响：
+        # Lead 进了 coordinator 也仍然需要身份、环境、项目指令这些基础段落
+        from codeplus.prompts import build_system_prompt, IDENTITY_SECTION
+        from codeplus.teams.coordinator import get_coordinator_system_prompt
 
+        prompt = build_system_prompt()
+        assert IDENTITY_SECTION.content[:30] in prompt
+        assert "coordinator" not in prompt.lower()
+
+        reminder = get_coordinator_system_prompt()
+        assert "coordinator" in reminder.lower()
+
+    def test_coordinator_reminder_lists_only_allowed_tools(self):
+        from codeplus.agents.tool_filter import COORDINATOR_MODE_ALLOWED_TOOLS
+        from codeplus.teams.coordinator import get_coordinator_system_prompt
+
+        reminder = get_coordinator_system_prompt()
+        section = reminder[
+            reminder.index("## 2. Your Tools") : reminder.index("### Worker Results")
+        ]
+        for name in COORDINATOR_MODE_ALLOWED_TOOLS:
+            assert f"**{name}**" in section, f"{name} 没出现在提示词的工具清单里"
+        for name in ["ReadFile", "Bash", "Grep", "TaskCreate", "TeamCreate"]:
+            assert f"**{name}**" not in section, f"提示词列了被过滤掉的 {name}"
 
 
 class TestTaskStopTool:
