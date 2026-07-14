@@ -369,20 +369,106 @@ class TestStatusHandler:
         assert "default" in ui.messages[0]
 
 class TestSessionHandler:
-    pass
+    @pytest.mark.asyncio
+    async def test_session_no_manager(self) -> None:
+        from codeplus.commands.handlers.session import handle_session
 
+        ui = MockUI()
+        ctx = _make_context(args="", ui=ui)
+        ctx.session_manager = None
+        await handle_session(ctx)
+        assert "未初始化" in ui.messages[0]
 
+    @pytest.mark.asyncio
+    async def test_session_list_empty(self) -> None:
+        from codeplus.commands.handlers.session import handle_session
+
+        ui = MockUI()
+        sm = MagicMock()
+        sm.list.return_value = []
+        ctx = _make_context(args="list", ui=ui)
+        ctx.session_manager = sm
+        await handle_session(ctx)
+        assert "没有已保存的会话" in ui.messages[0]
+
+    @pytest.mark.asyncio
+    async def test_session_unknown_sub(self) -> None:
+        from codeplus.commands.handlers.session import handle_session
+
+        ui = MockUI()
+        ctx = _make_context(args="foobar", ui=ui)
+        ctx.session_manager = MagicMock()
+        await handle_session(ctx)
+        assert "用法" in ui.messages[0]
 
 class TestMemoryHandler:
-    pass
+    @pytest.mark.asyncio
+    async def test_memory_display(self) -> None:
+        from codeplus.commands.handlers.memory import handle_memory
 
+        ui = MockUI()
+        mm = MagicMock()
+        mm.get_display_text.return_value = "记忆内容"
+        ctx = _make_context(args="", ui=ui)
+        ctx.memory_manager = mm
+        await handle_memory(ctx)
+        assert "记忆内容" in ui.messages[0]
 
+    @pytest.mark.asyncio
+    async def test_memory_clear(self) -> None:
+        from codeplus.commands.handlers.memory import handle_memory
+
+        ui = MockUI()
+        mm = MagicMock()
+        ctx = _make_context(args="clear", ui=ui)
+        ctx.memory_manager = mm
+        await handle_memory(ctx)
+        mm.clear.assert_called_once()
+        assert "清空" in ui.messages[0]
+
+    @pytest.mark.asyncio
+    async def test_memory_no_manager(self) -> None:
+        from codeplus.commands.handlers.memory import handle_memory
+
+        ui = MockUI()
+        ctx = _make_context(args="", ui=ui)
+        ctx.memory_manager = None
+        await handle_memory(ctx)
+        assert "未初始化" in ui.messages[0]
 
 # ---------------------------------------------------------------------------
 # 集成测试：register_all_commands
 # ---------------------------------------------------------------------------
 
 class TestRegisterAllCommands:
-    pass
+    def test_all_commands_registered(self) -> None:
+        from codeplus.commands.handlers import register_all_commands
 
+        registry = CommandRegistry()
+        register_all_commands(registry)
+        cmds = registry.list_commands()
+        names = {c.name for c in cmds}
+        expected = {
+            "help", "compact", "clear", "plan",
+            "session", "mcp", "memory",
+            "sandbox", "rewind", "status", "skill",
+        }
+        assert names == expected
 
+    def test_no_alias_conflicts(self) -> None:
+        from codeplus.commands.handlers import register_all_commands
+
+        registry = CommandRegistry()
+        register_all_commands(registry)
+
+    def test_aliases_work(self) -> None:
+        from codeplus.commands.handlers import register_all_commands
+
+        registry = CommandRegistry()
+        register_all_commands(registry)
+        assert registry.find("h") is not None
+        assert registry.find("h").name == "help"
+        assert registry.find("c").name == "compact"
+        assert registry.find("p").name == "plan"
+        assert registry.find("s").name == "status"
+        assert registry.find("?").name == "help"
