@@ -1,0 +1,870 @@
+from __future__ import annotations
+
+import asyncio
+import os
+import random
+import time as _time
+from pathlib import Path
+from typing import Any
+
+from rich.markup import escape
+from textual.app import App, ComposeResult
+from textual.binding import Binding
+from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.message import Message as TMessage
+from textual.widgets import Markdown, OptionList, Static, TextArea
+from textual.widgets.option_list import Option
+
+from codeplus.agent import (
+    Agent,
+    CompactNotification,
+    ErrorEvent,
+    HookEvent,
+    LoopComplete,
+    PermissionRequest,
+    PermissionResponse,
+    RetryEvent,
+    StreamText,
+    ThinkingText,
+    ToolResultEvent,
+    ToolUseEvent,
+    TurnComplete,
+    UsageEvent,
+)
+from codeplus.client import (
+    AuthenticationError,
+    LLMClient,
+    LLMError,
+    create_client,
+    resolve_context_window,
+)
+from codeplus.commands import (
+    CommandContext,
+    CommandRegistry,
+    complete,
+    parse_command,
+)
+from codeplus import crashlog
+from codeplus.commands.completion import CompletionPopup
+from codeplus.commands.handlers import register_all_commands
+from codeplus.config import MCPServerConfig, ProviderConfig
+from codeplus.hooks import HookContext, HookEngine, load_hooks
+from codeplus.conversation import ConversationManager, Message
+from codeplus.mcp import ConnectResult, MCPManager
+from codeplus.mcp.tool_wrapper import mcp_tool_name_prefix
+from codeplus.memory import (
+    MemoryManager,
+    Session,
+    SessionManager,
+    find_relevant_memories,
+    generate_session_summary,
+    load_instructions,
+    make_compact_boundary,
+    render_reminder,
+)
+from codeplus.permissions import (
+    DangerousCommandDetector,
+    PathSandbox,
+    PermissionChecker,
+    PermissionMode,
+    RuleEngine,
+)
+from codeplus.agents.loader import AgentLoader
+from codeplus.agents.task_manager import TaskManager
+from codeplus.agents.trace import TraceManager
+from codeplus.agents.notification import inject_task_notifications
+from codeplus.commands.handlers.tasks import create_tasks_command
+from codeplus.skills.executor import SkillExecutor
+from codeplus.skills.loader import SkillLoader
+from codeplus.commands.handlers.skill_register import register_skill_commands
+from rich.text import Text as RichText
+from textual.theme import Theme
+from codeplus.tools import ToolRegistry, create_default_registry
+from codeplus.tools.agent_tool import AgentTool
+from codeplus.tools.ask_user import AskUserEvent, AskUserTool
+from codeplus.tools.impl.tool_search import ToolSearchTool
+from codeplus.tools.mcp_call import McpCallTool
+from codeplus.tools.install_skill import InstallSkillTool
+from codeplus.tools.load_skill import LoadSkill
+from codeplus.worktree.cleanup import start_stale_cleanup_task
+from codeplus.worktree.manager import WorktreeManager
+from codeplus.commands.handlers.worktree import create_worktree_command
+from codeplus.teammate_tree import TeammateTree
+
+import re
+
+MAX_TRUNCATED_LINES = 20
+MAX_AT_REF_BYTES = 10240
+
+# 启动横幅使用完整的 CodePlus 字标，避免继续沿用与产品品牌无关的猫头图案。
+CODEPLUS_ASCII_LOGO = (
+    " ██████╗ ██████╗ ██████╗ ███████╗██████╗ ██╗     ██╗   ██╗███████╗",
+    "██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔══██╗██║     ██║   ██║██╔════╝",
+    "██║     ██║   ██║██║  ██║█████╗  ██████╔╝██║     ██║   ██║███████╗",
+    "██║     ██║   ██║██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║╚════██║",
+    "╚██████╗╚██████╔╝██████╔╝███████╗██║     ███████╗╚██████╔╝███████║",
+    " ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝ ╚══════╝",
+)
+
+_AT_REF_RE = re.compile(r"@([\w./_\-]+(?:\.[\w]+)*)")
+
+_SKIP_DIRS = {".git", "node_modules", ".venv", "__pycache__", ".codeplus", "build", ".gradle"}
+
+
+def scan_files_for_at(prefix: str, work_dir: str, limit: int = 10) -> list[str]:
+    raise NotImplementedError("Implementation pending")
+
+
+def expand_at_refs(text: str, work_dir: str) -> str:
+    def _replace(m: re.Match) -> str:
+        rel_path = m.group(1)
+        full_path = os.path.join(work_dir, rel_path)
+        if not os.path.isfile(full_path):
+            return m.group(0)
+        try:
+            content = open(full_path, encoding="utf-8", errors="replace").read(MAX_AT_REF_BYTES)
+            return f"[File: {rel_path}]\n```\n{content}\n```"
+        except Exception:
+            return m.group(0)
+    return _AT_REF_RE.sub(_replace, text)
+
+
+class ChatInput(TextArea):
+    BINDINGS = [
+        Binding("enter", "submit", "Submit", priority=True),
+        Binding("shift+enter", "newline", "Newline", priority=True),
+        Binding("ctrl+j", "newline", "Newline", priority=True),
+        Binding("tab", "complete", "Complete", priority=True),
+        Binding("escape", "dismiss_popup", "Dismiss", priority=True),
+        Binding("up", "nav_up", "Navigate up", priority=True),
+        Binding("down", "nav_down", "Navigate down", priority=True),
+    ]
+
+    class Submitted(TMessage):
+        def __init__(self, text: str) -> None:
+            super().__init__()
+            self.text = text
+
+    class TabComplete(TMessage):
+        def __init__(self, text: str) -> None:
+            super().__init__()
+            self.text = text
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.cursor_blink = False
+        self._history: list[str] = []
+        self._history_index: int = -1
+        self._history_draft: str = ""
+        self._history_file: Path | None = None
+
+    def load_history(self, work_dir: str) -> None:
+        self._history_file = Path(work_dir) / ".codeplus" / "history"
+        if self._history_file.exists():
+            try:
+                lines = self._history_file.read_text(encoding="utf-8").splitlines()
+                self._history = [l for l in lines if l.strip()]
+            except Exception:
+                pass
+
+    def _persist_entry(self, text: str) -> None:
+        if self._history_file is None:
+            return
+        try:
+            self._history_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(self._history_file, "a", encoding="utf-8") as f:
+                f.write(text + "\n")
+        except Exception:
+            pass
+
+    def _popup(self) -> CompletionPopup | None:
+        try:
+            return self.app.query_one(CompletionPopup)
+        except Exception:
+            return None
+
+    def action_submit(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def action_newline(self) -> None:
+        self.insert("\n")
+
+    def action_complete(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def action_dismiss_popup(self) -> None:
+        popup = self._popup()
+        if popup is not None:
+            popup.hide()
+
+    def action_nav_up(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def action_nav_down(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    class AtFileRequest(TMessage):
+        def __init__(self, prefix: str) -> None:
+            super().__init__()
+            self.prefix = prefix
+
+    class SlashMenuUpdate(TMessage):
+        def __init__(self, prefix: str | None) -> None:
+            super().__init__()
+            self.prefix = prefix
+
+    def on_text_area_changed(self, event: TextArea.Changed) -> None:
+        raise NotImplementedError("Implementation pending")
+
+
+COLLAPSIBLE_TOOLS = {"ReadFile", "Glob", "Grep", "ToolSearch"}
+
+
+def _is_subagent_tool(tool_name: str) -> bool:
+    return tool_name == "Agent"
+
+
+def _tool_title(tool_name: str, arguments: dict[str, Any]) -> str:
+    raise NotImplementedError("Implementation pending")
+
+
+def _format_detail(tool_name: str, arguments: dict[str, Any], output: str) -> str:
+    raise NotImplementedError("Implementation pending")
+
+
+class ToolCallBlock(Static, can_focus=True):
+
+    def __init__(self, tool_name: str, arguments: dict[str, Any], **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.tool_name = tool_name
+        self._arguments = arguments
+        self._title = _tool_title(tool_name, arguments)
+        self._full_output = ""
+        self._is_error = False
+        self._elapsed = 0.0
+        self._collapsed = True
+        self._loading = True
+        self._render_loading()
+
+    def _render_loading(self) -> None:
+        self.update(f"  ● {self._title} …")
+        self.add_class("tool-block-loading")
+
+    def set_result(self, output: str, is_error: bool, elapsed: float) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def _render_collapsed(self) -> None:
+        if self._is_error:
+            self.update(f"  ✗ {self._title} ({self._elapsed:.1f}s)")
+        else:
+            self.update(f"  ✓ {self._title} ({self._elapsed:.1f}s)")
+
+    def _render_expanded(self) -> None:
+        if self._is_error:
+            header = f"  ✗ {self._title} ({self._elapsed:.1f}s)"
+        else:
+            header = f"  ✓ {self._title} ({self._elapsed:.1f}s)"
+        detail = _format_detail(self.tool_name, self._arguments, self._full_output)
+        self.update(f"{header}\n{detail}")
+
+    def on_click(self) -> None:
+        if self._loading:
+            return
+        self._collapsed = not self._collapsed
+        if self._collapsed:
+            self._render_collapsed()
+        else:
+            self._render_expanded()
+
+
+_MODE_CYCLE = [
+    PermissionMode.DEFAULT,
+    PermissionMode.ACCEPT_EDITS,
+    PermissionMode.PLAN,
+    PermissionMode.BYPASS,
+]
+
+_MODE_COLORS = {
+    PermissionMode.DEFAULT: "dim",
+    PermissionMode.ACCEPT_EDITS: "green",
+    PermissionMode.PLAN: "yellow",
+    PermissionMode.BYPASS: "red",
+}
+
+SPINNER_FRAMES = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
+
+
+def _to_past_tense(verb: str) -> str:
+    """把现在进行时动词转换为过去式。"""
+    if verb.endswith("ing"):
+        stem = verb[:-3]
+        if stem.endswith("e"):
+            return stem + "d"
+        if stem and stem[-1] in "atutitet":
+            return stem + "ed"
+        return stem + "ed"
+    return verb + "ed"
+
+
+THINKING_VERBS = [
+    "Accomplishing", "Architecting", "Baking", "Beboppin'", "Befuddling",
+    "Bloviating", "Boogieing", "Boondoggling", "Bootstrapping", "Brewing",
+    "Calculating", "Canoodling", "Caramelizing", "Cascading", "Cerebrating",
+    "Choreographing", "Churning", "Coalescing", "Cogitating", "Combobulating",
+    "Composing", "Computing", "Concocting", "Considering", "Contemplating",
+    "Cooking", "Crafting", "Creating", "Crunching", "Crystallizing",
+    "Cultivating", "Deciphering", "Deliberating", "Dilly-dallying",
+    "Discombobulating", "Doodling", "Elucidating", "Enchanting", "Envisioning",
+    "Fermenting", "Finagling", "Flambéing", "Flibbertigibbeting", "Flummoxing",
+    "Forging", "Frolicking", "Gallivanting", "Garnishing", "Generating",
+    "Germinating", "Grooving", "Harmonizing", "Hatching", "Honking",
+    "Hullaballooing", "Ideating", "Imagining", "Improvising", "Incubating",
+    "Inferring", "Infusing", "Kneading", "Lollygagging", "Manifesting",
+    "Marinating", "Meandering", "Metamorphosing", "Mapping", "Moonwalking",
+    "Moseying", "Mulling", "Musing", "Noodling", "Orbiting",
+    "Orchestrating", "Percolating", "Philosophising", "Pondering",
+    "Pontificating", "Pouncing", "Purring", "Puzzling", "Razzle-dazzling",
+    "Ruminating", "Scampering", "Simmering", "Sketching", "Spelunking",
+    "Spinning", "Sprouting", "Synthesizing", "Thinking", "Tinkering",
+    "Transfiguring", "Transmuting", "Undulating", "Unfurling", "Unravelling",
+    "Vibing", "Wandering", "Whisking", "Working", "Wrangling", "Zigzagging",
+]  # 共 105 个 TUI 快捷键动词
+
+
+class ToolGroupSummary(Static, can_focus=True):
+
+
+    def __init__(self, count: int, total_elapsed: float, **kwargs: Any) -> None:
+        label = f"● Done ({count} tool uses · {total_elapsed:.1f}s)  (ctrl+o to expand)"
+        super().__init__(label, **kwargs)
+        self._count = count
+        self._total = total_elapsed
+        self._expanded = False
+
+    def _refresh_display(self) -> None:
+        if self._expanded:
+            self.update(f"▼ Done ({self._count} tool uses · {self._total:.1f}s)")
+        else:
+            self.update(
+                f"● Done ({self._count} tool uses · {self._total:.1f}s)"
+                "  (ctrl+o to expand)"
+            )
+
+    def toggle(self) -> None:
+        self._expanded = not self._expanded
+        self._refresh_display()
+
+
+    def on_click(self) -> None:
+        self.toggle()
+
+
+class SubAgentBlock(Static, can_focus=True):
+
+    def __init__(self, agent_type: str, description: str, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._agent_type = agent_type or "agent"
+        self._description = description[:60] if description else ""
+        self._done = False
+        self._is_error = False
+        self._elapsed = 0.0
+        self._collapsed = True
+        self._result_preview = ""
+        self._tool_count = 0
+        self._render_running()
+
+    def _render_running(self) -> None:
+        desc = f"({self._description})" if self._description else ""
+        self.update(f"● {self._agent_type}{desc}\n     Running…")
+
+    def set_result(self, output: str, is_error: bool, elapsed: float) -> None:
+        self._done = True
+        self._is_error = is_error
+        self._elapsed = elapsed
+        self._result_preview = output[:300] if output else ""
+        self._parse_stats(output)
+        self._render_done()
+
+    def _parse_stats(self, output: str) -> None:
+        import re
+        m = re.search(r"(\d+)\s+tool", output[:200])
+        if m:
+            self._tool_count = int(m.group(1))
+
+    def _render_done(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def on_click(self) -> None:
+        if not self._done:
+            return
+        self._collapsed = not self._collapsed
+        self._render_done()
+
+
+_CODEPLUS_THEME = Theme(
+    name="codeplus",
+    primary="#875FFF",
+    background="#1a1a1a",
+    surface="#1a1a1a",
+    panel="#1a1a1a",
+    dark=True,
+)
+
+
+class CodePlusApp(App):
+    CSS_PATH = "styles.tcss"
+    TITLE = "CodePlus"
+    INLINE_PADDING = 0
+    theme = "codeplus"
+    BINDINGS = [
+        Binding("ctrl+c", "handle_ctrl_c", "Quit", priority=True),
+        Binding("escape", "cancel", "Cancel", priority=True),
+        Binding("shift+tab", "cycle_mode", "Cycle mode", priority=True),
+        Binding("ctrl+o", "toggle_tool_blocks", "Toggle tools", priority=True),
+    ]
+
+
+    def __init__(
+        self,
+        providers: list[ProviderConfig],
+        permission_mode: PermissionMode = PermissionMode.DEFAULT,
+        mcp_servers: list[MCPServerConfig] | None = None,
+        hook_engine: HookEngine | None = None,
+        enable_fork: bool = True,
+        enable_verification_agent: bool = False,
+        worktree_config: Any = None,
+        teammate_mode: str = "",
+        enable_coordinator_mode: bool = False,
+        driver_class: type | None = None,
+        sandbox_config: Any = None,
+    ) -> None:
+        super().__init__(driver_class=driver_class)
+        self.providers = providers
+        self._initial_permission_mode = permission_mode
+        self._mcp_server_configs = mcp_servers or []
+        self.hook_engine = hook_engine
+        self._enable_fork = enable_fork
+        self._enable_verification_agent = enable_verification_agent
+        self._worktree_config = worktree_config
+        self._teammate_mode = teammate_mode
+        self._enable_coordinator_mode = enable_coordinator_mode
+        from codeplus.config import SandboxAppConfig
+        self._sandbox_cfg: SandboxAppConfig = sandbox_config or SandboxAppConfig()
+        self.client: LLMClient | None = None
+        self.conversation = ConversationManager()
+        self.registry: ToolRegistry = create_default_registry()
+        self.agent: Agent | None = None
+        self.mcp_manager: MCPManager | None = None
+        self._mcp_init_task: asyncio.Task[None] | None = None
+        self._selected_provider: ProviderConfig | None = None
+        self._streaming = False
+        self._thinking_start: float = 0.0
+        self._thinking_verb: str = ""
+        self._spinner_idx: int = 0
+        self._spinner_timer = None
+        self._spinner_label: Static | None = None
+        self._mcp_server_info: str = ""
+        self._agent_task: asyncio.Task[None] | None = None
+        self._subagent_task: asyncio.Task[None] | None = None
+        self._subagent_start_time: float | None = None
+        self.session_manager: SessionManager | None = None
+        self.session: Session | None = None
+        self.memory_manager: MemoryManager | None = None
+        self._instructions_content: str = ""
+        self.command_registry = CommandRegistry()
+        register_all_commands(self.command_registry)
+        self.skill_loader: SkillLoader | None = None
+        self.skill_executor: SkillExecutor | None = None
+        self._load_skill_tool: LoadSkill | None = None
+        self.agent_loader: AgentLoader | None = None
+        self.task_manager: TaskManager = TaskManager()
+        self.trace_manager: TraceManager = TraceManager()
+        self._notification_check_task: asyncio.Task[None] | None = None
+        self.worktree_manager: WorktreeManager | None = None
+        self._stale_cleanup_task: asyncio.Task[None] | None = None
+        self._current_streaming_label: Static | None = None
+        self._current_ai_row: Vertical | None = None
+        self._current_accumulated_text: str = ""
+        self._mcp_instructions: str = ""
+        self._mcp_instructions_ok: bool = False
+        self._mcp_connecting: bool = False
+        self._teammate_tree: TeammateTree | None = None
+        self._teammate_timer = None
+        # 记录本次会话是否曾退出过 Plan Mode，用于重入时注入提示
+        self._has_exited_plan_mode: bool = False
+
+    @staticmethod
+    def _make_banner(model: str = "", work_dir: str = "") -> RichText:
+        raise NotImplementedError("Implementation pending")
+
+    def compose(self) -> ComposeResult:
+        raise NotImplementedError("Implementation pending")
+
+    def _handle_exception(self, error: Exception) -> None:
+        """接管 Textual 的未处理异常入口，先把现场落盘再交回框架。
+
+        框架拿到未处理异常后会把 traceback 画到终端然后结束应用，终端一关
+        就什么都不剩了。事件处理器、后台 worker、刷新回调抛出的异常都汇聚
+        到这里，写进崩溃日志才能在事后定位。
+        """
+        crashlog.record_exception("textual", error)
+        super()._handle_exception(error)
+
+    def on_mount(self) -> None:
+        self.register_theme(_CODEPLUS_THEME)
+        self.theme = "codeplus"
+        if len(self.providers) == 1:
+            self._select_provider(self.providers[0])
+        else:
+            self.query_one("#chat-area").display = False
+            self.query_one("#input-area").display = False
+
+    def _select_provider(self, provider: ProviderConfig) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    async def _resolve_context_window(self, provider: ProviderConfig) -> None:
+        """Layer 2 后台 worker：异步拉取模型的 context window，
+        拉到就原地升级 agent 的窗口值。
+
+        尽力而为 — resolve_context_window 不会抛异常；如果拉不到，
+        agent 继续使用同步解析得到的窗口值。
+        """
+        await resolve_context_window(provider)
+        if self.agent is not None:
+            self.agent.context_window = provider.get_context_window()
+
+    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
+        if event.option_list.id == "provider-list":
+            provider = self.providers[event.option_index]
+            self._select_provider(provider)
+
+    # -----------------------------------------------------------------
+    # UIController 协议实现
+    # -----------------------------------------------------------------
+
+    def add_system_message(self, text: str) -> None:
+        self._show_system_message(text)
+
+    def send_user_message(self, text: str) -> None:
+        if self._streaming or self.agent is None:
+            return
+        self._agent_task = asyncio.create_task(self._send_message(text))
+
+    def set_plan_mode(self, enabled: bool) -> None:
+        if self.agent is None:
+            return
+        if enabled:
+            self._pre_plan_mode = self.agent.permission_mode
+            self.agent.set_permission_mode(PermissionMode.PLAN)
+        else:
+            restore = getattr(self, "_pre_plan_mode", PermissionMode.DEFAULT)
+            self.agent.set_permission_mode(restore)
+        self._update_mode_label()
+
+    def get_token_count(self) -> tuple[int, int]:
+        if self.agent:
+            return self.agent.total_input_tokens, self.agent.total_output_tokens
+        return 0, 0
+
+    def refresh_status(self) -> None:
+        self._update_mode_label()
+
+    # -----------------------------------------------------------------
+    # 命令分发
+    # -----------------------------------------------------------------
+
+
+    def _build_command_context(self, args: str) -> CommandContext:
+        raise NotImplementedError("Implementation pending")
+
+    def _set_session(self, session: Session) -> None:
+        self.session = session
+        if self.agent:
+            self.agent.session_id = session.session_id
+
+    def _persist_compact_boundary(self, notification: CompactNotification) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def _set_conversation(self, conv: ConversationManager) -> None:
+        self.conversation = conv
+
+    def _clear_chat(self) -> None:
+        chat = self.query_one("#chat-area", VerticalScroll)
+        chat.remove_children()
+
+    async def _dispatch_command(self, text: str) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    # -----------------------------------------------------------------
+    # 输入处理
+    # -----------------------------------------------------------------
+
+    async def on_chat_input_submitted(self, event: ChatInput.Submitted) -> None:
+        text = event.text.strip()
+        if self._streaming and not text.startswith("/"):
+            if self._agent_task and not self._agent_task.done():
+                self._agent_task.cancel()
+                try:
+                    await self._agent_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+            self._finish_streaming()
+            self._show_system_message("(response interrupted)")
+        await self._dispatch_command(text)
+
+    def on_chat_input_tab_complete(self, event: ChatInput.TabComplete) -> None:
+        matches = complete(self.command_registry, event.text)
+        if not matches:
+            return
+        popup = self.query_one(CompletionPopup)
+        if len(matches) == 1:
+            input_widget = self.query_one("#chat-input", ChatInput)
+            input_widget.clear()
+            input_widget.insert(matches[0][1] + " ")
+        else:
+            popup.show_pairs(matches)
+
+    def on_chat_input_slash_menu_update(self, event: ChatInput.SlashMenuUpdate) -> None:
+        popup = self.query_one(CompletionPopup)
+        if event.prefix is None:
+            popup.hide()
+            return
+        matches = complete(self.command_registry, event.prefix)
+        if not matches:
+            popup.hide()
+            return
+        popup.show_pairs(matches)
+
+    def on_chat_input_at_file_request(self, event: ChatInput.AtFileRequest) -> None:
+        work_dir = self.agent.work_dir if self.agent else os.getcwd()
+        matches = scan_files_for_at(event.prefix, work_dir)
+        if matches:
+            popup = self.query_one(CompletionPopup)
+            popup.show([f"@{m}" for m in matches])
+
+    def on_completion_popup_selected(self, event: CompletionPopup.Selected) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def action_cycle_mode(self) -> None:
+        if self.agent is None:
+            return
+        current = self.agent.permission_mode
+        try:
+            idx = _MODE_CYCLE.index(current)
+        except ValueError:
+            idx = 0
+        next_mode = _MODE_CYCLE[(idx + 1) % len(_MODE_CYCLE)]
+        self.agent.set_permission_mode(next_mode)
+        self._update_mode_label()
+
+    def action_toggle_tool_blocks(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def action_cancel(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    async def _prefetch_relevant_memories(self, query: str) -> str:
+        raise NotImplementedError("Implementation pending")
+
+    def _refresh_skills_if_needed(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    async def _send_message(self, text: str, is_notification: bool = False) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    async def _process_task_notifications(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    async def _start_notification_polling(self) -> None:
+        while True:
+            await asyncio.sleep(2)
+            if not self._streaming and self.agent is not None:
+                await self._process_task_notifications()
+                await self._process_mailbox_notifications()
+
+    async def _process_mailbox_notifications(self) -> None:
+        if not hasattr(self, "team_manager") or self.team_manager is None:
+            return
+        if self._streaming or self.agent is None:
+            return
+        notes = self.team_manager.drain_lead_mailbox()
+        if not notes:
+            return
+        for note in notes:
+            self.conversation.add_system_reminder(note)
+        self._agent_task = asyncio.create_task(
+            self._send_message("", is_notification=True)
+        )
+
+    async def _show_plan_approval(self) -> None:
+        from codeplus.plan_dialog import InlinePlanWidget
+
+        chat = self.query_one("#chat-area", VerticalScroll)
+        widget = InlinePlanWidget()
+        await chat.mount(widget)
+        self.call_after_refresh(chat.scroll_end, animate=False)
+        try:
+            self.query_one("#chat-input").disabled = True
+        except Exception:
+            pass
+
+    def on_inline_plan_widget_responded(
+        self, event: "InlinePlanWidget.Responded"
+    ) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    async def _handle_askuser(self, event: AskUserEvent) -> None:
+        from codeplus.askuser_dialog import InlineAskUserWidget
+
+        chat = self.query_one("#chat-area", VerticalScroll)
+        widget = InlineAskUserWidget(event.questions)
+        self._pending_askuser_event = event
+        await chat.mount(widget)
+        self.call_after_refresh(chat.scroll_end, animate=False)
+        try:
+            self.query_one("#chat-input").disabled = True
+        except Exception:
+            pass
+
+    def on_inline_ask_user_widget_responded(
+        self, event: "InlineAskUserWidget.Responded"
+    ) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def _start_spinner(self) -> None:
+        """启动 braille spinner 动画（每帧 80ms）。"""
+        if self._spinner_timer is not None:
+            return
+        self._spinner_timer = self.set_interval(0.08, self._tick_spinner)
+
+    def _stop_spinner(self) -> None:
+        """停止 spinner 动画。"""
+        if self._spinner_timer is not None:
+            self._spinner_timer.stop()
+            self._spinner_timer = None
+
+    def _finish_streaming(self) -> None:
+        """清理所有 streaming 状态（取消或完成时调用）。"""
+        self._streaming = False
+        self._stop_spinner()
+        self._stop_teammate_polling()
+        self._agent_task = None
+        if self._teammate_tree is not None:
+            self._teammate_tree.remove()
+            self._teammate_tree = None
+        if self._spinner_label is not None:
+            self._spinner_label.remove()
+            self._spinner_label = None
+
+    def _tick_spinner(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def _start_teammate_polling(self) -> None:
+        """Start polling teammate progress every 0.5s."""
+        if self._teammate_timer is not None:
+            return
+        self._teammate_timer = self.set_interval(0.5, self._tick_teammate_tree)
+
+    def _stop_teammate_polling(self) -> None:
+        """Stop the teammate progress polling timer."""
+        if self._teammate_timer is not None:
+            self._teammate_timer.stop()
+            self._teammate_timer = None
+
+    def _tick_teammate_tree(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def _update_teammates_label(self, count: int) -> None:
+        """Update the teammates count in the status bar."""
+        try:
+            label = self.query_one("#teammates-label", Static)
+            if count > 0:
+                label.update(f"[cyan]● {count} teammate{'s' if count != 1 else ''}[/cyan]  ")
+            else:
+                label.update("")
+        except Exception:
+            pass
+
+    async def _handle_permission_request(self, request: PermissionRequest) -> None:
+        from codeplus.permission_dialog import InlinePermissionWidget
+
+        chat = self.query_one("#chat-area", VerticalScroll)
+        widget = InlinePermissionWidget(request.tool_name, request.description)
+        self._pending_perm_request = request
+        await chat.mount(widget)
+        self.call_after_refresh(chat.scroll_end, animate=False)
+        # 权限提示弹窗期间禁用输入框
+        try:
+            self.query_one("#chat-input").disabled = True
+        except Exception:
+            pass
+
+    def on_inline_permission_widget_responded(
+        self, event: "InlinePermissionWidget.Responded"
+    ) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    # -----------------------------------------------------------------
+    # 恢复 session 的消息渲染
+    # -----------------------------------------------------------------
+
+    async def _render_restored_messages(self, messages: list[Message]) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    # -----------------------------------------------------------------
+    # Session 摘要（异步后台生成）
+    # -----------------------------------------------------------------
+
+    async def _update_session_summary(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    # -----------------------------------------------------------------
+    # MCP
+    # -----------------------------------------------------------------
+
+    async def _init_mcp(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    async def _shutdown_mcp(self) -> None:
+        if self._mcp_init_task is not None:
+            self._mcp_init_task.cancel()
+            try:
+                await self._mcp_init_task
+            except (asyncio.CancelledError, Exception):
+                pass
+            self._mcp_init_task = None
+        if self.mcp_manager is not None:
+            await self.mcp_manager.shutdown()
+            self.mcp_manager = None
+
+    # -----------------------------------------------------------------
+    # 退出
+    # -----------------------------------------------------------------
+
+    async def action_handle_ctrl_c(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def _show_error(self, text: str) -> None:
+        chat = self.query_one("#chat-area", VerticalScroll)
+        error_widget = Static(f"✖ {text}", classes="message error-message")
+        chat.mount(error_widget)
+        self.call_after_refresh(chat.scroll_end, animate=False)
+
+    def _show_system_message(self, text: str) -> None:
+        chat = self.query_one("#chat-area", VerticalScroll)
+        msg = Static(f"  {text}", classes="message system-message")
+        chat.mount(msg)
+        self.call_after_refresh(chat.scroll_end, animate=False)
+
+    _MODE_DISPLAY = {
+        PermissionMode.DEFAULT: "default",
+        PermissionMode.ACCEPT_EDITS: "accept-edits",
+        PermissionMode.PLAN: "plan",
+        PermissionMode.BYPASS: "YOLO",
+    }
+
+    def _update_mode_label(self) -> None:
+        raise NotImplementedError("Implementation pending")
+
+    def _update_token_label(self, input_tokens: int, output_tokens: int) -> None:
+        pass  # token 标签已从 UI 中移除
