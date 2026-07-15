@@ -416,7 +416,29 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
 
 
 def _parse_teammate_flags(args: list[str]) -> tuple[str, str] | None:
-    raise NotImplementedError("Implementation pending")
+    """从 CLI 参数里解析队友 worker 模式。
+
+    仅当首个参数是 --teammate 时返回 (team_name, agent_name)，表示 worker 模式；
+    否则返回 None，调用方应启动正常 TUI。格式对齐 build_teammate_cli 的产出：
+
+        --teammate --team-name <t> --agent-name <n>
+    """
+    if not args or args[0] != "--teammate":
+        return None
+    team_name = ""
+    agent_name = ""
+    i = 1
+    while i < len(args):
+        if args[i] == "--team-name" and i + 1 < len(args):
+            team_name = args[i + 1]
+            i += 2
+            continue
+        if args[i] == "--agent-name" and i + 1 < len(args):
+            agent_name = args[i + 1]
+            i += 2
+            continue
+        i += 1
+    return team_name, agent_name
 
 
 async def _build_teammate_registry(
@@ -429,11 +451,186 @@ async def _build_teammate_registry(
     base_url: str = "",
     context_window: int = 0,
 ):
-    raise NotImplementedError("Implementation pending")
+    """组装队友工具集。
+
+    文件与命令工具、工具检索、Worktree 切换、Skill、MCP 扩展，再加上团队协作工具
+    （按自己的名字发消息，以及读写团队共享任务板）。任务板按团队名解析到同一份
+    tasks.json，所以队友之间看到的是同一张表。
+
+    Agent 不在其中，调用树到队友这一层为止，队友不再往下派子 Agent。
+    TeamCreate 与 TeamDelete 也不在其中，组建和解散团队是 Lead 的职责。
+    """
+    from codeplus.config import WorktreeConfig
+    from codeplus.mcp import MCPManager
+    from codeplus.tools import create_default_registry
+    from codeplus.tools.enter_worktree import EnterWorktreeTool
+    from codeplus.tools.exit_worktree import ExitWorktreeTool
+    from codeplus.tools.impl.tool_search import ToolSearchTool
+    from codeplus.tools.mcp_call import McpCallTool
+    from codeplus.tools.install_skill import InstallSkillTool
+    from codeplus.tools.load_skill import LoadSkill
+    from codeplus.tools.send_message import SendMessageTool
+    from codeplus.tools.synthetic_output import SyntheticOutputTool
+    from codeplus.tools.task_create import TaskCreateTool
+    from codeplus.tools.task_get import TaskGetTool
+    from codeplus.tools.task_list import TaskListTool
+    from codeplus.tools.task_update import TaskUpdateTool
+    from codeplus.worktree import WorktreeManager
+
+    registry = create_default_registry()
+    registry.register(ToolSearchTool(registry, protocol=protocol))
+    registry.register(McpCallTool(registry))
+    registry.register(SyntheticOutputTool())
+
+    wt_manager = WorktreeManager(
+        repo_root=work_dir,
+        symlink_directories=WorktreeConfig().symlink_directories,
+    )
+    registry.register(EnterWorktreeTool(worktree_manager=wt_manager))
+    registry.register(ExitWorktreeTool(worktree_manager=wt_manager))
+
+    # 未注入执行器，声明 fork 模式的 skill 会退回 inline 执行
+    registry.register(LoadSkill())
+    registry.register(InstallSkillTool())
+
+    registry.register(SendMessageTool(
+        team_manager=team_manager,
+        team_name=team_name,
+        from_agent_id=agent_name,
+        from_agent_name=agent_name,
+    ))
+    registry.register(TaskCreateTool(team_manager, team_name, agent_name))
+    registry.register(TaskGetTool(team_manager, team_name))
+    registry.register(TaskListTool(team_manager, team_name))
+    registry.register(TaskUpdateTool(team_manager, team_name))
+
+    if mcp_servers:
+        try:
+            from codeplus.mcp.loading_strategy import decide_and_apply
+
+            manager = MCPManager()
+            manager.load_configs(mcp_servers)
+            result = await manager.register_all_tools(registry)
+            for err in result.errors:
+                print(f"MCP warning: {err}", file=sys.stderr)
+            # 工具都在位了才算得准 schema 总量跟上下文窗口的比例
+            decide_and_apply(
+                registry, base_url=base_url, context_window=context_window
+            )
+        except Exception as e:  # MCP 连不上不应该拖垮队友进程
+            print(f"MCP setup failed: {e}", file=sys.stderr)
+
+    return registry
 
 
 async def _run_teammate(team_name: str, agent_name: str) -> None:
-    raise NotImplementedError("Implementation pending")
+    """把本进程作为已有团队的队友 worker 启动。
+
+    流程：加载 config → 建 LLM client → 建工具集（含 SendMessage）→ 定位团队邮箱
+    （lead 已在磁盘上创建）→ 建子 agent → 注册成员名字 → 跑队友主循环，
+    首个任务由 lead 在 spawn 前写进邮箱、worker 首次空闲轮询取出。
+    """
+    from codeplus.agent import Agent
+    from codeplus.client import create_client, resolve_context_window
+    from codeplus.memory.instructions import load_instructions
+    from codeplus.permissions import (
+        DangerousCommandDetector,
+        PathSandbox,
+        PermissionChecker,
+        PermissionMode,
+        RuleEngine,
+    )
+    from codeplus.teams.manager import TeamManager
+    from codeplus.teams.registry import AgentNameRegistry
+    from codeplus.teams.spawn_inprocess import LEAD_NAME, spawn_inprocess_teammate
+
+    # worker 无 TUI，日志走 stderr，供 tmux/iTerm2 窗格直接显示
+    logging.basicConfig(level=logging.INFO, stream=sys.stderr, force=True)
+
+    if not team_name or not agent_name:
+        print("--teammate requires --team-name and --agent-name", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        config = load_config()
+    except ConfigError as e:
+        print(f"Error loading config: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    if not config.providers:
+        print("No providers configured", file=sys.stderr)
+        sys.exit(1)
+
+    provider = config.providers[0]
+    client = create_client(provider)
+    await resolve_context_window(provider)
+
+    work_dir = os.getcwd()
+
+    # 团队目录由 lead 在磁盘上建好，worker 按团队名加载团队与邮箱
+    team_manager = TeamManager()
+    team = team_manager.get_team(team_name)
+    if team is None:
+        print(f"Team '{team_name}' not found", file=sys.stderr)
+        sys.exit(1)
+    mailbox = team_manager.get_mailbox(team_name)
+    if mailbox is None:
+        print(f"Mailbox for team '{team_name}' not found", file=sys.stderr)
+        sys.exit(1)
+
+    # 名字解析表：登记自己和 lead，便于 SendMessage 按名字投递
+    name_registry = AgentNameRegistry.instance()
+    name_registry.register(agent_name, agent_name)
+    name_registry.register(LEAD_NAME, team.lead_agent_id)
+
+    registry = await _build_teammate_registry(
+        work_dir=work_dir,
+        protocol=provider.protocol,
+        team_manager=team_manager,
+        team_name=team_name,
+        agent_name=agent_name,
+        mcp_servers=config.mcp_servers,
+        base_url=provider.base_url,
+        context_window=provider.get_context_window(),
+    )
+
+    checker = PermissionChecker(
+        detector=DangerousCommandDetector(),
+        sandbox=PathSandbox(work_dir),
+        rule_engine=RuleEngine(
+            user_rules_path=Path.home() / ".codeplus" / "permissions.yaml",
+            project_rules_path=Path(work_dir) / ".codeplus" / "permissions.yaml",
+            local_rules_path=Path(work_dir) / ".codeplus" / "permissions.local.yaml",
+        ),
+        mode=PermissionMode.BYPASS,
+    )
+
+    agent = Agent(
+        client=client,
+        registry=registry,
+        protocol=provider.protocol,
+        work_dir=work_dir,
+        permission_checker=checker,
+        context_window=provider.get_context_window(),
+        instructions_content=load_instructions(work_dir),
+    )
+
+    # 不传初始 prompt：lead 已把首个任务写进邮箱，主循环首次轮询即可取到，
+    # 避免重复注入一条 user 消息。
+    print(f"[teammate {team_name}/{agent_name}] booted, awaiting tasks", file=sys.stderr)
+    handle = spawn_inprocess_teammate(
+        agent=agent,
+        prompt="",
+        name=agent_name,
+        team_name=team_name,
+        mailbox=mailbox,
+        # 外部 worker 把 idle 通知写到 lead 实际读取的键，保证回传对得上
+        lead_key=team.lead_agent_id,
+    )
+    try:
+        await handle.task
+    except (KeyboardInterrupt, asyncio.CancelledError):
+        handle.cancel()
 
 
 if __name__ == "__main__":
