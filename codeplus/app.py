@@ -734,7 +734,296 @@ class CodePlusApp(App):
             self.query_one("#input-area").display = False
 
     def _select_provider(self, provider: ProviderConfig) -> None:
-        raise NotImplementedError("Implementation pending")
+        self._selected_provider = provider
+        try:
+            self.client = create_client(provider)
+        except AuthenticationError as e:
+            self._show_error(str(e))
+            return
+
+        work_dir = os.getcwd()
+        home = Path.home()
+
+        # 根据配置决定是否启用 OS 级沙箱自动放行
+        sandbox_auto_allow = (
+            self._sandbox_cfg.enabled and self._sandbox_cfg.auto_allow
+        )
+        checker = PermissionChecker(
+            detector=DangerousCommandDetector(),
+            sandbox=PathSandbox(work_dir),
+            rule_engine=RuleEngine(
+                user_rules_path=home / ".codeplus" / "permissions.yaml",
+                project_rules_path=Path(work_dir) / ".codeplus" / "permissions.yaml",
+                local_rules_path=Path(work_dir) / ".codeplus" / "permissions.local.yaml",
+            ),
+            mode=self._initial_permission_mode,
+            sandbox_enabled=sandbox_auto_allow,
+        )
+
+        # 如果配置启用了沙箱，为 Bash 工具挂载 OS 沙箱
+        if self._sandbox_cfg.enabled:
+            from codeplus.sandbox import SandboxConfig, create_sandbox
+            os_sandbox = create_sandbox()
+            if os_sandbox and os_sandbox.available():
+                sandbox_config = SandboxConfig(
+                    allow_write=[work_dir, "/tmp"],
+                    deny_write=[
+                        f"{work_dir}/.codeplus/config.yaml",
+                        f"{work_dir}/.codeplus/permissions.local.yaml",
+                    ],
+                    network_enabled=self._sandbox_cfg.network_enabled,
+                )
+                bash_tool = self.registry.get("Bash")
+                if bash_tool:
+                    bash_tool.sandbox = os_sandbox
+                    bash_tool.sandbox_config = sandbox_config
+
+        self._instructions_content = load_instructions(work_dir)
+        self.memory_manager = MemoryManager(work_dir)
+        self.session_manager = SessionManager(work_dir)
+        self.session_manager.cleanup()
+        self.session = self.session_manager.create()
+
+        from codeplus.filehistory import FileHistory
+        self.file_history = FileHistory(work_dir, self.session.session_id)
+        for tool in self.registry.list_tools():
+            if hasattr(tool, "file_history"):
+                tool.file_history = self.file_history
+
+        load_skill_tool = LoadSkill()
+        self.registry.register(load_skill_tool)
+        self._load_skill_tool = load_skill_tool
+
+        install_skill_tool = InstallSkillTool()
+        self.registry.register(install_skill_tool)
+        self._install_skill_tool = install_skill_tool
+
+        self.registry.register(
+            ToolSearchTool(self.registry, protocol=provider.protocol)
+        )
+        # mcp_call 必须在 MCP 连接之前就注册好。等连上再按加载模式决定注不注册，
+        # 本身就是一次中途改动 tools[]，缓存前缀照样断。
+        self.registry.register(McpCallTool(self.registry))
+        self.registry.register(AskUserTool())
+
+        from codeplus.tools.exit_plan_mode import ExitPlanModeTool
+        self._exit_plan_tool = ExitPlanModeTool()
+        self.registry.register(self._exit_plan_tool)
+
+        self.agent = Agent(
+            client=self.client,
+            registry=self.registry,
+            protocol=provider.protocol,
+            work_dir=work_dir,
+            permission_checker=checker,
+            context_window=provider.get_context_window(),
+            instructions_content=self._instructions_content,
+            memory_manager=self.memory_manager,
+            hook_engine=self.hook_engine,
+        )
+        self.agent.file_history = self.file_history
+        self.agent.session_id = self.session.session_id
+
+        self._exit_plan_tool._is_plan_mode = lambda: self.agent.plan_mode
+        self._exit_plan_tool._plan_exists = lambda: self.agent._get_plan_path().exists()
+
+        # Layer 2: 在后台异步拉取模型的 context window，不阻塞启动流程。
+        # agent 已经有一个同步解析的窗口值（来自配置 / 映射表 / 默认值）；
+        # 如果异步拉取成功，就原地升级为更准确的值。
+        self.run_worker(
+            self._resolve_context_window(provider), exclusive=False
+        )
+
+        self.skill_loader = SkillLoader(work_dir)
+        self.skill_loader.load_all()
+
+        load_skill_tool.set_loader(self.skill_loader)
+        load_skill_tool.set_agent(self.agent)
+
+        install_skill_tool.set_loader(self.skill_loader)
+
+        self.skill_executor = SkillExecutor(
+            agent=self.agent,
+            client=self.client,
+            protocol=provider.protocol,
+        )
+        load_skill_tool.set_executor(self.skill_executor)
+
+        catalog = self.skill_loader.get_catalog()
+        if catalog:
+            lines = [
+                "You can use the following Skills:",
+                "",
+            ]
+            for name, desc in catalog:
+                lines.append(f"- {name}: {desc}")
+            lines.append("")
+            lines.append(
+                "If the user's request matches a Skill, call LoadSkill to activate it."
+            )
+            self.agent.set_skill_catalog("\n".join(lines))
+
+        register_skill_commands(
+            self.command_registry, self.skill_loader, self.skill_executor
+        )
+
+        # 安装新 skill 后重新注册斜杠命令，让 /<new-skill> 立即可用
+        def _on_skill_installed(name: str) -> None:
+            register_skill_commands(
+                self.command_registry, self.skill_loader, self.skill_executor
+            )
+
+        install_skill_tool.set_on_installed(_on_skill_installed)
+
+        # --- Worktree 系统初始化 ---
+        from codeplus.config import WorktreeConfig
+        wt_cfg = self._worktree_config or WorktreeConfig()
+        self.worktree_manager = WorktreeManager(
+            repo_root=work_dir,
+            symlink_directories=wt_cfg.symlink_directories,
+        )
+        restored = self.worktree_manager.restore_session()
+        if restored:
+            self.agent.work_dir = restored.worktree_path
+
+        wt_command = create_worktree_command(self.worktree_manager)
+        self.command_registry.register_sync(wt_command)
+
+        from codeplus.tools.enter_worktree import EnterWorktreeTool
+        from codeplus.tools.exit_worktree import ExitWorktreeTool
+        self.registry.register(EnterWorktreeTool(worktree_manager=self.worktree_manager))
+        self.registry.register(ExitWorktreeTool(worktree_manager=self.worktree_manager))
+
+        self._stale_cleanup_task = asyncio.create_task(
+            start_stale_cleanup_task(
+                self.worktree_manager,
+                wt_cfg.stale_cleanup_interval,
+                wt_cfg.stale_cutoff_hours,
+            )
+        )
+
+        # --- 子 agent 系统初始化 ---
+        self.agent_loader = AgentLoader(
+            work_dir, enable_verification=self._enable_verification_agent
+        )
+        self.agent_loader.load_all()
+
+        # --- Agent 团队系统初始化 ---
+        from codeplus.teams.manager import TeamManager
+        from codeplus.tools.team_create import TeamCreateTool
+        from codeplus.tools.team_delete import TeamDeleteTool
+
+        self.team_manager = TeamManager(worktree_manager=self.worktree_manager, trace_manager=self.trace_manager)
+
+        agent_tool = AgentTool(
+            agent_loader=self.agent_loader,
+            task_manager=self.task_manager,
+            trace_manager=self.trace_manager,
+            parent_agent=self.agent,
+            enable_fork=self._enable_fork,
+            provider_config=provider,
+            worktree_manager=self.worktree_manager,
+            team_manager=self.team_manager,
+        )
+        self.registry.register(agent_tool)
+
+        team_create_tool = TeamCreateTool(
+            team_manager=self.team_manager,
+            parent_agent=self.agent,
+            teammate_mode=self._teammate_mode,
+            is_interactive=True,
+            enable_coordinator_mode=self._enable_coordinator_mode,
+        )
+        self.registry.register(team_create_tool)
+
+        team_delete_tool = TeamDeleteTool(
+            team_manager=self.team_manager,
+            parent_agent=self.agent,
+        )
+        self.registry.register(team_delete_tool)
+
+        agent_catalog = self.agent_loader.list_agents()
+        if agent_catalog:
+            lines = [
+                "## Available Sub-Agent Types",
+                "",
+                "Use the Agent tool with subagent_type parameter to delegate tasks:",
+                "",
+            ]
+            for agent_type, when_to_use in agent_catalog:
+                lines.append(f"- **{agent_type}**: {when_to_use}")
+            if self._enable_fork:
+                lines.append("")
+                lines.append(
+                    "Leave subagent_type empty to fork the current conversation "
+                    "(inherits full dialog history)."
+                )
+            lines.append("")
+            lines.append(
+                "IMPORTANT: Sub-agents run in the background. "
+                "After calling the Agent tool, you will get a task ID immediately. "
+                "Do NOT wait, sleep, or poll for the result. "
+                "Simply report the task ID to the user and end your turn. "
+                "The system will automatically notify when the task completes."
+            )
+            self.agent.set_agent_catalog("\n".join(lines), catalog_list=agent_catalog)
+
+        tasks_cmd = create_tasks_command(self.task_manager)
+        self.command_registry.register_sync(tasks_cmd)
+
+        from codeplus.commands.handlers.trace import create_trace_command
+        trace_cmd = create_trace_command(self.trace_manager, self.agent.agent_id)
+        self.command_registry.register_sync(trace_cmd)
+
+        # --- 协调者模式初始化（工具已注册，激活推迟到 TeamCreate 时） ---
+        from codeplus.tools.send_message import SendMessageTool
+        from codeplus.tools.synthetic_output import SyntheticOutputTool
+        from codeplus.tools.task_stop import TaskStopTool
+
+        self.registry.register(SyntheticOutputTool())
+        self.registry.register(TaskStopTool(team_manager=self.team_manager))
+        # Lead 给队员派活、续写都走这个工具，团队要等 TeamCreate 才存在，
+        # 所以这里不绑定团队，发信时再取当前团队
+        self.registry.register(SendMessageTool(team_manager=self.team_manager))
+
+        # coordinator 模式由配置决定，开了就从第一轮起收窄工具集
+        if self._enable_coordinator_mode:
+            from codeplus.agents.tool_filter import apply_coordinator_filter
+
+            self.agent.enable_coordinator_mode = True
+            self.agent.registry = apply_coordinator_filter(self.agent.registry)
+        self.agent._team_manager = self.team_manager
+
+        if self.hook_engine:
+            asyncio.ensure_future(
+                self.hook_engine.run_hooks(
+                    "startup", HookContext(event_name="startup")
+                )
+            )
+
+        if self._mcp_server_configs:
+            self._mcp_init_task = asyncio.create_task(self._init_mcp())
+
+        self.query_one("#model-label", Static).update(provider.model)
+        work_dir = os.getcwd()
+        self.query_one("#title-bar", Static).update(
+            self._make_banner(provider.model, work_dir)
+        )
+        self._update_mode_label()
+
+        select = self.query("#provider-select")
+        if select:
+            select.first().display = False
+        self.query_one("#chat-area").display = True
+        self.query_one("#input-area").display = True
+        chat_input = self.query_one("#chat-input", ChatInput)
+        chat_input.placeholder = "Send a message..."
+        chat_input.load_history(work_dir)
+        chat_input.focus()
+
+        self._notification_check_task = asyncio.create_task(
+            self._start_notification_polling()
+        )
 
     async def _resolve_context_window(self, provider: ProviderConfig) -> None:
         """Layer 2 后台 worker：异步拉取模型的 context window，
