@@ -1078,7 +1078,24 @@ class CodePlusApp(App):
 
 
     def _build_command_context(self, args: str) -> CommandContext:
-        raise NotImplementedError("Implementation pending")
+        return CommandContext(
+            args=args,
+            agent=self.agent,
+            conversation=self.conversation,
+            session=self.session,
+            session_manager=self.session_manager,
+            memory_manager=self.memory_manager,
+            ui=self,
+            config={
+                "registry": self.command_registry,
+                "set_session": self._set_session,
+                "set_conversation": self._set_conversation,
+                "clear_chat": self._clear_chat,
+                "render_restored": self._render_restored_messages,
+                "skill_loader": self.skill_loader,
+                "skill_executor": self.skill_executor,
+            },
+        )
 
     def _set_session(self, session: Session) -> None:
         self.session = session
@@ -1086,7 +1103,19 @@ class CodePlusApp(App):
             self.agent.session_id = session.session_id
 
     def _persist_compact_boundary(self, notification: CompactNotification) -> None:
-        raise NotImplementedError("Implementation pending")
+        """Layer-2 compact 后写入 compact_boundary 记录。
+
+        将摘要 + 原样保留的尾部内联到一条记录中，resume 时只需这一条
+        就能重建压缩后的状态。之前已写入磁盘的原始前缀不会被重放。
+        没有活跃 session 或 compact 未产出 boundary 时直接跳过。
+        """
+        if not self.session or notification.boundary is None:
+            return
+        record = make_compact_boundary(
+            notification.boundary.summary,
+            notification.boundary.keep,
+        )
+        self.session.append_record(record)
 
     def _set_conversation(self, conv: ConversationManager) -> None:
         self.conversation = conv
@@ -1096,7 +1125,40 @@ class CodePlusApp(App):
         chat.remove_children()
 
     async def _dispatch_command(self, text: str) -> None:
-        raise NotImplementedError("Implementation pending")
+        name, args, is_command = parse_command(text)
+
+        if not is_command:
+            if self._streaming or self.agent is None:
+                return
+            self._agent_task = asyncio.create_task(self._send_message(text))
+            return
+
+        if name == "":
+            commands = self.command_registry.list_commands()
+            lines = ["可用命令："]
+            for cmd in commands:
+                aliases_str = ", ".join(f"/{a}" for a in cmd.aliases)
+                name_part = f"/{cmd.name}"
+                if aliases_str:
+                    name_part += f", {aliases_str}"
+                lines.append(f"  {name_part:<24} {cmd.description}")
+            self._show_system_message("\n".join(lines))
+            return
+
+        cmd = self.command_registry.find(name)
+        if cmd is None:
+            self._show_system_message(f"未知命令：/{name}，输入 /help 查看可用命令")
+            return
+
+        if not args and cmd.arg_prompt:
+            self._show_system_message(cmd.arg_prompt)
+            return
+
+        ctx = self._build_command_context(args)
+        try:
+            await cmd.handler(ctx)
+        except Exception as e:
+            self._show_error(f"命令执行失败: {e}")
 
     # -----------------------------------------------------------------
     # 输入处理
@@ -1146,7 +1208,19 @@ class CodePlusApp(App):
             popup.show([f"@{m}" for m in matches])
 
     def on_completion_popup_selected(self, event: CompletionPopup.Selected) -> None:
-        raise NotImplementedError("Implementation pending")
+        input_widget = self.query_one("#chat-input", ChatInput)
+        selected = event.value
+        text = input_widget.text
+        if selected.startswith("@"):
+            at_idx = text.rfind("@")
+            if at_idx >= 0:
+                input_widget.clear()
+                input_widget.insert(text[:at_idx] + selected + " ")
+                input_widget.focus()
+                return
+        input_widget.clear()
+        input_widget.insert(selected + " ")
+        input_widget.focus()
 
     def action_cycle_mode(self) -> None:
         if self.agent is None:
@@ -1161,16 +1235,124 @@ class CodePlusApp(App):
         self._update_mode_label()
 
     def action_toggle_tool_blocks(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        for block in self.query(ToolCallBlock):
+            if block._loading:
+                continue
+            block._collapsed = not block._collapsed
+            if block._collapsed:
+                block._render_collapsed()
+            else:
+                block._render_expanded()
+
+        for summary in self.query(ToolGroupSummary):
+            was_expanded = summary._expanded
+            summary.toggle()
+            parent = summary.parent
+            if parent:
+                for child in parent.children:
+                    if isinstance(child, ToolCallBlock) and child.tool_name in COLLAPSIBLE_TOOLS:
+                        child.display = summary._expanded
+
+        for block in self.query(SubAgentBlock):
+            if block._done:
+                block._collapsed = not block._collapsed
+                block._render_done()
 
     def action_cancel(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        popup = self.query_one(CompletionPopup)
+        if popup.is_visible:
+            popup.hide()
+            self.query_one("#chat-input", ChatInput).focus()
+            return
+        if self._agent_task and not self._agent_task.done():
+            if self._subagent_task and not self._subagent_task.done():
+                task_id = self.task_manager.adopt_running(
+                    self._subagent_task, "background task"
+                ) if hasattr(self.task_manager, 'adopt_running') else None
+                if task_id:
+                    self._show_system_message(
+                        f"Task moved to background (id: {task_id})"
+                    )
+                    return
+            self._agent_task.cancel()
 
     async def _prefetch_relevant_memories(self, query: str) -> str:
-        raise NotImplementedError("Implementation pending")
+        """Run the recall selector as a side-query with an 8s timeout.
+
+        Creates a fresh LLM client so the selector's system prompt is
+        independent of the main conversation's system prompt. Returns the
+        rendered system-reminder body, or "" on any failure / timeout.
+        """
+        if self.memory_manager is None or self._selected_provider is None:
+            return ""
+
+        provider = self._selected_provider
+        user_dir = self.memory_manager.user_mem_dir
+        project_dir = self.memory_manager.project_mem_dir
+
+        async def selector(system_prompt: str, user_message: str) -> str:
+            from codeplus.tools.base import StreamEnd, TextDelta
+
+            side_client = create_client(provider)
+            mini_conv = ConversationManager()
+            mini_conv.history = [Message(role="user", content=user_message)]
+            collected = ""
+            async for event in side_client.stream(mini_conv, system=system_prompt):
+                if isinstance(event, TextDelta):
+                    collected += event.text
+                elif isinstance(event, StreamEnd):
+                    pass
+            return collected
+
+        # 最近用过的工具和已注入过的记忆都挂在 agent 上，跨轮累积
+        agent = self.agent
+        recent_tools = list(agent.recent_tool_names) if agent else None
+        already_surfaced = set(agent.surfaced_memory_paths) if agent else None
+
+        try:
+            results = await asyncio.wait_for(
+                find_relevant_memories(
+                    query=query,
+                    user_mem_dir=user_dir,
+                    project_mem_dir=project_dir,
+                    recent_tools=recent_tools,
+                    already_surfaced=already_surfaced,
+                    selector=selector,
+                ),
+                timeout=8.0,
+            )
+            # 记下这轮注入了哪些，下一轮召回时先排除掉
+            if agent is not None:
+                for mem in results:
+                    agent.surfaced_memory_paths.add(mem.path)
+            return render_reminder(results)
+        except (asyncio.TimeoutError, Exception):
+            return ""
 
     def _refresh_skills_if_needed(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        """每轮对话前检查 skill 目录 modtime，有变化则自动 reload。"""
+        if self.skill_loader is None or self.agent is None:
+            return
+        if not self.skill_loader.needs_reload():
+            return
+        self.skill_loader.reload()
+        if self.command_registry is not None:
+            from codeplus.commands.handlers.skill_register import register_skill_commands
+            register_skill_commands(
+                self.command_registry, self.skill_loader, self.skill_executor
+            )
+        catalog = self.skill_loader.get_catalog()
+        if catalog:
+            lines = ["You can use the following Skills:", ""]
+            for name, desc in catalog:
+                lines.append(f"- {name}: {desc}")
+            lines.append("")
+            lines.append(
+                "If the user's request matches a Skill, call LoadSkill to activate it."
+            )
+            self.agent.set_skill_catalog("\n".join(lines))
+        else:
+            self.agent.set_skill_catalog("")
 
     async def _send_message(self, text: str, is_notification: bool = False) -> None:
         raise NotImplementedError("Implementation pending")
