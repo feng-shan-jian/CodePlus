@@ -112,7 +112,25 @@ _SKIP_DIRS = {".git", "node_modules", ".venv", "__pycache__", ".codeplus", "buil
 
 
 def scan_files_for_at(prefix: str, work_dir: str, limit: int = 10) -> list[str]:
-    raise NotImplementedError("Implementation pending")
+    matches: list[str] = []
+    base = os.path.join(work_dir, os.path.dirname(prefix)) if "/" in prefix else work_dir
+    name_prefix = os.path.basename(prefix).lower()
+    if not os.path.isdir(base):
+        return matches
+    try:
+        for entry in sorted(os.listdir(base)):
+            if entry in _SKIP_DIRS or entry.startswith("."):
+                continue
+            if entry.lower().startswith(name_prefix):
+                rel = os.path.join(os.path.dirname(prefix), entry) if "/" in prefix else entry
+                if os.path.isdir(os.path.join(base, entry)):
+                    rel += "/"
+                matches.append(rel)
+                if len(matches) >= limit:
+                    break
+    except OSError:
+        pass
+    return matches
 
 
 def expand_at_refs(text: str, work_dir: str) -> str:
@@ -184,13 +202,44 @@ class ChatInput(TextArea):
             return None
 
     def action_submit(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        popup = self._popup()
+        if popup is not None and popup.is_visible:
+            selected = popup.get_selected()
+            popup.hide()
+            if selected:
+                self._history.append(selected)
+                self._persist_entry(selected)
+                self._history_index = -1
+                self._history_draft = ""
+                self.post_message(self.Submitted(selected))
+                self.clear()
+                return
+        text = self.text.strip()
+        if text:
+            self._history.append(text)
+            self._persist_entry(text)
+            self._history_index = -1
+            self._history_draft = ""
+            self.post_message(self.Submitted(text))
+            self.clear()
 
     def action_newline(self) -> None:
         self.insert("\n")
 
     def action_complete(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        popup = self._popup()
+        if popup is not None and popup.is_visible:
+            selected = popup.get_selected()
+            if selected:
+                popup.hide()
+                self.clear()
+                self.insert(selected + " ")
+            return
+        text = self.text.strip()
+        if text.startswith("/"):
+            self.post_message(self.TabComplete(text))
+        else:
+            self.insert("\t")
 
     def action_dismiss_popup(self) -> None:
         popup = self._popup()
@@ -198,10 +247,37 @@ class ChatInput(TextArea):
             popup.hide()
 
     def action_nav_up(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        popup = self._popup()
+        if popup is not None and popup.is_visible:
+            popup.move_up()
+            return
+        if not self._history:
+            return
+        if self._history_index == -1:
+            self._history_draft = self.text
+            self._history_index = len(self._history) - 1
+        elif self._history_index > 0:
+            self._history_index -= 1
+        else:
+            return
+        self.clear()
+        self.insert(self._history[self._history_index])
 
     def action_nav_down(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        popup = self._popup()
+        if popup is not None and popup.is_visible:
+            popup.move_down()
+            return
+        if self._history_index == -1:
+            return
+        if self._history_index < len(self._history) - 1:
+            self._history_index += 1
+            self.clear()
+            self.insert(self._history[self._history_index])
+        else:
+            self._history_index = -1
+            self.clear()
+            self.insert(self._history_draft)
 
     class AtFileRequest(TMessage):
         def __init__(self, prefix: str) -> None:
@@ -214,7 +290,24 @@ class ChatInput(TextArea):
             self.prefix = prefix
 
     def on_text_area_changed(self, event: TextArea.Changed) -> None:
-        raise NotImplementedError("Implementation pending")
+        text = self.text
+        if text.startswith("/") and self._history_index < 0:
+            prefix = text[1:]
+            if " " not in prefix and "\n" not in prefix:
+                self.post_message(self.SlashMenuUpdate(prefix))
+            else:
+                self.post_message(self.SlashMenuUpdate(None))
+        else:
+            self.post_message(self.SlashMenuUpdate(None))
+
+        at_idx = text.rfind("@")
+        if at_idx < 0:
+            return
+        after = text[at_idx + 1:]
+        if " " in after or "\n" in after:
+            return
+        if after:
+            self.post_message(self.AtFileRequest(after))
 
 
 COLLAPSIBLE_TOOLS = {"ReadFile", "Glob", "Grep", "ToolSearch"}
@@ -225,11 +318,67 @@ def _is_subagent_tool(tool_name: str) -> bool:
 
 
 def _tool_title(tool_name: str, arguments: dict[str, Any]) -> str:
-    raise NotImplementedError("Implementation pending")
+    if tool_name == "ReadFile":
+        path = os.path.basename(arguments.get("file_path", ""))
+        return f"Read {path}" if path else "Read"
+    if tool_name == "WriteFile":
+        path = os.path.basename(arguments.get("file_path", ""))
+        content = arguments.get("content", "")
+        lines = content.count("\n") + 1 if content else 0
+        return f"Write {path} ({lines} lines)" if path else "Write"
+    if tool_name == "EditFile":
+        path = os.path.basename(arguments.get("file_path", ""))
+        return f"Edit {path}" if path else "Edit"
+    if tool_name == "Bash":
+        cmd = arguments.get("command", "")
+        short = cmd[:50] + "…" if len(cmd) > 50 else cmd
+        return f"Bash: {short}" if short else "Bash"
+    if tool_name == "Glob":
+        return f"Glob: {arguments.get('pattern', '')}"
+    if tool_name == "Grep":
+        return f"Grep: {arguments.get('pattern', '')}"
+    return tool_name
 
 
 def _format_detail(tool_name: str, arguments: dict[str, Any], output: str) -> str:
-    raise NotImplementedError("Implementation pending")
+    parts: list[str] = []
+
+    if tool_name == "Bash":
+        parts.append(f"  IN   {arguments.get('command', '')}")
+        parts.append("")
+        for line in output.splitlines():
+            parts.append(f"  OUT  {line}")
+    elif tool_name == "EditFile":
+        # EditFile 的 output 是 build_diff() 生成的带行号 diff 文本：
+        # "+ " 开头绿色、"- " 开头红色，其余（上下文行/摘要行）走 dim。
+        # 转义 Rich markup 特殊字符，避免代码里的方括号被当成标签解析。
+        for line in output.splitlines()[:MAX_TRUNCATED_LINES]:
+            escaped = escape(line)
+            if line.startswith("+ "):
+                parts.append(f"  [green]{escaped}[/]")
+            elif line.startswith("- "):
+                parts.append(f"  [red]{escaped}[/]")
+            else:
+                parts.append(f"  [dim]{escaped}[/]")
+        total = output.count("\n") + 1
+        if total > MAX_TRUNCATED_LINES:
+            parts.append(f"  [dim]… ({total - MAX_TRUNCATED_LINES} more lines)[/]")
+    elif tool_name in ("ReadFile", "WriteFile"):
+        parts.append(f"  {arguments.get('file_path', '')}")
+        parts.append("")
+        for line in output.splitlines()[:MAX_TRUNCATED_LINES]:
+            parts.append(f"  {line}")
+        total = output.count("\n") + 1
+        if total > MAX_TRUNCATED_LINES:
+            parts.append(f"  … ({total - MAX_TRUNCATED_LINES} more lines)")
+    else:
+        for line in output.splitlines()[:MAX_TRUNCATED_LINES]:
+            parts.append(f"  {line}")
+        total = output.count("\n") + 1
+        if total > MAX_TRUNCATED_LINES:
+            parts.append(f"  … ({total - MAX_TRUNCATED_LINES} more lines)")
+
+    return "\n".join(parts)
 
 
 class ToolCallBlock(Static, can_focus=True):
@@ -251,7 +400,21 @@ class ToolCallBlock(Static, can_focus=True):
         self.add_class("tool-block-loading")
 
     def set_result(self, output: str, is_error: bool, elapsed: float) -> None:
-        raise NotImplementedError("Implementation pending")
+        self._full_output = output
+        self._is_error = is_error
+        self._elapsed = elapsed
+        self._loading = False
+        self.remove_class("tool-block-loading")
+        if is_error:
+            self.add_class("tool-block-error")
+        # EditFile 的 diff 是最高频需要的信息，默认直接展开，不用等用户点
+        # 或按 ctrl+o；其余工具仍然默认折叠，避免刷屏。
+        if self.tool_name == "EditFile" and not is_error:
+            self._collapsed = False
+            self._render_expanded()
+        else:
+            self._collapsed = True
+            self._render_collapsed()
 
     def _render_collapsed(self) -> None:
         if self._is_error:
@@ -392,7 +555,19 @@ class SubAgentBlock(Static, can_focus=True):
             self._tool_count = int(m.group(1))
 
     def _render_done(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        desc = f"({self._description})" if self._description else ""
+        tool_info = f"{self._tool_count} tool uses · " if self._tool_count else ""
+        if self._collapsed:
+            self.update(
+                f"● {self._agent_type}{desc}\n"
+                f"    ⎿  Done ({tool_info}{self._elapsed:.1f}s)  (ctrl+o to expand)"
+            )
+        else:
+            self.update(
+                f"● {self._agent_type}{desc}\n"
+                f"    ⎿  Done ({tool_info}{self._elapsed:.1f}s)\n"
+                f"  {self._result_preview}"
+            )
 
     def on_click(self) -> None:
         if not self._done:
@@ -495,10 +670,49 @@ class CodePlusApp(App):
 
     @staticmethod
     def _make_banner(model: str = "", work_dir: str = "") -> RichText:
-        raise NotImplementedError("Implementation pending")
+        """生成包含 CodePlus 字标和当前运行信息的启动横幅。
+
+        Args:
+            model (str): 当前选中的模型名称；为空时不展示模型信息。
+            work_dir (str): 当前项目工作目录；为空时不展示目录信息。
+
+        Returns:
+            RichText: 可直接交给 Textual ``Static`` 渲染的富文本横幅。
+        """
+        t = RichText()
+        for logo_line in CODEPLUS_ASCII_LOGO:
+            t.append(f"{logo_line}\n", style="bold color(99)")
+
+        # 将运行信息集中到字标下方，避免模型名或工作目录破坏 Logo 的固定宽度。
+        metadata_parts = ["CodePlus v0.1.0"]
+        if model:
+            metadata_parts.append(model)
+        if work_dir:
+            metadata_parts.append(work_dir)
+        t.append("  " + "  ·  ".join(metadata_parts), style="color(242)")
+        return t
 
     def compose(self) -> ComposeResult:
-        raise NotImplementedError("Implementation pending")
+        yield Static(self._make_banner(), id="title-bar")
+
+        if len(self.providers) > 1:
+            with Vertical(id="provider-select"):
+                yield Static("Select a Provider", id="select-label")
+                yield OptionList(
+                    *[
+                        Option(f"{p.name}  [{p.model}]", id=p.name)
+                        for p in self.providers
+                    ],
+                    id="provider-list",
+                )
+        yield VerticalScroll(id="chat-area")
+        with Vertical(id="input-area"):
+            yield ChatInput(id="chat-input")
+            with Horizontal(id="status-bar"):
+                yield Static("  default", id="mode-label")
+                yield Static("", id="teammates-label")
+                yield Static("", id="model-label")
+            yield CompletionPopup()
 
     def _handle_exception(self, error: Exception) -> None:
         """接管 Textual 的未处理异常入口，先把现场落盘再交回框架。
