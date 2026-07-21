@@ -1926,7 +1926,57 @@ class CodePlusApp(App):
     # -----------------------------------------------------------------
 
     async def _init_mcp(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        self._mcp_connecting = True
+        self._update_mode_label()
+        manager = MCPManager()
+        manager.load_configs(self._mcp_server_configs)
+        tools_before = len(self.registry.list_tools())
+        connect_result: ConnectResult = await manager.register_all_tools(self.registry)
+        self.mcp_manager = manager
+        self._mcp_connecting = False
+        self._update_mode_label()
+        for err in connect_result.errors:
+            self._show_system_message(f"MCP warning: {err}")
+        tools_after = len(self.registry.list_tools())
+        mcp_tools = tools_after - tools_before
+        # 工具都在位了才算得准 schema 总量跟上下文窗口的比例
+        if self._selected_provider is not None:
+            from codeplus.mcp.loading_strategy import decide_and_apply
+
+            decide_and_apply(
+                self.registry,
+                base_url=self._selected_provider.base_url,
+                context_window=self._selected_provider.get_context_window(),
+            )
+        server_count = len(connect_result.servers)
+        if server_count > 0:
+            self._mcp_server_info = (
+                f"Connected to {server_count} MCP server(s), {mcp_tools} tools registered"
+            )
+        if server_count > 0 and mcp_tools > 0:
+            # 构建 MCP 指令，从 InitializeResult 提取 instructions
+            parts = []
+            for srv_info in connect_result.servers:
+                section = f"## {srv_info.name}\n"
+                # 优先使用服务器返回的 instructions
+                if srv_info.instructions:
+                    section += srv_info.instructions
+                else:
+                    # 回退：列出该服务器注册的工具名
+                    prefix = mcp_tool_name_prefix(srv_info.name)
+                    tool_names = [
+                        t.name for t in self.registry.list_tools()
+                        if t.name.startswith(prefix)
+                    ]
+                    if tool_names:
+                        section += "Available tools: " + ", ".join(tool_names)
+                parts.append(section)
+            self._mcp_instructions = (
+                "# MCP Server Instructions\n\n"
+                "The following MCP servers have provided instructions "
+                "for how to use their tools and resources:\n\n"
+                + "\n\n".join(parts)
+            )
 
     async def _shutdown_mcp(self) -> None:
         if self._mcp_init_task is not None:
@@ -1945,7 +1995,66 @@ class CodePlusApp(App):
     # -----------------------------------------------------------------
 
     async def action_handle_ctrl_c(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        if self._streaming:
+            if self._agent_task and not self._agent_task.done():
+                self._agent_task.cancel()
+            self._show_system_message("(response interrupted)")
+            self._finish_streaming()
+            try:
+                inp = self.query_one("#chat-input", ChatInput)
+                inp.disabled = False
+                inp.focus()
+            except Exception:
+                pass
+            return
+
+        if getattr(self, "_exit_requested", False):
+            self.exit()
+            return
+        self._exit_requested = True
+
+        async def _cleanup() -> None:
+            tasks: list[asyncio.Task] = []
+
+            if self.agent and self.agent.memory_manager:
+                tasks.append(asyncio.create_task(
+                    self.agent._extract_memories(self.conversation)
+                ))
+            if self.hook_engine:
+                tasks.append(asyncio.create_task(
+                    self.hook_engine.run_hooks(
+                        "shutdown", HookContext(event_name="shutdown")
+                    )
+                ))
+            tasks.append(asyncio.create_task(self._shutdown_mcp()))
+
+            if tasks:
+                await asyncio.wait(tasks, timeout=3.0)
+                for t in tasks:
+                    if not t.done():
+                        t.cancel()
+
+            if self._stale_cleanup_task and not self._stale_cleanup_task.done():
+                self._stale_cleanup_task.cancel()
+
+            if hasattr(self, 'team_manager'):
+                for name in list(self.team_manager._teams):
+                    try:
+                        team = self.team_manager._teams[name]
+                        for m in team.members:
+                            team.set_member_active(m.name, False)
+                        self.team_manager.delete_team(name)
+                    except Exception:
+                        pass
+
+            if self.session:
+                self.session.close()
+
+        try:
+            await _cleanup()
+        except Exception:
+            pass
+        self.exit()
 
     def _show_error(self, text: str) -> None:
         chat = self.query_one("#chat-area", VerticalScroll)
@@ -1967,7 +2076,24 @@ class CodePlusApp(App):
     }
 
     def _update_mode_label(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        if self.agent:
+            perm = self.agent.permission_mode
+            display = self._MODE_DISPLAY.get(perm, perm.value)
+            color = _MODE_COLORS.get(perm, "dim")
+            label = self.query_one("#mode-label", Static)
+            if perm == PermissionMode.DEFAULT:
+                label.update(f"[{color}]{display}[/{color}]")
+            else:
+                label.update(f"[{color}]{display}[/{color}]  (shift+tab to cycle)")
+        try:
+            model_label = self.query_one("#model-label", Static)
+            model_text = self._selected_provider.model if self._selected_provider else ""
+            if self._mcp_connecting:
+                model_label.update(f"[yellow]MCP connecting…[/yellow]  {model_text}")
+            else:
+                model_label.update(model_text)
+        except Exception:
+            pass
 
     def _update_token_label(self, input_tokens: int, output_tokens: int) -> None:
         pass  # token 标签已从 UI 中移除
