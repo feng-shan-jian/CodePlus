@@ -1606,7 +1606,24 @@ class CodePlusApp(App):
             await self._process_task_notifications()
 
     async def _process_task_notifications(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        completed = self.task_manager.poll_completed()
+        if not completed or self.agent is None:
+            return
+
+        inject_task_notifications(self.conversation, completed)
+
+        for task in completed:
+            status_icon = "✓" if task.status == "completed" else "✗"
+            self._show_system_message(
+                f"{status_icon} 后台任务完成: [{task.id}] {task.name} — {task.status}"
+            )
+
+            if hasattr(self, 'team_manager'):
+                self.team_manager.on_teammate_completed(task.agent.agent_id)
+
+        self._agent_task = asyncio.create_task(
+            self._send_message("", is_notification=True)
+        )
 
     async def _start_notification_polling(self) -> None:
         while True:
@@ -1644,7 +1661,59 @@ class CodePlusApp(App):
     def on_inline_plan_widget_responded(
         self, event: "InlinePlanWidget.Responded"
     ) -> None:
-        raise NotImplementedError("Implementation pending")
+        from codeplus.plan_dialog import InlinePlanWidget, PlanChoice
+        from codeplus.prompts import build_plan_mode_exit_reminder
+
+        try:
+            self.query_one("#plan-inline", InlinePlanWidget).remove()
+        except Exception:
+            pass
+        try:
+            self.query_one("#chat-input").disabled = False
+            self.query_one("#chat-input").focus()
+        except Exception:
+            pass
+
+        if self.agent is None:
+            return
+
+        choice = event.choice
+        feedback = event.feedback
+        plan_path = self.agent._get_plan_path()
+        plan_exists = plan_path.exists()
+        plan_content = ""
+        if plan_exists:
+            try:
+                plan_content = plan_path.read_text(encoding="utf-8")
+            except Exception:
+                pass
+
+        pre = getattr(self, "_pre_plan_mode", PermissionMode.DEFAULT)
+        if choice == PlanChoice.YOLO:
+            self.agent.set_permission_mode(PermissionMode.BYPASS)
+            self._update_mode_label()
+            # 构建退出提示并标记已退出 Plan Mode
+            exit_msg = build_plan_mode_exit_reminder(str(plan_path), plan_exists)
+            self._has_exited_plan_mode = True
+            execute_text = exit_msg + "\n\nUser has approved your plan. You can now start coding."
+            if plan_content:
+                execute_text += "\n\nApproved Plan:\n" + plan_content
+            self.send_user_message(execute_text)
+        elif choice == PlanChoice.MANUAL:
+            self.agent.set_permission_mode(pre)
+            self._update_mode_label()
+            # 构建退出提示并标记已退出 Plan Mode
+            exit_msg = build_plan_mode_exit_reminder(str(plan_path), plan_exists)
+            self._has_exited_plan_mode = True
+            execute_text = exit_msg + "\n\nUser has approved your plan. You can now start coding."
+            if plan_content:
+                execute_text += "\n\nApproved Plan:\n" + plan_content
+            self.send_user_message(execute_text)
+        elif choice == PlanChoice.FEEDBACK:
+            if feedback:
+                self.send_user_message(feedback)
+            else:
+                self._show_system_message("Type your feedback and send.")
 
     async def _handle_askuser(self, event: AskUserEvent) -> None:
         from codeplus.askuser_dialog import InlineAskUserWidget
@@ -1662,7 +1731,21 @@ class CodePlusApp(App):
     def on_inline_ask_user_widget_responded(
         self, event: "InlineAskUserWidget.Responded"
     ) -> None:
-        raise NotImplementedError("Implementation pending")
+        from codeplus.askuser_dialog import InlineAskUserWidget
+
+        req = getattr(self, "_pending_askuser_event", None)
+        if req is not None and not req.future.done():
+            req.future.set_result(event.answers if event.answers else {})
+            self._pending_askuser_event = None
+        try:
+            self.query_one("#askuser-inline", InlineAskUserWidget).remove()
+        except Exception:
+            pass
+        try:
+            self.query_one("#chat-input").disabled = False
+            self.query_one("#chat-input").focus()
+        except Exception:
+            pass
 
     def _start_spinner(self) -> None:
         """启动 braille spinner 动画（每帧 80ms）。"""
@@ -1690,7 +1773,19 @@ class CodePlusApp(App):
             self._spinner_label = None
 
     def _tick_spinner(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        """推进持久 spinner 标签上的动画帧。"""
+        self._spinner_idx += 1
+        frame = SPINNER_FRAMES[self._spinner_idx % len(SPINNER_FRAMES)]
+        elapsed = _time.monotonic() - self._thinking_start
+        if self._spinner_label is not None:
+            self._spinner_label.update(
+                f"  {frame} {self._thinking_verb}…  ({elapsed:.0f}s)"
+            )
+            if self._spinner_idx % 5 == 0:
+                try:
+                    self.query_one("#chat-area", VerticalScroll).scroll_end(animate=False)
+                except Exception:
+                    pass
 
     def _start_teammate_polling(self) -> None:
         """Start polling teammate progress every 0.5s."""
@@ -1705,7 +1800,31 @@ class CodePlusApp(App):
             self._teammate_timer = None
 
     def _tick_teammate_tree(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        """Poll team_manager for teammate progress and update the tree widget."""
+        if not hasattr(self, "team_manager") or self.team_manager is None:
+            return
+        if self._teammate_tree is None:
+            return
+
+        progress_list = self.team_manager.get_all_teammate_progress()
+
+        if not progress_list:
+            self._teammate_tree.display = False
+            self._update_teammates_label(0)
+            return
+
+        # Update the reactive properties via mutate_reactive for list
+        self._teammate_tree.teammates = list(progress_list)
+
+        # Update leader tokens from main agent
+        if self.agent:
+            self._teammate_tree.leader_tokens = (
+                self.agent.total_input_tokens + self.agent.total_output_tokens
+            )
+
+        self._teammate_tree.display = True
+        active_count = sum(1 for p in progress_list if p.status == "running")
+        self._update_teammates_label(active_count)
 
     def _update_teammates_label(self, count: int) -> None:
         """Update the teammates count in the status bar."""
@@ -1735,21 +1854,72 @@ class CodePlusApp(App):
     def on_inline_permission_widget_responded(
         self, event: "InlinePermissionWidget.Responded"
     ) -> None:
-        raise NotImplementedError("Implementation pending")
+        from codeplus.permission_dialog import InlinePermissionWidget
+
+        req = getattr(self, "_pending_perm_request", None)
+        # future 可能已经结束（本轮被取消时会被 cancel），此时不能再回填结果
+        if req is not None and not req.future.done():
+            req.future.set_result(event.response)
+        if req is not None:
+            self._pending_perm_request = None
+        # 从聊天区移除权限弹窗组件
+        try:
+            widget = self.query_one("#perm-inline", InlinePermissionWidget)
+            widget.remove()
+        except Exception:
+            pass
+        # 重新启用输入框
+        try:
+            self.query_one("#chat-input").disabled = False
+            self.query_one("#chat-input").focus()
+        except Exception:
+            pass
 
     # -----------------------------------------------------------------
     # 恢复 session 的消息渲染
     # -----------------------------------------------------------------
 
     async def _render_restored_messages(self, messages: list[Message]) -> None:
-        raise NotImplementedError("Implementation pending")
+        chat = self.query_one("#chat-area", VerticalScroll)
+        await chat.remove_children()
+
+        for msg in messages:
+            if msg.tool_results or not msg.content:
+                continue
+            if msg.role == "user":
+                row = Vertical(classes="user-row")
+                await chat.mount(row)
+                user_rich = RichText()
+                user_rich.append("❯ ", style="bold color(80)")
+                user_rich.append(msg.content, style="bold color(255)")
+                bubble = Static(user_rich, classes="message user-message")
+                await row.mount(bubble)
+            elif msg.role == "assistant":
+                row = Vertical(classes="ai-row")
+                await chat.mount(row)
+                md = Markdown(msg.content, classes="message ai-message")
+                await row.mount(md)
+
+        self.call_after_refresh(chat.scroll_end, animate=False)
 
     # -----------------------------------------------------------------
     # Session 摘要（异步后台生成）
     # -----------------------------------------------------------------
 
     async def _update_session_summary(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        if not self.session or not self.client or not self.agent:
+            return
+        try:
+            summary = await generate_session_summary(
+                self.client, self.conversation, self.agent.protocol
+            )
+            if summary:
+                self.session.meta.summary = summary
+                self.session.meta.save(
+                    self.session._sessions_dir / f"{self.session.session_id}.meta"
+                )
+        except Exception:
+            pass
 
     # -----------------------------------------------------------------
     # MCP
