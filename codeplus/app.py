@@ -1355,7 +1355,255 @@ class CodePlusApp(App):
             self.agent.set_skill_catalog("")
 
     async def _send_message(self, text: str, is_notification: bool = False) -> None:
-        raise NotImplementedError("Implementation pending")
+        assert self.agent is not None
+        self._refresh_skills_if_needed()
+
+        if self._mcp_init_task and not self._mcp_init_task.done():
+            self._show_system_message("Waiting for MCP servers to connect...")
+            await self._mcp_init_task
+
+        self._streaming = True
+        chat = self.query_one("#chat-area", VerticalScroll)
+        input_widget = self.query_one("#chat-input", ChatInput)
+
+        if text and "@" in text:
+            text = expand_at_refs(text, self.agent.work_dir)
+
+        # Start memory recall prefetch before UI work.
+        prefetch_task = asyncio.create_task(
+            self._prefetch_relevant_memories(text)
+        ) if text else None
+
+        if text:
+            user_row = Vertical(classes="user-row")
+            await chat.mount(user_row)
+            from rich.text import Text as RichText
+            user_rich = RichText()
+            user_rich.append("❯ ", style="bold color(80)")
+            user_rich.append(text, style="bold color(255)")
+            user_bubble = Static(user_rich, classes="message user-message")
+            await user_row.mount(user_bubble)
+            self.call_after_refresh(chat.scroll_end, animate=False)
+
+            self.conversation.add_user_message(text)
+            if self.session:
+                self.session.append(Message(role="user", content=text))
+
+        if self._mcp_instructions and not self._mcp_instructions_ok:
+            self.conversation.add_system_reminder(self._mcp_instructions)
+            self._mcp_instructions_ok = True
+
+        # 非阻塞 memory recall：传给 agent，工具执行后注入
+        if prefetch_task is not None:
+            self.agent.memory_recall_task = prefetch_task
+            self.agent._memory_recall_consumed = False
+
+        history_cursor = len(self.conversation.history)
+
+        # 准备 AI 回复区域
+        ai_row = Vertical(classes="ai-row")
+        await chat.mount(ai_row)
+        streaming_label = Static("", classes="message ai-message")
+        await ai_row.mount(streaming_label)
+
+        accumulated_text = ""
+        tool_blocks: dict[str, ToolCallBlock] = {}
+
+        # 在聊天区底部启动持续旋转的加载动画
+        self._thinking_start = _time.monotonic()
+        self._thinking_verb = random.choice(THINKING_VERBS)
+        self._spinner_idx = 0
+        self._spinner_label = Static(
+            f"  {SPINNER_FRAMES[0]} {self._thinking_verb}…",
+            id="spinner-live",
+        )
+        await chat.mount(self._spinner_label)
+
+        # Mount teammate tree (initially hidden) below the spinner
+        self._teammate_tree = TeammateTree(id="teammate-tree")
+        self._teammate_tree.display = False
+        await chat.mount(self._teammate_tree)
+        self._start_teammate_polling()
+
+        self.call_after_refresh(chat.scroll_end, animate=False)
+        self._start_spinner()
+
+        await asyncio.sleep(0)
+
+        try:
+            async for event in self.agent.run(self.conversation):
+                if isinstance(event, ThinkingText):
+                    self.call_after_refresh(chat.scroll_end, animate=False)
+
+                elif isinstance(event, StreamText):
+                    if streaming_label is not None and not accumulated_text:
+                        await streaming_label.remove()
+                        streaming_label = Static("", classes="message ai-message")
+                        await ai_row.mount(streaming_label)
+                    accumulated_text += event.text
+                    from rich.text import Text as RichText
+                    t = RichText()
+                    t.append("● ", style="bold color(99)")
+                    t.append(accumulated_text)
+                    streaming_label.update(t)
+                    self.call_after_refresh(chat.scroll_end, animate=False)
+
+                elif isinstance(event, RetryEvent):
+                    self._show_system_message(f"↻ Retrying: {event.reason}")
+
+                elif isinstance(event, ToolUseEvent):
+                    if accumulated_text:
+                        if streaming_label is not None:
+                            await streaming_label.remove()
+                        from rich.text import Text as RichText
+                        prefix = Static(RichText("●  ", style="bold color(99)"), classes="message")
+                        await ai_row.mount(prefix)
+                        md = Markdown(accumulated_text, classes="message ai-message")
+                        await ai_row.mount(md)
+                        streaming_label = None
+                        accumulated_text = ""
+                    elif streaming_label is not None:
+                        await streaming_label.remove()
+                        streaming_label = None
+
+                    if _is_subagent_tool(event.tool_name):
+                        agent_type = event.arguments.get("subagent_type", "")
+                        desc = event.arguments.get("description", "")
+                        block = SubAgentBlock(
+                            agent_type or "agent",
+                            desc,
+                            classes="tool-block subagent-block",
+                        )
+                    else:
+                        block = ToolCallBlock(
+                            event.tool_name, event.arguments, classes="tool-block"
+                        )
+                    await ai_row.mount(block)
+                    tool_blocks[event.tool_id] = block
+                    self.call_after_refresh(chat.scroll_end, animate=False)
+
+                elif isinstance(event, PermissionRequest):
+                    await self._handle_permission_request(event)
+
+                elif isinstance(event, ToolResultEvent):
+                    block = tool_blocks.get(event.tool_id)
+                    if block:
+                        block.set_result(event.output, event.is_error, event.elapsed)
+                    self.call_after_refresh(chat.scroll_end, animate=False)
+
+                    ask_tool = self.registry.get("AskUserQuestion")
+                    if ask_tool and isinstance(ask_tool, AskUserTool) and ask_tool._pending_event:
+                        await self._handle_askuser(ask_tool._pending_event)
+
+                elif isinstance(event, TurnComplete):
+                    if self.session:
+                        for msg in self.conversation.history[history_cursor:]:
+                            self.session.append(msg)
+                        history_cursor = len(self.conversation.history)
+
+                    collapsible = [
+                        (tid, blk) for tid, blk in tool_blocks.items()
+                        if isinstance(blk, ToolCallBlock)
+                        and blk.tool_name in COLLAPSIBLE_TOOLS
+                        and not blk._loading
+                    ]
+                    if len(collapsible) >= 2:
+                        total_elapsed = sum(b._elapsed for _, b in collapsible)
+                        summary = ToolGroupSummary(
+                            len(collapsible), total_elapsed,
+                            classes="tool-block tool-group-summary",
+                        )
+                        for _, blk in collapsible:
+                            blk.display = False
+                        await ai_row.mount(summary)
+
+                    tool_blocks.clear()
+                    ai_row = Vertical(classes="ai-row")
+                    await chat.mount(ai_row)
+                    streaming_label = Static("", classes="message ai-message")
+                    await ai_row.mount(streaming_label)
+                    accumulated_text = ""
+                    self.call_after_refresh(chat.scroll_end, animate=False)
+
+                elif isinstance(event, UsageEvent):
+                    pass  # token 展示已移除
+
+                elif isinstance(event, HookEvent):
+                    status = "✓" if event.success else "✗"
+                    self._show_system_message(
+                        f"Hook [{event.hook_id}] {status} {event.output}"
+                    )
+
+                elif isinstance(event, CompactNotification):
+                    self._show_system_message(event.message)
+                    # auto_compact 已重写 conversation.history（摘要 +
+                    # boundary + 保留尾部）。先持久化 boundary 记录，然后
+                    # 将游标推进到重建后的历史末尾，这样 TurnComplete/LoopComplete
+                    # 刷盘时只追加 boundary 之后的新消息，不会把已压缩的
+                    # 前缀作为普通记录重复写入。
+                    self._persist_compact_boundary(event)
+                    history_cursor = len(self.conversation.history)
+
+                elif isinstance(event, ErrorEvent):
+                    # 保留错误前已输出的流式文本
+                    if accumulated_text and streaming_label is not None:
+                        await streaming_label.remove()
+                        md = Markdown(accumulated_text, classes="message ai-message")
+                        await ai_row.mount(md)
+                        streaming_label = None
+                        accumulated_text = ""
+                    self._show_error(event.message)
+
+                elif isinstance(event, LoopComplete):
+                    total_time = _time.monotonic() - self._thinking_start
+                    done_label = Static(
+                        f"✻ {_to_past_tense(self._thinking_verb)} for {total_time:.1f}s",
+                        classes="message thinking-done",
+                    )
+                    await ai_row.mount(done_label)
+                    if self.session:
+                        for msg in self.conversation.history[history_cursor:]:
+                            self.session.append(msg)
+                        history_cursor = len(self.conversation.history)
+                        self.session.meta.total_tokens = (
+                            self.agent.total_input_tokens
+                            + self.agent.total_output_tokens
+                        )
+                        asyncio.ensure_future(
+                            self._update_session_summary()
+                        )
+                    if self.agent.plan_mode:
+                        asyncio.ensure_future(
+                            self._show_plan_approval()
+                        )
+
+            # 收尾：渲染剩余的累积文本
+            if accumulated_text and streaming_label is not None:
+                await streaming_label.remove()
+                md = Markdown(accumulated_text, classes="message ai-message")
+                await ai_row.mount(md)
+            elif streaming_label is not None:
+                await streaming_label.remove()
+
+            self.call_after_refresh(chat.scroll_end, animate=False)
+
+        except asyncio.CancelledError:
+            if accumulated_text:
+                if streaming_label is not None:
+                    await streaming_label.remove()
+                md = Markdown(
+                    accumulated_text + "\n\n*[cancelled]*",
+                    classes="message ai-message",
+                )
+                await ai_row.mount(md)
+            self._show_system_message("Operation cancelled")
+        except LLMError as e:
+            self._show_error(str(e))
+        finally:
+            self._finish_streaming()
+            input_widget.focus()
+
+            await self._process_task_notifications()
 
     async def _process_task_notifications(self) -> None:
         raise NotImplementedError("Implementation pending")
