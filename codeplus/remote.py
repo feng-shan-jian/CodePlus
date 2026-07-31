@@ -356,14 +356,225 @@ class RemoteServer:
     # ------------------------------------------------------------------
 
     async def _init_mcp(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        """连接所有配置的 MCP 服务器，注册工具。"""
+        if not self._mcp_server_configs or self.registry is None:
+            return
+
+        manager = MCPManager()
+        manager.load_configs(self._mcp_server_configs)
+        connect_result = await manager.register_all_tools(self.registry)
+        self.mcp_manager = manager
+
+        for err in connect_result.errors:
+            log.warning("MCP error: %s", err)
+
+        # 工具都在位了才算得准 schema 总量跟上下文窗口的比例
+        if self.providers:
+            from codeplus.mcp.loading_strategy import decide_and_apply
+
+            provider = self.providers[0]
+            decide_and_apply(
+                self.registry,
+                base_url=provider.base_url,
+                context_window=provider.get_context_window(),
+            )
+
+        # 构建 MCP 指令（首次发送消息时注入 conversation）
+        if connect_result.servers:
+            parts = []
+            for srv_info in connect_result.servers:
+                section = f"## {srv_info.name}\n"
+                if srv_info.instructions:
+                    section += srv_info.instructions
+                else:
+                    prefix = mcp_tool_name_prefix(srv_info.name)
+                    tool_names = [
+                        t.name for t in self.registry.list_tools()
+                        if t.name.startswith(prefix)
+                    ]
+                    if tool_names:
+                        section += "Available tools: " + ", ".join(tool_names)
+                parts.append(section)
+            self._mcp_instructions = (
+                "# MCP Server Instructions\n\n"
+                "The following MCP servers have provided instructions "
+                "for how to use their tools and resources:\n\n"
+                + "\n\n".join(parts)
+            )
 
     # ------------------------------------------------------------------
     # 用户消息处理
     # ------------------------------------------------------------------
 
     async def _handle_user_message(self, content: str) -> None:
-        raise NotImplementedError("Implementation pending")
+        """处理来自 Web UI 的用户消息或斜杠命令。"""
+        if self._streaming:
+            return
+
+        # 斜杠命令
+        if content.startswith("/"):
+            await self._handle_slash_command(content)
+            return
+
+        # 普通消息 → 发给 Agent
+        self._streaming = True
+        assert self.conversation is not None
+        assert self.agent is not None
+
+        self.conversation.add_user_message(content)
+
+        # 首次注入 MCP 指令
+        if self._mcp_instructions:
+            self.conversation.add_system_reminder(self._mcp_instructions)
+            self._mcp_instructions = ""
+
+        # 创建取消事件
+        self._cancel_event = asyncio.Event()
+        start_time = time.monotonic()
+        stream_buf = ""
+
+        try:
+            async for event in self.agent.run(self.conversation):
+                # 检查取消信号
+                if self._cancel_event.is_set():
+                    break
+
+                if isinstance(event, StreamText):
+                    stream_buf += event.text
+                    await self._broadcast({
+                        "type": "stream_text",
+                        "data": {"text": event.text},
+                    })
+
+                elif isinstance(event, ThinkingText):
+                    await self._broadcast({
+                        "type": "thinking_text",
+                        "data": {"text": event.text},
+                    })
+
+                elif isinstance(event, ToolUseEvent):
+                    await self._broadcast({
+                        "type": "tool_use",
+                        "data": {
+                            "toolId": event.tool_id,
+                            "toolName": event.tool_name,
+                            "args": event.arguments,
+                        },
+                    })
+
+                elif isinstance(event, ToolResultEvent):
+                    # 如果之前有累积的流式文本，先结束它
+                    if stream_buf:
+                        await self._broadcast({
+                            "type": "stream_end",
+                            "data": {"text": stream_buf},
+                        })
+                        stream_buf = ""
+                    await self._broadcast({
+                        "type": "tool_result",
+                        "data": {
+                            "toolId": event.tool_id,
+                            "toolName": event.tool_name,
+                            "output": event.output,
+                            "isError": event.is_error,
+                            "elapsed": event.elapsed,
+                        },
+                    })
+
+                elif isinstance(event, PermissionRequest):
+                    # 生成唯一 ID，等待 Web 端回复
+                    perm_id = f"perm_{time.time_ns()}"
+                    self._pending_perms[perm_id] = event.future
+                    await self._broadcast({
+                        "type": "permission_request",
+                        "data": {
+                            "id": perm_id,
+                            "toolName": event.tool_name,
+                            "description": event.description,
+                        },
+                    })
+
+                elif isinstance(event, TurnComplete):
+                    if stream_buf:
+                        await self._broadcast({
+                            "type": "stream_end",
+                            "data": {"text": stream_buf},
+                        })
+                        stream_buf = ""
+                    await self._broadcast({
+                        "type": "turn_complete",
+                        "data": {"turn": event.turn},
+                    })
+
+                elif isinstance(event, LoopComplete):
+                    if stream_buf:
+                        await self._broadcast({
+                            "type": "stream_end",
+                            "data": {"text": stream_buf},
+                        })
+                        stream_buf = ""
+                    elapsed = time.monotonic() - start_time
+                    await self._broadcast({
+                        "type": "loop_complete",
+                        "data": {
+                            "totalTurns": event.total_turns,
+                            "elapsed": elapsed,
+                        },
+                    })
+
+                elif isinstance(event, UsageEvent):
+                    await self._broadcast({
+                        "type": "usage",
+                        "data": {
+                            "inputTokens": event.input_tokens,
+                            "outputTokens": event.output_tokens,
+                        },
+                    })
+
+                elif isinstance(event, ErrorEvent):
+                    await self._broadcast({
+                        "type": "error",
+                        "data": {"message": event.message},
+                    })
+
+                elif isinstance(event, CompactNotification):
+                    await self._broadcast({
+                        "type": "compact",
+                        "data": {"message": event.message},
+                    })
+
+                elif isinstance(event, RetryEvent):
+                    await self._broadcast({
+                        "type": "retry",
+                        "data": {
+                            "reason": event.reason,
+                            "waitMs": int(event.wait * 1000),
+                        },
+                    })
+
+                elif isinstance(event, HookEvent):
+                    status = "ok" if event.success else "error"
+                    await self._broadcast({
+                        "type": "system",
+                        "data": {
+                            "message": f"Hook [{event.hook_id}] {status}: {event.output}"
+                        },
+                    })
+
+        except asyncio.CancelledError:
+            await self._broadcast({
+                "type": "error",
+                "data": {"message": "Operation cancelled"},
+            })
+        except Exception as exc:
+            log.exception("Agent run error")
+            await self._broadcast({
+                "type": "error",
+                "data": {"message": str(exc)},
+            })
+        finally:
+            self._streaming = False
+            self._cancel_event = None
 
     # ------------------------------------------------------------------
     # 斜杠命令处理
