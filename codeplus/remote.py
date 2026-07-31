@@ -117,7 +117,25 @@ class RemoteServer:
     # ------------------------------------------------------------------
 
     async def run(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        """启动 HTTP + WebSocket 服务器。"""
+        # 初始化 Agent
+        self._init_agent()
+
+        # 初始化 MCP（如果有配置）
+        await self._init_mcp()
+
+        print(f"\n  Remote UI: http://localhost:{self.port}\n")
+
+        # websockets 的 serve 支持 process_request 回调来处理普通 HTTP
+        async with websockets.serve(
+            self._ws_handler,
+            self.addr,
+            self.port,
+            process_request=self._process_http_request,
+            max_size=4 * 1024 * 1024,  # 4MB 消息上限
+        ):
+            # 服务器启动后永久阻塞
+            await asyncio.Future()
 
     # ------------------------------------------------------------------
     # HTTP 请求处理（为 / 路径提供前端 HTML）
@@ -126,21 +144,212 @@ class RemoteServer:
     def _process_http_request(
         self, connection: ServerConnection, request: Request
     ) -> Response | None:
-        raise NotImplementedError("Implementation pending")
+        """拦截 HTTP 请求，对 / 路径返回 HTML 页面。
+        返回 None 表示继续走 WebSocket 升级流程。
+        """
+        if request.path == "/":
+            return Response(
+                200,
+                "OK",
+                websockets.Headers({"Content-Type": "text/html; charset=utf-8"}),
+                INDEX_HTML.encode("utf-8"),
+            )
+        if request.path != "/ws":
+            return Response(404, "Not Found", websockets.Headers(), b"404 Not Found")
+        # /ws 路径 → 继续 WebSocket 升级
+        return None
 
     # ------------------------------------------------------------------
     # WebSocket 连接处理
     # ------------------------------------------------------------------
 
     async def _ws_handler(self, websocket: ServerConnection) -> None:
-        raise NotImplementedError("Implementation pending")
+        """处理单个 WebSocket 连接的全生命周期。"""
+        self._connections.add(websocket)
+        try:
+            # 连接建立时推送会话信息
+            await self._broadcast({
+                "type": "connected",
+                "data": {
+                    "session": self.session_id,
+                    "cwd": os.getcwd(),
+                },
+            })
+
+            # 推送命令列表
+            await self._broadcast({
+                "type": "commands",
+                "data": self._build_command_list(),
+            })
+
+            # 消息循环
+            async for raw in websocket:
+                try:
+                    msg = json.loads(raw)
+                except json.JSONDecodeError:
+                    continue
+
+                msg_type = msg.get("type", "")
+                data = msg.get("data", {})
+
+                if msg_type == "user_message":
+                    content = data.get("content", "").strip()
+                    if content:
+                        # 在后台任务中处理，不阻塞 WebSocket 读循环
+                        asyncio.create_task(self._handle_user_message(content))
+
+                elif msg_type == "permission_response":
+                    self._handle_permission_response(data)
+
+                elif msg_type == "cancel":
+                    if self._cancel_event is not None:
+                        self._cancel_event.set()
+
+                elif msg_type == "ping":
+                    # 应用层保活
+                    await self._broadcast({"type": "pong", "data": None})
+
+        except websockets.ConnectionClosed:
+            pass
+        finally:
+            self._connections.discard(websocket)
 
     # ------------------------------------------------------------------
     # Agent 初始化（复刻 TUI 的 _select_provider 流程）
     # ------------------------------------------------------------------
 
     def _init_agent(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        """初始化 Agent 及相关子系统。"""
+        provider = self.providers[0]
+        work_dir = os.getcwd()
+        home = Path.home()
+
+        # 权限系统
+        checker = PermissionChecker(
+            detector=DangerousCommandDetector(),
+            sandbox=PathSandbox(work_dir),
+            rule_engine=RuleEngine(
+                user_rules_path=home / ".codeplus" / "permissions.yaml",
+                project_rules_path=Path(work_dir) / ".codeplus" / "permissions.yaml",
+                local_rules_path=Path(work_dir) / ".codeplus" / "permissions.local.yaml",
+            ),
+            mode=PermissionMode.DEFAULT,
+        )
+
+        # 加载自定义指令和记忆
+        instructions = load_instructions(work_dir)
+        self.memory_manager = MemoryManager(work_dir)
+        self.session_manager = SessionManager(work_dir)
+        self.session = self.session_manager.create()
+        self.session_id = self.session.session_id
+
+        # 创建 LLM 客户端
+        client = create_client(provider)
+
+        # 工具注册表
+        self.registry = create_default_registry()
+        self.registry.register(ToolSearchTool(self.registry, protocol=provider.protocol))
+        self.registry.register(McpCallTool(self.registry))
+
+        # Skill 加载
+        self.skill_loader = SkillLoader(work_dir)
+        self.skill_loader.load_all()
+        load_skill_tool = LoadSkill()
+        self.registry.register(load_skill_tool)
+
+        # 创建 Agent
+        self.agent = Agent(
+            client=client,
+            registry=self.registry,
+            protocol=provider.protocol,
+            work_dir=work_dir,
+            permission_checker=checker,
+            context_window=provider.get_context_window(),
+            instructions_content=instructions,
+            memory_manager=self.memory_manager,
+            hook_engine=self.hook_engine,
+        )
+        self.agent.session_id = self.session_id
+
+        # 团队工具在 remote 模式下同样可用，Lead 能在浏览器会话里组建团队把活派出去
+        from codeplus.agents.loader import AgentLoader
+        from codeplus.agents.task_manager import TaskManager
+        from codeplus.agents.trace import TraceManager
+        from codeplus.config import WorktreeConfig
+        from codeplus.teams.manager import TeamManager
+        from codeplus.tools.agent_tool import AgentTool
+        from codeplus.tools.synthetic_output import SyntheticOutputTool
+        from codeplus.tools.task_stop import TaskStopTool
+        from codeplus.tools.team_create import TeamCreateTool
+        from codeplus.tools.team_delete import TeamDeleteTool
+        from codeplus.worktree import WorktreeManager
+
+        cfg = self._config
+        enable_fork = getattr(cfg, "enable_fork", False)
+        enable_verification = getattr(cfg, "enable_verification_agent", False)
+        enable_coordinator = getattr(cfg, "enable_coordinator_mode", False)
+        wt_cfg = getattr(cfg, "worktree", None) or WorktreeConfig()
+
+        wt_manager = WorktreeManager(
+            repo_root=work_dir,
+            symlink_directories=wt_cfg.symlink_directories,
+        )
+        trace_manager = TraceManager()
+        self.task_manager = TaskManager()
+        agent_loader = AgentLoader(work_dir, enable_verification=enable_verification)
+        agent_loader.load_all()
+        self.team_manager = TeamManager(
+            worktree_manager=wt_manager, trace_manager=trace_manager
+        )
+
+        self.registry.register(AgentTool(
+            agent_loader=agent_loader,
+            task_manager=self.task_manager,
+            trace_manager=trace_manager,
+            parent_agent=self.agent,
+            enable_fork=enable_fork,
+            provider_config=provider,
+            worktree_manager=wt_manager,
+            team_manager=self.team_manager,
+        ))
+        self.registry.register(TeamCreateTool(
+            team_manager=self.team_manager,
+            parent_agent=self.agent,
+            teammate_mode="in-process",
+            is_interactive=False,
+            enable_coordinator_mode=enable_coordinator,
+        ))
+        self.registry.register(TeamDeleteTool(
+            team_manager=self.team_manager, parent_agent=self.agent
+        ))
+        self.registry.register(TaskStopTool(team_manager=self.team_manager))
+        self.registry.register(SyntheticOutputTool())
+        # Lead 给队员派活、续写都走这个工具，团队要等 TeamCreate 才存在，
+        # 所以这里不绑定团队，发信时再取当前团队
+        from codeplus.tools.send_message import SendMessageTool
+
+        self.registry.register(SendMessageTool(team_manager=self.team_manager))
+
+        # 队员干完活的回传落在 lead 信箱里，每轮排空成 system-reminder 交给 Lead
+        self.agent.notification_fn = self.team_manager.drain_lead_mailbox
+
+        # 连接 Skill 到 Agent
+        load_skill_tool.set_loader(self.skill_loader)
+        load_skill_tool.set_agent(self.agent)
+
+        catalog = self.skill_loader.get_catalog()
+        if catalog:
+            lines = ["You can use the following Skills:", ""]
+            for name, desc in catalog:
+                lines.append(f"- {name}: {desc}")
+            lines.append("")
+            lines.append("If the user's request matches a Skill, call LoadSkill to activate it.")
+            self.agent.set_skill_catalog("\n".join(lines))
+
+        # 初始化对话管理器
+        self.conversation = ConversationManager()
+
+        log.info("Agent initialized: session=%s, model=%s", self.session_id, provider.model)
 
     # ------------------------------------------------------------------
     # MCP 初始化
