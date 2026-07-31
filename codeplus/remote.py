@@ -581,13 +581,116 @@ class RemoteServer:
     # ------------------------------------------------------------------
 
     async def _handle_slash_command(self, input_text: str) -> None:
-        raise NotImplementedError("Implementation pending")
+        """分发斜杠命令。"""
+        name, args, is_command = parse_command(input_text)
+        if not is_command or not name:
+            return
+
+        cmd = self.command_registry.find(name)
+        if cmd is None:
+            await self._broadcast({
+                "type": "error",
+                "data": {"message": f"Unknown command: /{name} — type /help to see available commands"},
+            })
+            await self._broadcast({"type": "command_done", "data": None})
+            return
+
+        # 需要参数但没给
+        if not args and cmd.arg_prompt:
+            await self._broadcast({
+                "type": "system",
+                "data": {"message": cmd.arg_prompt},
+            })
+            await self._broadcast({"type": "command_done", "data": None})
+            return
+
+        if cmd.type == CommandType.LOCAL:
+            # 本地命令直接执行
+            ctx = self._build_command_context(args)
+            try:
+                await cmd.handler(ctx)
+            except Exception as exc:
+                await self._broadcast({
+                    "type": "error",
+                    "data": {"message": f"Command error: {exc}"},
+                })
+            await self._broadcast({"type": "command_done", "data": None})
+
+        elif cmd.type == CommandType.LOCAL_UI:
+            # UI 命令需要特殊处理
+            if name == "clear":
+                self.conversation = ConversationManager()
+                if self.agent is not None:
+                    self.agent.clear_active_skills()
+                await self._broadcast({"type": "clear", "data": None})
+
+            elif name == "compact":
+                await self._handle_compact()
+                return
+
+            else:
+                await self._broadcast({
+                    "type": "system",
+                    "data": {"message": f"/{name} is not fully supported in remote mode."},
+                })
+
+            await self._broadcast({"type": "command_done", "data": None})
+
+        elif cmd.type == CommandType.PROMPT:
+            # Prompt 类命令：handler 返回 prompt 文本，注入给 agent
+            ctx = self._build_command_context(args)
+            try:
+                await cmd.handler(ctx)
+            except Exception as exc:
+                await self._broadcast({
+                    "type": "error",
+                    "data": {"message": f"Command error: {exc}"},
+                })
+                await self._broadcast({"type": "command_done", "data": None})
 
     def _build_command_context(self, args: str) -> CommandContext:
-        raise NotImplementedError("Implementation pending")
+        """构建命令上下文。"""
+        return CommandContext(
+            args=args,
+            agent=self.agent,
+            conversation=self.conversation,
+            session=self.session,
+            session_manager=self.session_manager,
+            memory_manager=self.memory_manager,
+            ui=self,  # type: ignore[arg-type]
+            config={
+                "registry": self.command_registry,
+            },
+        )
 
     async def _handle_compact(self) -> None:
-        raise NotImplementedError("Implementation pending")
+        """处理 /compact 命令。"""
+        if self.agent is None or self.conversation is None:
+            await self._broadcast({
+                "type": "error",
+                "data": {"message": "Compact requires an active agent."},
+            })
+            await self._broadcast({"type": "command_done", "data": None})
+            return
+
+        await self._broadcast({
+            "type": "system",
+            "data": {"message": "Compacting conversation..."},
+        })
+
+        result = await self.agent.manual_compact(self.conversation)
+        if isinstance(result, CompactNotification):
+            await self._broadcast({
+                "type": "system",
+                "data": {"message": result.message},
+            })
+        elif isinstance(result, ErrorEvent):
+            await self._broadcast({
+                "type": "error",
+                "data": {"message": result.message},
+            })
+
+        await self._broadcast({"type": "command_done", "data": None})
 
     # ------------------------------------------------------------------
     # UIController 协议实现（供命令系统回调）
@@ -625,7 +728,24 @@ class RemoteServer:
     # ------------------------------------------------------------------
 
     def _handle_permission_response(self, data: dict[str, Any]) -> None:
-        raise NotImplementedError("Implementation pending")
+        """处理来自 Web UI 的权限回复。"""
+        perm_id = data.get("id", "")
+        response_str = data.get("response", "deny")
+
+        future = self._pending_perms.pop(perm_id, None)
+        if future is None or future.done():
+            return
+
+        # 映射字符串到枚举
+        mapping = {
+            "allow": PermissionResponse.ALLOW,
+            "deny": PermissionResponse.DENY,
+            "allowAlways": PermissionResponse.ALLOW_ALWAYS,
+        }
+        response = mapping.get(response_str, PermissionResponse.DENY)
+        # future 可能已经结束（本轮被取消时会被 cancel），此时不能再回填结果
+        if not future.done():
+            future.set_result(response)
 
     # ------------------------------------------------------------------
     # 辅助方法
@@ -642,4 +762,18 @@ class RemoteServer:
         return result
 
     async def _broadcast(self, msg: dict[str, Any]) -> None:
-        raise NotImplementedError("Implementation pending")
+        """向所有已连接的 WebSocket 客户端广播消息。"""
+        if not self._connections:
+            return
+        data = json.dumps(msg, ensure_ascii=False)
+        # 复制集合避免迭代中修改
+        closed = []
+        for ws in list(self._connections):
+            try:
+                await ws.send(data)
+            except websockets.ConnectionClosed:
+                closed.append(ws)
+            except Exception:
+                closed.append(ws)
+        for ws in closed:
+            self._connections.discard(ws)
