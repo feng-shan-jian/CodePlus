@@ -351,8 +351,43 @@ class TestNaming:
         assert name.startswith(mcp_tool_name_prefix("chrome-2"))
 
 
+class TestToolResultSerialization:
+    def test_structured_blocks_replace_text(self) -> None:
+        blocks = [{"type": "tool_reference", "tool_name": "mcp__linear__create_issue"}]
+        msg = Message(role="user", content="", tool_results=[
+            ToolResultBlock(tool_use_id="t1", content="等价文本", content_blocks=blocks),
+        ])
+        out = build_anthropic_messages([msg])
+        assert out[0]["content"][0]["content"] == blocks
+
+    def test_plain_text_unchanged(self) -> None:
+        msg = Message(role="user", content="", tool_results=[
+            ToolResultBlock(tool_use_id="t1", content="plain"),
+        ])
+        out = build_anthropic_messages([msg])
+        assert out[0]["content"][0]["content"] == "plain"
 
 
+class TestToolSearchBetaHeader:
+    """beta header 的开关条件：只有工具真带了 defer_loading 才发。
+
+    官方端点这条路没法拿第三方端点真机验证，这里只能盯住请求该长什么样：
+    header 漏了，defer_loading 会被服务端直接拒；header 多发了，不认识它的
+    端点也会拒。两头都是硬失败。
+    """
+
+    def test_no_tools(self) -> None:
+        assert needs_tool_search_beta([]) is False
+
+    def test_all_eager(self) -> None:
+        assert needs_tool_search_beta([{"name": "Bash"}, {"name": "ToolSearch"}]) is False
+
+    def test_one_deferred(self) -> None:
+        tools = [{"name": "Bash"}, {"name": "mcp__linear__x", "defer_loading": True}]
+        assert needs_tool_search_beta(tools) is True
+
+    def test_defer_loading_false_does_not_count(self) -> None:
+        assert needs_tool_search_beta([{"name": "x", "defer_loading": False}]) is False
 
 
 class TestToolExposureByMode:
