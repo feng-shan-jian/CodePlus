@@ -677,5 +677,124 @@ async def test_adjacent_reads_overlap_without_crossing_mutations(tmp_path, inter
     assert not any(r.is_error for r in results)
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("interactive", [True, False])
+async def test_cancelling_read_batch_stops_all_tools(tmp_path, interactive):
+    from pydantic import BaseModel
+    from codeplus.tools import ToolRegistry
+    from codeplus.tools.base import Tool, ToolResult
+
+    class Params(BaseModel):
+        label: str
+
+    started = {name: asyncio.Event() for name in ("a", "b")}
+    stopped: set[str] = set()
+    writes = []
+
+    class WaitRead(Tool):
+        name = "WaitRead"
+        params_model = Params
+        description = "Wait until cancelled"
+        is_concurrency_safe = True
+
+        async def execute(self, params):
+            started[params.label].set()
+            try:
+                await asyncio.Event().wait()
+            finally:
+                stopped.add(params.label)
+
+    class WriteAfter(Tool):
+        name = "WriteAfter"
+        params_model = Params
+        description = "Must not run after cancellation"
+        category = "write"
+
+        async def execute(self, params):
+            writes.append(params.label)
+            return ToolResult("written")
+
+    registry = ToolRegistry()
+    registry.register(WaitRead())
+    registry.register(WriteAfter())
+    client = MockLLMClient([[
+        ToolCallComplete("a", "WaitRead", {"label": "a"}),
+        ToolCallComplete("b", "WaitRead", {"label": "b"}),
+        ToolCallComplete("write", "WriteAfter", {"label": "write"}),
+        StreamEnd("tool_use"),
+    ]])
+    agent = Agent(client, registry, "anthropic", work_dir=str(tmp_path), max_iterations=1)
+    conv = ConversationManager()
+    conv.add_user_message("Start reads")
+
+    async def run():
+        if interactive:
+            async for _ in agent.run(conv):
+                pass
+        else:
+            await agent.run_to_completion("Start reads", conversation=conv)
+
+    task = asyncio.create_task(run())
+    try:
+        await asyncio.wait_for(asyncio.gather(*(event.wait() for event in started.values())), timeout=2)
+    finally:
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+    assert stopped == {"a", "b"}
+    assert writes == []
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("interactive", [True, False])
+async def test_read_batch_respects_permission_and_disabled_tools(tmp_path, interactive):
+    from pydantic import BaseModel
+    from codeplus.permissions import DangerousCommandDetector, PathSandbox, PermissionChecker, RuleEngine
+    from codeplus.tools import ToolRegistry
+    from codeplus.tools.base import Tool, ToolResult
+
+    class Params(BaseModel):
+        pass
+
+    executed = []
+
+    class Read(Tool):
+        description = "Read"
+        params_model = Params
+        is_concurrency_safe = True
+
+        def __init__(self, name):
+            self.name = name
+
+        async def execute(self, params):
+            executed.append(self.name)
+            return ToolResult(self.name)
+
+    names = ["Protected", "Allowed", "Disabled", "Unknown", "Denied"]
+    registry = ToolRegistry()
+    for name in names:
+        if name != "Unknown":
+            registry.register(Read(name))
+    registry.disable("Disabled")
+    rules_path = tmp_path / "rules.yaml"
+    rules_path.write_text(
+        '- rule: "Protected(*)"\n  effect: ask\n- rule: "Denied(*)"\n  effect: deny\n',
+        encoding="utf-8",
+    )
+    checker = PermissionChecker(DangerousCommandDetector(), PathSandbox(str(tmp_path)),
+                                RuleEngine(local_rules_path=rules_path))
+    calls = [ToolCallComplete(name, name, {}) for name in names]
+    agent = Agent(MockLLMClient([[*calls, StreamEnd("tool_use")]]), registry,
+                  "anthropic", work_dir=str(tmp_path), max_iterations=1, permission_checker=checker)
+    conv = ConversationManager()
+    if interactive:
+        async for event in agent.run(conv):
+            if isinstance(event, PermissionRequest):
+                assert executed == []
+                event.future.set_result(PermissionResponse.DENY)
+    else:
+        await agent.run_to_completion("Read", conversation=conv)
+    results = [r for message in conv.history for r in message.tool_results]
+    assert [r.tool_use_id for r in results] == names
+    assert [r.is_error for r in results] == [True, False, True, True, True]
+    assert executed == ["Allowed"]
