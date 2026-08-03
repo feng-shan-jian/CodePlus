@@ -742,3 +742,47 @@ class TestAgentExtensions:
         assert agent._agent_catalog == "## Agents\n- Explore"
 
 
+class TestSubAgentRuleInheritance:
+    """子 Agent 的规则引擎继承（父级 allow/deny/ask 规则同样约束子 Agent）"""
+
+    @staticmethod
+    def _make_tool(parent):
+        from codeplus.tools.agent_tool import AgentTool
+
+        return AgentTool(
+            agent_loader=None,
+            task_manager=None,
+            trace_manager=None,
+            parent_agent=parent,
+        )
+
+    def test_inherits_parent_rule_engine(self, tmp_path: Path):
+        from codeplus.permissions import (
+            DangerousCommandDetector,
+            PathSandbox,
+            PermissionChecker,
+            PermissionMode,
+            RuleEngine,
+        )
+
+        rules = tmp_path / "permissions.yaml"
+        rules.write_text('- rule: "Bash(git *)"\n  effect: deny\n')
+        engine = RuleEngine(project_rules_path=rules)
+        parent = MagicMock()
+        parent.permission_checker = PermissionChecker(
+            detector=DangerousCommandDetector(),
+            sandbox=PathSandbox(str(tmp_path)),
+            rule_engine=engine,
+            mode=PermissionMode.DEFAULT,
+        )
+
+        inherited = self._make_tool(parent)._inherited_rule_engine()
+        assert inherited is engine
+        assert inherited.evaluate("Bash", "git push") == "deny"
+
+    def test_falls_back_when_parent_has_no_checker(self):
+        parent = MagicMock()
+        parent.permission_checker = None
+
+        inherited = self._make_tool(parent)._inherited_rule_engine()
+        assert inherited.evaluate("Bash", "anything") is None
