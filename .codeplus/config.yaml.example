@@ -1,0 +1,29 @@
+providers:
+  - name: anthropic-official
+    protocol: anthropic
+    base_url: https://api.anthropic.com
+    api_key: "your-api-key-here"
+    model: claude-sonnet-4-20250514
+    thinking: true
+
+  # OpenAI provider example
+  # - name: openai-official
+  #   protocol: openai
+  #   base_url: https://api.openai.com/v1
+  #   api_key: "your-api-key-here"
+  #   model: gpt-4o
+
+permission_mode: default
+
+mcp_servers:
+  - name: context7
+    command: npx
+    args: ["-y", "@upstash/context7-mcp"]
+
+  # 配置 url 时使用 Streamable HTTP：
+  # - name: my-http-mcp
+  #   url: https://example.com/mcp
+  #   headers:
+  #     Authorization: "Bearer ${MY_TOKEN}"
+
+enable_coordinator_mode: false   # 设为 true 后创建 Team 时 Lead 只能调度不能写代码
