@@ -1,9 +1,35 @@
-# Local configuration and generated files
+config.yaml
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+dist/
+build/
+.idea/
+.vscode/
 .codeplus/*
 !.codeplus/config.yaml.example
-.venv/
-__pycache__/
-*.py[cod]
+.claude/
+CLAUDE.md
+
+# Playwright snapshot leaks
+example-com-snapshot.md
+example-*.md
+
+# Playwright MCP 运行日志
+.playwright-mcp/
+
+# Local credentials, environments and caches
+.env
+.env.*
+!.env.example
+config.local.*
+*.log
 .pytest_cache/
-dist/
-*.egg-info/
+.ruff_cache/
+.mypy_cache/
+.venv-*/
+
+# Content isolated from the public source tree.
+/SWE-bench/
+/tests/test_packaging.py
