@@ -447,3 +447,32 @@ class TestLoadSkillTool:
 # Agent 集成
 # ---------------------------------------------------------------------------
 
+class TestAgentSkillIntegration:
+    def test_env_context_does_not_include_active_skills(self) -> None:
+        from codeplus.prompts import build_environment_context
+
+        env = build_environment_context(
+            "/test",
+            active_skills={"commit": "Do commit stuff"},
+            skill_catalog="Available: commit",
+        )
+        assert "Active Skills" not in env
+        assert "Do commit stuff" not in env
+        assert "Available: commit" in env
+
+    def test_agent_activate_and_clear(self) -> None:
+        agent = MagicMock()
+        agent.active_skills = {}
+
+        from codeplus.agent import Agent
+
+        real_agent = MagicMock(spec=Agent)
+        real_agent.active_skills = {}
+        real_agent.activate_skill = Agent.activate_skill.__get__(real_agent)
+        real_agent.clear_active_skills = Agent.clear_active_skills.__get__(real_agent)
+
+        real_agent.activate_skill("test", "SOP")
+        assert "test" in real_agent.active_skills
+
+        real_agent.clear_active_skills()
+        assert len(real_agent.active_skills) == 0
