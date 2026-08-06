@@ -32,7 +32,7 @@ from codeplus.memory.session import (
 )
 
 # =========================================================================
-# A. 指令文件（LICENSE）
+# A. 指令文件（CODEPLUS.md）
 # =========================================================================
 
 class TestProcessIncludes:
@@ -112,32 +112,32 @@ class TestProcessIncludes:
 
 class TestLoadInstructions:
     def test_single_layer(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        codeplus_md = tmp_path / "LICENSE"
+        codeplus_md = tmp_path / "CODEPLUS.md"
         codeplus_md.write_text("project instructions", encoding="utf-8")
         result = load_instructions(str(tmp_path))
         assert "project instructions" in result
 
     def test_multi_layer_priority(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """同一目录下 LICENSE 在前，.codeplus/LICENSE 在后（优先级更高）。"""
-        root_md = tmp_path / "LICENSE"
+        """同一目录下 CODEPLUS.md 在前，.codeplus/CODEPLUS.md 在后（优先级更高）。"""
+        root_md = tmp_path / "CODEPLUS.md"
         root_md.write_text("root level", encoding="utf-8")
         dotdir = tmp_path / ".codeplus"
         dotdir.mkdir()
-        dot_md = dotdir / "LICENSE"
+        dot_md = dotdir / "CODEPLUS.md"
         dot_md.write_text("dotdir level", encoding="utf-8")
         result = load_instructions(str(tmp_path))
         assert result.index("root level") < result.index("dotdir level")
         assert "---" in result
 
     def test_dotdir_walks_up(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """.codeplus/LICENSE 参与逐级遍历，深层目录的排在后面。"""
+        """.codeplus/CODEPLUS.md 参与逐级遍历，深层目录的排在后面。"""
         subprocess.run(["git", "init"], cwd=tmp_path, capture_output=True)
         sub = tmp_path / "pkg" / "deep"
         sub.mkdir(parents=True)
         (tmp_path / ".codeplus").mkdir(exist_ok=True)
-        (tmp_path / ".codeplus" / "LICENSE").write_text("dotdir root", encoding="utf-8")
+        (tmp_path / ".codeplus" / "CODEPLUS.md").write_text("dotdir root", encoding="utf-8")
         (sub / ".codeplus").mkdir()
-        (sub / ".codeplus" / "LICENSE").write_text("dotdir leaf", encoding="utf-8")
+        (sub / ".codeplus" / "CODEPLUS.md").write_text("dotdir leaf", encoding="utf-8")
         result = load_instructions(str(sub))
         assert result.index("dotdir root") < result.index("dotdir leaf")
 
@@ -763,7 +763,7 @@ class TestConversationInjection:
         assert "mems" in content
 
     def test_inject_skills_only(self) -> None:
-        """项目可能没写 LICENSE 也没有记忆，只有 Skill 时同样要注入。"""
+        """项目可能没写 CODEPLUS.md 也没有记忆，只有 Skill 时同样要注入。"""
         conv = ConversationManager()
         conv.inject_long_term_memory("", "", "- /review: review code")
 
