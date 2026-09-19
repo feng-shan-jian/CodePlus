@@ -1,14 +1,14 @@
 # CodePlus Knowledge：首版架构
 
-日期：2026-09-19。状态：K01 环境验收通过，功能未实现。实施顺序见 [最小任务清单](knowledge-tasks.md)，实测环境及遗留项见 [环境说明](knowledge-setup.md)。
+日期：2026-09-19。状态：K01 环境和 S1 Milvus/本地 Embedding 基础已验收通过；文档导入、检索与问答按后续阶段实现。实施顺序见 [最小任务清单](knowledge-tasks.md)，实测环境及遗留项见 [环境说明](knowledge-setup.md)。
 
 本版取代此前的整库快照发布方案。目标是本地个人知识库，以及可独立运行的检索评测。
 
 ## 1. 已确认的选择
 
 - 向量数据库：Milvus Standalone，Docker Compose 部署。
-- 本机运行位置：CodePlus/Embedding 使用 Windows Python；Milvus 使用 Ubuntu-24.04 WSL2 内已有的 Docker Engine，实际部署留给 K02。
-- Embedding：本地运行；首个候选 Qwen3-Embedding-0.6B，模型 revision 与运行参数固定后验证。
+- 本机运行位置：CodePlus/Embedding 使用 Windows Python；Milvus 使用 Ubuntu-24.04 WSL2 内已有的 Docker Engine，S1 已实际部署并验证。
+- Embedding：本地运行；Qwen3-Embedding-0.6B 的固定 revision 与 CPU 运行参数已在 S1 验证。
 - 回答：复用现有 CodePlus 模型配置。
 - 文档：先 Markdown，再文本型 PDF、DOCX。
 - 输出：带可定位来源的回答和 Markdown 报告。
@@ -130,4 +130,6 @@ BM25 创建条件以 [官方全文检索文档](https://milvus.io/docs/full-text
 
 首版暂缓：扫描件 OCR、复杂版面、多用户权限、退出后继续运行的导入服务、自动历史清理、整库版本回滚、第二种数据库。
 
-K01 已验证 Windows Python/uv、WSL2 与所选 Ubuntu Docker Engine/Compose，并记录资源情况。Windows Docker Desktop 仍有独立启动故障，重试目录清理受自动审批限制，详情见环境说明。K02–K36 尚未开始，Milvus、本地模型、RAG 代码和检索性能均未验证。
+K01 已验证 Windows Python/uv、WSL2 与所选 Ubuntu Docker Engine/Compose，并记录资源情况。Windows Docker Desktop 仍有独立启动故障，K01 重试目录清理受自动审批限制，详情见环境说明。S1 仅接入 Compose、可选依赖、配置和本地向量生成，执行证据与 leader 验收状态见 [环境说明](knowledge-setup.md) 和 [任务清单](knowledge-tasks.md)。K06 及后续 RAG 链路尚未开始。
+
+S1 直接复用 `config.py` / `validator.py` 的读取与合并路径；默认关闭，按显式出现的 knowledge 字段覆盖前层。数据目录在 `load_config` 返回前按启动目录解析为绝对路径。模型和 tokenizer 默认使用同一个固定 revision，CPU float32、左侧补齐、末 token pooling 和 L2 归一化；实际维度及上下文约束在首次加载模型时核对，输入超限时报错，不静默截断。只有调用编码入口才导入模型依赖或下载模型。首期仅创建 `knowledge/__init__.py` 和 `embedding.py`，未预建存储、服务或解析器框架。

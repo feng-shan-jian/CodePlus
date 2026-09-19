@@ -15,6 +15,13 @@ dependencies = [
     "websockets>=14.0",
 ]
 
+[project.optional-dependencies]
+knowledge = [
+    "pymilvus==3.0.2",
+    "torch==2.14.0",
+    "transformers==5.17.0",
+]
+
 [project.scripts]
 codeplus = "codeplus.__main__:main"
 

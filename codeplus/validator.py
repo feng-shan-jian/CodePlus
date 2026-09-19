@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from urllib.parse import urlsplit
+
 VALID_PROTOCOLS = {"anthropic", "openai", "openai-compat"}
 
 VALID_PERMISSION_MODES = {
@@ -236,13 +238,31 @@ def validate_sandbox(raw_sb: dict | None) -> dict:
     return result
 
 
+def validate_knowledge(raw: dict | None) -> dict:
+    """Validate supplied fields only, preserving omission for config layering."""
+    if raw is None:
+        return {}
+    if not isinstance(raw, dict):
+        raise ConfigError("'knowledge' must be a mapping")
+    if "enabled" in raw:
+        validate_bool_field(raw["enabled"], "knowledge.enabled")
+    if "milvus_uri" in raw:
+        try:
+            uri = urlsplit(raw["milvus_uri"])
+            if uri.scheme not in {"http", "https"} or not uri.hostname or not uri.port:
+                raise ValueError
+        except (ValueError, TypeError, AttributeError):
+            raise ConfigError("'knowledge.milvus_uri' must be http(s)://host:port")
+    return dict(raw)
+
+
 def validate_config_structure(raw: object) -> dict:
     """校验的主入口。校验解析后的原始配置，返回清洗后的字典。
 
     返回的字典包含以下键：
         providers、permission_mode、mcp_servers、hooks、
         enable_fork、enable_verification_agent、worktree、
-        teammate_mode、enable_coordinator_mode、sandbox
+        teammate_mode、enable_coordinator_mode、sandbox、knowledge
     """
     if not isinstance(raw, dict) or "providers" not in raw:
         raise ConfigError("Config must contain a 'providers' list")
@@ -262,4 +282,5 @@ def validate_config_structure(raw: object) -> dict:
             raw.get("enable_coordinator_mode", False), "enable_coordinator_mode"
         ),
         "sandbox": validate_sandbox(raw.get("sandbox")),
+        "knowledge": validate_knowledge(raw.get("knowledge")),
     }

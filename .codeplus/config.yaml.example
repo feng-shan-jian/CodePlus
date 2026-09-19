@@ -27,3 +27,16 @@ mcp_servers:
   #     Authorization: "Bearer ${MY_TOKEN}"
 
 enable_coordinator_mode: false   # 设为 true 后创建 Team 时 Lead 只能调度不能写代码
+
+# Optional S1 foundation; install with uv sync --extra knowledge.
+# /knowledge and document import are implemented in later stages.
+knowledge:
+  enabled: false
+  milvus_uri: http://127.0.0.1:19530
+  data_dir: .codeplus/knowledge  # resolved once from the startup directory
+  embedding_model: Qwen/Qwen3-Embedding-0.6B
+  embedding_revision: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+  embedding_dimension: 1024
+  max_input_tokens: 8192
+  batch_size: 8
+  top_k: 5

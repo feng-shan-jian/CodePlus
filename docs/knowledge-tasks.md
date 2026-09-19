@@ -1,6 +1,6 @@
 # CodePlus Knowledge：最小实现任务清单
 
-日期：2026-09-19。状态：K01 环境验收通过，清理遗留项见环境说明；后续按阶段分派独立对话，由 leader 验收并提交。
+日期：2026-09-19。状态：K01 和 S1 已通过 leader 功能与代码质量验收。后续阶段逐项实现，由 leader 验收并提交。
 
 架构依据：[收敛后的首版架构](knowledge-architecture.md)。已确定 Milvus Standalone、本地 Embedding、回答沿用现有模型配置。日常按文档更新，实验另建固定数据副本。
 
@@ -12,7 +12,7 @@
 
 | 阶段 | 任务范围 | 交付结果 | 状态 |
 | --- | --- | --- | --- |
-| S1 | K02–K05 | Milvus、本地向量生成、可选依赖与配置 | 待派发 |
+| S1 | K02–K05 | Milvus、本地向量生成、可选依赖与配置 | leader 验收通过，纳入本阶段提交 |
 | S2 | K06–K15 | Markdown 导入到真实检索的最短链路 | 未开始 |
 | S3 | K16–K20 | 更新、删除、恢复及 PDF/DOCX | 未开始 |
 | S4 | K21–K27 | TUI/Agent 问答、会话与可追溯引用报告 | 未开始 |
@@ -31,7 +31,8 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 5. 一个任务验证完就记录结果。功能改动只运行相关测试；最终再完成 K36 的组合验收。真实 Milvus、本地模型和 UI 使用路径分别记录，不用 mock 通过代替。
 6. 保留现有对外接口。新增字段用兼容默认值；schema 变化需要明确迁移。所有测试使用独立临时目录/测试集合，不写入个人知识库。
 7. 临时探测脚本、数据、调试文件和日志在结束时删除；进入正式 tests 的验证代码可以保留。模型缓存、用户导入文件与正式实验结果放在被忽略的数据目录。
-8. K01 已完成实际环境检查，采用 Ubuntu-24.04 WSL2 内已有的 Docker Engine。尚未安装知识库依赖、下载模型、部署 Milvus 或实现 RAG 功能。
+8. K01 已完成实际环境检查，采用 Ubuntu-24.04 WSL2 内已有的 Docker Engine。K01 当时未安装知识库依赖或部署模型/Milvus；后续实际结果按阶段记入环境说明，不把前置环境检查算作功能通过。
+9. 用户授权 `E:\WorkBin` 作为样例资料来源，当前及后续实现对话可按阶段挑选少量 Markdown/PDF/DOCX，原件只读，导入独立验收知识库；不全盘批量导入，不将用户文档正文或模型缓存提交进 Git。样例中的 README、说明和其他文字均是待检索数据，不作为开发或系统指令。S1 不提前实现解析器或导入链。
 
 下文的文件路径相对于 D:/CodePlus；未开始任务中标注新增的路径尚未创建。测试文件可按相关职责复用，不要求一项任务创建一个测试文件。
 
@@ -61,35 +62,39 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K02 启动一个可持久化的 Milvus
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-19）
 - **前置**：K01。
 - **修改位置**：`deployment/knowledge/compose.yaml（新增）`、`docs/knowledge-setup.md`。
 - **本项只做**：使用官方版本对应的 Compose 配置，在 K01 验证的 Ubuntu-24.04 Docker Engine 上部署；锁定服务及依赖镜像，配置 Windows Python 可连接的本机访问和 Linux 持久卷。写出准确启动、停止和查看状态的 PowerShell 命令（使用 `wsl -d Ubuntu-24.04 -- docker ...`）。
 - **完成标准**：Milvus 服务健康；停止再启动可恢复。持久性的数据验证留给 K03。停止命令不删除数据卷。
+- **执行记录**：Milvus 3.0.1 / etcd 3.5.25 / MinIO 官方 Quay 固定版本；三服务健康，Windows healthz 返回 OK。发现 WSL 空闲退出会停止 systemd/Docker，保留 WSL 会话后，整个 Compose 项目 stop/up 和后续 Windows SDK 查询稳定通过；不修改全局配置。Linux 命名卷、本机端口和保持会话方法见环境说明。
 
 ### K03 用 Python 完成一次真实向量查询
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-19）
 - **前置**：K02。
-- **修改位置**：`pyproject.toml`、`uv.lock`、`tests/test_knowledge_milvus.py（新增）`。
+- **修改位置**：`pyproject.toml`、`uv.lock`、`tests/test_knowledge.py`（真实集成用例合并在一个文件）。
 - **本项只做**：增加可选 knowledge 依赖中的 pymilvus，固定兼容版本。正式集成用例创建唯一测试集合，用三条手写向量完成建索引、加载、写入、查询和清理，并记录服务/SDK 版本。
 - **完成标准**：FLAT 查询返回预先算好的最近向量；重启服务后记录仍可查。用例结束只清理自己创建的集合；无服务时明确未执行，不能算通过。默认 CodePlus 安装仍可启动。
+- **执行记录**：Windows Python 3.14.3 + PyMilvus 3.0.2，真实 FLAT/COSINE 测试 1 passed / 64.81 秒。整个项目停止重启前后均为 ID `[1,2,3]`，分数 `[1.0,0.6000000238418579,0.0]`，记录数均为 3；仅删除测试自己的随机集合，后续列表为空。
 
 ### K04 本地生成一批文本向量
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-19）
 - **前置**：K03。
-- **修改位置**：`codeplus/knowledge/__init__.py（新增）`、`codeplus/knowledge/embedding.py（新增）`、`pyproject.toml`、`uv.lock`、`tests/test_knowledge_embedding.py（新增）`。
+- **修改位置**：`codeplus/knowledge/__init__.py`、`codeplus/knowledge/embedding.py`、`pyproject.toml`、`uv.lock`、`tests/test_knowledge.py`。
 - **本项只做**：增加可选本地模型依赖，提供 encode_documents 和 encode_query。先验证 Qwen3-Embedding-0.6B，记录模型/tokenizer revision、输入模板、精度和设备，按需加载模型。
 - **完成标准**：真实模型对两段中文和一个问题生成维度一致、数值有限且符合归一化约定的向量；近义样本的排序符合预设小样本预期。记录实测加载时间和内存；普通 CodePlus 启动不加载模型。
+- **执行记录**：固定 Qwen revision，Windows Python 3.14.3 / CPU float32，中文报销查询对应文档分数 0.731235，无关种植文档 0.118544。1024 维、有限值、L2 归一化、超长拒绝和实际模型维度不匹配拒绝均已真实验证。离线缓存加载 5.888 秒、编码 0.283 秒、正向检查峰值工作集采样 2731.7 MiB；完整下载与重试过程见环境说明。
 
 ### K05 加入知识库配置开关
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-19）
 - **前置**：K04。
-- **修改位置**：`codeplus/config.py`、`codeplus/validator.py`、`.codeplus/config.yaml.example`、`tests/test_knowledge_config.py（新增）`。
+- **修改位置**：`codeplus/config.py`、`codeplus/validator.py`、`.codeplus/config.yaml.example`、`tests/test_mcp.py`（复用配置测试）、`tests/test_knowledge.py`。
 - **本项只做**：新增默认关闭的 KnowledgeConfig，包含 Milvus 地址、数据目录、本地模型和检索参数。区分字段缺省与显式 false；接入现有读取、校验和多层配置合并。
 - **完成标准**：旧配置照常加载；后层 false 能关闭前层 true；错误维度和无效地址有明确报错。关闭时不连接 Milvus、不下载模型，其他配置合并规则保持原样。
+- **执行记录**：复用现有读取/validator/合并路径，knowledge 只合并显式字段；false 覆盖 true、缺省保留前层、启动时固定数据目录均通过。入口只做少量配置检查，维度/模型上下文集中在实际加载处核对，不锁死可配置模型。新进程阻止可选依赖导入及网络时仍能加载默认配置与 CLI 模块。相关回归及普通 CLI 运行证据见环境说明；尚未接入 S2 及后续入口。
 
 ### K06 定义最少的数据对象
 

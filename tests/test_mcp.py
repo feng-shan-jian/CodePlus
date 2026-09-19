@@ -94,6 +94,42 @@ class TestLoadConfigMCP:
         """)
         config = load_config(path)
         assert config.mcp_servers == []
+        assert config.knowledge.enabled is False
+
+    def test_knowledge_layers_preserve_omission_and_explicit_false(self, tmp_path, monkeypatch):
+        home, project = tmp_path / "home", tmp_path / "project"
+        for directory in (home, project):
+            (directory / ".codeplus").mkdir(parents=True)
+        provider = "providers:\n  - {name: test, protocol: openai, base_url: 'http://localhost', model: test}\n"
+        (home / ".codeplus/config.yaml").write_text(
+            provider + "knowledge: {enabled: true, top_k: 7, data_dir: './saved knowledge'}\n", encoding="utf-8")
+        (project / ".codeplus/config.yaml").write_text(provider, encoding="utf-8")
+        monkeypatch.setattr(Path, "home", classmethod(lambda cls: home))
+        monkeypatch.chdir(project)
+        assert load_config().knowledge.enabled is True
+        (project / ".codeplus/config.local.yaml").write_text(
+            provider + "knowledge: {enabled: false}\n", encoding="utf-8")
+        config = load_config()
+        assert config.knowledge.enabled is False
+        assert config.knowledge.top_k == 7
+        assert config.knowledge.data_dir == str(project / "saved knowledge")
+        monkeypatch.chdir(home)
+        assert config.knowledge.data_dir == str(project / "saved knowledge")
+
+    @pytest.mark.parametrize("knowledge, message", [
+        ({"milvus_uri": "localhost:19530"}, "milvus_uri"),
+        ({"enabled": "false"}, "enabled"),
+    ])
+    def test_invalid_knowledge_config(self, tmp_path, knowledge, message):
+        path = self._write_config(tmp_path, """\
+            providers:
+              - {name: test, protocol: openai, base_url: 'http://localhost', model: test}
+        """)
+        raw = yaml.safe_load(path.read_text())
+        raw["knowledge"] = knowledge
+        path.write_text(yaml.safe_dump(raw), encoding="utf-8")
+        with pytest.raises(ConfigError, match=message):
+            load_config(path)
 
     def test_stdio_server(self, tmp_path: Path) -> None:
         path = self._write_config(tmp_path, """\
