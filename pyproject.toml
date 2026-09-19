@@ -17,6 +17,8 @@ dependencies = [
 
 [project.optional-dependencies]
 knowledge = [
+    "filelock==4.0.1",
+    "markdown-it-py==4.0.0",
     "pymilvus==3.0.2",
     "torch==2.14.0",
     "transformers==5.17.0",

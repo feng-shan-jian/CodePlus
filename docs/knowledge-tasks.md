@@ -1,6 +1,6 @@
 # CodePlus Knowledge：最小实现任务清单
 
-日期：2026-09-19。状态：K01 和 S1 已通过 leader 功能与代码质量验收。后续阶段逐项实现，由 leader 验收并提交。
+日期：2026-09-20。状态：K01、S1 和 S2 已通过 leader 功能与代码质量验收。S2 临时文件清理受自动审批限制，详见环境记录；后续阶段逐项实现，由 leader 验收并提交。
 
 架构依据：[收敛后的首版架构](knowledge-architecture.md)。已确定 Milvus Standalone、本地 Embedding、回答沿用现有模型配置。日常按文档更新，实验另建固定数据副本。
 
@@ -13,7 +13,7 @@
 | 阶段 | 任务范围 | 交付结果 | 状态 |
 | --- | --- | --- | --- |
 | S1 | K02–K05 | Milvus、本地向量生成、可选依赖与配置 | leader 验收通过，纳入本阶段提交 |
-| S2 | K06–K15 | Markdown 导入到真实检索的最短链路 | 未开始 |
+| S2 | K06–K15 | Markdown 导入到真实检索的最短链路 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S3 | K16–K20 | 更新、删除、恢复及 PDF/DOCX | 未开始 |
 | S4 | K21–K27 | TUI/Agent 问答、会话与可追溯引用报告 | 未开始 |
 | S5 | K28–K29 | 非交互 CLI 与 Remote 复用同一实现 | 未开始 |
@@ -98,7 +98,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K06 定义最少的数据对象
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K05。
 - **修改位置**：`codeplus/knowledge/models.py（新增）`。
 - **本项只做**：定义 ParsedBlock、Chunk、SearchHit、SearchResult，文档登记字段按架构文档确定。片段必须包含文档 ID、内容代次、原文和来源范围；结果携带知识库 revision。
@@ -106,7 +106,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K07 保存知识库和文档登记信息
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K06。
 - **修改位置**：`codeplus/knowledge/metadata.py（新增）`、`tests/test_knowledge_metadata.py（新增）`。
 - **本项只做**：建立 knowledge_bases、documents、chunks 三类表和 schema 版本。支持创建库、登记文档/片段、查询状态；保存集合名称、profile_hash、revision 和待恢复操作字段。
@@ -114,7 +114,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K08 保存一份可追溯的原件
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K07。
 - **修改位置**：`codeplus/knowledge/sources.py（新增）`、`tests/test_knowledge_sources.py（新增）`。
 - **本项只做**：将指定文件复制到知识库原件目录，计算内容哈希并保存来源信息。先写临时文件再改名，复制期间源文件发生变化时返回可重试错误。
@@ -122,7 +122,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K09 读取 Markdown 并保留行号
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K08。
 - **修改位置**：`codeplus/knowledge/parsing.py（新增）`、`tests/test_knowledge_parsing.py（新增）`。
 - **本项只做**：从保存的 Markdown 原件提取标题、段落、代码块及行范围，输出 ParsedBlock。实现格式分派的最小入口。
@@ -130,7 +130,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K10 把文本分成可检索的片段
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K09。
 - **修改位置**：`codeplus/knowledge/chunking.py（新增）`、`tests/test_knowledge_chunking.py（新增）`。
 - **本项只做**：优先沿标题和段落分块，超长内容按固定 tokenizer 切分。实现可配置上限与重叠，生成稳定 chunk_id，并保留跨块来源映射。
@@ -138,7 +138,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K11 实现 Milvus 的片段存取
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K03、K06。
 - **修改位置**：`codeplus/knowledge/milvus_store.py（新增）`、`tests/test_knowledge_milvus.py`。
 - **本项只做**：建立首期 dense 集合 schema，实现 ensure_collection、upsert_chunks、search_dense 和 delete_document。知识库绑定集合与模型 fingerprint，参数化处理过滤条件。
@@ -146,7 +146,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K12 加入最小的读写保护
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K07。
 - **修改位置**：`codeplus/knowledge/service.py（新增）`、`codeplus/knowledge/metadata.py`、`tests/test_knowledge_service.py（新增）`。
 - **本项只做**：建立每库跨进程文件锁和 READY、UPDATING、NEEDS_REPAIR 状态检查。所有服务查询和数据库提交都走同一个入口；准备模型输入时不占有长事务，等待锁不阻塞 UI 线程。
@@ -154,7 +154,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K13 串起首次 Markdown 导入
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K04、K08、K09、K10、K11、K12。
 - **修改位置**：`codeplus/knowledge/service.py`、`codeplus/knowledge/metadata.py`、`tests/test_knowledge_service.py`。
 - **本项只做**：实现 import_document：保存原件、解析、分块、向量化、写入和元数据提交。数据库写入前记录可重试材料，完成后验证片段集合并置 READY。按文件返回结果，目录导入后续复用此入口。
@@ -162,7 +162,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K14 用一句话查出原文片段
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K13。
 - **修改位置**：`codeplus/knowledge/service.py`、`tests/test_knowledge_service.py`。
 - **本项只做**：实现 search(query)：按该知识库已绑定的模型编码问题、执行 dense 查询、从 SQLite 解析原文和来源，返回 SearchResult。完整检索与读取结果期间持有短锁。
@@ -170,11 +170,13 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K15 提供可手工使用的独立命令
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K14。
 - **修改位置**：`codeplus/knowledge/__main__.py（新增）`、`tests/test_knowledge_cli.py（新增）`、`docs/knowledge-setup.md`。
 - **本项只做**：提供 python -m codeplus.knowledge 下的 create、import、search、status 命令，直接复用 service。支持含空格的 Windows 路径和清晰退出码。
 - **完成标准**：从终端创建库、导入文件、输入问题、看到带来源的片段；该过程不调用回答模型。所有文档中的命令用真实入口验证。至此达到第一个可用里程碑。
+
+**S2 执行记录（K06–K15，共用记录）**：实现和验证见 [S2 环境记录](knowledge-setup.md)。复用 S1 配置和模型，新增具体数据对象、Markdown 处理、一个 SQLite 元数据类、固定 Milvus 存取类、统一服务及 CLI；没有逐任务建模块。三份真实 Markdown 共 23 chunks、revision=3，五题 Top 3 命中预期文档并核对行号。重复导入不编码、不增行；同维不同 profile 拒绝；SQLite 回滚、pending/失败状态、跨进程锁和真实 SDK 文档隔离均已验证。leader 已完成独立 CLI、分块和相关回归验收；S3 尚未开始。
 
 ### K16 只更新发生变化的文档
 

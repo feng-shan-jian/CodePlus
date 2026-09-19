@@ -168,3 +168,99 @@ Remove-Item Env:CODEPLUS_TEST_EMBEDDING
 - 三个健康容器及 Linux 命名卷、worktree `.venv` 和完整 HF 缓存保留供 leader / 后续阶段复用。临时监测脚本、探测日志、空测试目录及第一次下载的孤立 partial 已清理；正式测试保留在 `tests/test_knowledge.py`，配置用例复用 `tests/test_mcp.py`。
 - 本阶段没有创建个人知识库或导入 `E:\WorkBin` 原件；没有修理 Docker Desktop 或操作 K01 的旧 socket。K01 未清理 socket 仍属于旧遗留项。
 - 未执行：GPU 推理、长期稳定性/压力测试、其他模型配置、S2 以后的真实文档导入/检索/问答。没有将小样本排序作为检索质量评测结论。
+
+## S2 Markdown 导入和真实检索（K06–K15）
+
+实现 worktree：`C:\Users\18221\.codex\worktrees\397c\CodePlus`，基线 HEAD 为 S1 提交 `87fad9770d40ad8a1dcc07cb342db9c1ab822c30`。**2026-09-20 已通过 leader 独立功能与代码质量验收，纳入 S2 提交。** 临时文件清理的自动审批阻塞单独记录在末尾。
+
+### 使用入口
+
+同步本工作树自己的 Windows `.venv`：`uv sync --locked --extra knowledge`。本阶段显式声明已存在的 `filelock==4.0.1`、`markdown-it-py==4.0.0`，复用现有依赖版本；未升级 Torch、Transformers、PyMilvus。已验证的默认 profile 仍为 S1 固定 Qwen revision / CPU float32 / 1024 维。分块增加 `chunk_tokens: 512`、`chunk_overlap: 64`。
+
+在现有 CodePlus YAML 中将 `knowledge.enabled` 设为 `true`，为验收指定独立绝对 `knowledge.data_dir`。`--config` 沿用已有配置加载器，因此仍需合法的 `providers` 字段，但以下命令不会调用回答模型。未显式传 `--config` 时，沿用已有多层配置合并规则。
+
+实测使用 `%TEMP%\codeplus-s2-...\knowledge config.yaml` 及其 `acceptance library` 子目录，二者名称均包含空格；完成后已删除。以下 `$configPath` 指向使用者自己的上述 YAML。命令参数与实测 CLI 一致，实际执行目录为本节 worktree：
+
+```powershell
+$env:HF_HUB_OFFLINE = '1'  # 本机完整缓存已存在，无需重复下载
+$configPath = '.codeplus/config.yaml'
+$created = & .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath create 'S2 acceptance'
+$kbId = ($created | ConvertFrom-Json).id
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath import $kbId 'E:\WorkBin\Recipe\README.md'
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath import $kbId 'E:\WorkBin\Recipe\docs\recipe-manifest.md'
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath import $kbId 'E:\WorkBin\Recipe\supabase\README.md'
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath status $kbId
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath search $kbId '匿名用户可以读取哪些 recipes 数据？' --top-k 3
+Remove-Item Env:HF_HUB_OFFLINE
+```
+
+成功退出码 0，业务/配置/模型/SDK 错误为 1，命令参数错误为 2。结果为 JSON，search 返回 kb_id、revision、profile_hash、检索配置及带 cosine_similarity 分数的 hits；每个 hit 包含保存的原文、source_uri、original_path 和来源范围。路径可包含空格；原件按 UTF-8（允许 BOM）读取，不改写源文件。当前仅接受 `.md` / `.markdown`。
+
+### 数据与一致性
+
+- `metadata.sqlite3` 只含 `knowledge_bases`、`documents`、`chunks` 三张表，schema version=1；拒绝未知版本。外键和唯一约束保护库、来源身份与片段登记，最终文档/片段/revision 在同一 SQLite 事务提交。
+- 相同来源+相同字节重复导入直接返回 `unchanged: true`，不加载 tokenizer/模型/SDK、不再次编码。相同字节的不同来源保留不同 doc_id；generation_id 绑定内容哈希、解析器、tokenizer 和分块配置，chunk_id 绑定文档、generation 和序号。
+- 原件先写临时文件、flush/fsync 后改名并设只读；复制读取前后核对文件身份、大小和 mtime。Windows Python 3.14 的 `stat`/`fstat` ctime 含义不同，不能交叉比较。原件保存在每次导入的唯一目录，避免进程死在 pending 登记前导致后续重导路径冲突。
+- Markdown 使用 CommonMark 结构，保存标题路径、段落/代码块类型、原文字符范围和行号。短块优先沿结构合并；仅超长结构按 tokenizer 拆分并加入不超过 overlap 的重叠，不在自然分段间机械补重叠。按字符 offset 切分后重新计算 token 数，避免中文多 token 字符和 emoji 被解码切坏；不静默截断。
+- 每库 `filelock.FileLock` 覆盖服务读取、Milvus 检索及结果来源解析、提交；原件/解析/编码准备在锁外，锁内重新核对 profile、状态和来源。独立 CLI 是同步入口；后续 UI 应通过 `asyncio.to_thread` 调用，S2 尚未接 UI。
+- 同一 profile 同时写入 SQLite 哈希、profile.json 和集合 description；模型/revision、输入模板、pooling/精度、维度、tokenizer/分块参数改变均不能混写。每库一个稳定 FLAT/COSINE 集合，使用 Strong 一致性及同步 load。
+- 提交前落盘完整原件、chunks 和向量；SQLite 登记 pending 并置 UPDATING，SDK 完整行 upsert 后核对该文档的**全部 chunk ID、generation、doc_id 和文本**，成功才写元数据并置 READY。异常保留 NEEDS_REPAIR；硬退出可能保留 UPDATING，两者均拒绝检索，不凭进程消失自动恢复。
+- PyMilvus 3.0.2 实测差异：`query_iterator` 直接使用 `expr_params`，而 `delete` 使用 `filter_params`；均参数化传值。search 返回主键名 `chunk_id`。最初真实导入发现 iterator 模板参数未传递，修正后重新完整验收，未增加多版本猜测分支。依据 [过滤模板](https://milvus.io/docs/filtering-templating.md)、[查询迭代器](https://milvus.io/api-reference/pymilvus/v3.0.x/MilvusClient/Vector/query_iterator.md) 和本机 SDK 源码核对。
+
+### 真实结果
+
+Windows Python 3.14.3，PyMilvus 3.0.2 / 服务 3.0.1，Qwen 固定 revision，仅用现有离线缓存。完整验收库 `e61257ac5a63408ba8dc02a478bbc9ee`，集合 `codeplus_kb_e61257ac5a63408ba8dc02a478bbc9ee`；最终 READY、3 documents、23 chunks、revision=3。
+
+| 原件（只读来源） | chunks | SHA256 |
+| --- | --- | --- |
+| `E:\WorkBin\Recipe\README.md` | 10 | `a4bf37f33a8d189c290444067236c6c0945d93ffd7ea50d0ee2adbbedbfd8064` |
+| `E:\WorkBin\Recipe\docs\recipe-manifest.md` | 6 | `63b6b97811bcf191dd88daf8aca45fb31250c4603eed833ac19242b66a2393c1` |
+| `E:\WorkBin\Recipe\supabase\README.md` | 7 | `cacac7e0bae65ed2e5225706a3fa0b7c476b1b97d0bf819385bbb121f2e98d7b` |
+
+每次 import 独立 CLI 启动，耗时 12.149 / 11.395 / 11.780 秒（包含各自模型加载）；重复 import 0.258 秒，前后 status 完全相同。另以新服务对象复核重复调用后 `_model is None`、`_store is None`。原件副本与来源文件逐字节一致；来源后来被修改仍使用已保存的原件（正式测试用合成文件验证，没有修改上述样例）。
+
+| 已知答案问题 | 预期来源命中的排名 / cosine | 命中范围 |
+| --- | --- | --- |
+| 本地启动网站的开发命令和访问端口是什么？ | 1 / 0.695748 | 根 README 7–14 行 |
+| 生产环境缺少 Supabase 配置时公开目录会怎样？ | 1 / 0.825055 | 根 README 16–24 行 |
+| 公开投稿的仓库根目录建议提供什么 manifest 文件？ | 2 / 0.640978 | recipe-manifest 3–5 行 |
+| 管理员审核通过就会自动标记为 Verified 吗？ | 2 / 0.551349 | recipe-manifest 74–76 行 |
+| 匿名用户可以读取哪些 recipes 数据？ | 1 / 0.676757 | supabase README 15–22 行 |
+
+五题均在 Top 3 找到预期文档和答案片段；对所有返回 hit 的 source_spans 逐片核对字符子串、原文行范围和保存文本。每次 search CLI 6.262–7.591 秒，包含进程启动及模型加载；这只是五题链路核验，不是正式召回率或性能评测。
+
+### 关键检查、清理与后续边界
+
+正式检查集中在 `tests/test_knowledge_service.py`，复用 S1 的 `tests/test_knowledge.py` 和既有配置/命令测试：
+
+```powershell
+& .\.venv\Scripts\python.exe -m pytest tests/test_knowledge_service.py tests/test_knowledge.py tests/test_mcp.py tests/test_commands.py -q
+$env:CODEPLUS_TEST_MILVUS_URI = 'http://127.0.0.1:19530'
+& .\.venv\Scripts\python.exe -m pytest tests/test_knowledge_service.py -q
+Remove-Item Env:CODEPLUS_TEST_MILVUS_URI
+uv lock --check
+uv sync --locked --extra knowledge --dry-run
+git diff --check
+```
+
+- 相关回归：73 passed / 3 skipped；跳过的是未 opt-in 的 S1 两个外部集成及 S2 SDK 用例，不当作通过。S2 真实 SDK 单独 opt-in 最终回归：7 passed / 43.14 秒，覆盖实际创建、两文档写入、检索、完整行重复 upsert、同维不同 profile/错维拒绝、参数化删除与另一文档不受影响，以及 65535 UTF-8 字节边界。
+- SQLite 故障注入：SDK 写入失败、核验失败、第二条 chunk 插入由 SQLite trigger 真实拒绝，均保留 pending、NEEDS_REPAIR、revision=0，元数据没有半批 chunks；新服务重开后状态保持。模型准备/查询失败不改变旧库；空库和空 Markdown 明确报错。
+- 跨进程：写进程走真实 service 导入，在 pending 后的 SDK 调用内暂停；另一进程的 search 确实等待同一 OS 锁，其他知识库的 status 正常。强制终止写进程后 reader 获锁，仍因 UPDATING 拒绝查询；pending.json 和原件保留。该用例的向量后端/编码为明确测试替身，实际模型+Milvus 路径由上面的独立 CLI 验收覆盖。
+- 连接失败独立检查：已导入临时库后，另一个服务对象连接 `http://127.0.0.1:1`，2.042 秒返回 MilvusException；本地 status 仍为 READY / revision=1 且与失败前完全一致，无虚假检索结果。未停止或重启共享容器。
+- 测试集合均按本次创建的明确名字删除，并确认自身集合不存在；没有清理他人集合。真实 CLI/连接失败验收库的原件副本、SQLite、向量和临时 YAML 已由各自 TemporaryDirectory 清理。正式 pytest 产生的临时数据和三份临时脚本清理被自动审批拒绝，准确残留见下文。保留本 worktree `.venv`、原有 HF 缓存、健康容器和已授权 WSL 存活会话；未操作主仓或源样例。
+- S2 没有 update/remove/retry 命令，来源内容变化会明确拒绝并提示更新属于 S3。SDK 的 delete_document 仅为 K11 的存取能力，未伪装成可用业务删除。S3 必须保留每代原件的精确映射，再实现历史读取/更新；不能在覆盖 documents.original_path 后丢失旧代原件位置。
+- 未验证：恢复流程、PDF/DOCX、TUI/Agent/Remote、回答和报告、GPU、其他模型、长时压力/大语料和掉电恢复。硬退出发生在 pending 登记前可能留下未登记准备目录，当前不会阻塞下次导入；本阶段不提供自动孤立材料回收，也不提前实现 S3。
+
+leader 独立功能验收：使用 `E:\WorkBin\Recipe\docs\recipe-manifest.md` 和真实 Qwen/Milvus，独立执行 create/import/reimport/search/status 全部成功，6 chunks / revision=1。问题“审核通过是否就能直接标记为 Verified？”命中 74–76 行，字符范围与保存原件一致；重复 import 指向空 `HF_HOME` 仍成功，未加载模型。源文件 SHA256 前后不变，leader 自建集合、目录及脚本均已清理。该次复跑已包含唯一导入目录的更改。
+
+leader 独立回归命令为 `python -m pytest tests/test_knowledge_service.py tests/test_knowledge.py tests/test_mcp.py tests/test_commands.py tests/test_agent.py tests/test_memory.py tests/test_permissions.py -q`：**215 passed / 4 skipped，10.08 秒**。跳过三项未 opt-in 的外部集成和现有系统符号链接用例；与实现对话的测试有重叠，不累加计数。另用真实 tokenizer 检查 CRLF、长中文、罕见汉字、emoji 和代码块，24 个片段的 token 上限、原文覆盖、字符定位和稳定 ID 全部通过。
+
+代码质量验收通过：继续复用配置和 LocalEmbedding，原件/解析/分块集中在一个具体文档模块，SQLite 和 Milvus 各保留一个实现，CLI 直接调用同一服务；未加入多后端框架或重复校验层。leader 发现的真实 SDK 参数问题已修复并独立复验，通过后按明确文件范围提交并合入主目录。
+
+**清理阻塞（2026-09-20）**：已核对目标路径后，PowerShell 批量删除本阶段临时目录/文件的命令被自动审批以 `blocked by policy` 拒绝。随后缩小为本 worktree 内三个明确临时脚本的 `Remove-Item -LiteralPath ... -Force`，同样被拒绝，未给出具体原因。未更换删除工具或绕过审批；以下残留仍存在，不能标记已清理：
+
+- 本 worktree `.codeplus/s2_accept.py`、`.codeplus/s2_lockfile.py`、`.codeplus/s2_unavailable.py`。
+- 本 worktree `.codeplus/s2-pytest/`、`.codeplus/s2-regression/`、`.codeplus/s2-final-sdk/`，仅包含本阶段正式测试的临时合成数据。
+- `C:\Users\18221\AppData\Local\Temp\pytest-of-18221\pytest-11`、`pytest-12`，本阶段早期服务测试目录；`pytest-10` 已由 pytest 自身清理。
+
+工作树内上述残留均受既有 Git 忽略规则覆盖，没有暂存或纳入代码 diff；不是正式产品文件，也不是应长期保留的交付物。功能实现和实测已完成，最终验收仍需保留这一清理未完成边界。

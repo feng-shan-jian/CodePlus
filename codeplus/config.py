@@ -145,6 +145,8 @@ class KnowledgeConfig:
     max_input_tokens: int = 8192
     batch_size: int = 8
     top_k: int = 5
+    chunk_tokens: int = 512
+    chunk_overlap: int = 64
 
 
 @dataclass

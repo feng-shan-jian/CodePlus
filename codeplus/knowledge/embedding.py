@@ -65,6 +65,12 @@ class LocalEmbedding:
             vectors.extend(output.tolist())
         return vectors
 
+    @property
+    def tokenizer(self):
+        """The same pinned tokenizer used for chunking and embedding inputs."""
+        self._load()
+        return self._tokenizer
+
     def encode_query(self, query: str) -> list[float]:
         """Use the pinned retrieval instruction only for the query."""
         if not query.strip():
