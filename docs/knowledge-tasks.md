@@ -17,7 +17,7 @@
 | S3 | K16–K20 | 更新、删除、恢复及 PDF/DOCX | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S4 | K21–K27 | TUI/Agent 问答、会话与可追溯引用报告 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S5 | K28–K29 | 非交互 CLI 与 Remote 复用同一实现 | leader 验收通过，纳入本阶段提交 |
-| S6 | K30–K33 | 可复现的基础检索评测与混合检索实验 | 未开始 |
+| S6 | K30–K33 | 可复现的基础检索评测与混合检索实验 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S7 | K36 | 完整使用验收与文档收尾 | 未开始 |
 
 K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，保留准确记录，不标记通过或提前提交未验收实现。
@@ -296,7 +296,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K30 建立固定问题集并计算检索指标
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K15、K20。
 - **修改位置**：`codeplus/knowledge/evaluate.py（新增）`、`tests/test_knowledge_evaluate.py（新增）`、`tests/fixtures/knowledge/（正式小样本）`。
 - **本项只做**：准备约 10–20 个问题和原文证据标注，直接调用检索服务。保存实验配置、固定语料哈希、分阶段结果、延迟与失败；先实现证据 Recall@K。
@@ -304,7 +304,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K31 比较 FLAT 与 HNSW
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K30。
 - **修改位置**：`codeplus/knowledge/milvus_store.py`、`codeplus/knowledge/evaluate.py`、`tests/test_knowledge_evaluate.py`。
 - **本项只做**：固定文档向量和查询向量，在两个明确属于实验的集合建立 FLAT、HNSW。记录 M、efConstruction、ef、资源与预热条件，区分建索引和查询参数。
@@ -312,19 +312,21 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K32 加入 BM25 单路检索实验
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K31。
-- **修改位置**：`codeplus/knowledge/milvus_store.py`、`codeplus/knowledge/evaluate.py`、`tests/test_knowledge_milvus.py`。
+- **修改位置**：`codeplus/knowledge/milvus_store.py`、`codeplus/knowledge/evaluate.py`、`tests/test_knowledge_evaluate.py`。
 - **本项只做**：在新的实验集合中配置 text analyzer、BM25 Function 和 sparse 字段，验证中文分词后导入固定语料。保留原有纯向量集合，不偷偷改 schema。
 - **完成标准**：中文术语、英文缩写、编号样本的分词与命中可核对；原文范围过滤与 dense 一致；输出 BM25 单路指标。启用到日常库时需显式重导与迁移说明。
 
 ### K33 加入 RRF 混合检索
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K32。
-- **修改位置**：`codeplus/knowledge/service.py`、`codeplus/knowledge/evaluate.py`、`codeplus/config.py`、`codeplus/validator.py`、`tests/test_knowledge_evaluate.py`。
+- **修改位置**：`codeplus/knowledge/__main__.py`、`codeplus/knowledge/evaluate.py`、`tests/test_knowledge_evaluate.py`。模式参数只在实验 CLI，不修改日常 service/config/validator。
 - **本项只做**：合并 dense 与 BM25 排名，保留两路原始得分，增加 dense/bm25/hybrid 模式和候选数量配置。新 schema 的日常集合只有在验证后才显式切换绑定。
 - **完成标准**：用可手算的排名验证融合结果；对照纯向量、纯 BM25、混合检索；缺一路时明确记录策略，不静默改变实验；知识库现有路径与模型权限不变。
+
+**S6 执行记录（K30–K33，leader 验收通过）**：1066 个真实 Qwen 片段、固定 16 题/18 处原文范围，三路和同冻结向量的 FLAT/HNSW 已完成。25 行小集合曾出现 Finished 假阳性，新增一个 1040 条背景展品 Markdown 后，通过对应 segment 的真实 HNSW 文件加载日志确认执行。最终 Evidence Recall@3：dense 16/18、BM25 12/18、hybrid 15/18；同一 HNSW 上 ef16/64 的 ANN 为 111/144、129/144。冻结重放不加载模型，不依赖旧临时路径或现有 fixtures；日常哨兵库状态、绑定、原文和完整向量行不变。默认相关回归57 passed/4 skipped；正式 opt-in 真实回归4 passed，具体哈希、命令、指标、资源及清理见 [S6 环境记录](knowledge-setup.md)。leader 独立冻结重放、指标复算及真实 HNSW 日志核对通过，独立回归57 passed/4 skipped；日常 BM25/hybrid 和迁移均未实现。
 
 ### K34 可选：验证精排是否值得
 
@@ -359,7 +361,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 - SQLite 元数据提交与 Milvus 写入分别验证，不声称跨数据库事务。
 - 配置和会话字段兼容旧数据；关闭知识库时普通 CodePlus 可独立运行。
 - 集成测试需要真实服务时使用显式选项或标记，缺少服务清楚记录未执行。首期查询可见性使用明确的一致性配置，并等待索引及加载就绪。
-- K32/K33 涉及 schema 升级，先在实验集合完成；用于日常库时在知识库锁内核对语料 revision、确认新集合完整再修改绑定。失败保持原绑定，不删除原件或旧集合；这是一次显式迁移，日常文档更新仍按单文档执行。
+- K32/K33 在独立实验集合完成；当前不支持日常 BM25/hybrid，也没有日常集合迁移入口。未来若另行实现日常迁移，须在知识库锁内核对语料 revision、确认新集合完整再修改绑定；失败保持原绑定，不删除原件或旧集合。实验不会自动执行迁移。
 - 新程序遇到未知 SQLite schema 版本应拒绝使用该模块；迁移前备份元数据。关闭功能是应用回退方式，恢复数据则使用原件和明确的重试材料。
 - 日常删除不清除历史引用原件；不实现自动后台历史清理或整库快照发布。
 

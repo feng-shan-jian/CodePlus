@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import sys
 
-from codeplus.config import load_config
+from codeplus.config import KnowledgeConfig, load_config
 from .service import KnowledgeService
 
 
@@ -31,8 +31,29 @@ def main(argv=None) -> int:
     source = commands.add_parser("source", help="Read a saved chunk and its generation's original location")
     source.add_argument("kb_id")
     source.add_argument("chunk_id")
+    evaluate = commands.add_parser("evaluate", help="Frozen synthetic Milvus experiment; never migrates a daily base")
+    inputs = evaluate.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--fixtures", type=Path, help="Directory containing Markdown originals and questions.json")
+    inputs.add_argument("--replay", type=Path, help="Use this frozen.json without loading an embedding model or fixtures")
+    evaluate.add_argument("--mode", choices=("all", "dense", "bm25", "hybrid"), default="all")
+    evaluate.add_argument("--top-k", type=int, default=3)
+    evaluate.add_argument("--candidates", type=int, default=6, help="Candidates per lane; also used by ANN comparisons")
+    evaluate.add_argument("--rrf-k", type=float, default=60)
+    evaluate.add_argument("--m", type=int, default=16)
+    evaluate.add_argument("--ef-construction", type=int, default=128)
+    evaluate.add_argument("--ef", type=int, nargs="+", default=[16, 64], help="Two or more query-only ef settings")
+    evaluate.add_argument("--warmup", type=int, default=1, help="Warmup rounds over all questions, excluded from percentiles")
+    evaluate.add_argument("--repeats", type=int, default=3)
     args = parser.parse_args(argv)
     try:
+        if args.command == "evaluate":
+            from .evaluate import run
+
+            # Experiments need no answer provider configuration. Explicit YAML still uses the existing loader.
+            config = load_config(args.config).knowledge if args.config else KnowledgeConfig(enabled=True)
+            result = run(config, args)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0 if result["status"] == "ok" else 1
         with closing(KnowledgeService(load_config(args.config).knowledge)) as service:
             if args.command == "create":
                 result = service.create(args.name)

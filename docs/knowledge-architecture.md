@@ -35,14 +35,12 @@ codeplus/knowledge/
   __main__.py      独立管理/检索命令
   models.py        配置与数据结构
   metadata.py      SQLite 登记信息
-  sources.py       原件复制与哈希
-  parsing.py       格式解析
-  chunking.py      结构分块
+  documents.py     原件复制、格式解析、结构分块与来源范围
   embedding.py     本地模型
   milvus_store.py  官方 SDK 适配
   service.py       导入、检索、更新和状态保护
   citations.py     原文读取与引用校验
-  evaluate.py      后续正式评测入口
+  evaluate.py      固定语料、原文证据召回、Milvus 索引/BM25/RRF 实验
 ```
 
 先实现具体函数，不预先创建多后端继承框架。后续增加替代模型或数据库时再抽取实际需要的接口。
@@ -74,7 +72,7 @@ S3 schema 2 在现有三张表加列，从 S2 documents 回填 chunks.original_p
 - `text`：VARCHAR，检索预览；按 UTF-8 字节检查长度。
 - `dense`：FLOAT_VECTOR，维度来自锁定的模型配置。
 
-先用 FLAT + COSINE 跑通并建立参照，再在实验集合中比较 HNSW。首期只做稠密向量检索；BM25 阶段在新实验集合创建 text analyzer、BM25 Function 和 sparse 字段，明确重导数据。启用混合检索作为日常方案时，通过一次显式迁移切换集合；这不是每次文档更新都要做的操作。
+日常集合继续使用 FLAT + COSINE，只支持 dense。S6 在新实验集合创建 text analyzer、BM25 Function 和 sparse 字段，并用同一份冻结向量比较 FLAT/HNSW。**当前没有日常 BM25/hybrid 迁移入口**；实验不修改任何日常集合 schema 或绑定。未来若提供日常混合检索，须另行实现显式重导与绑定切换，不能把本阶段实验视为已经迁移。
 
 ## 5. 更新与失败处理
 
@@ -114,7 +112,11 @@ Milvus 的记录更新能力依据 [Upsert 文档](https://milvus.io/docs/upsert
 
 ## 7. 实验范围
 
-日常使用支持更新文档。实验复制一组固定原件和标注到实验目录，记录哈希、模型/配置、数据库版本、向量文件以及检索结果。实验集合与日常集合名称区分，清理只作用于明确属于本实验的资源。
+日常使用支持更新文档。`python -m codeplus.knowledge evaluate --fixtures <目录>` 通过现有 KnowledgeService 导入临时库，复用 documents 的分块/来源范围、LocalEmbedding 和 MilvusStore。`--fixtures` 与 `--replay <frozen.json>` 必选其一；公开样例位于仓库 `tests/fixtures/knowledge`，不作为 wheel 的运行期依赖。
+
+实验输出写入当前工作目录被忽略的 `.codeplus/knowledge/experiments/<run>/`。frozen.json 保存完整原文、原文范围标注、profile、文档/查询向量和来源映射；report.json 保存稳定的 corpus_sha256、冻结内容校验和、运行配置、各路原始结果、分词、失败和耗时。语料哈希仅依赖排序后的文件名与原文 SHA256；完整快照/行哈希包含本轮实际身份。replay 只使用冻结内容及冻结 profile，无需旧临时路径、当前 fixtures 或 Embedding 加载；当前配置只用于连接等运行参数。
+
+实验集合使用随机 `codeplus_eval_` 名称，与临时导入库均在 finally 内按本轮明确名字删除；来源临时目录正常关闭后清理。日常库隔离在验收中检查，不在生产评测中增加整库扫描或审计层。
 
 实验顺序为：FLAT 参照 → HNSW 对比 → BM25 单路 → RRF 混合 → 可选精排 → 模型/分块对照。
 
@@ -122,7 +124,11 @@ Milvus 的记录更新能力依据 [Upsert 文档](https://milvus.io/docs/upsert
 - 文档检索：固定问题和人工标注，比较是否找到了正确原文。
 - 回答质量：检查答案是否受证据支持、引用是否准确。
 
-首先用 3 份小文档和 5 个已知答案的问题检查链路；建立正式评测时扩展到约 10–20 个标注问题，再逐渐扩大。不同分块策略的标注锚定原文范围，不能绑定旧 chunk_id。
+S6 固定 16 个中英文问题、18 处原文证据范围，包含两题无答案和一题需要五处证据的跨文档问题。Evidence Recall@K 的分母是有答案问题的全部标注范围数；同一来源范围须由前 K 个结果的区间并集完整覆盖，部分覆盖不计。请求失败按零命中保留在固定分母，并单独报告失败率与成功请求召回；无标准答案的召回为 null，不计满分。重复测时不重复扩大证据分母。ANN Recall@K 另以同范围 FLAT 实际返回的 K 内 ID 集合作参照，空参照不可用。
+
+实验的 dense/bm25/hybrid 模式和候选数只属于 evaluate CLI；日常配置、SearchKnowledge、会话绑定不扩展模式。RRF 使用两路一基排名等权求和 `1/(rrf_k+rank)`，保留原始分数/排名，以 chunk ID 打破融合平分。两路有效但某路空返回，正常计算并记录该路 no_hits；任一路异常，hybrid 标记 unavailable，保留各路错误和原始输出。
+
+固定背景目录包含 1040 条短小虚构展品，让真实分块达到当前 Milvus 建索引规模。小集合可能显示 Finished/indexed_rows、非零 index_id 和 HNSW index_name，却跳过 HNSW 构建；报告保留 loaded segment/index 信息，将 ANN 数值明确标为配置集合的邻居重合率，execution_verified=false，不能仅凭公共 API 当作已验证的 HNSW 比较。实际本轮类型须结合服务端对应集合的 build/load 日志确认，验收证据记录在 setup。禁止为实验改变共享 Milvus 全局阈值。微型合成集的 P50/P95 不用于生产性能结论。
 
 BM25 创建条件以 [官方全文检索文档](https://milvus.io/docs/full-text-search.md) 为准。不会把不同数据库自带 analyzer 的差异误称为向量索引性能差异。
 

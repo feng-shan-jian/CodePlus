@@ -12,16 +12,26 @@ class MilvusStore:
     def close(self):
         self.client.close()
 
-    def ensure_collection(self, name: str, profile_hash: str, dimension: int, *, create=False):
+    def _schema(self, description: str, dimension: int, analyzer=None):
         from pymilvus import DataType
 
+        schema = self.client.create_schema(auto_id=False, enable_dynamic_field=False, description=description)
+        for field in ("chunk_id", "doc_id", "generation_id", "text"):
+            options = {"enable_analyzer": True, "analyzer_params": analyzer} if field == "text" and analyzer else {}
+            schema.add_field(field, DataType.VARCHAR, is_primary=field == "chunk_id",
+                             max_length=65535 if field == "text" else 64, **options)
+        schema.add_field("dense", DataType.FLOAT_VECTOR, dim=dimension)
+        if analyzer:
+            from pymilvus import Function, FunctionType
+
+            schema.add_field("sparse", DataType.SPARSE_FLOAT_VECTOR)
+            schema.add_function(Function(name="text_bm25", input_field_names=["text"],
+                                         output_field_names=["sparse"], function_type=FunctionType.BM25))
+        return schema
+
+    def ensure_collection(self, name: str, profile_hash: str, dimension: int, *, create=False):
         if create and not self.client.has_collection(name):
-            schema = self.client.create_schema(auto_id=False, enable_dynamic_field=False,
-                                               description=f"codeplus:{profile_hash}")
-            for field in ("chunk_id", "doc_id", "generation_id", "text"):
-                schema.add_field(field, DataType.VARCHAR, is_primary=field == "chunk_id",
-                                 max_length=65535 if field == "text" else 64)
-            schema.add_field("dense", DataType.FLOAT_VECTOR, dim=dimension)
+            schema = self._schema(f"codeplus:{profile_hash}", dimension)
             self.client.create_collection(name, schema=schema, consistency_level="Strong")
         description = self.client.describe_collection(name)
         dense = next(field for field in description["fields"] if field["name"] == "dense")
@@ -32,6 +42,25 @@ class MilvusStore:
             index.add_index("dense", index_type="FLAT", metric_type="COSINE")
             self.client.create_index(name, index)
         self.client.load_collection(name)
+
+    def create_experiment(self, name, profile_hash, dimension, rows, *, index_type, build_params, analyzer=None):
+        """Fresh experiment only. Never mutate or bind an existing daily collection."""
+        if not name.startswith("codeplus_eval_") or self.client.has_collection(name):
+            raise ValueError("Experiment requires a new codeplus_eval_ collection")
+        if index_type not in {"FLAT", "HNSW"}:
+            raise ValueError("Experiment index must be FLAT or HNSW")
+        schema = self._schema(f"codeplus-experiment:{profile_hash}", dimension, analyzer)
+        self.client.create_collection(name, schema=schema, consistency_level="Strong", num_shards=1)
+        # Flush the complete frozen batch before building, then synchronously load.
+        self.client.insert(name, rows)
+        self.client.flush(name)
+        indexes = self.client.prepare_index_params()
+        indexes.add_index("dense", index_type=index_type, metric_type="COSINE", params=build_params)
+        if analyzer:
+            indexes.add_index("sparse", index_type="SPARSE_INVERTED_INDEX", metric_type="BM25",
+                              params={"inverted_index_algo": "DAAT_MAXSCORE", "bm25_k1": 1.2, "bm25_b": 0.75})
+        self.client.create_index(name, indexes, timeout=180)
+        self.client.load_collection(name, timeout=180)
 
     @staticmethod
     def rows(chunks, vectors, dimension: int) -> list[dict]:
@@ -69,9 +98,19 @@ class MilvusStore:
         if sorted(found, key=lambda row: row["chunk_id"]) != sorted(wanted, key=lambda row: row["chunk_id"]):
             raise ValueError("Milvus document verification failed: visible chunk set or text differs")
 
-    def search_dense(self, name: str, vector: list[float], top_k: int):
+    @staticmethod
+    def _scope(doc_ids):
+        return {} if doc_ids is None else {"filter": "doc_id in {doc_ids}", "filter_params": {"doc_ids": doc_ids}}
+
+    def search_dense(self, name: str, vector: list[float], top_k: int, *, doc_ids=None, ef=None):
         return self.client.search(name, [vector], anns_field="dense", limit=top_k,
-                                  search_params={"metric_type": "COSINE"}, consistency_level="Strong")[0]
+                                  search_params={"metric_type": "COSINE", "params": {} if ef is None else {"ef": ef}},
+                                  consistency_level="Strong", **self._scope(doc_ids))[0]
+
+    def search_bm25(self, name: str, query: str, top_k: int, *, doc_ids=None):
+        return self.client.search(name, [query], anns_field="sparse", limit=top_k,
+                                  search_params={"metric_type": "BM25"}, consistency_level="Strong",
+                                  **self._scope(doc_ids))[0]
 
     def delete_document(self, name: str, doc_id: str):
         """Idempotently erase just this document and verify the visible result."""

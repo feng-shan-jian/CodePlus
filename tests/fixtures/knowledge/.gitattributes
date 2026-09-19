@@ -1,0 +1,3 @@
+* text eol=lf
+# Preserve the frozen originals, including their final paragraph separator.
+*.md whitespace=-blank-at-eof
