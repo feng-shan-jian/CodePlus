@@ -1,6 +1,6 @@
 # CodePlus Knowledge：最小实现任务清单
 
-日期：2026-09-20。状态：K01 及 S1–S5 已通过 leader 功能与代码质量验收。S2/S3/S4 临时文件清理限制分别见环境记录；后续阶段逐项实现，由 leader 验收并提交。
+日期：2026-09-20。状态：K01 及 S1–S7 已通过 leader 功能与代码质量验收，纳入逐阶段本地提交。首版组合验收与文档已完成；可选 K34/K35 未实现。各阶段临时文件清理限制分别见环境记录。
 
 架构依据：[收敛后的首版架构](knowledge-architecture.md)。已确定 Milvus Standalone、本地 Embedding、回答沿用现有模型配置。日常按文档更新，实验另建固定数据副本。
 
@@ -18,7 +18,7 @@
 | S4 | K21–K27 | TUI/Agent 问答、会话与可追溯引用报告 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S5 | K28–K29 | 非交互 CLI 与 Remote 复用同一实现 | leader 验收通过，纳入本阶段提交 |
 | S6 | K30–K33 | 可复现的基础检索评测与混合检索实验 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
-| S7 | K36 | 完整使用验收与文档收尾 | 未开始 |
+| S7 | K36 | 完整使用验收与文档收尾 | leader 验收通过，纳入本阶段提交 |
 
 K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，保留准确记录，不标记通过或提前提交未验收实现。
 
@@ -94,7 +94,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 - **修改位置**：`codeplus/config.py`、`codeplus/validator.py`、`.codeplus/config.yaml.example`、`tests/test_mcp.py`（复用配置测试）、`tests/test_knowledge.py`。
 - **本项只做**：新增默认关闭的 KnowledgeConfig，包含 Milvus 地址、数据目录、本地模型和检索参数。区分字段缺省与显式 false；接入现有读取、校验和多层配置合并。
 - **完成标准**：旧配置照常加载；后层 false 能关闭前层 true；错误维度和无效地址有明确报错。关闭时不连接 Milvus、不下载模型，其他配置合并规则保持原样。
-- **执行记录**：复用现有读取/validator/合并路径，knowledge 只合并显式字段；false 覆盖 true、缺省保留前层、启动时固定数据目录均通过。入口只做少量配置检查，维度/模型上下文集中在实际加载处核对，不锁死可配置模型。新进程阻止可选依赖导入及网络时仍能加载默认配置与 CLI 模块。相关回归及普通 CLI 运行证据见环境说明；尚未接入 S2 及后续入口。
+- **执行记录**：复用现有读取/validator/合并路径，knowledge 只合并显式字段；false 覆盖 true、缺省保留前层、启动时固定数据目录均通过。入口只做少量配置检查，维度/模型上下文集中在实际加载处核对，不锁死可配置模型。新进程阻止可选依赖导入及网络时仍能加载默认配置与 CLI 模块。相关回归及普通 CLI 运行证据见环境说明；S1 当时尚未接入 S2 及后续入口。
 
 ### K06 定义最少的数据对象
 
@@ -176,7 +176,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 - **本项只做**：提供 python -m codeplus.knowledge 下的 create、import、search、status 命令，直接复用 service。支持含空格的 Windows 路径和清晰退出码。
 - **完成标准**：从终端创建库、导入文件、输入问题、看到带来源的片段；该过程不调用回答模型。所有文档中的命令用真实入口验证。至此达到第一个可用里程碑。
 
-**S2 执行记录（K06–K15，共用记录）**：实现和验证见 [S2 环境记录](knowledge-setup.md)。复用 S1 配置和模型，新增具体数据对象、Markdown 处理、一个 SQLite 元数据类、固定 Milvus 存取类、统一服务及 CLI；没有逐任务建模块。三份真实 Markdown 共 23 chunks、revision=3，五题 Top 3 命中预期文档并核对行号。重复导入不编码、不增行；同维不同 profile 拒绝；SQLite 回滚、pending/失败状态、跨进程锁和真实 SDK 文档隔离均已验证。leader 已完成独立 CLI、分块和相关回归验收；S3 尚未开始。
+**S2 执行记录（K06–K15，共用记录）**：实现和验证见 [S2 环境记录](knowledge-setup.md)。复用 S1 配置和模型，新增具体数据对象、Markdown 处理、一个 SQLite 元数据类、固定 Milvus 存取类、统一服务及 CLI；没有逐任务建模块。三份真实 Markdown 共 23 chunks、revision=3，五题 Top 3 命中预期文档并核对行号。重复导入不编码、不增行；同维不同 profile 拒绝；SQLite 回滚、pending/失败状态、跨进程锁和真实 SDK 文档隔离均已验证。leader 已完成独立 CLI、分块和相关回归验收。
 
 ### K16 只更新发生变化的文档
 
@@ -276,7 +276,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 - **本项只做**：复用 Agent 的既有文件输出能力生成报告，保存引用 ID、原文位置和语料 revision。再次检索前检查 revision，资料中途变化时提示重新生成。
 - **完成标准**：导入三份文档并生成对比报告，每个事实结论能打开来源；没有依据的项目标为缺少信息；未知引用不能作为完成报告输出；写文件仍遵守当前权限。无需新增专用报告生成 Agent。
 
-**S4 实现记录（K21–K27，共用记录）**：只新增 `knowledge/citations.py`、`tools/knowledge.py` 和一个命令 handler，复用原服务、ToolResult、权限、Agent 循环、会话元数据/压缩边界及 WriteFile。正式测试只扩展 `test_knowledge_service.py` 的三个业务用例和命令注册预期。首检与补查走正常工具权限，证据单独进入工具结果；切库/off 清空当前上下文并持久化边界，历史引用可独立打开。真实三格式、回答、报告和 TUI Pilot 证据及清理限制见 [S4 环境记录](knowledge-setup.md)。leader 已完成独立真实问答、revision 与历史引用核对及回归，功能和代码质量通过，按本阶段明确路径提交；K28/K29 尚未实现。
+**S4 实现记录（K21–K27，共用记录）**：只新增 `knowledge/citations.py`、`tools/knowledge.py` 和一个命令 handler，复用原服务、ToolResult、权限、Agent 循环、会话元数据/压缩边界及 WriteFile。正式测试只扩展 `test_knowledge_service.py` 的三个业务用例和命令注册预期。首检与补查走正常工具权限，证据单独进入工具结果；切库/off 清空当前上下文并持久化边界，历史引用可独立打开。真实三格式、回答、报告和 TUI Pilot 证据及清理限制见 [S4 环境记录](knowledge-setup.md)。leader 已完成独立真实问答、revision 与历史引用核对及回归，功能和代码质量通过，按本阶段明确路径提交。
 
 ### K28 接入非交互 CodePlus 入口
 
@@ -346,11 +346,13 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K36 完成首版验收和使用说明
 
-- [ ] 完成
+- [x] 完成，leader 最终验收通过
 - **前置**：K18、K20、K27、K28、K29、K30、K33。
 - **修改位置**：`README.md`、`README_EN.md`、`docs/knowledge-setup.md`、`tests/test_knowledge_*.py`、`既有 commands/agent/memory/permissions 测试`。
 - **本项只做**：整理安装、导入、问答、引用、更新、删除、恢复和评测的实际命令。运行已实现功能的相关回归，并用真实 Milvus、本地模型和回答入口做一次完整使用验收。
 - **完成标准**：普通编码模式回归通过；三类文件可检索并引用；更新/删除/恢复符合边界；关闭知识功能时无额外服务依赖。逐项区分通过、失败、未执行；K34/K35 未做可明确列为可选未实现。
+
+**S7 执行记录**：仅更新中英文 README、setup、架构和任务状态，无产品代码或新测试框架。独立 Windows 环境同步成功；真实 Textual Pilot 输入经 dispatcher/Agent/Qwen/Milvus/既有 provider 完成三格式导入、问答、Markdown 报告、全部来源核对、更新/删除与历史引用、retry 无待处理操作、off 后普通回答，最终 READY/revision=5，127.871 秒。临时脚本、三份合成资料、报告、会话及自建集合均已正常清理，原 provider 配置哈希不变。首轮仅临时断言未按 Windows source_uri 小写约定索引而失败，修正探测后完整重跑通过，产品代码未变。复用 leader 在基线 `b8ecaa3` 的全套 **701 passed / 7 skipped**、wheel 打包及 S6 冻结独立重放证据；不把本轮未重跑的硬退出恢复、CLI/Remote、大样本编码记为本轮执行。详情见 [S7 环境记录](knowledge-setup.md#s7-组合验收与文档收尾k36)。
 
 ## 实施时的约定
 

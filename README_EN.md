@@ -298,6 +298,65 @@ Launch the interactive TUI:
 uv run codeplus
 ```
 
+### Optional: Local Personal Knowledge Base
+
+Import Markdown, text PDFs, and DOCX files, ask document-grounded questions, and save cited Markdown reports. Retrieval uses local Qwen embeddings and Milvus; answers use your existing Provider.
+
+```powershell
+uv sync --locked --extra knowledge
+```
+
+Keep `providers` in your **existing complete** `.codeplus/config.yaml` and add or update this fragment. Do not create a knowledge-only `config.local.yaml`: each YAML layer requires non-empty providers.
+
+```yaml
+knowledge:
+  enabled: true
+  milvus_uri: http://127.0.0.1:19530
+  data_dir: .codeplus/knowledge
+```
+
+On the validated Windows setup, Milvus runs in Ubuntu-24.04 WSL. Keep a separate `wsl -d Ubuntu-24.04` shell open while using it. From the repository root in PowerShell 7:
+
+```powershell
+$windowsCompose = (Resolve-Path deployment/knowledge/compose.yaml).Path.Replace('\', '/')
+$compose = (wsl -d Ubuntu-24.04 -- wslpath -a $windowsCompose).Trim()
+wsl -d Ubuntu-24.04 -- docker compose -f $compose up -d --wait --wait-timeout 240
+Invoke-RestMethod http://127.0.0.1:9091/healthz
+uv run --extra knowledge codeplus
+```
+
+Reuse an already healthy shared service. Keep `--extra knowledge` on subsequent `uv run` commands so synchronization retains the optional dependencies. The first import/search downloads the pinned Qwen model; subsequent runs use the HF cache. Use an absolute data_dir to share a base across startup directories. Windows and WSL must have separate virtual environments.
+
+In the TUI:
+
+```text
+/knowledge create "Personal documents"
+/knowledge import "C:\Documents\reference material"
+/knowledge status
+/knowledge sources
+Compare the policies using document evidence and citations. Use WriteFile to save comparison.md.
+/knowledge open K:<kb_id>:<chunk_id>
+```
+
+create selects the new base; use `/knowledge use <kb_id>` next time. Import accepts a file or recursively imports `.md`, `.pdf`, and `.docx` files from a directory. Reports use the existing file permissions: approve the write when prompted, or explicitly start with `--mode acceptEdits`. open shows saved text and line/page/paragraph locations; pass the returned next_offset to read more of a long chunk. Reports include source, generation, and revision records; citation existence does not establish factual support.
+
+Import the same path again to update it. `/knowledge remove <doc_id>` removes a document listed by sources. New searches exclude old or removed versions; historical citations still open. After an interrupted operation, inspect status, resolve the cause, and run `/knowledge retry`. Failed preparation needs another import. `/knowledge off` clears the current answer context and returns to ordinary mode while preserving history. Setting `knowledge.enabled: false` and restarting removes the knowledge service requirement.
+
+```powershell
+$kbId = '<ID returned by create>'
+uv run --extra knowledge codeplus -p 'Answer from the documents and cite sources' --knowledge $kbId
+uv run --extra knowledge codeplus -p 'Answer from the documents and cite sources' --knowledge $kbId --output-format stream-json
+uv run --extra knowledge codeplus --remote
+uv run --extra knowledge python -m codeplus.knowledge evaluate --fixtures tests/fixtures/knowledge --mode all
+uv run --extra knowledge python -m codeplus.knowledge evaluate --replay '<absolute frozen.json path>' --mode hybrid --ef 16 64
+```
+
+`--knowledge` requires `-p`. text prints the final answer; stream-json emits NDJSON on stdout and diagnostics on stderr. Failures exit nonzero. Non-interactive knowledge mode rejects operations that require a permission prompt; explicitly use `--mode acceptEdits` when allowing report writes. Remote uses the same slash commands, with import paths on the **server**; browser uploads are not implemented.
+
+Evaluation writes frozen.json/report.json under `.codeplus/knowledge/experiments/<run>/`. Replay needs neither the model nor the original fixtures. `--mode` selects additional retrieval lanes; every mode still runs the dense/FLAT and HNSW ANN comparison. **Daily bases remain dense-only. BM25/RRF use isolated experimental collections; there is no automatic upgrade or migration command.** Confirm actual HNSW execution against server build/load logs, not just index configuration or Finished status. Wheel installations need an external fixtures directory or frozen file.
+
+Scanned PDFs have no OCR support; legacy `.doc`, complex layouts, and Word page numbers are outside scope. DOCX locations use body paragraphs or table row/column positions. Reranking and model/chunking comparisons are not implemented. See the [setup and acceptance record](docs/knowledge-setup.md) for recovery details, standalone management commands, and verified limits.
+
 ## Development and Verification
 
 Main directories:

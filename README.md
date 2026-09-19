@@ -254,6 +254,51 @@ cp .codeplus/config.yaml.example .codeplus/config.yaml
 uv run codeplus
 ```
 
+### 可选：本地个人知识库
+
+导入 Markdown、文本型 PDF、DOCX，基于资料问答并保存带引用的 Markdown 报告。需要本地 Qwen Embedding 和 Milvus；回答复用已有 Provider。
+
+```powershell
+uv sync --locked --extra knowledge
+```
+
+在**已有完整** `.codeplus/config.yaml` 中保留 `providers`，添加或修改下面的配置片段；不要单独创建只有 knowledge 的 `config.local.yaml`，每层 YAML 都要求非空 providers。
+
+```yaml
+knowledge:
+  enabled: true
+  milvus_uri: http://127.0.0.1:19530
+  data_dir: .codeplus/knowledge
+```
+
+本机 Milvus 在 Ubuntu-24.04 WSL 内运行，先按 [安装与启动步骤](docs/knowledge-setup.md#最短使用流程) 启动 Compose 并保持 WSL shell 存活。随后执行 `uv run --extra knowledge codeplus`；每次 `uv run` 都保留 extra，避免同步时移除依赖。首次导入/检索下载固定版本 Qwen，后续复用缓存。需要跨启动目录共用库时，将 data_dir 设为同一绝对路径。
+
+```text
+/knowledge create "个人资料"
+/knowledge import "C:\资料目录"
+/knowledge status
+/knowledge sources
+根据资料比较各方案并引用来源；将结果用 WriteFile 保存为 comparison.md。
+/knowledge open K:<kb_id>:<chunk_id>
+```
+
+create 自动选中；下次使用 `/knowledge use <kb_id>`。报告保存沿用原文件权限，可按提示授权或启动时加 `--mode acceptEdits`。open 展示保存原文及行/页/段落位置，长片段按返回的 next_offset 继续读取。
+
+同一路径再次 import 即更新；`/knowledge remove <doc_id>` 移除 sources 中的文档。新检索只读当前有效代，历史引用仍可 open。中断后用 status 查看待恢复操作，排除原因后 `/knowledge retry`；`/knowledge off` 返回普通模式，保留历史记录。
+
+```powershell
+$kbId = '<create 返回的知识库 ID>'
+uv run --extra knowledge codeplus -p '根据资料回答并引用来源' --knowledge $kbId
+uv run --extra knowledge codeplus -p '根据资料回答并引用来源' --knowledge $kbId --output-format stream-json
+uv run --extra knowledge codeplus --remote
+uv run --extra knowledge python -m codeplus.knowledge evaluate --fixtures tests/fixtures/knowledge --mode all
+uv run --extra knowledge python -m codeplus.knowledge evaluate --replay '<frozen.json 绝对路径>' --mode hybrid --ef 16 64
+```
+
+`--knowledge` 仅配合 `-p`；Remote 聊天框使用同一套命令，导入路径在**服务器**，没有浏览器上传。评测生成 frozen.json/report.json，重放不加载模型；`--mode` 选择附加检索路线，所有模式仍运行 FLAT/HNSW 对照。**日常库仅 dense；BM25/RRF 是隔离实验，没有自动升级或迁移入口。** HNSW 真实执行须结合服务端日志核对，不能仅看配置或 Finished。
+
+扫描 PDF 无 OCR，旧 `.doc`、复杂版面及 Word 页码不在支持范围；精排、模型/分块对照未实现。完整命令、三格式定位、恢复边界与验收记录见 [Knowledge 使用说明](docs/knowledge-setup.md)。
+
 ## 开发与验证
 
 主要目录：

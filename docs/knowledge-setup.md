@@ -1,6 +1,113 @@
 # Knowledge 本机环境与运行说明
 
-检查日期：2026-09-19。下方 K01 记录来自 `D:\CodePlus`；S1 在独立 worktree 实现，见文末 S1 记录。
+更新日期：2026-09-20。先按以下步骤使用；后面的 K01–S7 是分阶段实测记录，其中“尚未实现”等表述仅代表该阶段当时状态。S1–S7 已通过 leader 验收并纳入逐阶段本地提交，最终证据见文末。
+
+## 最短使用流程
+
+### 1. 安装、配置与启动 Milvus
+
+在项目自己的 Windows 环境执行 `uv sync --locked --extra knowledge`。后续使用 `uv run` 时也带 `--extra knowledge`，避免默认同步移除可选依赖；或直接使用 `.venv\Scripts\python.exe`。Windows 与 WSL 不共用虚拟环境。
+
+编辑**已有完整** `.codeplus/config.yaml`，保留已配置的 `providers`，添加或修改下面的块。它只是配置片段，不能单独保存成 `config.local.yaml`：现有加载器要求每个 YAML 层都有非空 `providers`。
+
+```yaml
+knowledge:
+  enabled: true
+  milvus_uri: http://127.0.0.1:19530
+  data_dir: .codeplus/knowledge
+```
+
+相对 `data_dir` 在启动时解析。多个启动目录要共用库时，改为同一绝对路径，例如 `D:/CodePlus/.codeplus/knowledge`。默认 Embedding 是本地 Qwen3-Embedding-0.6B，固定 revision `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3`、CPU、1024 维；首次导入/检索下载模型，后续复用 HF 缓存。回答使用原有 provider。已建库绑定模型与分块配置，修改这些参数须建新库重新导入。
+
+本机使用 Ubuntu-24.04 WSL2 内的 Docker Engine。先在单独终端执行 `wsl -d Ubuntu-24.04` 并保持 shell 打开；systemd/Docker 服务本身不能保证 WSL 保活。在另一个 PowerShell 7 终端执行：
+
+```powershell
+Set-Location D:\CodePlus
+uv sync --locked --extra knowledge
+$windowsCompose = (Resolve-Path deployment/knowledge/compose.yaml).Path.Replace('\', '/')
+$compose = (wsl -d Ubuntu-24.04 -- wslpath -a $windowsCompose).Trim()
+wsl -d Ubuntu-24.04 -- docker compose -f $compose up -d --wait --wait-timeout 240
+wsl -d Ubuntu-24.04 -- docker compose -f $compose ps
+Invoke-RestMethod http://127.0.0.1:9091/healthz
+uv run --extra knowledge codeplus
+```
+
+已有健康共享服务时直接复用。日后自行停用可执行 `wsl -d Ubuntu-24.04 -- docker compose -f $compose stop`；数据保存在 Linux 命名卷，不用 `down -v`。本机不通过 Windows Docker Desktop 管理这套服务。
+
+### 2. 导入、问答与报告
+
+在 TUI 输入以下命令。`create` 自动选中新库；记下返回的 ID，后续通过 `use` 选择。
+
+```text
+/knowledge create "个人资料"
+/knowledge import "C:\资料\说明.md"
+/knowledge import "C:\资料\报告.pdf"
+/knowledge import "C:\资料\手册.docx"
+/knowledge status
+/knowledge sources
+```
+
+也可 `import "C:\资料目录"` 递归导入 `.md`、`.pdf`、`.docx`，逐文件显示进度和失败。随后直接提问：“根据资料比较各方案，列出依据和缺少的信息，并给出引用。”生成文件时明确要求：“把比较结果用 WriteFile 保存为 comparison.md，每个结论附原文引用。”写文件沿用原权限；按提示授权，或启动时显式加 `--mode acceptEdits` 允许编辑。
+
+复制答案中的完整 `K:<kb_id>:<chunk_id>`（也可含方括号），执行 `/knowledge open K:<kb_id>:<chunk_id>` 读取保存的原文、行/页/段落位置与原件路径。长片段返回 `next_offset` 时，用 `/knowledge open K:<kb_id>:<chunk_id> <next_offset>` 继续。报告追加来源、generation 和库 revision；程序校验引用存在且本轮已提供，结论是否受到原文支持仍需核对。
+
+### 3. 更新、删除、恢复与退出
+
+```text
+/knowledge use <kb_id>
+/knowledge import "C:\资料\说明.md"
+/knowledge sources
+/knowledge remove <doc_id>
+/knowledge status
+/knowledge retry
+/knowledge off
+```
+
+同一路径内容改变后再次 import 即更新；相同内容不重复编码。`doc_id` 来自 sources。删除后新检索不再返回该文档，更新后只检索新代；旧回答/报告的引用仍能通过 open 核对旧代。更新途中失败或进程中断会阻止检索，排除服务/文件问题后显式 retry 重放已登记材料；READY 且无待处理操作时 retry 不改库。未成功准备的文件需重新 import。
+
+off 关闭当前会话知识模式并清空当前回答上下文，历史记录和引用保留；不会删除库。彻底禁用时将配置设为 `knowledge.enabled: false` 并重新启动，普通编码模式不要求 Milvus 或模型依赖。
+
+### 4. 非交互 CLI 与 Remote
+
+在含上述完整配置的项目目录执行，将 `$kbId` 换成 create 返回的 ID：
+
+```powershell
+$kbId = '<kb_id>'
+uv run --extra knowledge codeplus -p '根据资料回答问题并引用来源' --knowledge $kbId
+uv run --extra knowledge codeplus -p '根据资料回答问题并引用来源' --knowledge $kbId --output-format stream-json
+uv run --extra knowledge codeplus --remote
+```
+
+`--knowledge` 必须配合 `-p`，省略它即普通问答。text 输出最终正文，stream-json 在 stdout 逐行输出 JSON，诊断走 stderr；检索/回答失败非零退出。非交互知识模式无法弹出权限询问，保存报告可显式使用 `--mode acceptEdits`，其他原权限约束仍生效。
+
+Remote 聊天框使用同一套 `/knowledge` 命令。导入路径是**运行 CodePlus 的服务器路径**，相对路径基于服务端工作目录；当前没有浏览器上传。服务默认监听 `0.0.0.0:18888`。
+
+独立管理入口不调用回答模型，支持 create/import/update/search/status/remove/retry/source；`--config` 必须放在子命令前，且指向完整 YAML。它的 import/update 接受单文件，目录导入使用 TUI/Remote。
+
+```powershell
+uv run --extra knowledge python -m codeplus.knowledge --config .codeplus/config.yaml search $kbId '检索问题' --top-k 3
+uv run --extra knowledge python -m codeplus.knowledge --config .codeplus/config.yaml update $kbId 'C:\资料\说明.md'
+uv run --extra knowledge python -m codeplus.knowledge --help
+```
+
+### 5. 冻结评测与三路实验
+
+在仓库根目录运行；仅安装 wheel 的用户需提供自己的 fixtures 或冻结文件：
+
+```powershell
+uv run --extra knowledge python -m codeplus.knowledge evaluate --fixtures tests/fixtures/knowledge --mode all
+uv run --extra knowledge python -m codeplus.knowledge evaluate --replay '<上次输出的 frozen.json 绝对路径>' --mode hybrid --ef 16 64
+```
+
+首次运行保存原文、标注、profile 和真实文档/问题向量；replay 不加载模型、不读取原 fixtures。输出在当前目录 `.codeplus/knowledge/experiments/<run>/`，含 frozen.json 和 report.json。未传 `--config` 的 evaluate 使用本地默认连接，不要求回答 provider。
+
+三路为 dense、Milvus BM25、RRF hybrid；`--mode` 选择附加证据检索路线，**所有模式仍保留 dense/FLAT 与 HNSW 的 ANN 对照**。实验另建临时集合，**日常库仍为 FLAT + COSINE dense，没有自动升级、BM25/hybrid 配置或迁移入口**。配置为 HNSW、SDK 显示 Finished 不足以确认真实执行类型；S6 已用 1066 个片段及对应服务端构建/加载日志核实。完整结果和冻结路径见下方 S6，不用小集合指标推断生产性能。
+
+### 范围限制
+
+支持 Markdown 行号、文本型 PDF 物理页码、DOCX 正文段落/表格行列。扫描 PDF 无 OCR，旧 `.doc` 不支持；复杂 PDF 版面、Word 页码、页眉页脚/批注/嵌套表格不在承诺范围。退出后后台导入服务、自动历史清理、多用户权限未实现。精排、模型/分块对照本轮未实现；改变配置不等于已验证其他模型。
+
+## 分阶段实测记录
 
 **K01 环境验收通过，使用 Ubuntu-24.04 WSL2 内已有的 Docker Engine。** Windows 上的 Docker Desktop 启动失败，不作为本项目当前的容器运行入口。下表至 K01 验收边界保留当时状态；Milvus 和本地 Embedding 的后续验证单独记录在文末。
 
@@ -350,7 +457,7 @@ leader 另在本轮独立 TemporaryDirectory 下运行两份 knowledge 正式测
 
 ## S4 TUI、Agent、会话与引用报告（K21–K27）
 
-实现 worktree：`C:\Users\18221\.codex\worktrees\dc17\CodePlus`，基线 `cfd1a8ea0626629f78e99cabedf517f4e0e07fbd`。**实现及下述实现者验证完成，待 leader 独立功能与代码质量验收；保持未暂存，不提交或 push。**
+实现 worktree：`C:\Users\18221\.codex\worktrees\dc17\CodePlus`，基线 `cfd1a8ea0626629f78e99cabedf517f4e0e07fbd`。**已通过 leader 独立功能与代码质量验收，本地提交 `7861da9`；独立证据见本节末尾。**
 
 ### 使用方式与复用范围
 
@@ -424,16 +531,17 @@ leader 独立验收通过：另建真实 Qwen/Milvus 临时库，使用现有 de
 
 ## S5 非交互 CLI 与 Remote（K28–K29）
 
-实现 worktree：`C:\Users\18221\.codex\worktrees\b379\CodePlus`，基线 `7861da95083d9dda681376f40954c061f513a38b`。**实现及下述实现者验证完成，待 leader 独立功能与代码质量验收；K28/K29 不提前勾选，未暂存、未提交或 push。**
+实现 worktree：`C:\Users\18221\.codex\worktrees\b379\CodePlus`，基线 `7861da95083d9dda681376f40954c061f513a38b`。**已通过 leader 独立功能与代码质量验收，本地提交 `518519a`；独立证据见本节末尾。**
 
 ### 使用方式与入口行为
 
 在自己的既有配置中启用 knowledge 并指向已导入的同一数据目录，然后使用 create 返回的稳定 `kb_id`：
 
 ```powershell
-uv run codeplus -p "根据资料回答报销上限及期限，并标明来源" --knowledge <kb_id>
-uv run codeplus -p "根据资料回答报销上限及期限，并标明来源" --knowledge <kb_id> --output-format stream-json
-uv run codeplus --remote
+$kbId = '<create 返回的知识库 ID>'
+uv run --extra knowledge codeplus -p "根据资料回答报销上限及期限，并标明来源" --knowledge $kbId
+uv run --extra knowledge codeplus -p "根据资料回答报销上限及期限，并标明来源" --knowledge $kbId --output-format stream-json
+uv run --extra knowledge codeplus --remote
 ```
 
 `--knowledge` 只用于 `-p`，缺少 `-p` 时由现有 argparse 报错。不指定时保留普通 `-p` 行为。绑定后直接使用 S4 KnowledgeContext、SearchKnowledge/ReadDocument 和 Agent.run：首检仍发出原契约的 tool_use/tool_result（同一 tool_id），引用仍由既有代码校验。text 只输出最终正文；stream-json 的 stdout 每行均为 JSON，模型/SDK 诊断转到 stderr。知识检索或回答失败返回非零退出码，不发送成功 result；库不存在、配置禁用和服务不可达分别保留实际错误。
@@ -577,3 +685,37 @@ ANN Recall@K 单独计算：分母为同一文档范围内 FLAT 实际返回的�
 这些中间副本均为本阶段合成数据，不纳入 Git；首轮 SDK 序列化失败的两个目录只保存了 frozen.json。旧小集合报告不作为真实 HNSW 结论。1066 行首次准备资源值仍可从 `20260919T173526Z_5fe896ab/report.json` 核对；最终可交付结果只使用 `20260919T173947Z_e1ff51df` 下的报告与对应服务日志。
 
 leader S6 独立验收：在新的 TemporaryDirectory 禁止模型加载并修改当前模型配置，从最终冻结文件重建两库。两边 1066 行完整读回哈希一致，按原文字位置集合独立复算 Evidence Recall 和 RRF 排名，复得 dense 16/18、BM25 12/18、hybrid 15/18。另选 ef12/48 的 ANN 为 34/48、37/48，重建近似图不保证复现旧排名。对应 segment 469193619237779068 的 UTC 17:47:51–53 服务日志确认构建、保存 HNSW 文件并加载；所有自建集合、临时目录与独立脚本正常清理。四文件回归 57 passed / 4 skipped（16.95 秒）。逐项审查复用、失败统计、冻结重放和日常隔离后，功能与代码质量通过。
+
+## S7 组合验收与文档收尾（K36）
+
+2026-09-20，worktree `C:\Users\18221\.codex\worktrees\3e14\CodePlus`，基线 `b8ecaa37d4577fa5c28780d2657964f6e587f344`。实现者交付后，leader 已完成最终功能与文档质量审查，纳入本阶段本地提交。仅修改五份已有文档；未改产品接口、存储或配置加载，未新增测试文件/框架。
+
+### 本轮真实组合链路：通过
+
+本 worktree 原生 Windows Python 3.14.3 `.venv` 执行 `uv sync --locked --extra knowledge` 成功。复用固定 revision Qwen/CPU/1024 维的离线 HF 缓存、健康的共享 WSL Milvus 和既有 keepalive。只读加载 `D:\CodePlus\.codeplus\config.yaml` 的现有回答 provider；在内存启用独立临时知识目录，未复制密钥或修改配置。
+
+真实 `CodePlusApp.run_test` / Textual Pilot 向 ChatInput 输入并按 Enter，经实际 dispatcher、handler、Agent、模型和 SDK 执行；仅旁路记录显示消息，不替换业务实现。这是 headless TUI 用户输入链路，不是桌面视觉验收。三份小型合成资料共 3 chunks，资料、输出及 session 均位于本轮 TemporaryDirectory；本轮不再读取 WorkBin 个人文档，真实原件覆盖复用 S3。
+
+| 检查 | 实际结果 |
+| --- | --- |
+| create → 目录 import → status | MD/PDF/DOCX 各 1 chunk，READY/revision=3；89.114 秒，包含初始化与模型加载 |
+| 问答与实际 WriteFile 报告 | Sable 137 元/19 天、Juniper 246 元/31 天、Cobalt 358 元/期限未规定；答案、三行报告逐项与原文一致。显式使用 acceptEdits，沿原文件工具保存 |
+| 全部三条引用 open | Markdown 第 3 行、PDF 物理第 1 页、DOCX 正文第 2 段；每条 SourceSpan 与解析原文字符范围一致，保存原件 SHA256 与导入文件一致；报告记录三处来源、generation、revision=3 |
+| 同路径更新后重新问答 | Sable 改为 149 元/22 天，当前证据无旧数值，回答使用新引用；旧引用仍读到 137 元/19 天，revision=4 |
+| remove 后新一轮检索 | 删除 Juniper 后本轮证据仅剩两份有效文档，已删 doc_id 不出现；旧 PDF 引用仍读到 246 元；既有报告文件哈希不变，revision=5 |
+| retry / off / 普通回答 / 历史 open | READY 下 retry 不增加 revision；off 清空回答上下文并禁用两项知识工具，真实 provider 回复 K36_OFF_OK，无知识工具调用/证据；off 后旧 MD 引用仍可打开 |
+
+最终完整运行 127.871 秒，应用错误记录为空；这是一次小样本功能链路时间，不是性能基准。临时库 ID `581a5d9d63f34740ab80d445fcdbb853`；对应集合已删除并确认不存在。先关闭 session、SDK、provider 和日志句柄，再正常退出 TemporaryDirectory；工作目录和外层探测脚本目录均确认不存在。配置 SHA256 前后不变。没有重启共享容器、改动 Windows Docker Desktop、触碰任何旧 policy 拒绝路径，或产生新的清理阻塞。
+
+首轮实际已完成导入/问答/报告，在探测的原件哈希核对处因 source_uri 经 Windows normcase 小写、临时 hashes 用原大小写文件名而发生 `KeyError('sable policy.md')`。这是验收脚本映射错误；改为 URI 解码后 casefold 映射，保留完整哈希和位置断言，第二轮从新临时库完整重跑通过。未修改产品 source_uri。首轮集合 `codeplus_kb_e45b09147ee04b00af136a1ec0073381` 及其临时上下文也正常清理，原配置未变。
+
+### 复用的独立证据与未执行项
+
+- leader 在主目录同一 `b8ecaa3` 基线执行全套 tests：**701 passed / 7 skipped，47.66 秒**；另有一个既有 `test_consolidation.py:243` 未注册 `pytest.mark.timeout` 警告。skip 保留为未执行，不计通过。本轮无产品代码变更，不重复全套。该轮使用独立 TemporaryDirectory basetemp 和 `no:cacheprovider`，正常清理。
+- leader `uv build` wheel 成功，核实 knowledge 十个模块均入包，tests 不作为 wheel 运行依赖；临时构建目录已清理。主目录 fixtures 保持 LF，16 题/18 处 quote 范围均匹配；主配置未改，主目录 Git 干净。
+- 恢复复用 S3 的真实 SDK 四个进程硬退出点与显式 retry，以及 S6 opt-in 复跑；本轮只检查无待处理操作的 retry。CLI text/stream-json 和真实 WebSocket 用户入口复用 S5 的已验收证据；S7 实际重查普通 CLI、knowledge、evaluate 及各管理子命令的 `--help`，全部退出 0，参数与新增文档一致。`uv lock --check` 通过。
+- 冻结三路与真实 HNSW 复用 S6 最终 frozen/report/server-evidence 和 leader 禁止模型加载的独立重放，未重跑 1066 片段编码或修改实验结果。日常 BM25/hybrid 迁移、K34 精排、K35 模型/分块对照均未实现；OCR、复杂版面、大规模/长期压力、掉电保证、多用户及可视桌面布局仍未验收。
+
+本轮未新增个人资料、原始实测输出或缓存到 Git。旧阶段的清理限制保留在原记录中，不把本轮正常收尾表述为已处理历史残留。
+
+leader 最终验收：核对第二轮真实命令退出 0 及各阶段原始输出，确认三格式报告、全部来源、更新/删除、历史引用、off 和清理均通过；对照真实命令及配置/权限代码审查中英文使用说明。结合主目录完整测试、wheel 与前序逐阶段独立验证，首版功能和代码质量验收通过。提交只包含本阶段五份文档，合入主目录，不推送远端。用户原配置保持原样，功能默认关闭，启用步骤见本文开头。
