@@ -612,6 +612,7 @@ class CodePlusApp(App):
         enable_coordinator_mode: bool = False,
         driver_class: type | None = None,
         sandbox_config: Any = None,
+        knowledge_config: Any = None,
     ) -> None:
         super().__init__(driver_class=driver_class)
         self.providers = providers
@@ -633,6 +634,10 @@ class CodePlusApp(App):
         self._mcp_init_task: asyncio.Task[None] | None = None
         self._selected_provider: ProviderConfig | None = None
         self._streaming = False
+        from codeplus.config import KnowledgeConfig
+        from codeplus.knowledge.citations import KnowledgeContext
+        self.knowledge = KnowledgeContext(knowledge_config or KnowledgeConfig())
+        self._knowledge_task: asyncio.Task | None = None
         self._thinking_start: float = 0.0
         self._thinking_verb: str = ""
         self._spinner_idx: int = 0
@@ -823,6 +828,11 @@ class CodePlusApp(App):
         )
         self.agent.file_history = self.file_history
         self.agent.session_id = self.session.session_id
+        from codeplus.tools.knowledge import SearchKnowledge, ReadDocument
+        self.agent.knowledge = self.knowledge
+        self.registry.register(SearchKnowledge(self.knowledge))
+        self.registry.register(ReadDocument(self.knowledge))
+        self._restore_knowledge_binding()
 
         self._exit_plan_tool._is_plan_mode = lambda: self.agent.plan_mode
         self._exit_plan_tool._plan_exists = lambda: self.agent._get_plan_path().exists()
@@ -1094,6 +1104,9 @@ class CodePlusApp(App):
                 "render_restored": self._render_restored_messages,
                 "skill_loader": self.skill_loader,
                 "skill_executor": self.skill_executor,
+                "knowledge": self.knowledge,
+                "set_knowledge_binding": self._set_knowledge_binding,
+                "check_knowledge": self._check_knowledge_binding,
             },
         )
 
@@ -1101,6 +1114,37 @@ class CodePlusApp(App):
         self.session = session
         if self.agent:
             self.agent.session_id = session.session_id
+        self._restore_knowledge_binding()
+
+    def _restore_knowledge_binding(self) -> None:
+        self.knowledge.bind(self.session.meta.knowledge_binding if self.session else None)
+        for name in ("SearchKnowledge", "ReadDocument"):
+            if self.knowledge.binding:
+                self.registry.enable(name)
+            else:
+                self.registry.disable(name)
+
+    async def _check_knowledge_binding(self) -> None:
+        if self.knowledge.binding:
+            try:
+                await self.knowledge.check()
+            except Exception as exc:
+                self.add_system_message(f"恢复的知识库不可用，回答已阻止: {exc}")
+
+    def _set_knowledge_binding(self, binding) -> None:
+        self.knowledge.bind(binding)
+        if self.session:
+            self.session.meta.knowledge_binding = self.knowledge.binding
+            # Use the existing durable context boundary so resume cannot revive old evidence.
+            self.session.append_record(make_compact_boundary("知识库作用域已切换；此前资料不作为本轮证据。", []))
+        self._restore_knowledge_binding()
+        self._set_conversation(ConversationManager())
+
+    async def _run_knowledge_command(self, cmd, ctx) -> None:
+        try:
+            await cmd.handler(ctx)
+        except Exception as exc:
+            self._show_error(f"知识库操作失败: {exc}")
 
     def _persist_compact_boundary(self, notification: CompactNotification) -> None:
         """Layer-2 compact 后写入 compact_boundary 记录。
@@ -1126,6 +1170,14 @@ class CodePlusApp(App):
 
     async def _dispatch_command(self, text: str) -> None:
         name, args, is_command = parse_command(text)
+        knowledge_busy = self._knowledge_task is not None and not self._knowledge_task.done()
+        answer_busy = self._streaming or (self._agent_task is not None and not self._agent_task.done())
+        if knowledge_busy and (not is_command or name in {"knowledge", "session", "clear"}):
+            self.add_system_message("知识库操作正在执行；完成后再提问、切库或切换会话。")
+            return
+        if answer_busy and name in {"knowledge", "session", "clear"}:
+            self.add_system_message("回答正在执行；结束后再操作知识库或切换会话。")
+            return
 
         if not is_command:
             if self._streaming or self.agent is None:
@@ -1155,6 +1207,9 @@ class CodePlusApp(App):
             return
 
         ctx = self._build_command_context(args)
+        if name == "knowledge":
+            self._knowledge_task = asyncio.create_task(self._run_knowledge_command(cmd, ctx))
+            return
         try:
             await cmd.handler(ctx)
         except Exception as e:
@@ -1166,6 +1221,9 @@ class CodePlusApp(App):
 
     async def on_chat_input_submitted(self, event: ChatInput.Submitted) -> None:
         text = event.text.strip()
+        if self.knowledge.retrieving and not text.startswith("/"):
+            self.add_system_message("本地检索正在执行；完成后可中断回答或重新提问。")
+            return
         if self._streaming and not text.startswith("/"):
             if self._agent_task and not self._agent_task.done():
                 self._agent_task.cancel()
@@ -1259,6 +1317,9 @@ class CodePlusApp(App):
                 block._render_done()
 
     def action_cancel(self) -> None:
+        if self.knowledge.retrieving:
+            self.add_system_message("本地检索正在执行；完成后可中断回答。")
+            return
         popup = self.query_one(CompletionPopup)
         if popup.is_visible:
             popup.hide()
@@ -1372,7 +1433,7 @@ class CodePlusApp(App):
         # Start memory recall prefetch before UI work.
         prefetch_task = asyncio.create_task(
             self._prefetch_relevant_memories(text)
-        ) if text else None
+        ) if text and not self.agent.knowledge_active else None
 
         if text:
             user_row = Vertical(classes="user-row")
@@ -1436,8 +1497,9 @@ class CodePlusApp(App):
                     self.call_after_refresh(chat.scroll_end, animate=False)
 
                 elif isinstance(event, StreamText):
-                    if streaming_label is not None and not accumulated_text:
-                        await streaming_label.remove()
+                    if not accumulated_text:
+                        if streaming_label is not None:
+                            await streaming_label.remove()
                         streaming_label = Static("", classes="message ai-message")
                         await ai_row.mount(streaming_label)
                     accumulated_text += event.text
@@ -1995,6 +2057,9 @@ class CodePlusApp(App):
     # -----------------------------------------------------------------
 
     async def action_handle_ctrl_c(self) -> None:
+        if self.knowledge.retrieving or (self._knowledge_task and not self._knowledge_task.done()):
+            self.add_system_message("知识库操作正在执行；请等待本次操作完成后退出。")
+            return
         if self._streaming:
             if self._agent_task and not self._agent_task.done():
                 self._agent_task.cancel()
@@ -2049,6 +2114,8 @@ class CodePlusApp(App):
 
             if self.session:
                 self.session.close()
+            if self.knowledge._service is not None:
+                self.knowledge._service.close()
 
         try:
             await _cleanup()

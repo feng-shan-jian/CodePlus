@@ -250,6 +250,7 @@ class SessionMeta:
     total_tokens: int = 0
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     last_active: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    knowledge_binding: dict[str, Any] | None = None
 
     def save(self, path: Path) -> None:
         data = {
@@ -260,6 +261,7 @@ class SessionMeta:
             "total_tokens": self.total_tokens,
             "created_at": self.created_at.isoformat(),
             "last_active": self.last_active.isoformat(),
+            "knowledge_binding": self.knowledge_binding,
         }
         path.write_text(
             json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -277,6 +279,7 @@ class SessionMeta:
                 total_tokens=data.get("total_tokens", 0),
                 created_at=datetime.fromisoformat(data["created_at"]),
                 last_active=datetime.fromisoformat(data["last_active"]),
+                knowledge_binding=data.get("knowledge_binding"),
             )
         except (json.JSONDecodeError, KeyError, ValueError):
             return None

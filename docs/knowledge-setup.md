@@ -347,3 +347,77 @@ leader 独立验收：实际运行主目录 S2 代码，在真实 Milvus 和 Qwe
 leader 另在本轮独立 TemporaryDirectory 下运行两份 knowledge 正式测试：8 passed / 3 skipped，2.36 秒；三项跳过为未 opt-in 的外部集成。代码审查取消了原拟新增的代次表，复用 chunks 保存原件映射；并发现、修正及真实验证了建库缺索引的恢复缺口。功能与代码质量均通过，按明确文件范围提交后合入主目录。
 
 未执行 S4 的 TUI/Agent/会话/引用报告，也未测试 GPU、长时压力、大语料、OCR 或系统掉电；真实进程死亡恢复不等同于掉电持久性保证。
+
+## S4 TUI、Agent、会话与引用报告（K21–K27）
+
+实现 worktree：`C:\Users\18221\.codex\worktrees\dc17\CodePlus`，基线 `cfd1a8ea0626629f78e99cabedf517f4e0e07fbd`。**实现及下述实现者验证完成，待 leader 独立功能与代码质量验收；保持未暂存，不提交或 push。**
+
+### 使用方式与复用范围
+
+先在自己的既有配置启用 `knowledge.enabled: true` 并指定数据目录，仍使用 S1–S3 的模型/profile 和 Milvus 配置。未启用时不会创建服务、加载模型或连接 Milvus。正常 TUI 启动分支只多传入 KnowledgeConfig；没有新增 `-p` 选择参数或 Remote 接线。
+
+```text
+/knowledge create "个人资料"
+/knowledge use <create 返回的 kb_id>
+/knowledge import "C:\资料目录\含空格的文件.md"
+/knowledge import "C:\资料目录"
+/knowledge status
+/knowledge sources
+/knowledge remove <sources 返回的 doc_id>
+/knowledge retry
+/knowledge open K:<kb_id>:<chunk_id>
+/knowledge open K:<kb_id>:<chunk_id> <next_offset>
+/knowledge off
+```
+
+create 自动选中新库；use 使用稳定 ID，避免名称歧义。import 接受单文件或目录，后台逐文件调用现有 import_document，显示 `1/N`、当前文件及完成/未变化/失败；目录扫描也在线程中执行。路径作为整个参数余部处理，保留 Windows 反斜杠及空格。sources/status/remove/retry 直接调用 S3 服务，没有第二份导入或状态机。
+
+只新增三个生产模块：`knowledge/citations.py` 管当前绑定、本轮证据和引用记录；`tools/knowledge.py` 容纳两个既有 Tool 子类；`commands/handlers/knowledge.py` 容纳具体管理命令。S3 service 仅增加读取同代相邻片段的方法。SQLite 仍三张表，不新增版本表、HTTP 服务或专用报告 Agent。
+
+- SearchKnowledge 仅接受 query 和 1–10 的 top_k，拒绝额外参数；当前库由应用绑定。每轮首检一次，最多三次补查。run 与 run_to_completion 共用首检函数，经现有工具注册、启停及权限检查执行；显式 deny 也约束自动首检。内部 MCP/system-reminder 不作为查询问题。
+- 原文经标准 ToolUse/ToolResult JSON 提供一次，系统提示只含稳定规则。资料正文、历史回答、会话摘要与项目指令/autoMemory 分开；知识模式不自动提取/整合个人记忆，也不注入异步记忆召回。文档内说明和提示词只作不可信数据。
+- ReadDocument 仅接收本轮提供的引用，读取精确代次片段及最多前后各一片。单次正文预算 6000 字符；长文显示 truncated、next_offset，继续读不会把邻块文字冒充为锚点文字。邻块有独立引用。用户 open 可按保存的稳定引用读取历史原文，包括关闭模式、更新、移除或会话压缩之后；这不会把历史引用授权给模型本轮回答。
+- SessionMeta 只增加可选 `{kb_id, top_k}`，不保存连接。use/off 同步保存并使用现有 compact_boundary 清空回答上下文；磁盘旧记录仍保留。new/clear 关闭模式；resume 恢复绑定，旧文件缺字段为关闭。恢复缺失/待修复库明确提示，后续提问也拒绝，不能静默退回普通回答。
+- 同一 TUI 中库操作与回答互斥，运行中不允许切库/切会话；本地检索正在执行时不取消底层编码线程，完成检索后可正常中断模型回答。导入期间输入仍能编辑；不承诺退出应用后继续导入。
+- 每次补查、写报告及最终回答均核对语料 revision；变化则提示重新生成。模型正文在机械引用检查后显示，未提供的引用报错。Markdown 报告仍由原 WriteFile 写入，保留权限、读后覆盖和文件状态检查，并追加引用 ID、原位置、generation、revision。权限/Hook/写入失败经既有工具结果路径记录，不能宣称报告已完成。引用存在性不等于事实支持性。
+
+### 真实模型、服务、provider 与 TUI
+
+本 worktree 使用独立原生 Windows `.venv`，`uv sync --locked --extra knowledge`；使用原有离线 Qwen3-Embedding-0.6B 缓存（固定 revision、CPU float32、1024 维）与 S3 的本机 Milvus。回答只读加载 `D:\CodePlus\.codeplus\config.yaml` 的现有 `deepseek-chat / openai-compat`；先实际请求并收到 `OK`，配置 SHA256 前后相同，未复制/输出密钥。整个阶段一次仅运行一个真实模型验收进程，未重启共享容器或操作 Docker Desktop。
+
+最终临时库 `696b2aee3c0943b5babb5688e71dbe23`，三份合成资料各 1 chunk，revision=3。通过真实 `CodePlusApp.run_test` 的 Textual Pilot 向 ChatInput 输入命令、按 Enter，再走实际 dispatcher、handler、Agent、Qwen、Milvus 和回答 provider；这是 headless TUI 交互，不是可视桌面终端验收，也不是只测 handler。
+
+| 资料 | 原文事实 | 引用位置 | 手工核对结果 |
+| --- | --- | --- | --- |
+| Atlas policy.md | 上限 73 元；17 个日历日内交票据 | 第 3 行；chunk `617f801f…` | 已知答案及报告均一致 |
+| Boreal policy.pdf | 上限 91 元；23 个日历日内交票据 | 物理第 1 页；chunk `62cabcd4…` | 报告一致；没有手机号资料 |
+| Cedar policy.docx | 上限 108 元；文件没有规定交票据期限 | 正文第 2 段；chunk `7fd8c389…` | 报告明确“缺少信息”，不生成页码 |
+
+- 实际 create/import 三格式共 70.896 秒（含初始化和模型加载）；导入期间在输入框按键得到 `type`，没有冻结。完整验收 93.288 秒，是小样本单次链路时间，不是性能指标。
+- 已知问题经实际 TUI/Agent.run 返回 73 元和 17 个日历日。无依据手机号问题经同一 Agent.run_to_completion 明确“资料未提供”，没有编造号码。检索失败、no_hits、命中但证据不足分别由错误/状态 JSON/回答表现；真实本轮未人为关闭共享 Milvus，连接失败正式回归使用明确替身。
+- 默认权限下要求 WriteFile 写报告，真实 provider 调用了工具，原 PermissionChecker 拒绝，目标文件不存在，最终错误为 `Report was not saved with verified citations: Permission denied: non-interactive agent cannot prompt user`。随后验收代码显式切到 acceptEdits，再实际保存三方比较 Markdown；知识模式本身从不修改权限模式。
+- 报告金额 73/91/108、期限 17/23/缺少信息与原文逐项一致。三条唯一引用全部由实际 `/knowledge open` 打开，核对其保存原件、解析文本、SourceSpan 字符范围以及行/页/段落，generation 和 revision=3 写入报告。报告结尾对表格事实的复述未重复每个行内引用；其事实支持性由上表人工核对，不声称机械系统做了语义验证。
+- Cedar 第 3 段含合成伪指令，模型将它引用为可疑文档内容，没有按其要求改变任务或把暗号当作答案。此处只记录一个样例行为，不当作通用提示注入安全证明。
+- 实际 Pilot 完成 create/use/import/status/sources/remove/retry/off/open 及 session new/resume/clear，errors=[]；off 后历史引用仍可打开，普通 provider 请求返回 `OFF_OK`。源样例哈希不变。仅用合成小样本，本阶段未重复导入 `E:\WorkBin` 个人正文。
+
+### 回归、发现与清理
+
+正式测试仅在原 `test_knowledge_service.py` 添加三个关键业务函数，并更新 `test_commands.py` 注册预期。包含实际 SQLite 来源隔离、ReadDocument 截断续读、旧代原文、跨轮引用拒绝、revision 变化、两 Agent 入口、首检权限 deny、MCP 提醒不作为 query、报告写入拒绝/成功、真实 App Pilot 输入/后台导入/首次回答/绑定恢复。普通 Agent、会话、权限和默认关闭回归沿用原测试。
+
+在本轮 TemporaryDirectory 的独立 `--basetemp` 中运行：
+
+```text
+python -m pytest tests/test_knowledge_service.py tests/test_agent.py tests/test_commands.py tests/test_memory.py tests/test_permissions.py tests/test_knowledge.py tests/test_mcp.py --basetemp <本轮临时目录>/pytest -q
+```
+
+最终 **219 passed / 4 skipped，12.16 秒**。skip 为未 opt-in 的 S1 两项真实集成、S3 SDK 用例及既有系统符号链接用例，不计为通过。`uv lock --check`、`uv sync --locked --extra knowledge --dry-run`、`git diff --check` 通过；未增加依赖或修改锁文件。
+
+首轮真实 TUI 暴露自动检索 ToolUse 先于正文时 streaming_label 已为 None 的问题，修复为收到首段正文时重建文本组件，已在同一个 Pilot 用例覆盖。后续验收脚本的 CRLF/LF 比较及“警告中也不得提及伪指令暗号”两个过强断言已修正：使用原解析文本核对位置，事实/伪指令行为单独人工核对。不能把这些中间失败算成功，也不能把断言修改说成产品修复。
+
+最终集合 `codeplus_kb_696b2aee3c0943b5babb5688e71dbe23` 已删除并查询确认不存在；最终 `codeplus-s4-live-vm5tsn4a`、另外两次正常退出验收目录和各轮独立 pytest 目录均已由自己的 TemporaryDirectory 收尾。第一轮失败库的集合 `codeplus_kb_9c9e70313dde420c845b4a46e74b8410` 也已删除，但第一轮目录清理先遇到未关闭 session 句柄的 WinError32；后续脚本将 session.close 移入 finally，避免重复。
+
+**S4 自动审批拒绝清理的残留**：句柄错误后，对明确的本轮目录 `C:\Users\18221\AppData\Local\Temp\codeplus-s4-live-ha52kl2a` 发出核对绝对路径的 PowerShell Remove-Item，执行前被 `blocked by policy` 拒绝。任务收尾再对已核对的本 worktree `.codeplus/s4_provider.py`、`.codeplus/s4_acceptance.py` 发出精确文件删除，同样在执行前被拒绝，未给出进一步原因。三个目标仍保留；没有更换删除工具或绕过审批，旧 S2/S3 被拒绝路径未操作。两个脚本受 Git 忽略，没有暂存；Temp 残留只含合成资料及该轮会话/登记材料，不是正式交付文件。
+
+保留本 worktree `.venv`、既有 HF 缓存和共享服务。未验证 S5 CLI/Remote、S6 评测、大语料/长时压力、可视桌面终端布局、多用户、GPU/OCR 或对所有提示注入的防护。
+
+leader 独立验收通过：另建真实 Qwen/Milvus 临时库，使用现有 deepseek provider，流式 Agent.run 在含 MCP 内部提醒的会话中正确回答 43 天/267 元并给出可读原文引用；run_to_completion 对未提供的手机号明确说明缺少依据。更新为 52 天/310 元后，旧轮回答被 revision 检查拒绝，旧引用仍能读取 43 天的历史原件。该库、目录和独立脚本已清理，真实 provider 配置哈希未变。相关回归独立复跑 219 passed / 4 skipped（11.34 秒）。审查修正首检权限、MCP 问题识别、证据重复注入和写入拒绝后的完成判断；复用现有工具、会话和写文件路径，功能与代码质量通过后本地提交。

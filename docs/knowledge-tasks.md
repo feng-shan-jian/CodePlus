@@ -1,6 +1,6 @@
 # CodePlus Knowledge：最小实现任务清单
 
-日期：2026-09-20。状态：K01 及 S1–S3 已通过 leader 功能与代码质量验收。S2/S3 临时文件清理限制分别见环境记录；后续阶段逐项实现，由 leader 验收并提交。
+日期：2026-09-20。状态：K01 及 S1–S4 已通过 leader 功能与代码质量验收。S2/S3/S4 临时文件清理限制分别见环境记录；后续阶段逐项实现，由 leader 验收并提交。
 
 架构依据：[收敛后的首版架构](knowledge-architecture.md)。已确定 Milvus Standalone、本地 Embedding、回答沿用现有模型配置。日常按文档更新，实验另建固定数据副本。
 
@@ -15,7 +15,7 @@
 | S1 | K02–K05 | Milvus、本地向量生成、可选依赖与配置 | leader 验收通过，纳入本阶段提交 |
 | S2 | K06–K15 | Markdown 导入到真实检索的最短链路 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S3 | K16–K20 | 更新、删除、恢复及 PDF/DOCX | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
-| S4 | K21–K27 | TUI/Agent 问答、会话与可追溯引用报告 | 未开始 |
+| S4 | K21–K27 | TUI/Agent 问答、会话与可追溯引用报告 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S5 | K28–K29 | 非交互 CLI 与 Remote 复用同一实现 | 未开始 |
 | S6 | K30–K33 | 可复现的基础检索评测与混合检索实验 | 未开始 |
 | S7 | K36 | 完整使用验收与文档收尾 | 未开始 |
@@ -222,7 +222,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K21 把检索包装成 Agent 工具
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K20。
 - **修改位置**：`codeplus/tools/search_knowledge.py（新增）`、`codeplus/tools/__init__.py`、`tests/test_knowledge_tools.py（新增）`。
 - **本项只做**：增加只读 SearchKnowledge，注入当前知识库服务与作用域，通过既有 ToolResult.output 返回 JSON。参数只含问题、受限 top_k 和允许的文档范围。
@@ -230,7 +230,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K22 增加读取原文上下文的工具
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K21。
 - **修改位置**：`codeplus/tools/read_document.py（新增）`、`codeplus/knowledge/citations.py（新增）`、`tests/test_knowledge_tools.py`。
 - **本项只做**：增加只读 ReadDocument，根据已返回的引用 ID 读取保存的片段与有限相邻上下文，保留原版本来源。未知引用和跨库引用应拒绝。
@@ -238,7 +238,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K23 加入 /knowledge 命令入口
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K22。
 - **修改位置**：`codeplus/commands/handlers/knowledge.py（新增）`、`codeplus/commands/handlers/__init__.py`、`codeplus/app.py`、`tests/test_commands.py`。
 - **本项只做**：在 TUI 中支持 create、use、import、status、sources、remove、retry、off，处理器只调用已经验证的服务函数。导入使用后台执行，显示进度和每文件结果。
@@ -246,7 +246,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K24 让 Agent 基于资料回答
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K23。
 - **修改位置**：`codeplus/agent.py`、`codeplus/prompts.py`、`codeplus/app.py`、`tests/test_agent.py`。
 - **本项只做**：增加共享的知识库上下文准备函数，流式 run 与 run_to_completion 复用。知识库问答首轮检索，注入来源约束，允许受限补查，保留原有权限与工具调用协议。
@@ -254,7 +254,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K25 恢复会话时恢复知识库绑定
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K24。
 - **修改位置**：`codeplus/memory/session.py`、`codeplus/commands/handlers/session.py`、`codeplus/app.py`、`tests/test_memory.py`、`tests/test_commands.py`。
 - **本项只做**：为 SessionMeta 增加可选 knowledge_binding，覆盖保存、恢复、新建、clear、切换与 off。只持久化稳定知识库身份和检索配置，不持久化服务连接。
@@ -262,7 +262,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K26 让用户能核对每条引用
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K25。
 - **修改位置**：`codeplus/knowledge/citations.py`、`codeplus/commands/handlers/knowledge.py`、`codeplus/app.py`、`tests/test_knowledge_citations.py（新增）`。
 - **本项只做**：增加 /knowledge open <引用ID>，展示文件名、原版本位置、原文及邻近内容。校验回答中的引用只指向本轮已提供证据；未知引用不标记为有效。
@@ -270,11 +270,13 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K27 生成第一份带出处的 Markdown 报告
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K26。
 - **修改位置**：`codeplus/knowledge/citations.py`、`codeplus/prompts.py`、`tests/test_knowledge_reports.py（新增）`。
 - **本项只做**：复用 Agent 的既有文件输出能力生成报告，保存引用 ID、原文位置和语料 revision。再次检索前检查 revision，资料中途变化时提示重新生成。
 - **完成标准**：导入三份文档并生成对比报告，每个事实结论能打开来源；没有依据的项目标为缺少信息；未知引用不能作为完成报告输出；写文件仍遵守当前权限。无需新增专用报告生成 Agent。
+
+**S4 实现记录（K21–K27，共用记录）**：只新增 `knowledge/citations.py`、`tools/knowledge.py` 和一个命令 handler，复用原服务、ToolResult、权限、Agent 循环、会话元数据/压缩边界及 WriteFile。正式测试只扩展 `test_knowledge_service.py` 的三个业务用例和命令注册预期。首检与补查走正常工具权限，证据单独进入工具结果；切库/off 清空当前上下文并持久化边界，历史引用可独立打开。真实三格式、回答、报告和 TUI Pilot 证据及清理限制见 [S4 环境记录](knowledge-setup.md)。leader 已完成独立真实问答、revision 与历史引用核对及回归，功能和代码质量通过，按本阶段明确路径提交；K28/K29 尚未实现。
 
 ### K28 接入非交互 CodePlus 入口
 

@@ -33,7 +33,7 @@ from codeplus.permissions import (
 )
 from codeplus.hooks import HookContext, HookEngine, ToolRejectedError
 from codeplus.hooks.engine import HookNotification
-from codeplus.prompts import build_environment_context, build_plan_mode_reminder, build_system_prompt
+from codeplus.prompts import KNOWLEDGE_PROMPT, build_environment_context, build_plan_mode_reminder, build_system_prompt
 from codeplus.tools import ToolRegistry
 from codeplus.tools.base import (
     MAX_OUTPUT_CHARS,
@@ -344,6 +344,50 @@ class Agent:
         # 非阻塞 memory recall：prefetch task 与主 LLM 调用并行，工具执行后注入
         self.memory_recall_task: Any | None = None
         self._memory_recall_consumed: bool = False
+        self.knowledge = None
+
+    @property
+    def knowledge_active(self) -> bool:
+        return self.knowledge is not None and self.knowledge.binding is not None
+
+    async def _prepare_knowledge(self, conversation: ConversationManager, *, interactive: bool):
+        if not self.knowledge_active:
+            return
+        query = next((m.content for m in reversed(conversation.history)
+                      if m.role == "user" and m.content and not m.tool_results
+                      and not m.content.startswith("<system-reminder>")), "")
+        self.knowledge.begin_turn()
+        call = ToolCallComplete(uuid.uuid4().hex, "SearchKnowledge",
+                                {"query": query, "top_k": self.knowledge.binding["top_k"]})
+        conversation.add_assistant_message("", [ToolUseBlock(call.tool_id, call.tool_name, call.arguments)])
+        yield ToolUseEvent(call.tool_name, call.tool_id, call.arguments)
+        start = time.monotonic()
+        if interactive:
+            async for item in self._execute_tool(call):
+                if isinstance(item, PermissionRequest):
+                    yield item
+                else:
+                    result, _elapsed = item
+        else:
+            result = await self._execute_tool_noninteractive(call)
+        conversation.add_tool_results_message([ToolResultBlock(call.tool_id, result.output, result.is_error)])
+        yield ToolResultEvent(call.tool_id, call.tool_name, result.output, result.is_error, time.monotonic() - start)
+        if result.is_error:
+            yield ErrorEvent(message=f"Knowledge retrieval failed (not no_hits): {result.output}")
+
+    async def _execute_with_knowledge(self, tool, params) -> ToolResult:
+        # Called only after the existing permission and parameter checks.
+        report = (self.knowledge_active and tool.name == "WriteFile"
+                  and Path(params.file_path).suffix.lower() == ".md")
+        if report:
+            params = params.model_copy(update={"content": await self.knowledge.report(params.content)})
+        return await tool.execute(params)
+
+    def _record_report_result(self, call, result) -> None:
+        # Observe the normal result path, including permission/hook rejection before execution.
+        if (self.knowledge_active and call.tool_name == "WriteFile"
+                and Path(call.arguments.get("file_path", "")).suffix.lower() == ".md"):
+            self.knowledge.report_error = result.output if result.is_error else ""
 
     def _announce_deferred_tools(self, conversation: ConversationManager) -> None:
         """把延迟工具名清单告诉模型，只在需要的时候发。
@@ -477,6 +521,10 @@ class Agent:
 
     async def run(self, conversation: ConversationManager) -> AsyncIterator[AgentEvent]:
         self._current_conversation = conversation
+        async for event in self._prepare_knowledge(conversation, interactive=True):
+            yield event
+            if isinstance(event, ErrorEvent):
+                return
         env_context = build_environment_context(
             self.work_dir, self.active_skills, self._skill_catalog, self._agent_catalog
         )
@@ -588,11 +636,22 @@ class Agent:
                 yield ErrorEvent(message=compact_result)
 
             collector = StreamCollector()
+            if self.knowledge_active:
+                system += "\n" + KNOWLEDGE_PROMPT
             llm_stream = self.client.stream(conversation, system=system, tools=tools)
             async for event in collector.consume(llm_stream):
-                yield event
+                if not (self.knowledge_active and isinstance(event, StreamText)):
+                    yield event
 
             response = collector.response
+            if self.knowledge_active:
+                try:
+                    await self.knowledge.validate_answer(response.text, final=not response.tool_calls)
+                except Exception as exc:
+                    yield ErrorEvent(message=str(exc))
+                    return
+                if response.text:
+                    yield StreamText(text=response.text)
 
             if self.hook_engine:
                 ctx = self._build_hook_context("post_receive", message=response.text)
@@ -650,9 +709,10 @@ class Agent:
                 if (
                     self._loop_count % MEMORY_EXTRACTION_INTERVAL == 0
                     and self.memory_manager
+                    and not self.knowledge_active
                 ):
                     asyncio.ensure_future(self._extract_memories(conversation))
-                if self._consolidator is not None:
+                if self._consolidator is not None and not self.knowledge_active:
                     asyncio.ensure_future(
                         self._consolidator.maybe_run(self.client, conversation, self.protocol)
                     )
@@ -704,6 +764,7 @@ class Agent:
                 if isinstance(br, PermissionRequest):
                     yield br
                     continue
+                self._record_report_result(next(tc for tc in response.tool_calls if tc.tool_id == br.tool_id), br.result)
                 content = self._maybe_persist_or_truncate(
                     br.tool_id, br.result.output, exempt_ids
                 )
@@ -732,7 +793,7 @@ class Agent:
             conversation.add_tool_results_message(tool_results)
 
             # 非阻塞 memory recall：工具执行完后检查 prefetch 是否就绪
-            if self.memory_recall_task and not self._memory_recall_consumed:
+            if self.memory_recall_task and not self._memory_recall_consumed and not self.knowledge_active:
                 if self.memory_recall_task.done():
                     try:
                         recall = self.memory_recall_task.result()
@@ -833,7 +894,7 @@ class Agent:
 
         try:
             params = tool.params_model.model_validate(tc.arguments)
-            result = await tool.execute(params)
+            result = await self._execute_with_knowledge(tool, params)
         except ValidationError as e:
             result = ToolResult(output=f"Parameter validation error: {e}", is_error=True)
         except Exception as e:
@@ -924,7 +985,7 @@ class Agent:
 
         try:
             params = tool.params_model.model_validate(tc.arguments)
-            result = await tool.execute(params)
+            result = await self._execute_with_knowledge(tool, params)
         except ValidationError as e:
             result = ToolResult(
                 output=f"Parameter validation error: {e}", is_error=True
@@ -982,7 +1043,7 @@ class Agent:
         当前提取完成后检查该标志，如果有 pending 则立即执行一次尾随提取，
         防止多个触发器同时执行导致重复提取。
         """
-        if not self.memory_manager:
+        if not self.memory_manager or self.knowledge_active:
             return
 
         # 合并策略：正在提取时暂存新请求，等当前提取完成后尾随执行
@@ -1046,12 +1107,11 @@ class Agent:
         self, task: str, conversation: ConversationManager | None = None,
         event_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> str:
+        env_context = build_environment_context(
+            self.work_dir, self.active_skills, self._skill_catalog, self._agent_catalog
+        )
         if conversation is None:
             conversation = ConversationManager()
-
-            env_context = build_environment_context(
-                self.work_dir, self.active_skills, self._skill_catalog, self._agent_catalog
-            )
             conversation.inject_environment(env_context)
 
             if self.instructions_content:
@@ -1062,6 +1122,9 @@ class Agent:
 
         if task:
             conversation.add_user_message(task)
+        async for event in self._prepare_knowledge(conversation, interactive=False):
+            if isinstance(event, ErrorEvent):
+                raise ValueError(event.message)
 
         hook_prompts = (
             self.hook_engine.get_prompt_messages() if self.hook_engine else None
@@ -1111,11 +1174,14 @@ class Agent:
             self._announce_deferred_tools(conversation)
 
             collector = StreamCollector()
-            llm_stream = self.client.stream(conversation, system=system, tools=tools)
+            turn_system = system + "\n" + KNOWLEDGE_PROMPT if self.knowledge_active else system
+            llm_stream = self.client.stream(conversation, system=turn_system, tools=tools)
             async for _event in collector.consume(llm_stream):
                 pass
 
             response = collector.response
+            if self.knowledge_active:
+                await self.knowledge.validate_answer(response.text, final=not response.tool_calls)
             self.total_input_tokens += response.input_tokens
             self.total_output_tokens += response.output_tokens
 
@@ -1191,6 +1257,7 @@ class Agent:
                 else:
                     results = [await self._execute_tool_noninteractive(batch.calls[0])]
                 for tc, result in zip(batch.calls, results):
+                    self._record_report_result(tc, result)
                     content = self._maybe_persist_or_truncate(
                         tc.tool_id, result.output, exempt_ids
                     )
@@ -1263,7 +1330,7 @@ class Agent:
 
         try:
             params = tool.params_model.model_validate(tc.arguments)
-            result = await tool.execute(params)
+            result = await self._execute_with_knowledge(tool, params)
         except ValidationError as e:
             result = ToolResult(
                 output=f"Parameter validation error: {e}", is_error=True

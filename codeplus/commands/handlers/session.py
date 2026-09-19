@@ -71,6 +71,8 @@ async def handle_session(ctx: CommandContext) -> None:
         for msg in result.messages:
             conv.history.append(msg)
         ctx.config["set_conversation"](conv)
+        if "check_knowledge" in ctx.config:
+            await ctx.config["check_knowledge"]()
         if ctx.agent:
             ctx.agent._loop_count = 0
         await ctx.config["render_restored"](result.messages)

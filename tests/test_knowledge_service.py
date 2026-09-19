@@ -8,6 +8,7 @@ import sqlite3
 import subprocess
 import sys
 import time
+import asyncio
 
 import pytest
 
@@ -64,6 +65,255 @@ def service(tmp_path):
     service._store = MemoryStore()
     yield service
     service.close()
+
+
+@pytest.mark.asyncio
+async def test_turn_citations_history_and_reports(service, tmp_path, monkeypatch):
+    from codeplus.knowledge.citations import KnowledgeContext
+    from codeplus.tools.knowledge import SearchKnowledge, SearchParams, ReadDocument, ReadParams
+    from pydantic import ValidationError
+
+    kb = service.create("citations")["id"]
+    source = tmp_path / "policy.md"
+    source.write_text("# Policy\n\nRefund deadline is 17 days.\n\n" + "Other conditions. " * 12, encoding="utf-8")
+    service.import_document(kb, source)
+    context = KnowledgeContext(service.config)
+    context._service = service
+    context.bind({"kb_id": kb, "top_k": 2})
+    result = await SearchKnowledge(context).execute(SearchParams(query="deadline", top_k=2))
+    hit = json.loads(result.output)["hits"][0]
+    citation = hit["citation_id"]
+    with pytest.raises(ValidationError):
+        SearchParams(query="test", kb_id="other", file_path="anything")
+    denied = await ReadDocument(context).execute(ReadParams(citation_id="K:other:unknown"))
+    assert denied.is_error
+    read = json.loads((await ReadDocument(context).execute(ReadParams(citation_id=citation))).output)
+    assert "17 days" in read["source"]["text"]
+    assert len(read["neighbours"]) <= 2
+    # Exercise pagination with the actual saved text, using a small output budget.
+    monkeypatch.setattr("codeplus.knowledge.citations.READ_CHARS", 9)
+    first = await context.read(citation)
+    assert first["source"]["truncated"] and first["source"]["next_offset"] == 9
+    second = await context.read(citation, 9)
+    assert first["source"]["text"] + second["source"]["text"] == service.source(kb, hit["chunk_id"])["text"][:18]
+    report = await context.report(f"Refund: 17 days. [{citation}]")
+    assert '"revision": 1' in report and '"line_start"' in report and '"generation_id"' in report
+    with pytest.raises(ValueError, match="Unverified citation"):
+        await context.report("wrong [K:other:unknown]")
+    with pytest.raises(ValueError, match="not saved"):
+        await context.validate_answer("报告已完成")
+    source.write_text("Refund deadline is 28 days.", encoding="utf-8")
+    service.import_document(kb, source)
+    assert "17 days" in service.source_context(kb, hit["chunk_id"])[0]["text"]
+    with pytest.raises(ValueError, match="corpus changed"):
+        await context.search("deadline")
+    context.begin_turn()
+    await context.search("deadline")
+    with pytest.raises(ValueError, match="Unknown citation"):
+        await context.read(citation)
+    context.bind(None)
+    assert (await SearchKnowledge(context).execute(SearchParams(query="test"))).is_error
+
+
+@pytest.mark.asyncio
+async def test_agent_knowledge_both_entries_permissions_and_failures(service, tmp_path, monkeypatch):
+    from codeplus.agent import Agent, ErrorEvent, StreamText
+    from codeplus.conversation import ConversationManager
+    from codeplus.knowledge.citations import KnowledgeContext
+    from codeplus.permissions import PermissionChecker, PermissionMode
+    from codeplus.permissions.dangerous import DangerousCommandDetector
+    from codeplus.permissions.rules import RuleEngine, Rule
+    from codeplus.permissions.sandbox import PathSandbox
+    from codeplus.tools import create_default_registry
+    from codeplus.tools.knowledge import SearchKnowledge, ReadDocument
+    from codeplus.tools.base import TextDelta, StreamEnd, ToolCallComplete
+
+    kb = service.create("agent")["id"]
+    source = tmp_path / "agent.md"
+    source.write_text("Refund deadline is 17 days.", encoding="utf-8")
+    service.import_document(kb, source)
+    context = KnowledgeContext(service.config)
+    context._service = service
+    context.bind({"kb_id": kb, "top_k": 2})
+    registry = create_default_registry()
+    registry.register(SearchKnowledge(context))
+    registry.register(ReadDocument(context))
+    class Client:
+        calls = 0
+        bad = False
+        async def stream(self, conversation, system="", tools=None):
+            self.calls += 1
+            assert "Refund deadline is 17 days" not in system
+            assert "untrusted" in system
+            data = json.loads(conversation.history[-1].tool_results[0].content)
+            assert data["status"] == "hits"
+            ref = data["hits"][0]["citation_id"]
+            yield TextDelta("17 days. [" + ("K:bad" if self.bad else ref) + "]")
+            yield StreamEnd("end_turn")
+    client = Client()
+    agent = Agent(client, registry, "openai-compat", work_dir=str(tmp_path))
+    agent.knowledge = context
+    original_search = service.search
+    queries = []
+    def search(kb_id, query, top_k):
+        queries.append(query)
+        return original_search(kb_id, query, top_k)
+    monkeypatch.setattr(service, "search", search)
+    conv = ConversationManager()
+    conv.add_user_message("deadline?")
+    conv.add_system_reminder("MCP internal instructions, never a search query")
+    events = [event async for event in agent.run(conv)]
+    assert queries == ["deadline?"] and any(isinstance(e, StreamText) for e in events)
+    assert "17 days" in await agent.run_to_completion("deadline?")
+    assert queries == ["deadline?", "deadline?"]
+    client.bad = True
+    events = [event async for event in agent.run(ConversationManager(history=conv.history[:1]))]
+    assert any(isinstance(e, ErrorEvent) for e in events) and not any(isinstance(e, StreamText) for e in events)
+    with pytest.raises(ValueError, match="Unverified"):
+        await agent.run_to_completion("deadline?")
+    rules = RuleEngine(local_rules_path=tmp_path / "permissions.yaml")
+    checker = PermissionChecker(DangerousCommandDetector(), PathSandbox(str(tmp_path)), rules, mode=PermissionMode.PLAN)
+    agent.permission_checker = checker
+    agent.set_permission_mode(PermissionMode.PLAN)
+    report_path = tmp_path / "report.md"
+    result = await agent._execute_tool_noninteractive(ToolCallComplete("write", "WriteFile", {
+        "file_path": str(report_path), "content": "bad [K:invented]"}))
+    assert result.is_error and "Permission denied" in result.output and not report_path.exists()
+    class ReportClient:
+        wrote = False
+        async def stream(self, conversation, system="", tools=None):
+            if not self.wrote:
+                self.wrote = True
+                ref = next(iter(context.evidence))
+                yield ToolCallComplete("report", "WriteFile", {
+                    "file_path": str(report_path), "content": f"17 days [{ref}]"})
+                yield StreamEnd("tool_use")
+            else:
+                yield TextDelta("报告已完成")
+                yield StreamEnd("end_turn")
+    agent.client = ReportClient()
+    with pytest.raises(ValueError, match="not saved.*Permission denied"):
+        await agent.run_to_completion("write a report")
+    assert not report_path.exists()
+    agent.set_permission_mode(PermissionMode.ACCEPT_EDITS)
+    agent.client = ReportClient()
+    assert await agent.run_to_completion("write a report") == "报告已完成"
+    assert '"revision": 1' in report_path.read_text(encoding="utf-8")
+    agent.client = client
+    rules.append_local_rule(Rule(tool_name="SearchKnowledge", pattern="*", effect="deny"))
+    calls = client.calls
+    searched = len(queries)
+    with pytest.raises(ValueError, match="Permission denied"):
+        await agent.run_to_completion("deadline?")
+    conv = ConversationManager()
+    conv.add_user_message("deadline?")
+    assert any(isinstance(e, ErrorEvent) for e in [e async for e in agent.run(conv)])
+    assert len(queries) == searched and client.calls == calls
+    agent.permission_checker = None
+    monkeypatch.setattr(service.store, "search_dense", lambda *args: [])
+    context.begin_turn()
+    assert (await context.search("no match"))["status"] == "no_hits"
+    def unavailable(*args):
+        raise RuntimeError("Milvus unavailable")
+    monkeypatch.setattr(service, "search", unavailable)
+    with pytest.raises(ValueError, match="not no_hits"):
+        await agent.run_to_completion("deadline?")
+
+
+@pytest.mark.asyncio
+async def test_knowledge_pilot_binding_background_import_and_history(service, tmp_path, monkeypatch):
+    from codeplus.app import CodePlusApp, ChatInput
+    from codeplus.config import ProviderConfig
+    from codeplus.conversation import Message
+    from codeplus.memory.session import SessionMeta
+    import threading
+
+    monkeypatch.chdir(tmp_path)
+    provider = ProviderConfig("test", "openai-compat", "http://127.0.0.1:1", "test", "test")
+    app = CodePlusApp([provider], enable_fork=False, knowledge_config=service.config)
+    app.knowledge._service = service
+    messages = []
+    show = app.add_system_message
+    def record(text):
+        messages.append(text)
+        show(text)
+    monkeypatch.setattr(app, "add_system_message", record)
+    source = tmp_path / "path with spaces.md"
+    source.write_text("Knowledge pilot answer is 47.", encoding="utf-8")
+    started, release = threading.Event(), threading.Event()
+    original_import = service.import_document
+    def slow_import(*args):
+        started.set()
+        assert release.wait(10)
+        return original_import(*args)
+    monkeypatch.setattr(service, "import_document", slow_import)
+    async with app.run_test(size=(110, 35)) as pilot:
+        async def enter(text, wait=True):
+            inp = app.query_one("#chat-input", ChatInput)
+            inp.focus()
+            inp.insert(text)
+            await pilot.press("enter")
+            await pilot.pause()
+            if wait and app._knowledge_task:
+                await app._knowledge_task
+        await enter('/knowledge create "Pilot library"')
+        kb = app.knowledge.binding["kb_id"]
+        session_id = app.session.session_id
+        assert app.session.meta.knowledge_binding["kb_id"] == kb
+        await enter(f'/knowledge import "{source}"', wait=False)
+        assert await asyncio.to_thread(started.wait, 5)
+        await enter('/knowledge off', wait=False)
+        assert app.knowledge.binding["kb_id"] == kb and any("正在执行" in m for m in messages)
+        # The real input widget still accepts keystrokes while import is held in a thread.
+        await pilot.press("a", "b", "c")
+        assert app.query_one("#chat-input", ChatInput).text == "abc"
+        app.query_one("#chat-input", ChatInput).clear()
+        release.set()
+        await app._knowledge_task
+        assert any("导入 1/1" in m for m in messages) and any("导入完成" in m for m in messages)
+        from codeplus.tools.base import TextDelta, StreamEnd
+        class Client:
+            async def stream(self, conversation, system="", tools=None):
+                ref = next(iter(app.knowledge.evidence))
+                yield TextDelta(f"47 [{ref}]")
+                yield StreamEnd("end_turn")
+        app.agent.client = Client()
+        app.agent.memory_manager = None
+        await enter('pilot answer?')
+        if app._agent_task:
+            await app._agent_task
+        assert app.conversation.history[-1].content.startswith("47 [K:")
+        await enter('/knowledge sources')
+        await enter('/knowledge status')
+        hit = service.search(kb, "answer").hits[0]
+        ref = f"K:{kb}:{hit.chunk_id}"
+        app.session.append(Message("assistant", f"47 [{ref}]"))
+        app.conversation.add_assistant_message(f"47 [{ref}]")
+        await enter('/session new')
+        assert app.knowledge.binding is None and not app.registry.is_enabled("SearchKnowledge")
+        await enter(f'/session resume {session_id}')
+        assert app.knowledge.binding["kb_id"] == kb
+        await enter('/knowledge off')
+        assert not app.conversation.history and app.session.meta.knowledge_binding is None
+        await enter(f'/knowledge open {ref}')
+        assert any('"historical_sources"' in m and "47" in m for m in messages)
+        await enter(f'/session resume {session_id}')
+        assert app.knowledge.binding is None and all(ref not in m.content for m in app.conversation.history)
+        await enter(f'/knowledge use {kb}')
+        await enter('/clear')
+        assert app.knowledge.binding is None and not app.registry.is_enabled("ReadDocument")
+        # Old metadata defaults off; missing restored library remains bound and blocks answers.
+        meta_path = app.session._sessions_dir / f"{app.session.session_id}.meta"
+        data = json.loads(meta_path.read_text(encoding="utf-8"))
+        data.pop("knowledge_binding")
+        meta_path.write_text(json.dumps(data), encoding="utf-8")
+        assert SessionMeta.load(meta_path).knowledge_binding is None
+        app.session.meta.knowledge_binding = {"kb_id": "f" * 32, "top_k": 2}
+        app.session.meta.save(meta_path)
+        await enter(f'/session resume {app.session.session_id}')
+        assert any("不可用" in m for m in messages)
+        assert app.knowledge.binding["kb_id"] == "f" * 32
+        app.session.close()
 
 
 def test_import_identity_sources_and_preparation_failure(service, tmp_path, monkeypatch):
