@@ -1,4 +1,4 @@
-"""Markdown originals and tokenizer chunks, with offsets into the saved source."""
+"""Saved originals, format adapters and one structure/offset tokenizer chunker."""
 
 from bisect import bisect_right
 from dataclasses import replace
@@ -9,9 +9,13 @@ from pathlib import Path
 from .models import Chunk, ParsedBlock, SourceSpan, fingerprint
 
 
+PARSERS = {".md": "markdown-it-4/lines-v1", ".markdown": "markdown-it-4/lines-v1",
+           ".pdf": "pypdf-6.19.0/pages-v1", ".docx": "python-docx-1.2.0/body-v1"}
+
+
 def read_source(path: Path) -> tuple[bytes, str]:
-    if path.suffix.lower() not in {".md", ".markdown"}:
-        raise ValueError("Only Markdown is supported in S2")
+    if path.suffix.lower() not in PARSERS:
+        raise ValueError("Supported formats: Markdown, PDF, DOCX; convert legacy .doc to .docx first")
     with path.open("rb") as stream:
         before = os.fstat(stream.fileno())
         data = stream.read()
@@ -23,13 +27,13 @@ def read_source(path: Path) -> tuple[bytes, str]:
     return data, sha256(data).hexdigest()
 
 
-def save_original(directory: Path, data: bytes) -> Path:
+def save_original(directory: Path, data: bytes, suffix: str = ".md") -> Path:
     temporary = directory / "original.tmp"
     with temporary.open("xb") as stream:
         stream.write(data)
         stream.flush()
         os.fsync(stream.fileno())
-    saved = directory / "original.md"
+    saved = directory / f"original{suffix}"
     temporary.replace(saved)
     saved.chmod(0o444)
     return saved
@@ -61,6 +65,76 @@ def parse_markdown(text: str) -> list[ParsedBlock]:
     if not blocks:
         raise ValueError("Markdown has no content")
     return blocks
+
+
+def parse_document(original: Path) -> tuple[str, list[ParsedBlock]]:
+    """Non-Markdown offsets refer to the extracted text, with native source locations.
+
+    PDF pages are physical, one-based pages. DOCX paragraphs count body paragraphs
+    (including empty ones); tables/rows/columns are one-based and never page guesses.
+    """
+    suffix = original.suffix.lower()
+    if suffix in {".md", ".markdown"}:
+        text = original.read_bytes().decode("utf-8-sig")
+        return text, parse_markdown(text)
+    parts, blocks = [], []
+    offset = 0
+
+    def append(value, kind, headings=(), **location):
+        nonlocal offset
+        if not value.strip():
+            return
+        value += "\n"
+        blocks.append(ParsedBlock(value, SourceSpan(kind, list(headings), None, None,
+                                  offset, offset + len(value), suffix[1:], **location)))
+        parts.append(value)
+        offset += len(value)
+
+    if suffix == ".pdf":
+        from pypdf import PdfReader
+        from pypdf.errors import PyPdfError
+
+        try:
+            reader = PdfReader(original, strict=True)
+            if reader.is_encrypted:
+                raise ValueError("Encrypted PDF is not supported; provide an unencrypted original")
+            for page, content in enumerate(reader.pages, 1):
+                append(content.extract_text(), "page", page=page)
+        except (PyPdfError, OSError, ValueError) as exc:
+            raise ValueError(f"Cannot parse PDF: {exc}") from exc
+        if not blocks:
+            raise ValueError("PDF has no extractable text (empty or scanned); OCR is not supported")
+    elif suffix == ".docx":
+        from docx import Document
+        from docx.text.paragraph import Paragraph
+
+        headings = []
+        paragraph = table = 0
+        for item in Document(original).iter_inner_content():
+            if isinstance(item, Paragraph):
+                paragraph += 1
+                style = item.style.name if item.style else ""
+                kind = "paragraph"
+                if style.startswith("Heading ") and style[8:].isdigit():
+                    level = int(style[8:])
+                    headings = [(depth, title) for depth, title in headings if depth < level]
+                    headings.append((level, item.text))
+                    kind = "heading"
+                elif style == "Title":
+                    headings = [(0, item.text)]
+                    kind = "heading"
+                append(item.text, kind, [title for _, title in headings], paragraph=paragraph)
+            else:
+                table += 1
+                for row, cells in enumerate(item.rows, 1):
+                    for column, cell in enumerate(cells.cells, cells.grid_cols_before + 1):
+                        append(cell.text, "table_cell", [title for _, title in headings],
+                               table=table, row=row, column=column)
+        if not blocks:
+            raise ValueError("DOCX has no body text")
+    else:
+        raise ValueError(f"Unsupported document format: {suffix}")
+    return "".join(parts), blocks
 
 
 def chunk_markdown(text: str, blocks: list[ParsedBlock], tokenizer, doc_id: str,
@@ -102,9 +176,10 @@ def chunk_markdown(text: str, blocks: list[ParsedBlock], tokenizer, doc_id: str,
             for block in blocks:
                 left, right = max(start, block.source.char_start), min(end, block.source.char_end)
                 if left < right:
-                    spans.append(replace(block.source, char_start=left, char_end=right,
-                                         line_start=bisect_right(line_starts, left),
-                                         line_end=bisect_right(line_starts, right - 1)))
+                    lines = ({"line_start": bisect_right(line_starts, left),
+                              "line_end": bisect_right(line_starts, right - 1)}
+                             if block.source.format == "markdown" else {})
+                    spans.append(replace(block.source, char_start=left, char_end=right, **lines))
             ordinal = len(chunks)
             chunks.append(Chunk(fingerprint([doc_id, generation_id, ordinal]), doc_id,
                                 generation_id, ordinal, value, spans))

@@ -22,7 +22,7 @@ def test_disabled_knowledge_has_no_optional_imports_or_network(tmp_path):
 import builtins, socket, sys
 real_import = builtins.__import__
 def guarded_import(name, *args, **kwargs):
-    assert name.split('.')[0] not in {'torch', 'transformers', 'pymilvus', 'huggingface_hub'}, name
+    assert name.split('.')[0] not in {'torch', 'transformers', 'pymilvus', 'huggingface_hub', 'pypdf', 'docx'}, name
     return real_import(name, *args, **kwargs)
 builtins.__import__ = guarded_import
 def reject_network(*args, **kwargs):
@@ -31,6 +31,7 @@ socket.socket.connect = reject_network
 from pathlib import Path
 from codeplus.config import load_config
 from codeplus.knowledge.embedding import LocalEmbedding
+import codeplus.knowledge.documents
 import codeplus.__main__
 config = load_config(Path(sys.argv[1]))
 assert not config.knowledge.enabled

@@ -15,20 +15,22 @@ class MilvusStore:
     def ensure_collection(self, name: str, profile_hash: str, dimension: int, *, create=False):
         from pymilvus import DataType
 
-        if create:
+        if create and not self.client.has_collection(name):
             schema = self.client.create_schema(auto_id=False, enable_dynamic_field=False,
                                                description=f"codeplus:{profile_hash}")
             for field in ("chunk_id", "doc_id", "generation_id", "text"):
                 schema.add_field(field, DataType.VARCHAR, is_primary=field == "chunk_id",
                                  max_length=65535 if field == "text" else 64)
             schema.add_field("dense", DataType.FLOAT_VECTOR, dim=dimension)
-            index = self.client.prepare_index_params()
-            index.add_index("dense", index_type="FLAT", metric_type="COSINE")
-            self.client.create_collection(name, schema=schema, index_params=index, consistency_level="Strong")
+            self.client.create_collection(name, schema=schema, consistency_level="Strong")
         description = self.client.describe_collection(name)
         dense = next(field for field in description["fields"] if field["name"] == "dense")
         if description["description"] != f"codeplus:{profile_hash}" or int(dense["params"]["dim"]) != dimension:
             raise ValueError("Milvus collection profile mismatch; create a separate knowledge base")
+        if create and not self.client.list_indexes(name, field_name="dense"):
+            index = self.client.prepare_index_params()
+            index.add_index("dense", index_type="FLAT", metric_type="COSINE")
+            self.client.create_index(name, index)
         self.client.load_collection(name)
 
     @staticmethod
@@ -72,7 +74,7 @@ class MilvusStore:
                                   search_params={"metric_type": "COSINE"}, consistency_level="Strong")[0]
 
     def delete_document(self, name: str, doc_id: str):
-        """SDK operation for K11; user-facing removal/recovery belongs to S3."""
+        """Idempotently erase just this document and verify the visible result."""
         self.client.delete(name, filter="doc_id == {doc_id}", filter_params={"doc_id": doc_id})
         self.client.flush(name)
         self.verify_document(name, doc_id, [])

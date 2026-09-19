@@ -31,11 +31,16 @@ def profile(config: KnowledgeConfig) -> dict:
 class SourceSpan:
     kind: str
     heading_path: list[str]
-    line_start: int
-    line_end: int
+    line_start: int | None
+    line_end: int | None
     char_start: int
     char_end: int
     format: str = "markdown"
+    page: int | None = None
+    paragraph: int | None = None
+    table: int | None = None
+    row: int | None = None
+    column: int | None = None
 
 
 @dataclass

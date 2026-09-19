@@ -1,6 +1,6 @@
 # CodePlus Knowledge：最小实现任务清单
 
-日期：2026-09-20。状态：K01、S1 和 S2 已通过 leader 功能与代码质量验收。S2 临时文件清理受自动审批限制，详见环境记录；后续阶段逐项实现，由 leader 验收并提交。
+日期：2026-09-20。状态：K01 及 S1–S3 已通过 leader 功能与代码质量验收。S2/S3 临时文件清理限制分别见环境记录；后续阶段逐项实现，由 leader 验收并提交。
 
 架构依据：[收敛后的首版架构](knowledge-architecture.md)。已确定 Milvus Standalone、本地 Embedding、回答沿用现有模型配置。日常按文档更新，实验另建固定数据副本。
 
@@ -14,7 +14,7 @@
 | --- | --- | --- | --- |
 | S1 | K02–K05 | Milvus、本地向量生成、可选依赖与配置 | leader 验收通过，纳入本阶段提交 |
 | S2 | K06–K15 | Markdown 导入到真实检索的最短链路 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
-| S3 | K16–K20 | 更新、删除、恢复及 PDF/DOCX | 未开始 |
+| S3 | K16–K20 | 更新、删除、恢复及 PDF/DOCX | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S4 | K21–K27 | TUI/Agent 问答、会话与可追溯引用报告 | 未开始 |
 | S5 | K28–K29 | 非交互 CLI 与 Remote 复用同一实现 | 未开始 |
 | S6 | K30–K33 | 可复现的基础检索评测与混合检索实验 | 未开始 |
@@ -180,7 +180,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K16 只更新发生变化的文档
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K15。
 - **修改位置**：`codeplus/knowledge/service.py`、`codeplus/knowledge/metadata.py`、`tests/test_knowledge_service.py`。
 - **本项只做**：实现已登记文档的替换：先准备新原件和向量，锁内登记更新，只替换该 doc_id 对应向量，核验后提交新代次与 revision。保留旧原文供引用读取。
@@ -188,7 +188,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K17 移除一份文档
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K16。
 - **修改位置**：`codeplus/knowledge/service.py`、`codeplus/knowledge/__main__.py`、`tests/test_knowledge_service.py`。
 - **本项只做**：增加 remove：在同一保护流程中删除目标文档的向量，确认不可检索后登记 removed 并增加 revision。原件和历史片段继续保留。
@@ -196,7 +196,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K18 恢复一次中断的导入或删除
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K17。
 - **修改位置**：`codeplus/knowledge/service.py`、`codeplus/knowledge/__main__.py`、`tests/test_knowledge_service.py`。
 - **本项只做**：增加 retry 和启动检查。根据 pending_operation 与落盘材料重新执行目标文档操作，成功后核对两边记录再恢复 READY。重试只处理明确失败的目标文档。
@@ -204,19 +204,21 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K19 支持文本型 PDF
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K18。
-- **修改位置**：`codeplus/knowledge/parsing.py`、`pyproject.toml`、`uv.lock`、`tests/test_knowledge_parsing.py`。
+- **修改位置**：复用 `codeplus/knowledge/documents.py`、`models.py`、`pyproject.toml`、`uv.lock`、`tests/test_knowledge_service.py`。
 - **本项只做**：增加 pypdf 解析适配，输出与 Markdown 相同的 ParsedBlock，保留真实页码。接入既有导入流程，不另写一条 PDF 检索链。
 - **完成标准**：两页合成 PDF 的已知句子可以通过正式导入和查询定位到正确页；空文本、扫描件、加密或损坏样本有明确结果，不误报成功。
 
 ### K20 支持 DOCX
 
-- [ ] 完成
+- [x] leader 验收通过（2026-09-20）
 - **前置**：K19。
-- **修改位置**：`codeplus/knowledge/parsing.py`、`pyproject.toml`、`uv.lock`、`tests/test_knowledge_parsing.py`。
+- **修改位置**：复用 `codeplus/knowledge/documents.py`、`models.py`、`pyproject.toml`、`uv.lock`、`tests/test_knowledge_service.py`。
 - **本项只做**：增加 python-docx 适配，按文档顺序处理段落和表格，保留标题路径及表格行列。使用同一分块和导入入口。
 - **完成标准**：段落答案和表格单元格答案都可定位；表格顺序未丢失；不编造 Word 页码。只支持 .docx，旧 .doc 提示格式不支持。
+
+**S3 执行记录（K16–K20，共用记录）**：复用同一个导入/分块/提交/检索链；增加 update（import 别名）、remove、retry、source。schema 1→2 原地迁移仍保留三张表，在 chunks 保存每代原件路径，保持 Markdown profile、已有 ID 和集合名。真实 SDK 覆盖四处进程硬退出后的拒绝查询与显式恢复，以及创建集合后缺 dense 索引的恢复；真实 Qwen/Milvus 覆盖 S2 原库迁移、三个真实格式样例、合成页码/表格定位及恢复。正式测试仅扩展原有文件，详细数量、运行证据与边界见 [S3 环境记录](knowledge-setup.md)。leader 独立迁移、更新、恢复、旧引用和关键回归已通过；未进入 S4。
 
 ### K21 把检索包装成 Agent 工具
 

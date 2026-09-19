@@ -257,10 +257,93 @@ leader 独立回归命令为 `python -m pytest tests/test_knowledge_service.py t
 
 代码质量验收通过：继续复用配置和 LocalEmbedding，原件/解析/分块集中在一个具体文档模块，SQLite 和 Milvus 各保留一个实现，CLI 直接调用同一服务；未加入多后端框架或重复校验层。leader 发现的真实 SDK 参数问题已修复并独立复验，通过后按明确文件范围提交并合入主目录。
 
-**清理阻塞（2026-09-20）**：已核对目标路径后，PowerShell 批量删除本阶段临时目录/文件的命令被自动审批以 `blocked by policy` 拒绝。随后缩小为本 worktree 内三个明确临时脚本的 `Remove-Item -LiteralPath ... -Force`，同样被拒绝，未给出具体原因。未更换删除工具或绕过审批；以下残留仍存在，不能标记已清理：
+**S2 当时的清理阻塞（2026-09-20）**：已核对目标路径后，PowerShell 批量删除本阶段临时目录/文件的命令被自动审批以 `blocked by policy` 拒绝。随后缩小为本 worktree 内三个明确临时脚本的 `Remove-Item -LiteralPath ... -Force`，同样被拒绝，未给出具体原因。S2 未更换删除工具或绕过审批；当时记录的残留如下，后续实际变化见 S3 清理更正：
 
 - 本 worktree `.codeplus/s2_accept.py`、`.codeplus/s2_lockfile.py`、`.codeplus/s2_unavailable.py`。
 - 本 worktree `.codeplus/s2-pytest/`、`.codeplus/s2-regression/`、`.codeplus/s2-final-sdk/`，仅包含本阶段正式测试的临时合成数据。
 - `C:\Users\18221\AppData\Local\Temp\pytest-of-18221\pytest-11`、`pytest-12`，本阶段早期服务测试目录；`pytest-10` 已由 pytest 自身清理。
 
 工作树内上述残留均受既有 Git 忽略规则覆盖，没有暂存或纳入代码 diff；不是正式产品文件，也不是应长期保留的交付物。功能实现和实测已完成，最终验收仍需保留这一清理未完成边界。
+
+## S3 更新、删除、恢复和 PDF/DOCX（K16–K20）
+
+实现 worktree：`C:\Users\18221\.codex\worktrees\68fd\CodePlus`；起点为已验收 S2 提交 `255be654a93afd5cd523b978a4696e7c26c51a22`。**2026-09-20 已通过 leader 独立功能与代码质量验收，纳入 S3 提交。** 清理限制单独列于本阶段末尾。
+
+### 入口与复用
+
+`import` 现在按同一来源路径替换文档，`update` 是同一 CLI 分支的别名。重复导入未变化且未删除的文件返回 `unchanged: true`，不加载模型；重新导入已删除文件可恢复检索。`remove` 使用 status 中的 doc_id，重复移除返回 unchanged，不增加 revision。READY 且无 pending 的 `retry` 也为 unchanged；其他情况只恢复已登记的唯一目标，不扫描原件目录、推断 PID 或自动放行查询。
+
+以下 `$configPath`、`$kbId`、`$docId`、`$chunkId` 分别来自自己的配置和命令结果；本阶段已用含空格配置/原件路径逐个执行这些入口：
+
+```powershell
+uv sync --locked --extra knowledge
+$env:HF_HUB_OFFLINE = '1'
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath update $kbId 'C:\资料\说明.md'
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath import $kbId 'C:\资料\报告.pdf'
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath import $kbId 'C:\资料\手册.docx'
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath remove $kbId $docId
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath retry $kbId
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath source $kbId $chunkId
+& .\.venv\Scripts\python.exe -m codeplus.knowledge --config $configPath status $kbId
+Remove-Item Env:HF_HUB_OFFLINE
+```
+
+`source` 只读取本库已保存片段、来源范围和该代原件的精确路径，包括已更新/删除文档的历史片段。该读取不加载模型或连接 Milvus，未扩展成 S4 的 Agent 引用工具。`status` 中 removed=1 的文档仍保留登记信息，但当前 chunk_count=0。
+
+生产代码未新增模块或类。原件/解析/分块继续放在 documents.py；import、remove、retry 共用 service 的单一文档提交函数，SQLite 继续用原来的 begin_import/finish_import 事务入口，CLI 直接调用 service。
+
+### 数据迁移和恢复语义
+
+- schema 1→2 是同一 SQLite 事务内的加列与回填，仍只有 knowledge_bases、documents、chunks 三张表。新增 documents.removed、knowledge_bases.pending_operation 和 chunks.original_path；旧 chunks 从当时 documents 的原件路径回填。更新成功后只切换 documents 当前代次，不覆盖历史 chunks 的原件路径；重新导入历史相同字节时保持原 chunk ID 和旧代原件映射。
+- Markdown 的 profile.json、profile_hash、generation 规则不变。PDF/DOCX 各自固定的解析器标识只参与对应文档代次计算；格式扩展不要求重建已有 Markdown 集合，也不迁移向量。
+- 准备原件、解析、分块、编码及 pending.json 均在锁外；锁内重新检查文档登记是否变化，登记 pending 后删除该 doc_id 全部旧向量，完整行 upsert 并 verify_document，最后 SQLite 单事务登记 chunks、当前代次、removed、revision 和 READY。准备期同一文档被另一个写者修改会明确拒绝本次过时提交。
+- 初次导入、更新、删除都使用这条提交路径。retry 读取登记的落盘材料，不重新读用户源文件、不重新编码；只验证保存原件哈希和目标/profile 后重放。正常异常保留 NEEDS_REPAIR，硬退出保留 UPDATING；重开后两者都拒绝检索。pending 未登记前的孤立 attempt 目录不会被当作恢复目标。
+- S2 在创建库时 Milvus 失败留下的空库（revision=0、未登记任何文档、非 READY）由迁移明确登记 pending=create。恢复仅补完同一个集合的创建、缺失 dense 索引与 load；先核对既有 profile/维度，不删除重建已有集合。真实 SDK 在集合创建后、create_index 前抛错，确认集合存在且索引为空，再 retry 成功；没有手写状态模拟。
+- 迁移后 S2 程序会拒绝 schema 2。需要回退程序版本时，应从升级前的数据备份恢复；本阶段没有设计自动降级或历史垃圾回收。
+
+### 解析与真实来源
+
+新增可选依赖 `pypdf==6.19.0`、`python-docx==1.2.0`，锁定传递依赖 lxml 6.1.3；原有包版本和平台约束保留。依赖按需导入，默认启动不会加载它们。PDF 逐物理页提取文本，SourceSpan.page 从 1 开始；DOCX 按正文段落和表格顺序读取，段落计数包含空段落，表格/行/列从 1 开始，保留 Heading/Title 路径，不提供页码。两者共用既有结构/offset 分块器。依据 [pypdf 提取说明](https://pypdf.readthedocs.io/en/stable/user/extract-text.html) 和 [python-docx 正文顺序 API](https://python-docx.readthedocs.io/en/latest/api/document.html)。
+
+非 Markdown 的 char_start/char_end 是本次解析文本中的字符范围，原件定位依靠 PDF 页码或 DOCX 段落/表格行列；Markdown 仍为保存原文的字符范围和行号。空/全扫描 PDF、加密 PDF、损坏 PDF 和旧 `.doc` 明确失败，不提交元数据或向量。当前没有 OCR、PDF 复杂版面重建、Word 排版页码或页眉页脚/批注/嵌套表格承诺。
+
+真实环境为 Windows Python 3.14.3、Milvus 3.0.1 / SDK 3.0.2、既有固定 revision Qwen/CPU float32/1024 维，使用 HF_HUB_OFFLINE=1 的已有缓存。只读取三个 `E:\WorkBin` 样例，导入前后源文件哈希相同，保存副本与源文件字节一致：
+
+| 样例 | chunks / 本进程导入秒数 | 问题与命中 |
+| --- | --- | --- |
+| `Recipe\docs\recipe-manifest.md` | 6 / 15.659 | 审核通过能否直接标为 Verified：rank 1、cosine 0.564289，74–76 行 |
+| `AIGC研究报告\deloitte-cn-dai-the-impact-and-significance-of-generative-artificial-intelligence-on-enterprises-zh-20230327.pdf` | 35 / 38.624 | 生成式 AI 技术栈三层：rank 1、cosine 0.817878，第 5–6 页 |
+| `班级\测试管理\已完成\附件1：Midscene.js安装手册.docx` | 1 / 21.145 | Midscene.js 开源团队：rank 1、cosine 0.750437，答案在正文第 2 段，无页码 |
+
+对应 SHA256 依次为 `63b6b97811bcf191dd88daf8aca45fb31250c4603eed833ac19242b66a2393c1`、`8da5e48ee93f87c95d8afad832a5f5507f7971acbcc40eded1bc7303ff5923df`、`c9d00f537bc122bd654953c37d649ed13e2f185f0e3f81dd7f91eea5ef477961`。合成两页 PDF 的 Zircon 772 / November 答案命中真实第 2 页；合成 DOCX 的 Saffron warranty / 813 dollars 答案命中标题路径及表 1、行 2、列 2，并验证表格前后段落顺序。上述是链路和来源定位证据，不是正式检索质量评测。
+
+真实迁移/恢复库为 `af9e6a0fc9744166827b4a95016d9927`，集合始终为 `codeplus_kb_af9e6a0fc9744166827b4a95016d9927`。首先把 `255be65` 的真实 codeplus 代码通过 git archive 解到本轮临时目录，用其 S2 service 与真实 Qwen/Milvus 创建两个 Markdown 文档，确认 schema=1、revision=2，再用 S3 service 打开原库；profile_hash、旧 chunk ID、原件路径和查询结果保持不变，未修改向量。加入上述三个真实样例和两个合成格式样例后 revision=7。
+
+随后分别在真实 service/SDK 执行点调用子进程 `os._exit(73)`，不执行 finally，也不手写数据库状态。每次重开都保留 UPDATING 并拒绝查询，然后显式 retry：
+
+| 硬退出位置 | 中断时 A 可见向量数 | retry 后 A 向量数 | 成功 revision |
+| --- | --- | --- | --- |
+| 删完旧向量 | 0 | 4 | 8 |
+| 新向量只写一半 | 2 | 4 | 9 |
+| 写完并核验、尚未提交 SQLite | 4 | 4 | 10 |
+| 删除向量后、尚未提交 removed | 0 | 0 | 11 |
+
+每轮都比对 B 的全部向量行（含 dense）与初始值完全相同；成功后 A 只保留当前代向量或零向量，历史片段仍指向原始字节。retry 的 LocalEmbedding._model 始终为 None，重复 retry 不增加 revision。最后独立 CLI 执行 update 恢复历史相同内容、重复 import、source、remove、重复 remove、retry、status，最终 revision=13 / READY；历史 generation 与 original_path 恢复为 S2 原始值。
+
+### 测试及清理边界
+
+正式测试只扩展既有 `tests/test_knowledge_service.py`（新增一个格式测试函数，原有用例扩展更新/恢复）及 `tests/test_knowledge.py` 的默认禁用依赖检查。相关回归：**74 passed / 3 skipped，最终隔离目录复跑 4.37 秒**；skip 为未 opt-in 的 S1 两个真实集成及 S3 SDK 用例。真实 SDK 单独 opt-in：**8 passed / 208.75 秒**，其中测试编码器为 TinyEmbedding，Milvus/SQLite/子进程退出均为真实实现；真正 Qwen 的三格式和恢复验收另行记录，不把替身计为模型验证。`uv lock --check`、`uv sync --locked --extra knowledge --dry-run` 和 `git diff --check` 均通过。
+
+运行正式测试时使用本轮 TemporaryDirectory 之内的独立 `--basetemp`；例如在 Python 临时目录上下文中调用 `python -m pytest tests/test_knowledge_service.py tests/test_knowledge.py tests/test_mcp.py tests/test_commands.py --basetemp <本轮新建临时目录>/pytest -q`。真实 SDK 只额外设置 `CODEPLUS_TEST_MILVUS_URI=http://127.0.0.1:19530`，不设置 S1 restart/model opt-in，也不重跑无改动的 S1 全量真实检查。
+
+**S3 清理更正**：早期正式 pytest 按初始交接建议使用 `tmp_path_retention_count=0`，但未指定独立 basetemp，pytest 自身的全局保留策略因此影响了旧测试目录。leader 于本阶段只读核对确认 S2 旧 `Temp\pytest-of-18221\pytest-11`、`pytest-12` 已不存在；不能继续把它们列为当前仍在的残留。这不是一次获批的 S2 清理任务。397c worktree 的三个 `s2_*.py` 仍存在，S3 未操作它们或其他旧拒绝路径。收到限制后改为每轮 TemporaryDirectory 内独立 basetemp，仅由该上下文清理本轮目录，不进行旧路径删除补救或绕过审批。
+
+本轮真实验收集合 `codeplus_kb_af9e6a0fc9744166827b4a95016d9927` 已删除并确认不存在；正式 SDK 测试同样在 finally 删除自身随机集合。真实验收的原件副本、S2 代码快照、SQLite、向量材料、临时配置及子进程脚本均随 TemporaryDirectory 清理，并断言本轮目录不存在。保留本 worktree 原生 Windows .venv、已有 HF 缓存、共享服务和已授权 WSL 会话。没有改动真实样例、重启容器或操作 Docker Desktop。
+
+**S3 本轮清理阻塞**：任务结束时尝试用 PowerShell 核对解析后的绝对目标路径，再以 Remove-Item 删除本 worktree `.codeplus/s3_acceptance.py`、`.codeplus/s3_checks.py`。整条命令在执行前被自动审批以 `blocked by policy` 拒绝，没有更具体原因。两个脚本仍保留在 `C:\Users\18221\.codex\worktrees\68fd\CodePlus\.codeplus\`，受既有 Git 忽略规则覆盖，没有暂存或纳入 diff；不是正式交付文件。未缩小目标重试、未改用其他工具删除，也未标为已清理。这与上述 TemporaryDirectory 和自建集合已成功收尾是不同事实。
+
+leader 独立验收：实际运行主目录 S2 代码，在真实 Milvus 和 Qwen 上创建 schema 1 双文档库，再用 S3 代码原地迁移到 schema 2；保持三张表、集合名、旧片段和原件映射。A 更新后新期限可检索，旧引用仍指向旧原件；在真实 Milvus 删除 A 后注入中断，查询被 NEEDS_REPAIR 阻止，新服务 retry 成功且模型未加载。随后删除 A、重复删除不增 revision，B 的全部向量行与 S2 基线完全一致，最终 revision=5。该独立测试集合、目录和脚本已清理。
+
+leader 另在本轮独立 TemporaryDirectory 下运行两份 knowledge 正式测试：8 passed / 3 skipped，2.36 秒；三项跳过为未 opt-in 的外部集成。代码审查取消了原拟新增的代次表，复用 chunks 保存原件映射；并发现、修正及真实验证了建库缺索引的恢复缺口。功能与代码质量均通过，按明确文件范围提交后合入主目录。
+
+未执行 S4 的 TUI/Agent/会话/引用报告，也未测试 GPU、长时压力、大语料、OCR 或系统掉电；真实进程死亡恢复不等同于掉电持久性保证。

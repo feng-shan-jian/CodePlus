@@ -1,4 +1,4 @@
-"""Three SQLite tables. Service callers hold the library lock for state transitions."""
+"""Three SQLite tables; historical chunks retain their generation's original path."""
 
 from contextlib import contextmanager
 from dataclasses import asdict
@@ -14,7 +14,7 @@ class Metadata:
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1):
+            if version not in (0, 1, 2):
                 raise ValueError(f"Unsupported knowledge schema version: {version}")
             if version == 0:
                 for statement in (
@@ -38,7 +38,16 @@ class Metadata:
                         UNIQUE(doc_id, generation_id, ordinal))""",
                 ):
                     db.execute(statement)
-                db.execute("PRAGMA user_version = 1")
+            if version < 2:
+                db.execute("ALTER TABLE documents ADD COLUMN removed INTEGER NOT NULL DEFAULT 0 CHECK(removed IN (0,1))")
+                db.execute("ALTER TABLE knowledge_bases ADD COLUMN pending_operation TEXT")
+                db.execute("ALTER TABLE chunks ADD COLUMN original_path TEXT NOT NULL DEFAULT ''")
+                db.execute("UPDATE chunks SET original_path=(SELECT original_path FROM documents d WHERE d.id=chunks.doc_id)")
+                # S2 registers creation before contacting Milvus. An unfinished empty
+                # revision-zero base has exactly this pending target, even on SDK failure.
+                db.execute("UPDATE knowledge_bases SET pending_operation='create' WHERE state!='READY' "
+                           "AND revision=0 AND NOT EXISTS (SELECT 1 FROM documents d WHERE d.kb_id=knowledge_bases.id)")
+                db.execute("PRAGMA user_version = 2")
 
     @contextmanager
     def connect(self):
@@ -65,39 +74,50 @@ class Metadata:
 
     def register(self, kb_id: str, name: str, collection: str, profile_hash: str):
         with self.connect() as db:
-            db.execute("INSERT INTO knowledge_bases(id,name,collection_name,profile_hash,state) "
-                       "VALUES (?,?,?,?,'UPDATING')", (kb_id, name, collection, profile_hash))
+            db.execute("INSERT INTO knowledge_bases(id,name,collection_name,profile_hash,state,pending_operation) "
+                       "VALUES (?,?,?,?,'UPDATING','create')", (kb_id, name, collection, profile_hash))
 
     def set_state(self, kb_id: str, state: str, error: str | None = None):
         with self.connect() as db:
             db.execute("UPDATE knowledge_bases SET state=?, error=? WHERE id=?", (state, error, kb_id))
+            if state == "READY":
+                db.execute("UPDATE knowledge_bases SET pending_operation=NULL WHERE id=?", (kb_id,))
             if state == "NEEDS_REPAIR":
                 db.execute("UPDATE documents SET state=?, error=? WHERE kb_id=? AND pending_operation IS NOT NULL",
                            (state, error, kb_id))
 
-    def begin_import(self, document: dict, pending_path: str):
+    def begin_import(self, document: dict, pending_path: str | None, operation="import"):
         with self.connect() as db:
             db.execute("INSERT INTO documents(id,kb_id,source_uri,content_hash,generation_id,original_path,"
                        "state,pending_operation,pending_path) VALUES "
-                       "(:id,:kb_id,:source_uri,:content_hash,:generation_id,:original_path,'UPDATING','import',:pending_path)",
-                       {**document, "pending_path": pending_path})
+                       "(:id,:kb_id,:source_uri,:content_hash,:generation_id,:original_path,'UPDATING',:operation,:pending_path) "
+                       "ON CONFLICT(id) DO UPDATE SET state='UPDATING', pending_operation=excluded.pending_operation, "
+                       "pending_path=excluded.pending_path, error=NULL",
+                       {**document, "pending_path": pending_path, "operation": operation})
             db.execute("UPDATE knowledge_bases SET state='UPDATING', error=NULL WHERE id=?", (document["kb_id"],))
 
-    def finish_import(self, kb_id: str, doc_id: str, chunks):
+    def finish_import(self, kb_id: str, doc_id: str, chunks, document=None, *, removed=False):
+        document = document or self.document(doc_id)
         with self.connect() as db:
-            db.executemany("INSERT INTO chunks VALUES (?,?,?,?,?,?)", [
+            db.executemany("INSERT INTO chunks VALUES (?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING", [
                 (c.id, c.doc_id, c.generation_id, c.ordinal, c.text,
-                 json.dumps([asdict(span) for span in c.source_spans], ensure_ascii=False)) for c in chunks
+                 json.dumps([asdict(span) for span in c.source_spans], ensure_ascii=False),
+                 document["original_path"]) for c in chunks
             ])
-            db.execute("UPDATE documents SET state='READY', pending_operation=NULL, pending_path=NULL, error=NULL "
-                       "WHERE id=?", (doc_id,))
+            if not removed:
+                original = db.execute("SELECT original_path FROM chunks WHERE doc_id=? AND generation_id=? LIMIT 1",
+                                      (doc_id, document["generation_id"])).fetchone()[0]
+                db.execute("UPDATE documents SET content_hash=?, generation_id=?, original_path=? WHERE id=?",
+                           (document["content_hash"], document["generation_id"], original, doc_id))
+            db.execute("UPDATE documents SET state='READY', removed=?, pending_operation=NULL, pending_path=NULL, error=NULL "
+                       "WHERE id=?", (removed, doc_id))
             db.execute("UPDATE knowledge_bases SET state='READY', revision=revision+1, error=NULL WHERE id=?", (kb_id,))
 
     def status(self, kb_id: str) -> dict:
         result = self.library(kb_id)
         with self.connect() as db:
             result["documents"] = [dict(row) for row in db.execute(
-                "SELECT d.*, (SELECT count(*) FROM chunks c WHERE c.doc_id=d.id AND "
+                "SELECT d.*, (SELECT count(*) FROM chunks c WHERE d.removed=0 AND c.doc_id=d.id AND "
                 "c.generation_id=d.generation_id) AS chunk_count FROM documents d WHERE kb_id=? ORDER BY source_uri",
                 (kb_id,))]
         return result

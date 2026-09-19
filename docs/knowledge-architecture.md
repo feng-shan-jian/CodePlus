@@ -1,6 +1,6 @@
 # CodePlus Knowledge：首版架构
 
-日期：2026-09-20。状态：K01 环境、S1 Milvus/本地 Embedding 基础和 S2 Markdown 导入与检索均已通过 leader 验收；后续阶段尚未实现。实施顺序见 [最小任务清单](knowledge-tasks.md)，实测环境及遗留项见 [环境说明](knowledge-setup.md)。
+日期：2026-09-20。状态：K01 环境及 S1–S3 已通过 leader 验收，支持三种格式的导入、检索、更新、删除和恢复；Agent 问答等后续阶段尚未实现。实施顺序见 [最小任务清单](knowledge-tasks.md)，实测环境及遗留项见 [环境说明](knowledge-setup.md)。
 
 本版取代此前的整库快照发布方案。目标是本地个人知识库，以及可独立运行的检索评测。
 
@@ -53,11 +53,13 @@ codeplus/knowledge/
 
 | 表 | 关键字段 | 用途 |
 | --- | --- | --- |
-| knowledge_bases | id、name、collection_name、profile_hash、revision、state、error | 当前集合、模型/分块约定、是否允许查询 |
-| documents | id、kb_id、source_uri、content_hash、generation_id、original_path、state、pending_operation、pending_path、error | 原件身份、当前版本、失败后待执行的操作 |
-| chunks | id、doc_id、generation_id、ordinal、text、source_spans | 原文片段、来源位置与历史引用读取 |
+| knowledge_bases | id、name、collection_name、profile_hash、revision、state、error、pending_operation | 当前集合、模型/分块约定、是否允许查询；未完成创建的明确目标 |
+| documents | id、kb_id、source_uri、content_hash、generation_id、original_path、state、pending_operation、pending_path、error、removed | 原件身份、当前版本、失败后待执行的操作及删除标记 |
+| chunks | id、doc_id、generation_id、ordinal、text、source_spans、original_path | 原文片段、来源位置与该代原件的精确路径 |
 
 `generation_id` 根据原件哈希、解析器和分块配置确定。相同字节的不同来源保留各自文档身份。旧片段与原件保留供历史引用读取，但旧向量在文档更新完成后移除。
+
+S3 schema 2 在现有三张表加列，从 S2 documents 回填 chunks.original_path；更新不覆盖历史 chunks，恢复旧内容时继续使用该代已保存的原件路径。PDF/DOCX 解析器标识只参与各自文档代次计算，新增格式不改变已有 Markdown 库的 profile_hash。
 
 `SearchResult` 保存 query、kb_id、revision、检索配置以及 hits。每个 hit 包含 chunk_id、doc_id、generation_id、原文、来源和带类型的分数。引用 ID 对应已保存的片段，不能由模型编造文件路径。
 
@@ -130,6 +132,6 @@ BM25 创建条件以 [官方全文检索文档](https://milvus.io/docs/full-text
 
 首版暂缓：扫描件 OCR、复杂版面、多用户权限、退出后继续运行的导入服务、自动历史清理、整库版本回滚、第二种数据库。
 
-K01 已验证 Windows Python/uv、WSL2 与所选 Ubuntu Docker Engine/Compose，并记录资源情况。Windows Docker Desktop 仍有独立启动故障，K01 重试目录清理受自动审批限制，详情见环境说明。S1 接入 Compose、可选依赖、配置和本地向量生成。S2 已完成 K06–K15 的独立 Markdown 检索链，实际模块按职责合并，执行证据与 leader 验收状态见 [环境说明](knowledge-setup.md) 和 [任务清单](knowledge-tasks.md)。更新、删除、恢复及 Agent 接入仍属后续阶段。
+K01 已验证 Windows Python/uv、WSL2 与所选 Ubuntu Docker Engine/Compose，并记录资源情况。Windows Docker Desktop 仍有独立启动故障，K01 重试目录清理受自动审批限制，详情见环境说明。S1 接入 Compose、可选依赖、配置和本地向量生成。S2 已完成 K06–K15 的独立 Markdown 检索链，实际模块按职责合并，执行证据与 leader 验收状态见 [环境说明](knowledge-setup.md) 和 [任务清单](knowledge-tasks.md)。S3 继续在现有 documents/service/metadata 内实现更新、删除、恢复和格式扩展，未新增生产模块；Agent 接入仍属 S4。
 
 S1 直接复用 `config.py` / `validator.py` 的读取与合并路径；默认关闭，按显式出现的 knowledge 字段覆盖前层。数据目录在 `load_config` 返回前按启动目录解析为绝对路径。模型和 tokenizer 默认使用同一个固定 revision，CPU float32、左侧补齐、末 token pooling 和 L2 归一化；实际维度及上下文约束在首次加载模型时核对，输入超限时报错，不静默截断。只有调用编码入口才导入模型依赖或下载模型。首期仅创建 `knowledge/__init__.py` 和 `embedding.py`，未预建存储、服务或解析器框架。

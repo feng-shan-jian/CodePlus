@@ -45,6 +45,9 @@ class MemoryStore:
     def verify_document(self, name, doc_id, expected):
         assert {r["chunk_id"] for r in expected} == {key for key, r in self.rows.items() if r["doc_id"] == doc_id}
 
+    def delete_document(self, name, doc_id):
+        self.rows = {key: r for key, r in self.rows.items() if r["doc_id"] != doc_id}
+
     def search_dense(self, name, vector, top_k):
         return [{"chunk_id": key, "distance": 1.0} for key in list(self.rows)[:top_k]]
 
@@ -82,16 +85,44 @@ def test_import_identity_sources_and_preparation_failure(service, tmp_path, monk
     with pytest.raises(ValueError, match="profile mismatch"):
         wrong.import_document(kb, source)
     assert wrong.embedding._model is None and wrong._store is None
-    source.write_text("Changed", encoding="utf-8")
-    with pytest.raises(ValueError, match="S3"):
-        service.import_document(kb, source)
-    assert saved.read_bytes() == data
     hit = service.search(kb, "中文").hits[0]
     original = saved.read_bytes().decode("utf-8-sig")
     for span in hit.source_spans:
         fragment = original[span.char_start:span.char_end]
         assert fragment in hit.text
         assert fragment in "".join(original.splitlines(keepends=True)[span.line_start-1:span.line_end])
+    rows_b = {key: row for key, row in service.store.rows.items() if row["doc_id"] == duplicate_bytes["id"]}
+    source.write_text("Changed", encoding="utf-8")
+    updated = service.import_document(kb, source)
+    assert updated["id"] == doc["id"] and updated["generation_id"] != doc["generation_id"]
+    assert service.status(kb)["revision"] == 3 and service.status(kb)["collection_name"] == before["collection_name"]
+    assert all(h.generation_id == updated["generation_id"] for h in service.search(kb, "test").hits if h.doc_id == doc["id"])
+    assert {key: row for key, row in service.store.rows.items() if row["doc_id"] == duplicate_bytes["id"]} == rows_b
+    assert Path(service.source(kb, hit.chunk_id)["original_path"]).read_bytes() == data == saved.read_bytes()
+    assert service.remove(kb, doc["id"])["removed"]
+    state = service.status(kb)
+    assert service.remove(kb, doc["id"])["unchanged"] and service.status(kb) == state
+    assert all(h.doc_id != doc["id"] for h in service.search(kb, "test").hits)
+    assert service.source(kb, hit.chunk_id)["original_path"] == str(saved)
+    source.write_bytes(data)  # Restore a historical generation: stable IDs, retained original mapping.
+    restored = service.import_document(kb, source)
+    assert restored["generation_id"] == doc["generation_id"] and restored["original_path"] == str(saved)
+    assert not restored["removed"] and service.status(kb)["revision"] == 5
+    assert service.retry(kb)["unchanged"] and service.status(kb)["revision"] == 5
+    # A concurrent replacement wins while the first import prepares its vectors.
+    source.write_text("First candidate", encoding="utf-8")
+    encode = service.embedding.encode_documents
+    def concurrent_update(texts):
+        other_writer = KnowledgeService(service.config)
+        other_writer.embedding, other_writer._store = TinyEmbedding(), service.store
+        source.write_text("Concurrent winner", encoding="utf-8")
+        other_writer.import_document(kb, source)
+        return encode(texts)
+    with monkeypatch.context() as patch:
+        patch.setattr(service.embedding, "encode_documents", concurrent_update)
+        with pytest.raises(ValueError, match="changed during preparation"):
+            service.import_document(kb, source)
+    assert Path(service.metadata.document(doc["id"])["original_path"]).read_text() == "Concurrent winner"
     before = service.status(kb)
     fresh = tmp_path / "failure.md"
     fresh.write_text("# New\n\nFailed preparation", encoding="utf-8")
@@ -144,18 +175,52 @@ def test_failed_commit_retains_pending_and_blocks_search(service, tmp_path, monk
     assert reopened.status(kb) == state
     with pytest.raises(ValueError, match="NEEDS_REPAIR"):
         reopened.search(kb, "test")
+    monkeypatch.undo()
+    if failure == "metadata":
+        with service.metadata.connect() as db:
+            db.execute("DROP TRIGGER fail_second")
+    reopened._store = service.store
+    reopened.embedding = TinyEmbedding()
+    assert reopened.retry(kb)["chunk_count"] == len(pending["chunks"])
+    assert reopened.status(kb)["state"] == "READY" and reopened.status(kb)["revision"] == 1
+    assert reopened.retry(kb)["unchanged"]
+    assert reopened.search(kb, "test").hits
 
 
-def test_schema_constraints_and_version(tmp_path):
-    metadata = Metadata(tmp_path)
+def test_schema_constraints_and_version(service, tmp_path, monkeypatch):
+    metadata = service.metadata
     with pytest.raises(sqlite3.IntegrityError):
         with metadata.connect() as db:
-            db.execute("INSERT INTO chunks VALUES ('c','unknown','g',0,'text','[]')")
+            db.execute("INSERT INTO chunks VALUES ('c','unknown','g',0,'text','[]','original.md')")
+    kb = service.create("S2")["id"]
+    source = tmp_path / "s2.md"
+    source.write_text("S2 existing document", encoding="utf-8")
+    document = service.import_document(kb, source)
+    hit = service.search(kb, "test").hits[0]
+    with monkeypatch.context() as patch:
+        def unavailable(*args, **kwargs):
+            raise RuntimeError("Milvus unavailable at creation")
+        patch.setattr(service.store, "ensure_collection", unavailable)
+        with pytest.raises(RuntimeError, match="Milvus unavailable"):
+            service.create("unfinished S2 creation")
     with metadata.connect() as db:
-        assert db.execute("SELECT count(*) FROM chunks").fetchone()[0] == 0
-        db.execute("PRAGMA user_version = 2")
-    with pytest.raises(ValueError, match="schema version: 2"):
-        Metadata(tmp_path)
+        failed = db.execute("SELECT id FROM knowledge_bases WHERE name='unfinished S2 creation'").fetchone()[0]
+        # Reconstruct the actual v1 column layout; lifecycle state comes from service operations.
+        db.execute("ALTER TABLE chunks DROP COLUMN original_path")
+        db.execute("ALTER TABLE documents DROP COLUMN removed")
+        db.execute("ALTER TABLE knowledge_bases DROP COLUMN pending_operation")
+        db.execute("PRAGMA user_version = 1")
+    Metadata(service.root)
+    assert service.source(kb, hit.chunk_id)["original_path"] == document["original_path"]
+    assert service.search(kb, "test").hits[0] == hit
+    assert service.import_document(kb, source)["unchanged"]
+    assert service.status(failed)["pending_operation"] == "create"
+    assert service.retry(failed)["state"] == "READY"
+    with metadata.connect() as db:
+        assert {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")} == {"knowledge_bases", "documents", "chunks"}
+        db.execute("PRAGMA user_version = 99")
+    with pytest.raises(ValueError, match="schema version: 99"):
+        Metadata(service.root)
 
 
 def test_process_lock_crash_keeps_import_pending(service, tmp_path):
@@ -220,8 +285,89 @@ else:
                 process.communicate(timeout=10)
 
 
+def write_pdf(path, pages, *, encrypted=False):
+    """Small real PDF fixture, without adding a second PDF library to test dependencies."""
+    from pypdf import PdfWriter
+    from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
+
+    writer = PdfWriter()
+    for text in pages:
+        page = writer.add_blank_page(300, 200)
+        font = DictionaryObject({NameObject("/Type"): NameObject("/Font"), NameObject("/Subtype"): NameObject("/Type1"),
+                                 NameObject("/BaseFont"): NameObject("/Helvetica")})
+        page[NameObject("/Resources")] = DictionaryObject({NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})})
+        stream = DecodedStreamObject()
+        stream.set_data(f"BT /F1 12 Tf 20 100 Td ({text}) Tj ET".encode("ascii"))
+        page[NameObject("/Contents")] = writer._add_object(stream)
+    if encrypted:
+        writer.encrypt("test-password")
+    writer.write(path)
+
+
+def test_pdf_docx_locations_and_format_errors(service, tmp_path):
+    from docx import Document
+    from codeplus.knowledge.documents import parse_document
+
+    kb = service.create("formats")["id"]
+    pdf = tmp_path / "two pages.pdf"
+    write_pdf(pdf, ["Amber license expires in April.", "Cobalt delivery arrives in November."])
+    doc = service.import_document(kb, pdf)
+    hits = service.search(kb, "Cobalt", 50).hits
+    assert {span.page for hit in hits for span in hit.source_spans} == {1, 2}
+    text, _ = parse_document(Path(doc["original_path"]))
+    assert any("Cobalt" in text[s.char_start:s.char_end] and s.page == 2 for h in hits for s in h.source_spans)
+    word = tmp_path / "body order.docx"
+    source = Document()
+    source.add_heading("Dispatch", 1)
+    source.add_paragraph("Before table")
+    table = source.add_table(rows=2, cols=2)
+    for cell, value in zip((c for r in table.rows for c in r.cells), ("Route", "Deadline", "Cobalt", "November")):
+        cell.text = value
+    source.add_paragraph("After table")
+    source.save(word)
+    document = service.import_document(kb, word)
+    text, blocks = parse_document(Path(document["original_path"]))
+    assert text.index("Before table") < text.index("November") < text.index("After table")
+    assert next(b.source for b in blocks if "After table" in b.text).paragraph == 3
+    hits = [h for h in service.search(kb, "November", 50).hits if h.doc_id == document["id"]]
+    spans = [s for h in hits for s in h.source_spans]
+    assert all(s.page is None and s.line_start is None and s.heading_path == ["Dispatch"] for s in spans)
+    assert any((s.table, s.row, s.column) == (1, 2, 2) and "November" in text[s.char_start:s.char_end] for s in spans)
+    assert all(text[s.char_start:s.char_end] in h.text for h in hits for s in h.source_spans)
+    before = service.status(kb)
+    invalid = tmp_path / "invalid.pdf"
+    write_pdf(invalid, [""])
+    with pytest.raises(ValueError, match="empty or scanned"):
+        service.import_document(kb, invalid)
+    from pypdf import PdfWriter
+    from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject, NumberObject
+    writer = PdfWriter()
+    page = writer.add_blank_page(300, 200)
+    image = DecodedStreamObject()
+    image.set_data(b"\x00")
+    image.update({NameObject("/Type"): NameObject("/XObject"), NameObject("/Subtype"): NameObject("/Image"),
+                  NameObject("/Width"): NumberObject(1), NameObject("/Height"): NumberObject(1),
+                  NameObject("/ColorSpace"): NameObject("/DeviceGray"), NameObject("/BitsPerComponent"): NumberObject(8)})
+    page[NameObject("/Resources")] = DictionaryObject({NameObject("/XObject"): DictionaryObject({NameObject("/Im1"): writer._add_object(image)})})
+    stream = DecodedStreamObject()
+    stream.set_data(b"q 100 0 0 100 0 0 cm /Im1 Do Q")
+    page[NameObject("/Contents")] = writer._add_object(stream)
+    writer.write(invalid)
+    with pytest.raises(ValueError, match="empty or scanned"):
+        service.import_document(kb, invalid)
+    write_pdf(invalid, ["Secret"], encrypted=True)
+    with pytest.raises(ValueError, match="Encrypted PDF"):
+        service.import_document(kb, invalid)
+    invalid.write_bytes(b"not a PDF")
+    with pytest.raises(ValueError, match="Cannot parse PDF"):
+        service.import_document(kb, invalid)
+    with pytest.raises(ValueError, match="convert legacy .doc"):
+        service.import_document(kb, tmp_path / "old.doc")
+    assert service.status(kb) == before
+
+
 @pytest.mark.skipif(not os.getenv("CODEPLUS_TEST_MILVUS_URI"), reason="real Milvus not requested")
-def test_real_store_document_isolation_and_binding(service, tmp_path):
+def test_real_store_document_isolation_and_binding(service, tmp_path, monkeypatch):
     from codeplus.knowledge.milvus_store import MilvusStore
     from codeplus.knowledge.models import Chunk
 
@@ -233,7 +379,19 @@ def test_real_store_document_isolation_and_binding(service, tmp_path):
     service._store = MilvusStore(os.environ["CODEPLUS_TEST_MILVUS_URI"])
     kb = None
     try:
-        kb = service.create("real SDK")
+        # The collection really exists without a dense index when creation fails.
+        with monkeypatch.context() as patch:
+            def fail_index(*args, **kwargs):
+                raise RuntimeError("before index creation")
+            patch.setattr(service.store.client, "create_index", fail_index)
+            with pytest.raises(RuntimeError, match="before index creation"):
+                service.create("real SDK")
+        with service.metadata.connect() as db:
+            kb = dict(db.execute("SELECT * FROM knowledge_bases WHERE name='real SDK'").fetchone())
+        assert service.store.client.has_collection(kb["collection_name"])
+        assert service.store.client.list_indexes(kb["collection_name"]) == []
+        assert service.retry(kb["id"])["state"] == "READY"
+        assert service.store.client.list_indexes(kb["collection_name"], field_name="dense")
         docs = []
         for name in ("first", "second"):
             source = tmp_path / f"{name}.md"
@@ -251,8 +409,66 @@ def test_real_store_document_isolation_and_binding(service, tmp_path):
             service.store.ensure_collection(kb["collection_name"], "different", 3)
         with pytest.raises(ValueError, match="profile mismatch"):
             service.store.ensure_collection(kb["collection_name"], kb["profile_hash"], 4)
-        service.store.delete_document(kb["collection_name"], docs[0]["id"])
-        service.store.verify_document(kb["collection_name"], docs[1]["id"], [r for r in rows if r["doc_id"] == docs[1]["id"]])
+        child = tmp_path / "crash.py"
+        child.write_text('''
+import json, os, sys
+from pathlib import Path
+sys.path.insert(0, str(Path.cwd() / 'tests'))
+from test_knowledge_service import TinyEmbedding
+from codeplus.config import KnowledgeConfig
+from codeplus.knowledge.service import KnowledgeService
+service = KnowledgeService(KnowledgeConfig(**json.loads(sys.argv[1])))
+service.embedding = TinyEmbedding()
+kb, path, doc, phase = sys.argv[2:]
+if phase in ('deleted', 'remove'):
+    erase = service.store.delete_document
+    def stop(*args):
+        erase(*args)
+        os._exit(73)
+    service.store.delete_document = stop
+elif phase == 'partial':
+    write = service.store.upsert_chunks
+    def stop(name, rows):
+        assert len(rows) > 1
+        write(name, rows[:len(rows)//2])
+        os._exit(73)
+    service.store.upsert_chunks = stop
+else:
+    service.metadata.finish_import = lambda *args, **kwargs: os._exit(73)
+if phase == 'remove':
+    service.remove(kb, doc)
+else:
+    service.import_document(kb, path)
+''', encoding="utf-8")
+        source = tmp_path / "first.md"
+        for phase in ("deleted", "partial", "written", "remove"):
+            before = service.status(kb["id"])
+            old = service.metadata.document(docs[0]["id"])
+            source.write_text(f"# {phase}\n\n" + "New content with distinct chunks. " * 8, encoding="utf-8")
+            process = subprocess.run([sys.executable, str(child), json.dumps(asdict(service.config)), kb["id"],
+                                      str(source), docs[0]["id"], phase], capture_output=True, text=True, timeout=90)
+            assert process.returncode == 73, process.stderr
+            with KnowledgeService(service.config).metadata.connect() as db:
+                assert db.execute("SELECT generation_id FROM documents WHERE id=?", (old["id"],)).fetchone()[0] == old["generation_id"]
+            reopened = KnowledgeService(service.config)
+            reopened._store = service.store
+            reopened.embedding = TinyEmbedding()
+            assert reopened.status(kb["id"])["state"] == "UPDATING"
+            with pytest.raises(ValueError, match="UPDATING"):
+                reopened.search(kb["id"], "test")
+            pending_doc = reopened.metadata.document(old["id"])
+            expected = [] if phase == "remove" else json.loads(Path(pending_doc["pending_path"]).read_text(encoding="utf-8"))["rows"]
+            recovered = reopened.retry(kb["id"])
+            state = reopened.status(kb["id"])
+            assert state["revision"] == before["revision"] + 1 and state["state"] == "READY"
+            assert state["collection_name"] == kb["collection_name"]
+            service.store.verify_document(kb["collection_name"], old["id"], expected)
+            actual_b = service.store.client.query(kb["collection_name"], filter="doc_id == {doc_id}",
+                                                  filter_params={"doc_id": docs[1]["id"]}, output_fields=["*"])
+            assert list(actual_b) == [r for r in rows if r["doc_id"] == docs[1]["id"]]
+            assert recovered["removed"] == (phase == "remove")
+            assert reopened.retry(kb["id"])["unchanged"]
+            print(f"real process exit at {phase}: blocked then READY revision={state['revision']}; B unchanged")
     finally:
         if kb:
             service.store.client.drop_collection(kb["collection_name"])
