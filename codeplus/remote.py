@@ -39,13 +39,13 @@ from codeplus.client import create_client, resolve_context_window
 from codeplus.commands import CommandContext, CommandRegistry, CommandType
 from codeplus.commands.handlers import register_all_commands
 from codeplus.commands.parser import parse_command
-from codeplus.config import MCPServerConfig, ProviderConfig
+from codeplus.config import KnowledgeConfig, MCPServerConfig, ProviderConfig
 from codeplus.conversation import ConversationManager
 from codeplus.hooks import HookEngine
 from codeplus.mcp import MCPManager
 from codeplus.mcp.tool_wrapper import mcp_tool_name_prefix
 from codeplus.memory import MemoryManager, load_instructions
-from codeplus.memory.session import Session, SessionManager
+from codeplus.memory.session import Session, SessionManager, make_compact_boundary
 from codeplus.permissions import (
     DangerousCommandDetector,
     PathSandbox,
@@ -92,6 +92,11 @@ class RemoteServer:
         self.session_id: str = ""
         self._streaming = False
         self._cancel_event: asyncio.Event | None = None
+        self._command_running = False
+        self._message_tasks: set[asyncio.Task] = set()
+        self._ui_tasks: list[asyncio.Task] = []
+        from codeplus.knowledge.citations import KnowledgeContext
+        self.knowledge = KnowledgeContext(getattr(config, "knowledge", None) or KnowledgeConfig())
 
         # 权限请求的 pending 队列：id -> Future
         self._pending_perms: dict[str, asyncio.Future[PermissionResponse]] = {}
@@ -127,15 +132,30 @@ class RemoteServer:
         print(f"\n  Remote UI: http://localhost:{self.port}\n")
 
         # websockets 的 serve 支持 process_request 回调来处理普通 HTTP
-        async with websockets.serve(
-            self._ws_handler,
-            self.addr,
-            self.port,
-            process_request=self._process_http_request,
-            max_size=4 * 1024 * 1024,  # 4MB 消息上限
-        ):
-            # 服务器启动后永久阻塞
-            await asyncio.Future()
+        try:
+            async with websockets.serve(
+                self._ws_handler,
+                self.addr,
+                self.port,
+                process_request=self._process_http_request,
+                max_size=4 * 1024 * 1024,  # 4MB 消息上限
+            ):
+                await asyncio.Future()
+        finally:
+            if self._cancel_event is not None:
+                self._cancel_event.set()
+            for future in self._pending_perms.values():
+                if not future.done():
+                    future.set_result(PermissionResponse.DENY)
+            # Let in-flight to_thread imports finish before closing their service.
+            await asyncio.gather(*self._message_tasks, return_exceptions=True)
+            await self._flush_ui_messages()
+            if self.session:
+                self.session.close()
+            if self.knowledge._service is not None:
+                self.knowledge._service.close()
+            if self.mcp_manager:
+                await self.mcp_manager.shutdown()
 
     # ------------------------------------------------------------------
     # HTTP 请求处理（为 / 路径提供前端 HTML）
@@ -196,7 +216,7 @@ class RemoteServer:
                     content = data.get("content", "").strip()
                     if content:
                         # 在后台任务中处理，不阻塞 WebSocket 读循环
-                        asyncio.create_task(self._handle_user_message(content))
+                        self.send_user_message(content)
 
                 elif msg_type == "permission_response":
                     self._handle_permission_response(data)
@@ -270,6 +290,11 @@ class RemoteServer:
             hook_engine=self.hook_engine,
         )
         self.agent.session_id = self.session_id
+        from codeplus.tools.knowledge import SearchKnowledge, ReadDocument
+        self.agent.knowledge = self.knowledge
+        self.registry.register(SearchKnowledge(self.knowledge))
+        self.registry.register(ReadDocument(self.knowledge))
+        self._restore_knowledge_binding()
 
         # 团队工具在 remote 模式下同样可用，Lead 能在浏览器会话里组建团队把活派出去
         from codeplus.agents.loader import AgentLoader
@@ -408,12 +433,18 @@ class RemoteServer:
 
     async def _handle_user_message(self, content: str) -> None:
         """处理来自 Web UI 的用户消息或斜杠命令。"""
-        if self._streaming:
+        if self._streaming or self._command_running:
+            await self._broadcast({"type": "system", "data": {
+                "message": "当前回答或命令正在执行；完成后再提问、操作知识库或切换会话。"}})
             return
 
         # 斜杠命令
         if content.startswith("/"):
-            await self._handle_slash_command(content)
+            self._command_running = True
+            try:
+                await self._handle_slash_command(content)
+            finally:
+                self._command_running = False
             return
 
         # 普通消息 → 发给 Agent
@@ -422,6 +453,8 @@ class RemoteServer:
         assert self.agent is not None
 
         self.conversation.add_user_message(content)
+        if self.session:
+            self.session.append(self.conversation.history[-1])
 
         # 首次注入 MCP 指令
         if self._mcp_instructions:
@@ -432,6 +465,7 @@ class RemoteServer:
         self._cancel_event = asyncio.Event()
         start_time = time.monotonic()
         stream_buf = ""
+        history_cursor = len(self.conversation.history)
 
         try:
             async for event in self.agent.run(self.conversation):
@@ -495,6 +529,10 @@ class RemoteServer:
                     })
 
                 elif isinstance(event, TurnComplete):
+                    if self.session:
+                        for message in self.conversation.history[history_cursor:]:
+                            self.session.append(message)
+                        history_cursor = len(self.conversation.history)
                     if stream_buf:
                         await self._broadcast({
                             "type": "stream_end",
@@ -538,6 +576,8 @@ class RemoteServer:
                     })
 
                 elif isinstance(event, CompactNotification):
+                    self._persist_compact_boundary(event)
+                    history_cursor = len(self.conversation.history)
                     await self._broadcast({
                         "type": "compact",
                         "data": {"message": event.message},
@@ -573,8 +613,13 @@ class RemoteServer:
                 "data": {"message": str(exc)},
             })
         finally:
+            if self.session:
+                self.session.meta.total_tokens = self.agent.total_input_tokens + self.agent.total_output_tokens
+                for message in self.conversation.history[history_cursor:]:
+                    self.session.append(message)
             self._streaming = False
             self._cancel_event = None
+            self._pending_perms.clear()
 
     # ------------------------------------------------------------------
     # 斜杠命令处理
@@ -604,27 +649,24 @@ class RemoteServer:
             await self._broadcast({"type": "command_done", "data": None})
             return
 
-        if cmd.type == CommandType.LOCAL:
+        if cmd.type == CommandType.LOCAL or name == "clear":
             # 本地命令直接执行
             ctx = self._build_command_context(args)
             try:
+                if name == "knowledge" and args.split(None, 1)[:1] == ["import"]:
+                    self.add_system_message("导入路径位于运行 CodePlus 的服务器本地文件系统；不从浏览器上传文件。")
                 await cmd.handler(ctx)
             except Exception as exc:
                 await self._broadcast({
                     "type": "error",
                     "data": {"message": f"Command error: {exc}"},
                 })
+            await self._flush_ui_messages()
             await self._broadcast({"type": "command_done", "data": None})
 
         elif cmd.type == CommandType.LOCAL_UI:
             # UI 命令需要特殊处理
-            if name == "clear":
-                self.conversation = ConversationManager()
-                if self.agent is not None:
-                    self.agent.clear_active_skills()
-                await self._broadcast({"type": "clear", "data": None})
-
-            elif name == "compact":
+            if name == "compact":
                 await self._handle_compact()
                 return
 
@@ -660,6 +702,13 @@ class RemoteServer:
             ui=self,  # type: ignore[arg-type]
             config={
                 "registry": self.command_registry,
+                "knowledge": self.knowledge,
+                "set_knowledge_binding": self._set_knowledge_binding,
+                "check_knowledge": self._check_knowledge_binding,
+                "set_session": self._set_session,
+                "set_conversation": self._set_conversation,
+                "clear_chat": self._clear_chat,
+                "render_restored": self._render_restored_messages,
             },
         )
 
@@ -680,6 +729,7 @@ class RemoteServer:
 
         result = await self.agent.manual_compact(self.conversation)
         if isinstance(result, CompactNotification):
+            self._persist_compact_boundary(result)
             await self._broadcast({
                 "type": "system",
                 "data": {"message": result.message},
@@ -698,14 +748,65 @@ class RemoteServer:
 
     def add_system_message(self, text: str) -> None:
         """同步接口 — 在事件循环中调度广播。"""
-        asyncio.ensure_future(self._broadcast({
+        self._ui_tasks.append(asyncio.create_task(self._broadcast({
             "type": "system",
             "data": {"message": text},
-        }))
+        })))
+
+    async def _flush_ui_messages(self) -> None:
+        pending, self._ui_tasks = self._ui_tasks, []
+        await asyncio.gather(*pending)
 
     def send_user_message(self, text: str) -> None:
         """同步接口 — 注入用户消息并触发 agent。"""
-        asyncio.create_task(self._handle_user_message(text))
+        task = asyncio.create_task(self._handle_user_message(text))
+        self._message_tasks.add(task)
+        task.add_done_callback(self._message_tasks.discard)
+
+    def _restore_knowledge_binding(self) -> None:
+        self.knowledge.bind(self.session.meta.knowledge_binding if self.session else None)
+        for name in ("SearchKnowledge", "ReadDocument"):
+            if self.knowledge.binding:
+                self.registry.enable(name)
+            else:
+                self.registry.disable(name)
+
+    def _set_knowledge_binding(self, binding) -> None:
+        self.knowledge.bind(binding)
+        if self.session:
+            self.session.meta.knowledge_binding = self.knowledge.binding
+            self.session.append_record(make_compact_boundary("知识库作用域已切换；此前资料不作为本轮证据。", []))
+        self._restore_knowledge_binding()
+        self._set_conversation(ConversationManager())
+
+    async def _check_knowledge_binding(self) -> None:
+        if self.knowledge.binding:
+            try:
+                await self.knowledge.check()
+            except Exception as exc:
+                self.add_system_message(f"恢复的知识库不可用，回答已阻止: {exc}")
+
+    def _set_session(self, session: Session) -> None:
+        self.session = session
+        self.session_id = session.session_id
+        self.agent.session_id = self.session_id
+        self._restore_knowledge_binding()
+
+    def _set_conversation(self, conversation: ConversationManager) -> None:
+        self.conversation = conversation
+
+    def _clear_chat(self) -> None:
+        self._ui_tasks.append(asyncio.create_task(self._broadcast({"type": "clear", "data": None})))
+
+    async def _render_restored_messages(self, messages) -> None:
+        await self._broadcast({"type": "clear", "data": None})
+        for message in messages:
+            if message.content and not message.tool_results:
+                await self._broadcast({"type": f"replay_{message.role}", "data": {"content": message.content}})
+
+    def _persist_compact_boundary(self, notification: CompactNotification) -> None:
+        if self.session and notification.boundary is not None:
+            self.session.append_record(make_compact_boundary(notification.boundary.summary, notification.boundary.keep))
 
     def set_plan_mode(self, enabled: bool) -> None:
         if self.agent is None:

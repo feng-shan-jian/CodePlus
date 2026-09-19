@@ -1,6 +1,6 @@
 # CodePlus Knowledge：最小实现任务清单
 
-日期：2026-09-20。状态：K01 及 S1–S4 已通过 leader 功能与代码质量验收。S2/S3/S4 临时文件清理限制分别见环境记录；后续阶段逐项实现，由 leader 验收并提交。
+日期：2026-09-20。状态：K01 及 S1–S5 已通过 leader 功能与代码质量验收。S2/S3/S4 临时文件清理限制分别见环境记录；后续阶段逐项实现，由 leader 验收并提交。
 
 架构依据：[收敛后的首版架构](knowledge-architecture.md)。已确定 Milvus Standalone、本地 Embedding、回答沿用现有模型配置。日常按文档更新，实验另建固定数据副本。
 
@@ -16,7 +16,7 @@
 | S2 | K06–K15 | Markdown 导入到真实检索的最短链路 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S3 | K16–K20 | 更新、删除、恢复及 PDF/DOCX | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
 | S4 | K21–K27 | TUI/Agent 问答、会话与可追溯引用报告 | leader 验收通过，纳入本阶段提交；清理遗留见环境记录 |
-| S5 | K28–K29 | 非交互 CLI 与 Remote 复用同一实现 | 未开始 |
+| S5 | K28–K29 | 非交互 CLI 与 Remote 复用同一实现 | leader 验收通过，纳入本阶段提交 |
 | S6 | K30–K33 | 可复现的基础检索评测与混合检索实验 | 未开始 |
 | S7 | K36 | 完整使用验收与文档收尾 | 未开始 |
 
@@ -280,7 +280,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K28 接入非交互 CodePlus 入口
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K27。
 - **修改位置**：`codeplus/__main__.py`、`tests/test_knowledge_cli.py`。
 - **本项只做**：为现有 -p 模式增加可选知识库选择参数，例如 --knowledge <库名>，复用 service 和 K24 的上下文准备逻辑；保持已有参数语义。
@@ -288,7 +288,7 @@ K34/K35 为可选扩展，本轮不做。某阶段存在真实环境阻塞时，
 
 ### K29 接入 Remote 入口
 
-- [ ] 完成
+- [x] 完成，leader 验收通过
 - **前置**：K28。
 - **修改位置**：`codeplus/remote.py`、`codeplus/commands/handlers/knowledge.py`、`tests/test_knowledge_remote.py（新增）`。
 - **本项只做**：复用同一知识库服务和命令处理器，补齐 Remote 所需的状态、进度与绑定支持，避免依赖 TUI 专属回调。文件路径语义明确为服务端主机。

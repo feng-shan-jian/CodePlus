@@ -421,3 +421,69 @@ python -m pytest tests/test_knowledge_service.py tests/test_agent.py tests/test_
 保留本 worktree `.venv`、既有 HF 缓存和共享服务。未验证 S5 CLI/Remote、S6 评测、大语料/长时压力、可视桌面终端布局、多用户、GPU/OCR 或对所有提示注入的防护。
 
 leader 独立验收通过：另建真实 Qwen/Milvus 临时库，使用现有 deepseek provider，流式 Agent.run 在含 MCP 内部提醒的会话中正确回答 43 天/267 元并给出可读原文引用；run_to_completion 对未提供的手机号明确说明缺少依据。更新为 52 天/310 元后，旧轮回答被 revision 检查拒绝，旧引用仍能读取 43 天的历史原件。该库、目录和独立脚本已清理，真实 provider 配置哈希未变。相关回归独立复跑 219 passed / 4 skipped（11.34 秒）。审查修正首检权限、MCP 问题识别、证据重复注入和写入拒绝后的完成判断；复用现有工具、会话和写文件路径，功能与代码质量通过后本地提交。
+
+## S5 非交互 CLI 与 Remote（K28–K29）
+
+实现 worktree：`C:\Users\18221\.codex\worktrees\b379\CodePlus`，基线 `7861da95083d9dda681376f40954c061f513a38b`。**实现及下述实现者验证完成，待 leader 独立功能与代码质量验收；K28/K29 不提前勾选，未暂存、未提交或 push。**
+
+### 使用方式与入口行为
+
+在自己的既有配置中启用 knowledge 并指向已导入的同一数据目录，然后使用 create 返回的稳定 `kb_id`：
+
+```powershell
+uv run codeplus -p "根据资料回答报销上限及期限，并标明来源" --knowledge <kb_id>
+uv run codeplus -p "根据资料回答报销上限及期限，并标明来源" --knowledge <kb_id> --output-format stream-json
+uv run codeplus --remote
+```
+
+`--knowledge` 只用于 `-p`，缺少 `-p` 时由现有 argparse 报错。不指定时保留普通 `-p` 行为。绑定后直接使用 S4 KnowledgeContext、SearchKnowledge/ReadDocument 和 Agent.run：首检仍发出原契约的 tool_use/tool_result（同一 tool_id），引用仍由既有代码校验。text 只输出最终正文；stream-json 的 stdout 每行均为 JSON，模型/SDK 诊断转到 stderr。知识检索或回答失败返回非零退出码，不发送成功 result；库不存在、配置禁用和服务不可达分别保留实际错误。
+
+知识模式不改变 PermissionChecker：显式 deny 阻止首检，需要 ask 的操作在非交互知识模式下拒绝。普通 `-p` 的既有权限策略未扩展。资源在整个已有 Agent/后续团队处理结束后关闭；同一个 finally 也覆盖 MCP 的原有提前 return 出口。
+
+Remote 的聊天框使用 S4 同一套 `/knowledge create/use/import/status/sources/remove/retry/open/off` 命令。`/knowledge import "C:\资料目录\含空格的文件.md"` 中的路径指向**运行 CodePlus 的服务器本地文件系统**，相对路径以服务端工作目录为基准；界面导入消息也明确说明这一点，没有浏览器上传。
+
+- 每个库命令在原 WebSocket 消息后台任务内执行，handler 继续把耗时库操作交给线程。导入进度、完成及逐文件错误沿用 system 消息，在 command_done 之前发送完毕。
+- 回答和命令互斥；忙时新请求收到提示，不排队执行旧提问、切库、导入或会话操作。WebSocket 读循环仍能接收 ping 和权限响应。
+- 复用 SessionMeta.knowledge_binding、Session.append 和 compact_boundary；use/off 清空当前回答上下文而保留旧记录及历史原件。session new/clear 创建新会话并关闭知识模式；resume 恢复绑定及已有消息。clear 直接使用既有 handler，不另建会话系统。恢复画面复用现有 HTML 的 replay_user/replay_assistant 消息。
+- `open` 可在切库/off 后读取历史来源，不将其加入新库的本轮证据；回答仍通过原 Agent 的首检、ReadDocument 范围与引用校验。
+
+### 真实验证及配置边界
+
+本 worktree 新建独立 Windows `.venv`，执行 `uv sync --locked --extra knowledge`。使用已有 Qwen3-Embedding-0.6B 固定 revision `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3` 的离线缓存（CPU float32、1024 维，HF_HUB_OFFLINE=1）和共享 WSL Milvus；healthz 返回 OK，没有重启容器或操作 Docker Desktop。
+
+回答 provider 只读加载 `D:\CodePlus\.codeplus\config.yaml`。Remote 在内存配置中启用独立临时知识目录，启动真实 `_init_agent` 与 WebSocket `_ws_handler`；通过实际 TCP WebSocket 发送消息，未替换 handler、Agent、Embedding、Milvus 或回答客户端。CLI 每次启动独立 Python 子进程，**仅替换 load_config 返回的内存配置，再执行真实 main/argparse**；未修改或复制真实密钥配置，未宣称磁盘原配置已经启用知识库，配置文件 SHA256 前后相同。
+
+两个合成 Markdown 各 1 chunk、各库 revision=1，完整真实链路单次耗时 **119.254 秒**（包括模型加载及不可达连接超时，不是吞吐指标）：
+
+| 入口/操作 | 实测结果 |
+| --- | --- |
+| Remote 创建、导入 Magpie 库并 use→提问→open | 回答 186 元、29 个日历日；引用指向保存的 Markdown，事实位于第 3 行 |
+| Remote 导入过程中同时发送 off、问题、session new、ping | 三个业务请求被忙提示拒绝，绑定/会话不变；ping 0.001 秒返回，早于导入完成 |
+| Remote 缺文件导入及 use missing | 逐文件导入失败可见；坏库命令返回 error，原绑定不变 |
+| Remote 回答期间 off/ping | off 被拒绝，ping 正常返回；完成后问答仍引用原库 |
+| Remote session new/resume | 恢复原绑定与含引用的历史回答，已有 replay 消息被发送 |
+| Remote 切换 Kestrel 库再问答 | 回答 275 元、41 个日历日；本轮引用/证据只含新库 ID，旧库引用仍可 open |
+| Remote off→open→resume→普通提问→use→clear | 历史原文可核对；恢复 off 状态不复活旧证据；普通回答 OFF_OK；clear 新建会话且关闭模式 |
+| CLI text / stream-json | 都实际回答 186 元、29 天并带可追溯引用；退出 0。JSON 输出共 5 行、逐行 json.loads 成功，加载日志仅在 stderr |
+| CLI 未指定 knowledge | 原回答 provider 返回 PLAIN_OK，stdout 无知识工具事件、stderr 为空 |
+| CLI missing / ../missing / disabled / 不可达 | 均退出 1，text 错误只到 stderr，JSON 错误 3 行且无 result；不可达使用独立地址 127.0.0.1:1，未停止共享 Milvus |
+
+本阶段不重复导入前序已验的三种格式，不读取 `E:\WorkBin` 真实正文。没有运行桌面浏览器的可视验收；上述是实际 WebSocket 协议链路，不将它表述为浏览器上传或多用户隔离验证。
+
+### 回归与清理
+
+只在现有 `tests/test_knowledge_service.py` 添加两个入口回归函数，复用 TinyEmbedding/MemoryStore 与真实 SQLite：CLI main/argparse 的输出、退出码、权限 deny/ask、报告拒绝；真实 WebSocket 的后台导入、进度/错误、忙期间 ping、会话恢复及证据范围。PROMPT 交接在测试中注册既有 REVIEW_COMMAND 后通过；该命令原本不在 Remote 生产注册表，未借本阶段扩大注册或 /plan 功能。这些替身回归与上面的真实模型验收分别记录。
+
+在本轮 TemporaryDirectory 的独立 `--basetemp` 执行：
+
+```text
+python -m pytest tests/test_knowledge_service.py tests/test_agent.py tests/test_commands.py tests/test_memory.py tests/test_permissions.py tests/test_knowledge.py tests/test_mcp.py tests/test_clear.py --basetemp <本轮目录>/pytest -q
+```
+
+最终结果 **224 passed / 4 skipped，13.76 秒**。四项 skip 为未 opt-in 的真实集成及已有系统符号链接用例，不计通过。首轮为 221 passed / 4 skipped / 3 failed（15.54 秒），三项失败均来自 `test_clear.py` 的 MockAgent 缺少 work_dir；将阶段 HEAD 通过 git archive 放入独立临时目录重跑，同样 3 failed（0.69 秒）。leader 进一步追溯确认是本系列 S4 将 clear 调用对齐真实 Agent.work_dir 时遗漏同步测试夹具，不能作为本任务无关问题排除。本阶段仅将 MockAgent 的 `_work_dir` 改为 `work_dir` 一行，同步已有契约，未在生产增加 fallback；随后上述完整相关回归全部通过。新入口两项也曾单独执行 **2 passed，2.85 秒**；真实 Remote 使用实际 Agent 的 clear 通过。`uv lock --check`、依赖同步 dry-run 及 `git diff --check` 通过，未增加依赖或修改锁文件。
+
+真实集合 `codeplus_kb_fb23ae0e00104620a33c9ed19b71a147` 与 `codeplus_kb_12904faf85e544e2b6af8caeccdaca9d` 已删除并逐一确认不存在。真实验收目录 `C:\Users\18221\AppData\Local\Temp\codeplus-s5-live-80rdtrp1`、各轮 pytest/baseline TemporaryDirectory、子进程配置注入脚本和外层自清理脚本均已清理；先关闭 session/SDK/文件句柄再收尾。没有产生新的 policy 拒绝残留，未触碰 S2/S3/S4 的已记录残留。保留本 worktree `.venv`、既有模型缓存和共享服务。
+
+未验证 S6 评测、浏览器视觉布局、大语料/长时压力、GPU/OCR、多用户隔离及知识模式下的团队协作全链路；后者仅保留既有调用和正确资源生命周期。本阶段未新增服务层、报告 Agent、校验层或会话系统。
+
+leader 独立验收：新建真实 Qwen/Milvus 单文档库，以独立子进程执行真实 CLI main/argparse，仅在内存注入配置；stream-json 每行均合法，首检工具事件与最终结果齐全，现有 provider 正确回答 Orion 保修 46 个月并引用来源。无效库退出 1，只输出工具失败与 error，无成功 result。自建集合、目录及独立脚本已清理，真实配置哈希不变。七文件回归独立运行 221 passed / 4 skipped（15.91 秒），同步修正后的三个 clear 用例独立运行 3 passed（0.44 秒）。代码审查修正资源提前关闭，并追溯补齐 S4 遗漏的测试替身字段；未新增业务模块，功能与代码质量通过后本地提交。

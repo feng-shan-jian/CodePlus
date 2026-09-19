@@ -316,6 +316,202 @@ async def test_knowledge_pilot_binding_background_import_and_history(service, tm
         app.session.close()
 
 
+def test_prompt_knowledge_json_exit_and_permissions(service, tmp_path, monkeypatch, capsys):
+    from codeplus import __main__ as cli
+    from codeplus.config import AppConfig, ProviderConfig
+    from codeplus.tools.base import TextDelta, StreamEnd, ToolCallComplete
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(cli.crashlog, "install", lambda: None)
+    monkeypatch.setattr(cli.logging, "basicConfig", lambda **kwargs: None)
+    kb = service.create("prompt")["id"]
+    source = tmp_path / "policy.md"
+    source.write_text("Refund deadline is 17 days.", encoding="utf-8")
+    service.import_document(kb, source)
+    config = AppConfig([ProviderConfig("test", "openai-compat", "http://127.0.0.1:1", "test")],
+                       knowledge=service.config, enable_fork=False)
+    monkeypatch.setattr(cli, "load_config", lambda: config)
+    monkeypatch.setattr("codeplus.knowledge.service.KnowledgeService", lambda cfg: service)
+    async def resolve(provider):
+        pass
+    monkeypatch.setattr("codeplus.client.resolve_context_window", resolve)
+    class Client:
+        report = False
+        async def stream(self, conversation, system="", tools=None):
+            results = [m.tool_results for m in conversation.history if m.tool_results]
+            if not results:
+                assert not any(t["name"] == "SearchKnowledge" for t in tools)
+                yield TextDelta("PLAIN_OK")
+            elif self.report and len(results) == 1:
+                yield ToolCallComplete("report", "WriteFile", {
+                    "file_path": str(tmp_path / "report.md"), "content": "Unapproved report"})
+            else:
+                ref = json.loads(results[0][0].content)["hits"][0]["citation_id"]
+                yield TextDelta(f"17 days [{ref}]")
+            yield StreamEnd("end_turn")
+    client = Client()
+    monkeypatch.setattr("codeplus.client.create_client", lambda provider: client)
+    original = service.search
+    def noisy_search(*args):
+        print("MODEL_LOAD_DIAGNOSTIC")
+        return original(*args)
+    monkeypatch.setattr(service, "search", noisy_search)
+    def run(extra, failure=False):
+        monkeypatch.setattr(sys, "argv", ["codeplus", "-p", "deadline?", *extra])
+        if failure:
+            with pytest.raises(SystemExit) as exit:
+                cli.main()
+            assert exit.value.code == 1
+        else:
+            cli.main()
+        return capsys.readouterr()
+    json_args = ["--knowledge", kb, "--output-format", "stream-json"]
+    output = run(json_args)
+    events = [json.loads(line) for line in output.out.splitlines()]
+    assert events[0]["tool_name"] == events[1]["tool_name"] == "SearchKnowledge"
+    assert events[0]["tool_id"] == events[1]["tool_id"]
+    assert events[0]["args"]["query"] == "deadline?"
+    assert events[-1]["type"] == "result" and "17 days [K:" in events[-1]["result"]
+    assert "MODEL_LOAD_DIAGNOSTIC" in output.err
+    assert run(["--knowledge", kb]).out.startswith("17 days [K:")
+    assert run([]).out == "PLAIN_OK"
+    for bad in ("missing", "../missing"):
+        events = [json.loads(line) for line in run(["--knowledge", bad, "--output-format", "stream-json"], True).out.splitlines()]
+        assert events[-1]["type"] == "error" and all(e["type"] != "result" for e in events)
+    with monkeypatch.context() as patch:
+        patch.setattr(config.knowledge, "enabled", False)
+        assert "disabled" in run(["--knowledge", kb], True).err
+    for effect in ("deny", "ask"):
+        rules = tmp_path / ".codeplus" / "permissions.local.yaml"
+        rules.write_text(f"- rule: SearchKnowledge(*)\n  effect: {effect}\n", encoding="utf-8")
+        events = [json.loads(line) for line in run(json_args, True).out.splitlines()]
+        assert events[-1]["type"] == "error"
+        assert ("Permission denied" if effect == "deny" else "user rejected") in events[-1]["message"]
+    rules.write_text("[]", encoding="utf-8")
+    client.report = True
+    events = [json.loads(line) for line in run(json_args, True).out.splitlines()]
+    assert events[-1]["type"] == "error" and "not saved" in events[-1]["message"]
+    assert not (tmp_path / "report.md").exists()
+
+
+@pytest.mark.asyncio
+async def test_remote_knowledge_websocket_scope_progress_and_resume(service, tmp_path, monkeypatch):
+    import threading
+    import websockets
+    from codeplus.config import AppConfig, ProviderConfig
+    from codeplus.remote import RemoteServer
+    from codeplus.tools.base import TextDelta, StreamEnd
+
+    monkeypatch.chdir(tmp_path)
+    config = AppConfig([ProviderConfig("test", "openai-compat", "http://127.0.0.1:1", "test", "test")],
+                       knowledge=service.config, enable_fork=False)
+    server = RemoteServer(config.providers, config=config)
+    server.knowledge._service = service
+    server._init_agent()
+    started, release = threading.Event(), threading.Event()
+    original_import = service.import_document
+    def slow_import(*args):
+        started.set()
+        assert release.wait(10)
+        return original_import(*args)
+    monkeypatch.setattr(service, "import_document", slow_import)
+    answer_started, answer_release = asyncio.Event(), asyncio.Event()
+    class Client:
+        async def stream(self, conversation, system="", tools=None):
+            answer_started.set()
+            await answer_release.wait()
+            if server.knowledge.binding:
+                ref = next(iter(server.knowledge.evidence))
+                yield TextDelta(f"17 days [{ref}]")
+            else:
+                assert not any("K:" in m.content or m.tool_results for m in conversation.history)
+                yield TextDelta("OFF_OK")
+            yield StreamEnd("end_turn")
+    server.agent.client = Client()
+    source = tmp_path / "server path with spaces.md"
+    source.write_text("Refund deadline is 17 days.", encoding="utf-8")
+    try:
+        async with websockets.serve(server._ws_handler, "127.0.0.1", 0) as listener:
+            port = listener.sockets[0].getsockname()[1]
+            async with websockets.connect(f"ws://127.0.0.1:{port}/ws") as ws:
+                async def until(kind, ready=lambda events: True):
+                    events = []
+                    async with asyncio.timeout(10):
+                        while True:
+                            events.append(json.loads(await ws.recv()))
+                            if (kind is None or events[-1]["type"] == kind) and ready(events):
+                                return events
+                async def send(content):
+                    await ws.send(json.dumps({"type": "user_message", "data": {"content": content}}))
+                async def command(content):
+                    await send(content)
+                    events = await until("command_done")
+                    assert not any(e["type"] == "error" for e in events), events
+                    return events
+                await until("commands")
+                await command('/knowledge create "remote"')
+                kb = server.knowledge.binding["kb_id"]
+                session_id = server.session_id
+                await send(f'/knowledge import "{source}"')
+                assert await asyncio.to_thread(started.wait, 5)
+                await send("/knowledge off")
+                await send("question during import")
+                await ws.send(json.dumps({"type": "ping"}))
+                events = await until(None, lambda es: any(e["type"] == "pong" for e in es)
+                                     and sum("正在执行" in str(e) for e in es) == 2)
+                assert sum("正在执行" in e.get("data", {}).get("message", "") for e in events if isinstance(e.get("data"), dict)) == 2
+                assert not answer_started.is_set() and server.knowledge.binding["kb_id"] == kb
+                release.set()
+                events += await until("command_done")
+                assert any("服务器本地" in str(e) for e in events)
+                assert any("导入 1/1" in str(e) for e in events) and any("导入完成" in str(e) for e in events)
+                errors = await command(f'/knowledge import "{tmp_path / "missing.md"}"')
+                assert any("导入失败" in str(e) for e in errors)
+                await command(f"/knowledge use {kb}")
+                await send("deadline?")
+                await asyncio.wait_for(answer_started.wait(), 5)
+                await send("/knowledge off")
+                await ws.send(json.dumps({"type": "ping"}))
+                events = await until(None, lambda es: any(e["type"] == "pong" for e in es)
+                                     and any("正在执行" in str(e) for e in es))
+                assert any("正在执行" in str(e) for e in events)
+                assert server.knowledge.binding["kb_id"] == kb
+                answer_release.set()
+                events += await until("loop_complete")
+                use = next(e["data"] for e in events if e["type"] == "tool_use")
+                result = next(e["data"] for e in events if e["type"] == "tool_result")
+                assert use["toolId"] == result["toolId"] and use["toolName"] == "SearchKnowledge"
+                ref = next(iter(server.knowledge.evidence))
+                await command("/session new")
+                assert server.knowledge.binding is None
+                restored = await command(f"/session resume {session_id}")
+                assert server.knowledge.binding["kb_id"] == kb
+                assert any(e["type"] == "replay_assistant" and ref in str(e) for e in restored)
+                await command("/knowledge off")
+                opened = await command(f"/knowledge open {ref}")
+                assert any("historical_sources" in str(e) and "17 days" in str(e) for e in opened)
+                await command(f"/session resume {session_id}")
+                assert server.knowledge.binding is None and not server.knowledge.evidence
+                await send("normal answer")
+                assert any("OFF_OK" in str(e) for e in await until("loop_complete"))
+                await command(f"/knowledge use {kb}")
+                await command("/clear")
+                assert server.knowledge.binding is None and server.session_id != session_id
+                assert not server.registry.is_enabled("ReadDocument")
+                # Existing PROMPT commands must hand their internally generated prompt to the Agent.
+                from codeplus.commands.handlers.review import REVIEW_COMMAND
+                server.command_registry.register_sync(REVIEW_COMMAND)
+                await send("/review")
+                assert any("OFF_OK" in str(e) for e in await until("loop_complete"))
+                assert any("git diff" in m.content for m in server.conversation.history if m.role == "user")
+    finally:
+        release.set()
+        answer_release.set()
+        await asyncio.gather(*server._message_tasks, return_exceptions=True)
+        await server._flush_ui_messages()
+        server.session.close()
+
+
 def test_import_identity_sources_and_preparation_failure(service, tmp_path, monkeypatch):
     kb = service.create("sources")["id"]
     source = tmp_path / "source with spaces.md"

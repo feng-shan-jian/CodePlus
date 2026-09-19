@@ -25,7 +25,7 @@ class MockUI:
 
 class MockAgent:
     def __init__(self, work_dir: str) -> None:
-        self._work_dir = work_dir
+        self.work_dir = work_dir
         self._loop_count = 5
         self.total_input_tokens = 12345
         self.total_output_tokens = 6789
