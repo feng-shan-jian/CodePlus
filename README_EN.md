@@ -321,7 +321,7 @@ What CodePlus wants to keep exploring is how to connect those judgments to a rea
 
 ## What Comes Next
 
-Alongside existing engineering tests and [knowledge retrieval experiments](codeplus/knowledge/evaluate.py), the next step is to gather more reproducible, complete development tasks. Some costs appear only later: compaction saves space but may lead to repeated investigation; parallel work finishes local parts earlier but may add integration time. Looking at the process alongside its final result should help establish which designs deserve to stay and give the next change a clearer direction.
+The next step is to expand **Agentic RAG (Work) mode**: add OCR for scanned documents and parsing for complex layouts, bring BM25 + vector hybrid retrieval into everyday Q&A, and add reranking so more types of material can support evidence checking and cited reports.
 
 ---
 
