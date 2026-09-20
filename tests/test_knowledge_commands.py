@@ -67,6 +67,10 @@ async def test_batch_counts_and_unregistered_failure_recovery(command, service, 
     assert final["kb_id"] == kb_id
     assert final["failures"] == [{"path": str(empty), "reason": "Markdown has no content", "kind": "import"}]
     assert snapshots[0]["failures"] == []
+    assert snapshots[0]["completed_path"] is None and snapshots[0]["outcome"] is None
+    assert {p["completed_path"]: p["outcome"] for p in snapshots[1:]} == {
+        str(fresh): "succeeded", str(empty): "failed", str(unchanged): "unchanged",
+    }
     assert sum(m.startswith("开始导入") for m in messages) == 1
     assert sum(m.startswith("导入完成") for m in messages) == 1
     assert "已处理 3/3，成功 1，未变化 1，失败 1" in messages[-1]

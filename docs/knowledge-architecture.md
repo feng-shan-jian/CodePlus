@@ -52,12 +52,14 @@ codeplus/knowledge/
 | 表 | 关键字段 | 用途 |
 | --- | --- | --- |
 | knowledge_bases | id、name、collection_name、profile_hash、revision、state、error、pending_operation | 当前集合、模型/分块约定、是否允许查询；未完成创建的明确目标 |
-| documents | id、kb_id、source_uri、content_hash、generation_id、original_path、state、pending_operation、pending_path、error、removed | 原件身份、当前版本、失败后待执行的操作及删除标记 |
+| documents | id、kb_id、source_uri、content_hash、generation_id、original_path、state、pending_operation、pending_path、error、removed、updated_at | 原件身份、当前版本、待执行操作、删除标记及最后成功提交时间 |
 | chunks | id、doc_id、generation_id、ordinal、text、source_spans、original_path | 原文片段、来源位置与该代原件的精确路径 |
 
 `generation_id` 根据原件哈希、解析器和分块配置确定。相同字节的不同来源保留各自文档身份。旧片段与原件保留供历史引用读取，但旧向量在文档更新完成后移除。
 
 S3 schema 2 在现有三张表加列，从 S2 documents 回填 chunks.original_path；更新不覆盖历史 chunks，恢复旧内容时继续使用该代已保存的原件路径。PDF/DOCX 解析器标识只参与各自文档代次计算，新增格式不改变已有 Markdown 库的 profile_hash。
+
+命令交互采用 schema 3：仅增加可空的 `documents.updated_at`，在成功提交导入、更新或移除时与 revision 同事务写入 UTC 时间；历史未知时间不回填猜测值。`list_libraries()` 直接查询现有 SQLite 表，提供库名、状态和未移除的文档数，不连接 Milvus、不加载模型，也不建立额外管理服务。
 
 `SearchResult` 保存 query、kb_id、revision、检索配置以及 hits。每个 hit 包含 chunk_id、doc_id、generation_id、原文、来源和带类型的分数。引用 ID 对应已保存的片段，不能由模型编造文件路径。
 

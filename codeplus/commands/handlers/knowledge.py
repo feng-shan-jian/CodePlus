@@ -42,7 +42,8 @@ def _import_failure(service, kb_id: str, file: Path, exc: Exception) -> dict:
 
 async def _import_files(ctx: CommandContext, service, kb_id: str, files: list[Path]) -> None:
     progress = {"kb_id": kb_id, "processed": 0, "total": len(files),
-                "succeeded": 0, "unchanged": 0, "failed": 0, "failures": []}
+                "succeeded": 0, "unchanged": 0, "failed": 0, "failures": [],
+                "completed_path": None, "outcome": None}
     callback = ctx.config.get("knowledge_progress")
 
     def report():
@@ -58,10 +59,12 @@ async def _import_files(ctx: CommandContext, service, kb_id: str, files: list[Pa
         except Exception as exc:
             failure = await asyncio.to_thread(_import_failure, service, kb_id, file, exc)
             progress["failures"].append(failure)
-            progress["failed"] += 1
+            outcome = "failed"
         else:
-            progress["unchanged" if result["unchanged"] else "succeeded"] += 1
+            outcome = "unchanged" if result["unchanged"] else "succeeded"
+        progress[outcome] += 1
         progress["processed"] += 1
+        progress.update(completed_path=str(file), outcome=outcome)
         report()
 
     summary = (f"导入完成：已处理 {progress['processed']}/{progress['total']}，"

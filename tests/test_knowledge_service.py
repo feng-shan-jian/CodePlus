@@ -303,7 +303,7 @@ async def test_knowledge_pilot_binding_background_import_and_history(service, tm
         async def enter(text, wait=True):
             inp = app.query_one("#chat-input", ChatInput)
             inp.focus()
-            inp.insert(text)
+            inp.load_text(text)
             await pilot.press("enter")
             await pilot.pause()
             if wait and app._knowledge_task:

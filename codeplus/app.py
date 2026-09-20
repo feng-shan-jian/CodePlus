@@ -46,6 +46,7 @@ from codeplus.commands import (
 )
 from codeplus import crashlog
 from codeplus.commands.completion import CompletionPopup
+from codeplus.commands.knowledge_menu import PREFIX as KNOWLEDGE_PREFIX, candidates as knowledge_candidates
 from codeplus.commands.handlers import register_all_commands
 from codeplus.config import MCPServerConfig, ProviderConfig
 from codeplus.knowledge.citations import short_citations
@@ -115,7 +116,8 @@ _SKIP_DIRS = {".git", "node_modules", ".venv", "__pycache__", ".codeplus", "buil
 
 def scan_files_for_at(prefix: str, work_dir: str, limit: int = 10) -> list[str]:
     matches: list[str] = []
-    base = os.path.join(work_dir, os.path.dirname(prefix)) if "/" in prefix else work_dir
+    directory = os.path.dirname(prefix)
+    base = os.path.join(work_dir, directory)
     name_prefix = os.path.basename(prefix).lower()
     if not os.path.isdir(base):
         return matches
@@ -124,7 +126,7 @@ def scan_files_for_at(prefix: str, work_dir: str, limit: int = 10) -> list[str]:
             if entry in _SKIP_DIRS or entry.startswith("."):
                 continue
             if entry.lower().startswith(name_prefix):
-                rel = os.path.join(os.path.dirname(prefix), entry) if "/" in prefix else entry
+                rel = os.path.join(directory, entry)
                 if os.path.isdir(os.path.join(base, entry)):
                     rel += "/"
                 matches.append(rel)
@@ -205,18 +207,14 @@ class ChatInput(TextArea):
 
     def action_submit(self) -> None:
         popup = self._popup()
-        if popup is not None and popup.is_visible:
-            selected = popup.get_selected()
-            popup.hide()
-            if selected:
-                self._history.append(selected)
-                self._persist_entry(selected)
-                self._history_index = -1
-                self._history_draft = ""
-                self.post_message(self.Submitted(selected))
-                self.clear()
+        if popup is not None:
+            if popup.is_visible and popup.choose(self.text, submit=True):
                 return
-        text = self.text.strip()
+            popup.hide()
+        self.submit_text(self.text)
+
+    def submit_text(self, text: str) -> None:
+        text = text.strip()
         if text:
             self._history.append(text)
             self._persist_entry(text)
@@ -231,12 +229,9 @@ class ChatInput(TextArea):
     def action_complete(self) -> None:
         popup = self._popup()
         if popup is not None and popup.is_visible:
-            selected = popup.get_selected()
-            if selected:
-                popup.hide()
-                self.clear()
-                self.insert(selected + " ")
-            return
+            if popup.choose(self.text):
+                return
+            popup.hide()
         text = self.text.strip()
         if text.startswith("/"):
             self.post_message(self.TabComplete(text))
@@ -249,13 +244,11 @@ class ChatInput(TextArea):
             self.insert("\t")
 
     def action_dismiss_popup(self) -> None:
-        popup = self._popup()
-        if popup is not None:
-            popup.hide()
+        self.app.action_cancel()
 
     def action_nav_up(self) -> None:
         popup = self._popup()
-        if popup is not None and popup.is_visible:
+        if popup is not None and popup.is_visible and popup.input_text == self.text:
             popup.move_up()
             return
         if not self._history:
@@ -272,7 +265,7 @@ class ChatInput(TextArea):
 
     def action_nav_down(self) -> None:
         popup = self._popup()
-        if popup is not None and popup.is_visible:
+        if popup is not None and popup.is_visible and popup.input_text == self.text:
             popup.move_down()
             return
         if self._history_index == -1:
@@ -287,25 +280,24 @@ class ChatInput(TextArea):
             self.insert(self._history_draft)
 
     class AtFileRequest(TMessage):
-        def __init__(self, prefix: str) -> None:
+        def __init__(self, prefix: str, input_text: str) -> None:
             super().__init__()
             self.prefix = prefix
+            self.input_text = input_text
 
     class SlashMenuUpdate(TMessage):
-        def __init__(self, prefix: str | None) -> None:
+        def __init__(self, prefix: str | None, input_text: str) -> None:
             super().__init__()
             self.prefix = prefix
+            self.input_text = input_text
 
     def on_text_area_changed(self, event: TextArea.Changed) -> None:
         text = self.text
-        if text.startswith("/") and self._history_index < 0:
-            prefix = text[1:]
-            if " " not in prefix and "\n" not in prefix:
-                self.post_message(self.SlashMenuUpdate(prefix))
-            else:
-                self.post_message(self.SlashMenuUpdate(None))
-        else:
-            self.post_message(self.SlashMenuUpdate(None))
+        prefix = text if text.startswith("/") and self._history_index < 0 else None
+        self.post_message(self.SlashMenuUpdate(prefix, text))
+
+        if text.startswith(KNOWLEDGE_PREFIX):
+            return
 
         at_idx = text.rfind("@")
         if at_idx < 0:
@@ -314,7 +306,7 @@ class ChatInput(TextArea):
         if " " in after or "\n" in after:
             return
         if after:
-            self.post_message(self.AtFileRequest(after))
+            self.post_message(self.AtFileRequest(after, text))
 
 
 COLLAPSIBLE_TOOLS = {"ReadFile", "Glob", "Grep", "ToolSearch"}
@@ -645,6 +637,15 @@ class CodePlusApp(App):
         from codeplus.knowledge.citations import KnowledgeContext
         self.knowledge = KnowledgeContext(knowledge_config or KnowledgeConfig())
         self._knowledge_task: asyncio.Task | None = None
+        self._knowledge_libraries: list[dict] = []
+        self._knowledge_status: dict | None = None
+        self._knowledge_choices_loaded = False
+        self._knowledge_choices_error = ""
+        self._knowledge_choices_revision = 0
+        self._knowledge_document: str | None = None
+        self._knowledge_progress: dict | None = None
+        self._knowledge_failures: dict[str, dict[str, dict]] = {}
+        self._knowledge_completion_revision = 0
         self._thinking_start: float = 0.0
         self._thinking_verb: str = ""
         self._spinner_idx: int = 0
@@ -723,6 +724,7 @@ class CodePlusApp(App):
             with Horizontal(id="status-bar"):
                 yield Static("  default", id="mode-label")
                 yield Static("", id="teammates-label")
+                yield Static("", id="knowledge-label")
                 yield Static("", id="model-label")
             yield CompletionPopup()
 
@@ -1114,6 +1116,8 @@ class CodePlusApp(App):
                 "knowledge": self.knowledge,
                 "set_knowledge_binding": self._set_knowledge_binding,
                 "check_knowledge": self._check_knowledge_binding,
+                "show_knowledge_menu": self._show_knowledge_menu,
+                "knowledge_progress": self._on_knowledge_progress,
             },
         )
 
@@ -1130,6 +1134,16 @@ class CodePlusApp(App):
                 self.registry.enable(name)
             else:
                 self.registry.disable(name)
+        self._knowledge_choices_loaded = False
+        self._knowledge_choices_error = ""
+        self._knowledge_choices_revision += 1
+        self._knowledge_status = None
+        self._knowledge_progress = None
+        if self.is_mounted:
+            self._update_knowledge_label()
+            if self.knowledge.binding:
+                self._knowledge_choices_loaded = True
+                self.run_worker(self._load_knowledge_choices(), group="knowledge-choices", exclusive=True)
 
     async def _check_knowledge_binding(self) -> None:
         if self.knowledge.binding:
@@ -1153,6 +1167,102 @@ class CodePlusApp(App):
             await cmd.handler(ctx)
         except Exception as exc:
             self._show_error(f"知识库操作失败: {exc}")
+        finally:
+            await self._load_knowledge_choices()
+
+    def _on_knowledge_progress(self, payload: dict) -> None:
+        self._knowledge_progress = payload
+        failures = self._knowledge_failures.setdefault(payload["kb_id"], {})
+        for failure in payload["failures"]:
+            failures[os.path.normcase(os.path.abspath(failure["path"]))] = failure
+        if payload.get("completed_path") and payload.get("outcome") in {"succeeded", "unchanged"}:
+            failures.pop(os.path.normcase(os.path.abspath(payload["completed_path"])), None)
+        self._update_knowledge_label()
+
+    def _update_knowledge_label(self) -> None:
+        label = self.query_one("#knowledge-label", Static)
+        binding = self.knowledge.binding
+        if not binding:
+            label.update("")
+            return
+        progress = self._knowledge_progress
+        if progress and progress["kb_id"] == binding["kb_id"]:
+            label.update(f"资料 {progress['processed']}/{progress['total']} · 成功 {progress['succeeded']}"
+                         f" · 未变 {progress['unchanged']} · 失败 {progress['failed']}")
+        else:
+            name = next((k["name"] for k in self._knowledge_libraries if k["id"] == binding["kb_id"]), "已绑定")
+            label.update(RichText("知识库 · " + name))
+
+    async def _load_knowledge_choices(self) -> None:
+        self._knowledge_choices_revision += 1
+        revision = self._knowledge_choices_revision
+        binding = self.knowledge.binding
+        kb_id = binding["kb_id"] if binding else None
+        def read():
+            service = self.knowledge.service
+            return service.list_libraries(), service.status(kb_id) if kb_id else None
+        try:
+            libraries, status = await asyncio.to_thread(read)
+            error = ""
+        except Exception as exc:
+            libraries, status = [], None
+            error = f"读取知识库列表失败：{exc}"
+        current = self.knowledge.binding
+        if revision != self._knowledge_choices_revision or (current["kb_id"] if current else None) != kb_id:
+            return
+        self._knowledge_libraries, self._knowledge_status = libraries, status
+        self._knowledge_choices_error = error
+        self._knowledge_choices_loaded = True
+        self._update_knowledge_label()
+        self._refresh_knowledge_completion()
+
+    def _show_knowledge_menu(self) -> None:
+        if self.query_one("#chat-input", ChatInput).text.strip():
+            return
+        self._knowledge_document = None
+        self._set_completion_input(KNOWLEDGE_PREFIX)
+
+    def _set_completion_input(self, text: str) -> None:
+        widget = self.query_one("#chat-input", ChatInput)
+        widget.load_text(text)
+        widget.move_cursor(widget.document.end)
+        widget.focus()
+        self._refresh_knowledge_completion()
+
+    def _refresh_knowledge_completion(self) -> None:
+        text = self.query_one("#chat-input", ChatInput).text
+        if not text.startswith(KNOWLEDGE_PREFIX):
+            return
+        binding = self.knowledge.binding or {}
+        failures = list(self._knowledge_failures.get(binding.get("kb_id"), {}).values())
+        pairs, kind, hint = knowledge_candidates(text, self._knowledge_libraries, self._knowledge_status,
+                                                failures, self._knowledge_document)
+        if self._knowledge_choices_error:
+            hint = self._knowledge_choices_error + " · Esc 返回/取消"
+        self.query_one(CompletionPopup).show_pairs(pairs, input_text=text, kind=kind, hint=hint)
+
+    async def _complete_knowledge_path(self, text: str, revision: int) -> None:
+        prefix = text[len(KNOWLEDGE_PREFIX + "import "):].strip()
+        if prefix[:1] in {'"', "'"}:
+            quote, prefix = prefix[0], prefix[1:]
+            if prefix.endswith(quote):
+                prefix = prefix[:-1]
+        prefix = os.path.expanduser(prefix)
+        work_dir = self.agent.work_dir if self.agent else os.getcwd()
+        def read():
+            matches = scan_files_for_at(prefix, work_dir)
+            # A complete directory command still imports that directory, even
+            # when its trailing separator also offers children to select.
+            if prefix and os.path.isdir(os.path.join(work_dir, prefix)):
+                matches = [prefix] + [path for path in matches if path != prefix]
+            return matches
+        matches = await asyncio.to_thread(read)
+        if (revision != self._knowledge_completion_revision
+                or self.query_one("#chat-input", ChatInput).text != text):
+            return
+        pairs = [(escape(path), KNOWLEDGE_PREFIX + 'import "' + path + '"') for path in matches]
+        self.query_one(CompletionPopup).show_pairs(pairs, input_text=text, kind="knowledge-path",
+                                                  hint="↑↓ 选择路径 · Tab 补全 · Enter 导入 · Esc 返回")
 
     def _persist_compact_boundary(self, notification: CompactNotification) -> None:
         """Layer-2 compact 后写入 compact_boundary 记录。
@@ -1185,6 +1295,12 @@ class CodePlusApp(App):
             return
         if answer_busy and name in {"knowledge", "session", "clear"}:
             self.add_system_message("回答正在执行；结束后再操作知识库或切换会话。")
+            return
+
+        if name == "knowledge" and (args in {"create", "use", "import", "sources", "remove", "reimport"}
+                                    or args.startswith("sources ")):
+            self._knowledge_document = None
+            self._set_completion_input(KNOWLEDGE_PREFIX + args + " ")
             return
 
         if not is_command:
@@ -1244,6 +1360,12 @@ class CodePlusApp(App):
         await self._dispatch_command(text)
 
     def on_chat_input_tab_complete(self, event: ChatInput.TabComplete) -> None:
+        input_widget = self.query_one("#chat-input", ChatInput)
+        if input_widget.text.strip() != event.text:
+            return
+        if event.text.startswith(KNOWLEDGE_PREFIX):
+            self._refresh_knowledge_completion()
+            return
         matches = complete(self.command_registry, event.text)
         if not matches:
             return
@@ -1253,10 +1375,22 @@ class CodePlusApp(App):
             input_widget.clear()
             input_widget.insert(matches[0][1] + " ")
         else:
-            popup.show_pairs(matches)
+            popup.show_pairs(matches, input_text=input_widget.text)
 
     def on_chat_input_slash_menu_update(self, event: ChatInput.SlashMenuUpdate) -> None:
+        if self.query_one("#chat-input", ChatInput).text != event.input_text:
+            return
         popup = self.query_one(CompletionPopup)
+        if event.prefix is not None and event.prefix.startswith(KNOWLEDGE_PREFIX):
+            self._refresh_knowledge_completion()
+            if not self._knowledge_choices_loaded:
+                self._knowledge_choices_loaded = True
+                self.run_worker(self._load_knowledge_choices(), group="knowledge-choices", exclusive=True)
+            if event.prefix.startswith(KNOWLEDGE_PREFIX + "import "):
+                self._knowledge_completion_revision += 1
+                self.run_worker(self._complete_knowledge_path(event.prefix, self._knowledge_completion_revision),
+                                group="knowledge-path", exclusive=True)
+            return
         if event.prefix is None:
             popup.hide()
             return
@@ -1264,19 +1398,34 @@ class CodePlusApp(App):
         if not matches:
             popup.hide()
             return
-        popup.show_pairs(matches)
+        popup.show_pairs(matches, input_text=event.input_text)
 
-    def on_chat_input_at_file_request(self, event: ChatInput.AtFileRequest) -> None:
+    async def on_chat_input_at_file_request(self, event: ChatInput.AtFileRequest) -> None:
         work_dir = self.agent.work_dir if self.agent else os.getcwd()
-        matches = scan_files_for_at(event.prefix, work_dir)
+        matches = await asyncio.to_thread(scan_files_for_at, event.prefix, work_dir)
+        if self.query_one("#chat-input", ChatInput).text != event.input_text:
+            return
         if matches:
             popup = self.query_one(CompletionPopup)
-            popup.show([f"@{m}" for m in matches])
+            popup.show([f"@{m}" for m in matches], input_text=event.input_text)
 
     def on_completion_popup_selected(self, event: CompletionPopup.Selected) -> None:
         input_widget = self.query_one("#chat-input", ChatInput)
+        if event.input_text is not None and input_widget.text != event.input_text:
+            return
         selected = event.value
         text = input_widget.text
+        if event.kind == "knowledge-source":
+            self._knowledge_document = selected
+            self._set_completion_input(KNOWLEDGE_PREFIX + "sources " + selected)
+            return
+        if selected in {KNOWLEDGE_PREFIX + sub for sub in ("create", "use", "import", "sources", "remove", "reimport")}:
+            self._knowledge_document = None
+            self._set_completion_input(selected + " ")
+            return
+        if event.submit and not selected.startswith("@"):
+            input_widget.submit_text(selected)
+            return
         if selected.startswith("@"):
             at_idx = text.rfind("@")
             if at_idx >= 0:
@@ -1284,9 +1433,7 @@ class CodePlusApp(App):
                 input_widget.insert(text[:at_idx] + selected + " ")
                 input_widget.focus()
                 return
-        input_widget.clear()
-        input_widget.insert(selected + " ")
-        input_widget.focus()
+        self._set_completion_input(selected + " ")
 
     def action_cycle_mode(self) -> None:
         if isinstance(self.focused, CitationMarkdown) or self.query(InlineSourcePreview):
@@ -1332,13 +1479,26 @@ class CodePlusApp(App):
         if previews:
             previews.first().action_close()
             return
+        popup = self.query_one(CompletionPopup)
+        input_widget = self.query_one("#chat-input", ChatInput)
+        if popup.is_visible:
+            self._knowledge_completion_revision += 1
+            if popup.kind.startswith("knowledge") and popup.input_text == input_widget.text:
+                if self._knowledge_document and input_widget.text.strip() == KNOWLEDGE_PREFIX + "sources " + self._knowledge_document:
+                    self._knowledge_document = None
+                    self._set_completion_input(KNOWLEDGE_PREFIX + "sources ")
+                elif input_widget.text.strip() != "/knowledge":
+                    self._knowledge_document = None
+                    self._set_completion_input(KNOWLEDGE_PREFIX)
+                else:
+                    input_widget.clear()
+                    popup.hide()
+            else:
+                popup.hide()
+            input_widget.focus()
+            return
         if self.knowledge.retrieving:
             self.add_system_message("本地检索正在执行；完成后可中断回答。")
-            return
-        popup = self.query_one(CompletionPopup)
-        if popup.is_visible:
-            popup.hide()
-            self.query_one("#chat-input", ChatInput).focus()
             return
         if self._agent_task and not self._agent_task.done():
             if self._subagent_task and not self._subagent_task.done():
