@@ -148,6 +148,9 @@ class KnowledgeConfig:
     chunk_tokens: int = 512
     chunk_overlap: int = 64
     managed_local: bool = False
+    retrieval_mode: str = "auto"
+    retrieval_candidates: int = 50
+    rrf_k: float = 60
 
 
 @dataclass

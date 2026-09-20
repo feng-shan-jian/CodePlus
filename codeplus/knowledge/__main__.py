@@ -39,7 +39,7 @@ def main(argv=None) -> int:
     evaluate.add_argument("--mode", choices=("all", "dense", "bm25", "hybrid"), default="all")
     evaluate.add_argument("--top-k", type=int, default=3)
     evaluate.add_argument("--candidates", type=int, default=6, help="Candidates per lane; also used by ANN comparisons")
-    evaluate.add_argument("--rrf-k", type=float, default=60)
+    evaluate.add_argument("--rrf-k", type=float, default=KnowledgeConfig.rrf_k)
     evaluate.add_argument("--m", type=int, default=16)
     evaluate.add_argument("--ef-construction", type=int, default=128)
     evaluate.add_argument("--ef", type=int, nargs="+", default=[16, 64], help="Two or more query-only ef settings")

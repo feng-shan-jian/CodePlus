@@ -8,7 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from codeplus.knowledge.evaluate import ann_recall, evidence_recall, fuse, rrf, summarize
+from codeplus.knowledge.evaluate import ann_recall, evidence_recall, fuse, summarize
+from codeplus.knowledge.retrieval import rrf
 
 
 def test_original_range_union_and_fixed_denominators():

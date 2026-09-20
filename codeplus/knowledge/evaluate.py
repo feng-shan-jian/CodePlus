@@ -15,10 +15,8 @@ import uuid
 
 from .milvus_store import MilvusStore
 from .models import fingerprint
+from .retrieval import ANALYZER, rrf
 from .service import KnowledgeService
-
-
-ANALYZER = {"tokenizer": {"type": "jieba", "mode": "search", "hmm": False}, "filter": ["lowercase"]}
 
 
 def evidence_recall(gold, hits, top_k, *, ignore_whitespace=False):
@@ -51,21 +49,6 @@ def ann_recall(reference, approximate, top_k):
     found = expected & {h["chunk_id"] for h in approximate[:top_k]}
     return {"matched": len(found), "reference_count": len(expected),
             "recall": len(found) / len(expected) if expected else None}
-
-
-def rrf(dense, bm25, constant):
-    """Equal weights, one-based ranks, deterministic chunk-ID tie break; preserve both scores."""
-    merged = {}
-    for lane, hits in (("dense", dense), ("bm25", bm25)):
-        for rank, hit in enumerate(hits, 1):
-            entry = merged.setdefault(hit["chunk_id"], {
-                **hit, "score": 0.0, "score_type": "rrf", "dense_rank": None, "dense_score": None,
-                "bm25_rank": None, "bm25_score": None,
-            })
-            entry[f"{lane}_rank"], entry[f"{lane}_score"] = rank, hit["score"]
-            entry["score"] += 1 / (constant + rank)
-    result = sorted(merged.values(), key=lambda hit: (-hit["score"], hit["chunk_id"]))
-    return [{**hit, "rank": rank} for rank, hit in enumerate(result, 1)]
 
 
 def fuse(dense, bm25, constant):

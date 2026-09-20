@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from urllib.parse import urlsplit
 
 VALID_PROTOCOLS = {"anthropic", "openai", "openai-compat"}
@@ -248,6 +249,23 @@ def validate_knowledge(raw: dict | None) -> dict:
         validate_bool_field(raw["enabled"], "knowledge.enabled")
     if "managed_local" in raw:
         validate_bool_field(raw["managed_local"], "knowledge.managed_local")
+    if "retrieval_mode" in raw:
+        mode = raw["retrieval_mode"]
+        if not isinstance(mode, str) or mode not in {"auto", "dense", "bm25", "hybrid"}:
+            raise ConfigError("'knowledge.retrieval_mode' must be auto, dense, bm25 or hybrid")
+    if "retrieval_candidates" in raw:
+        candidates = raw["retrieval_candidates"]
+        if isinstance(candidates, bool) or not isinstance(candidates, int) or not 1 <= candidates <= 16384:
+            raise ConfigError("'knowledge.retrieval_candidates' must be an integer from 1 to 16384")
+    if "rrf_k" in raw:
+        constant = raw["rrf_k"]
+        try:
+            valid = (not isinstance(constant, bool) and isinstance(constant, (int, float))
+                     and math.isfinite(constant) and constant > 0)
+        except OverflowError:
+            valid = False
+        if not valid:
+            raise ConfigError("'knowledge.rrf_k' must be a finite positive number")
     if "milvus_uri" in raw:
         try:
             uri = urlsplit(raw["milvus_uri"])

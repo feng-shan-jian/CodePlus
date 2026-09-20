@@ -2,6 +2,8 @@
 
 import math
 
+from .retrieval import BM25_INDEX_PARAMS
+
 
 class MilvusStore:
     def __init__(self, uri: str, *, timeout=30):
@@ -61,7 +63,7 @@ class MilvusStore:
         indexes.add_index("dense", index_type=index_type, metric_type="COSINE", params=build_params)
         if analyzer:
             indexes.add_index("sparse", index_type="SPARSE_INVERTED_INDEX", metric_type="BM25",
-                              params={"inverted_index_algo": "DAAT_MAXSCORE", "bm25_k1": 1.2, "bm25_b": 0.75})
+                              params=BM25_INDEX_PARAMS.copy())
         self.client.create_index(name, indexes, timeout=180)
         self.client.load_collection(name, timeout=180)
 

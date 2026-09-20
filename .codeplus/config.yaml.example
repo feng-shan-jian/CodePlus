@@ -41,5 +41,8 @@ knowledge:
   max_input_tokens: 8192
   batch_size: 8
   top_k: 5
+  retrieval_mode: auto  # auto | dense | bm25 | hybrid
+  retrieval_candidates: 50  # per lane, 1-16384; hybrid uses at least top_k
+  rrf_k: 60  # finite positive RRF rank constant
   chunk_tokens: 512
   chunk_overlap: 64

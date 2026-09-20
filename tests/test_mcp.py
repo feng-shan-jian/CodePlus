@@ -95,6 +95,9 @@ class TestLoadConfigMCP:
         config = load_config(path)
         assert config.mcp_servers == []
         assert config.knowledge.enabled is False
+        assert config.knowledge.retrieval_mode == "auto"
+        assert config.knowledge.retrieval_candidates == 50
+        assert config.knowledge.rrf_k == 60
 
     def test_knowledge_layers_preserve_omission_and_explicit_false(self, tmp_path, monkeypatch):
         home, project = tmp_path / "home", tmp_path / "project"
@@ -102,23 +105,53 @@ class TestLoadConfigMCP:
             (directory / ".codeplus").mkdir(parents=True)
         provider = "providers:\n  - {name: test, protocol: openai, base_url: 'http://localhost', model: test}\n"
         (home / ".codeplus/config.yaml").write_text(
-            provider + "knowledge: {enabled: true, top_k: 7, data_dir: './saved knowledge'}\n", encoding="utf-8")
+            provider + "knowledge: {enabled: true, top_k: 7, data_dir: './saved knowledge', "
+            "retrieval_mode: hybrid, retrieval_candidates: 30, rrf_k: 20.5}\n", encoding="utf-8")
         (project / ".codeplus/config.yaml").write_text(provider, encoding="utf-8")
         monkeypatch.setattr(Path, "home", classmethod(lambda cls: home))
         monkeypatch.chdir(project)
-        assert load_config().knowledge.enabled is True
+        config = load_config()
+        assert config.knowledge.enabled is True
+        assert config.knowledge.retrieval_mode == "hybrid"
+        assert config.knowledge.retrieval_candidates == 30
+        assert config.knowledge.rrf_k == 20.5
+        (project / ".codeplus/config.yaml").write_text(
+            provider + "knowledge: {retrieval_candidates: 50}\n", encoding="utf-8")
         (project / ".codeplus/config.local.yaml").write_text(
-            provider + "knowledge: {enabled: false}\n", encoding="utf-8")
+            provider + "knowledge: {enabled: false, retrieval_mode: auto}\n", encoding="utf-8")
         config = load_config()
         assert config.knowledge.enabled is False
         assert config.knowledge.top_k == 7
+        assert config.knowledge.retrieval_mode == "auto"
+        assert config.knowledge.retrieval_candidates == 50
+        assert config.knowledge.rrf_k == 20.5
         assert config.knowledge.data_dir == str(project / "saved knowledge")
         monkeypatch.chdir(home)
         assert config.knowledge.data_dir == str(project / "saved knowledge")
 
+    @pytest.mark.parametrize("mode, candidates, constant", [
+        ("auto", 50, 60), ("dense", 1, 0.5), ("bm25", 16384, 20), ("hybrid", 30, 100.5),
+    ])
+    def test_valid_knowledge_retrieval_config(self, tmp_path, mode, candidates, constant):
+        path = self._write_config(tmp_path, f"""\
+            providers:
+              - {{name: test, protocol: openai, base_url: 'http://localhost', model: test}}
+            knowledge:
+              retrieval_mode: {mode}
+              retrieval_candidates: {candidates}
+              rrf_k: {constant}
+        """)
+        config = load_config(path).knowledge
+        assert (config.retrieval_mode, config.retrieval_candidates, config.rrf_k) == (mode, candidates, constant)
+
     @pytest.mark.parametrize("knowledge, message", [
         ({"milvus_uri": "localhost:19530"}, "milvus_uri"),
         ({"enabled": "false"}, "enabled"),
+        *[({"retrieval_mode": value}, "retrieval_mode") for value in ("all", True, None, [])],
+        *[({"retrieval_candidates": value}, "retrieval_candidates")
+          for value in (0, 16385, True, 1.5, "50", None)],
+        *[({"rrf_k": value}, "rrf_k")
+          for value in (0, -1, True, float("nan"), float("inf"), -float("inf"), "60", None, 10 ** 400)],
     ])
     def test_invalid_knowledge_config(self, tmp_path, knowledge, message):
         path = self._write_config(tmp_path, """\
