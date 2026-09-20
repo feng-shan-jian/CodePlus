@@ -1,10 +1,11 @@
 """Saved originals, format adapters and one structure/offset tokenizer chunker."""
 
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 from dataclasses import replace
 from hashlib import sha256
 import os
 from pathlib import Path
+import re
 
 from .models import Chunk, ParsedBlock, SourceSpan, fingerprint
 
@@ -139,39 +140,46 @@ def parse_document(original: Path) -> tuple[str, list[ParsedBlock]]:
 
 def chunk_markdown(text: str, blocks: list[ParsedBlock], tokenizer, doc_id: str,
                    generation_id: str, max_tokens: int, overlap: int) -> list[Chunk]:
-    """Merge adjacent structures; overlap only when splitting an oversized structure.
+    """Split heading sections into sentences, retaining exact extracted-text offsets."""
+    from llama_index.core.node_parser import SentenceSplitter
 
-    Use character offsets, not decoded token slices: a Chinese character may span
-    multiple tokens. Every emitted substring is re-tokenized with special tokens.
-    """
-    def count(value):
-        return len(tokenizer(value, add_special_tokens=True)["input_ids"])
+    class SourceSentenceSplitter(SentenceSplitter):
+        def _postprocess_chunks(self, chunks):
+            # 0.14.24 normally strips whitespace here, losing CRLF/source lengths.
+            return chunks
+
+    splitter = SourceSentenceSplitter(
+        chunk_size=max_tokens, chunk_overlap=overlap,
+        tokenizer=lambda value: tokenizer(value, add_special_tokens=True)["input_ids"],
+        # Lossless Chinese/English sentence boundaries; no NLTK model download.
+        chunking_tokenizer_fn=lambda value: re.findall(
+            r'.+?(?:[。！？!?]+[”’"\u300d\u300f]*|\.(?=\s|$)|$)', value, re.DOTALL),
+        paragraph_separator="\n\n", secondary_chunking_regex=r"[^,;，；]+[,;，；]?|[,;，；]",
+    )
 
     groups = []
     for block in blocks:
         start, end = block.source.char_start, block.source.char_end
-        if (groups and block.source.kind != "heading"
-                and count(text[groups[-1][0]:end]) <= max_tokens):
+        if groups and block.source.kind != "heading":
             groups[-1] = (groups[-1][0], end)
         else:
             groups.append((start, end))
     line_starts = [0] + [i + 1 for i, char in enumerate(text) if char == "\n"]
     chunks = []
-    for start, stop in groups:
-        while start < stop:
-            remaining = text[start:stop]
-            offsets = tokenizer(remaining, add_special_tokens=False,
-                                return_offsets_mapping=True)["offset_mapping"]
-            end = stop
-            if count(remaining) > max_tokens:
-                boundaries = sorted({a for a, _ in offsets[:max_tokens + 1] if a > 0})
-                while boundaries:
-                    end = start + boundaries.pop()
-                    if count(text[start:end]) <= max_tokens:
-                        break
-                else:
-                    raise ValueError("chunk_tokens cannot fit one source character")
-            value = text[start:end]
+    for group_start, stop in groups:
+        # These pinned SentenceSplitter hooks expose the lossless atomic splits.
+        # Follow their lengths and overlap budget, never find() repeated text.
+        parts = splitter._split(text[group_start:stop], max_tokens)
+        boundaries = [group_start]
+        for part in parts:
+            boundaries.append(boundaries[-1] + len(part.text))
+        start = group_start
+        for value in splitter._merge(parts, max_tokens):
+            end = start + len(value)
+            if value != text[start:end]:
+                raise ValueError("SentenceSplitter changed source text")
+            if len(tokenizer(value, add_special_tokens=True)["input_ids"]) > max_tokens:
+                raise ValueError("SentenceSplitter chunk exceeds chunk_tokens")
             spans = []
             for block in blocks:
                 left, right = max(start, block.source.char_start), min(end, block.source.char_end)
@@ -180,19 +188,19 @@ def chunk_markdown(text: str, blocks: list[ParsedBlock], tokenizer, doc_id: str,
                               "line_end": bisect_right(line_starts, right - 1)}
                              if block.source.format == "markdown" else {})
                     spans.append(replace(block.source, char_start=left, char_end=right, **lines))
-            ordinal = len(chunks)
-            chunks.append(Chunk(fingerprint([doc_id, generation_id, ordinal]), doc_id,
-                                generation_id, ordinal, value, spans))
+            if value.strip():
+                ordinal = len(chunks)
+                chunks.append(Chunk(fingerprint([doc_id, generation_id, ordinal]), doc_id,
+                                    generation_id, ordinal, value, spans))
             if end == stop:
                 break
-            emitted = tokenizer(value, add_special_tokens=False,
-                                return_offsets_mapping=True)["offset_mapping"]
-            # Do not repeat a partial multi-token character beyond the overlap budget.
-            next_start = end
-            if overlap and len(emitted) > overlap:
-                boundary = emitted[-overlap][0]
-                next_start = start + next((a for a, _ in emitted[-overlap:] if a > boundary), len(value))
-                if boundary > 0 and all(a < boundary for a, _ in emitted[:-overlap]):
-                    next_start = start + boundary
-            start = next_start
+            first, following = bisect_left(boundaries, start), bisect_left(boundaries, end)
+            retained, index = 0, following
+            # Match 0.14.24's whole-split overlap, including making room for the
+            # next sentence. This is position bookkeeping; LlamaIndex owns splits.
+            budget = min(overlap, max_tokens - parts[following].token_size)
+            while index > first and retained + parts[index - 1].token_size <= budget:
+                index -= 1
+                retained += parts[index].token_size
+            start = boundaries[index]
     return chunks

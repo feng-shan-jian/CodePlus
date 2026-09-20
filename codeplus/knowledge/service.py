@@ -96,7 +96,7 @@ class KnowledgeService:
                 self._runtime.close()
 
     @contextmanager
-    def _locked(self, kb_id: str, *, operational=True, ready=True):
+    def _locked(self, kb_id: str, *, operational=True, ready=True, importing=False):
         from filelock import FileLock
 
         kb = self.metadata.library(kb_id)
@@ -104,8 +104,18 @@ class KnowledgeService:
             kb = self.metadata.library(kb_id)
             if operational:
                 saved_profile = json.loads((self.root / kb_id / "profile.json").read_text(encoding="utf-8"))
-                if kb["profile_hash"] != self.profile_hash or fingerprint(saved_profile) != self.profile_hash:
+                # Existing vectors are readable with the same embedding contract.
+                # Only the known previous chunker is compatible; keep every other
+                # profile check, and keep the collection bound to its saved hash.
+                compatible = dict(saved_profile)
+                if compatible.get("chunking") == "structure-offsets-v1":
+                    compatible["chunking"] = self.profile["chunking"]
+                if (fingerprint(saved_profile) != kb["profile_hash"]
+                        or compatible != self.profile):
                     raise ValueError("Knowledge profile mismatch; use the bound configuration or create a separate base")
+                if importing and saved_profile != self.profile:
+                    raise ValueError("Knowledge chunking upgrade requires a separate base: create a new base, "
+                                     "import all source documents, then use its ID; keep the old base for historical citations")
                 if ready and kb["state"] != "READY":
                     raise ValueError(f"Knowledge base is {kb['state']}; retry required: {kb['error'] or 'unfinished operation'}")
             yield kb
@@ -153,7 +163,7 @@ class KnowledgeService:
         data, content_hash = read_source(source)
         doc_id = fingerprint([kb_id, source_uri])
         # Reject a duplicate before loading the tokenizer/model or writing preparation files.
-        with self._locked(kb_id):
+        with self._locked(kb_id, importing=True):
             previous = self.metadata.document(doc_id)
             if previous and not previous["removed"] and previous["content_hash"] == content_hash:
                 return {**previous, "unchanged": True}
@@ -182,7 +192,7 @@ class KnowledgeService:
                            "rows": rows}, stream, ensure_ascii=False, allow_nan=False)
                 stream.flush()
                 os.fsync(stream.fileno())
-            with self._locked(kb_id) as kb:
+            with self._locked(kb_id, importing=True) as kb:
                 existing = self.metadata.document(doc_id)
                 if existing and not existing["removed"] and existing["content_hash"] == content_hash:
                     return {**existing, "unchanged": True}
@@ -317,4 +327,4 @@ class KnowledgeService:
                                           [SourceSpan(**span) for span in json.loads(row["source_spans"])],
                                           float(match["distance"])))
             return SearchResult(query, kb_id, kb["revision"],
-                                {"top_k": top_k, "index": "FLAT", "metric": "COSINE", "profile_hash": self.profile_hash}, hits)
+                                {"top_k": top_k, "index": "FLAT", "metric": "COSINE", "profile_hash": kb["profile_hash"]}, hits)

@@ -73,6 +73,90 @@ def service(tmp_path):
     service.close()
 
 
+@pytest.mark.parametrize("body", [
+    "中文句子必须保持完整，不能从中间截断。" * 90,
+    ("重复段落相同。\r\n\r\n" * 100) + "最后一段。\r\n",
+    "𠮷" * 1200 + "。\r\n没有标点的超长句也不能丢字。",
+    ("短句。" * 20 + "长" * 480 + "。\r\n") * 3,
+])
+def test_sentence_chunks_preserve_text_positions_and_token_budget(body):
+    from codeplus.knowledge.documents import chunk_markdown, parse_markdown
+
+    def tokenizer(value, add_special_tokens=True):
+        # Multi-token Unicode character plus two special tokens; no decode path.
+        return {"input_ids": [0] * (sum(2 if c == "𠮷" else 1 for c in value)
+                                    + (2 if add_special_tokens else 0))}
+
+    text = "# 第一节\r\n\r\n" + body + "\r\n# 第二节\r\n\r\n正文。\r\n"
+    chunks = chunk_markdown(text, parse_markdown(text), tokenizer, "doc", "gen", 512, 64)
+    assert len(chunks) > 2
+    covered = set()
+    previous_end = 0
+    for chunk in chunks:
+        start, end = chunk.source_spans[0].char_start, chunk.source_spans[-1].char_end
+        assert chunk.text == text[start:end]
+        assert end > previous_end  # Repeated paragraphs must advance to new occurrences.
+        assert not text[previous_end:start].strip()
+        assert len(tokenizer(chunk.text)["input_ids"]) <= 512
+        assert len({tuple(s.heading_path) for s in chunk.source_spans}) == 1
+        for span in chunk.source_spans:
+            assert span.line_start == text[:span.char_start].count("\n") + 1
+            assert span.line_end == text[:span.char_end - 1].count("\n") + 1
+            covered.update(range(span.char_start, span.char_end))
+        if body.startswith("中文"):
+            assert chunk.text.rstrip().endswith("。")
+        previous_end = end
+    assert all(c.isspace() or i in covered for i, c in enumerate(text))
+    assert not text[previous_end:].strip()
+    assert any(a.source_spans[-1].char_end > b.source_spans[0].char_start
+               for a, b in zip(chunks, chunks[1:]))
+
+
+def test_previous_chunk_profile_reads_history_but_requires_new_base_for_import(service, tmp_path):
+    from codeplus.knowledge.models import fingerprint
+
+    # Short chunks are identical in v1 and v2; persist real v1 profile/generation IDs.
+    service.profile["chunking"] = "structure-offsets-v1"
+    service.profile_hash = fingerprint(service.profile)
+    kb = service.create("previous chunker")["id"]
+    source = tmp_path / "old.md"
+    source.write_bytes("历史内容。\r\n".encode())
+    old = service.import_document(kb, source)
+    historical = service.search(kb, "历史").hits[0]
+    source.write_bytes("当前内容。\r\n".encode())
+    service.import_document(kb, source)
+    before = service.status(kb)
+    reopened = KnowledgeService(service.config)
+    reopened.embedding, reopened._store = TinyEmbedding(), service.store
+    result = reopened.search(kb, "当前")
+    assert result.hits[0].text == "当前内容。\r\n"
+    assert result.retrieval["profile_hash"] == before["profile_hash"] != reopened.profile_hash
+    assert reopened.source(kb, historical.chunk_id)["source_status"] == "historical"
+    assert Path(reopened.source_context(kb, historical.chunk_id)[0]["original_path"]).read_bytes() == "历史内容。\r\n".encode()
+    with pytest.raises(ValueError, match="create a new base"):
+        reopened.import_document(kb, source)
+    assert reopened.status(kb) == before and not reopened.embedding.loaded
+    new_kb = reopened.create("new chunker")["id"]
+    source.write_bytes("历史内容。\r\n".encode())
+    new = reopened.import_document(new_kb, source)
+    assert new["generation_id"] != old["generation_id"]
+    # Normalization must not waive any other profile mismatch or accept corruption.
+    saved_path = reopened.root / kb / "profile.json"
+    saved = json.loads(saved_path.read_text(encoding="utf-8"))
+    for key, value in (("revision", "other-model"), ("chunking", "unknown-algorithm")):
+        changed = {**saved, key: value}
+        saved_path.write_text(json.dumps(changed), encoding="utf-8")
+        with reopened.metadata.connect() as db:
+            db.execute("UPDATE knowledge_bases SET profile_hash=? WHERE id=?", (fingerprint(changed), kb))
+        with pytest.raises(ValueError, match="profile mismatch"):
+            reopened.search(kb, "test")
+    saved_path.write_text(json.dumps(saved), encoding="utf-8")
+    with pytest.raises(ValueError, match="profile mismatch"):
+        reopened.search(kb, "test")
+    assert reopened.source(kb, historical.chunk_id)["text"] == "历史内容。\r\n"
+    reopened.close()
+
+
 @pytest.mark.asyncio
 async def test_turn_citations_history_and_reports(service, tmp_path, monkeypatch):
     from codeplus.knowledge.citations import KnowledgeContext
@@ -722,8 +806,14 @@ def test_import_identity_sources_and_preparation_failure(service, tmp_path, monk
     assert service.status(empty)["revision"] == 0
 
 
-@pytest.mark.parametrize("failure", ["upsert", "verify", "metadata"])
-def test_failed_commit_retains_pending_and_blocks_search(service, tmp_path, monkeypatch, failure):
+@pytest.mark.parametrize("failure,legacy", [("upsert", False), ("verify", False),
+                                          ("metadata", False), ("upsert", True)])
+def test_failed_commit_retains_pending_and_blocks_search(service, tmp_path, monkeypatch, failure, legacy):
+    if legacy:
+        from codeplus.knowledge.models import fingerprint
+
+        service.profile["chunking"] = "structure-offsets-v1"
+        service.profile_hash = fingerprint(service.profile)
     kb = service.create("failure")["id"]
     source = tmp_path / "document.md"
     source.write_text("# Long\n\n" + "中文正文 " * 40, encoding="utf-8")

@@ -75,6 +75,22 @@ TUI 与 Remote 把每条回答的引用显示为 `[1]`、`[2]`，附文件名和
 
 off 关闭当前会话知识模式并清空当前回答上下文，历史记录和引用保留；不会删除库。彻底禁用时将配置设为 `knowledge.enabled: false` 并重新启动，普通编码模式不要求 Milvus 或模型依赖。
 
+### 分块升级与旧库重建
+
+安装 `uv sync --locked --extra knowledge` 后，新库使用 SentenceSplitter（512 tokens / 64 tokens 重叠预算，包含特殊 token 的最终片段不得超限）。旧 `structure-offsets-v1` 库仍可查询并打开既有引用；向旧库 import/update/reimport 会提示另建库。已登记的失败写入仍可 `retry` 原材料，remove 也仍可用，均不引入新分块。
+
+在 `/knowledge` 中执行 `create "资料库 SentenceSplitter"`，再 `import "C:\资料目录"` 导入全部原件，核对 sources/status 与引用后用 `use <新库ID>` 切换会话。CLI 对应 `python -m codeplus.knowledge create "资料库 SentenceSplitter"` 和逐文件 `python -m codeplus.knowledge import <新库ID> <原件路径>`。保留旧库，旧报告中的 `K:<旧库ID>:<chunk_id>` 继续指向旧代；不要手改旧 profile、覆盖原件或删除旧库目录。原来源路径丢失时，可从旧库 status 的 `original_path` 取保存原件导入新库。
+
+评测重建使用冻结数据集 corpus 原件和独立新库，将新 ID 通过 `benchmark --kb-id <新库ID>` 传入；无需修改现有 binding.json、问题、参考答案、解析文本或历史结果。
+
+本次实现者实测（2026-09-20，leader 已验收通过）：Python 3.14.3 安装及 `uv lock --check` 通过；知识库相关回归 47 passed / 4 skipped。独立新库用真实 Qwen/Milvus 导入冻结 31 份资料，789 → 742 个片段，含特殊 token 的最大长度 509；导入耗时 989.18 秒，环境准备另计 57.68 秒。原基线未记录可比导入耗时，不作加速结论。
+
+原 benchmark 全部 32 题零查询错误；单轮找齐题数 20/25 → 20/25，指定证据覆盖 27/34 → 28/34；追问均为 1/3。仅 Q28 从 0/2 改善到 1/2，无证据覆盖退步题；Q28 仍未找齐全部依据。4 道无答案题不自动判拒答通过，这些指标不是回答正确率。原库真实检索及基线 112 个不同引用可用，新结果的 108 个不同引用经应用 preview 入口核对；原库状态、32 个原库文件与 76 个既有评测文件核对未变。详细对照与逐文件耗时位于本机 `.codeplus/benchmarks/workbin-v1/runs/sentence_upgrade_20260920T111625Z/`，原 benchmark 新报告位于 `runs/20260920T113421Z_eec171/`。未执行回答模型或桌面点击验收，4 个独立 opt-in 测试的 skipped 不计为通过。
+
+Leader 独立复核：上述 47/4 回归与锁文件检查结果一致；两份报告重算、实现源码指纹及 108 个保全文件指纹均一致。核对全部 742 个新片段的真实 token 长度与来源范围，另验 9 组真实 tokenizer 边界样例，并对新旧库各执行一次真实查询与来源读取；均通过。本轮未重复完整导入、回答模型或桌面点击验收。
+
+Leader 临时核验脚本已删除；系统临时目录 `C:\Users\18221\AppData\Local\Temp\codeplus-leader-sentence-review-20260920` 的清理被自动审批拒绝（未提供具体原因），暂保留，不纳入提交。
+
 ### 4. 非交互 CLI 与 Remote
 
 在含上述完整配置的项目目录执行，将 `$kbId` 换成 create 返回的 ID：
@@ -115,7 +131,7 @@ uv run --extra knowledge python -m codeplus.knowledge evaluate --replay '<上次
 
 ### 范围限制
 
-支持 Markdown 行号、文本型 PDF 物理页码、DOCX 正文段落/表格行列。扫描 PDF 无 OCR，旧 `.doc` 不支持；复杂 PDF 版面、Word 页码、页眉页脚/批注/嵌套表格不在承诺范围。退出后后台导入服务、自动历史清理、多用户权限未实现。精排、模型/分块对照本轮未实现；改变配置不等于已验证其他模型。
+支持 Markdown 行号、文本型 PDF 物理页码、DOCX 正文段落/表格行列。扫描 PDF 无 OCR，旧 `.doc` 不支持；复杂 PDF 版面、Word 页码、页眉页脚/批注/嵌套表格不在承诺范围。退出后后台导入服务、自动历史清理、多用户权限未实现。精排与模型对照未实现；本次仅升级 SentenceSplitter 分块，未接入 Unstructured，改变配置不等于已验证其他模型。
 
 ## 分阶段实测记录
 

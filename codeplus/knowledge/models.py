@@ -22,7 +22,7 @@ def profile(config: KnowledgeConfig) -> dict:
         "tokenizer": [config.embedding_model, config.embedding_revision],
         "document_template": "raw", "query_template": f"Instruct: {QUERY_INSTRUCTION}\nQuery:{{query}}",
         "encoding": "cpu/float32/left-padding/last-token/l2-v1",
-        "parsing": "markdown-it-4/lines-v1", "chunking": "structure-offsets-v1",
+        "parsing": "markdown-it-4/lines-v1", "chunking": "sentence-offsets-v2/llama-index-0.14.24",
         "chunk_tokens": config.chunk_tokens, "chunk_overlap": config.chunk_overlap,
     }
 

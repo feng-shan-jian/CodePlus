@@ -35,7 +35,7 @@ codeplus/knowledge/
   __main__.py      独立管理/检索命令
   models.py        配置与数据结构
   metadata.py      SQLite 登记信息
-  documents.py     原件复制、格式解析、结构分块与来源范围
+  documents.py     原件复制、格式解析、句子分块与来源范围
   embedding.py     本地模型
   milvus_store.py  官方 SDK 适配
   service.py       导入、检索、更新和状态保护
@@ -66,6 +66,8 @@ S3 schema 2 在现有三张表加列，从 S2 documents 回填 chunks.original_p
 ## 4. Milvus 集合规则
 
 一个知识库使用一个稳定集合，并绑定明确的 Embedding、解析和分块配置。更换模型或分块配置时先创建单独实验集合；不能向原集合混写不兼容向量。即使维度相同，也要核对模型 revision 与输入模板。
+
+`sentence-offsets-v2/llama-index-0.14.24` 替代 `structure-offsets-v1`，自动参与 generation 指纹。旧库除已知旧分块标识外，仍须逐项匹配完整 profile，并验证落盘 profile 与库/集合保存的哈希一致；检索返回旧库的真实 profile_hash。旧库可检索、读取历史引用、移除和重放已登记的 pending 材料，但新导入必须另建库；不原地修改 profile 或重算历史 chunks。
 
 首期集合字段为：
 
@@ -102,7 +104,9 @@ Milvus 的记录更新能力依据 [Upsert 文档](https://milvus.io/docs/upsert
 - Markdown：标题、段落和行号。
 - 文本型 PDF：页码和块范围；扫描件、空文本、加密或损坏文件明确提示。
 - DOCX：标题、段落、表格行列；页码不作为首版定位承诺。
-- 分块：结构优先，超长块再按固定 tokenizer 拆分；初始候选 512 tokens、重叠 64 tokens，均可调。
+- 分块：标题划定章节，章节内复用固定 `llama-index-core==0.14.24` 的 SentenceSplitter，接入同一 Qwen tokenizer，默认上限 512 tokens、重叠预算 64 tokens。中英文句末识别保留原文；长句仍可能按分句、空格或字符拆开。重叠按完整拆分单元保留，必要时减少以容纳下一句，不保证每块恰好重叠 64 tokens。
+
+SentenceSplitter 默认剥离空白，且文本查找无法可靠定位重复段落。本实现仅在分块函数内部保留其 `_split`/`_merge` 和 `_postprocess_chunks` 接点，关闭剥离，按原子拆分长度与同一重叠预算累计 Unicode 字符位置，再投影既有 SourceSpan；不解码 token、不重写或补造原文。固定版本升级时必须重验这些接点。分块与最终片段均计入特殊 token，最终超限直接拒绝导入，不静默截断。依赖延迟至真正分块时导入；Markdown/PDF/DOCX 解析器、Embedding、Milvus 和 Agent 契约不变。接口依据：[官方 SentenceSplitter 源码（v0.14.24）](https://github.com/run-llama/llama_index/blob/v0.14.24/llama-index-core/llama_index/core/node_parser/text/sentence.py)。
 - Embedding：查询与文档分别按模型输入约定编码；校验维度、有限数值、模型版本和输入是否被截断。
 - 答案：首轮读取知识库证据；检索失败、没有命中和证据不足分别表示，不能拿用户记忆当文档依据。
 - 引用：程序检查来源是否存在、是否在本轮提供的证据中。是否支持结论另做人工评测。

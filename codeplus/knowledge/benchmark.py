@@ -90,9 +90,10 @@ def run(config, args):
                 raise ValueError("Knowledge base must contain exactly the dataset's ready source versions")
             by_doc = {d["id"]: by_hash[d["content_hash"]] for d in documents}
             service.prepare()
-            report.update(kb_id=before["id"], kb_revision=before["revision"], profile=service.profile,
+            saved_profile = json.loads((service.root / before["id"] / "profile.json").read_text(encoding="utf-8"))
+            report.update(kb_id=before["id"], kb_revision=before["revision"], profile=saved_profile,
                           milvus_version=service.store.check_health(),
-                          dependencies={name: version(name) for name in ("pymilvus", "torch", "transformers", "pypdf", "python-docx")})
+                          dependencies={name: version(name) for name in ("pymilvus", "torch", "transformers", "pypdf", "python-docx", "llama-index-core")})
             for q in questions:
                 start = perf_counter()
                 record = {"id": q["id"], "query": q["query"], "status": "ok", "hits": []}
