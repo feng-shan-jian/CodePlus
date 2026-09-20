@@ -1,5 +1,6 @@
-"""The fixed dense schema and full-row writes; no alternative backend layer."""
+"""Profile-bound daily schemas and full-row writes; no alternative backend layer."""
 
+import json
 import math
 
 from .retrieval import BM25_INDEX_PARAMS
@@ -34,19 +35,84 @@ class MilvusStore:
                                          output_field_names=["sparse"], function_type=FunctionType.BM25))
         return schema
 
-    def ensure_collection(self, name: str, profile_hash: str, dimension: int, *, create=False):
+    def ensure_collection(self, name: str, profile_hash: str, dimension: int, *, create=False, indexing=None):
+        # An absent indexing contract is the original dense-only schema.
+        schema = self._schema(f"codeplus:{profile_hash}", dimension,
+                              indexing["analyzer"] if indexing is not None else None)
         if create and not self.client.has_collection(name):
-            schema = self._schema(f"codeplus:{profile_hash}", dimension)
             self.client.create_collection(name, schema=schema, consistency_level="Strong")
-        description = self.client.describe_collection(name)
-        dense = next(field for field in description["fields"] if field["name"] == "dense")
-        if description["description"] != f"codeplus:{profile_hash}" or int(dense["params"]["dim"]) != dimension:
-            raise ValueError("Milvus collection profile mismatch; create a separate knowledge base")
-        if create and not self.client.list_indexes(name, field_name="dense"):
-            index = self.client.prepare_index_params()
-            index.add_index("dense", index_type="FLAT", metric_type="COSINE")
-            self.client.create_index(name, index)
+        self._validate_schema(self.client.describe_collection(name), schema.to_dict())
+        expected = ({field: indexing[field] for field in ("dense", "sparse")} if indexing is not None else
+                    {"dense": {"index_type": "FLAT", "metric_type": "COSINE", "params": {}}})
+        existing = self._validate_indexes(name, expected, allow_missing=create)
+        for field, spec in expected.items():
+            if existing.get(field) != "Finished":
+                index = self.client.prepare_index_params()
+                index.add_index(field, **spec)
+                self.client.create_index(name, index)
+        # Both indexes must be complete before the service can commit READY.
+        if create:
+            self._validate_indexes(name, expected)
         self.client.load_collection(name)
+
+    @staticmethod
+    def _validate_schema(actual, expected):
+        def fields(schema):
+            result = []
+            for field in schema["fields"]:
+                params = dict(field.get("params", {}))
+                # PyMilvus returns analyzer JSON and enable_analyzer as strings.
+                for key in ("analyzer_params", "enable_analyzer"):
+                    if isinstance(params.get(key), str):
+                        params[key] = json.loads(params[key])
+                result.append({
+                    "name": field["name"], "type": field["type"], "params": params,
+                    "default_value": field.get("default_value"),
+                    "external_field": field.get("external_field", ""),
+                    **{key: field.get(key, False) for key in
+                       ("is_primary", "auto_id", "nullable", "is_partition_key", "is_clustering_key",
+                        "is_dynamic", "is_function_output")},
+                })
+            return sorted(result, key=lambda field: field["name"])
+
+        def functions(schema):
+            return sorted([{
+                "name": fn["name"], "type": fn["type"], "params": fn.get("params", {}),
+                "input_field_names": list(fn["input_field_names"]),
+                "output_field_names": list(fn["output_field_names"]),
+            } for fn in schema.get("functions", [])], key=lambda fn: fn["name"])
+
+        if (actual["description"] != expected["description"]
+                or any(actual.get(key, False) != expected.get(key, False) for key in
+                       ("auto_id", "enable_dynamic_field", "enable_namespace"))
+                or actual.get("struct_array_fields") or actual.get("external_source")
+                or fields(actual) != fields(expected) or functions(actual) != functions(expected)):
+            raise ValueError("Milvus collection profile mismatch; fields/functions differ from the bound profile")
+
+    def _validate_indexes(self, name, expected, *, allow_missing=False):
+        found = {}
+        for index_name in self.client.list_indexes(name):
+            actual = self.client.describe_index(name, index_name)
+            field = actual["field_name"]
+            spec = expected.get(field)
+            # SDK 3.0.2 describes build parameters as flattened strings; older
+            # responses can carry a nested params object. Ignore only SDK metadata.
+            params = dict(actual.get("params", {}))
+            params.update({key: value for key, value in actual.items() if key not in
+                           {"params", "field_name", "index_name", "index_type", "metric_type", "state",
+                            "total_rows", "indexed_rows", "pending_index_rows"}})
+            for key in ("bm25_k1", "bm25_b"):
+                if key in params:
+                    params[key] = float(params[key])
+            if (spec is None or field in found
+                    or any(actual.get(key) != spec[key] for key in ("index_type", "metric_type"))
+                    or params != spec["params"]
+                    or actual.get("state") not in (("Finished", "Unissued", "InProgress") if allow_missing else ("Finished",))):
+                raise ValueError(f"Milvus collection profile mismatch; index {index_name} differs from the bound profile")
+            found[field] = actual["state"]
+        if not allow_missing and found.keys() != expected.keys():
+            raise ValueError("Milvus collection profile mismatch; required index is missing")
+        return found
 
     def create_experiment(self, name, profile_hash, dimension, rows, *, index_type, build_params, analyzer=None):
         """Fresh experiment only. Never mutate or bind an existing daily collection."""

@@ -2,6 +2,7 @@
 
 import math
 import os
+from copy import deepcopy
 from pathlib import Path
 import subprocess
 import sys
@@ -9,6 +10,121 @@ import time
 import uuid
 
 import pytest
+
+
+def test_index_profile_is_immutable_and_excludes_query_controls():
+    from dataclasses import replace
+    from codeplus.config import KnowledgeConfig
+    from codeplus.knowledge.models import profile
+    from codeplus.knowledge.retrieval import ANALYZER, BM25_INDEX_PARAMS
+
+    config = KnowledgeConfig()
+    original = profile(config)
+    assert profile(replace(config, retrieval_mode="bm25", retrieval_candidates=3, rrf_k=20, top_k=2)) == original
+    changed = profile(config)
+    changed["indexing"]["analyzer"]["tokenizer"]["mode"] = "changed"
+    changed["indexing"]["sparse"]["params"]["bm25_b"] = 0.5
+    assert original["indexing"]["analyzer"] == ANALYZER == profile(config)["indexing"]["analyzer"]
+    assert original["indexing"]["sparse"]["params"] == BM25_INDEX_PARAMS
+
+
+@pytest.fixture
+def schema_store():
+    sdk = pytest.importorskip("pymilvus")
+    from codeplus.knowledge.milvus_store import MilvusStore
+
+    class SchemaClient:
+        create_schema = staticmethod(sdk.MilvusClient.create_schema)
+        prepare_index_params = staticmethod(sdk.MilvusClient.prepare_index_params)
+
+        def __init__(self):
+            self.schema = None
+            self.indexes = {}
+            self.loaded = False
+
+        def has_collection(self, name):
+            return self.schema is not None
+
+        def create_collection(self, name, *, schema, consistency_level):
+            assert consistency_level == "Strong"
+            self.schema = schema.to_dict()
+
+        def describe_collection(self, name):
+            return deepcopy(self.schema)
+
+        def list_indexes(self, name):
+            return list(self.indexes)
+
+        def describe_index(self, name, index):
+            return deepcopy(self.indexes[index])
+
+        def create_index(self, name, indexes):
+            for index in indexes:
+                spec = index.to_dict()
+                for key in ("bm25_k1", "bm25_b"):
+                    if key in spec:
+                        spec[key] = str(spec[key])
+                self.indexes[spec["field_name"]] = {**spec, "state": "Finished"}
+
+        def load_collection(self, name):
+            self.loaded = True
+
+    store = MilvusStore.__new__(MilvusStore)
+    store.client = SchemaClient()
+    return store
+
+
+@pytest.mark.parametrize("legacy", [False, True])
+def test_collection_validates_complete_contract(schema_store, legacy):
+    from codeplus.config import KnowledgeConfig
+    from codeplus.knowledge.models import profile
+
+    store = schema_store
+    indexing = None if legacy else profile(KnowledgeConfig())["indexing"]
+    store.ensure_collection("test", "hash", 3, create=True, indexing=indexing)
+    original_schema, original_indexes = deepcopy(store.client.schema), deepcopy(store.client.indexes)
+    # Each independent alteration must fail even though dense dimensions/hash and sparse presence still match.
+    mutations = [
+        lambda s, i: s.update(enable_dynamic_field=True),
+        lambda s, i: s["fields"][0].update(is_primary=False),
+        lambda s, i: s["fields"][1].update(type=5),
+        lambda s, i: s["fields"][2].update(nullable=True),
+        lambda s, i: s["fields"][3]["params"].update(max_length=100),
+        lambda s, i: s["fields"][4]["params"].update(dim=4),
+        lambda s, i: s["fields"].pop(1),
+        lambda s, i: i["dense"].update(metric_type="IP"),
+        lambda s, i: i["dense"].update(index_type="HNSW"),
+        lambda s, i: i["dense"].update(state="InProgress"),
+        lambda s, i: i.pop("dense"),
+    ]
+    if not legacy:
+        mutations.extend([
+            lambda s, i: s["fields"][3]["params"].update(enable_analyzer=False),
+            lambda s, i: s["fields"][3]["params"].update(analyzer_params='{"tokenizer":"standard"}'),
+            lambda s, i: s["fields"][5].update(type=101),
+            lambda s, i: s["functions"].clear(),
+            lambda s, i: s["functions"][0].update(type=0),
+            lambda s, i: s["functions"][0].update(input_field_names=["doc_id"]),
+            lambda s, i: s["functions"][0].update(output_field_names=["dense"]),
+            lambda s, i: s["functions"][0].update(params={"unexpected": "value"}),
+            lambda s, i: i["sparse"].update(bm25_k1="1.8"),
+            lambda s, i: i["sparse"].update(bm25_b="0.5"),
+            lambda s, i: i["sparse"].update(inverted_index_algo="DAAT_WAND"),
+            lambda s, i: i.pop("sparse"),
+        ])
+    for mutate in mutations:
+        store.client.schema, store.client.indexes = deepcopy(original_schema), deepcopy(original_indexes)
+        mutate(store.client.schema, store.client.indexes)
+        store.client.loaded = False
+        with pytest.raises(ValueError, match="profile mismatch"):
+            store.ensure_collection("test", "hash", 3, indexing=indexing)
+        assert not store.client.loaded
+    store.client.schema, store.client.indexes = original_schema, original_indexes
+    store.ensure_collection("test", "hash", 3, indexing=indexing)
+    # Interrupted asynchronous creation is awaited again by the SDK create_index call.
+    store.client.indexes["dense"]["state"] = "InProgress"
+    store.ensure_collection("test", "hash", 3, create=True, indexing=indexing)
+    assert store.client.indexes["dense"]["state"] == "Finished"
 
 
 def test_disabled_knowledge_has_no_optional_imports_or_network(tmp_path):

@@ -1,11 +1,13 @@
 """Persisted identities and the small retrieval contract shared by the CLI and service."""
 
+from copy import deepcopy
 from dataclasses import dataclass
 from hashlib import sha256
 import json
 
 from codeplus.config import KnowledgeConfig
 from . import QUERY_INSTRUCTION
+from .retrieval import ANALYZER, BM25_INDEX_PARAMS
 
 
 def fingerprint(value) -> str:
@@ -24,6 +26,12 @@ def profile(config: KnowledgeConfig) -> dict:
         "encoding": "cpu/float32/left-padding/last-token/l2-v1",
         "parsing": "markdown-it-4/lines-v1", "chunking": "sentence-offsets-v2/llama-index-0.14.24",
         "chunk_tokens": config.chunk_tokens, "chunk_overlap": config.chunk_overlap,
+        "indexing": {
+            "version": "dense-bm25-v1", "analyzer": deepcopy(ANALYZER),
+            "dense": {"index_type": "FLAT", "metric_type": "COSINE", "params": {}},
+            "sparse": {"index_type": "SPARSE_INVERTED_INDEX", "metric_type": "BM25",
+                       "params": BM25_INDEX_PARAMS.copy()},
+        },
     }
 
 

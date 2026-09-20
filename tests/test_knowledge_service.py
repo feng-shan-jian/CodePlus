@@ -1,5 +1,6 @@
 """State/identity regressions use real SQLite and OS locks; SDK checks are opt-in."""
 
+from copy import deepcopy
 from dataclasses import asdict, replace
 from datetime import datetime, timedelta, timezone
 import json
@@ -15,6 +16,7 @@ import pytest
 
 from codeplus.config import KnowledgeConfig
 from codeplus.knowledge.metadata import Metadata
+from codeplus.knowledge.models import fingerprint, profile
 from codeplus.knowledge.service import KnowledgeService
 
 
@@ -39,12 +41,16 @@ class TinyEmbedding:
 class MemoryStore:
     def __init__(self):
         self.rows = {}
+        self.collections = {}
 
     def check_health(self):
         return "test"
 
-    def ensure_collection(self, *args, **kwargs):
-        pass
+    def ensure_collection(self, name, profile_hash, dimension, *, create=False, indexing=None):
+        contract = (profile_hash, dimension, deepcopy(indexing))
+        if create and name not in self.collections:
+            self.collections[name] = contract
+        assert self.collections[name] == contract, "Collection must use its saved profile"
 
     def upsert_chunks(self, name, rows):
         self.rows.update((row["chunk_id"], row) for row in rows)
@@ -116,6 +122,7 @@ def test_previous_chunk_profile_reads_history_but_requires_new_base_for_import(s
     from codeplus.knowledge.models import fingerprint
 
     # Short chunks are identical in v1 and v2; persist real v1 profile/generation IDs.
+    service.profile.pop("indexing")
     service.profile["chunking"] = "structure-offsets-v1"
     service.profile_hash = fingerprint(service.profile)
     kb = service.create("previous chunker")["id"]
@@ -806,15 +813,74 @@ def test_import_identity_sources_and_preparation_failure(service, tmp_path, monk
     assert service.status(empty)["revision"] == 0
 
 
-@pytest.mark.parametrize("failure,legacy", [("upsert", False), ("verify", False),
-                                          ("metadata", False), ("upsert", True)])
+def test_legacy_dense_writes_keep_profile_and_generation(service, tmp_path):
+    service.profile.pop("indexing")
+    service.profile_hash = fingerprint(service.profile)
+    saved_profile = deepcopy(service.profile)
+    kb = service.create("legacy dense")["id"]
+    reopened = KnowledgeService(service.config)
+    reopened.embedding, reopened._store = TinyEmbedding(), service.store
+    source = tmp_path / "legacy.md"
+    source.write_text("Original contents.", encoding="utf-8")
+    original = reopened.import_document(kb, source)
+    hit = reopened.search(kb, "contents").hits[0]
+    assert reopened.import_document(kb, source)["unchanged"]
+    hybrid = reopened.create("hybrid")["id"]
+    same = reopened.import_document(hybrid, source)
+    assert same["generation_id"] == original["generation_id"]
+    source.write_text("Updated contents.", encoding="utf-8")
+    changed = reopened.import_document(kb, source)
+    assert changed["generation_id"] != original["generation_id"]
+    assert reopened.source(kb, hit.chunk_id)["source_status"] == "historical"
+    assert reopened.remove(kb, original["id"])["removed"]
+    assert reopened.retry(kb)["unchanged"]
+    assert reopened.status(kb)["revision"] == 3
+    assert reopened.status(kb)["profile_hash"] == fingerprint(saved_profile)
+    assert json.loads((reopened.root / kb / "profile.json").read_text(encoding="utf-8")) == saved_profile
+    assert service.store.collections[reopened.status(kb)["collection_name"]][2] is None
+    assert service.store.collections[reopened.status(hybrid)["collection_name"]][2] == reopened.profile["indexing"]
+
+
+@pytest.mark.parametrize("change", ["version", "analyzer", "index", "partial", "null", "chunker", "hash"])
+def test_unknown_or_corrupt_index_profiles_are_rejected(service, change):
+    kb = service.create("invalid profile")["id"]
+    saved = deepcopy(service.profile)
+    if change == "version":
+        saved["indexing"]["version"] = "unknown"
+    elif change == "analyzer":
+        saved["indexing"]["analyzer"]["tokenizer"]["hmm"] = True
+    elif change == "index":
+        saved["indexing"]["sparse"]["params"]["bm25_b"] = 0.5
+    elif change == "partial":
+        del saved["indexing"]["dense"]
+    elif change == "null":
+        saved["indexing"] = None
+    elif change == "chunker":
+        saved["chunking"] = "structure-offsets-v1"  # Never a known hybrid profile.
+    else:
+        saved.pop("indexing")  # Otherwise valid legacy shape with a mismatched saved hash.
+    (service.root / kb / "profile.json").write_text(json.dumps(saved), encoding="utf-8")
+    if change != "hash":
+        with service.metadata.connect() as db:
+            db.execute("UPDATE knowledge_bases SET profile_hash=? WHERE id=?", (fingerprint(saved), kb))
+    with pytest.raises(ValueError, match="profile mismatch"):
+        service.retry(kb)
+
+
+@pytest.mark.parametrize("failure,legacy", [("upsert", None), ("verify", None),
+                                          ("metadata", None), ("upsert", "dense"), ("upsert", "structure")])
 def test_failed_commit_retains_pending_and_blocks_search(service, tmp_path, monkeypatch, failure, legacy):
     if legacy:
-        from codeplus.knowledge.models import fingerprint
-
-        service.profile["chunking"] = "structure-offsets-v1"
+        service.profile.pop("indexing")
+        if legacy == "structure":
+            service.profile["chunking"] = "structure-offsets-v1"
         service.profile_hash = fingerprint(service.profile)
+    bound_profile = deepcopy(service.profile)
     kb = service.create("failure")["id"]
+    if legacy == "dense":
+        # An upgraded service still writes the original dense library's profile.
+        service.profile = profile(service.config)
+        service.profile_hash = fingerprint(service.profile)
     source = tmp_path / "document.md"
     source.write_text("# Long\n\n" + "中文正文 " * 40, encoding="utf-8")
     def fail(*args):
@@ -836,6 +902,8 @@ def test_failed_commit_retains_pending_and_blocks_search(service, tmp_path, monk
     assert document["updated_at"] is None
     assert document["pending_operation"] == "import"
     pending = json.loads(Path(document["pending_path"]).read_text(encoding="utf-8"))
+    assert pending["profile"] == bound_profile
+    assert fingerprint(pending["profile"]) == state["profile_hash"]
     assert pending["document"]["content_hash"] == document["content_hash"]
     assert len(pending["chunks"]) == len(pending["rows"]) > 1
     with pytest.raises(ValueError, match="NEEDS_REPAIR"):
@@ -855,11 +923,23 @@ def test_failed_commit_retains_pending_and_blocks_search(service, tmp_path, monk
             db.execute("DROP TRIGGER fail_second")
     reopened._store = service.store
     reopened.embedding = TinyEmbedding()
+    if failure == "upsert":
+        path = Path(document["pending_path"])
+        corrupt = deepcopy(pending)
+        corrupt["profile"]["revision"] = "different-model"
+        path.write_text(json.dumps(corrupt), encoding="utf-8")
+        with pytest.raises(ValueError, match="registered document/profile"):
+            reopened.retry(kb)
+        assert reopened.status(kb)["revision"] == 0
+        path.write_text(json.dumps(pending), encoding="utf-8")
     assert reopened.retry(kb)["chunk_count"] == len(pending["chunks"])
     assert datetime.fromisoformat(reopened.metadata.document(document["id"])["updated_at"]).tzinfo == timezone.utc
     assert reopened.status(kb)["state"] == "READY" and reopened.status(kb)["revision"] == 1
     assert reopened.retry(kb)["unchanged"]
     assert reopened.search(kb, "test").hits
+    if legacy == "structure":
+        with pytest.raises(ValueError, match="create a new base"):
+            reopened.import_document(kb, source)
 
 
 @pytest.mark.parametrize("version", [1, 2])
@@ -1018,7 +1098,10 @@ def test_process_lock_crash_keeps_import_pending(service, tmp_path):
     command = [sys.executable, "-c", """
 import json, os, sys
 from pathlib import Path
+sys.path.insert(0, str(Path.cwd()))
 sys.path.insert(0, str(Path.cwd() / 'tests'))
+import codeplus
+assert Path(codeplus.__file__).resolve().parent.parent == Path.cwd()
 from test_knowledge_service import TinyEmbedding, MemoryStore
 from codeplus.config import KnowledgeConfig
 from codeplus.knowledge.service import KnowledgeService
@@ -1030,6 +1113,8 @@ class PausedStore(MemoryStore):
         sys.stdin.readline()
         os._exit(0)
 service._store = PausedStore()
+with service._locked(sys.argv[2]) as bound:
+    service._collection(bound, create=True)
 service.import_document(sys.argv[2], sys.argv[3])
 """, json.dumps(asdict(service.config)), kb, str(source), str(marker)]
     writer = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -1042,6 +1127,9 @@ service.import_document(sys.argv[2], sys.argv[3])
         assert service.status(other)["state"] == "READY"
         reader = subprocess.Popen([sys.executable, "-c", """
 import json, sys
+from pathlib import Path
+import codeplus
+assert Path(codeplus.__file__).resolve().parent.parent == Path.cwd()
 from codeplus.config import KnowledgeConfig
 from codeplus.knowledge.service import KnowledgeService
 service = KnowledgeService(KnowledgeConfig(**json.loads(sys.argv[1])))
@@ -1157,7 +1245,8 @@ def test_pdf_docx_locations_and_format_errors(service, tmp_path):
 
 
 @pytest.mark.skipif(not os.getenv("CODEPLUS_TEST_MILVUS_URI"), reason="real Milvus not requested")
-def test_real_store_document_isolation_and_binding(service, tmp_path, monkeypatch):
+@pytest.mark.parametrize("legacy", [False, True], ids=["hybrid", "legacy-dense"])
+def test_real_store_document_isolation_and_binding(service, tmp_path, monkeypatch, legacy):
     from codeplus.knowledge.milvus_store import MilvusStore
     from codeplus.knowledge.models import Chunk
 
@@ -1166,22 +1255,32 @@ def test_real_store_document_isolation_and_binding(service, tmp_path, monkeypatc
         MilvusStore.rows([chunk], [[1.0, 0.0, 0.0]], 3)
     with pytest.raises(ValueError, match="dimension"):
         MilvusStore.rows([replace(chunk, text="small")], [[1.0, 0.0]], 3)
+    if legacy:
+        service.profile.pop("indexing")
+        service.profile_hash = fingerprint(service.profile)
     service._store = MilvusStore(os.environ["CODEPLUS_TEST_MILVUS_URI"])
+    service.config = replace(service.config, milvus_uri=os.environ["CODEPLUS_TEST_MILVUS_URI"])
     kb = None
     try:
-        # The collection really exists without a dense index when creation fails.
+        # Dense creation is interrupted before its index; hybrid between its two indexes.
         with monkeypatch.context() as patch:
+            create_index = service.store.client.create_index
             def fail_index(*args, **kwargs):
-                raise RuntimeError("before index creation")
+                if legacy or service.store.client.list_indexes(args[0]):
+                    raise RuntimeError("before index creation")
+                return create_index(*args, **kwargs)
             patch.setattr(service.store.client, "create_index", fail_index)
             with pytest.raises(RuntimeError, match="before index creation"):
                 service.create("real SDK")
         with service.metadata.connect() as db:
             kb = dict(db.execute("SELECT * FROM knowledge_bases WHERE name='real SDK'").fetchone())
         assert service.store.client.has_collection(kb["collection_name"])
-        assert service.store.client.list_indexes(kb["collection_name"]) == []
+        assert service.store.client.list_indexes(kb["collection_name"]) == ([] if legacy else ["dense"])
+        # The latest service must recover using the collection's saved contract.
+        service.profile = profile(service.config)
+        service.profile_hash = fingerprint(service.profile)
         assert service.retry(kb["id"])["state"] == "READY"
-        assert service.store.client.list_indexes(kb["collection_name"], field_name="dense")
+        assert set(service.store.client.list_indexes(kb["collection_name"])) == ({"dense"} if legacy else {"dense", "sparse"})
         docs = []
         for name in ("first", "second"):
             source = tmp_path / f"{name}.md"
@@ -1191,7 +1290,10 @@ def test_real_store_document_isolation_and_binding(service, tmp_path, monkeypatc
             assert document["chunk_count"] == 1
         hits = service.search(kb["id"], "test").hits
         assert {hit.doc_id for hit in hits} == {doc["id"] for doc in docs}
-        rows = list(service.store.client.query(kb["collection_name"], filter="", limit=10, output_fields=["*"]))
+        if not legacy:
+            assert len(service.store.search_bm25(kb["collection_name"], "passage", 10)) == 2
+        fields = ["chunk_id", "doc_id", "generation_id", "text", "dense"]
+        rows = list(service.store.client.query(kb["collection_name"], filter="", limit=10, output_fields=fields))
         service.store.upsert_chunks(kb["collection_name"], rows)
         for doc in docs:
             service.store.verify_document(kb["collection_name"], doc["id"], [r for r in rows if r["doc_id"] == doc["id"]])
@@ -1203,7 +1305,10 @@ def test_real_store_document_isolation_and_binding(service, tmp_path, monkeypatc
         child.write_text('''
 import json, os, sys
 from pathlib import Path
+sys.path.insert(0, str(Path.cwd()))
 sys.path.insert(0, str(Path.cwd() / 'tests'))
+import codeplus
+assert Path(codeplus.__file__).resolve().parent.parent == Path.cwd()
 from test_knowledge_service import TinyEmbedding
 from codeplus.config import KnowledgeConfig
 from codeplus.knowledge.service import KnowledgeService
@@ -1254,12 +1359,30 @@ else:
             assert state["collection_name"] == kb["collection_name"]
             service.store.verify_document(kb["collection_name"], old["id"], expected)
             actual_b = service.store.client.query(kb["collection_name"], filter="doc_id == {doc_id}",
-                                                  filter_params={"doc_id": docs[1]["id"]}, output_fields=["*"])
+                                                  filter_params={"doc_id": docs[1]["id"]}, output_fields=fields)
             assert list(actual_b) == [r for r in rows if r["doc_id"] == docs[1]["id"]]
+            if not legacy:
+                sparse_hits = service.store.search_bm25(kb["collection_name"], "distinct", 50)
+                assert {h["chunk_id"] for h in sparse_hits} <= {r["chunk_id"] for r in expected}
+                assert bool(sparse_hits) == (phase != "remove")
             assert recovered["removed"] == (phase == "remove")
             assert reopened.retry(kb["id"])["unchanged"]
             print(f"real process exit at {phase}: blocked then READY revision={state['revision']}; B unchanged")
+        if not legacy:
+            # Check the server's actual BM25 parameters, including flattened numeric strings.
+            name = kb["collection_name"]
+            service.store.client.release_collection(name)
+            service.store.client.drop_index(name, "sparse")
+            wrong = deepcopy(service.profile["indexing"]["sparse"])
+            wrong["params"]["bm25_k1"] = 1.8
+            indexes = service.store.client.prepare_index_params()
+            indexes.add_index("sparse", **wrong)
+            service.store.client.create_index(name, indexes)
+            with service._locked(kb["id"]) as bound, pytest.raises(ValueError, match="index sparse"):
+                service._collection(bound)
     finally:
-        if kb:
-            service.store.client.drop_collection(kb["collection_name"])
-            assert not service.store.client.has_collection(kb["collection_name"])
+        for owned in service.list_libraries():
+            name = owned["collection_name"]
+            if service.store.client.has_collection(name):
+                service.store.client.drop_collection(name)
+            assert not service.store.client.has_collection(name)

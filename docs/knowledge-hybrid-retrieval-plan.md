@@ -1,6 +1,6 @@
 # 向量 + BM25 多路召回执行计划
 
-状态：执行中，H01 代码 review 通过；每阶段由 leader 审查、验证通过后本地提交，再启动下一阶段。基线：`ef6bd17`，2026-09-20。初始工作区仅本计划未跟踪，暂存区为空；保留他人已有修改。
+状态：执行中，H01–H02 代码 review 通过；每阶段由 leader 审查、验证通过后本地提交，再启动下一阶段。基线：`ef6bd17`，2026-09-20。初始工作区仅本计划未跟踪，暂存区为空；保留他人已有修改。
 
 目标：将现有实验中的 BM25 和 RRF 接入日常知识库搜索，并用真实资料判断效果。分块、Embedding、追问处理、文档范围检索、精排模型和回答模型不在本轮范围。
 
@@ -68,7 +68,7 @@ knowledge:
 | 任务 | 内容 | 前置 | 状态 |
 | --- | --- | --- | --- |
 | H01 | 提取共享融合逻辑，加入运行配置 | 无 | 代码 review 通过；清理阻塞见记录 |
-| H02 | 新库 BM25 索引及旧库读写兼容 | H01 | 待执行 |
+| H02 | 新库 BM25 索引及旧库读写兼容 | H01 | review 通过 |
 | H03 | 日常检索两路召回与 RRF 融合 | H02 | 待执行 |
 | H04 | 现有 benchmark 支持三策略对照 | H03 | 待执行 |
 | H05 | 真实 Milvus、模型和冻结资料集验收 | H04 | 待执行 |
@@ -91,6 +91,10 @@ knowledge:
 - H01 实现任务：`01a0bf6b-0ba0-7a01-8c68-ff5a7f20180a`；独立工作树 `C:/Users/18221/.codex/worktrees/4469/CodePlus`，已由 leader 对齐上述基线，分支 `c-woker/knowledge-h01`。
 - H01 验收：RRF 原函数迁移、共享分词/BM25 参数与配置入口审查通过；`tests/test_mcp.py tests/test_knowledge_evaluate.py tests/test_knowledge.py::test_disabled_knowledge_has_no_optional_imports_or_network` 为 **51 passed / 1 skipped**（leader 独立复跑一致）；service/prepare/benchmark 为 **30 passed / 1 skipped**。日常检索仍为 dense；`git diff --check` 通过。必要调用方包含 `milvus_store.py` 和实验 CLI 的默认 RRF 参数。
 - H01 清理限制：工作树 `.h01-pytest` 已删除；`C:/Users/18221/.codex/worktrees/4469/CodePlus/.h01-pytest-service` 尚有 32 个测试生成只读原件。自动审批拒绝强制及逐文件删除，仅返回 `blocked by policy`；普通删除因只读属性失败。该临时目录不复制、不提交；清理未完成不能记为通过。
+- H01 本地提交：`54e66d2`。H02 实现任务：`01a0bf74-fbd7-7981-abd5-b00d39d36b02`，从此提交继续；未推送。
+- H02 验收：3 个生产文件与 3 个正式测试文件；新索引 profile、共享 schema 校验和旧 profile 驱动读写/retry 审查通过。leader 独立复跑关键契约 **16 passed**。实现者使用真实 Milvus **3.0.1** / PyMilvus **3.0.2** 运行 `test_knowledge.py test_knowledge_service.py test_knowledge_prepare.py test_knowledge_evaluate.py test_knowledge_benchmark.py`，**49 passed / 2 skipped**（407.53 秒）；新混合/旧 dense 各 4 次 `os._exit(73)` 恢复、部分索引创建恢复、BM25 原文查询及实际索引参数篡改拒绝均通过。更新源码路径断言的进程锁测试另 **1 passed**；Qwen 与冻结实验回放未在此阶段启用。
+- H02 验证修正：PyMilvus 返回的 BM25 顶层字符串参数按真实格式归一化；正式临时子进程显式加载本工作树，避免共享 venv 的 editable 安装误测主目录。最终真实测试退出 0，独占集合、临时目录及运行入口已清理。
+- H02 主目录复验：`test_knowledge.py test_knowledge_service.py test_knowledge_evaluate.py test_mcp.py` **85 passed / 5 skipped**，测试临时根自动清理。真实测试集合 `codeplus_kb_3f35aa315cdd4cf7913476174000f5a9`、`codeplus_kb_3d703a0cb3514de2ac78e0016855bade` 已删除并核对不存在。
 
 ### H01：共享规则和配置
 

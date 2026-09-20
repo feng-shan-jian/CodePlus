@@ -79,6 +79,9 @@ def test_real_replay_preserves_daily_binding_without_loading_model(tmp_path, mon
     config = KnowledgeConfig(enabled=True, data_dir=str(tmp_path / "daily"),
                              milvus_uri=os.getenv("CODEPLUS_TEST_MILVUS_URI", "http://127.0.0.1:19530"))
     daily = KnowledgeService(config)
+    # This control deliberately exercises the known pre-BM25 daily schema.
+    daily.profile.pop("indexing")
+    daily.profile_hash = fingerprint(daily.profile)
     name = None
     try:
         kb = daily.create("daily-bound-control")

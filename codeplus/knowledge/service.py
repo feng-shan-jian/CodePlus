@@ -104,25 +104,28 @@ class KnowledgeService:
             kb = self.metadata.library(kb_id)
             if operational:
                 saved_profile = json.loads((self.root / kb_id / "profile.json").read_text(encoding="utf-8"))
-                # Existing vectors are readable with the same embedding contract.
-                # Only the known previous chunker is compatible; keep every other
-                # profile check, and keep the collection bound to its saved hash.
+                # Normalize only the two known legacy differences for comparison.
+                # All operations still use the saved profile and its original hash.
                 compatible = dict(saved_profile)
-                if compatible.get("chunking") == "structure-offsets-v1":
+                if compatible.get("chunking") == "structure-offsets-v1" and "indexing" not in compatible:
                     compatible["chunking"] = self.profile["chunking"]
+                if "indexing" not in compatible and "indexing" in self.profile:
+                    compatible["indexing"] = self.profile["indexing"]
                 if (fingerprint(saved_profile) != kb["profile_hash"]
-                        or compatible != self.profile):
+                        or fingerprint(compatible) != self.profile_hash):
                     raise ValueError("Knowledge profile mismatch; use the bound configuration or create a separate base")
-                if importing and saved_profile != self.profile:
+                if importing and saved_profile["chunking"] != self.profile["chunking"]:
                     raise ValueError("Knowledge chunking upgrade requires a separate base: create a new base, "
                                      "import all source documents, then use its ID; keep the old base for historical citations")
                 if ready and kb["state"] != "READY":
                     raise ValueError(f"Knowledge base is {kb['state']}; retry required: {kb['error'] or 'unfinished operation'}")
+                kb["profile"] = saved_profile
             yield kb
 
     def _collection(self, kb: dict, *, create=False):
         self.store.ensure_collection(kb["collection_name"], kb["profile_hash"],
-                                     self.config.embedding_dimension, create=create)
+                                     kb["profile"]["dimension"], create=create,
+                                     indexing=kb["profile"].get("indexing"))
 
     def create(self, name: str) -> dict:
         if not name.strip():
@@ -136,7 +139,7 @@ class KnowledgeService:
         except Exception:
             shutil.rmtree(directory)
             raise
-        with self._locked(kb_id, operational=False) as kb:
+        with self._locked(kb_id, ready=False) as kb:
             self._finish_create(kb)
         return self.status(kb_id)
 
@@ -163,12 +166,13 @@ class KnowledgeService:
         data, content_hash = read_source(source)
         doc_id = fingerprint([kb_id, source_uri])
         # Reject a duplicate before loading the tokenizer/model or writing preparation files.
-        with self._locked(kb_id, importing=True):
+        with self._locked(kb_id, importing=True) as kb:
+            saved_profile = kb["profile"]
             previous = self.metadata.document(doc_id)
             if previous and not previous["removed"] and previous["content_hash"] == content_hash:
                 return {**previous, "unchanged": True}
         # Adding formats does not invalidate an existing Markdown profile or generation.
-        parsing = {key: self.profile[key] for key in
+        parsing = {key: saved_profile[key] for key in
                    ("tokenizer", "parsing", "chunking", "chunk_tokens", "chunk_overlap")}
         parsing["parsing"] = PARSERS[source.suffix.lower()]
         generation_id = fingerprint([content_hash, parsing])
@@ -178,9 +182,9 @@ class KnowledgeService:
             original = save_original(prepared, data, source.suffix.lower())
             text, blocks = parse_document(original)
             chunks = chunk_markdown(text, blocks, self.embedding.tokenizer, doc_id, generation_id,
-                                    self.config.chunk_tokens, self.config.chunk_overlap)
+                                    saved_profile["chunk_tokens"], saved_profile["chunk_overlap"])
             vectors = self.embedding.encode_documents([chunk.text for chunk in chunks])
-            rows = MilvusStore.rows(chunks, vectors, self.config.embedding_dimension)
+            rows = MilvusStore.rows(chunks, vectors, saved_profile["dimension"])
             # A death before registering pending may leave an unreferenced folder.
             # A fresh attempt must not collide with it; identities live in metadata.
             destination = self.root / kb_id / "documents" / uuid.uuid4().hex
@@ -188,7 +192,7 @@ class KnowledgeService:
                         "generation_id": generation_id, "original_path": str(destination / original.name)}
             # Complete inputs survive a process death after pending is committed to SQLite.
             with (prepared / "pending.json").open("x", encoding="utf-8") as stream:
-                json.dump({"document": document, "profile": self.profile, "chunks": [asdict(c) for c in chunks],
+                json.dump({"document": document, "profile": saved_profile, "chunks": [asdict(c) for c in chunks],
                            "rows": rows}, stream, ensure_ascii=False, allow_nan=False)
                 stream.flush()
                 os.fsync(stream.fileno())
