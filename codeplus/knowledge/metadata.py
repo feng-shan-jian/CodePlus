@@ -2,6 +2,7 @@
 
 from contextlib import contextmanager
 from dataclasses import asdict
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 import sqlite3
@@ -14,7 +15,7 @@ class Metadata:
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1, 2):
+            if version not in (0, 1, 2, 3):
                 raise ValueError(f"Unsupported knowledge schema version: {version}")
             if version == 0:
                 for statement in (
@@ -47,7 +48,10 @@ class Metadata:
                 # revision-zero base has exactly this pending target, even on SDK failure.
                 db.execute("UPDATE knowledge_bases SET pending_operation='create' WHERE state!='READY' "
                            "AND revision=0 AND NOT EXISTS (SELECT 1 FROM documents d WHERE d.kb_id=knowledge_bases.id)")
-                db.execute("PRAGMA user_version = 2")
+            if version < 3:
+                # Old imports have no reliable commit time; leave them unknown.
+                db.execute("ALTER TABLE documents ADD COLUMN updated_at TEXT")
+                db.execute("PRAGMA user_version = 3")
 
     @contextmanager
     def connect(self):
@@ -66,6 +70,18 @@ class Metadata:
         if row is None:
             raise ValueError(f"Knowledge base not found: {kb_id}")
         return dict(row)
+
+    def list_libraries(self) -> list[dict]:
+        """Local snapshot, including unfinished bases and registered pending documents.
+
+        Counts exclude removed documents. The last successful document commit time
+        includes removals and is None when no document has a known commit time.
+        """
+        with self.connect() as db:
+            return [dict(row) for row in db.execute(
+                "SELECT kb.*, COUNT(CASE WHEN d.removed=0 THEN 1 END) AS document_count, "
+                "MAX(d.updated_at) AS updated_at FROM knowledge_bases kb "
+                "LEFT JOIN documents d ON d.kb_id=kb.id GROUP BY kb.id ORDER BY kb.name, kb.id")]
 
     def document(self, doc_id: str) -> dict | None:
         with self.connect() as db:
@@ -109,8 +125,8 @@ class Metadata:
                                       (doc_id, document["generation_id"])).fetchone()[0]
                 db.execute("UPDATE documents SET content_hash=?, generation_id=?, original_path=? WHERE id=?",
                            (document["content_hash"], document["generation_id"], original, doc_id))
-            db.execute("UPDATE documents SET state='READY', removed=?, pending_operation=NULL, pending_path=NULL, error=NULL "
-                       "WHERE id=?", (removed, doc_id))
+            db.execute("UPDATE documents SET state='READY', removed=?, pending_operation=NULL, pending_path=NULL, error=NULL, "
+                       "updated_at=? WHERE id=?", (removed, datetime.now(timezone.utc).isoformat(), doc_id))
             db.execute("UPDATE knowledge_bases SET state='READY', revision=revision+1, error=NULL WHERE id=?", (kb_id,))
 
     def status(self, kb_id: str) -> dict:

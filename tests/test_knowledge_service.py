@@ -1,6 +1,7 @@
 """State/identity regressions use real SQLite and OS locks; SDK checks are opt-in."""
 
 from dataclasses import asdict, replace
+from datetime import datetime, timedelta, timezone
 import json
 import os
 from pathlib import Path
@@ -742,14 +743,20 @@ def test_failed_commit_retains_pending_and_blocks_search(service, tmp_path, monk
     assert state["state"] == "NEEDS_REPAIR" and state["revision"] == 0
     document, = state["documents"]
     assert document["state"] == "NEEDS_REPAIR" and document["chunk_count"] == 0
+    assert document["updated_at"] is None
     assert document["pending_operation"] == "import"
     pending = json.loads(Path(document["pending_path"]).read_text(encoding="utf-8"))
     assert pending["document"]["content_hash"] == document["content_hash"]
     assert len(pending["chunks"]) == len(pending["rows"]) > 1
     with pytest.raises(ValueError, match="NEEDS_REPAIR"):
         service.search(kb, "test")
+    with service.metadata.connect() as db:
+        db.execute("ALTER TABLE documents DROP COLUMN updated_at")
+        db.execute("PRAGMA user_version = 2")
     reopened = KnowledgeService(service.config)
     assert reopened.status(kb) == state
+    assert reopened.list_libraries()[0]["document_count"] == 1
+    assert reopened.list_libraries()[0]["updated_at"] is None
     with pytest.raises(ValueError, match="NEEDS_REPAIR"):
         reopened.search(kb, "test")
     monkeypatch.undo()
@@ -759,12 +766,14 @@ def test_failed_commit_retains_pending_and_blocks_search(service, tmp_path, monk
     reopened._store = service.store
     reopened.embedding = TinyEmbedding()
     assert reopened.retry(kb)["chunk_count"] == len(pending["chunks"])
+    assert datetime.fromisoformat(reopened.metadata.document(document["id"])["updated_at"]).tzinfo == timezone.utc
     assert reopened.status(kb)["state"] == "READY" and reopened.status(kb)["revision"] == 1
     assert reopened.retry(kb)["unchanged"]
     assert reopened.search(kb, "test").hits
 
 
-def test_schema_constraints_and_version(service, tmp_path, monkeypatch):
+@pytest.mark.parametrize("version", [1, 2])
+def test_schema_constraints_and_version(service, tmp_path, monkeypatch, version):
     metadata = service.metadata
     with pytest.raises(sqlite3.IntegrityError):
         with metadata.connect() as db:
@@ -782,12 +791,26 @@ def test_schema_constraints_and_version(service, tmp_path, monkeypatch):
             service.create("unfinished S2 creation")
     with metadata.connect() as db:
         failed = db.execute("SELECT id FROM knowledge_bases WHERE name='unfinished S2 creation'").fetchone()[0]
-        # Reconstruct the actual v1 column layout; lifecycle state comes from service operations.
-        db.execute("ALTER TABLE chunks DROP COLUMN original_path")
-        db.execute("ALTER TABLE documents DROP COLUMN removed")
-        db.execute("ALTER TABLE knowledge_bases DROP COLUMN pending_operation")
-        db.execute("PRAGMA user_version = 1")
+        # Reconstruct the old column layout; lifecycle state comes from service operations.
+        if version == 1:
+            db.execute("ALTER TABLE chunks DROP COLUMN original_path")
+            db.execute("ALTER TABLE documents DROP COLUMN removed")
+            db.execute("ALTER TABLE knowledge_bases DROP COLUMN pending_operation")
+        db.execute("ALTER TABLE documents DROP COLUMN updated_at")
+        db.execute(f"PRAGMA user_version = {version}")
+        previous = {table: [dict(row) for row in db.execute(f"SELECT * FROM {table} ORDER BY id")]
+                    for table in ("knowledge_bases", "documents", "chunks")}
     Metadata(service.root)
+    with metadata.connect() as db:
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 3
+        for table, rows in previous.items():
+            current = [dict(row) for row in db.execute(f"SELECT * FROM {table} ORDER BY id")]
+            assert [{key: row[key] for key in rows[0]} for row in current] == rows
+    assert service.metadata.document(document["id"])["updated_at"] is None
+    assert all(kb["updated_at"] is None for kb in service.list_libraries())
+    state = service.status(kb)
+    Metadata(service.root)  # Reopening v3 is idempotent.
+    assert service.status(kb) == state
     assert service.source(kb, hit.chunk_id)["original_path"] == document["original_path"]
     assert service.search(kb, "test").hits[0] == hit
     assert service.import_document(kb, source)["unchanged"]
@@ -798,6 +821,102 @@ def test_schema_constraints_and_version(service, tmp_path, monkeypatch):
         db.execute("PRAGMA user_version = 99")
     with pytest.raises(ValueError, match="schema version: 99"):
         Metadata(service.root)
+
+
+def test_library_list_is_local_read_only_and_includes_unfinished_bases(service, tmp_path):
+    assert service.list_libraries() == []
+    populated = service.create("Zulu")["id"]
+    empty = service.create("Alpha")["id"]
+    source = tmp_path / "source.md"
+    source.write_text("A document", encoding="utf-8")
+    document = service.import_document(populated, source)
+    source = tmp_path / "removed.md"
+    source.write_text("A removed document", encoding="utf-8")
+    removed = service.remove(populated, service.import_document(populated, source)["id"])
+    # Registered creation targets can be listed even before their profile exists.
+    service.metadata.register("a" * 32, "Pending", "pending_collection", service.profile_hash)
+    service.metadata.register("b" * 32, "Repair", "repair_collection", service.profile_hash)
+    service.metadata.set_state("b" * 32, "NEEDS_REPAIR", "creation failed")
+    offline = KnowledgeService(replace(service.config, embedding_revision="unavailable-profile"))
+    before = service.metadata.path.read_bytes()
+    try:
+        libraries = offline.list_libraries()
+        assert [kb["name"] for kb in libraries] == ["Alpha", "Pending", "Repair", "Zulu"]
+        assert libraries == offline.metadata.list_libraries() == offline.list_libraries()
+        by_id = {kb["id"]: kb for kb in libraries}
+        assert by_id[empty]["document_count"] == 0 and by_id[empty]["updated_at"] is None
+        assert by_id[populated]["document_count"] == 1
+        assert by_id[populated]["updated_at"] == removed["updated_at"]
+        assert by_id[populated]["revision"] == 3
+        assert by_id["a" * 32]["state"] == "UPDATING"
+        assert by_id["b" * 32]["state"] == "NEEDS_REPAIR"
+        assert by_id["b" * 32]["error"] == "creation failed"
+        for library in libraries:
+            assert {key: library[key] for key in service.metadata.library(library["id"])} == service.metadata.library(library["id"])
+        assert offline._store is None and not offline.embedding.loaded
+        assert offline.metadata.document(document["id"])["updated_at"] == document["updated_at"]
+        assert service.metadata.path.read_bytes() == before
+    finally:
+        offline.close()
+
+
+def test_document_update_time_tracks_successful_commits_and_retry(service, tmp_path, monkeypatch):
+    class Clock:
+        value = datetime(2026, 1, 1, tzinfo=timezone.utc)
+
+        @classmethod
+        def now(cls, tz):
+            assert tz == timezone.utc
+            return cls.value
+
+    monkeypatch.setattr("codeplus.knowledge.metadata.datetime", Clock)
+    kb = service.create("timestamps")["id"]
+    source = tmp_path / "source.md"
+    source.write_text("Original document", encoding="utf-8")
+    original = service.import_document(kb, source)
+    assert original["updated_at"] == Clock.value.isoformat()
+    Clock.value += timedelta(days=1)
+    assert service.import_document(kb, source)["updated_at"] == original["updated_at"]
+    source.write_text("Replacement document", encoding="utf-8")
+    with monkeypatch.context() as patch:
+        def fail_verify(*args):
+            raise RuntimeError("verify failed")
+        patch.setattr(service.store, "verify_document", fail_verify)
+        with pytest.raises(RuntimeError, match="verify failed"):
+            service.import_document(kb, source)
+    assert service.metadata.document(original["id"])["updated_at"] == original["updated_at"]
+    assert service.list_libraries()[0]["updated_at"] == original["updated_at"]
+    Clock.value += timedelta(days=1)
+    replaced = service.retry(kb)
+    assert replaced["updated_at"] == Clock.value.isoformat()
+    assert replaced["id"] == original["id"] and replaced["generation_id"] != original["generation_id"]
+    Clock.value += timedelta(days=1)
+    # Fail after the document timestamp UPDATE, proving it rolls back with revision.
+    with service.metadata.connect() as db:
+        db.execute("CREATE TRIGGER fail_revision BEFORE UPDATE OF revision ON knowledge_bases "
+                   "BEGIN SELECT RAISE(ABORT, 'revision failed'); END")
+    with pytest.raises(sqlite3.IntegrityError, match="revision failed"):
+        service.remove(kb, original["id"])
+    failed = service.metadata.document(original["id"])
+    assert failed["updated_at"] == replaced["updated_at"] and not failed["removed"]
+    assert service.status(kb)["revision"] == 2
+    with service.metadata.connect() as db:
+        db.execute("DROP TRIGGER fail_revision")
+    Clock.value += timedelta(days=1)
+    removed = service.retry(kb)
+    assert removed["removed"] and removed["updated_at"] == Clock.value.isoformat()
+    assert service.list_libraries()[0]["updated_at"] == removed["updated_at"]
+    assert service.list_libraries()[0]["document_count"] == 0
+    Clock.value += timedelta(days=1)
+    assert service.remove(kb, original["id"])["updated_at"] == removed["updated_at"]
+    assert service.retry(kb)["unchanged"]
+    assert service.metadata.document(original["id"])["updated_at"] == removed["updated_at"]
+    source.write_text("Original document", encoding="utf-8")
+    restored = service.import_document(kb, source)
+    assert restored["updated_at"] == Clock.value.isoformat()
+    assert restored["generation_id"] == original["generation_id"]
+    assert restored["original_path"] == original["original_path"]
+    assert service.status(kb)["revision"] == 4
 
 
 def test_process_lock_crash_keeps_import_pending(service, tmp_path):

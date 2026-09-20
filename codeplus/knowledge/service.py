@@ -143,6 +143,10 @@ class KnowledgeService:
         with self._locked(kb_id, operational=False):
             return self.metadata.status(kb_id)
 
+    def list_libraries(self) -> list[dict]:
+        """Read local summaries without preparing Milvus/model or requiring a matching profile."""
+        return self.metadata.list_libraries()
+
     def import_document(self, kb_id: str, source: str | Path) -> dict:
         source = Path(source).expanduser().resolve()
         source_uri = Path(os.path.normcase(str(source))).as_uri()
