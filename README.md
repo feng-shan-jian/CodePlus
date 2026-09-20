@@ -110,14 +110,14 @@ Remote 默认监听 `0.0.0.0:18888`，本机访问 `http://localhost:18888`。TU
 
 ### 可选：本地知识库
 
-先按 [部署步骤](docs/knowledge-setup.md#最短使用流程) 启动 Milvus。在已有 `.codeplus/config.yaml` 中保留 `providers`，将 `knowledge.enabled` 设为 `true`，确认 `knowledge.milvus_uri` 指向服务地址。
+按 [部署说明](docs/knowledge-setup.md#最短使用流程) 在已有配置中保留 `providers`，启用 `knowledge.enabled`。项目受管本地部署另设 `knowledge.managed_local: true`，首次进入知识库会自动准备服务与模型；外部 Milvus 保持 `false`，只连接配置的地址。
 
 ```powershell
 uv sync --locked --extra knowledge
 uv run --extra knowledge codeplus
 ```
 
-后续运行也保留 `--extra knowledge`。首次导入或检索会下载本地嵌入模型，回答仍使用已配置的模型服务。
+后续运行也保留 `--extra knowledge`。首次准备可能下载本地嵌入模型；失败后用 `/knowledge prepare` 重试。回答仍使用已配置的模型服务。
 
 ```text
 /knowledge create "个人资料"

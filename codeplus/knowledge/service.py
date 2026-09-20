@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import shutil
 from tempfile import TemporaryDirectory
+from threading import RLock
 import uuid
 
 from codeplus.config import KnowledgeConfig
@@ -30,16 +31,69 @@ class KnowledgeService:
         self.root = Path(self.config.data_dir).expanduser().resolve()
         self.metadata = Metadata(self.root)
         self._store = None
+        self._prepare_lock = RLock()
+        self._runtime = None
+        self._closed = False
 
     @property
     def store(self):
+        if self._closed:
+            raise RuntimeError("Knowledge service is closed")
         if self._store is None:
             self._store = MilvusStore(self.config.milvus_uri)
         return self._store
 
-    def close(self):
-        if self._store is not None:
+    def prepare(self, progress=lambda message: None):
+        """Serialize preparation and close; a failed attempt can be retried safely."""
+        from .runtime import MANAGED_URI, ManagedRuntime
+
+        with self._prepare_lock:
+            if self._closed:
+                raise RuntimeError("Knowledge service is closed")
+            if self.config.managed_local and self.config.milvus_uri != MANAGED_URI:
+                raise ValueError("managed_local 只适用于 http://127.0.0.1:19530；外部 Milvus 请设为 false")
+            try:
+                progress("正在连接服务")
+                if self.config.managed_local:
+                    if self._runtime is None:
+                        self._runtime = ManagedRuntime()
+                try:
+                    self._connect()
+                except (ImportError, ModuleNotFoundError):
+                    raise
+                except Exception as exc:
+                    if self._runtime is None:
+                        raise RuntimeError("无法连接 Milvus；请检查已配置服务。项目受管部署需显式设置 knowledge.managed_local: true") from exc
+                    self._runtime.start(progress, self._connect)
+                if self._runtime is not None:
+                    self._runtime.hold()
+                if not self.embedding.loaded:
+                    progress("正在加载模型（首次使用可能下载；需要网络和磁盘空间）")
+                self.embedding.tokenizer
+                progress("已就绪")
+            except ImportError as exc:
+                raise RuntimeError(f"知识库依赖加载失败（{exc}）；在本机环境运行 uv sync --extra knowledge，或 pip install 'codeplus[knowledge]'；然后 /knowledge prepare 重试。") from exc
+            except Exception as exc:
+                raise RuntimeError(f"知识库准备失败：{exc}。修复后执行 /knowledge prepare（CLI: python -m codeplus.knowledge prepare）重试。") from exc
+
+    def _connect(self):
+        if self._store is None:
+            self._store = MilvusStore(self.config.milvus_uri, timeout=3)
+        try:
+            self._store.check_health()
+        except Exception:
             self._store.close()
+            self._store = None
+            raise
+
+    def close(self):
+        with self._prepare_lock:
+            self._closed = True
+            if self._store is not None:
+                self._store.close()
+                self._store = None
+            if self._runtime is not None:
+                self._runtime.close()
 
     @contextmanager
     def _locked(self, kb_id: str, *, operational=True, ready=True):

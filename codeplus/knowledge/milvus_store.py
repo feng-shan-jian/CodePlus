@@ -4,10 +4,13 @@ import math
 
 
 class MilvusStore:
-    def __init__(self, uri: str):
+    def __init__(self, uri: str, *, timeout=30):
         from pymilvus import MilvusClient
 
-        self.client = MilvusClient(uri=uri, timeout=30)
+        self.client = MilvusClient(uri=uri, timeout=timeout)
+
+    def check_health(self):
+        return self.client.get_server_version(timeout=3)
 
     def close(self):
         self.client.close()

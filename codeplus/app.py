@@ -1127,6 +1127,7 @@ class CodePlusApp(App):
     async def _check_knowledge_binding(self) -> None:
         if self.knowledge.binding:
             try:
+                await self.knowledge.prepare(self.add_system_message)
                 await self.knowledge.check()
             except Exception as exc:
                 self.add_system_message(f"恢复的知识库不可用，回答已阻止: {exc}")
@@ -1170,7 +1171,7 @@ class CodePlusApp(App):
 
     async def _dispatch_command(self, text: str) -> None:
         name, args, is_command = parse_command(text)
-        knowledge_busy = self._knowledge_task is not None and not self._knowledge_task.done()
+        knowledge_busy = self.knowledge.preparing or (self._knowledge_task is not None and not self._knowledge_task.done())
         answer_busy = self._streaming or (self._agent_task is not None and not self._agent_task.done())
         if knowledge_busy and (not is_command or name in {"knowledge", "session", "clear"}):
             self.add_system_message("知识库操作正在执行；完成后再提问、切库或切换会话。")
@@ -1207,7 +1208,7 @@ class CodePlusApp(App):
             return
 
         ctx = self._build_command_context(args)
-        if name == "knowledge":
+        if name == "knowledge" or (name == "session" and args.split(None, 1)[:1] == ["resume"]):
             self._knowledge_task = asyncio.create_task(self._run_knowledge_command(cmd, ctx))
             return
         try:
@@ -2057,7 +2058,7 @@ class CodePlusApp(App):
     # -----------------------------------------------------------------
 
     async def action_handle_ctrl_c(self) -> None:
-        if self.knowledge.retrieving or (self._knowledge_task and not self._knowledge_task.done()):
+        if self.knowledge.preparing or self.knowledge.retrieving or (self._knowledge_task and not self._knowledge_task.done()):
             self.add_system_message("知识库操作正在执行；请等待本次操作完成后退出。")
             return
         if self._streaming:
@@ -2114,14 +2115,18 @@ class CodePlusApp(App):
 
             if self.session:
                 self.session.close()
-            if self.knowledge._service is not None:
-                self.knowledge._service.close()
+            await self.knowledge.aclose()
 
         try:
             await _cleanup()
         except Exception:
             pass
         self.exit()
+
+    async def on_unmount(self) -> None:
+        if self._knowledge_task is not None:
+            await asyncio.gather(self._knowledge_task, return_exceptions=True)
+        await self.knowledge.aclose()
 
     def _show_error(self, text: str) -> None:
         chat = self.query_one("#chat-area", VerticalScroll)

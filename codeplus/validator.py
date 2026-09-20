@@ -246,6 +246,8 @@ def validate_knowledge(raw: dict | None) -> dict:
         raise ConfigError("'knowledge' must be a mapping")
     if "enabled" in raw:
         validate_bool_field(raw["enabled"], "knowledge.enabled")
+    if "managed_local" in raw:
+        validate_bool_field(raw["managed_local"], "knowledge.managed_local")
     if "milvus_uri" in raw:
         try:
             uri = urlsplit(raw["milvus_uri"])
@@ -253,6 +255,8 @@ def validate_knowledge(raw: dict | None) -> dict:
                 raise ValueError
         except (ValueError, TypeError, AttributeError):
             raise ConfigError("'knowledge.milvus_uri' must be http(s)://host:port")
+    if raw.get("managed_local") and raw.get("milvus_uri", "http://127.0.0.1:19530") != "http://127.0.0.1:19530":
+        raise ConfigError("knowledge.managed_local requires http://127.0.0.1:19530; external Milvus must use false")
     return dict(raw)
 
 

@@ -32,6 +32,9 @@ codeplus = "codeplus.__main__:main"
 [tool.hatch.build.targets.wheel]
 packages = ["codeplus"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"deployment/knowledge/compose.yaml" = "codeplus/knowledge/compose.yaml"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

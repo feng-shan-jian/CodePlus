@@ -123,14 +123,14 @@ Remote listens on `0.0.0.0:18888` by default; open `http://localhost:18888` loca
 
 ### Optional: Local Knowledge Base
 
-Start Milvus using the [setup steps](docs/knowledge-setup.md#最短使用流程). Keep `providers` in your existing `.codeplus/config.yaml`, set `knowledge.enabled` to `true`, and check that `knowledge.milvus_uri` points to your service.
+Follow the [setup steps](docs/knowledge-setup.md#最短使用流程), keep existing `providers`, and enable `knowledge.enabled`. Set `knowledge.managed_local: true` to prepare the bundled local service and model automatically on entry; keep it `false` for an external Milvus connection.
 
 ```powershell
 uv sync --locked --extra knowledge
 uv run --extra knowledge codeplus
 ```
 
-Keep `--extra knowledge` on subsequent runs. The first import or search downloads the local embedding model; answers still use your configured model service.
+Keep `--extra knowledge` on subsequent runs. Initial preparation may download the local embedding model; use `/knowledge prepare` to retry a failure. Answers still use your configured model service.
 
 ```text
 /knowledge create "Personal documents"

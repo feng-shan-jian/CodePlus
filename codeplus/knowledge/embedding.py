@@ -3,9 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from threading import Lock
 
 from codeplus.config import KnowledgeConfig
 from . import QUERY_INSTRUCTION
+
+
+# Transformers lazily imports model classes; concurrent first loads can observe
+# a partially initialized module. Serialize initialization across local instances.
+_LOAD_LOCK = Lock()
 
 
 class LocalEmbedding:
@@ -19,26 +25,33 @@ class LocalEmbedding:
         self._model = None
         self._tokenizer = None
 
+    @property
+    def loaded(self) -> bool:
+        return self._model is not None
+
     def _load(self) -> None:
         if self._model is not None:
             return
-        import torch
-        from transformers import AutoModel, AutoTokenizer
+        with _LOAD_LOCK:
+            if self._model is not None:
+                return
+            import torch
+            from transformers import AutoModel, AutoTokenizer
 
-        # Both artifacts use the same immutable revision and the normal HF cache.
-        tokenizer = AutoTokenizer.from_pretrained(
-            self.config.embedding_model, revision=self.config.embedding_revision,
-            padding_side="left", trust_remote_code=False,
-        )
-        model = AutoModel.from_pretrained(
-            self.config.embedding_model, revision=self.config.embedding_revision,
-            dtype=torch.float32, trust_remote_code=False,
-        ).to("cpu").eval()
-        if model.config.hidden_size != self.config.embedding_dimension:
-            raise ValueError("knowledge.embedding_dimension does not match the loaded model")
-        if self.config.max_input_tokens > model.config.max_position_embeddings:
-            raise ValueError("knowledge.max_input_tokens exceeds the loaded model context")
-        self._tokenizer, self._model = tokenizer, model
+            # Both artifacts use the same immutable revision and the normal HF cache.
+            tokenizer = AutoTokenizer.from_pretrained(
+                self.config.embedding_model, revision=self.config.embedding_revision,
+                padding_side="left", trust_remote_code=False,
+            )
+            model = AutoModel.from_pretrained(
+                self.config.embedding_model, revision=self.config.embedding_revision,
+                dtype=torch.float32, trust_remote_code=False,
+            ).to("cpu").eval()
+            if model.config.hidden_size != self.config.embedding_dimension:
+                raise ValueError("knowledge.embedding_dimension does not match the loaded model")
+            if self.config.max_input_tokens > model.config.max_position_embeddings:
+                raise ValueError("knowledge.max_input_tokens exceeds the loaded model context")
+            self._tokenizer, self._model = tokenizer, model
 
     def encode_documents(self, texts: list[str]) -> list[list[float]]:
         """Encode raw passages without instructions; reject truncation."""

@@ -19,9 +19,11 @@ from codeplus.knowledge.service import KnowledgeService
 
 class TinyEmbedding:
     calls = 0
+    loaded = False
 
     @property
     def tokenizer(self):
+        self.loaded = True
         return lambda text, **kwargs: {"input_ids": list(range(len(text))),
                                        "offset_mapping": [(i, i + 1) for i in range(len(text))]}
 
@@ -36,6 +38,9 @@ class TinyEmbedding:
 class MemoryStore:
     def __init__(self):
         self.rows = {}
+
+    def check_health(self):
+        return "test"
 
     def ensure_collection(self, *args, **kwargs):
         pass
@@ -331,7 +336,18 @@ def test_prompt_knowledge_json_exit_and_permissions(service, tmp_path, monkeypat
     config = AppConfig([ProviderConfig("test", "openai-compat", "http://127.0.0.1:1", "test")],
                        knowledge=service.config, enable_fork=False)
     monkeypatch.setattr(cli, "load_config", lambda: config)
-    monkeypatch.setattr("codeplus.knowledge.service.KnowledgeService", lambda cfg: service)
+    def new_service(cfg):
+        # Each CLI invocation owns its connection/lifecycle, with the same test corpus.
+        current = KnowledgeService(cfg)
+        current.embedding, current._store = service.embedding, service.store
+        current.search = noisy_search
+        prepare = current.prepare
+        def noisy_prepare(progress):
+            print("PREPARE_DIAGNOSTIC")
+            return prepare(progress)
+        current.prepare = noisy_prepare
+        return current
+    monkeypatch.setattr("codeplus.knowledge.service.KnowledgeService", new_service)
     async def resolve(provider):
         pass
     monkeypatch.setattr("codeplus.client.resolve_context_window", resolve)
@@ -373,6 +389,7 @@ def test_prompt_knowledge_json_exit_and_permissions(service, tmp_path, monkeypat
     assert events[0]["args"]["query"] == "deadline?"
     assert events[-1]["type"] == "result" and "17 days [K:" in events[-1]["result"]
     assert "MODEL_LOAD_DIAGNOSTIC" in output.err
+    assert "PREPARE_DIAGNOSTIC" in output.err and "已就绪" in output.err
     assert run(["--knowledge", kb]).out.startswith("17 days [K:")
     assert run([]).out == "PLAIN_OK"
     for bad in ("missing", "../missing"):

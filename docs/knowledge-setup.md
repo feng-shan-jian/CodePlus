@@ -4,7 +4,7 @@
 
 ## 最短使用流程
 
-### 1. 安装、配置与启动 Milvus
+### 1. 安装、配置与自动准备
 
 在项目自己的 Windows 环境执行 `uv sync --locked --extra knowledge`。后续使用 `uv run` 时也带 `--extra knowledge`，避免默认同步移除可选依赖；或直接使用 `.venv\Scripts\python.exe`。Windows 与 WSL 不共用虚拟环境。
 
@@ -14,25 +14,22 @@
 knowledge:
   enabled: true
   milvus_uri: http://127.0.0.1:19530
+  managed_local: true
   data_dir: .codeplus/knowledge
 ```
 
-相对 `data_dir` 在启动时解析。多个启动目录要共用库时，改为同一绝对路径，例如 `D:/CodePlus/.codeplus/knowledge`。默认 Embedding 是本地 Qwen3-Embedding-0.6B，固定 revision `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3`、CPU、1024 维；首次导入/检索下载模型，后续复用 HF 缓存。回答使用原有 provider。已建库绑定模型与分块配置，修改这些参数须建新库重新导入。
+相对 `data_dir` 在启动时解析。多个启动目录要共用库时，改为同一绝对路径，例如 `D:/CodePlus/.codeplus/knowledge`。默认 Embedding 是本地 Qwen3-Embedding-0.6B，固定 revision `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3`、CPU、1024 维；首次准备可能下载模型，后续复用 HF 缓存。回答使用原有 provider。已建库绑定模型与分块配置，修改这些参数须建新库重新导入。
 
-本机使用 Ubuntu-24.04 WSL2 内的 Docker Engine。先在单独终端执行 `wsl -d Ubuntu-24.04` 并保持 shell 打开；systemd/Docker 服务本身不能保证 WSL 保活。在另一个 PowerShell 7 终端执行：
+Windows 需先安装 Ubuntu-24.04 WSL2 内的 Docker Engine 和 Compose。CodePlus 使用这个发行版，不调用 Windows Docker Desktop；应用会保持自己的隐藏 WSL 会话，无需额外打开终端。Linux/macOS 使用本机 Docker。然后运行：
 
 ```powershell
-Set-Location D:\CodePlus
 uv sync --locked --extra knowledge
-$windowsCompose = (Resolve-Path deployment/knowledge/compose.yaml).Path.Replace('\', '/')
-$compose = (wsl -d Ubuntu-24.04 -- wslpath -a $windowsCompose).Trim()
-wsl -d Ubuntu-24.04 -- docker compose -f $compose up -d --wait --wait-timeout 240
-wsl -d Ubuntu-24.04 -- docker compose -f $compose ps
-Invoke-RestMethod http://127.0.0.1:9091/healthz
 uv run --extra knowledge codeplus
 ```
 
-已有健康共享服务时直接复用。日后自行停用可执行 `wsl -d Ubuntu-24.04 -- docker compose -f $compose stop`；数据保存在 Linux 命名卷，不用 `down -v`。本机不通过 Windows Docker Desktop 管理这套服务。
+输入 `/knowledge`、`create`、`use` 或恢复知识库会话时，应用异步准备环境，按实际步骤显示“正在连接服务”“正在启动服务”“正在加载模型”“已就绪”；已有健康服务直接复用。失败后按提示修复，再执行 `/knowledge prepare`；独立命令为 `python -m codeplus.knowledge prepare`。`retry` 仍只用于恢复已登记的资料写入。缺依赖时重新安装 knowledge extra；首次模型下载需要网络和磁盘空间，离线使用须已缓存固定 revision。
+
+`managed_local` 默认 `false`，外部服务（包括自行部署在 localhost 的 Milvus）保持此值。只有明确设为 `true` 且 URI 为 `http://127.0.0.1:19530`，才允许操作随包提供的固定 `codeplus-knowledge` Compose 项目；启动前核对已有容器服务标签、镜像和端口，使用 `up --no-recreate --wait` 复用健康检查。资源定位与启动目录无关，wheel/sdist 均携带 Compose。多实例串行准备共享项目，退出仅释放自己的连接和 WSL 管道，不执行 stop/down，也不关闭其他实例或外部服务。普通聊天、disabled 模式及本地 status/source 不启动服务或加载模型；程序不修改配置或 providers。
 
 ### 2. 导入、问答与报告
 
@@ -719,3 +716,9 @@ leader S6 独立验收：在新的 TemporaryDirectory 禁止模型加载并修�
 本轮未新增个人资料、原始实测输出或缓存到 Git。旧阶段的清理限制保留在原记录中，不把本轮正常收尾表述为已处理历史残留。
 
 leader 最终验收：核对第二轮真实命令退出 0 及各阶段原始输出，确认三格式报告、全部来源、更新/删除、历史引用、off 和清理均通过；对照真实命令及配置/权限代码审查中英文使用说明。结合主目录完整测试、wheel 与前序逐阶段独立验证，首版功能和代码质量验收通过。提交只包含本阶段五份文档，合入主目录，不推送远端。用户原配置保持原样，功能默认关闭，启用步骤见本文开头。
+
+### 自动准备环境验收（2026-09-20）
+
+Leader 独立复核：完整回归 705 passed / 7 skipped（44.50 秒，既有 timeout 标记警告）；最终进度文案小修相关回归 17 passed / 1 skipped。真实隔离 Compose 双实例验收 90.63 秒完成：失败修复重试、仅启动一次、双 Qwen 加载、重复进入保活复用、关闭一实例不影响另一实例；独占容器和卷已清理，原共享容器 ID/启动时间不变。另实测本地外部地址与远程不可达地址均不触发本地管理。
+
+原生 TUI 键盘进入、Remote 浏览器准备与真实问答通过；CLI stream-json 每行合法并正确回答合成资料的 17 天期限，普通聊天回归通过，主配置哈希未变。首次全新联网下载与未安装 WSL/Docker 的真实安装过程未现场执行。wheel/sdist 的 Compose 内容和包外目录定位由实现成员验证通过。

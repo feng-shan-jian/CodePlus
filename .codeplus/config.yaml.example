@@ -33,6 +33,7 @@ enable_coordinator_mode: false   # 设为 true 后创建 Team 时 Lead 只能调
 knowledge:
   enabled: false
   milvus_uri: http://127.0.0.1:19530
+  managed_local: false  # true opts in to bundled Compose; Windows uses Ubuntu-24.04 Docker
   data_dir: .codeplus/knowledge  # resolved once from the startup directory
   embedding_model: Qwen/Qwen3-Embedding-0.6B
   embedding_revision: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3

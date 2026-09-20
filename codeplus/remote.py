@@ -152,8 +152,7 @@ class RemoteServer:
             await self._flush_ui_messages()
             if self.session:
                 self.session.close()
-            if self.knowledge._service is not None:
-                self.knowledge._service.close()
+            await self.knowledge.aclose()
             if self.mcp_manager:
                 await self.mcp_manager.shutdown()
 
@@ -782,6 +781,7 @@ class RemoteServer:
     async def _check_knowledge_binding(self) -> None:
         if self.knowledge.binding:
             try:
+                await self.knowledge.prepare(self.add_system_message)
                 await self.knowledge.check()
             except Exception as exc:
                 self.add_system_message(f"恢复的知识库不可用，回答已阻止: {exc}")

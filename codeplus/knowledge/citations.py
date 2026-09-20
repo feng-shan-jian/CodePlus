@@ -22,15 +22,42 @@ class KnowledgeContext:
         self.searches = 0
         self.report_error = ""
         self.retrieving = False
+        self._prepare_task = None
+        self._closed = False
 
     @property
     def service(self):
+        if self._closed:
+            raise RuntimeError("Knowledge context is closed")
         if not self.config.enabled:
             raise ValueError("Knowledge is disabled in configuration")
         if self._service is None:
             from .service import KnowledgeService
             self._service = KnowledgeService(self.config)
         return self._service
+
+    @property
+    def preparing(self):
+        return self._prepare_task is not None and not self._prepare_task.done()
+
+    async def prepare(self, progress=None):
+        if self._closed:
+            raise RuntimeError("Knowledge context is closed")
+        if not self.preparing:
+            loop = asyncio.get_running_loop()
+            def report(message):
+                if progress is not None:
+                    loop.call_soon_threadsafe(progress, message)
+            # A cancelled waiter must not abandon an in-flight model load / Compose call.
+            self._prepare_task = asyncio.create_task(asyncio.to_thread(lambda: self.service.prepare(report)))
+        await asyncio.shield(self._prepare_task)
+
+    async def aclose(self):
+        self._closed = True
+        if self._prepare_task is not None:
+            await asyncio.gather(asyncio.shield(self._prepare_task), return_exceptions=True)
+        if self._service is not None:
+            await asyncio.to_thread(self._service.close)
 
     def bind(self, binding):
         if binding is not None:
@@ -46,6 +73,10 @@ class KnowledgeContext:
     async def check(self):
         if self.binding is None:
             raise ValueError("No knowledge base selected; use /knowledge use <id>")
+        if self._prepare_task is None:
+            await self.prepare()
+        else:
+            await asyncio.shield(self._prepare_task)
         def check():
             with self.service._locked(self.binding["kb_id"]) as kb:
                 if self.revision is not None and kb["revision"] != self.revision:

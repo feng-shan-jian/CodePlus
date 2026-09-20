@@ -318,6 +318,8 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
     try:
         # Keep model/SDK diagnostics off the machine-readable output channel.
         with redirect_stdout(sys.stderr) if knowledge else nullcontext():
+            if knowledge is not None:
+                await knowledge.prepare(lambda message: print(message, file=sys.stderr, flush=True))
             async for event in agent.run(conv):
                 if isinstance(event, StreamText):
                     text_buf += event.text
@@ -441,8 +443,8 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
             print(f"Error: {exc}", file=sys.stderr, flush=True)
         raise SystemExit(1) from None
     finally:
-        if knowledge is not None and knowledge._service is not None:
-            knowledge._service.close()
+        if knowledge is not None:
+            await knowledge.aclose()
         if mcp_manager is not None:
             # 多个 stdio 服务器同时收尾时，底层的 anyio cancel scope 会互相打断并抛
             # CancelledError。结果已经输出完了，这里不该因为收尾失败而带崩整个命令。

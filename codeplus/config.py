@@ -147,6 +147,7 @@ class KnowledgeConfig:
     top_k: int = 5
     chunk_tokens: int = 512
     chunk_overlap: int = 64
+    managed_local: bool = False
 
 
 @dataclass

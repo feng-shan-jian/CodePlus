@@ -8,7 +8,7 @@ import re
 from codeplus.commands.registry import Command, CommandContext, CommandType
 
 
-USAGE = '/knowledge create <name> | use <id> | import "<path>" | status | sources | remove <doc_id> | retry | off | open <citation_id> [offset]'
+USAGE = '/knowledge prepare | create <name> | use <id> | import "<path>" | status | sources | remove <doc_id> | retry | off | open <citation_id> [offset]'
 
 
 async def handle_knowledge(ctx: CommandContext) -> None:
@@ -43,7 +43,13 @@ async def handle_knowledge(ctx: CommandContext) -> None:
             source["citation_id"] = f"K:{match[2]}:{source['id']}"
         ctx.ui.add_system_message(json.dumps({"historical_sources": sources}, ensure_ascii=False, indent=2))
         return
+    if sub in {"", "prepare"}:
+        await knowledge.prepare(ctx.ui.add_system_message)
+        if not sub:
+            ctx.ui.add_system_message(USAGE)
+        return
     if sub == "create" and arg:
+        await knowledge.prepare(ctx.ui.add_system_message)
         result = await asyncio.to_thread(knowledge.service.create, arg)
         ctx.config["set_knowledge_binding"]({"kb_id": result["id"], "top_k": min(10, knowledge.config.top_k)})
         ctx.ui.add_system_message(f"已创建并选中知识库 {result['name']}: {result['id']}")
@@ -52,6 +58,7 @@ async def handle_knowledge(ctx: CommandContext) -> None:
         status = await asyncio.to_thread(knowledge.service.status, arg)
         ctx.config["set_knowledge_binding"]({"kb_id": status["id"], "top_k": min(10, knowledge.config.top_k)})
         ctx.ui.add_system_message(f"已选中知识库 {status['name']}: {status['id']} ({status['state']})")
+        await knowledge.prepare(ctx.ui.add_system_message)
         return
     if sub not in {"import", "status", "sources", "remove", "retry"}:
         ctx.ui.add_system_message(USAGE)
@@ -59,6 +66,8 @@ async def handle_knowledge(ctx: CommandContext) -> None:
     if not knowledge.binding:
         raise ValueError("请先 /knowledge create <name> 或 /knowledge use <id>")
     kb_id = knowledge.binding["kb_id"]
+    if sub in {"import", "remove", "retry"}:
+        await knowledge.prepare(ctx.ui.add_system_message)
     if sub == "import" and arg:
         path = Path(arg).expanduser()
         def collect_files():

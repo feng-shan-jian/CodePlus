@@ -1,7 +1,7 @@
 """Standalone retrieval, using the existing layered CodePlus configuration."""
 
 import argparse
-from contextlib import closing
+from contextlib import closing, redirect_stdout
 from dataclasses import asdict, is_dataclass
 import json
 from pathlib import Path
@@ -15,6 +15,7 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Local Markdown/PDF/DOCX knowledge retrieval (no answer model)")
     parser.add_argument("--config", type=Path, help="Existing CodePlus YAML configuration")
     commands = parser.add_subparsers(dest="command", required=True)
+    commands.add_parser("prepare", help="Prepare services/model, or retry failed environment preparation")
     commands.add_parser("create").add_argument("name")
     importer = commands.add_parser("import", aliases=["update"], help="Import or replace the document at this source path")
     importer.add_argument("kb_id")
@@ -55,7 +56,12 @@ def main(argv=None) -> int:
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0 if result["status"] == "ok" else 1
         with closing(KnowledgeService(load_config(args.config).knowledge)) as service:
-            if args.command == "create":
+            if args.command not in {"status", "source"}:
+                with redirect_stdout(sys.stderr):
+                    service.prepare(lambda message: print(message, file=sys.stderr, flush=True))
+            if args.command == "prepare":
+                result = {"status": "ready"}
+            elif args.command == "create":
                 result = service.create(args.name)
             elif args.command in {"import", "update"}:
                 result = service.import_document(args.kb_id, args.source)
