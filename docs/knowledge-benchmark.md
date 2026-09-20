@@ -22,6 +22,8 @@ python -m codeplus.knowledge benchmark --dataset <数据集目录> --replay <rep
 
 `--managed-local` 仅用于项目自带本地部署；远程服务省略它。实时运行在本进程启用知识库，不修改用户配置，也不导入、删除或重建库。重建资料库可复用现有 create/import 命令，再把新库 ID 传入 benchmark。
 
+Windows 使用项目的 `.venv\Scripts\python.exe` 或 `uv run --extra knowledge python` 执行上述命令。完整旧库兼容与重建步骤见 [使用说明](knowledge-setup.md#旧库兼容与重建)。
+
 `--mode`、`--candidates` 和 `--rrf-k` 都是可选的，仅覆盖本次运行；省略的字段沿用现有 knowledge 配置。默认配置为 `auto`、50、60：auto 在新混合库使用 hybrid，在已知旧向量库使用 dense。显式对旧向量库请求 bm25/hybrid 会计为查询失败，需另建混合库。候选数必须为 1–16384 的整数，RRF 常量必须为有限正数，复用日常配置校验。
 
 最终 Top-K 固定取自数据集协议，不能用 benchmark 参数修改。hybrid 每路取 `max(candidates, Top-K)` 后融合；dense/bm25 只取该路 Top-K，候选数与 RRF 配置不参与单路排名。分数分别为 `cosine_similarity`、`bm25`、`rrf`；RRF 分数不代表相似度或概率。
@@ -35,6 +37,29 @@ python -m codeplus.knowledge benchmark --dataset <数据集目录> --replay <rep
 Markdown 报告也显示请求参数和每题实际策略、候选数、RRF。实际 RRF 为 null 时显示“—”；旧报告或失败查询缺少的策略信息显示“未记录”。
 
 三策略应使用同一个库和 revision、同一数据集指纹进行比较。独立 CLI 进程的模型准备和首题冷启动耗时不能直接当作稳定的热查询性能；本命令不额外预热或重试查询。
+
+## H05 真实资料对照（2026-09-21）
+
+同一新库 `1955508ffde242ccafed2a6193c1f300`，READY/revision 31，31 文档、742 片段，固定 Qwen revision、SentenceSplitter 512/64 与 Top-5；32 题中含 25 单轮、3 追问和 4 无答案题。六份正式报告均零查询错误，leader 已独立复核：
+
+| 策略 | 单轮找齐 / 25 | 单轮证据 / 34 | 追问找齐 / 3 | 热查询 P50 / P95（ms） |
+| --- | ---: | ---: | ---: | ---: |
+| dense | 20 | 28 | 1 | 128.61 / 148.55 |
+| bm25 | 19 | 26 | 0 | 18.32 / 29.03 |
+| hybrid N50 / RRF60（默认） | 20 | 27 | 0 | 136.03 / 164.74 |
+| hybrid N20 / RRF20 | 21 | 28 | 0 | 未执行 |
+| hybrid N20 / RRF60 | 21 | 28 | 0 | 未执行 |
+| hybrid N50 / RRF20 | 21 | 28 | 0 | 未执行 |
+
+默认 hybrid 改善 Q20，但 Q14/Q27 退步；Q28 仍为 1/2，却丢失原先命中的英文限制信息。三组有限调参仍未消除退步。因此本回归集建议日常显式配置 `knowledge.retrieval_mode: dense`，benchmark 对照用 `--mode dense`；功能接入完成不代表全面召回或回答质量提升。代码保留 auto 默认，本次没有修改用户配置或绑定。
+
+热查询每模式先预热完整 32 题，再重复两轮、第二轮逆序，各 64 样本；包含查询编码、索引校验、数据库召回、融合与来源读取。冷启动与准备单列于本地报告，不计入上表。小规模本机延迟不代表生产 P95 或吞吐，未测调参热重复。
+
+复核入口为本机 `D:/CodePlus/.codeplus/benchmarks/workbin-v1/runs/h05_20260921_qwen_hybrid/summary.md`、`summary.json` 和 `leader-review.json`；汇总索引指向全部六份正式报告、逐题覆盖和实际片段，均位于 Git 忽略目录。公开文档不复制私人原文。H05 新库与报告保留；旧库、177 个既有文件及 220 个旧引用保全通过，187 个新引用来源核对通过，独占临时小库及入口已清理。
+
+该库的会话切换命令为 `/knowledge use 1955508ffde242ccafed2a6193c1f300`，本次未实际切换用户绑定；auto 会选择 hybrid，采用上述建议须显式配置 dense 后重启应用。其他机器请按 [重建流程](knowledge-setup.md#旧库兼容与重建) 创建自己的库。
+
+文件名未进入正文检索，追问只检索最后一句，无答案题仅记录命中。未执行本轮回答模型、回答/拒答正确性、桌面 UI、生产规模/吞吐；H05 故障恢复采用异常注入，进程硬退出证据单列 H02。本资料集已观察过结果，只作为回归集。
 
 ## 数据集结构
 

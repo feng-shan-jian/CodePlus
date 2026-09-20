@@ -1,6 +1,6 @@
 # Knowledge 本机环境与运行说明
 
-更新日期：2026-09-20。先按以下步骤使用；后面的 K01–S7 是分阶段实测记录，其中“尚未实现”等表述仅代表该阶段当时状态。S1–S7 已通过 leader 验收并纳入逐阶段本地提交，最终证据见文末。
+更新日期：2026-09-21。先按以下步骤使用；后面的 K01–S7 是历史实测记录，其中“尚未实现”等表述仅代表该阶段当时状态。S1–S7 首版及混合检索 H01–H06 已通过 leader review，验收与清理限制见 [混合检索计划](knowledge-hybrid-retrieval-plan.md)。
 
 ## 最短使用流程
 
@@ -16,9 +16,19 @@ knowledge:
   milvus_uri: http://127.0.0.1:19530
   managed_local: true
   data_dir: .codeplus/knowledge
+  retrieval_mode: auto
+  retrieval_candidates: 50
+  rrf_k: 60
+  top_k: 5
 ```
 
 相对 `data_dir` 在启动时解析。多个启动目录要共用库时，改为同一绝对路径，例如 `D:/CodePlus/.codeplus/knowledge`。默认 Embedding 是本地 Qwen3-Embedding-0.6B，固定 revision `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3`、CPU、1024 维；首次准备可能下载模型，后续复用 HF 缓存。回答使用原有 provider。已建库绑定模型与分块配置，修改这些参数须建新库重新导入。
+
+`retrieval_mode` 默认 `auto`：新混合库用 hybrid，已知旧向量库用 dense。可显式设置 `dense`（向量）、`bm25`（正文关键词）或 `hybrid`（两路 RRF）；旧库显式使用 bm25/hybrid 会报错，升级见 [旧库兼容与重建](#旧库兼容与重建)。**H05 的真实 workbin-v1 回归集建议显式设为 `dense`**，默认 hybrid 未全面改善该集；没有改动现有用户配置。
+
+hybrid 每路候选数为 `max(retrieval_candidates, 本次 top_k)`，融合后返回 Top-K；候选数必须是 1–16384 的整数，`rrf_k` 必须是有限正数。dense/bm25 仅取该路 Top-K，不使用候选数或 RRF 参数。修改检索参数后重启应用即可生效，无需重建库。TUI、CLI、Remote 和 Agent 共用配置，工具参数及会话绑定不新增模式字段。纯 BM25 的 search 不编码查询，现有 prepare 仍会准备模型。
+
+结果中的 `score_type` 为 `cosine_similarity`、`bm25` 或 `rrf`，RRF 是排名融合分数，不是相似度或概率；`retrieval` 显示请求/实际模式、实际候选数、RRF 参数和两路数量。一路正常空返回可融合，任一路异常会使 hybrid 查询失败，不静默降级。
 
 Windows 需先安装 Ubuntu-24.04 WSL2 内的 Docker Engine 和 Compose。CodePlus 使用这个发行版，不调用 Windows Docker Desktop；应用会保持自己的隐藏 WSL 会话，无需额外打开终端。Linux/macOS 使用本机 Docker。然后运行：
 
@@ -75,13 +85,31 @@ TUI 与 Remote 把每条回答的引用显示为 `[1]`、`[2]`，附文件名和
 
 off 关闭当前会话知识模式并清空当前回答上下文，历史记录和引用保留；不会删除库。彻底禁用时将配置设为 `knowledge.enabled: false` 并重新启动，普通编码模式不要求 Milvus 或模型依赖。
 
-### 分块升级与旧库重建
+### 旧库兼容与重建
 
-安装 `uv sync --locked --extra knowledge` 后，新库使用 SentenceSplitter（512 tokens / 64 tokens 重叠预算，包含特殊 token 的最终片段不得超限）。旧 `structure-offsets-v1` 库仍可查询并打开既有引用；向旧库 import/update/reimport 会提示另建库。已登记的失败写入仍可 `retry` 原材料，remove 也仍可用，均不引入新分块。
+安装 `uv sync --locked --extra knowledge` 后，create 新库使用 SentenceSplitter（512 tokens / 64 tokens 重叠预算，包含特殊 token 的最终片段不得超限）及 dense + BM25 索引。旧库不会自动升级：
 
-在 `/knowledge` 中执行 `create "资料库 SentenceSplitter"`，再 `import "C:\资料目录"` 导入全部原件，核对 sources/status 与引用后用 `use <新库ID>` 切换会话。CLI 对应 `python -m codeplus.knowledge create "资料库 SentenceSplitter"` 和逐文件 `python -m codeplus.knowledge import <新库ID> <原件路径>`。保留旧库，旧报告中的 `K:<旧库ID>:<chunk_id>` 继续指向旧代；不要手改旧 profile、覆盖原件或删除旧库目录。原来源路径丢失时，可从旧库 status 的 `original_path` 取保存原件导入新库。
+| 库的保存配置 | auto 实际检索 | 原有写入与恢复 |
+| --- | --- | --- |
+| 新 `dense-bm25-v1` 索引 | hybrid | 正常导入、更新、删除、retry |
+| SentenceSplitter、无 indexing 的旧向量库 | dense | 仍可导入、更新、删除、retry，不因缺少 BM25 禁写 |
+| `structure-offsets-v1` 旧分块库 | dense | 禁止新 import/update/reimport；仍可 remove、retry 已登记材料及读取历史引用 |
+
+分块或 BM25 升级共用一次 create/import/use 流程，在 TUI 或 Remote 输入：
+
+```text
+/knowledge create "资料库 混合检索"
+/knowledge import "C:\资料目录"
+/knowledge sources
+/knowledge status
+/knowledge use <新库ID>
+```
+
+create 会立即选中新库；导入全部原件、核对数量、状态与引用后，其他会话用 `use <新库ID>` 切换。独立 CLI 对应 `python -m codeplus.knowledge create "资料库 混合检索"` 和逐文件 `python -m codeplus.knowledge import <新库ID> <原件路径>`；问答 CLI 使用 `codeplus -p '问题' --knowledge <新库ID>`。保留旧库，旧报告中的 `K:<旧库ID>:<chunk_id>` 继续指向旧代；不要手改旧 profile、覆盖原件或删除旧库目录。原来源路径丢失时，可从旧库 status 的 `original_path` 取保存原件导入新库。
 
 评测重建使用冻结数据集 corpus 原件和独立新库，将新 ID 通过 `benchmark --kb-id <新库ID>` 传入；无需修改现有 binding.json、问题、参考答案、解析文本或历史结果。
+
+### 分块升级实测（2026-09-20，历史 dense 库）
 
 本次实现者实测（2026-09-20，leader 已验收通过）：Python 3.14.3 安装及 `uv lock --check` 通过；知识库相关回归 47 passed / 4 skipped。独立新库用真实 Qwen/Milvus 导入冻结 31 份资料，789 → 742 个片段，含特殊 token 的最大长度 509；导入耗时 989.18 秒，环境准备另计 57.68 秒。原基线未记录可比导入耗时，不作加速结论。
 
@@ -127,11 +155,19 @@ uv run --extra knowledge python -m codeplus.knowledge evaluate --replay '<上次
 
 首次运行保存原文、标注、profile 和真实文档/问题向量；replay 不加载模型、不读取原 fixtures。输出在当前目录 `.codeplus/knowledge/experiments/<run>/`，含 frozen.json 和 report.json。未传 `--config` 的 evaluate 使用本地默认连接，不要求回答 provider。
 
-三路为 dense、Milvus BM25、RRF hybrid；`--mode` 选择附加证据检索路线，**所有模式仍保留 dense/FLAT 与 HNSW 的 ANN 对照**。实验另建临时集合，**日常库仍为 FLAT + COSINE dense，没有自动升级、BM25/hybrid 配置或迁移入口**。配置为 HNSW、SDK 显示 Finished 不足以确认真实执行类型；S6 已用 1066 个片段及对应服务端构建/加载日志核实。完整结果和冻结路径见下方 S6，不用小集合指标推断生产性能。
+三路为 dense、Milvus BM25、RRF hybrid；evaluate 的 `--mode` 选择附加证据检索路线，**所有模式仍保留 dense/FLAT 与 HNSW 的 ANN 对照**。实验另建临时集合，不修改日常库或绑定；日常检索策略的同库比较用 benchmark，旧库升级用前述 create/import/use。配置为 HNSW、SDK 显示 Finished 不足以确认真实执行类型；S6 已用 1066 个片段及对应服务端构建/加载日志核实。完整历史结果和冻结路径见下方 S6，不用小集合指标推断生产性能。
+
+### H05 混合检索实测与交付边界（2026-09-21）
+
+真实 Qwen/Milvus 功能与六组同库报告已通过 leader review；默认 hybrid 有改善也有退步，本集建议 dense。简要指标、正式新库 ID、切换命令和本地 ignored 报告入口集中在 [标准回归评测说明](knowledge-benchmark.md#h05-真实资料对照2026-09-21)，私人原文与失败片段仅保留在本地报告。
+
+H06 仅调整文档和示例注释，复用 leader 对 H01–H04 最终生产代码的全仓结果：`python -m pytest -q` **814 passed / 10 skipped / 1 warning**（88.89 秒）；唯一 warning 是既有未注册 `pytest.mark.timeout`。H04 knowledge/config 为 **151 passed / 7 skipped**。真实 Milvus/Qwen 与恢复证据单列在 [计划执行记录](knowledge-hybrid-retrieval-plan.md#执行记录leader-维护)，skip 不计通过。H05 临时入口已清理；H01 `.h01-pytest-service` 的 32 个只读测试原件曾被自动审批以 `blocked by policy` 拒绝删除，仍为遗留限制，本阶段未触碰。
 
 ### 范围限制
 
-支持 Markdown 行号、文本型 PDF 物理页码、DOCX 正文段落/表格行列。扫描 PDF 无 OCR，旧 `.doc` 不支持；复杂 PDF 版面、Word 页码、页眉页脚/批注/嵌套表格不在承诺范围。退出后后台导入服务、自动历史清理、多用户权限未实现。精排与模型对照未实现；本次仅升级 SentenceSplitter 分块，未接入 Unstructured，改变配置不等于已验证其他模型。
+支持 Markdown 行号、文本型 PDF 物理页码、DOCX 正文段落/表格行列。扫描 PDF 无 OCR，旧 `.doc` 不支持；复杂 PDF 版面、Word 页码、页眉页脚/批注/嵌套表格不在承诺范围。退出后后台导入服务、自动历史清理、多用户权限、精排与模型对照未实现，未接入 Unstructured。
+
+BM25 匹配正文，文件名未进入检索文本。H05 追问只测试最后一句的首次检索，未增加查询改写或文档定位能力。未执行本轮回答模型、回答/拒答正确性、桌面 UI、生产规模/吞吐及调参后的热重复，不宣称回答质量或全面召回提升；历史 S7 的小样本回答验收仍只代表当时结果。
 
 ## 分阶段实测记录
 
@@ -697,7 +733,7 @@ ANN Recall@K 单独计算：分母为同一文档范围内 FLAT 实际返回的�
 
 相关默认回归：57 passed / 4 skipped（17.18 秒），覆盖 knowledge、service、evaluate 和命令注册；未 opt-in 的真实测试明确跳过。`CODEPLUS_TEST_EVAL_FROZEN=<上述 frozen.json>` 与 `CODEPLUS_TEST_MILVUS_URI=http://127.0.0.1:19530` 显式 opt-in 后，运行 `tests/test_knowledge_evaluate.py` 及原有 `tests/test_knowledge_service.py::test_real_store_document_isolation_and_binding`：4 passed / 240.78 秒，含上述真实重放哨兵和原 SDK 四次进程硬退出后的显式恢复。每轮 pytest 在本轮 TemporaryDirectory 内指定独立 `--basetemp`，不触发全局旧目录保留清理。
 
-本轮自建集合均在 finally 中按名字删除并确认不存在；临时导入库及 pytest TemporaryDirectory 正常收尾。正式冻结、报告及服务证据摘要保留在 Git 忽略目录。没有修改共享容器配置、既有 WSL keepalive、主工作区或任何旧 S2/S3/S4 policy 拒绝路径。**日常 BM25/hybrid 当前不支持，未实现显式迁移**；本阶段仅交付实验集合路径，不提前扩展精排、模型/分块对照或大规模迁移系统。
+本轮自建集合均在 finally 中按名字删除并确认不存在；临时导入库及 pytest TemporaryDirectory 正常收尾。正式冻结、报告及服务证据摘要保留在 Git 忽略目录。没有修改共享容器配置、既有 WSL keepalive、主工作区或任何旧 S2/S3/S4 policy 拒绝路径。**S6 当时不支持日常 BM25/hybrid，未实现显式迁移**；本阶段仅交付实验集合路径，不提前扩展精排、模型/分块对照或大规模迁移系统。当前能力与重建步骤见本文开头。
 
 **S6 本轮清理阻塞**：收尾时提交的 PowerShell 命令计划先保存准备阶段资源摘要，再核对绝对目标均在本 worktree 内，以 Remove-Item 删除以下中间目录和测试缓存；整条命令在执行前被自动审批以 `blocked by policy` 拒绝，未给出进一步原因。因此资源摘要新文件未创建，下列清理未执行；不更换工具、不缩小范围重试，也不触碰旧拒绝路径。
 
@@ -740,7 +776,7 @@ leader S6 独立验收：在新的 TemporaryDirectory 禁止模型加载并修�
 - leader 在主目录同一 `b8ecaa3` 基线执行全套 tests：**701 passed / 7 skipped，47.66 秒**；另有一个既有 `test_consolidation.py:243` 未注册 `pytest.mark.timeout` 警告。skip 保留为未执行，不计通过。本轮无产品代码变更，不重复全套。该轮使用独立 TemporaryDirectory basetemp 和 `no:cacheprovider`，正常清理。
 - leader `uv build` wheel 成功，核实 knowledge 十个模块均入包，tests 不作为 wheel 运行依赖；临时构建目录已清理。主目录 fixtures 保持 LF，16 题/18 处 quote 范围均匹配；主配置未改，主目录 Git 干净。
 - 恢复复用 S3 的真实 SDK 四个进程硬退出点与显式 retry，以及 S6 opt-in 复跑；本轮只检查无待处理操作的 retry。CLI text/stream-json 和真实 WebSocket 用户入口复用 S5 的已验收证据；S7 实际重查普通 CLI、knowledge、evaluate 及各管理子命令的 `--help`，全部退出 0，参数与新增文档一致。`uv lock --check` 通过。
-- 冻结三路与真实 HNSW 复用 S6 最终 frozen/report/server-evidence 和 leader 禁止模型加载的独立重放，未重跑 1066 片段编码或修改实验结果。日常 BM25/hybrid 迁移、K34 精排、K35 模型/分块对照均未实现；OCR、复杂版面、大规模/长期压力、掉电保证、多用户及可视桌面布局仍未验收。
+- 冻结三路与真实 HNSW 复用 S6 最终 frozen/report/server-evidence 和 leader 禁止模型加载的独立重放，未重跑 1066 片段编码或修改实验结果。S7 当时日常 BM25/hybrid 迁移、K34 精排、K35 模型/分块对照均未实现；OCR、复杂版面、大规模/长期压力、掉电保证、多用户及可视桌面布局仍未验收。
 
 本轮未新增个人资料、原始实测输出或缓存到 Git。旧阶段的清理限制保留在原记录中，不把本轮正常收尾表述为已处理历史残留。
 

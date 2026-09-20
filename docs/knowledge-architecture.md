@@ -1,6 +1,6 @@
-# CodePlus Knowledge：首版架构
+# CodePlus Knowledge：架构与检索契约
 
-日期：2026-09-20。状态：K01 环境及 S1–S7 已通过 leader 功能与代码质量验收，纳入逐阶段本地提交，支持三种格式的导入、检索、更新、删除、恢复，TUI、非交互 CLI、Remote 的知识问答、会话绑定和引用报告，以及独立冻结检索实验。组合验收与用户文档已完成。实施顺序见 [最小任务清单](knowledge-tasks.md)，使用步骤、实测证据及遗留项见 [环境说明](knowledge-setup.md)。
+日期：2026-09-21。K01 环境及 S1–S7 首版已通过 leader 验收；日常 BM25/混合检索的 H01–H06 已通过 review，验收及清理限制见 [混合检索计划](knowledge-hybrid-retrieval-plan.md)。支持三种格式的导入、检索、更新、删除、恢复，TUI、非交互 CLI、Remote 的知识问答、会话绑定和引用报告，以及独立冻结检索实验。首版实施顺序见 [最小任务清单](knowledge-tasks.md)，使用步骤与遗留项见 [环境说明](knowledge-setup.md)。
 
 本版取代此前的整库快照发布方案。目标是本地个人知识库，以及可独立运行的检索评测。
 
@@ -18,16 +18,16 @@
 
 ```text
 导入：原件 → 解析 → 分块 → 本地 Embedding → Milvus
-提问：查询 Embedding → Milvus 召回 → 读取原文 → 现有 Agent 回答
+提问：按模式选择向量召回 / BM25 召回 / 两路 RRF → 核对并读取原文 → 现有 Agent 回答
 ```
 
 CodePlus 内增加一个 knowledge 模块。命令、Agent 工具和评测程序调用同一套服务函数。Milvus 单独运行；首版不另建 RAG HTTP 服务。
 
-Milvus 保存向量、检索文本和片段标识。SQLite 保存知识库、文档及片段的登记信息。本地文件保存导入原件和必要的重试材料。SQLite 不承担向量检索。
+Milvus 在同一条记录保存向量、检索正文和片段标识，并由内建 BM25 函数生成稀疏向量。SQLite 保存知识库、文档及片段的登记信息，不另建全文索引。本地文件保存导入原件和必要的重试材料。
 
 ## 3. 代码与数据范围
 
-按实现需要逐步创建模块：
+主要模块：
 
 ```text
 codeplus/knowledge/
@@ -39,11 +39,13 @@ codeplus/knowledge/
   embedding.py     本地模型
   milvus_store.py  官方 SDK 适配
   service.py       导入、检索、更新和状态保护
+  retrieval.py     共享分词/BM25 配置与纯 RRF 函数
   citations.py     原文读取与引用校验
   evaluate.py      固定语料、原文证据召回、Milvus 索引/BM25/RRF 实验
+  benchmark.py     通过日常服务运行固定真实资料回归集
 ```
 
-先实现具体函数，不预先创建多后端继承框架。后续增加替代模型或数据库时再抽取实际需要的接口。
+日常服务与实验共用 `retrieval.py`，runtime 不依赖 `evaluate.py`；只有评测程序复用其评分和报告辅助函数。没有新增检索框架或第二套更新状态机。
 
 数据固定在启动时解析的 `<project_root>/.codeplus/knowledge/`，进入 worktree 或改变工作目录不隐式改用另一套数据。现有 Git 忽略规则覆盖该目录。
 
@@ -65,18 +67,23 @@ S3 schema 2 在现有三张表加列，从 S2 documents 回填 chunks.original_p
 
 ## 4. Milvus 集合规则
 
-一个知识库使用一个稳定集合，并绑定明确的 Embedding、解析和分块配置。更换模型或分块配置时先创建单独实验集合；不能向原集合混写不兼容向量。即使维度相同，也要核对模型 revision 与输入模板。
+一个知识库使用一个稳定集合，绑定明确的 Embedding、解析、分块及索引 profile。更换这些约定时另建库并重新导入，不能向原集合混写不兼容向量。即使维度相同，也要核对模型 revision 与输入模板。查询模式、候选数和 RRF 参数不进入 profile，不改变 generation 或 chunk ID。
 
-`sentence-offsets-v2/llama-index-0.14.24` 替代 `structure-offsets-v1`，自动参与 generation 指纹。旧库除已知旧分块标识外，仍须逐项匹配完整 profile，并验证落盘 profile 与库/集合保存的哈希一致；检索返回旧库的真实 profile_hash。旧库可检索、读取历史引用、移除和重放已登记的 pending 材料，但新导入必须另建库；不原地修改 profile 或重算历史 chunks。
+当前分块为 `sentence-offsets-v2/llama-index-0.14.24`。缺少 `indexing` 的已知旧 profile 仍按 dense 集合访问：SentenceSplitter 旧库可继续导入、更新、查询、删除和 retry；更早的 `structure-offsets-v1` 库可查询、读取历史引用、移除及重放已登记的 pending，新导入/update/reimport 仍须另建库。兼容处理仅识别这两项已知差异，完整旧 profile hash、其余模型/解析/分块配置与集合契约仍需匹配；未知版本和篡改均拒绝。写入及 pending 保存所属库的真实 profile，不套用新库默认值。
 
-首期集合字段为：
+新集合字段为：
 
 - `chunk_id`：VARCHAR 主键，稳定生成，关闭 AutoID。
 - `doc_id`、`generation_id`：VARCHAR，用于单文档替换与校验。
-- `text`：VARCHAR，检索预览；按 UTF-8 字节检查长度。
+- `text`：VARCHAR，检索正文；按 UTF-8 字节检查长度，启用 analyzer。
 - `dense`：FLOAT_VECTOR，维度来自锁定的模型配置。
+- `sparse`：SPARSE_FLOAT_VECTOR，由 `text_bm25` 函数从 text 生成。
 
-日常集合继续使用 FLAT + COSINE，只支持 dense。S6 在新实验集合创建 text analyzer、BM25 Function 和 sparse 字段，并用同一份冻结向量比较 FLAT/HNSW。**当前没有日常 BM25/hybrid 迁移入口**；实验不修改任何日常集合 schema 或绑定。未来若提供日常混合检索，须另行实现显式重导与绑定切换，不能把本阶段实验视为已经迁移。
+新 profile 的 `indexing.version` 为 `dense-bm25-v1`：dense 使用 FLAT/COSINE，sparse 使用 SPARSE_INVERTED_INDEX/BM25、DAAT_MAXSCORE、`k1=1.2`、`b=0.75`；分词为 jieba search、`hmm=false`、lowercase。集合实际字段、BM25 函数和全部索引须与绑定 profile 一致，两路索引完成后建库才能 READY。失败沿用 NEEDS_REPAIR/retry。旧库不原地添加索引；升级复用 [create/import/use 重建流程](knowledge-setup.md#旧库兼容与重建)。
+
+`knowledge.retrieval_mode` 默认 `auto`，在新混合库选 hybrid、已知旧向量库选 dense；也可显式设为 `dense`、`bm25` 或 `hybrid`。旧库显式请求 bm25/hybrid 会报错，不自动降级。dense/bm25 只取该路 Top-K；纯 BM25 的 search 不编码查询，但现有环境 prepare 仍会准备模型。hybrid 每路取 `max(retrieval_candidates, 本次 top_k)`，按 chunk ID 合并后截取 Top-K。候选数默认 50，整数范围 1–16384；`rrf_k` 默认 60，必须是有限正数。
+
+RRF 等权累加各路的一基排名 `1/(rrf_k+rank)`，缺席路贡献零，同分按 chunk ID 排序。返回 `score_type` 分别为 `cosine_similarity`、`bm25`、`rrf`；BM25/RRF 分数不是余弦相似度，RRF 也不是概率。`retrieval` 保留原字段并记录 `requested_mode`、实际 `mode`、`candidates`、`rrf_k`、`lane_counts`；单路的 RRF 参数和未执行路数量为 null。一路正常空返回可继续融合，任一路执行异常则整次 hybrid 失败，保留路名与异常原因。
 
 ## 5. 更新与失败处理
 
@@ -90,6 +97,8 @@ S3 schema 2 在现有三张表加列，从 S2 documents 回填 chunks.original_p
 4. 仅删除该 doc_id 的旧向量，写入本次片段；用稳定 ID 完整行 upsert 重试，验证写入可见与片段集合符合预期。
 5. SQLite 单事务保存当前文档、片段，清除 pending_operation，增加 revision，恢复 READY。
 6. 释放锁。
+
+查询编码在锁外；两路数据库查询、融合、Top-K 截取及返回来源核对在同一次锁内完成。每个返回片段必须属于当前库、READY 且未移除的文档及其当前 generation，结果带该锁内读取的 revision；来源不符直接报错。
 
 SQLite 与 Milvus 没有跨库事务。若第 3–5 步中断，查询在取得锁后仍会因状态不是 READY 而拒绝执行，展示“待恢复”；重试依据落盘材料重新执行该文档替换。禁止凭超时、异常消失或旧 PID 自动标记成功。
 
@@ -132,7 +141,7 @@ SentenceSplitter 默认剥离空白，且文本查找无法可靠定位重复段
 
 S6 固定 16 个中英文问题、18 处原文证据范围，包含两题无答案和一题需要五处证据的跨文档问题。Evidence Recall@K 的分母是有答案问题的全部标注范围数；同一来源范围须由前 K 个结果的区间并集完整覆盖，部分覆盖不计。请求失败按零命中保留在固定分母，并单独报告失败率与成功请求召回；无标准答案的召回为 null，不计满分。重复测时不重复扩大证据分母。ANN Recall@K 另以同范围 FLAT 实际返回的 K 内 ID 集合作参照，空参照不可用。
 
-实验的 dense/bm25/hybrid 模式和候选数只属于 evaluate CLI；日常配置、SearchKnowledge、会话绑定不扩展模式。RRF 使用两路一基排名等权求和 `1/(rrf_k+rank)`，保留原始分数/排名，以 chunk ID 打破融合平分。两路有效但某路空返回，正常计算并记录该路 no_hits；任一路异常，hybrid 标记 unavailable，保留各路错误和原始输出。
+`evaluate` 的模式/候选参数仅控制该次独立实验，RRF 复用日常相同的纯函数。实验报告额外保留两路原始分数/排名与状态：正常空路记 no_hits，任一路异常时 hybrid 记 unavailable。日常模式由 knowledge 配置控制，`SearchKnowledge` 参数和会话绑定结构保持不变；`benchmark` 通过同一服务比较日常策略，仅在本次运行覆盖配置，说明见 [标准回归评测](knowledge-benchmark.md)。
 
 固定背景目录包含 1040 条短小虚构展品，让真实分块达到当前 Milvus 建索引规模。小集合可能显示 Finished/indexed_rows、非零 index_id 和 HNSW index_name，却跳过 HNSW 构建；报告保留 loaded segment/index 信息，将 ANN 数值明确标为配置集合的邻居重合率，execution_verified=false，不能仅凭公共 API 当作已验证的 HNSW 比较。实际本轮类型须结合服务端对应集合的 build/load 日志确认，验收证据记录在 setup。禁止为实验改变共享 Milvus 全局阈值。微型合成集的 P50/P95 不用于生产性能结论。
 
@@ -140,7 +149,9 @@ BM25 创建条件以 [官方全文检索文档](https://milvus.io/docs/full-text
 
 ## 8. 接入与本次边界
 
-现有 TUI、Remote、非交互 CLI 分别初始化 Agent；`Agent.run` 与 `run_to_completion` 也分别构建上下文。按任务清单逐个接入，复用同一服务与知识库上下文准备函数，不靠只修改 TUI 宣称全入口完成。
+TUI、Remote、非交互 CLI 均经 `KnowledgeContext`、`SearchKnowledge` 与 `KnowledgeService.search` 消费同一检索结果；`Agent.run` 与 `run_to_completion` 共用知识上下文准备函数。独立 search CLI 直接调用该服务；引用 ID、来源读取和工具错误协议保持不变。
+
+H05 在同一真实库完成三策略对照，功能链路通过；默认 hybrid 有改善也有退步，本回归集建议显式 dense，未改变 auto 默认或用户配置。指标和本地报告入口见 [实际对照](knowledge-benchmark.md#h05-真实资料对照2026-09-21)。文件名未进入检索正文，追问仅评测最后一句的首次检索；未执行本轮回答模型、桌面 UI、生产规模/吞吐及调参热重复，不据此宣称回答质量或全面召回提升。
 
 首版暂缓：扫描件 OCR、复杂版面、多用户权限、退出后继续运行的导入服务、自动历史清理、整库版本回滚、第二种数据库。
 

@@ -321,7 +321,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 
 ## 接下来想做的事
 
-接下来，继续扩展 **Agentic RAG（Work）模式**：补充扫描件 OCR 与复杂版面解析，将 BM25 + 向量混合检索接入日常问答，并增加 Rerank 精排，让更多类型的资料能够参与查证与引用报告生成。
+接下来，继续扩展 **Agentic RAG（Work）模式**：补充扫描件 OCR 与复杂版面解析，并增加 Rerank 精排，让更多类型的资料能够参与查证与引用报告生成。
 
 ---
 
@@ -339,7 +339,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 | **扩展** | 多模型协议 · Skill · MCP · Hooks |
 | **执行控制** | 权限规则 · 路径边界 · 可选沙箱 · Git worktree |
 
-Agentic RAG（Work）模式已接入 TUI、CLI 和 Remote，当前使用本地 Qwen Embedding + Milvus 向量检索，回答由配置的模型生成。
+Agentic RAG（Work）模式已接入 TUI、CLI 和 Remote，支持本地 Qwen Embedding + Milvus 向量、BM25 及 RRF 混合检索，回答由配置的模型生成。默认 auto 在新库用 hybrid、旧向量库用 dense；本次真实回归集建议显式 dense，效果与边界见 [检索评测说明](docs/knowledge-benchmark.md)。
 
 ---
 

@@ -41,8 +41,10 @@ knowledge:
   max_input_tokens: 8192
   batch_size: 8
   top_k: 5
-  retrieval_mode: auto  # auto | dense | bm25 | hybrid
-  retrieval_candidates: 50  # per lane, 1-16384; hybrid uses at least top_k
-  rrf_k: 60  # finite positive RRF rank constant
+  retrieval_mode: auto  # auto: new hybrid bases -> hybrid; known legacy bases -> dense
+  # Explicit dense | bm25 | hybrid; legacy bases reject bm25/hybrid (create/import/use a new base).
+  # H05 workbin-v1 recommends explicit dense for that corpus; see docs/knowledge-benchmark.md.
+  retrieval_candidates: 50  # hybrid only: max(this integer, top_k) per lane; 1-16384
+  rrf_k: 60  # hybrid only: finite positive rank constant; RRF score is not similarity
   chunk_tokens: 512
   chunk_overlap: 64

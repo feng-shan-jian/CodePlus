@@ -1,6 +1,6 @@
 # 向量 + BM25 多路召回执行计划
 
-状态：执行中，H01–H05 review 通过；每阶段由 leader 审查、验证通过后本地提交，再启动下一阶段。基线：`ef6bd17`，2026-09-20。初始工作区仅本计划未跟踪，暂存区为空；保留他人已有修改。
+状态：H01–H06 实现及 review 完成，已按阶段本地提交，未推送；H01 临时文件清理受审批阻塞，见执行记录。基线：`ef6bd17`，2026-09-20。初始工作区仅本计划未跟踪，暂存区为空；保留他人已有修改。
 
 目标：将现有实验中的 BM25 和 RRF 接入日常知识库搜索，并用真实资料判断效果。分块、Embedding、追问处理、文档范围检索、精排模型和回答模型不在本轮范围。
 
@@ -72,7 +72,7 @@ knowledge:
 | H03 | 日常检索两路召回与 RRF 融合 | H02 | review 通过 |
 | H04 | 现有 benchmark 支持三策略对照 | H03 | review 通过 |
 | H05 | 真实 Milvus、模型和冻结资料集验收 | H04 | review 通过；效果退步如实记录 |
-| H06 | 集成审查、使用文档和清理 | H05 | 待执行 |
+| H06 | 集成审查、使用文档和清理 | H05 | review 通过；H01 清理限制单列 |
 
 通用约束：
 
@@ -108,6 +108,9 @@ knowledge:
 - H05 耗时与证据：每模式完整预热 32 题后两轮重复、第二轮逆序，64 个热样本；dense/BM25/hybrid 的 P50/P95 为 **128.61/148.55、18.32/29.03、136.03/164.74 ms**，包含查询编码、校验、检索、融合与来源读取。6 份正式报告及逐题、冷启动、热记录、保全清单均保存于 `.codeplus/benchmarks/workbin-v1/runs/h05_20260921_qwen_hybrid/` 的索引文件所指路径；不调用回答模型，不宣称回答或拒答正确率提升。
 - H05 leader 独立复核：全部 6 份正式报告和 9 轮记录评分/耗时重算一致；177 个既有文件哈希、两旧库 status/chunks 逻辑哈希相同，Milvus 前后行/schema/index 快照相同；187 个新引用和 220 个旧引用的来源与原件核对通过。工作树与主目录 12 个源码文件统一换行后完全一致，保留各自真实字节指纹（工作树 `1396db7b9ad30816dcd551c29b01cfc67451bcf2fd3ae38c7591616683e79e2a`，主目录 `5854855751e517c3ec997d5deff29a3d24b83a273b76c26f8fd8a84529a35dec`）。独立证据为同目录 `leader-review.json`，leader 临时复核与 pytest 入口已删除。
 - H05 交付 review 通过：正式汇总为上述验收目录 `summary.md` / `summary.json`；3 个执行者临时脚本已删除，工作树及暂存区干净，无产品或正式测试 diff。正式新库和报告保留；现有用户配置、绑定、旧库、历史报告均未修改。未执行回答模型、桌面 UI、生产规模/吞吐和调参热重复，H05 异常注入不冒充 H02 的进程硬退出验证。H01 已被审批拒绝的遗留目录仍单独记录。
+- H05 本地提交：`56070b9`。H06 实现任务：`01a0bfc3-9aff-7931-aa5d-416e28104359`，从此提交继续；未推送。
+- H06 review 通过：仅修改 `.codeplus/config.yaml.example`、`README.md`、架构/使用/评测说明及本计划 6 个文件；删除过时的日常 dense-only 说明，统一旧库重建流程，保留历史验收时间边界与真实效果退步。复核共享规则、旧 profile/pending、同锁检索、来源/引用与三入口后，未发现需追加修复的产品缺陷；生产及测试代码未变，复用上述全仓结果。
+- H06 实际验证：13 项命令帮助、52 处本地 Markdown 链接/锚点、示例与使用说明 YAML 校验、生产源码一致性、冻结集 `--check`（31 文档/32 问题及原指纹）、`git diff --check` 均通过。执行者临时脚本及 2 个帮助命令日志已删除，leader 集成 patch 已删除；H01 被审批拒绝的目录未触碰。6 个阶段任务按顺序独立执行、由 leader review 后精确提交；正式 H05 库和报告保留，用户配置、绑定、旧库与历史结果不变。
 
 ### H01：共享规则和配置
 
@@ -198,11 +201,11 @@ knowledge:
 
 1. 审查共享规则只有一个实现；确认 runtime 不依赖实验报告代码，没有额外检索框架或重复状态机。
 2. 核对旧库 profile/pending、两路异常、当前来源过滤、引用和所有入口的一致性。
-3. 完成知识库相关测试和配置测试；合并完全部改动后执行一次全仓回归，修复本轮引入的问题。真实集成按 H05 的明确开关单独记录。
+3. 完成知识库相关测试和配置测试；最终生产代码执行一次全仓回归，修复本轮引入的问题。H04 knowledge/config 和 leader 已执行的全仓结果见执行记录；H06 若仅改文档/注释则复用，不重复 pytest。若修正生产代码，按影响补检并由 leader 判断完整回归是否需重跑。真实集成与 opt-in 跳过单独记录。
 4. 写清默认模式、显式模式、旧库升级命令、分数含义、实际效果及未执行项。文档中的文件名匹配、追问与回答质量边界保持准确。
 5. 删除本轮临时脚本、调试文件和临时数据；保留正式验收资料。检查 `git diff --check` 与精确文件清单，交付未提交 diff。
 
-**交付清单**：代码修改清单、测试命令及结果、真实三策略对照报告、独立混合库 ID 与切换命令、已知限制、未执行项、临时文件清理结果。
+**交付清单**：精确修改清单、集成审查发现、实际验证及复用测试结果、文档入口、真实三策略对照报告、独立混合库 ID 与切换命令、已知限制、未执行项、仅本阶段临时文件清理结果。已被审批拒绝的 H01 遗留目录不触碰；最终 review 状态与提交号由 leader 填写。
 
 ## 4. 执行命令参考
 
@@ -218,17 +221,19 @@ $knowledgeTests = @(Get-ChildItem tests/test_knowledge*.py | ForEach-Object { $_
 .\.venv\Scripts\python.exe -m pytest @knowledgeTests -q
 ```
 
-H04 完成后才能使用以下新增参数；`$hybridKbId` 必须替换为 H05 实际创建并核对的库 ID。运行前沿用现有配置确认服务地址和数据目录，不打印凭据。
+H04 参数已可用，以下使用 H05 正式新库，仅供需要再次运行时参考；既有六份报告与结论见 [评测说明](knowledge-benchmark.md#h05-真实资料对照2026-09-21)。运行前沿用现有配置确认服务地址和数据目录，不打印凭据、不覆盖旧报告。
 
 ```powershell
 $datasetPath = '.codeplus/benchmarks/workbin-v1'
-$hybridKbId = '<H05实际创建的混合库ID>'
+$hybridKbId = '1955508ffde242ccafed2a6193c1f300'
 .\.venv\Scripts\python.exe -m codeplus.knowledge benchmark --dataset $datasetPath --kb-id $hybridKbId --managed-local --mode dense
 .\.venv\Scripts\python.exe -m codeplus.knowledge benchmark --dataset $datasetPath --kb-id $hybridKbId --managed-local --mode bm25
 .\.venv\Scripts\python.exe -m codeplus.knowledge benchmark --dataset $datasetPath --kb-id $hybridKbId --managed-local --mode hybrid --candidates 50 --rrf-k 60
 ```
 
-以上三条生成正式质量报告；独立 CLI 进程的模型加载和首题耗时不能直接作为稳定性能结论，热查询对照按 H05 的进程内预热方案执行。
+以上三条通过同一服务分别生成正式检索报告；独立 CLI 进程的模型加载和首题耗时不能直接作为稳定性能结论，热查询对照按 H05 的进程内预热方案执行。会话切换命令为 `/knowledge use 1955508ffde242ccafed2a6193c1f300`，本轮未改用户绑定；auto 会在该库选择 hybrid，本回归集实际建议显式 dense。旧库升级复用 [create/import/use 流程](knowledge-setup.md#旧库兼容与重建)。
+
+最后核对 diff 与状态；全仓 pytest 仅在最终代码尚未验证或代码修正需要重验时执行：
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
