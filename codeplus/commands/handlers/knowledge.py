@@ -4,11 +4,72 @@ import asyncio
 import json
 from pathlib import Path
 import re
+from urllib.parse import urlsplit
+from urllib.request import url2pathname
 
 from codeplus.commands.registry import Command, CommandContext, CommandType
 
 
-USAGE = '/knowledge prepare | create <name> | use <id> | import "<path>" | status | sources | remove <doc_id> | retry | off | open <citation_id> [offset]'
+USAGE = '/knowledge prepare | create <name> | use <id> | import "<path>" | status | sources | reimport <doc_id> | remove <doc_id> | retry | off | open <citation_id> [offset]'
+
+
+def _source_path(uri: str) -> Path:
+    source = urlsplit(uri)
+    if source.scheme != "file" or source.query or source.fragment:
+        raise ValueError("文档未保存有效的本地源路径；请使用 /knowledge import <path>")
+    path = source.path
+    if source.netloc and source.netloc.lower() != "localhost":
+        path = f"//{source.netloc}{path}"
+    result = Path(url2pathname(path))
+    if not result.is_absolute():
+        raise ValueError("文档源路径不是绝对路径；请使用 /knowledge import <path>")
+    return result
+
+
+def _import_failure(service, kb_id: str, file: Path, exc: Exception) -> dict:
+    failure = {"path": str(file), "reason": str(exc) or type(exc).__name__, "kind": "import"}
+    try:
+        status = service.status(kb_id)
+        pending = [doc for doc in status["documents"] if doc.get("pending_operation")]
+        if any(_source_path(doc["source_uri"]) == file.resolve() for doc in pending):
+            failure["kind"] = "retry"
+        elif pending or status.get("pending_operation") or status["state"] != "READY":
+            failure["reason"] += "；请先 /knowledge retry 恢复知识库，再重新导入此文件"
+    except Exception as status_error:
+        failure["reason"] += f"；无法确认恢复状态：{status_error}，请先 /knowledge status 核对"
+    return failure
+
+
+async def _import_files(ctx: CommandContext, service, kb_id: str, files: list[Path]) -> None:
+    progress = {"kb_id": kb_id, "processed": 0, "total": len(files),
+                "succeeded": 0, "unchanged": 0, "failed": 0, "failures": []}
+    callback = ctx.config.get("knowledge_progress")
+
+    def report():
+        if callback is not None:
+            # Consumers may retain snapshots for recovery; never expose mutable counters.
+            callback({**progress, "failures": [dict(failure) for failure in progress["failures"]]})
+
+    ctx.ui.add_system_message(f"开始导入，共 {len(files)} 个文件。")
+    report()
+    for file in files:
+        try:
+            result = await asyncio.to_thread(service.import_document, kb_id, file)
+        except Exception as exc:
+            failure = await asyncio.to_thread(_import_failure, service, kb_id, file, exc)
+            progress["failures"].append(failure)
+            progress["failed"] += 1
+        else:
+            progress["unchanged" if result["unchanged"] else "succeeded"] += 1
+        progress["processed"] += 1
+        report()
+
+    summary = (f"导入完成：已处理 {progress['processed']}/{progress['total']}，"
+               f"成功 {progress['succeeded']}，未变化 {progress['unchanged']}，失败 {progress['failed']}。")
+    for failure in progress["failures"]:
+        recovery = "/knowledge retry" if failure["kind"] == "retry" else f'/knowledge import "{failure["path"]}"'
+        summary += f"\n导入失败：{failure['path']}：{failure['reason']}\n恢复：{recovery}"
+    ctx.ui.add_system_message(summary)
 
 
 async def handle_knowledge(ctx: CommandContext) -> None:
@@ -44,8 +105,13 @@ async def handle_knowledge(ctx: CommandContext) -> None:
         ctx.ui.add_system_message(json.dumps({"historical_sources": sources}, ensure_ascii=False, indent=2))
         return
     if sub in {"", "prepare"}:
-        await knowledge.prepare(ctx.ui.add_system_message)
-        if not sub:
+        menu = ctx.config.get("show_knowledge_menu") if not sub else None
+        try:
+            await knowledge.prepare(ctx.ui.add_system_message)
+        finally:
+            if menu is not None:
+                menu()
+        if not sub and menu is None:
             ctx.ui.add_system_message(USAGE)
         return
     if sub == "create" and arg:
@@ -60,28 +126,32 @@ async def handle_knowledge(ctx: CommandContext) -> None:
         ctx.ui.add_system_message(f"已选中知识库 {status['name']}: {status['id']} ({status['state']})")
         await knowledge.prepare(ctx.ui.add_system_message)
         return
-    if sub not in {"import", "status", "sources", "remove", "retry"}:
+    if sub not in {"import", "status", "sources", "reimport", "remove", "retry"}:
         ctx.ui.add_system_message(USAGE)
         return
     if not knowledge.binding:
         raise ValueError("请先 /knowledge create <name> 或 /knowledge use <id>")
     kb_id = knowledge.binding["kb_id"]
-    if sub in {"import", "remove", "retry"}:
+    if sub in {"import", "reimport", "remove", "retry"}:
         await knowledge.prepare(ctx.ui.add_system_message)
     if sub == "import" and arg:
         path = Path(arg).expanduser()
         def collect_files():
-            return sorted(p for p in path.rglob("*") if p.suffix.lower() in {".md", ".pdf", ".docx"} and p.is_file()) if path.is_dir() else [path]
+            source = path.resolve()
+            return sorted(p for p in source.rglob("*") if p.suffix.lower() in {".md", ".pdf", ".docx"} and p.is_file()) if source.is_dir() else [source]
         files = await asyncio.to_thread(collect_files)
         if not files:
             raise ValueError("目录内没有 Markdown/PDF/DOCX 文件")
-        for i, file in enumerate(files, 1):
-            ctx.ui.add_system_message(f"导入 {i}/{len(files)}: {file}")
-            try:
-                result = await asyncio.to_thread(knowledge.service.import_document, kb_id, file)
-                ctx.ui.add_system_message(f"{i}/{len(files)} {'未变化' if result['unchanged'] else '导入完成'}: {file.name}")
-            except Exception as exc:
-                ctx.ui.add_system_message(f"{i}/{len(files)} 导入失败: {file.name}: {exc}")
+        await _import_files(ctx, knowledge.service, kb_id, files)
+        return
+    if sub == "reimport" and arg:
+        status = await asyncio.to_thread(knowledge.service.status, kb_id)
+        document = next((doc for doc in status["documents"] if doc["id"] == arg), None)
+        if document is None:
+            raise ValueError(f"当前知识库中没有此文档：{arg}")
+        if document.get("pending_operation"):
+            raise ValueError("此文档有待恢复操作，请先 /knowledge retry")
+        await _import_files(ctx, knowledge.service, kb_id, [_source_path(document["source_uri"])])
         return
     if sub in {"status", "sources"}:
         result = await asyncio.to_thread(knowledge.service.status, kb_id)

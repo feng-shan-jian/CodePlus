@@ -322,7 +322,7 @@ async def test_knowledge_pilot_binding_background_import_and_history(service, tm
         app.query_one("#chat-input", ChatInput).clear()
         release.set()
         await app._knowledge_task
-        assert any("导入 1/1" in m for m in messages) and any("导入完成" in m for m in messages)
+        assert any("导入完成：已处理 1/1，成功 1，未变化 0，失败 0" in m for m in messages)
         from codeplus.tools.base import TextDelta, StreamEnd
         class Client:
             async def stream(self, conversation, system="", tools=None):
@@ -587,7 +587,7 @@ async def test_remote_knowledge_websocket_scope_progress_and_resume(service, tmp
                 release.set()
                 events += await until("command_done")
                 assert any("服务器本地" in str(e) for e in events)
-                assert any("导入 1/1" in str(e) for e in events) and any("导入完成" in str(e) for e in events)
+                assert any("导入完成：已处理 1/1，成功 1，未变化 0，失败 0" in str(e) for e in events)
                 errors = await command(f'/knowledge import "{tmp_path / "missing.md"}"')
                 assert any("导入失败" in str(e) for e in errors)
                 await command(f"/knowledge use {kb}")
