@@ -2,393 +2,158 @@
 
 [中文](README.md) | [English](README_EN.md)
 
-> Exploring how tasks can communicate directly, hand work off, and collaborate over time, while providing a genuinely usable terminal AI coding tool.
+> Tools are bridges across technical gaps, helping us go faster and further. But every bridge has design limits. We should become not only skilled at crossing bridges, but engineers who understand the principles, weigh the tradeoffs, and can build bridges themselves.
 
-CodePlus is not intended to be a direct reproduction of Codex. Through this project, I want to keep exploring new forms of Agent collaboration, learn from proven ideas in existing tools, and gradually turn my understanding into a technical implementation that can be shared and used.
+CodePlus is a terminal AI coding tool and my exploration of an Agent Runtime: bringing model reasoning into a real environment, with execution rules for tool calls, context, and collaboration that can be inspected.
 
 ## Why CodePlus Exists
 
-I have seen many people share their Agent workflows, and many of those workflows use multiple sub-agents. Yet workflows that truly take advantage of direct task-to-task communication still seem uncommon, or at least I have not encountered many of them.
+What first drew me to AI coding tools was their ability to keep working toward a goal: read code, call a tool, observe the result, and decide what to do next. Following that path made me curious about the problems hidden beneath a smooth interaction.
 
-Codex does not prominently advertise this capability, or at least I did not see it mentioned when I first started using it. I discovered it by accident: I asked one task to prepare a prompt for another task and expected it to give me text that I could copy. Instead, it sent the message directly to the target task. At the time, I did not even know tasks could communicate this way.
+When the model believes an edit is complete, does the workspace match its understanding? If a tool call is interrupted, could retrying repeat a side effect? After context compaction, does the summary still support the decisions made earlier? These questions led me toward the runtime between the model and its environment.
 
-I later began experimenting with it in several scenarios:
+The model may propose a different course of action on every turn, while files, permissions, and execution results need concrete evidence. Through CodePlus, I want to explore how those two meet: leaving room for the model to investigate while tracking what informed an action, what it changed, and what remains uncertain.
 
-- **Task handoff**: after Task A finishes, create a new task with fresh context and send it a structured handoff directly.
-- **Model specialization**: create tasks with different models or reasoning capabilities, then assign each task work suited to its ability and cost.
-- **Progress monitoring**: ask one task to summarize another task's progress in plain language and determine whether human steering is needed; when it is, the monitoring task can send corrective instructions directly to the implementation task.
-- **Multi-level orchestration**: let an orchestrator task create several independent tasks that proactively report completion or blockers; each task can still use internal sub-agents for smaller units of work.
-- **Highly visible parallel collaboration**: turn execution that would otherwise remain hidden inside one Agent into independent tasks that users can observe, open, steer, stop, and reconnect to.
+## Preserving Causality in the Agent Loop
 
-That is not the full extent of it. Tasks can archive conversations that are no longer needed, be created in advance and wait for a trigger, wake up after becoming idle, or receive the same updated instruction together. A task can even confirm that it understands its assignment and then wait until another task sends a simple "start" message when the required condition is met.
+With **Tool Calling**, model output begins to produce real side effects. A tool name, a streamed argument fragment, and a complete call occupy different lifecycle stages. The [Agent Loop](codeplus/agent.py) collects the full model response before executing tools, keeping partial responses from changing the workspace.
 
-CodePlus also treats this way of working as a long-term direction: tasks should no longer be isolated, one-off conversations, but work units that can communicate, hand off work, wait, recover, and collaborate over time.
+Concurrency adds another constraint. If the model requests an edit followed by a read in the same turn, the read depends on the write. Sending every call to `asyncio.gather` could return an observation of the old file. The current implementation batches only adjacent reads explicitly marked safe for concurrency, preserving the order around writes, commands, and permission waits. Reducing latency has to preserve the causal relationships between these actions.
 
-## Two Forms of Parallel Collaboration
+An interruption can leave a harder state: a file may have changed before its result reached the context. Explicit rejection, execution failure, and an unknown outcome need distinct meanings. The current [tool-use / tool-result pairing repair](codeplus/conversation_pairing.py) inserts an interruption marker before a request, preserves uncertainty about side effects, and leaves the original history intact. Whether a subprocess is still running or an action can be retried safely requires checks at the relevant execution boundary.
 
-User-visible tasks and internal sub-agents solve different problems and should not be treated as the same thing.
+This also changes how I think about permissions. **Human-in-the-loop (HITL)** has to connect authorization, waiting, and continued execution within the same tool-call path. Permission propagation through sub-agents, MCP, and different interfaces also needs explicit examination. The model proposes an action, the runtime governs its execution, and the user can pause, redirect, or take over at meaningful points.
 
-```text
-User-visible tasks                     Inside the current task
+## Context Engineering: What Does the Agent Still Know?
 
-Task A       Task B       Task C        Current task
-  |            |            |             +-- Sub-agent
-  +---- messages, waits, handoffs ----+       +-- Sub-agent
+Long tasks make **Context Engineering** a question about decisions. The task information directly available for the model's next action depends on what actually enters its context window. A constraint may survive in a log yet stop influencing the model after compaction. Summaries are lossy representations; omitted assumptions or compressed accounts of failed attempts can change the direction of subsequent reasoning.
 
-Independent windows and context,       Focused research, review,
-with reattachment support               and bounded parallel work
-```
+Current [context management](codeplus/context/manager.py) summarizes older history, retains recent messages verbatim, and keeps tool calls paired with their results. Compaction boundaries are also persisted in the Session for replay. Token budgeting combines API usage with estimates of new messages, resetting the usage anchor after history is rebuilt. These mechanisms address protocol integrity, state recovery, and window limits; whether a summary preserves the constraints needed to finish the task still needs behavioral verification.
 
-User-visible tasks are suited to long-running work, cross-task communication, and human intervention. Internal sub-agents are better suited to code review, focused research, and parallel changes within the current task. CodePlus keeps the distinction explicit. The current version first implements Agent and Team collaboration inside a task; independent user-visible tasks with long-lived recovery remain a next-stage capability.
+Tool definitions consume context too. As MCP tools accumulate, the cost of full **Schemas**, extra discovery turns, and **Prompt Caching** requirements for stable request prefixes all influence the design. CodePlus's [MCP loading strategy](codeplus/mcp/loading_strategy.py) selects eager loading, native deferred loading, or a shared dispatch entry based on tool volume and endpoint. I want to understand whether the input savings justify another discovery step, and whether the model can still find and invoke the right tool.
 
-## The Tool System I Observed in Codex
+## Multiple Agents: What Should Be Shared or Isolated?
 
-The names below come from the tool environment I observed while using Codex Desktop. They are included to explain the inspiration and capability mapping behind CodePlus. They do not represent a long-term compatibility commitment from OpenAI for these internal tool names or behaviors, and the available capabilities may differ by version, account, or runtime environment.
+Delegating work introduces both context isolation and information exchange. Inheriting the parent conversation reduces handoff loss, but may also carry unverified assumptions into a review. A fresh context allows another assessment while requiring the relevant evidence to be supplied again. I want task boundaries to specify goals, input evidence, and acceptance criteria so that delegation can support meaningful cross-checks.
 
-### User-Visible Task and Thread Coordination
+The workspace has concurrency problems of its own. Two Agents with separate contexts may still edit the same file. Git worktrees isolate changes, but integration can expose semantic conflicts: patches may merge cleanly while their assumptions remain incompatible. Current file tools check whether a file has changed since it was read; this modification-time check still leaves a race between checking and writing.
 
-| Tool | Purpose |
+CodePlus currently provides sub-agents, Team Mailboxes, and shared task boards for collaboration within a session. Longer-lived collaboration requires separate handling of message delivery, task ownership, execution, and result acknowledgement. After a successful send, the receiver starting work, completing a side effect, and having its result accepted each need their own state evidence. This is why independent persistent tasks remain future work.
+
+## RAG: Can the Evidence Behind an Answer Stay Consistent?
+
+With **RAG (Retrieval-Augmented Generation)**, I began asking where evidence comes from and which version it belongs to. Chunking determines retrieval units, embeddings define the similarity space, and citations still need to lead back to source locations. CodePlus retains originals, content hashes, document generations, and source spans to preserve **Provenance**. Conversation memory and document evidence are managed separately, keeping an earlier answer from becoming evidence for the next one.
+
+Document updates expose an engineering boundary between SQLite metadata and Milvus vectors: one local transaction cannot commit both stores. The [knowledge service](codeplus/knowledge/service.py) registers a pending operation, updates and verifies the vectors, then commits the metadata. On failure, it blocks further retrieval and retains the prepared material for explicit retry. This recovery path makes partial failure visible and preserves the information needed to continue.
+
+New searches use the current generation; historical citations can still open older source text. Answers also check the corpus revision and require regeneration if it changes. That provides change detection; a consistent snapshot across multiple queries requires more. Citation checks currently establish that a source exists and was provided in the current turn. Whether it supports the conclusion is a further question of **Grounding**.
+
+## How Do We Know an Improvement Works?
+
+These tradeoffs eventually lead to **Evaluation**. I first ask whether the test's oracle is independent of the Agent's account: execution order needs observable reads and writes, interruption recovery needs actual state checks, and compaction needs verification that key constraints still influence later behavior. Failure cases matter because an automated system often has to continue with partially completed work.
+
+The [frozen retrieval experiments](codeplus/knowledge/evaluate.py) distinguish two metrics: **ANN Recall** measures neighbor overlap between approximate and exact retrieval; **evidence recall** measures coverage of annotated source passages. High ANN recall can coexist with poor evidence recall. Failed requests remain in the overall evidence-recall denominator, and empty results are counted separately from request failures. Answer faithfulness still needs its own assessment. These distinctions help identify whether a change improves indexing, retrieval, or the final answer.
+
+## What Works Today
+
+The repository connects model inference, tool execution, context management, and document retrieval. The table lists existing entry points and capabilities.
+
+| Area | Current capabilities |
 | --- | --- |
-| `codex_app__create_thread` | Create a new user-visible Codex task with an optional project and working directory |
-| `codex_app__send_message_to_thread` | Send follow-up instructions, steering, or reporting requests to an existing task |
-| `codex_app__wait_threads` | Wait for one or more tasks to finish, request input, or enter a state requiring attention; up to 8 tasks at once |
-| `codex_app__read_thread` | Read task status, Turn summaries, final responses, and tool output |
-| `codex_app__list_threads` | List user-visible tasks |
-| `codex_app__fork_thread` | Create a branch task from the completed context of an existing task |
-| `codex_app__handoff_thread` | Hand a task off to another task or execution environment |
-| `codex_app__get_handoff_status` | Query the state of an asynchronous task handoff |
-| `codex_app__set_thread_archived` | Archive or restore a task |
-| `codex_app__set_thread_pinned` | Pin or unpin a task |
-| `codex_app__set_thread_title` | Change a task title |
-| `codex_app__navigate_to_codex_page` | Open a specific task in the Codex application |
-| `codex_app__read_thread_terminal` | Read terminal output associated with the current desktop task |
-| `codex_app__list_projects` | List local projects available for task creation, including their paths and Git state |
+| Execution | Agent Loop, file operations and search, and command execution; TUI, non-interactive CLI, NDJSON events, and browser Remote |
+| Collaboration | In-session sub-agents, Team messaging, shared task boards, and background task inspection and cancellation |
+| Context | Session persistence and recovery, automatic Memory, Context Compaction, file history, and rewind |
+| Knowledge | Import Markdown, text PDFs, and DOCX; answer from documents, save cited reports, inspect sources, update or remove documents, and retry failed operations |
+| Extensions | Anthropic, OpenAI, and OpenAI-compatible protocols; Skills, MCP, and Hooks |
+| Execution controls | Permission rules, path boundaries, optional OS sandboxing, and Git worktree isolation |
 
-A typical flow looks like this:
+Knowledge mode is available through the TUI, non-interactive CLI, and Remote. Retrieval uses local Qwen embeddings and Milvus; answers use the configured model service. Daily retrieval is vector-based. BM25/RRF are separate experiments; OCR and reranking are not implemented.
 
-```text
-create_thread
-    -> send_message_to_thread
-    -> wait_threads
-    -> read_thread
-```
+## What I Want to Explore Next
 
-There are three important distinctions:
+The next direction is Durable Execution for independent tasks: continuing from persistent state after process exit, message redelivery, or human intervention. This requires clear boundaries for a single active executor, message acknowledgement, and idempotency. Recovery also needs to establish which side effects already occurred before deciding which actions can be replayed.
 
-1. `create_thread` creates an independent task that users can see and open from the sidebar.
-2. `send_message_to_thread` sends follow-up information across tasks instead of copying a prompt back into the current conversation.
-3. `wait_threads` waits for state events, so the caller does not need to repeatedly read another task's full history.
-
-After a task finishes, it can also proactively use `send_message_to_thread` to report its result or blocker to the source task.
-
-### Internal Sub-Agent Coordination
-
-| Tool | Purpose |
-| --- | --- |
-| `collaboration.spawn_agent` | Create a sub-agent inside the current task |
-| `collaboration.followup_task` | Assign follow-up work to an existing sub-agent and wake it up |
-| `collaboration.send_message` | Add information for a running sub-agent without necessarily starting another turn |
-| `collaboration.wait_agent` | Wait for a sub-agent to finish or produce a message |
-| `collaboration.interrupt_agent` | Interrupt a sub-agent's current work |
-| `collaboration.list_agents` | Inspect the current Agent tree and runtime state |
-
-Internal sub-agents usually do not appear as peer tasks in the user's task list. They are suited to bounded, parallel units of work. User-visible tasks behave more like independent work threads: each has its own lifecycle and can be opened, waited on, and sent additional messages independently.
-
-### Local Files and Commands
-
-| Tool | Purpose |
-| --- | --- |
-| `shell_command` | Run PowerShell commands to read files, build the project, and execute tests |
-| `apply_patch` | Apply precise patches to files |
-| `view_image` | Inspect local images and visual output |
-| `codex_app__load_workspace_dependencies` | Discover Node.js, Python, document, and media dependencies provided by the desktop environment |
-
-Together, they form the most common engineering loop:
-
-```text
-Read code -> Modify code -> Build or test -> Inspect real output
-```
-
-### Planning, Goals, and MCP Resources
-
-| Tool | Purpose |
-| --- | --- |
-| `update_plan` | Update the current task plan and step status |
-| `create_goal` | Create an explicit long-term goal |
-| `get_goal` | Query the current goal and execution state |
-| `update_goal` | Mark a goal as complete or blocked |
-| `list_mcp_resources` | List resources exposed by MCP services |
-| `read_mcp_resource` | Read a specific MCP resource |
-| `list_mcp_resource_templates` | List parameterized MCP resource templates |
-
-These tools manage goals, plans, and context. They do not replace tools that actually execute code.
-
-### Automation and Task Management
-
-| Tool | Purpose |
-| --- | --- |
-| `codex_app__automation_update` | Create, inspect, update, or delete scheduled tasks, reminders, monitors, and future wakeups |
-| `codex_app__set_thread_archived` | Archive completed tasks while preserving their history and reducing list clutter |
-| `codex_app__set_thread_pinned` | Pin important tasks that require ongoing attention |
-| `codex_app__set_thread_title` | Give long-running tasks stable, recognizable names |
-| `codex_app__navigate_to_codex_page` | Navigate to a task that needs attention in the desktop application |
-
-## What CodePlus Already Implements
-
-The current CodePlus repository provides runnable terminal entry points, real model calls, local engineering tools, permission controls, internal Agent/Team collaboration, Skills, MCP, context management, and worktree support. This section only describes capabilities that map to code and tests in the current repository.
-
-### Runnable Entry Points
-
-- Interactive Textual TUI for ongoing conversations, streamed output, tool calls, and permission requests.
-- Non-interactive execution through `-p`, printing the final response.
-- Structured NDJSON events through `stream-json` in non-interactive mode.
-- A Remote entry point that starts a WebSocket service and browser UI on `0.0.0.0:18888` by default.
-
-```powershell
-uv run codeplus
-uv run codeplus -p "inspect this project and summarize its risks"
-uv run codeplus -p "run the tests" --output-format stream-json
-uv run codeplus --remote
-```
-
-### Internal Agent and Team Collaboration
-
-- `Agent` provides bounded sub-agent work inside the current session for research, implementation, review, and verification.
-- `TeamCreate`, `TeamDelete`, `SendMessage`, and `TaskStop` manage internal teams, teammate communication, and stop requests.
-- `TaskCreate`, `TaskGet`, `TaskList`, and `TaskUpdate` provide a shared internal team task board. These Tasks are internal work items, not independent user-visible Runtime Tasks.
-- Teams can use in-process, tmux, or iTerm2 backends according to the environment, with in-process execution where independent panes are not appropriate.
-- Optional coordinator mode narrows the Lead's tools so it can focus on decomposition, delegation, follow-up, and synthesis.
-
-### Engineering Tools, Permissions, and Safety Boundaries
-
-- Local tools: `ReadFile`, `WriteFile`, `EditFile`, `Bash`, `Glob`, and `Grep`.
-- Interaction and workspace tools: `AskUserQuestion`, `ExitPlanMode`, `EnterWorktree`, and `ExitWorktree`.
-- Permission modes: `default`, `acceptEdits`, `plan`, and `bypassPermissions`.
-- Permission rules can be loaded from user, project, and local override layers, then combined with path boundaries, dangerous-command detection, and an optional OS sandbox.
-- Git projects can create isolated worktrees with change inspection, cleanup, and session integration.
-
-### Models, Extensions, and Context
-
-- Providers: Anthropic, OpenAI, and OpenAI-compatible protocols. Actual model, tool, and streaming capabilities depend on the configured endpoint.
-- MCP: stdio and Streamable HTTP services, with eager or deferred discovery based on tool volume.
-- Skills: local loading, installation, and runtime execution.
-- Context: Session history, automatic Memory, project instructions, context compaction, file history, and rewind.
-- Extensions: lifecycle Hooks, tool search, and non-interactive `stream-json` output.
-
-## Next Stage: User-Visible Runtime Tasks
-
-Persistent, user-visible Runtime Tasks that can be reattached across windows are the next-stage replacement direction for CodePlus. The contract below is retained as a product target; it does not mean that the current repository already provides these entry points. These capabilities will not move into the implemented section until real persistence, process coordination, and end-to-end acceptance are complete.
-
-### Target Tool Contract
-
-| Target Tool | Intended Behavior |
-| --- | --- |
-| `TaskSpawn` | Create an independent, user-visible, persistent Runtime Task with an appropriate window mode |
-| `TaskSend` | Reliably send messages to an existing task with idempotency and FIFO queuing |
-| `TaskWait` | Wait on one or more tasks using event cursors without repeatedly reading full history |
-| `TaskRead` | Read tasks, messages, Turns, events, and pending interactions |
-| `TaskList` | List tasks visible to the current project and states requiring user attention |
-| `TaskFork` | Create a task from the source task's completed, persisted history |
-| `TaskInterrupt` | Request interruption and converge persisted state with the real worker |
-
-The target CLI shape is shown below. The current version will fail if these `codeplus task ...` commands are run:
-
-```text
-codeplus task create --prompt "optional initial prompt"
-codeplus task open
-codeplus task respond
-codeplus task send
-codeplus task wait
-codeplus task read
-codeplus task list
-codeplus task fork
-codeplus task interrupt
-codeplus task resume
-codeplus task delete
-```
-
-### Full Chain That Must Be Rebuilt
-
-- Every user-visible task has independent context and a complete interactive window, with reattachment after a client closes.
-- Tasks, messages, events, Turns, and interaction requests use authoritative persistent state; clients do not keep a second copy of business state.
-- New messages remain FIFO-queued while permission or AskUser interactions are pending, and the pending interaction stays actionable.
-- A task has only one Session writer, with leases, heartbeats, CAS, and idempotency keys preventing duplicate execution.
-- Git projects can choose a shared directory or isolated worktree for a task, and that choice follows the task lifecycle.
-
-The current internal Agent/Team capabilities do not stand in for this Runtime Task chain. A future implementation must cover real entry points, persistence, recovery, permissions, state transitions, and failure branches together.
-
-## Capabilities Still Being Explored
-
-- Pinning, soft archiving, and independent title management for user-visible tasks.
-- Asynchronous handoff and status queries across projects, worktrees, or execution environments.
-- Codex Desktop project discovery and desktop terminal buffer access.
-- Scheduled tasks, reminders, periodic monitoring, and condition-triggered wakeups.
-- Letting the main task automatically select a configured Provider, model, and API Key for each task based on the type of work.
-- Letting the main task allocate an overall budget, assign reasoning effort and cost shares according to task difficulty, and continuously detect and correct execution drift.
-- Detecting when task context has drifted from the original goal, then requesting clarification, replanning, or handing off without unnecessarily interrupting normal execution.
+These remain design questions and future goals. The repository has no independent Runtime Task or `codeplus task ...` entry point. Session recovery and Team communication each address part of that work.
 
 ## Architecture
 
-The diagram below shows the main runtime relationships that exist in the current repository. User-visible Runtime Tasks are not yet part of this architecture.
-
 ```mermaid
 flowchart LR
-    User[User]
-    Entry[Textual TUI / CLI / Remote]
-    Agent[Agent Loop]
-    Context[Session / Memory / Context]
-    Permission[Permissions / Sandbox]
-    Registry[Tool Registry]
-    Local[Local Engineering Tools]
-    Extension[Skills / MCP / Hooks]
-    AgentTool[Agent Tool]
-    Team[Team Manager]
-    Workers[Sub-agents / Teammates]
-
-    User --> Entry
-    Entry --> Agent
-    Agent --> Context
-    Agent --> Permission
-    Agent --> Registry
-    Registry --> Local
-    Registry --> Extension
-    Agent --> AgentTool
-    AgentTool --> Workers
-    Agent --> Team
-    Team -->|SendMessage / Shared Tasks| Workers
+    Entry[TUI / CLI / Remote] --> Agent[Agent Loop]
+    Agent --> Model[Model Provider]
+    Agent --> Context[Session / Memory / Context]
+    Agent --> Permission[Permission Checks]
+    Permission --> Tools[Tools]
+    Tools --> Local[Files / Commands / Worktrees]
+    Tools --> Workers[Sub-agents / Teams]
+    Tools --> Extension[Skills / MCP]
+    Agent --> Knowledge[Optional Knowledge Context]
+    Tools --> Knowledge
+    Knowledge --> Sources[Saved Documents / Qwen / Milvus]
 ```
 
-`Agent` is the current execution loop, while the `Tool Registry` provides local tools and extension capabilities. Permissions, context, and session state are managed by their respective modules. Internal sub-agents and Team teammates are collaboration units inside the current session, not user-visible Runtime Tasks with independent lifecycles.
+The diagram groups responsibilities. The Agent Loop coordinates models and tools; permissions constrain execution; Session, Memory, and Context manage information with different lifetimes. Knowledge integrates through retrieval tools and evidence for the current turn. These components need to exchange verifiable results and explicit failure states. See the [knowledge architecture](docs/knowledge-architecture.md) for details.
 
 ## Quick Start
 
-### Requirements
-
-- Python 3.11 or later
-- [uv](https://docs.astral.sh/uv/)
-- At least one available model Provider and API Key
-
-### Install Dependencies
+Requires Python 3.11+, [uv](https://docs.astral.sh/uv/), and a working model API. From the repository, install dependencies and copy the example configuration on first use. Skip the copy if you already have a configuration.
 
 ```powershell
-uv sync --dev
+uv sync --locked
+Copy-Item .codeplus/config.yaml.example .codeplus/config.yaml
 ```
 
-### Configure a Provider
-
-Windows PowerShell:
-
-```powershell
-Copy-Item .codeplus\config.yaml.example .codeplus\config.yaml
-```
-
-Linux or macOS:
-
-```bash
-cp .codeplus/config.yaml.example .codeplus/config.yaml
-```
-
-Edit `.codeplus/config.yaml` and enter your Provider, model, and API Key. This file is intended to remain a local configuration file.
-
-### Start CodePlus
-
-Launch the interactive TUI:
+On Linux/macOS, replace `Copy-Item` with `cp`. Edit `providers` in `.codeplus/config.yaml` with your protocol, endpoint, model, and API key. Set `mcp_servers` to `[]` if you do not use MCP.
 
 ```powershell
 uv run codeplus
 ```
 
-### Optional: Local Personal Knowledge Base
+Describe your task in the terminal. Use `/help` to see commands, `/session list` and `/session resume <id>` to restore history, and `/tasks` to inspect background sub-agents.
 
-Import Markdown, text PDFs, and DOCX files, ask document-grounded questions, and save cited Markdown reports. Retrieval uses local Qwen embeddings and Milvus; answers use your existing Provider.
+For one-shot execution, NDJSON output, or the browser interface:
+
+```powershell
+uv run codeplus -p "Inspect this project and summarize its risks"
+uv run codeplus -p "Inspect this project" --output-format stream-json
+uv run codeplus --remote
+```
+
+Remote listens on `0.0.0.0:18888` by default; open `http://localhost:18888` locally. The TUI applies permission rules to changes and commands requiring confirmation; ordinary `-p` runs automatically approve permission requests.
+
+### Optional: Local Knowledge Base
+
+Start Milvus using the [setup steps](docs/knowledge-setup.md#最短使用流程). Keep `providers` in your existing `.codeplus/config.yaml`, set `knowledge.enabled` to `true`, and check that `knowledge.milvus_uri` points to your service.
 
 ```powershell
 uv sync --locked --extra knowledge
-```
-
-Keep `providers` in your **existing complete** `.codeplus/config.yaml` and add or update this fragment. Do not create a knowledge-only `config.local.yaml`: each YAML layer requires non-empty providers.
-
-```yaml
-knowledge:
-  enabled: true
-  milvus_uri: http://127.0.0.1:19530
-  data_dir: .codeplus/knowledge
-```
-
-On the validated Windows setup, Milvus runs in Ubuntu-24.04 WSL. Keep a separate `wsl -d Ubuntu-24.04` shell open while using it. From the repository root in PowerShell 7:
-
-```powershell
-$windowsCompose = (Resolve-Path deployment/knowledge/compose.yaml).Path.Replace('\', '/')
-$compose = (wsl -d Ubuntu-24.04 -- wslpath -a $windowsCompose).Trim()
-wsl -d Ubuntu-24.04 -- docker compose -f $compose up -d --wait --wait-timeout 240
-Invoke-RestMethod http://127.0.0.1:9091/healthz
 uv run --extra knowledge codeplus
 ```
 
-Reuse an already healthy shared service. Keep `--extra knowledge` on subsequent `uv run` commands so synchronization retains the optional dependencies. The first import/search downloads the pinned Qwen model; subsequent runs use the HF cache. Use an absolute data_dir to share a base across startup directories. Windows and WSL must have separate virtual environments.
-
-In the TUI:
+Keep `--extra knowledge` on subsequent runs. The first import or search downloads the local embedding model; answers still use your configured model service.
 
 ```text
 /knowledge create "Personal documents"
 /knowledge import "C:\Documents\reference material"
-/knowledge status
-/knowledge sources
-Compare the policies using document evidence and citations. Use WriteFile to save comparison.md.
+Compare the options using the documents, cite the sources, and save a report as comparison.md.
 /knowledge open K:<kb_id>:<chunk_id>
 ```
 
-create selects the new base; use `/knowledge use <kb_id>` next time. Import accepts a file or recursively imports `.md`, `.pdf`, and `.docx` files from a directory. Reports use the existing file permissions: approve the write when prompted, or explicitly start with `--mode acceptEdits`. open shows saved text and line/page/paragraph locations; pass the returned next_offset to read more of a long chunk. Reports include source, generation, and revision records; citation existence does not establish factual support.
+`create` selects the new base; use `/knowledge use <kb_id>` next time. Importing the same path again updates it. Use `/knowledge sources` to list documents, `/knowledge status` to inspect state, and `/knowledge off` to leave knowledge mode. Report writes follow the existing file permissions.
 
-Import the same path again to update it. `/knowledge remove <doc_id>` removes a document listed by sources. New searches exclude old or removed versions; historical citations still open. After an interrupted operation, inspect status, resolve the cause, and run `/knowledge retry`. Failed preparation needs another import. `/knowledge off` clears the current answer context and returns to ordinary mode while preserving history. Setting `knowledge.enabled: false` and restarting removes the knowledge service requirement.
+For non-interactive questions, use `uv run --extra knowledge codeplus -p "Answer from the documents with citations" --knowledge <kb_id>`. Non-interactive knowledge mode denies operations requiring approval; explicitly add `--mode acceptEdits` to allow report writes. Remote accepts the same commands, with import paths on the server. See the [full guide](docs/knowledge-setup.md) for removal, recovery, format limits, and retrieval experiments.
 
-```powershell
-$kbId = '<ID returned by create>'
-uv run --extra knowledge codeplus -p 'Answer from the documents and cite sources' --knowledge $kbId
-uv run --extra knowledge codeplus -p 'Answer from the documents and cite sources' --knowledge $kbId --output-format stream-json
-uv run --extra knowledge codeplus --remote
-uv run --extra knowledge python -m codeplus.knowledge evaluate --fixtures tests/fixtures/knowledge --mode all
-uv run --extra knowledge python -m codeplus.knowledge evaluate --replay '<absolute frozen.json path>' --mode hybrid --ef 16 64
-```
+## Development
 
-`--knowledge` requires `-p`. text prints the final answer; stream-json emits NDJSON on stdout and diagnostics on stderr. Failures exit nonzero. Non-interactive knowledge mode rejects operations that require a permission prompt; explicitly use `--mode acceptEdits` when allowing report writes. Remote uses the same slash commands, with import paths on the **server**; browser uploads are not implemented.
-
-Evaluation writes frozen.json/report.json under `.codeplus/knowledge/experiments/<run>/`. Replay needs neither the model nor the original fixtures. `--mode` selects additional retrieval lanes; every mode still runs the dense/FLAT and HNSW ANN comparison. **Daily bases remain dense-only. BM25/RRF use isolated experimental collections; there is no automatic upgrade or migration command.** Confirm actual HNSW execution against server build/load logs, not just index configuration or Finished status. Wheel installations need an external fixtures directory or frozen file.
-
-Scanned PDFs have no OCR support; legacy `.doc`, complex layouts, and Word page numbers are outside scope. DOCX locations use body paragraphs or table row/column positions. Reranking and model/chunking comparisons are not implemented. See the [setup and acceptance record](docs/knowledge-setup.md) for recovery details, standalone management commands, and verified limits.
-
-## Development and Verification
-
-Main directories:
-
-```text
-codeplus/
-  agents/          Sub-agent loading, execution, and tracing
-  teams/           Internal Teams, mailboxes, and shared work items
-  tools/           Local, Agent, Team, Skill, and MCP tools
-  commands/        TUI slash commands and completion
-  permissions/     Permission modes, rules, and path boundaries
-  sandbox/         Optional OS sandbox
-  mcp/             MCP clients, manager, and tool wrappers
-  skills/          Skill loading, installation, and execution
-  memory/          Sessions, automatic memory, and context recall
-  context/         Context-window management
-  hooks/           Lifecycle Hooks
-  filehistory/     File history and recovery
-  worktree/        Git worktree lifecycle
-tests/             Unit, persistence, TUI, and integration tests
-```
-
-Run the complete test suite:
+Follow a tool call through the [Agent Loop](codeplus/agent.py) and [tools](codeplus/tools), then trace context and messages through [agents](codeplus/agents) and [teams](codeplus/teams). [memory](codeplus/memory), [context](codeplus/context), and [knowledge](codeplus/knowledge) handle long-term memory, the current reasoning window, and external evidence respectively.
 
 ```powershell
+uv sync --locked --dev
 uv run pytest
 ```
 
-## Project Positioning
+Real knowledge integration checks also require the optional dependencies, Milvus, and the local model. Setup and acceptance records are in the [knowledge guide](docs/knowledge-setup.md).
 
-CodePlus is an independent project and is not an official OpenAI or Codex component.
+## A Continuing Practice
 
-It aims to answer a question that is still evolving rapidly: when Agents are no longer limited to one-off answers, but instead have independent tasks, persistent context, direct communication, and long-term collaboration, how should software development tools organize those Agents more effectively and efficiently while still keeping their work visible, controllable, and subject to user decisions at critical points?
-
-This question is worth exploring over time, and it is worth turning into a complete tool that can be used for the long term.
+With each new layer of automation, I want to ask what a successful run depends on, what state a failure leaves behind, and whether recovery can continue from actual evidence. CodePlus will keep recording those questions and testing each implementation against real work.
