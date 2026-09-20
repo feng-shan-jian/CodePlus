@@ -75,7 +75,9 @@ async def handle_session(ctx: CommandContext) -> None:
             await ctx.config["check_knowledge"]()
         if ctx.agent:
             ctx.agent._loop_count = 0
-        await ctx.config["render_restored"](result.messages)
+        await ctx.config["render_restored"](
+            result.display_messages if result.display_messages is not None else result.messages
+        )
         ctx.ui.add_system_message(
             f"会话已恢复: {session_id} ({result.session.meta.message_count} msgs)"
         )

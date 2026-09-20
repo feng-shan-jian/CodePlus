@@ -128,6 +128,8 @@ uv run --extra knowledge codeplus
 
 `create` 自动选中知识库，下次用 `/knowledge use <kb_id>`。同一路径再次导入即更新；`/knowledge sources` 查看文档，`/knowledge status` 查看状态，`/knowledge off` 退出资料问答。写报告沿用原文件权限。
 
+TUI 与 Remote 回答中的 `[1]`、`[2]` 可点击查看文件名、位置、引用原文及版本状态；TUI 也可 Tab 聚焦回答后按 Enter 打开、Esc 关闭。恢复会话仍可查看切库或退出知识模式前的引用，CLI 与报告保留完整追溯 ID。
+
 非交互问答使用 `uv run --extra knowledge codeplus -p "根据资料回答并引用来源" --knowledge <kb_id>`。知识库非交互模式拒绝需要询问的操作，写报告可显式加 `--mode acceptEdits`。Remote 使用同一套命令，导入路径属于服务端。删除、恢复、格式限制和检索实验见 [完整说明](docs/knowledge-setup.md)。
 
 ## 开发

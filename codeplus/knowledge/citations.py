@@ -4,12 +4,59 @@ import asyncio
 from dataclasses import asdict
 import json
 import re
+from urllib.parse import quote, unquote, urlsplit
 
 from codeplus.config import KnowledgeConfig
 
 
 CITATIONS = re.compile(r"\[K:([^\]\n]*)\]")
 READ_CHARS = 6000
+SOURCE_LINK = "codeplus-source:"
+
+
+def citation_ids(text):
+    """Number citations within this message only; persisted text remains untouched."""
+    return list(dict.fromkeys("K:" + ref for ref in CITATIONS.findall(text)))
+
+
+def citation_link(citation_id):
+    return SOURCE_LINK + quote(citation_id, safe=":")
+
+
+def short_citations(text, *, links=True):
+    numbers = {ref: i for i, ref in enumerate(citation_ids(text), 1)}
+
+    def replace(match):
+        ref = "K:" + match[1]
+        number = numbers[ref]
+        return f"[\\[{number}\\]]({citation_link(ref)})" if links else f"[{number}]"
+
+    return CITATIONS.sub(replace, text)
+
+
+def source_location(spans):
+    locations = []
+    for span in spans:
+        if span.get("page") is not None:
+            location = f"第{span['page']}页"
+        elif span.get("paragraph") is not None:
+            location = f"第{span['paragraph']}段"
+        elif span.get("table") is not None:
+            location = f"表{span['table']}"
+            for key, label in (("row", "行"), ("column", "列")):
+                if span.get(key) is not None:
+                    location += f" · 第{span[key]}{label}"
+        elif span.get("line_start") is not None:
+            start, end = span["line_start"], span.get("line_end")
+            location = f"第{start}{f'–{end}' if end and end != start else ''}行"
+        else:
+            location = "位置未记录"
+        if location not in locations:
+            locations.append(location)
+    return "、".join(locations) or "位置未记录"
+
+
+SOURCE_STATES = {"current": "当前版本", "historical": "历史版本", "removed": "已删除（保留的引用原文）"}
 
 
 class KnowledgeContext:
@@ -90,6 +137,29 @@ class KnowledgeContext:
         self.searches = 0
         self.report_error = ""
 
+    async def preview(self, citation_id):
+        """Read-only UI lookup: independent of binding, turn evidence and model readiness."""
+        if not isinstance(citation_id, str) or not re.fullmatch(r"K:[\w-]+:[\w-]+", citation_id):
+            raise ValueError("引用格式无效；需要 K:<kb_id>:<chunk_id>")
+        _, kb_id, chunk_id = citation_id.split(":")
+        source = await asyncio.to_thread(self.service.source, kb_id, chunk_id)
+        filename = unquote(urlsplit(source["source_uri"]).path).replace("\\", "/").rsplit("/", 1)[-1]
+        return {"citation_id": citation_id, "filename": filename or source["source_uri"],
+                "location": source_location(source["source_spans"]), "text": source["text"],
+                "generation_id": source["generation_id"], "status": source["source_status"],
+                "status_label": SOURCE_STATES[source["source_status"]]}
+
+    async def presentation(self, text):
+        citations = []
+        for number, ref in enumerate(citation_ids(text), 1):
+            try:
+                source = await self.preview(ref)
+                label = f"{source['filename']} · {source['location']}"
+            except Exception:
+                label = "来源不可用（点击查看原因）"
+            citations.append({"citation_id": ref, "number": number, "label": label})
+        return {"display_text": short_citations(text), "citations": citations}
+
     def _offer(self, source):
         chunk_id = source.get("chunk_id", source.get("id"))
         citation = f"K:{self.binding['kb_id']}:{chunk_id}"
@@ -148,7 +218,7 @@ class KnowledgeContext:
                 "revision": self.revision, "trust": "untrusted_document_data"}
 
     def cited(self, text):
-        ids = list(dict.fromkeys("K:" + ref for ref in CITATIONS.findall(text)))
+        ids = citation_ids(text)
         unknown = [ref for ref in ids if ref not in self.evidence]
         if unknown:
             raise ValueError("Unverified citation(s), not provided this turn: " + ", ".join(unknown))

@@ -258,25 +258,33 @@ class KnowledgeService:
         """Read a saved chunk and its exact generation's original, including removed documents."""
         with self._locked(kb_id, operational=False), self.metadata.connect() as db:
             row = db.execute(
-                "SELECT c.*, d.source_uri FROM chunks c JOIN documents d ON d.id=c.doc_id "
+                "SELECT c.*, d.source_uri, d.generation_id AS current_generation_id, d.removed "
+                "FROM chunks c JOIN documents d ON d.id=c.doc_id "
                 "WHERE c.id=? AND d.kb_id=?",
                 (chunk_id, kb_id),
             ).fetchone()
             if row is None:
                 raise ValueError(f"Chunk not found in this knowledge base: {chunk_id}")
-            return {**dict(row), "source_spans": json.loads(row["source_spans"])}
+            return self._source_row(row)
+
+    @staticmethod
+    def _source_row(row) -> dict:
+        return {**dict(row), "source_spans": json.loads(row["source_spans"]),
+                "source_status": "removed" if row["removed"] else (
+                    "current" if row["generation_id"] == row["current_generation_id"] else "historical")}
 
     def source_context(self, kb_id: str, chunk_id: str) -> list[dict]:
         """Anchor first, then at most one neighbour on each side of its saved generation."""
         anchor = self.source(kb_id, chunk_id)
         with self._locked(kb_id, operational=False), self.metadata.connect() as db:
             rows = db.execute(
-                "SELECT c.*, d.source_uri FROM chunks c JOIN documents d ON d.id=c.doc_id "
+                "SELECT c.*, d.source_uri, d.generation_id AS current_generation_id, d.removed "
+                "FROM chunks c JOIN documents d ON d.id=c.doc_id "
                 "WHERE d.kb_id=? AND c.doc_id=? AND c.generation_id=? "
                 "AND c.ordinal IN (?,?) ORDER BY c.ordinal",
                 (kb_id, anchor["doc_id"], anchor["generation_id"], anchor["ordinal"] - 1, anchor["ordinal"] + 1),
             ).fetchall()
-            return [anchor] + [{**dict(row), "source_spans": json.loads(row["source_spans"])} for row in rows]
+            return [anchor] + [self._source_row(row) for row in rows]
 
     def search(self, kb_id: str, query: str, top_k: int | None = None) -> SearchResult:
         top_k = self.config.top_k if top_k is None else top_k

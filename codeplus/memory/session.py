@@ -346,6 +346,8 @@ class ResumeResult:
     session: Session
     messages: list[Message]
     last_active: datetime
+    # Display only: never pass this history across a model context boundary.
+    display_messages: list[Message] | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -447,6 +449,10 @@ class SessionManager:
                 if record is not None:
                     records.append(record)
 
+        # Original records already contain the full transcript. Boundary keep tails
+        # are copies for model recovery, so exclude boundaries from display replay.
+        display_messages = records_to_messages([r for r in records if not r.is_compact_boundary()])
+
         # 重建压缩后的状态：仅从最后一个 compact_boundary 开始重放。
         # 该标记之前的 record 是已被摘要过的原始前缀——保留在磁盘上供审计，
         # 但不再重放。标记本身内联了摘要 + 原样 keep 尾部，标记之后追加的
@@ -472,6 +478,7 @@ class SessionManager:
             session=session,
             messages=messages,
             last_active=meta.last_active,
+            display_messages=display_messages,
         )
 
     def delete(self, session_id: str) -> bool:

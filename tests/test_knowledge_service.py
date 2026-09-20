@@ -88,6 +88,9 @@ async def test_turn_citations_history_and_reports(service, tmp_path, monkeypatch
     result = await SearchKnowledge(context).execute(SearchParams(query="deadline", top_k=2))
     hit = json.loads(result.output)["hits"][0]
     citation = hit["citation_id"]
+    preview = await context.preview(citation)
+    assert preview["status"] == "current" and preview["filename"] == "policy.md"
+    assert "行" in preview["location"] and preview["text"] == service.source(kb, hit["chunk_id"])["text"]
     with pytest.raises(ValidationError):
         SearchParams(query="test", kb_id="other", file_path="anything")
     denied = await ReadDocument(context).execute(ReadParams(citation_id="K:other:unknown"))
@@ -110,6 +113,7 @@ async def test_turn_citations_history_and_reports(service, tmp_path, monkeypatch
     source.write_text("Refund deadline is 28 days.", encoding="utf-8")
     service.import_document(kb, source)
     assert "17 days" in service.source_context(kb, hit["chunk_id"])[0]["text"]
+    assert (await context.preview(citation))["status"] == "historical"
     with pytest.raises(ValueError, match="corpus changed"):
         await context.search("deadline")
     context.begin_turn()
@@ -118,6 +122,44 @@ async def test_turn_citations_history_and_reports(service, tmp_path, monkeypatch
         await context.read(citation)
     context.bind(None)
     assert (await SearchKnowledge(context).execute(SearchParams(query="test"))).is_error
+    service.remove(kb, hit["doc_id"])
+    other_kb = service.create("other scope")["id"]
+    for binding in ({"kb_id": other_kb}, None):
+        context.bind(binding)
+        removed = await context.preview(citation)
+        assert removed["status"] == "removed" and removed["text"] == preview["text"]
+        assert removed["generation_id"] == preview["generation_id"]
+        assert not context.evidence and context.revision is None
+
+
+@pytest.mark.asyncio
+async def test_message_local_citation_presentation_and_unavailable_sources(service, tmp_path):
+    from codeplus.knowledge.citations import KnowledgeContext, citation_link
+
+    kb = service.create("presentation")["id"]
+    refs = []
+    for filename in ("[one]&two.md", "second.md"):
+        source = tmp_path / filename
+        source.write_text("[bold]literal[/bold] <script>alert(1)</script>", encoding="utf-8")
+        doc = service.import_document(kb, source)
+        with service.metadata.connect() as db:
+            chunk = db.execute("SELECT id FROM chunks WHERE doc_id=?", (doc["id"],)).fetchone()[0]
+        refs.append(f"K:{kb}:{chunk}")
+    context = KnowledgeContext(service.config)
+    context._service = service
+    first = await context.presentation(f"First [{refs[0]}] again [{refs[0]}]. [External](https://example.com)")
+    second = await context.presentation(f"Second [{refs[1]}]")
+    assert first["citations"] == [{"citation_id": refs[0], "number": 1, "label": "[one]&two.md · 第1行"}]
+    assert second["citations"][0]["number"] == 1 and second["citations"][0]["citation_id"] == refs[1]
+    assert first["display_text"].count(f"[\\[1\\]]({citation_link(refs[0])})") == 2
+    assert "[External](https://example.com)" in first["display_text"]
+    assert (await context.preview(refs[0]))["text"] == "[bold]literal[/bold] <script>alert(1)</script>"
+    invalid = await context.presentation("Invalid [K:bad] or missing [K:absent:chunk]")
+    assert all("来源不可用" in ref["label"] for ref in invalid["citations"])
+    with pytest.raises(ValueError, match="引用格式无效"):
+        await context.preview("K:bad")
+    with pytest.raises(ValueError, match="not found"):
+        await context.preview("K:absent:chunk")
 
 
 @pytest.mark.asyncio
@@ -231,12 +273,16 @@ async def test_knowledge_pilot_binding_background_import_and_history(service, tm
     from codeplus.config import ProviderConfig
     from codeplus.conversation import Message
     from codeplus.memory.session import SessionMeta
+    from codeplus.source_preview import CitationMarkdown, InlineSourcePreview
+    from textual.widgets import Static
     import threading
 
     monkeypatch.chdir(tmp_path)
     provider = ProviderConfig("test", "openai-compat", "http://127.0.0.1:1", "test", "test")
     app = CodePlusApp([provider], enable_fork=False, knowledge_config=service.config)
     app.knowledge._service = service
+    external_links = []
+    monkeypatch.setattr(app, "open_url", external_links.append)
     messages = []
     show = app.add_system_message
     def record(text):
@@ -280,7 +326,7 @@ async def test_knowledge_pilot_binding_background_import_and_history(service, tm
         class Client:
             async def stream(self, conversation, system="", tools=None):
                 ref = next(iter(app.knowledge.evidence))
-                yield TextDelta(f"47 [{ref}]")
+                yield TextDelta(f"47 [{ref}]\n\n[External](https://example.com)")
                 yield StreamEnd("end_turn")
         app.agent.client = Client()
         app.agent.memory_manager = None
@@ -288,12 +334,37 @@ async def test_knowledge_pilot_binding_background_import_and_history(service, tm
         if app._agent_task:
             await app._agent_task
         assert app.conversation.history[-1].content.startswith("47 [K:")
+        await pilot.pause()
+        answer = app.query_one(CitationMarkdown)
+        assert answer.references[0]["number"] == 1
+        # Click the rendered inline [1], through Textual's actual link event path.
+        paragraph = answer.query("MarkdownParagraph").first()
+        paragraph.scroll_visible(animate=False)
+        await pilot.pause()
+        await pilot.click(paragraph, offset=(4, 0))
+        await pilot.pause()
+        preview = app.query_one(InlineSourcePreview)
+        assert "Knowledge pilot answer is 47." in str(preview.query_one(".source-text", Static).render())
+        assert "当前版本" in str(preview.query_one(".source-details", Static).render())
+        await pilot.press("escape")
+        await pilot.pause()
+        assert not app.query(InlineSourcePreview)
+        external = list(answer.query("MarkdownParagraph"))[1]
+        external.scroll_visible(animate=False)
+        await pilot.pause()
+        await pilot.click(external, offset=(2, 0))
+        assert external_links == ["https://example.com"]
         await enter('/knowledge sources')
         await enter('/knowledge status')
         hit = service.search(kb, "answer").hits[0]
         ref = f"K:{kb}:{hit.chunk_id}"
-        app.session.append(Message("assistant", f"47 [{ref}]"))
-        app.conversation.add_assistant_message(f"47 [{ref}]")
+        second_file = tmp_path / "second [literal].md"
+        second_file.write_text("[bold]Second answer is 63.[/bold]", encoding="utf-8")
+        second_doc = service.import_document(kb, second_file)
+        second_hit = next(hit for hit in service.search(kb, "answer", 10).hits if hit.doc_id == second_doc["id"])
+        second_ref = f"K:{kb}:{second_hit.chunk_id}"
+        app.session.append(Message("assistant", f"63 [{second_ref}]. Compare [{ref}]"))
+        app.conversation.add_assistant_message(f"63 [{second_ref}]. Compare [{ref}]")
         await enter('/session new')
         assert app.knowledge.binding is None and not app.registry.is_enabled("SearchKnowledge")
         await enter(f'/session resume {session_id}')
@@ -304,6 +375,40 @@ async def test_knowledge_pilot_binding_background_import_and_history(service, tm
         assert any('"historical_sources"' in m and "47" in m for m in messages)
         await enter(f'/session resume {session_id}')
         assert app.knowledge.binding is None and all(ref not in m.content for m in app.conversation.history)
+        restored_answers = list(app.query(CitationMarkdown))
+        assert len(restored_answers) == 2  # Two persisted answers; no synthetic boundary/keep duplicates.
+        assert [answer.references[0]["number"] for answer in restored_answers] == [1, 1]
+        assert [answer.references[0]["citation_id"] for answer in restored_answers] == [ref, second_ref]
+        # Start in the real input, navigate to the second answer and open its own [1].
+        await pilot.press("tab", "tab", "enter")
+        await pilot.pause()
+        preview = app.query_one(InlineSourcePreview)
+        assert "[bold]Second answer is 63.[/bold]" in str(preview.query_one(".source-text", Static).render())
+        assert "second [literal].md" in str(preview.query_one(".source-details", Static).render())
+        await pilot.press("down", "enter")
+        await pilot.pause()
+        assert "Knowledge pilot answer is 47." in str(preview.query_one(".source-text", Static).render())
+        await pilot.press("escape")
+        await pilot.pause()
+        assert app.focused is restored_answers[1]
+        # A different library and then off leave the original link resolvable on resume.
+        await enter('/knowledge create "Second library"')
+        assert app.knowledge.binding["kb_id"] != kb
+        source.write_text("Updated answer is 99.", encoding="utf-8")
+        updated = service.import_document(kb, source)
+        service.remove(kb, updated["id"])
+        await enter('/knowledge off')
+        await enter(f'/session resume {session_id}')
+        answer = app.query(CitationMarkdown).first()
+        await pilot.press("tab", "enter")
+        await pilot.pause()
+        preview = app.query_one(InlineSourcePreview)
+        assert "已删除" in str(preview.query_one(".source-details", Static).render())
+        assert "Knowledge pilot answer is 47." in str(preview.query_one(".source-text", Static).render())
+        await pilot.press("escape")
+        await pilot.pause()
+        assert app.focused is answer and not app.knowledge.evidence
+        assert all(ref not in m.content for m in app.conversation.history)
         await enter(f'/knowledge use {kb}')
         await enter('/clear')
         assert app.knowledge.binding is None and not app.registry.is_enabled("ReadDocument")
@@ -499,6 +604,8 @@ async def test_remote_knowledge_websocket_scope_progress_and_resume(service, tmp
                 result = next(e["data"] for e in events if e["type"] == "tool_result")
                 assert use["toolId"] == result["toolId"] and use["toolName"] == "SearchKnowledge"
                 ref = next(iter(server.knowledge.evidence))
+                rendered = next(e["data"] for e in events if e["type"] == "stream_end" and "17 days" in e["data"]["text"])
+                assert rendered["citations"][0]["citation_id"] == ref and "[\\[1\\]]" in rendered["display_text"]
                 await command("/session new")
                 assert server.knowledge.binding is None
                 restored = await command(f"/session resume {session_id}")
@@ -507,8 +614,15 @@ async def test_remote_knowledge_websocket_scope_progress_and_resume(service, tmp
                 await command("/knowledge off")
                 opened = await command(f"/knowledge open {ref}")
                 assert any("historical_sources" in str(e) and "17 days" in str(e) for e in opened)
-                await command(f"/session resume {session_id}")
+                replay = await command(f"/session resume {session_id}")
                 assert server.knowledge.binding is None and not server.knowledge.evidence
+                assert any(e["type"] == "replay_assistant" and e["data"]["citations"][0]["citation_id"] == ref for e in replay)
+                await ws.send(json.dumps({"type": "source_request", "data": {"citation_id": ref, "request_id": "open-old"}}))
+                opened = (await until("source_preview"))[-1]["data"]
+                assert opened["request_id"] == "open-old" and "17 days" in opened["source"]["text"]
+                await ws.send(json.dumps({"type": "source_request", "data": {"citation_id": "K:bad", "request_id": "invalid"}}))
+                assert "引用格式无效" in (await until("source_preview"))[-1]["data"]["error"]
+                assert not server.knowledge.evidence and all(ref not in m.content for m in server.conversation.history)
                 await send("normal answer")
                 assert any("OFF_OK" in str(e) for e in await until("loop_complete"))
                 await command(f"/knowledge use {kb}")
@@ -770,6 +884,7 @@ def write_pdf(path, pages, *, encrypted=False):
 def test_pdf_docx_locations_and_format_errors(service, tmp_path):
     from docx import Document
     from codeplus.knowledge.documents import parse_document
+    from codeplus.knowledge.citations import source_location
 
     kb = service.create("formats")["id"]
     pdf = tmp_path / "two pages.pdf"
@@ -777,6 +892,7 @@ def test_pdf_docx_locations_and_format_errors(service, tmp_path):
     doc = service.import_document(kb, pdf)
     hits = service.search(kb, "Cobalt", 50).hits
     assert {span.page for hit in hits for span in hit.source_spans} == {1, 2}
+    assert "第2页" in source_location([asdict(s) for h in hits for s in h.source_spans])
     text, _ = parse_document(Path(doc["original_path"]))
     assert any("Cobalt" in text[s.char_start:s.char_end] and s.page == 2 for h in hits for s in h.source_spans)
     word = tmp_path / "body order.docx"
@@ -797,6 +913,8 @@ def test_pdf_docx_locations_and_format_errors(service, tmp_path):
     assert all(s.page is None and s.line_start is None and s.heading_path == ["Dispatch"] for s in spans)
     assert any((s.table, s.row, s.column) == (1, 2, 2) and "November" in text[s.char_start:s.char_end] for s in spans)
     assert all(text[s.char_start:s.char_end] in h.text for h in hits for s in h.source_spans)
+    label = source_location([asdict(s) for s in spans])
+    assert "第3段" in label and "表1 · 第2行 · 第2列" in label
     before = service.status(kb)
     invalid = tmp_path / "invalid.pdf"
     write_pdf(invalid, [""])

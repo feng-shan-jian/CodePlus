@@ -141,6 +141,8 @@ Compare the options using the documents, cite the sources, and save a report as 
 
 `create` selects the new base; use `/knowledge use <kb_id>` next time. Importing the same path again updates it. Use `/knowledge sources` to list documents, `/knowledge status` to inspect state, and `/knowledge off` to leave knowledge mode. Report writes follow the existing file permissions.
 
+Click `[1]` or `[2]` in TUI and Remote answers to preview the filename, location, quoted text, and version status. In the TUI, Tab to an answer and press Enter; Esc closes the preview. Restored sessions retain links across library switches and knowledge mode changes. CLI output and reports keep full source IDs.
+
 For non-interactive questions, use `uv run --extra knowledge codeplus -p "Answer from the documents with citations" --knowledge <kb_id>`. Non-interactive knowledge mode denies operations requiring approval; explicitly add `--mode acceptEdits` to allow report writes. Remote accepts the same commands, with import paths on the server. See the [full guide](docs/knowledge-setup.md) for removal, recovery, format limits, and retrieval experiments.
 
 ## Development

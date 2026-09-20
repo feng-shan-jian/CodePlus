@@ -220,6 +220,11 @@ class RemoteServer:
                 elif msg_type == "permission_response":
                     self._handle_permission_response(data)
 
+                elif msg_type == "source_request":
+                    # Reply only to the requesting browser; opening a source is not
+                    # an Agent turn and must not change any knowledge binding.
+                    await websocket.send(json.dumps(await self._source_response(data), ensure_ascii=False))
+
                 elif msg_type == "cancel":
                     if self._cancel_event is not None:
                         self._cancel_event.set()
@@ -500,7 +505,7 @@ class RemoteServer:
                     if stream_buf:
                         await self._broadcast({
                             "type": "stream_end",
-                            "data": {"text": stream_buf},
+                            "data": {"text": stream_buf, **await self.knowledge.presentation(stream_buf)},
                         })
                         stream_buf = ""
                     await self._broadcast({
@@ -535,7 +540,7 @@ class RemoteServer:
                     if stream_buf:
                         await self._broadcast({
                             "type": "stream_end",
-                            "data": {"text": stream_buf},
+                            "data": {"text": stream_buf, **await self.knowledge.presentation(stream_buf)},
                         })
                         stream_buf = ""
                     await self._broadcast({
@@ -547,7 +552,7 @@ class RemoteServer:
                     if stream_buf:
                         await self._broadcast({
                             "type": "stream_end",
-                            "data": {"text": stream_buf},
+                            "data": {"text": stream_buf, **await self.knowledge.presentation(stream_buf)},
                         })
                         stream_buf = ""
                     elapsed = time.monotonic() - start_time
@@ -802,7 +807,17 @@ class RemoteServer:
         await self._broadcast({"type": "clear", "data": None})
         for message in messages:
             if message.content and not message.tool_results:
-                await self._broadcast({"type": f"replay_{message.role}", "data": {"content": message.content}})
+                presentation = await self.knowledge.presentation(message.content) if message.role == "assistant" else {}
+                await self._broadcast({"type": f"replay_{message.role}",
+                                       "data": {"content": message.content, **presentation}})
+
+    async def _source_response(self, data) -> dict:
+        result = {"request_id": data.get("request_id"), "citation_id": data.get("citation_id")}
+        try:
+            result["source"] = await self.knowledge.preview(data.get("citation_id"))
+        except Exception as exc:
+            result["error"] = f"无法打开引用：{exc}"
+        return {"type": "source_preview", "data": result}
 
     def _persist_compact_boundary(self, notification: CompactNotification) -> None:
         if self.session and notification.boundary is not None:

@@ -555,6 +555,24 @@ class TestCompactBoundaryRoundTrip:
         assert s.meta.message_count == before  # 边界只是一个标记，不算一轮对话
         s.close()
 
+    def test_display_replay_crosses_boundaries_without_duplicate_keep(self, tmp_path: Path) -> None:
+        mgr = SessionManager(str(tmp_path))
+        session = mgr.create()
+        originals = [Message("user", "old question"), Message("assistant", "answer [K:library:chunk]")]
+        for message in originals:
+            session.append(message)
+        session.append_record(make_compact_boundary("summary", originals[-1:]))
+        session.append_record(make_compact_boundary("", []))  # Knowledge switch/off.
+        session.append(Message("user", "ordinary chat after off"))
+        session.close()
+        result = mgr.resume(session.session_id)
+        try:
+            assert [m.content for m in result.display_messages] == [
+                "old question", "answer [K:library:chunk]", "ordinary chat after off"]
+            assert all("K:" not in m.content and "old question" not in m.content for m in result.messages)
+        finally:
+            result.session.close()
+
 # =========================================================================
 # F. 会话元数据 SessionMeta
 # =========================================================================

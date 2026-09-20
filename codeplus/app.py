@@ -12,7 +12,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.message import Message as TMessage
-from textual.widgets import Markdown, OptionList, Static, TextArea
+from textual.widgets import OptionList, Static, TextArea
 from textual.widgets.option_list import Option
 
 from codeplus.agent import (
@@ -48,6 +48,8 @@ from codeplus import crashlog
 from codeplus.commands.completion import CompletionPopup
 from codeplus.commands.handlers import register_all_commands
 from codeplus.config import MCPServerConfig, ProviderConfig
+from codeplus.knowledge.citations import short_citations
+from codeplus.source_preview import CitationMarkdown, InlineSourcePreview
 from codeplus.hooks import HookContext, HookEngine, load_hooks
 from codeplus.conversation import ConversationManager, Message
 from codeplus.mcp import ConnectResult, MCPManager
@@ -239,6 +241,11 @@ class ChatInput(TextArea):
         if text.startswith("/"):
             self.post_message(self.TabComplete(text))
         else:
+            if not self.text:
+                answers = [answer for answer in self.app.query(CitationMarkdown) if answer.can_focus]
+                if answers:
+                    answers[0].focus()
+                    return
             self.insert("\t")
 
     def action_dismiss_popup(self) -> None:
@@ -1282,6 +1289,9 @@ class CodePlusApp(App):
         input_widget.focus()
 
     def action_cycle_mode(self) -> None:
+        if isinstance(self.focused, CitationMarkdown) or self.query(InlineSourcePreview):
+            self.screen.focus_previous()
+            return
         if self.agent is None:
             return
         current = self.agent.permission_mode
@@ -1318,6 +1328,10 @@ class CodePlusApp(App):
                 block._render_done()
 
     def action_cancel(self) -> None:
+        previews = self.query(InlineSourcePreview)
+        if previews:
+            previews.first().action_close()
+            return
         if self.knowledge.retrieving:
             self.add_system_message("本地检索正在执行；完成后可中断回答。")
             return
@@ -1507,7 +1521,7 @@ class CodePlusApp(App):
                     from rich.text import Text as RichText
                     t = RichText()
                     t.append("● ", style="bold color(99)")
-                    t.append(accumulated_text)
+                    t.append(short_citations(accumulated_text, links=False))
                     streaming_label.update(t)
                     self.call_after_refresh(chat.scroll_end, animate=False)
 
@@ -1521,7 +1535,7 @@ class CodePlusApp(App):
                         from rich.text import Text as RichText
                         prefix = Static(RichText("●  ", style="bold color(99)"), classes="message")
                         await ai_row.mount(prefix)
-                        md = Markdown(accumulated_text, classes="message ai-message")
+                        md = await self._answer_markdown(accumulated_text)
                         await ai_row.mount(md)
                         streaming_label = None
                         accumulated_text = ""
@@ -1611,7 +1625,7 @@ class CodePlusApp(App):
                     # 保留错误前已输出的流式文本
                     if accumulated_text and streaming_label is not None:
                         await streaming_label.remove()
-                        md = Markdown(accumulated_text, classes="message ai-message")
+                        md = await self._answer_markdown(accumulated_text)
                         await ai_row.mount(md)
                         streaming_label = None
                         accumulated_text = ""
@@ -1643,7 +1657,7 @@ class CodePlusApp(App):
             # 收尾：渲染剩余的累积文本
             if accumulated_text and streaming_label is not None:
                 await streaming_label.remove()
-                md = Markdown(accumulated_text, classes="message ai-message")
+                md = await self._answer_markdown(accumulated_text)
                 await ai_row.mount(md)
             elif streaming_label is not None:
                 await streaming_label.remove()
@@ -1654,10 +1668,7 @@ class CodePlusApp(App):
             if accumulated_text:
                 if streaming_label is not None:
                     await streaming_label.remove()
-                md = Markdown(
-                    accumulated_text + "\n\n*[cancelled]*",
-                    classes="message ai-message",
-                )
+                md = await self._answer_markdown(accumulated_text + "\n\n*[cancelled]*")
                 await ai_row.mount(md)
             self._show_system_message("Operation cancelled")
         except LLMError as e:
@@ -1942,6 +1953,10 @@ class CodePlusApp(App):
     # 恢复 session 的消息渲染
     # -----------------------------------------------------------------
 
+    async def _answer_markdown(self, text: str) -> CitationMarkdown:
+        return CitationMarkdown(await self.knowledge.presentation(text), self.knowledge,
+                                classes="message ai-message")
+
     async def _render_restored_messages(self, messages: list[Message]) -> None:
         chat = self.query_one("#chat-area", VerticalScroll)
         await chat.remove_children()
@@ -1960,7 +1975,7 @@ class CodePlusApp(App):
             elif msg.role == "assistant":
                 row = Vertical(classes="ai-row")
                 await chat.mount(row)
-                md = Markdown(msg.content, classes="message ai-message")
+                md = await self._answer_markdown(msg.content)
                 await row.mount(md)
 
         self.call_after_refresh(chat.scroll_end, animate=False)
