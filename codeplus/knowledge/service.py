@@ -20,6 +20,7 @@ from .embedding import LocalEmbedding
 from .metadata import Metadata
 from .milvus_store import MilvusStore
 from .models import Chunk, SearchHit, SearchResult, SourceSpan, fingerprint, profile
+from .retrieval import rrf
 
 
 class KnowledgeService:
@@ -308,17 +309,42 @@ class KnowledgeService:
         top_k = self.config.top_k if top_k is None else top_k
         if not 1 <= top_k <= 16384:
             raise ValueError("top_k must be between 1 and 16384")
-        with self._locked(kb_id):
+        requested_mode = self.config.retrieval_mode
+        with self._locked(kb_id) as kb:
+            supports_bm25 = "indexing" in kb["profile"]
+            mode = ("hybrid" if supports_bm25 else "dense") if requested_mode == "auto" else requested_mode
+            if mode in ("bm25", "hybrid") and not supports_bm25:
+                raise ValueError(f"Knowledge base does not support {mode}; create a new hybrid base and import documents")
             with self.metadata.connect() as db:
                 if db.execute("SELECT 1 FROM documents WHERE kb_id=? AND removed=0 LIMIT 1", (kb_id,)).fetchone() is None:
                     raise ValueError("Knowledge base is empty; import a document first")
-        vector = self.embedding.encode_query(query)
+        if mode in ("dense", "hybrid"):
+            try:
+                vector = self.embedding.encode_query(query)
+            except Exception as exc:
+                raise RuntimeError(f"dense retrieval failed: {exc}") from exc
+        candidates = max(self.config.retrieval_candidates, top_k) if mode == "hybrid" else top_k
         with self._locked(kb_id) as kb:
             self._collection(kb)
-            matches = self.store.search_dense(kb["collection_name"], vector, top_k)
+            lanes = ("dense", "bm25") if mode == "hybrid" else (mode,)
+            results = {}
+            for lane in lanes:
+                try:
+                    matches = (self.store.search_dense(kb["collection_name"], vector, candidates) if lane == "dense"
+                               else self.store.search_bm25(kb["collection_name"], query, candidates))
+                    results[lane] = [{"chunk_id": match["chunk_id"], "score": float(match["distance"])}
+                                     for match in matches]
+                except Exception as exc:
+                    raise RuntimeError(f"{lane} retrieval failed: {exc}") from exc
+            matches = rrf(results["dense"], results["bm25"], self.config.rrf_k) if mode == "hybrid" else results[mode]
+            score_type, index, metric = {
+                "dense": ("cosine_similarity", "FLAT", "COSINE"),
+                "bm25": ("bm25", "SPARSE_INVERTED_INDEX", "BM25"),
+                "hybrid": ("rrf", "FLAT+SPARSE_INVERTED_INDEX", "RRF"),
+            }[mode]
             hits = []
             with self.metadata.connect() as db:
-                for match in matches:
+                for match in matches[:top_k]:
                     row = db.execute(
                         "SELECT c.*, d.source_uri FROM chunks c JOIN documents d ON d.id=c.doc_id "
                         "WHERE c.id=? AND d.kb_id=? AND d.state='READY' AND d.removed=0 AND c.generation_id=d.generation_id",
@@ -329,6 +355,11 @@ class KnowledgeService:
                     hits.append(SearchHit(row["id"], row["doc_id"], row["generation_id"], row["text"],
                                           row["source_uri"], row["original_path"],
                                           [SourceSpan(**span) for span in json.loads(row["source_spans"])],
-                                          float(match["distance"])))
+                                          match["score"], score_type))
             return SearchResult(query, kb_id, kb["revision"],
-                                {"top_k": top_k, "index": "FLAT", "metric": "COSINE", "profile_hash": kb["profile_hash"]}, hits)
+                                {"top_k": top_k, "profile_hash": kb["profile_hash"],
+                                 "index": index, "metric": metric,
+                                 "requested_mode": requested_mode, "mode": mode, "candidates": candidates,
+                                 "rrf_k": self.config.rrf_k if mode == "hybrid" else None,
+                                 "lane_counts": {lane: len(results[lane]) if lane in results else None
+                                                 for lane in ("dense", "bm25")}}, hits)

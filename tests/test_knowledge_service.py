@@ -42,6 +42,8 @@ class MemoryStore:
     def __init__(self):
         self.rows = {}
         self.collections = {}
+        self.search_calls = []
+        self.search_results = {}
 
     def check_health(self):
         return "test"
@@ -62,7 +64,17 @@ class MemoryStore:
         self.rows = {key: r for key, r in self.rows.items() if r["doc_id"] != doc_id}
 
     def search_dense(self, name, vector, top_k):
-        return [{"chunk_id": key, "distance": 1.0} for key in list(self.rows)[:top_k]]
+        self.search_calls.append(("dense", name, vector, top_k))
+        return self.search_results.get("dense", [{"chunk_id": key, "distance": 1.0}
+                                                 for key in self.rows])[:top_k]
+
+    def search_bm25(self, name, query, top_k):
+        assert self.collections[name][2] is not None
+        self.search_calls.append(("bm25", name, query, top_k))
+        # A text-matching stub; real ranking/tokenization belongs to the SDK tests.
+        return self.search_results.get("bm25", [{"chunk_id": key, "distance": 2.0}
+                                                for key, row in self.rows.items()
+                                                if query.casefold() in row["text"].casefold()])[:top_k]
 
     def close(self):
         pass
@@ -77,6 +89,210 @@ def service(tmp_path):
     service._store = MemoryStore()
     yield service
     service.close()
+
+
+@pytest.fixture
+def retrieval_case(service, tmp_path):
+    kb = service.create("retrieval")["id"]
+    for name in ("dense", "shared", "keyword"):
+        source = tmp_path / f"{name}.md"
+        source.write_text(f"Evidence for {name}.", encoding="utf-8")
+        service.import_document(kb, source)
+    dense, shared, keyword = service.store.rows
+    service.store.search_results = {
+        "dense": [{"chunk_id": dense, "distance": 0.9}, {"chunk_id": shared, "distance": 0.7}],
+        "bm25": [{"chunk_id": keyword, "distance": 12.0}, {"chunk_id": shared, "distance": 4.0}],
+    }
+    return kb, (dense, shared, keyword)
+
+
+@pytest.mark.parametrize("mode,candidates,top_k", [
+    ("auto", 1, 3), ("hybrid", 8, 2), ("dense", 8, 2), ("bm25", 8, 2),
+])
+def test_retrieval_modes_candidates_scores_and_metadata(service, retrieval_case, monkeypatch, mode, candidates, top_k):
+    kb, (dense, shared, keyword) = retrieval_case
+    before = service.status(kb)
+    service.config = replace(service.config, retrieval_mode=mode, retrieval_candidates=candidates, rrf_k=20, top_k=top_k)
+    encoded = []
+    def encode(query):
+        assert mode != "bm25", "BM25 search must not encode the query"
+        encoded.append(query)
+        return [1.0, 0.0, 0.0]
+    monkeypatch.setattr(service.embedding, "encode_query", encode)
+    result = service.search(kb, "原始 Query")
+    actual = "hybrid" if mode == "auto" else mode
+    lanes = ["dense", "bm25"] if actual == "hybrid" else [actual]
+    assert [call[0] for call in service.store.search_calls] == lanes
+    limit = max(candidates, top_k) if actual == "hybrid" else top_k
+    assert all(call[1] == before["collection_name"] and call[3] == limit for call in service.store.search_calls)
+    assert encoded == ([] if mode == "bm25" else ["原始 Query"])
+    if "bm25" in lanes:
+        assert service.store.search_calls[-1][2] == "原始 Query"
+    expected = {"dense": [dense, shared], "bm25": [keyword, shared],
+                "hybrid": [shared, *sorted([dense, keyword])]}[actual][:top_k]
+    assert [hit.chunk_id for hit in result.hits] == expected
+    assert len({hit.chunk_id for hit in result.hits}) == len(result.hits)
+    scores = {"dense": [0.9, 0.7], "bm25": [12.0, 4.0], "hybrid": [2 / 22, 1 / 21, 1 / 21]}[actual][:top_k]
+    assert [hit.score for hit in result.hits] == pytest.approx(scores)
+    assert {hit.score_type for hit in result.hits} == {{"dense": "cosine_similarity", "bm25": "bm25", "hybrid": "rrf"}[actual]}
+    assert result.query == "原始 Query" and result.kb_id == kb and result.revision == before["revision"]
+    assert result.retrieval == {
+        "top_k": top_k, "profile_hash": before["profile_hash"],
+        "index": {"dense": "FLAT", "bm25": "SPARSE_INVERTED_INDEX", "hybrid": "FLAT+SPARSE_INVERTED_INDEX"}[actual],
+        "metric": {"dense": "COSINE", "bm25": "BM25", "hybrid": "RRF"}[actual],
+        "requested_mode": mode, "mode": actual, "candidates": limit,
+        "rrf_k": 20 if actual == "hybrid" else None,
+        "lane_counts": {lane: 2 if lane in lanes else None for lane in ("dense", "bm25")},
+    }
+    for hit in result.hits:
+        saved = service.source(kb, hit.chunk_id)
+        assert saved["text"] == hit.text and saved["generation_id"] == hit.generation_id
+        assert saved["source_status"] == "current"
+    assert service.status(kb) == before
+
+
+@pytest.mark.parametrize("empty", [("dense",), ("bm25",), ("dense", "bm25")])
+def test_hybrid_empty_lanes_are_successful(service, retrieval_case, empty):
+    kb, _ = retrieval_case
+    for lane in empty:
+        service.store.search_results[lane] = []
+    result = service.search(kb, "query", 3)
+    assert result.retrieval["lane_counts"] == {lane: 0 if lane in empty else 2 for lane in ("dense", "bm25")}
+    remaining = next((hits for lane, hits in service.store.search_results.items() if lane not in empty), [])
+    assert [hit.chunk_id for hit in result.hits] == [hit["chunk_id"] for hit in remaining]
+    assert all(hit.score_type == "rrf" for hit in result.hits)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("lane", ["dense", "bm25"])
+async def test_hybrid_lane_failure_preserves_cause_and_tool_error(service, retrieval_case, monkeypatch, lane):
+    from codeplus.knowledge.citations import KnowledgeContext
+    from codeplus.tools.knowledge import SearchKnowledge, SearchParams
+
+    kb, _ = retrieval_case
+    before = service.status(kb)
+    original = RuntimeError("SDK unavailable")
+    def fail(*args):
+        raise original
+    monkeypatch.setattr(service.store, f"search_{lane}", fail)
+    with pytest.raises(RuntimeError, match=f"{lane} retrieval failed: SDK unavailable") as error:
+        service.search(kb, "query")
+    assert error.value.__cause__ is original
+    context = KnowledgeContext(service.config)
+    context._service = service
+    context.bind({"kb_id": kb})
+    result = await SearchKnowledge(context).execute(SearchParams(query="query"))
+    assert result.is_error
+    assert json.loads(result.output) == {"status": "retrieval_failed", "error": f"{lane} retrieval failed: SDK unavailable"}
+    assert not context.evidence and context.revision is None
+    assert service.status(kb) == before
+
+
+@pytest.mark.parametrize("mode", ["auto", "dense", "bm25", "hybrid"])
+def test_legacy_retrieval_modes_fail_before_queries(service, tmp_path, monkeypatch, mode):
+    service.profile.pop("indexing")
+    service.profile_hash = fingerprint(service.profile)
+    kb = service.create("old dense")["id"]
+    source = tmp_path / "old.md"
+    source.write_text("Old evidence", encoding="utf-8")
+    service.import_document(kb, source)
+    service.profile = profile(service.config)
+    service.profile_hash = fingerprint(service.profile)
+    service.config = replace(service.config, retrieval_mode=mode)
+    if mode in ("bm25", "hybrid"):
+        monkeypatch.setattr(service.embedding, "encode_query", lambda *_: pytest.fail("Unsupported mode encoded query"))
+        monkeypatch.setattr(service, "_collection", lambda *_: pytest.fail("Unsupported mode queried collection"))
+        with pytest.raises(ValueError, match=f"does not support {mode}; create a new hybrid base"):
+            service.search(kb, "Old")
+        assert not service.store.search_calls
+    else:
+        result = service.search(kb, "Old", 1)
+        assert result.retrieval["requested_mode"] == mode and result.retrieval["mode"] == "dense"
+        assert result.retrieval["metric"] == "COSINE" and result.retrieval["candidates"] == 1
+        assert result.retrieval["rrf_k"] is None and result.retrieval["lane_counts"] == {"dense": 1, "bm25": None}
+        assert result.hits[0].score_type == "cosine_similarity"
+        assert [call[0] for call in service.store.search_calls] == ["dense"]
+
+
+@pytest.mark.parametrize("invalid", ["historical", "removed", "not_ready", "other_base", "missing"])
+def test_bm25_candidates_require_current_sources(service, retrieval_case, tmp_path, invalid):
+    kb, (_, _, keyword) = retrieval_case
+    row = service.source(kb, keyword)
+    if invalid == "historical":
+        source = tmp_path / "keyword.md"
+        source.write_text("Replacement evidence", encoding="utf-8")
+        service.import_document(kb, source)
+    elif invalid == "removed":
+        service.remove(kb, row["doc_id"])
+    elif invalid == "not_ready":
+        with service.metadata.connect() as db:
+            db.execute("UPDATE documents SET state='NEEDS_REPAIR' WHERE id=?", (row["doc_id"],))
+    elif invalid == "other_base":
+        other = service.create("other base")["id"]
+        with service.metadata.connect() as db:
+            db.execute("UPDATE documents SET kb_id=? WHERE id=?", (other, row["doc_id"]))
+    else:
+        keyword = "missing-chunk"
+    service.store.search_results["dense"] = []
+    service.store.search_results["bm25"] = [{"chunk_id": keyword, "distance": 10.0}]
+    for mode in ("bm25", "hybrid"):
+        service.config = replace(service.config, retrieval_mode=mode)
+        with pytest.raises(ValueError, match="no current source in this knowledge base"):
+            service.search(kb, "keyword")
+
+
+def test_hybrid_queries_fusion_and_sources_share_one_lock(service, retrieval_case, monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    from contextlib import contextmanager
+    from filelock import FileLock, Timeout
+    from codeplus.knowledge.retrieval import rrf
+
+    kb, _ = retrieval_case
+    stages = []
+    current_lock = []
+    original_locked = service._locked
+    @contextmanager
+    def locked(*args, **kwargs):
+        with original_locked(*args, **kwargs) as bound:
+            token = object()
+            current_lock.append(token)
+            try:
+                yield bound
+            finally:
+                current_lock.pop()
+    monkeypatch.setattr(service, "_locked", locked)
+    def cannot_write():
+        with pytest.raises(Timeout), FileLock(service.root / f"{kb}.lock", timeout=0):
+            pytest.fail("Writer entered during retrieval")
+    with ThreadPoolExecutor(max_workers=1) as contender:
+        def check(stage):
+            stages.append((stage, current_lock[-1]))
+            contender.submit(cannot_write).result(timeout=5)
+        for lane in ("dense", "bm25"):
+            original_search = getattr(service.store, f"search_{lane}")
+            def search(*args, lane=lane, original=original_search):
+                check(lane)
+                return original(*args)
+            monkeypatch.setattr(service.store, f"search_{lane}", search)
+        def fuse(*args):
+            check("rrf")
+            return rrf(*args)
+        monkeypatch.setattr("codeplus.knowledge.service.rrf", fuse)
+        original_connect = service.metadata.connect
+        @contextmanager
+        def connect():
+            with original_connect() as db:
+                # SQLite trace callbacks swallow exceptions; record and assert below.
+                def trace(sql):
+                    if sql.startswith("SELECT c.*, d.source_uri FROM chunks"):
+                        stages.append(("source", current_lock[-1] if current_lock else None))
+                db.set_trace_callback(trace)
+                yield db
+        monkeypatch.setattr(service.metadata, "connect", connect)
+        result = service.search(kb, "keyword", 3)
+    assert [stage for stage, _ in stages] == ["dense", "bm25", "rrf", "source", "source", "source"]
+    assert len({token for _, token in stages}) == 1 and stages[0][1] is not None
+    assert result.revision == service.status(kb)["revision"]
 
 
 @pytest.mark.parametrize("body", [
@@ -178,7 +394,10 @@ async def test_turn_citations_history_and_reports(service, tmp_path, monkeypatch
     context._service = service
     context.bind({"kb_id": kb, "top_k": 2})
     result = await SearchKnowledge(context).execute(SearchParams(query="deadline", top_k=2))
-    hit = json.loads(result.output)["hits"][0]
+    payload = json.loads(result.output)
+    assert payload["retrieval"]["requested_mode"] == "auto" and payload["retrieval"]["mode"] == "hybrid"
+    hit = payload["hits"][0]
+    assert hit["score_type"] == "rrf"
     citation = hit["citation_id"]
     preview = await context.preview(citation)
     assert preview["status"] == "current" and preview["filename"] == "policy.md"
@@ -286,6 +505,7 @@ async def test_agent_knowledge_both_entries_permissions_and_failures(service, tm
             assert "untrusted" in system
             data = json.loads(conversation.history[-1].tool_results[0].content)
             assert data["status"] == "hits"
+            assert data["retrieval"]["mode"] == "hybrid" and data["hits"][0]["score_type"] == "rrf"
             ref = data["hits"][0]["citation_id"]
             yield TextDelta("17 days. [" + ("K:bad" if self.bad else ref) + "]")
             yield StreamEnd("end_turn")
@@ -354,7 +574,7 @@ async def test_agent_knowledge_both_entries_permissions_and_failures(service, tm
     assert (await context.search("no match"))["status"] == "no_hits"
     def unavailable(*args):
         raise RuntimeError("Milvus unavailable")
-    monkeypatch.setattr(service, "search", unavailable)
+    monkeypatch.setattr(service.store, "search_bm25", unavailable)
     with pytest.raises(ValueError, match="not no_hits"):
         await agent.run_to_completion("deadline?")
 
@@ -1246,6 +1466,65 @@ def test_pdf_docx_locations_and_format_errors(service, tmp_path):
 
 @pytest.mark.skipif(not os.getenv("CODEPLUS_TEST_MILVUS_URI"), reason="real Milvus not requested")
 @pytest.mark.parametrize("legacy", [False, True], ids=["hybrid", "legacy-dense"])
+def test_real_daily_retrieval_modes(service, tmp_path, monkeypatch, legacy):
+    from codeplus.knowledge.milvus_store import MilvusStore
+
+    service._store = MilvusStore(os.environ["CODEPLUS_TEST_MILVUS_URI"])
+    if legacy:
+        service.profile.pop("indexing")
+        service.profile_hash = fingerprint(service.profile)
+    try:
+        kb = service.create("daily retrieval")["id"]
+        service.profile = profile(service.config)
+        service.profile_hash = fingerprint(service.profile)
+        documents = []
+        for name, text, vector in (("semantic", "Semantic evidence", [1.0, 0.0, 0.0]),
+                                   ("keyword", "红杉定额 ZXQ741", [0.0, 1.0, 0.0])):
+            source = tmp_path / f"{name}.md"
+            source.write_text(text, encoding="utf-8")
+            monkeypatch.setattr(service.embedding, "encode_documents", lambda texts, vector=vector: [vector for _ in texts])
+            documents.append(service.import_document(kb, source))
+        service.config = replace(service.config, retrieval_mode="dense")
+        dense = service.search(kb, "ZXQ741", 1)
+        assert dense.hits[0].doc_id == documents[0]["id"] and dense.hits[0].score_type == "cosine_similarity"
+        service.config = replace(service.config, retrieval_mode="bm25")
+        with monkeypatch.context() as patch:
+            patch.setattr(service.embedding, "encode_query", lambda *_: pytest.fail("BM25 encoded a query"))
+            if legacy:
+                with pytest.raises(ValueError, match="create a new hybrid base"):
+                    service.search(kb, "ZXQ741", 1)
+            else:
+                bm25 = service.search(kb, "ZXQ741", 1)
+                assert bm25.hits[0].doc_id == documents[1]["id"] and bm25.hits[0].score_type == "bm25"
+                assert bm25.hits[0].score > 0 and bm25.retrieval["lane_counts"] == {"dense": None, "bm25": 1}
+                chinese = service.search(kb, "红杉", 1)
+                assert chinese.hits[0].chunk_id == bm25.hits[0].chunk_id
+        service.config = replace(service.config, retrieval_mode="auto", retrieval_candidates=2)
+        result = service.search(kb, "ZXQ741", 2)
+        assert result.retrieval["mode"] == ("dense" if legacy else "hybrid")
+        assert result.retrieval["lane_counts"] == {"dense": 2, "bm25": None if legacy else 1}
+        assert {hit.doc_id for hit in result.hits} == {doc["id"] for doc in documents}
+        if not legacy:
+            assert result.hits[0].doc_id == documents[1]["id"]
+            assert [hit.score for hit in result.hits] == pytest.approx([1 / 61 + 1 / 62, 1 / 61])
+            assert all(hit.score_type == "rrf" for hit in result.hits)
+            service.config = replace(service.config, retrieval_mode="hybrid")
+            assert service.search(kb, "ZXQ741", 2).hits == result.hits
+        for hit in result.hits:
+            saved = service.source(kb, hit.chunk_id)
+            assert saved["source_status"] == "current" and saved["generation_id"] == hit.generation_id
+            assert saved["text"] == hit.text
+        print(f"daily retrieval legacy={legacy}: dense/BM25/auto modes and sources verified")
+    finally:
+        for owned in service.list_libraries():
+            name = owned["collection_name"]
+            if service.store.client.has_collection(name):
+                service.store.client.drop_collection(name)
+            assert not service.store.client.has_collection(name)
+
+
+@pytest.mark.skipif(not os.getenv("CODEPLUS_TEST_MILVUS_URI"), reason="real Milvus not requested")
+@pytest.mark.parametrize("legacy", [False, True], ids=["hybrid", "legacy-dense"])
 def test_real_store_document_isolation_and_binding(service, tmp_path, monkeypatch, legacy):
     from codeplus.knowledge.milvus_store import MilvusStore
     from codeplus.knowledge.models import Chunk
@@ -1288,8 +1567,10 @@ def test_real_store_document_isolation_and_binding(service, tmp_path, monkeypatc
             docs.append(service.import_document(kb["id"], source))
         for document in docs:
             assert document["chunk_count"] == 1
-        hits = service.search(kb["id"], "test").hits
-        assert {hit.doc_id for hit in hits} == {doc["id"] for doc in docs}
+        result = service.search(kb["id"], "test")
+        assert result.retrieval["mode"] == ("dense" if legacy else "hybrid")
+        assert all(hit.score_type == ("cosine_similarity" if legacy else "rrf") for hit in result.hits)
+        assert {hit.doc_id for hit in result.hits} == {doc["id"] for doc in docs}
         if not legacy:
             assert len(service.store.search_bm25(kb["collection_name"], "passage", 10)) == 2
         fields = ["chunk_id", "doc_id", "generation_id", "text", "dense"]
