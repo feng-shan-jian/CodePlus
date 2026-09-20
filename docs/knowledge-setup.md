@@ -100,6 +100,8 @@ uv run --extra knowledge python -m codeplus.knowledge --help
 
 ### 5. 冻结评测与三路实验
 
+真实资料的固定回归集使用 `python -m codeplus.knowledge benchmark`，支持原件/引用检查、日常检索复跑和离线重算；题目、版本及单轮/追问/无答案评分口径见[标准回归评测说明](knowledge-benchmark.md)。个人语料保存在本地，不纳入公共测试样例。
+
 在仓库根目录运行；仅安装 wheel 的用户需提供自己的 fixtures 或冻结文件：
 
 ```powershell

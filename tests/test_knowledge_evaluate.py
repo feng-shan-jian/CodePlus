@@ -39,6 +39,15 @@ def test_original_range_union_and_fixed_denominators():
     assert (summary["gold_ranges"], summary["request_errors"], summary["no_hits"], summary["no_gold_questions"]) == (3, 1, 2, 1)
 
 
+def test_content_coverage_ignores_only_whitespace():
+    gold = [{"file": "a", "char_start": 0, "char_end": 4, "quote": "甲\n\n乙"}]
+    hits = [{"file": "a", "source_spans": [{"char_start": 0, "char_end": 1}, {"char_start": 3, "char_end": 4}]}]
+    assert evidence_recall(gold, hits, 5)["recall"] == 0
+    assert evidence_recall(gold, hits, 5, ignore_whitespace=True)["recall"] == 1
+    assert evidence_recall([{**gold[0], "quote": "甲丙丁乙"}], hits, 5, ignore_whitespace=True)["recall"] == 0
+    assert evidence_recall(gold, [{**hits[0], "file": "b"}], 5, ignore_whitespace=True)["recall"] == 0
+
+
 def test_rrf_hand_calculation_and_empty_versus_failed_lane():
     dense = [{"chunk_id": "a", "score": 0.9}, {"chunk_id": "b", "score": 0.7}]
     bm25 = [{"chunk_id": "b", "score": 12.0}, {"chunk_id": "c", "score": 8.0}]

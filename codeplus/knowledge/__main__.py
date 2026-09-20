@@ -45,8 +45,22 @@ def main(argv=None) -> int:
     evaluate.add_argument("--ef", type=int, nargs="+", default=[16, 64], help="Two or more query-only ef settings")
     evaluate.add_argument("--warmup", type=int, default=1, help="Warmup rounds over all questions, excluded from percentiles")
     evaluate.add_argument("--repeats", type=int, default=3)
+    benchmark = commands.add_parser("benchmark", help="Run or replay a versioned local corpus regression dataset")
+    benchmark.add_argument("--dataset", type=Path, required=True)
+    benchmark_inputs = benchmark.add_mutually_exclusive_group(required=True)
+    benchmark_inputs.add_argument("--kb-id", help="Existing base containing exactly the dataset source versions")
+    benchmark_inputs.add_argument("--replay", type=Path, help="Rescore report.json without Milvus or an embedding model")
+    benchmark_inputs.add_argument("--check", action="store_true", help="Check corpus fingerprints and reference quotes only")
+    benchmark.add_argument("--managed-local", action="store_true", help="Prepare the project-managed local Milvus deployment")
     args = parser.parse_args(argv)
     try:
+        if args.command == "benchmark":
+            from .benchmark import run
+
+            config = load_config(args.config).knowledge if args.kb_id else None
+            result = run(config, args)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0 if result["status"] == "ok" else 1
         if args.command == "evaluate":
             from .evaluate import run
 

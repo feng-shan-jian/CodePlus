@@ -8,6 +8,7 @@ import json
 import math
 from pathlib import Path
 import platform
+import re
 from tempfile import TemporaryDirectory
 from time import perf_counter, process_time
 import uuid
@@ -20,19 +21,26 @@ from .service import KnowledgeService
 ANALYZER = {"tokenizer": {"type": "jieba", "mode": "search", "hmm": False}, "filter": ["lowercase"]}
 
 
-def evidence_recall(gold, hits, top_k):
+def evidence_recall(gold, hits, top_k, *, ignore_whitespace=False):
     """Micro recall: one gold source interval is one unit; only full union coverage counts."""
     covered = []
     for evidence in gold:
         intervals = sorted((s["char_start"], s["char_end"])
                            for hit in hits[:top_k] if hit["file"] == evidence["file"]
                            for s in hit["source_spans"])
-        cursor = evidence["char_start"]
-        for left, right in intervals:
-            if left > cursor:
-                break
-            cursor = max(cursor, right)
-        covered.append(cursor >= evidence["char_end"])
+        required = [(evidence["char_start"], evidence["char_end"])]
+        if ignore_whitespace:
+            required = [(evidence["char_start"] + match.start(), evidence["char_start"] + match.end())
+                        for match in re.finditer(r"\S+", evidence["quote"])]
+        checks = []
+        for start, end in required:
+            cursor = start
+            for left, right in intervals:
+                if left > cursor:
+                    break
+                cursor = max(cursor, right)
+            checks.append(cursor >= end)
+        covered.append(bool(checks) and all(checks))
     return {"covered": sum(covered), "total": len(gold), "per_range": covered,
             "recall": sum(covered) / len(gold) if gold else None}
 
