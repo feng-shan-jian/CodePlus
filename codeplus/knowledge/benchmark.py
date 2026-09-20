@@ -10,6 +10,7 @@ from pathlib import Path
 from time import perf_counter
 import uuid
 
+from codeplus.validator import validate_knowledge
 from .evaluate import _write, evidence_recall, latency
 from .models import fingerprint
 from .service import KnowledgeService
@@ -64,6 +65,11 @@ def score(questions, records, top_k):
 
 
 def run(config, args):
+    overrides = {field: getattr(args, option) for option, field in (
+        ("mode", "retrieval_mode"), ("candidates", "retrieval_candidates"), ("rrf_k", "rrf_k")
+    ) if getattr(args, option, None) is not None}
+    if overrides and (args.check or args.replay):
+        raise ValueError("--mode, --candidates and --rrf-k require --kb-id; --replay/--check do not run retrieval")
     root = args.dataset.resolve()
     manifest, questions, dataset_hash = load_dataset(root)
     if args.check:
@@ -75,12 +81,16 @@ def run(config, args):
             raise ValueError("Replay belongs to a different dataset version")
         report["replayed_from"] = str(args.replay.resolve())
     else:
+        config = replace(config, enabled=True, managed_local=config.managed_local or args.managed_local, **overrides)
+        validate_knowledge(asdict(config))
         report = {"dataset_id": manifest["id"], "dataset_version": manifest["version"],
                   "dataset_sha256": dataset_hash, "started_at": datetime.now(timezone.utc).isoformat(),
-                  "protocol": manifest["protocol"], "records": [], "answer_model_called": False}
-        report["implementation_sha256"] = fingerprint({name: Path(__file__).with_name(name).read_bytes().hex()
-            for name in ("benchmark.py", "evaluate.py", "service.py", "embedding.py", "milvus_store.py", "documents.py")})
-        config = replace(config, enabled=True, managed_local=config.managed_local or args.managed_local)
+                  "protocol": manifest["protocol"], "records": [], "answer_model_called": False,
+                  "retrieval_request": {"mode": config.retrieval_mode, "candidates": config.retrieval_candidates,
+                                        "rrf_k": config.rrf_k, "top_k": manifest["protocol"]["top_k"]}}
+        report["implementation_sha256"] = fingerprint({name: (Path(__file__).parent / name).read_bytes().hex()
+            for name in ("benchmark.py", "evaluate.py", "service.py", "embedding.py", "milvus_store.py", "documents.py",
+                         "retrieval.py", "models.py", "__init__.py", "__main__.py", "../config.py", "../validator.py")})
         with closing(KnowledgeService(config)) as service:
             before = service.status(args.kb_id)
             documents = [d for d in before["documents"] if not d["removed"]]
@@ -116,13 +126,20 @@ def run(config, args):
     output.mkdir(parents=True)
     _write(output / "report.json", report)
     lines = ["# 检索评测结果", "", f"数据集：{manifest['id']} {manifest['version']}；状态：{report['status']}。",
-             "", "仅检查指定原文依据覆盖，不代表模型回答正确率。追问只输入最后一句；无答案题不自动判拒答通过。", "",
-             "| 分组 | 题数 | 找齐依据 | 请求失败 |", "|---|---:|---:|---:|"]
+             "", "仅检查指定原文依据覆盖，不代表模型回答正确率。追问只输入最后一句；无答案题不自动判拒答通过。", ""]
+    request = report.get("retrieval_request")
+    if request:
+        lines += [f"请求检索：{request['mode']}；候选数 N={request['candidates']}；RRF={request['rrf_k']}；Top-K={request['top_k']}。", ""]
+    lines += ["| 分组 | 题数 | 找齐依据 | 请求失败 |", "|---|---:|---:|---:|"]
     for name, group in report["summary"].items():
         lines.append(f"| {name} | {group['questions']} | {group['fully_covered'] if group['fully_covered'] is not None else '不自动评分'} | {group['request_errors']} |")
-    lines += ["", "| 题号 | 覆盖依据 | 首条来源 |", "|---|---|---|"]
+    lines += ["", "| 题号 | 实际策略 | 候选数 | RRF | 覆盖依据 | 首条来源 |", "|---|---|---:|---:|---|---|"]
     for r in report["records"]:
         e = r["evidence"]
-        lines.append(f"| {r['id']} | {e['covered']}/{e['total']} | {r['hits'][0]['source_id'] if r['hits'] else r['status']} |")
+        retrieval = r.get("retrieval", {})
+        constant = retrieval.get("rrf_k", "未记录")
+        lines.append(f"| {r['id']} | {retrieval.get('mode', '未记录')} | {retrieval.get('candidates', '未记录')} | "
+                     f"{constant if constant is not None else '—'} | {e['covered']}/{e['total']} | "
+                     f"{r['hits'][0]['source_id'] if r['hits'] else r['status']} |")
     (output / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return {"status": report["status"], "report": str(output / "report.json"), "summary": report["summary"]}

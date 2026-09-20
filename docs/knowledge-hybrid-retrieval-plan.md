@@ -1,6 +1,6 @@
 # 向量 + BM25 多路召回执行计划
 
-状态：执行中，H01–H03 代码 review 通过；每阶段由 leader 审查、验证通过后本地提交，再启动下一阶段。基线：`ef6bd17`，2026-09-20。初始工作区仅本计划未跟踪，暂存区为空；保留他人已有修改。
+状态：执行中，H01–H04 代码 review 通过；每阶段由 leader 审查、验证通过后本地提交，再启动下一阶段。基线：`ef6bd17`，2026-09-20。初始工作区仅本计划未跟踪，暂存区为空；保留他人已有修改。
 
 目标：将现有实验中的 BM25 和 RRF 接入日常知识库搜索，并用真实资料判断效果。分块、Embedding、追问处理、文档范围检索、精排模型和回答模型不在本轮范围。
 
@@ -70,7 +70,7 @@ knowledge:
 | H01 | 提取共享融合逻辑，加入运行配置 | 无 | 代码 review 通过；清理阻塞见记录 |
 | H02 | 新库 BM25 索引及旧库读写兼容 | H01 | review 通过 |
 | H03 | 日常检索两路召回与 RRF 融合 | H02 | review 通过 |
-| H04 | 现有 benchmark 支持三策略对照 | H03 | 待执行 |
+| H04 | 现有 benchmark 支持三策略对照 | H03 | review 通过 |
 | H05 | 真实 Milvus、模型和冻结资料集验收 | H04 | 待执行 |
 | H06 | 集成审查、使用文档和清理 | H05 | 待执行 |
 
@@ -98,6 +98,8 @@ knowledge:
 - H02 本地提交：`4d752a3`。H03 实现任务：`01a0bf8a-439a-7122-9715-7fe8535ebb7f`，从此提交继续；未推送。
 - H03 验收：生产改动仅 `service.py`，复用共享 RRF 和已有 Milvus 查询；新增行为测试在原 `test_knowledge_service.py`。默认 auto、新旧库模式分支、纯 BM25 无 query 编码、Top-K/候选数、同锁融合与来源校验、失败 cause 和原工具错误路径审查通过。实现者 knowledge/service/prepare/evaluate/benchmark/config **112 passed / 7 skipped**，commands/interaction 另 **13 passed**（不重叠）；真实 `test_real_daily_retrieval_modes` **2 passed**（81 秒），覆盖中文 BM25、独有命中、混合手算结果、旧 dense 模式及来源。leader 独立关键分支 **18 passed / 2 skipped**，同锁测试另 **1 passed**。真实 Qwen/冻结资料对照留待 H05；临时入口、数据和独占集合已清理。
 - H03 主目录复验：`test_knowledge_service.py test_knowledge_interaction.py test_knowledge_commands.py` **63 passed / 4 skipped**，临时根自动清理，`git diff --check` 通过。
+- H03 本地提交：`ffaafe1`。H04 实现任务：`01a0bf95-12ec-76d0-a071-3de1067141e1`，从此提交继续；未推送。
+- H04 验收：指定 4 文件变更，CLI 运行时覆盖复用 `replace` 与 `validate_knowledge`，检索和评分继续调用原实现；JSON/Markdown 记录请求与实际策略，离线 check/replay 拒绝检索覆盖，旧报告不补造缺失字段。全部 knowledge/config **151 passed / 7 skipped**（37.13 秒）；leader 在实施工作树和主目录分别验证 benchmark **29 passed**，主目录冻结集指纹仍为基线值（31 文档/32 问题）。临时测试入口/数据/报告已清理，`git diff --check` 通过。
 
 ### H01：共享规则和配置
 

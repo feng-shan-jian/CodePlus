@@ -52,6 +52,9 @@ def main(argv=None) -> int:
     benchmark_inputs.add_argument("--replay", type=Path, help="Rescore report.json without Milvus or an embedding model")
     benchmark_inputs.add_argument("--check", action="store_true", help="Check corpus fingerprints and reference quotes only")
     benchmark.add_argument("--managed-local", action="store_true", help="Prepare the project-managed local Milvus deployment")
+    benchmark.add_argument("--mode", choices=("dense", "bm25", "hybrid"), help="Override retrieval mode for this run only")
+    benchmark.add_argument("--candidates", type=int, help="Override candidates per hybrid lane (1-16384)")
+    benchmark.add_argument("--rrf-k", type=float, help="Override the positive RRF constant for this run only")
     args = parser.parse_args(argv)
     try:
         if args.command == "benchmark":
