@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "scope": "dataset_integrity_and_agent_field_whitelist_only",
+  "dataset": "SWE-bench-Live/SWE-bench-Live",
+  "revision": "b51a86422e10cfd403beb4773e5a2947953e36ec",
+  "tasks": 15,
+  "selected_tasks": 15,
+  "agent_fields": [
+    "instance_id",
+    "repo",
+    "base_commit",
+    "problem_statement"
+  ],
+  "source_lock_sha256": "8ebff6f281f89a906937fc94cdb1e300cdc6770550f328cdafd7c4a34c391a18",
+  "model_evaluation": "not_executed",
+  "official_docker_evaluation": "not_executed"
+}

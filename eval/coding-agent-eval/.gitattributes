@@ -1,0 +1,2 @@
+# Frozen datasets use byte hashes; preserve their original line endings.
+* -text

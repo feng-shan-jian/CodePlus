@@ -1,0 +1,167 @@
+[
+  {
+    "instance_id": "amoffat__sh-744",
+    "repo": "amoffat/sh",
+    "language": "Python",
+    "created_at": "2025-01-08 22:39:32",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.amoffat_1776_sh-744:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.amoffat_1776_sh-744@sha256:0ab5f01f2c45fe84813deec1dd1478917ba63b9a2a7443dc43a065bd186e14c3"
+    ]
+  },
+  {
+    "instance_id": "reflex-dev__reflex-4711",
+    "repo": "reflex-dev/reflex",
+    "language": "Python",
+    "created_at": "2025-01-29 09:36:47",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.reflex-dev_1776_reflex-4711:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.reflex-dev_1776_reflex-4711@sha256:1181686b6f491a63bd4d9a34faa1f3303f109f112b7ddc4c331cf70be0453987"
+    ]
+  },
+  {
+    "instance_id": "dynaconf__dynaconf-1241",
+    "repo": "dynaconf/dynaconf",
+    "language": "Python",
+    "created_at": "2025-02-10 18:48:12",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.dynaconf_1776_dynaconf-1241:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.dynaconf_1776_dynaconf-1241@sha256:c5930010f69611e20ec838903de6d76a8bd61284ffdfb6237fbbc36d881bfed8"
+    ]
+  },
+  {
+    "instance_id": "sphinx-doc__sphinx-13127",
+    "repo": "sphinx-doc/sphinx",
+    "language": "Python",
+    "created_at": "2024-11-13 01:57:50",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.sphinx-doc_1776_sphinx-13127:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.sphinx-doc_1776_sphinx-13127@sha256:913f4e10551a9cb6ff573302f97e05ee05c325472f29d96090724cde3d74704f"
+    ]
+  },
+  {
+    "instance_id": "streamlink__streamlink-6389",
+    "repo": "streamlink/streamlink",
+    "language": "Python",
+    "created_at": "2025-01-08 02:29:19",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.streamlink_1776_streamlink-6389:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.streamlink_1776_streamlink-6389@sha256:919587eb216098747c880f8d7fbce0d9d2e5b3b42a609def1197b5d60a314509"
+    ]
+  },
+  {
+    "instance_id": "flexget__flexget-4244",
+    "repo": "Flexget/Flexget",
+    "language": "Python",
+    "created_at": "2025-02-12 01:39:14",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.flexget_1776_flexget-4244:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.flexget_1776_flexget-4244@sha256:bc092a1a5defcba454fdaeba669802ef5be4b933f8b02d6258344e8230c26583"
+    ]
+  },
+  {
+    "instance_id": "joke2k__faker-2190",
+    "repo": "joke2k/faker",
+    "language": "Python",
+    "created_at": "2025-03-16 04:48:10",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.joke2k_1776_faker-2190:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.joke2k_1776_faker-2190@sha256:a92de4a23d2ae854456e7da2adafdacb780bfbef51fb53c16619eeb89becd2f1"
+    ]
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-28933",
+    "repo": "matplotlib/matplotlib",
+    "language": "Python",
+    "created_at": "2024-10-03 11:45:38",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.matplotlib_1776_matplotlib-28933:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.matplotlib_1776_matplotlib-28933@sha256:4158a63b503b92f16ac92ebe7251915ec5c9474075d19f537cdf9be28d0dd37e"
+    ]
+  },
+  {
+    "instance_id": "sissbruecker__linkding-989",
+    "repo": "sissbruecker/linkding",
+    "language": "Python",
+    "created_at": "2025-02-15 07:20:57",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.sissbruecker_1776_linkding-989:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.sissbruecker_1776_linkding-989@sha256:65193413bcbc10c342db18d0cecabf61c1cf7c7fb15e0002371069d9b3cc7ee3"
+    ]
+  },
+  {
+    "instance_id": "tox-dev__tox-3409",
+    "repo": "tox-dev/tox",
+    "language": "Python",
+    "created_at": "2024-10-15 18:21:37",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.tox-dev_1776_tox-3409:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.tox-dev_1776_tox-3409@sha256:42777acedb47cdba36726c006a996626321e10c783d1a7e74fb36e5ad7c5a52e"
+    ]
+  },
+  {
+    "instance_id": "shapely__shapely-2224",
+    "repo": "shapely/shapely",
+    "language": "Python",
+    "created_at": "2025-02-15 15:01:20",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.shapely_1776_shapely-2224:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.shapely_1776_shapely-2224@sha256:d1faf3ea3adae0a292533a30fc3faab42943fbe1a9f228142e6f0e99b4a88a79"
+    ]
+  },
+  {
+    "instance_id": "ipython__ipython-14838",
+    "repo": "ipython/ipython",
+    "language": "Python",
+    "created_at": "2025-03-13 12:27:18",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.ipython_1776_ipython-14838:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.ipython_1776_ipython-14838@sha256:10aa4cfa3d25836e97ac83ecbbef07e1b2fcbfd173a98d8d9ced31386f6ce50a"
+    ]
+  },
+  {
+    "instance_id": "keras-team__keras-20880",
+    "repo": "keras-team/keras",
+    "language": "Python",
+    "created_at": "2025-02-08 15:27:23",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.keras-team_1776_keras-20880:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.keras-team_1776_keras-20880@sha256:4de029f06702fa2a7f0ef1133a66ca7a6dd9252c3ba903ef0c28d0e3383600f2"
+    ]
+  },
+  {
+    "instance_id": "matplotlib__matplotlib-29007",
+    "repo": "matplotlib/matplotlib",
+    "language": "Python",
+    "created_at": "2024-10-22 07:52:37",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.matplotlib_1776_matplotlib-29007:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.matplotlib_1776_matplotlib-29007@sha256:e6b19836c458cc71989bf043afca8cb178b9318453af12959292715a73c6efad"
+    ]
+  },
+  {
+    "instance_id": "tox-dev__tox-3388",
+    "repo": "tox-dev/tox",
+    "language": "Python",
+    "created_at": "2024-10-02 19:42:06",
+    "gold_pass": true,
+    "docker_image": "starryzhang/sweb.eval.x86_64.tox-dev_1776_tox-3388:latest",
+    "image_digests": [
+      "starryzhang/sweb.eval.x86_64.tox-dev_1776_tox-3388@sha256:aba35a4bb66e50a40d29b8e10645a90367d34a95470375488b189de6831cc755"
+    ]
+  }
+]

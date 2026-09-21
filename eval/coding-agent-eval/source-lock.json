@@ -1,0 +1,51 @@
+{
+  "dataset": "SWE-bench-Live/SWE-bench-Live",
+  "revision": "b51a86422e10cfd403beb4773e5a2947953e36ec",
+  "split": "lite",
+  "tasks": 15,
+  "upstream_url": "https://huggingface.co/datasets/SWE-bench-Live/SWE-bench-Live/tree/b51a86422e10cfd403beb4773e5a2947953e36ec",
+  "harness_commit": "ad79b850f15e33992e96f03f6e97f05ddf9aa0be",
+  "restored_at": "2026-09-21",
+  "origin": "The 15 historically evaluated tasks from the existing 2026-09-16 project backup, in the unchanged selected_tasks.json order; every retained evaluator field matches the corresponding original record.",
+  "files": {
+    "data/evaluator/dataset.json": "92f120f7281de2b0fa020674a527ccd447ffed84a6846d5c7ac0ab14716b65ca",
+    "data/agent/tasks.jsonl": "f9ec503d092e28363ab89bc8259791496cfc675af9a869ba1f27f73945338d58",
+    "selected_tasks.json": "f175a8e3b00f9a540da092f58873a79ce2e98cb17f20ea6936d598c771d5fda2"
+  },
+  "agent_input_fields": [
+    "instance_id",
+    "repo",
+    "base_commit",
+    "problem_statement"
+  ],
+  "agent_excluded_fields": [
+    "patch",
+    "test_patch",
+    "FAIL_TO_PASS",
+    "PASS_TO_PASS",
+    "hints_text",
+    "all_hints_text",
+    "test_cmds",
+    "log_parser"
+  ],
+  "selected_tasks_status": "Historical fixed 15-task set; no resampling or new Gold validation. Full 300-task data and 40 candidates remain only in the untouched original backup.",
+  "upstream_full_dataset_sha256": "792f053ac6597cc84c155c14d008809b62720b83e9a5e45e9817c0e7956779f7",
+  "upstream_parquet_sha256": "7ee0a75c41bfc954fd441b67ce738fc5c1cbae00721c4e30e7db4d893057c9ab",
+  "selected_instance_ids": [
+    "amoffat__sh-744",
+    "reflex-dev__reflex-4711",
+    "dynaconf__dynaconf-1241",
+    "sphinx-doc__sphinx-13127",
+    "streamlink__streamlink-6389",
+    "flexget__flexget-4244",
+    "joke2k__faker-2190",
+    "matplotlib__matplotlib-28933",
+    "sissbruecker__linkding-989",
+    "tox-dev__tox-3409",
+    "shapely__shapely-2224",
+    "ipython__ipython-14838",
+    "keras-team__keras-20880",
+    "matplotlib__matplotlib-29007",
+    "tox-dev__tox-3388"
+  ]
+}
