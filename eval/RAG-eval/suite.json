@@ -1,0 +1,82 @@
+{
+  "id": "rag-scenarios-v1",
+  "version": "1.0.0",
+  "seed": 20260921,
+  "status": "curated_candidate",
+  "datasets": [
+    {
+      "name": "original",
+      "path": "full/original",
+      "questions": 40,
+      "documents": 22,
+      "protocol": "corpus_retrieval",
+      "splits": {
+        "development": 32,
+        "holdout": 8
+      }
+    },
+    {
+      "name": "crud",
+      "path": "full/crud",
+      "questions": 90,
+      "documents": 2020,
+      "protocol": "corpus_retrieval",
+      "splits": {
+        "development": 8,
+        "holdout": 82
+      }
+    },
+    {
+      "name": "multihop",
+      "path": "full/multihop",
+      "questions": 100,
+      "documents": 609,
+      "protocol": "corpus_retrieval",
+      "splits": {
+        "development": 8,
+        "holdout": 92
+      }
+    },
+    {
+      "name": "openrag",
+      "path": "full/openrag",
+      "questions": 20,
+      "documents": 20,
+      "protocol": "corpus_retrieval",
+      "splits": {
+        "development": 4,
+        "holdout": 16
+      }
+    },
+    {
+      "name": "rgb",
+      "path": "full/rgb",
+      "questions": 50,
+      "documents": 230,
+      "protocol": "provided_context_only",
+      "splits": {
+        "development": 8,
+        "holdout": 42
+      }
+    }
+  ],
+  "single_questions": 300,
+  "sessions": 20,
+  "workflows": 20,
+  "source_mix": {
+    "public_derived": 260,
+    "original": 40
+  },
+  "single_question_split": {
+    "development": 60,
+    "holdout": 240
+  },
+  "execution_status": {
+    "retrieval": "not_executed",
+    "answers": "not_executed",
+    "sessions": "not_executed",
+    "workflows": "not_executed"
+  },
+  "review": "assistant source review plus automated structural checks; independent human review pending",
+  "smoke": "smoke/ is a 32-question development subset of full/original; do not add it to the 300-question denominator."
+}

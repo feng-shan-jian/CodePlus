@@ -1,0 +1,1568 @@
+1
+Alleviating Non-identifiability: a High-fidelity
+Calibration Objective for Financial Market
+Simulation with Multivariate Time Series Data
+Chenkai Wang, Junji Ren, and Peng Yang, Senior Member, IEEE
+Abstract—The non-identifiability issue has been frequently
+reported in social simulation works, where different parame-
+ters of an agent-based simulation model yield indistinguishable
+simulated time series data under certain discrepancy metrics.
+This issue largely undermines the simulation fidelity yet lacks
+dedicated investigations. This paper theoretically demonstrates
+that incorporating multiple time series data features during
+the model calibration phase can exponentially alleviate non-
+identifiability as the number of features increases. To imple-
+ment this theoretical finding, a maximization-based aggregation
+function is proposed based on existing discrepancy metrics to
+form a new calibration objective function. For verification, the
+task of calibrating the Financial Market Simulation (FMS), a
+typical yet complex social simulation, is considered. Empirical
+studies confirm the significant improvements in alleviating the
+non-identifiability of calibration tasks. Furthermore, as a model-
+agnostic method, it achieves much higher simulation fidelity
+of the chosen FMS model on both synthetic and real market
+data.Moreover, it is both theoretically and empirically analyzed
+that as long as the features are selected not linearly correlated,
+they can contribute to the alleviation, which demonstrates the ro-
+bustness of the proposed objective. Hence, this work is expected to
+provide not only a rigorous understanding of non-identifiability in
+social simulation but also an off-the-shelf high-fidelity calibration
+objective function for FMS.
+Index Terms—Financial market simulation, Agent-based mod-
+eling, Non-identifiability, High-fidelity calibration objective
+I. I NTRODUCTION
+Social simulation plays a pivotal role in understanding
+complex social systems in a way of revealing their endogenous
+complexity [1]. By properly modeling the endogenous compo-
+nents of the social system as multiple interacting agents, i.e.,
+using the Agent-based Models (ABMs) [2], various what-if
+tests can be conducted by intervening the agents of interest
+and analyzing the evolution process of the simulators [3], [4].
+These what-if tests involving simulating hypothetical scenarios
+to assess how changes in agent behaviors or interactions may
+influence the overall system dynamics.
+This paper was produced by the IEEE Publication Technology Group. They
+are in Piscataway, NJ.
+Manuscript received XXX,XXX. (Corresponding author: Peng Yang).
+Chenkai Wang is with Department of Statistics and Data Science, Southern
+University of Science and Technology, Shenzhen 518055, China (email:
+wangck2022@mail.sustech.edu.cn).
+Junji Ren and Peng Yang are with the Guangdong Provincial Key Lab-
+oratory of Brain-Inspired Intelligent Computation and the Department of
+Computer Science and Engineering, Southern University of Science and Tech-
+nology, Shenzhen 518055, China (emails: 12432695@mail.sustech.edu.cn;
+yangp@sustech.edu.cn). Peng Yang is also with the Department of Statistics
+and Data Science at the same university.
+The success of a social simulation largely lies in the model’s
+fidelity. Note that the what-if tests are often counterfactual,
+i.e., they do not happen in real social systems, and thus,
+there are no grounds for validation. To what extent should
+we believe the results of what-if tests? Besides, due to the
+uncertainty of human activities, it is often impractical to derive
+mathematically trustworthy social simulation models. Usually,
+this issue is addressed in a data-driven manner via model
+calibration [5].
+Specifically, a simulation modelM(ω) is essentially a data-
+generating process that can produce sequences of arbitrary
+length, i.e., M(ω) = XT′, where T′ = [1,...,τ ] and τ∈ N+.
+If the simulated data XT resembles the observed data ˆXT of
+the targeted real system within any discrete time interval of
+interest T = [ts,ts + 1,...,t e], we consider that M(ω) has
+learned the underlying data-generating probabilistic distribu-
+tion of the real system for generating ˆXT . Therefore, when
+using M(ω) for what-if tests, by keeping the non-intervened
+agents of M(ω) unchanged, the simulation results of how
+the intervened agent influences the system are considered
+trustworthy. To obtain such M(ω), the discrepancy between
+XT and ˆXT is measured by various metricsD [6]. The smaller
+D is, the closer M(ω) approximates the data-generating
+distribution of the real social system. By fixing the ABM-
+based model structure M, calibrating the parameter ω to fit
+a given observed data sequence ˆXT is often modeled as an
+optimization problem [6]:
+min
+ω∈ΩD
+D
+
+ˆXT,M (ω) = XT
+
+. (1)
+In practice, the calibration methods often suffer from the
+so-called non-identifiability issue [7], [8]. That is, there are
+multiple parameters in the parameter space ΩD share the same
+discrepancy value to the given ˆXT . However, those parameters
+highly likely lead to different distributions of data generation
+due to the nonlinear model structureM(ω). In other words, the
+“ground-truth” parameter of deciding the “ground-truth” data
+generating distribution cannot be effectively identified from the
+other parameters in those sets. Consequently, the what-if tests
+on the resultant model with a randomly picked non-identifiable
+parameter from there are less trustworthy.
+Taking the simulation of the well-known flash crush as an
+example. Two cases of non-identifiability are illustrated in Fig.
+1. In the case 1, the two calibrated parameters represent differ-
+ent trading behaviors while both two corresponding simulated
+data enjoys the identical objective value. By analyzing the flash
+arXiv:2407.16566v5  [q-fin.CP]  8 Apr 2025
+2
+Fig. 1. Two cases of non-identifiable simulation.
+crush with the two parameters, one may get different causes
+(i.e., high liquidity taking with large volume of market orders
+v.s. potential manipulation with large volume of canceling
+orders). Also, the non-identifiability can lead to the case
+2, where two simulated data has the same discrepancy to
+the target data but appears to be total different trends. In
+both cases, the calibration algorithm cannot identify the one
+with higher-fidelity and thus can deteriorate the downstream
+analysis unexpectedly.
+Even though non-identifiability is frequently mentioned in
+the literature, there is neither a formal definition to describe
+it nor a rigorous way to alleviate it. This paper first defines
+non-identifiability as the probability of a randomly uniformly
+sampled parameter falling into the non-identifiable set. With
+this definition, this paper mathematically proves that the non-
+identifiability can be alleviated by calibrating with more dis-
+tinct features, each of which represents an observed univariate
+time series. More specifically, we mathematically show that
+the upper bound of the non-identifiability can be reduced
+exponentially with the number of features if the selected
+features satisfy certain conditions.
+This explains well that the previous works mostly calibrate
+their models to merely one data feature and are thus less
+sufficient to describe the uniqueness of a social system. For
+clarification and applicability, this work restricts the scenarios
+to the FMS, as it is a representative social simulation and
+has been active for over 30 years [9]. Like other complex
+social systems, the real-world financial markets will output
+multivariate state data over time, e.g., price, volume, bid/ask
+directions, order arrival time, and other hand-crafted features
+[10]. However, existing works merely consider the observed
+mid-price data for calibration, resulting in wide criticism for
+their low simulation fidelity [11], especially in the high-
+frequency intraday simulations [7], [12].
+Note that, following our theory, the task of calibrating to
+a multivariate time series is naturally divided into multiple
+individual tasks, each of which calibrates the model to one
+distinct univariate time series. In practice, how to jointly
+execute those individual tasks so that the obtained parameter
+is more identifiable to the original calibration tasks with multi-
+variate time series? This challenges the implementation of the
+Fig. 2. An illustration of the ABM-based FMS.
+above theory. To address it, we propose a novel calibration
+objective by aggregating all those individual calibration tasks
+using the maximization function. This new objective function
+mathematically asks to search in the intersection of all those
+individual spaces. Thus, the obtained parameter can be highly
+identifiable across all individual tasks and thus fit our theory
+accurately.
+Extensive empirical studies have successfully shown that
+the proposed method can significantly alleviate the non-
+identifiability issue of FMS. Such advantages are verified
+robust over 6 commonly seen features of financial market data.
+Besides, this paper also presents the high-fidelity simulation
+results by using the proposed new calibration objective func-
+tion on 10 synthetic data and 1 real data from the Shenzhen
+Stock Exchange of China.
+The remainder of this paper is as follows. Section II de-
+scribes the background of FMS and related works. Section III
+theoretically discusses the alleviation of non-identifiability.
+Section IV reports the empirical studies in detail. Section V
+concludes this work.
+II. B ACKGROUND
+A. Calibration of Social Simulators
+To ensure the simulation fidelity, the simulator often needs
+careful calibration of the agent parameters so that the simu-
+lated data resembles the observed time series from the real
+system. The general form of calibration refers to (1).
+In recent years, the study of the discrepancy metrics D has
+attracted increasing research attention, as the distance measure
+between time series remains unsolved and impacts signifi-
+cantly on the calibration performance. Methods of Simulated
+Moments [13] is a typical method that first transforms the
+time series into several statistical moments and then calculates
+the weighted average between the moments of observed data
+and simulated data. The information criterion based objective
+functions [14], [15] abstract the temporal information of the
+original time series via various techniques like histograms and
+measure the distances between the abstracted temporal vectors.
+The non-parametric Kolmogorov-Smirnov test is also intro-
+duced as D by statistically testing between the probabilistic
+distributions of the observed data and the simulated data [8].
+Other methods employ the Bayesian theory to estimate the
+likelihood [16] or posterior distribution [17] of the observed
+data also require a well-defined D for selecting effective
+samples and updating the estimated distributions.
+3
+Fig. 3. LOB contains much information about the market.
+Despite the progress of exploiting various metrics for cali-
+brating social simulators, existing works frequently encounter
+the so-called non-identifiability issue, resulting in poor simu-
+lation fidelity [18]. From our viewpoint, one major reason is
+that existing works merely use one single feature to calibrate
+the model, ignoring that the real systems continuously output
+multivariate data. Although the features used might be a major
+factor in describing the social system, other features can help
+capture more details of the system. Unfortunately, existing
+calibration objectives are mostly designed for univariate time
+series data. Consequently, existing works are ill-equipped to
+calibrate with multivariate time series data. Yet, it is theoret-
+ically unclear how exactly it benefits from calibrating more
+features.
+B. ABM-based FMS and Data Features
+In social simulations, ABMs are dominantly preferred over
+the black-box deep learning models due to their interpretability
+of the data-generating process [19], [20]. ABM constructs a
+collection of agents mimicking various social activities and
+interacting together to simulate the whole social system [21].
+In FMS, the agents are designed to model various trading
+strategies [22] (illustrated in Fig. 2), e.g., fundamentalists,
+momentum traders, high-frequency traders, market makers,
+and arbitrage traders.
+Regardless of the differences among agents, the ABM-based
+FMSs follow the same workflow. That is, at the beginning of
+the simulation, the parameterized agents are initialized with
+the calibrated parameters, which determine how exactly those
+agents submit orders under their own simulated strategies.
+Each submitted order usually consists of the price, volume,
+direction, and arrival time. The Limited Order Book (LOB),
+a particular data structure for organizing the existing untraded
+orders, is maintained by the exchange and can be observed by
+all trading agents. The simulated exchange generates the next
+LOB by matchmaking the incoming orders submitted by the
+agents and the current LOB [23].
+Those untraded orders are categorized into two directions
+(bid or ask) and sorted by their prices. Orders with the same
+price are again sorted by arrival time. Each agent continuously
+observes the current LOB and submits its order at will. If a new
+order matches a price in the opposite direction of the LOB,
+it will be traded immediately, and the matched orders will be
+removed from the LOB. Undoubtedly, many data features can
+be extracted from LOB [10]. However, existing FMSs mostly
+considered the mid-price as the only feature for calibration,
+which represents the average between the best ask price and
+best bid prices (see Fig. 3) and implies the potential price
+movement of the market.
+Recent advances in financial time series modeling pri-
+oritize two objectives: capturing nonlinear dynamics while
+maintaining interpretability. The RHINE model [24] ad-
+dresses regime-switching through kernel-based spectral clus-
+tering and sliding-window eigengap analysis. Parallel inno-
+vations in concept drift detection, exemplified by WormKAN
+[25], employ Kolmogorov-Arnold Networks (KANs) with self-
+representation matrices to track abrupt transitions. These are
+unified through MT-KAN’s [26] lightweight architectures for
+multivariate interaction modeling. Besides that, recent works
+like [8] and [20] tried to calibrate simulators with multi-variate
+time series, but did not investigate the non-identifiability issue
+from the perspective of using more features.
+III. A H IGH -FIDELITY CALIBRATION OBJECTIVE
+This section first formally defines the non-identifiability,
+then theoretically analyzes how it benefits from calibrating
+with multivariate data, and lastly proposes a new calibration
+objective using multiple features to implement our theory.
+A. The Definition of Non-identifiability
+As existing discrepancy metrics D are designed for univari-
+ate data, we re-denote the target data as ˆXk
+T with a superscript
+k to emphasize that it is a 1-dimensional time series describing
+some k-th feature of the real system. In financial markets,
+this feature can be either price, volume, bid/ask directions,
+order arrival time, or any other hand-crafted features [10].
+Correspondingly, the k-th feature of the simulated data is
+re-denoted as Xk
+T . Let ΩD,k be the parameter space of this
+calibration task. Then the original calibration task can be re-
+written as
+min
+ω∈ΩD,k
+D
+
+ˆXk
+T,M (ω) = Xk
+T
+
+. (2)
+Without loss of generality, it is assumed that the opti-
+mal parameter ω∗ lies in the defined parameter space, i.e.,
+ω∗∈ ΩD,k, where D( ˆXk
+T,M (ω∗))<ϵ . Note that the optimal
+parameter may not be unique by definition. The cardinality of
+the set containing all optimal parameters depends on ϵ, which
+filters the observation noise in the data. This set, referred to
+as the non-identifiable set, is formally defined as follows:
+Definition 1 ( The Non-identifiable Set ): There exists
+some region SD,k,ϵ ⊆ ΩD,k that for all ω1,ω 2 ∈ SD,k,ϵ
+D( ˆXk
+T,M (ω1)) < ϵ and D( ˆXk
+T,M (ω2)) < ϵ. Such region
+SD,k,ϵ is called the non-identifiable set.
+The Lebesgue measure (intuitively the hypervolume) of
+SD,k,ϵ, denoted asµ
+ 
+SD,k,ϵ
+, is influenced by ϵ. By choosing
+the parameter space to be finite and based on Definition 1, we
+know that 0 < µ
+ 
+SD,k,ϵ
+≤ µ
+ 
+ΩD,k,ϵ
+< +∞. Then the
+non-identifiability can be defined as follows:
+Definition 2 ( The Univariate Non-identifiability ): Let
+P
+
+ω∈S D,k,ϵ
+ ˆXk
+T
+
+be the non-identifiability to the k-th
+univariate time series data. It is defined as the probability of
+4
+uniformly randomly sampling a parameter ω from ΩD,k while
+it falls into SD,k,ϵ. And we have
+P
+
+ω∈S D,k,ϵ
+ ˆXk
+T
+
+= µ
+ 
+SD,k,ϵ
+µ (ΩD,k) . (3)
+Therefore, the rank of any ω1,ω 2 ∈ SD,k,ϵ cannot be
+effectively identified by the objective D given the data ˆXk
+T ,
+leading to that the comparison-based calibration process easily
+gets stuck in SD,k,ϵ. Note that, SD,k,ϵ can involve arbitrary
+parameters in ΩD,k, including the “ground-truth” parameter
+ω∗. Hence, if the calibration process converges to SD,k,ϵ,
+one has to randomly pick one ω∈S D,k,ϵ for further what-
+if simulation. Unfortunately, the underlying data-generating
+distribution decided by any randomly pickedω∈S D,k,ϵ is less
+likely to be the same withω∗, given the nonlinear nature of the
+simulation model M(ω). Consequently, the what-if test on the
+randomly picked ω is less trustworthy unless the cardinality
+ofSD,k,ϵ is sufficiently small.
+B. Alleviating the Non-identifiability with Multiple Features
+In this section, it is shown that the non-identifiability issue
+can be alleviated exponentially with K > 1 features of the
+observed time series data.
+Suppose the observed time series generated by the real
+social system is multivariate containingK features, i.e., ˆXT =
+{ ˆXk
+T}K
+k=1, which is true for the financial markets. And the
+simulation model M(ω) can also generate a multivariate sim-
+ulated data XT ={Xk
+T}K
+k=1 with the same K features. Given
+that existing discrepancy metrics D only compute for two
+univariate time series, there are naturally in total K individual
+calibration tasks: minwD( ˆXk
+T,M (ω) = Xk
+T ),k = 1,··· ,K.
+Note that, given any two parameters ω1,ω 2∈ ΩD,k, only
+they are simultaneously non-identifiable in all K individual
+calibration tasks, i.e., ω1,ω 2 ∈ {SD,k,ϵ}K
+k=1, are they non-
+identifiable in the general calibration task with respect to
+multivariate ˆXT . Otherwise, their discrepancy to ˆXT can be
+distinguished in at least one feature and thus are identifiable.
+The search space ΩD,k is identical across all calibration
+tasks and is uniformly represented as ΩD. That is to say,
+only the intersection of the K individual non-identifiable set
+{SD,k,ϵ}K
+k=1 can be regarded as the non-identifiable set in the
+multivariate time series setting, which is defined as follows:
+Definition 3 ( The Multivariate Non-identifiability ): Let
+P
+
+ω∈{S D,k,ϵ}K
+k=1
+ ˆXT
+
+be the non-identifiability to the
+multivariate time series with K features. It is defined as the
+probability of uniformly randomly sampling a parameter ω
+from ΩD while it falls into all K individual non-identifiable
+set{SD,k,ϵ}K
+k=1. And we have
+P
+
+ω∈{S D,k,ϵ}K
+k=1
+ ˆXT
+
+= µ
+ 
+∩K
+k=1SD,k,ϵ
+µ (ΩD) . (4)
+Since
+µ
+ 
+∩K
+k=1SD,k,ϵ
+µ (ΩD) ≤ min
+k
+µ
+ 
+SD,k,ϵ
+µ (ΩD,k) (5)
+we have
+P
+
+ω∈{S D,k,ϵ}K
+k=1
+ ˆXT
+
+≤ min
+k
+P
+
+ω∈S D,k,ϵ
+ ˆXk
+T
+
+.
+(6)
+This equality holds only if the K non-identifiable sets are
+fully overlapped. This can be caused by the fact that the
+K features are fully dependent and that time series data
+of one feature can be deduced from other features. This
+suggests that the selected features should be as diverse as
+possible. Therefore, with proper choice of the features and
+D, the non-identifiability of calibrating the multivariate time
+series ˆXT is smaller than that of the univariate ˆXk
+T . In other
+words, calibrating multiple features can alleviate the non-
+identifiability issue. Next, we estimate how fast it decreases
+with K as follows.
+For clarity, letAk denote the event of a uniformly randomly
+sampled parameter falling into SD,k,ϵ. The probability of
+happeningAk isP (Ak) =P (ω∈S D,k,ϵ| ˆXk
+T ). Then we have:
+P
+
+ω∈{S D,k,ϵ}K
+k=1
+ ˆXT
+
+=P (A1A2··· AK)
+=P (A1)·P (A2|A1)··· P (AK|AK−1··· A1)
+= µ
+ 
+SD,1,ϵ
+µ (ΩD) ·
+µ
+T2
+i=1SD,i,ϵ
+
+µ (SD,1,ϵ) ···
+µ
+TK
+i=1SD,i,ϵ
+
+µ
+TK−1
+i=1 SD,i,ϵ
+
+(7a)
+=β1·β2·β3··· βK (7b)
+≤
+ PK
+i=1β2
+i
+K
+! K
+2
+. (7c)
+The proof of (7c) is provided in appendix A. In (7b),β1 rep-
+resents the non-identifiability of feature 1, i.e., the probability
+that any ω∈S D,1,ϵ falls into ΩD. βi,i = 2,...,K denotes
+the probability that any parameter ω∈∩ i
+k=1SD,k,ϵ falls into
+∩i−1
+k=1SD,k,ϵ. In other words, βi means the overlapping ratio
+between SD,i,ϵ and ∩i−1
+k=1SD,k,ϵ, and βi ≤ 1. Especially,
+βi = 1 only if ∩i−1
+k=1SD,k,ϵ ⊆ SD,i,ϵ, indicating that the
+selected i-th feature is fully dependent on the first i− 1
+features.
+The order of features in (7b) can be arbitrary but it influ-
+ences the upper bound of the multivariate non-identifiability,
+which is defined as (7c). That is,
+Theorem 1 ( The Exponential Alleviation ): If each K-th
+feature is selected such that β2
+K <
+PK−1
+i=1 β2
+i
+K−1 , the upper bound
+of the multivariate non-identifiability is reduced exponentially
+with the increasing number of features K.
+This is intuitive that if β2
+K <
+PK−1
+i=1 β2
+i
+K−1 , the base of (7c) will
+not increase. This theorem not only provides an exponential
+decreasing upper bound for the multivariate non-identifiability
+but theoretically suggests a rule to select the features. The
+proof of Theorem 1 is in appendix B.
+C. Aggregating Multiple Features via Maximization
+Note that the above discussions require the multivariate time
+series{ ˆXk
+T}K
+k=1 being calibrated separately as K univariate
+5
+time series with existing discrepancy metrics D. This results
+inK individual calibration tasks ofD( ˆXk
+T,M (ω) = Xk
+T ),k =
+1,··· ,K . How to jointly calibrate the parameter to satisfy the
+K individual tasks simultaneously? This section proposes a
+new objective function based on theK individual objectives so
+that the practical alleviation of the non-identifiability follows
+the above theory.
+Let F be the proposed new objective function used for
+calibrating the multivariate time series ˆXT , and letSF,ϵ denote
+the associated non-identifiable set defined by this objective
+function. To achieve SF,ϵ =∩K
+k=1SD,k,ϵ, the proposed way
+is to ensure every location in SF to be the worst value
+among all K non-identifiable sets {SD,k,ϵ}K
+k=1 (see Fig. 4
+for illustration). In this case, any parameter ω that is not
+simultaneously in all K non-identifiable sets will make it fall
+outside of theSF,ϵ. This is because the parameters outside the
+non-identifiable set are even worse than those that are non-
+identifiable from the ground-truth parameter ω∗.
+Given that the calibration problem is a minimization prob-
+lem, the new objective function F can be implemented with
+a maximization aggregation among K individual calibration
+tasks with D. Formally, we have the following theorem.
+Theorem 2: (The utility and uniqueness of new objective
+functionF ) LetF aggregate theK individual calibration tasks
+via maximization, i.e.
+F
+
+ˆXT,M (ω) = XT
+
+= max
+k∈{1,···,K}
+D
+
+ˆXk
+T,M (ω) = Xk
+T
+
+,
+(8)
+then minimizing F uniquely achievesSF,ϵ =∩K
+k=1SD,k,ϵ.
+The proof of Theorem 2 is provided in appendix C.
+Fig. 4. Optimizing the maximization of two functions equals searching in
+their intersections.
+IV. E MPIRICAL STUDIES
+This section empirically verifies two major claims.
+• With the increasing number of features applied in the
+calibration, the non-identifiable set shrinks exponentially.
+• The fidelity of the simulation data, in terms of various
+performance metrics, is improved significantly by cali-
+brating more features.
+A. Experimental Settings
+To conduct a calibration process, 4 terms should be specified
+according to (8), i.e., the discrepancy metric D, the simulation
+model M(ω), the optimization algorithm minω, and the K
+features{ ˆXk
+T}K
+k=1.
+The discrepancy metric . The Wasserstein distance is em-
+ployed as D since it provides geometric interpretability and
+tail sensitivity [27], [28]. Given two univariate time series Xk
+T
+and ˆXk
+T , the Wasserstein distance is defined as
+D( ˆXk
+T, Xk
+T )
+=
+Z +∞
+−∞
+
+1
+T
+teX
+t=ts
+I( ˆXk
+t≤x)− 1
+T
+teX
+t=ts
+I(Xk
+t≤x)
+ dx, (9)
+whereI(·) is an indicator function that returns 1 if the input
+event is true, otherwise it returns 0.
+The simulation model. This work considers the Preis-
+Golke-Paul-Schneid (PGPS) model as the simulation model,
+due to its popularity in recent FMS works [7], [12]. The PGPS
+model simulates the market dynamics through interactions
+between two types of agents, i.e., 125 liquidity providers
+and 125 liquidity takers. The PGPS model has 6 hyper-
+parameters shared by all agents that need to be calibrated, i.e.,
+ω = [δ,λ 0,Cλ, ∆s,α,µ ]. At the t-th time-step, each liquidity
+provider submits a limited order at a fixed probability α with
+the default volume equals 1. The probability of a limited order
+being bid side or ask side equals to 0.5. Each liquidity taker
+submits a market order at a fixed probabilityµ with the default
+volume equals 1. The probability of a market order being bid
+side or ask side is qtaker(t) or 1−qtaker(t), respectively. The
+probability qtaker(t) is specified by a mean-reverting random
+walk with mean equals 0.5, mean reversion probability equals
+0.5 +|qtaker(t)− 0.5|, and the increment sizes towards mean
+equals±∆s. Moreover, the liquidity taker has a probability
+δ to cancel its untraded limited order. Let pa(t) and pb(t)
+represents the best ask and bid price, respectively. The price of
+a market order is determined by the market, i.e., the best price
+at the opposite side of the LOB. The price of a limit order is
+determined asp =ps(t)+λ(t) log(u)+s whereps(t) =pa(t),
+s = 1 for an ask order, and ps(t) =pb(t), s =−1 otherwise,
+withu∼U(0, 1). Here λ(t) is a time-variant order placement
+depth parameter and is calculated as
+λ(t) =λ0
+
+1 +
+qtaker(t)− 1
+2
+
+q
+<q taker(t)− 1
+2 >2
+Cλ
+
+ (10)
+q
+<q taker(t)− 1
+2 >2 is a pre-computed value. Before ini-
+tiating the simulation, it is computed in advance through
+105 Monte Carlo iterations, ensuring its convergence to the
+accurate standard deviation.
+The optimization method. Since the order matchmaking
+process needs to align with the real market, the PGPS model
+should be run on the executable trading programs. As a result,
+the calibration objective function is non-differentiable and
+the calibration process often has to resort to non-derivative
+optimization methods. In such contexts, both Bayesian opti-
+mization methods and evolutionary algorithms are particularly
+suitable. This work employs the well-known Particle Swarm
+Optimization (PSO) algorithm [29], which has been frequently
+adopted to train the financial simulation or prediction models
+6
+TABLE I
+THE RANGES FOR RANDOMLY SAMPLING PARAMETERS ω TO GENERATE THE SYNTHETIC DATA
+Para. Range Remarks
+δ [0.00, 0.050] The probability for each liquidity taker to cancel an untraded order.
+λ0 [50.00, 300.000] Controlling the price of each limited order.
+Cλ [1.00, 50.000] Controlling the price of each limited order.
+∆S [0.00, 0.005] Controlling the probability of the side of a market order (ask or bid).
+α [0.05, 0.500] The probability of each liquidity provider submitting a limited order.
+µ [0.00, 0.050] The probability of each liquidity taker submitting a market order.
+TABLE II
+PARAMETER SETTINGS OF GENERATING 10 SYNTHETIC DATA WITH THE
+PGPS MODEL
+Parameters δ λ 0 Cλ ∆S α µ
+data 1 0.025 100 10 0.001 0.15 0.025
+data 2 0.002 200 10 0.002 0.1 0.03
+data 3 0.05 152 45 0.003 0.13 0.05
+data 4 0.02 288 27 0.003 0.11 0.04
+data 5 0.04 62 35 0.003 0.12 0.04
+data 6 0.01 171 15 0.0015 0.15 0.03
+data 7 0.033 114 14 0.0033 0.1 0.047
+data 8 0.01 129 30 0.0017 0.05 0.03
+data 9 0.02 62 2 0.003 0.14 0.02
+data 10 0.01 87 23 0.001 0.09 0.05
+[6], [20], [30], [31], to optimize ω with respect to (8). For
+simplicity, the standard version of PSO [32] is considered. The
+pseudocode for calibration with PSO is shown in Algorithm 1.
+Algorithm 1 Calibration with PSO
+Input: Number of Iterations to run κ
+Parameter: The hyper-parameters of PSO
+Output: The optimal candidate ω∗
+1: Let t = 0.
+2: Initialize a population of N particles{ωi}N
+i=1.
+3: Simulate each of N particles with M(ω) to obtain N
+simulated data.
+4: Calculate the performance of each of N particles as the
+Wasserstein distance.
+5: Set ω∗ to the best performed candidate.
+6: while t<κ do
+7: Generate a new population ofN particles{ωi}N
+i=1 using
+PSO operators.
+8: Simulate each of N particles with M(ω) to obtain N
+simulated data.
+9: Calculate the performance of each of N particles as the
+Wasserstein distance.
+10: Update ω∗ to the best performed candidate.
+11: end while
+12: returnω∗
+Without further fine-tuning, the hyper-parameters of PSO
+follow the suggested configurations, where the population size
+is set to N = 40, the inertia weight is set to 0.8, the cognitive
+and social crossover parameters c1 = 0.5,c 2 = 0.5.
+The selected features. Six different yet commonly seen
+features are considered [23], [33], which mainly concern either
+the price or volume information of the LOB data and are listed
+as follows:
+Fig. 5. The illustration of the exponentially decreased non-identifiable set
+(grey dots). The red dot is the optima.
+• f1, the mid-price mt = pa(t)+pb(t)
+2 at each t-th step;
+• f2, the total traded volume within each t-th step;
+• f3, the price return at each t-th step lnmt+1− lnmt;
+• f4, the spread at each t-th step pa(t)−pb(t);
+• f5, the volume of the best bid price at each t-th step;
+• f6, the volume of the best ask price at each t-th step.
+By incorporating the 6 selected features, 6 objective func-
+tions are constructed based on (8), denoted as Fi,i =
+1, 2,..., 6. Each Fi indicates that the first i features are used
+for calibration, i.e., Fi = maxk∈{1,···,i}D( ˆXk
+T,M (ω)). In the
+following empirical studies, it is shown how the increasing
+number of features influences the simulation fidelity.
+The test protocol. The test data consists of 11 targeted
+time series to be calibrated, including 10 synthetic data sets
+and 1 real data set. To ensure sufficient diversity, the 10
+synthetic time series are generated using the PGPS model
+by randomly sampling parameters within the ranges specified
+in table I, as suggested by [12]. The 10 sampled parameters
+are listed in table II. Each synthetic time series comprises
+3600 time steps at a frequency of 1 second. The real data is
+chosen as 000001.sz from Shenzhen Stock Exchange of China,
+consisting of 1200 time steps at a frequency of 3 seconds from
+9:30 a.m. to 10:30 a.m. of a day in 2019. The time budget of
+104 simulation evaluations is allowed for the calibration of
+each targeted data. That is, the PSO runs for 250 iterations
+with a population size of 40, and the best parameter with the
+lowest objective function value is applied to the PGPS model
+to simulate data as XT .
+Calibration performance is evaluated using the Wasserstein
+(W) distance and Mean Square Error (MSE), two common
+metrics in time series analysis. Both metrics measure the av-
+7
+Fig. 6. The non-identifiability (NI) decreases exponentially with the increas-
+ing features.
+Fig. 7. The non-identifiability (NI) decreasing behaviors with new adding
+features.
+erage discrepancy between synthetic and simulated data across
+6 features, i.e.,
+P6
+k=1D( ˆXk
+T,M(ω)=Xk
+T )
+6 , where D denotes W or
+MSE. Each feature is normalized by the min-max method.
+The computational platform. This work builds the sim-
+ulation environment based on the Multi-Agent Exchange
+Environment (MAXE) simulator developed by the Univer-
+sity of Oxford [34]. The experiments run on a server with
+500GB memory, the Intel(R) Xeon(R) Platinum 8358 CPU @
+2.60GHz with 32 physical cores. For a single objective, PSO
+can be run in parallel across 40 simulators. The calibration
+of 6 objective functions for 10 synthetic data takes 48 to 60
+hours in a data-parallel manner using the CPU.
+B. Results on Alleviation of Non-identifiability
+Fig. 5 illustrates the changes of the non-identifiable sets in
+the 2-dimensional parameter space of [α,µ ]. This is done by
+three steps: 1) a target data of 3600 time steps is generated us-
+ing the PGPS model with the recommended default parameter
+settingω∗ = [0.025, 100, 10, 0.001, 0.15, 0.025] [7]; 2) On this
+default setting, 10000 combinations are created by sampling
+in [α,µ ] in grid while keeping the values of other 4 parameters
+unchanged; 3) By usingF to measure the discrepancy between
+the target data and the simulated data of each of the 10000
+combinations, it obtains the objective values of the 10000
+combinations on each Fi, which are depicted as Fig. 5. The
+6 figures in Fig. 5 are depicted according to the objective
+values of F1, F2,...,F6, respectively. Only the combinations
+Fig. 8. The distances of the simulated data to the target data decrease almost
+linearly with the increasing number of features incorporated in F .
+whose objective values are smaller than ϵ = 0.1 are depicted
+in grey; otherwise, they will be depicted in blue. For example,
+in the third figure marked with F3, the combinations depicted
+in grey are those whose discrepancy values are smaller than
+ϵ = 0.1 on all the first 3 features {fi}3
+i=1. By this means,
+the grey points indicate the non-identifiable set as they are
+indistinguishable from ω∗ (marked as the red dot). As can be
+seen, with the increase of the features, the grey non-identifiable
+set decreases significantly. When 4 are incorporated inF , only
+the optimum exists, indicating that the non-identifiability issue
+is indeed alleviated very effectively.
+Fig. 6 further depicts how the non-identifiability decreases
+with the increasing numbers of features with different settings
+of ϵ. This is done by calculating (7b) using the above 10000
+combinations. Clearly, all the curves follow an exponentially
+decreasing manner. Besides, a larger value of ϵ is, the slower
+the corresponding curve decreases.
+Building on this, an additional experiment investigates the
+impact of feature dependencies on the alleviation. The theo-
+retical proof in Appendix C suggests that linearly dependent
+features do not contribute to the alleviation. To validate this,
+six new test features are constructed based on the original
+six, where f′
+1 = f1,f′
+2 = 2f1,f′
+3 = −2f1,f′
+4 = f5,f′
+5 =
+f6,f′
+6 = f2. The corresponding new objectives, F′
+i , are
+constructed in the same manner as the original Fi. These
+features include both linearly dependent ones ( f′
+1,f′
+2,f′
+3)
+and non-linearly related ones ( f′
+4,f′
+5,f′
+6), enabling a direct
+evaluation of their respective effects on NIP reduction. As
+illustrated in Fig. 7, adding linearly dependent features does
+Fig. 9. The average Pearson correlation coefficient of the selected features
+among 10 simulated data.
+8
+Fig. 10. The simulated data using F6 resembles the synthetic data on all 6 features.
+not reduce non-identifiability, aligning with the theoretical
+findings in Appendix C. In contrast, introducing non-linearly
+related features leads to a significant reduction, confirming
+that independent features impose additional constraints on the
+non-identifiability set.
+While adding more independent features continues for alle-
+viation, the marginal benefit diminishes as more features are
+included. This effect arises because the initial features already
+contribute substantially to the reduction, leaving less room for
+further alleviation. As a result, even if newly added features
+are entirely independent or possess highly distinctive and
+informative properties, their impact on further shrinking the
+non-identifiability set is inherently limited. Mathematically,
+this corresponds to their associated β values approaching 1,
+reflecting the decreasing marginal effect of additional features,
+rather than an indication of feature redundancy.
+To further assess the effectiveness of the originally selected
+six features, the average Pearson correlation coefficient among
+ten target datasets is computed, as shown in Fig. 9. The results
+indicate low pairwise correlations among the selected features,
+supporting their effectiveness in reducing NIP and confirming
+their direct applicability in calibration.
+C. Results on Calibration to the Synthetic Data
+Note that, although the non-identifiable set of any Fi is
+verified to be smaller than that of any Fj, i > j, it does
+not deterministically lead to better calibration performance of
+Fi than Fj. Because F mainly decides the parameter space,
+while the calibration performance is also jointly influenced by
+the optimization algorithms. Given the calibration problem is
+black-box with multiple local optima, it is non-trivial for the
+optimization algorithms to find the global optimum even if the
+parameter space is modeled fully identifiable.
+For each of the 10 synthetic data, by optimizing the 6
+objective functions Fi,i = 1,..., 6 with PSO, it results in 6
+calibrated models and 6 simulated data. Note that, even though
+a model is calibrated using Fi,i< 6, it can still functionally
+generate the simulated data XT with respect to all 6 features.
+TABLE III
+COMPARISONS OF CALIBRATION PERFORMANCE BETWEEN 6 UNIVARIATE
+DATA AND F6.*
+f1 f2 f3 f4 f5 f6 F6
+Data 1 3.99 5.07 6.22 4.62 4.92 3.95 3.07
+Data 2 3.65 3.95 4.67 3.73 6.18 4.77 2.90
+Data 3 2.86 4.43 3.73 3.87 5.75 4.62 3.08
+Data 4 2.83 3.50 3.47 3.87 4.33 2.99 2.47
+Data 5 2.72 2.70 4.93 5.98 3.17 5.83 2.84
+Data 6 5.23 5.58 4.02 6.67 4.48 6.77 3.67
+Data 7 3.08 3.57 3.06 3.65 3.60 3.86 3.51
+Data 8 4.88 4.50 2.56 3.82 3.91 3.62 2.26
+Data 9 4.31 3.59 5.07 4.19 5.73 3.82 3.51
+Data 10 2.53 2.43 2.95 6.93 3.22 2.24 2.23
+#rank 3.20+ 4.10+ 4.00+ 5.10+ 5.60+ 4.50+ 1.50
+* Performance is at the 1E10−2 level. Here + denotes Bonferroni-corrected
+significance at α = 0.05 (m = 5, per-test α = 0.01) based on pairwise
+comparisons between F6 and each baseline f1, · · ·,f 5.
+The performance between each simulated data and its
+corresponding synthetic data is measured by the indicators
+based on both MSE and W, respectively. In Fig. 8, each (blue
+or yellow) point displays the average performance on these
+10 synthetic data. It shows that by using more features in F ,
+the calibration performance generally improves as the distance
+values decrease.
+Furthermore, it is interesting to see how the simulation
+model calibrated by all features ( F6) compares to the ones
+calibrated to every single feature fi,i = 1,..., 6, instead of
+in an incremental manner of Fi,i = 1,..., 5. As listed in
+Table III, by calibrating withF6, the obtained parameter enjoys
+the best simulation performance, i.e., the smallest averaged
+distances on 7 out of the 10 instances and the top 3 averaged
+distances on the other 3 instances. Besides, the Friedman test
+(p = 6.7× 10−4) indicates significant ranking differences
+9
+TABLE IV
+LINEAR REGRESSION COEFFICIENT TABLE .*
+ϵ evaluationD slope intercept R2
+0.016 W -1.05 9.44 0.61
+MSE -0.185 4.18 0.59
+0.024 W -1.11 9.28 0.70
+MSE -0.294 4.66 0.84
+0.028 W -0.746 8.64 0.54
+MSE -0.154 4.18 0.39
+0.030 W -0.570 8.70 0.61
+MSE -0.167 4.48 0.24
+* Note that the unit of slope and intercept is at the
+1E10−2 level.
+among methods. Pairwise Wilcoxon tests further confirm that
+F6 consistently outperforms f1 to f5 with statistical signifi-
+cance. This implies that the proposed theory and new objective
+function are applicable to various features and not restricted
+by the feature with more information about the social system,
+e.g., the mid-price.
+We further expand the experiments in Fig. 8 to more
+different values of ϵ. Note that, ϵ determines how the random
+noise in the financial market data impacts on the measure of
+the discrepancy between two time series. The higher the value
+of ϵ is, the more likely two time series are indistinguishable
+given the Definition 1. The results are listed in Table IV.
+It can be seen that the under different ϵ, the calibration
+performance always decreases linearly with the increasing
+number of features. This shows that the proposed objective
+function is robust with respect to different observation noise.
+Then, we illustrate the time series of 6 features to show how
+the simulated data resembles the synthetic data in Fig. 10.
+Specifically, we calibrate the model by F6 and fx on the
+data generated based on the recommended parameter setting
+ω∗ = [0.025, 100, 10, 0.001, 0.15, 0.025] [7], where fx indi-
+cates any single feature which helps to calibrate the model and
+generate the best-simulated data. The simulated data calibrated
+by F6 closely resembles the target data on all 6 features. To
+our best knowledge, this is the first ABM-agnostic method of
+successfully calibrating the high-frequency market time series
+at 1 second level and simulating 6 features with high-fidelity.
+In comparison, the simulated data offx performs much poorer.
+This immediately suggests that calibrating more features can
+lead to low non-identifiability and high simulation fidelity.
+D. Ablation on Aggregation and Discrepancy
+The proof in Appendix C establishes that maximization is
+the unique aggregation function that preserves the intersection
+property of non-identifiable sets. To empirically validate it,
+Table V presents an ablation study comparing different aggre-
+gation methods (max, min, mean) and calibration measures,
+i.e., KL divergence (KL), Kolmogorov–Smirnov (KS), MSE,
+and W, across 10 synthetic datasets. The results confirm the
+theoretical properties that treating the aggregation methods
+under the max aggregation, significantly lower ranks are ex-
+hibited by KL, KS, MSE, and W, compared to those under min
+and mean, as confirmed by the Friedman test. This reinforces
+TABLE V
+STATISTICAL ABLATION TESTS OF AGGREGATION METHODS AND
+CALIBRATION MEASURES *
+aggregate max min mean
+measure KL KS MSE W W W
+data 1 3.19 4.47 3.47 3.07 6.63 4.77
+data 2 6.03 3.08 3.03 2.90 3.36 3.89
+data 3 6.86 4.30 3.19 3.08 4.63 3.47
+data 4 3.01 3.10 3.90 2.47 4.32 4.33
+data 5 2.55 6.58 3.75 2.84 3.01 3.79
+data 6 3.71 6.69 4.76 3.67 3.74 5.73
+data 7 3.93 3.10 1.42 3.51 3.23 3.52
+data 8 3.82 3.18 4.65 2.26 3.88 2.54
+data 9 8.35 5.48 3.85 3.51 5.07 5.40
+data 10 3.69 3.63 2.10 2.23 5.32 4.04
+#rank 3.90+ 3.90+ 2.90− 1.50 4.30+ 4.50+
+* Performance is at the 1E10−2 level. Here + denotes Bonferroni-
+corrected significance at α = 0.05 (m = 5, per-test α = 0.01) for
+pairwise comparisons with max-W, and − indicates no significance.
+the proof that max aggregation maintains strict intersection
+properties, thus can enhance identifiability. Further pairwise
+Wilcoxon tests indicate that max-W achieves the lowest rank
+(1.50), significantly outperforming KL (p = 4.88× 10−3), KS
+(p = 6.84× 10−3), making W the preferable choice for FMS.
+E. Results on Calibration to the Real Data
+At last, it is verified that the proposed method can also
+calibrate the real market data at a 3-second level. A 1-hour
+time series of 000001.sz is calibrated using F1 and F3. The
+simulated data generated by the corresponding best calibrated
+models is depicted in Fig. 11, together with the real observed
+data. Note that most of the FMS simulators (including the
+adopted PGPS model) model the order volume in a coarse-
+grained manner, i.e., simply setting all the orders with the
+identical volume of 100. Hence, only the mid-price time series
+is shown in a time step of 1 minute. It can be seen that the
+simulated mid-price of F3 is more similar to the real observed
+data than F1 by an improvement of 27.5% in MSE. This
+confirms that the proposed method indeed can calibrate the
+real market data with multiple time series, thus suggesting a
+new effective calibration objective function for FMS.
+Fig. 11. By calibrating with more features, the simulated data resembles the
+real market data better.
+10
+V. C ONCLUSIONS AND FUTURE WORK
+This paper studies the non-identifiability issue of social
+simulation. To our best knowledge, this is the first work in
+which the non-identifiability is formally defined and theoret-
+ically alleviated. It is defined as the probability of randomly
+sampling in the non-identifiable set of the parameter space.
+It is rigorously analyzed that this probability can be reduced
+with more time series features in an exponential manner.
+Based on the analysis, a new objective function is proposed
+to effectively aggregate multiple features with a maximization
+function over existing discrepancy metrics. We theoretically
+and empirically show that the proposed aggregation is the
+optimal one. Extensive empirical studies have been conducted
+on 10 synthetic data and 1 real data of the FMS tasks.
+It has been successfully verified through simulations that,
+by using multiple features, not only can the non-identifiable
+set be minimized, but the simulation fidelity is significantly
+improved. At last, we suggest how to select features via
+theoretical and empirical studies.
+Future work can be multi-directional. First, while the study
+relies on handcrafted LOB features, learning-based methods,
+such as advanced representation learning techniques [20] and
+interpretable alpha factor discovery [35], could help extract
+more meaningful market signals and refine feature selec-
+tion. Second, developing adaptive recalibration methods that
+dynamically adjust parameters based on incoming market
+data could help maintain high-fidelity simulations over longer
+time horizons and under changing conditions. Third, beyond
+financial markets, the approach of reducing non-identifiability
+through multivariate feature calibration could extend to other
+agent-based simulations that generate multivariate time series
+data, like weather forecasting and traffic flow modeling.
+APPENDIX
+A. Proof of inequality (7c)
+Proof 1: Recall that the inequality is
+KY
+i=1
+βi≤
+ PK
+i=1β2
+i
+K
+! K
+2
+.
+∀i∈{ 1,··· ,K}, we have βi > 0; by definition, βi≤ 1.
+Consider f(x) = log x
+e ≜ lnx, which is concave on
+(0, +∞). Suppose pi ≥ 0 and PK
+i=1pi = 1 , by Jensen’s
+inequality, we have
+pi
+KX
+i=1
+lnxi≤ ln
+ KX
+i=1
+pixi
+!
+. (11)
+Replace pi and xi with 1
+K and β2
+i , respectively, then
+1
+K
+KX
+i=1
+lnβ2
+i≤ ln
+ 
+1
+K
+KX
+i=1
+β2
+i
+!
+. (12)
+Also
+1
+K
+KX
+i=1
+lnβ2
+i =
+KX
+i=1
+lnβ
+2
+K
+i = ln
+
+
+ KY
+i=1
+βi
+! 2
+K
+
+. (13)
+By combining (12) with (13), and noticing the fact that lnx
+is strictly increasing on (0, +∞), we get the desired result.■
+B. Proof of Theorem 1.
+Proof 2: To prove the exponential alleviation of the upper
+bound of non-identifiability under the constraint
+β2
+K <
+PK−1
+i=1 β2
+i
+K− 1 , (14)
+We consider two cases with K− 1 and K features, respec-
+tively.The non-identifiability bounds in these cases are given
+by
+P
+
+ω∈{S D,k,ϵ}K−1
+k=1
+ ˆXT
+
+≤
+ 
+1
+K− 1
+K−1X
+i=1
+β2
+i
+! K−1
+2
+and
+P
+
+ω∈{S D,k,ϵ}K
+k=1
+ ˆXT
+
+≤
+ 
+1
+K
+KX
+i=1
+β2
+i
+! K
+2
+.
+We then examine the ratio of these two bounds:
+
+1
+K
+PK
+i=1β2
+i
+ K
+2
+
+1
+K−1
+PK−1
+i=1 β2
+i
+ K−1
+2
+= (15)
+ 
+K− 1
+K ·
+ 
+1 + β2
+KPK−1
+i=1 β2
+i
+!! K−1
+2
+·
+ PK
+i=1β2
+i
+K
+! 1
+2
+. (16)
+(17)
+Given the constraint in (14) and the fact that ∀i ∈
+{1,··· ,K− 1}, 0<β i≤ 1, we have
+ PK
+i=1β2
+i
+K
+! 1
+2
+< 1. (18)
+Furthermore, from (14), it follows that
+K− 1
+K · β2
+KPK
+i=1β2
+i
+< 1
+K (19)
+and therefore
+0<K− 1
+K ·
+ 
+1 + β2
+KPK−1
+i=1 β2
+i
+!
+< 1. (20)
+We define ∆K = 1− K−1
+K ·
+
+1 + β2
+KPK−1
+i=1 β2
+i
+
+Substituting this into the right-hand side of (15), denoted
+its left-hand side as LHS , we obtain LHS <(1− ∆K)
+K
+2 .
+Therefore,
+ 
+1
+K
+KX
+i=1
+β2
+i
+! K
+2
+< (1− ∆K)
+K
+2 =e−λK·K, (21)
+where λK = − ln(1−∆K)
+2 > 0. Furthermore, it follows
+that infK ∆K > 0, which implies that the corresponding
+infKλK > 0. Therefore, we define a uniform constant
+λ = infKλK > 0.
+This ensures that ∀K, λK ≥ λ. As a result, we have
+e−λK·K≤e−λ·K, which holds for all K. Therefore,
+ 
+1
+K
+KX
+i=1
+β2
+i
+! K
+2
+< (1− ∆K)
+K
+2 ≤e−λ·K (22)
+■
+11
+C. Proof of Uniqueness of Max Aggregation
+Proof 3: We consider a common domain ΩD for all ΩD,k,
+as originally stipulated in the definition 3.
+Define Fmax{Dk} = max1≤k≤KDk, where
+Dk(ω)≜D( ˆXk
+T,M (ω)) (23)
+for clarity of notation. We first establish the utility of F ,
+followed by its uniqueness.
+If ω∈S Fmax,ϵ, then:
+max
+k
+Dk(ω)≤ϵ =⇒ Dk(ω)≤ϵ, ∀k =⇒
+ω∈
+K\
+k=1
+SD,k,ϵ =⇒ SFmax⊆
+K\
+k=1
+SD,k,ϵ (24)
+If ω∈TK
+k=1SD,k,ϵ, then:
+Dk(ω)≤ϵ, ∀k =⇒ max
+k
+Dk(ω)≤ϵ =⇒
+ω∈S Fmax,ϵ =⇒
+K\
+k=1
+SD,k,ϵ⊆S Fmax,ϵ (25)
+Combine the result, we have
+SFmax,ϵ =
+K\
+k=1
+SD,k,ϵ, ∀ϵ> 0,ϵ∈ R (26)
+which completes the proof of the utility of F . Next, we
+establish the uniqueness of F via contradiction. Suppose these
+exists F′̸=Fmax that satisfies (26). Consider two cases:
+∃{D∗
+k} s.t. F′({D∗
+k})< maxkD∗
+k. Take ϵ0 =F′({D∗
+k}):
+max
+k
+D∗
+k >ϵ 0 but ω∈S F′,ϵ0
+ω∈S F′,ϵ0 =⇒ ω∈
+K\
+k=1
+SD,k,ϵ0 =⇒ D∗
+k≤ϵ0, ∀k.
+(27)
+Contradicts maxkD∗
+k >ϵ 0.
+∃{D∗
+k} s.t. F′({D∗
+k})> maxkD∗
+k. Take ϵ0 = maxkD∗
+k:
+ω∈
+K\
+k=1
+SD,k,ϵ0 =⇒ D∗
+k≤ϵ0, ∀k =⇒ F′({D∗
+k})≤ϵ0.
+(28)
+Contradicts F′({D∗
+k}) > ϵ0, thus completing the proof
+and establishing that maximization is the unique aggregation
+method that preserves the intersection of non-identifiable sets.
+Moreover, we analyze two common alternative aggregation
+methods. The minimum aggregation function is defined as
+Fmin{Dk} = min1≤k≤KDk, This leads to
+SFmin,ϵ =
+K[
+k=1
+SD,k,ϵ. (29)
+The weighted sum aggregation function is defined as
+Fsum{Dk} =PK
+k=1ηkDk, where ηk > 0 andPK
+k=1ηk = 1.
+This results in
+SFsum,ϵ⊆
+K\
+k=1
+SD,k,ϵ/ηk. (30)
+■
+D. Proof of Selecting Linearly Independent Features
+Proof 4: We demonstrate that if two features are correlated
+by an affine transformation, there exists a distance metric
+for which their non-identifiable sets are identical. Therefore,
+features should be chosen to be linearly independent.
+Let Xk
+T and ˆXk
+T (for k = 1, 2) represent generated and
+target time series features related by:
+( ˆX1
+T =a ˆX2
+T +b
+X1
+T =aX2
+T +b , a ̸= 0, b∈ R. (31)
+The non-identifiable sets are:
+SD,k,ϵ =
+n
+ω
+D
+
+ˆXk
+T (ω), Xk
+T
+
+≤ϵ
+o
+. (32)
+Choose D as the standardized MSE distance, denoted as
+Dstd(X,Y ),
+Dstd(Xk
+T, Yk
+T )≜ 1
+T
+teX
+t=ts
+ 
+Xt−µXk
+T
+σXk
+T
+−
+Yt−µYk
+T
+σYk
+T
+!2
+(33)
+and the mean and standard deviation can be computed as
+µXk
+T
+≜ 1
+T
+Pte
+t=tsXt, and σXk
+T
+≜
+q
+1
+T
+Pte
+t=ts(Xt−µX)2.
+For affine-related features
+X1
+T−µX1
+T
+σX1
+T
+= sign(a)
+X2
+T−µX2
+T
+σX2
+T
+,
+the relationship for Xk
+T and ˆXk
+T is analogous, which yields
+Dstd
+
+ˆX1
+T, X1
+T
+
+=Dstd
+
+ˆX2
+T, X2
+T
+
+.
+Consequently, the non-identifiable sets are identical, i.e.,
+SDstd,1,ϵ =SDstd,2,ϵ.
+Under the max-aggregation F , we obtain SF,ϵ =SDstd,1,ϵ∩
+SDstd,2,ϵ =SDstd,k,ϵ, ∀k.
+Thus, the measure remains unchanged:
+µ(SF,ϵ) =µ(SDstd,k,ϵ) ∀k. (34)
+■
+REFERENCES
+[1] F. Squazzoni, W. Jager, and B. Edmonds, “Social simulation in the social
+sciences: A brief overview,” Social Science Computer Review , vol. 32,
+no. 3, pp. 279–294, 2014.
+[2] J. D. Farmer and D. Foley, “The economy needs agent-based modelling,”
+Nature, vol. 460, no. 7256, pp. 685–686, 2009.
+[3] A. Fabretti, “On the problem of calibrating an agent based model for
+financial markets,” Journal of Economic Interaction and Coordination ,
+vol. 8, pp. 277–293, 2013.
+[4] E. Weinstein, “Meltdown modelling,” Nature, vol. 460, p. 6, 2009.
+[5] D. Kim, T.-S. Yun, I.-C. Moon, and J. W. Bae, “Automatic calibration
+of dynamic and heterogeneous parameters in agent-based models,”
+Autonomous Agents and Multi-Agent Systems, vol. 35, no. 2, p. 46, 2021.
+[6] D. Platt, “A comparison of economic agent-based model calibration
+methods,” Journal of Economic Dynamics and Control , vol. 113, p.
+103859, 2020.
+[7] K. Goosen, “Calibrating high frequency trading data to agent based mod-
+els using approximate bayesian computation,” Master’s thesis, Faculty
+of Science, 2021.
+[8] Y . Bai, H. Lam, T. Balch, and S. Vyetrenko, “Efficient calibration of
+multi-agent simulation models from output series with bayesian opti-
+mization,” in Proceedings of the Third ACM International Conference
+on AI in Finance , 2022, pp. 437–445.
+[9] R. G. Palmer, W. B. Arthur, J. H. Holland, B. LeBaron, and P. Tayler,
+“Artificial economic life: a simple model of a stockmarket,” Physica D:
+Nonlinear Phenomena, vol. 75, no. 1-3, pp. 264–274, 1994.
+[10] A. Ntakaris, M. Magris, J. Kanniainen, M. Gabbouj, and A. Iosifidis,
+“Benchmark dataset for mid-price forecasting of limit order book data
+with machine learning methods,” Journal of Forecasting, vol. 37, no. 8,
+pp. 852–866, 2018.
+12
+[11] G. Fagiolo, A. Moneta, and P. Windrum, “A critical guide to empirical
+validation of agent-based models in economics: Methodologies, pro-
+cedures, and open problems,” Computational Economics , vol. 30, pp.
+195–226, 2007.
+[12] D. Platt and T. Gebbie, “Can agent-based models probe market mi-
+crostructure?” Physica A: Statistical Mechanics and its Applications ,
+vol. 503, pp. 1092–1106, 2018.
+[13] J. Grazzini and M. Richiardi, “Estimation of ergodic agent-based models
+by simulated minimum distance,” Journal of Economic Dynamics and
+Control, vol. 51, pp. 148–165, 2015.
+[14] F. Lamperti, “An information theoretic criterion for empirical validation
+of simulation models,” Econometrics and Statistics , vol. 5, pp. 83–106,
+2018.
+[15] S. Barde, “A practical, accurate, information criterion for nth order
+markov processes,” Computational Economics, vol. 50, no. 2, pp. 281–
+324, 2017.
+[16] J. Kukacka and J. Barunik, “Estimation of financial agent-based models
+with simulated maximum likelihood,” Journal of Economic Dynamics
+and Control, vol. 85, pp. 21–45, 2017.
+[17] J. Grazzini, M. G. Richiardi, and M. Tsionas, “Bayesian estimation
+of agent-based models,” Journal of Economic Dynamics and Control ,
+vol. 77, pp. 26–47, 2017.
+[18] F. Lamperti, A. Roventini, and A. Sani, “Agent-based model calibration
+using machine learning surrogates,” Journal of Economic Dynamics and
+Control, vol. 90, pp. 366–389, 2018.
+[19] K. Jain, N. Firoozye, J. Kochems, and P. Treleaven, “Limit
+order book simulations: A review,” 2024. [Online]. Available:
+https://arxiv.org/abs/2402.17359
+[20] Y . Li, Y . Wu, and P. Yang, “Simlob: Learning representations of limited
+order book for financial market simulation,” 2024. [Online]. Available:
+https://arxiv.org/abs/2406.19396
+[21] J. Paulin, A. Calinescu, and M. Wooldridge, “Agent-based modeling for
+complex financial systems,” IEEE Intelligent Systems, vol. 33, no. 2, pp.
+74–82, 2018.
+[22] S.-H. Chen, C.-L. Chang, and Y .-R. Du, “Agent-based economic models
+and econometrics,” The Knowledge Engineering Review , vol. 27, no. 2,
+pp. 187–219, 2012.
+[23] S. Vyetrenko, D. Byrd, N. Petosa, M. Mahfouz, D. Dervovic, M. Veloso,
+and T. Balch, “Get real: Realism metrics for robust limit order book
+market simulations,” in Proceedings of the First ACM International
+Conference on AI in Finance , 2020, pp. 1–8.
+[24] K. Xu, L. Chen, J.-M. Patenaude, and S. Wang, “Rhine: A regime-
+switching model with nonlinear representation for discovering and
+forecasting regimes in financial markets,” in Proceedings of the 2024
+SIAM International Conference on Data Mining (SDM) . SIAM, 2024,
+pp. 526–534.
+[25] K. Xu, L. Chen, and S. Wang, “Kan4drift: Are kan effective for
+identifying and tracking concept drift in time series?” in NeurIPS
+Workshop on Time Series in the Age of Large Models , 2024.
+[26] ——, “Kolmogorov-arnold networks for time series: Bridging predictive
+power and interpretability,” arXiv preprint arXiv:2406.02496 , 2024.
+[27] A. Coletta, M. Prata, M. Conti, E. Mercanti, N. Bartolini, A. Moulin,
+S. Vyetrenko, and T. Balch, “Towards realistic market simulations: a
+generative adversarial networks approach,” in Proceedings of the Second
+ACM International Conference on AI in Finance , 2021, pp. 1–9.
+[28] A. Coletta, A. Moulin, S. Vyetrenko, and T. Balch, “Learning to
+simulate realistic limit order book markets from data as a world agent,”
+in Proceedings of the Third ACM International Conference on AI in
+Finance, 2022, pp. 428–436.
+[29] J. Kennedy and R. Eberhart, “Particle swarm optimization,” in Proceed-
+ings of ICNN’95-international conference on neural networks , vol. 4.
+IEEE, 1995, pp. 1942–1948.
+[30] M. J. Bazrkar and S. Hosseini, “Predict stock prices using supervised
+learning algorithms and particle swarm optimization algorithm,” Com-
+putational Economics, vol. 62, no. 1, pp. 165–186, 2023.
+[31] M. A. Amal, H. Napitupulu et al. , “Particle swarm optimization al-
+gorithm for determining global optima of investment portfolio weight
+using mean-value-at-risk model in banking sector stocks,” Mathematics,
+vol. 12, no. 24, p. 3920, 2024.
+[32] Y . Shi and R. Eberhart, “A modified particle swarm optimizer,” in
+Proceedings of 1998 IEEE international conference on evolutionary
+computation. IEEE, 1998, pp. 69–73.
+[33] R. Cont, “Empirical properties of asset returns: stylized facts and
+statistical issues,” Quantitative finance, vol. 1, no. 2, p. 223, 2001.
+[34] P. Belcak, J.-P. Calliess, and S. Zohren, “Fast agent-based simulation
+framework with applications to reinforcement learning and the study
+of trading latency effects,” in International Workshop on Multi-Agent
+Systems and Agent-Based Simulation . Springer, 2021, pp. 42–56.
+[35] J. Zhao, C. Zhang, M. Qin, and P. Yang, “Quantfactor reinforce: Mining
+steady formulaic alpha factors with variance-bounded reinforce,” arXiv
+preprint arXiv:2409.05144, 2024.

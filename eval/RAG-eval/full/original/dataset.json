@@ -1,0 +1,236 @@
+{
+  "id": "rag-scenarios-v1-original",
+  "version": "1.0.0",
+  "format_version": 1,
+  "status": "curated_candidate",
+  "origin": "original_fictional",
+  "protocol": {
+    "top_k": 5,
+    "scoring": "source-content-v1",
+    "scope": "corpus_retrieval",
+    "answer_model": "not_called",
+    "followup_query": "sessions_separate"
+  },
+  "documents": [
+    {
+      "id": "approval",
+      "file": "approval.md",
+      "path": "corpus/approval.md",
+      "sha256": "9db0171b1a552e75949511ef75f79a2ef1c0f094cf8a92e7864f5cd203e0b3d2",
+      "text_path": "text/approval.txt",
+      "text_sha256": "9db0171b1a552e75949511ef75f79a2ef1c0f094cf8a92e7864f5cd203e0b3d2",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "conflict-a",
+      "file": "conflict-a.md",
+      "path": "corpus/conflict-a.md",
+      "sha256": "045d44357c88c429caa9fc9bc007f0d34068fd77cd6ad92480523f9bb1dec532",
+      "text_path": "text/conflict-a.txt",
+      "text_sha256": "045d44357c88c429caa9fc9bc007f0d34068fd77cd6ad92480523f9bb1dec532",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "conflict-b",
+      "file": "conflict-b.md",
+      "path": "corpus/conflict-b.md",
+      "sha256": "a0ae0d57ed7572518dc4d8c51adb07348a000cd575919cc27a78ea61cbf1bcce",
+      "text_path": "text/conflict-b.txt",
+      "text_sha256": "a0ae0d57ed7572518dc4d8c51adb07348a000cd575919cc27a78ea61cbf1bcce",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "exceptions",
+      "file": "exceptions.md",
+      "path": "corpus/exceptions.md",
+      "sha256": "198898357324503acfcba13e676d990280c6f21d735b48a4300bd5ed96b5466e",
+      "text_path": "text/exceptions.txt",
+      "text_sha256": "198898357324503acfcba13e676d990280c6f21d735b48a4300bd5ed96b5466e",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "export",
+      "file": "export.docx",
+      "path": "corpus/export.docx",
+      "sha256": "19966b53de511c8b7b88931aa936ac228b54bc706ad0d64fee2b8a8bc0f9956f",
+      "text_path": "text/export.txt",
+      "text_sha256": "4377e8647c991ae9860cc2397e6f959604dd37f46224068b99ec759dbc2a8282",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "long-manual",
+      "file": "long-manual.md",
+      "path": "corpus/long-manual.md",
+      "sha256": "da4182eae82b0e4e86a6963982506bc80a3c41f1d6a7f7d8eaefdbeaad68109e",
+      "text_path": "text/long-manual.txt",
+      "text_sha256": "da4182eae82b0e4e86a6963982506bc80a3c41f1d6a7f7d8eaefdbeaad68109e",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "noise",
+      "file": "noise.md",
+      "path": "corpus/noise.md",
+      "sha256": "db0db3b0a4eaa595370d37160ba9bfe90427b906cfe1969e2d1125a2bd68cd12",
+      "text_path": "text/noise.txt",
+      "text_sha256": "db0db3b0a4eaa595370d37160ba9bfe90427b906cfe1969e2d1125a2bd68cd12",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "operations",
+      "file": "operations.md",
+      "path": "corpus/operations.md",
+      "sha256": "9767f7a54b488b0206a8dd82b82ccb9d29a5c55c7961b6288ac97f0f11221d11",
+      "text_path": "text/operations.txt",
+      "text_sha256": "9767f7a54b488b0206a8dd82b82ccb9d29a5c55c7961b6288ac97f0f11221d11",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "pricing-v1",
+      "file": "pricing-v1.md",
+      "path": "corpus/pricing-v1.md",
+      "sha256": "6306c096048527e54f19a095d42459ad8e30cc6ab61b95801b6f7c5e12306584",
+      "text_path": "text/pricing-v1.txt",
+      "text_sha256": "6306c096048527e54f19a095d42459ad8e30cc6ab61b95801b6f7c5e12306584",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "pricing-v2",
+      "file": "pricing-v2.md",
+      "path": "corpus/pricing-v2.md",
+      "sha256": "ccec38906e39bb4692a7a743ed9301dcd3e5828b596cf2d4c7ee2ea68f83b161",
+      "text_path": "text/pricing-v2.txt",
+      "text_sha256": "ccec38906e39bb4692a7a743ed9301dcd3e5828b596cf2d4c7ee2ea68f83b161",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "quality",
+      "file": "quality.md",
+      "path": "corpus/quality.md",
+      "sha256": "bf68ba2a6fcf1a74fb9d8cd6fac8a70496d46b096aca47df9564cdd302a91d11",
+      "text_path": "text/quality.txt",
+      "text_sha256": "bf68ba2a6fcf1a74fb9d8cd6fac8a70496d46b096aca47df9564cdd302a91d11",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "refund",
+      "file": "refund.pdf",
+      "path": "corpus/refund.pdf",
+      "sha256": "b4e13349fe371f1fe640a26552a8e1159d8efc4407209cd2565204ca2de7b360",
+      "text_path": "text/refund.txt",
+      "text_sha256": "a5d0114f899ba703c0dc0e8f36a4a05f367f7f33b9c198bae93673146411cd1c",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "security",
+      "file": "security.md",
+      "path": "corpus/security.md",
+      "sha256": "f06cf2e707b9f9ef41698632e0e8f4764ae9cd388aa9e63b04c9260954d11585",
+      "text_path": "text/security.txt",
+      "text_sha256": "f06cf2e707b9f9ef41698632e0e8f4764ae9cd388aa9e63b04c9260954d11585",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "travel",
+      "file": "travel.md",
+      "path": "corpus/travel.md",
+      "sha256": "12fd9fabece90960475a581569f9b297251a1ab1e202661675e1c47a50276810",
+      "text_path": "text/travel.txt",
+      "text_sha256": "12fd9fabece90960475a581569f9b297251a1ab1e202661675e1c47a50276810",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "edge-01",
+      "file": "edge-01.md",
+      "path": "corpus/edge-01.md",
+      "sha256": "1774897ab416cb2490497d4f449fe5724958bbc4e7ad33034d964b0cbb1f88b2",
+      "text_path": "text/edge-01.txt",
+      "text_sha256": "1774897ab416cb2490497d4f449fe5724958bbc4e7ad33034d964b0cbb1f88b2",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "edge-02",
+      "file": "edge-02.md",
+      "path": "corpus/edge-02.md",
+      "sha256": "afa183e1fa1dc7d11e6c3ee04b1265aec2b00e5d0f6421956e9dc134bd00cadb",
+      "text_path": "text/edge-02.txt",
+      "text_sha256": "afa183e1fa1dc7d11e6c3ee04b1265aec2b00e5d0f6421956e9dc134bd00cadb",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "edge-03",
+      "file": "edge-03.md",
+      "path": "corpus/edge-03.md",
+      "sha256": "ab3fd0dcad81800b37431f93248cfb67c30a146b1f34abd896702e63376c1d10",
+      "text_path": "text/edge-03.txt",
+      "text_sha256": "ab3fd0dcad81800b37431f93248cfb67c30a146b1f34abd896702e63376c1d10",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "edge-04",
+      "file": "edge-04.md",
+      "path": "corpus/edge-04.md",
+      "sha256": "b6100f326a1b63d84ff88a75357e212da30efc6d6dd00a3bf6c25868db1c8472",
+      "text_path": "text/edge-04.txt",
+      "text_sha256": "b6100f326a1b63d84ff88a75357e212da30efc6d6dd00a3bf6c25868db1c8472",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "edge-05",
+      "file": "edge-05.md",
+      "path": "corpus/edge-05.md",
+      "sha256": "69e3e77c3760a158b182b93b17efeeac5664306809312640330140862a236bfb",
+      "text_path": "text/edge-05.txt",
+      "text_sha256": "69e3e77c3760a158b182b93b17efeeac5664306809312640330140862a236bfb",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "edge-06",
+      "file": "edge-06.md",
+      "path": "corpus/edge-06.md",
+      "sha256": "6bd5fb89912b0d91dbb1c4b3fd5b83bbc2f6b4d321b80474f7f4cf33a0c2f15e",
+      "text_path": "text/edge-06.txt",
+      "text_sha256": "6bd5fb89912b0d91dbb1c4b3fd5b83bbc2f6b4d321b80474f7f4cf33a0c2f15e",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "edge-07",
+      "file": "edge-07.md",
+      "path": "corpus/edge-07.md",
+      "sha256": "5a24a4db3d6518701b80e63f55ddeef47e494b17742411b5c4329de6712e9c28",
+      "text_path": "text/edge-07.txt",
+      "text_sha256": "5a24a4db3d6518701b80e63f55ddeef47e494b17742411b5c4329de6712e9c28",
+      "origin": "original_fictional",
+      "provenance": {}
+    },
+    {
+      "id": "edge-08",
+      "file": "edge-08.md",
+      "path": "corpus/edge-08.md",
+      "sha256": "c3ed25565680403e4884d397599e4029a0a10ddf328181be009f425af10f1b39",
+      "text_path": "text/edge-08.txt",
+      "text_sha256": "c3ed25565680403e4884d397599e4029a0a10ddf328181be009f425af10f1b39",
+      "origin": "original_fictional",
+      "provenance": {}
+    }
+  ]
+}

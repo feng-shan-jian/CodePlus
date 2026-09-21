@@ -1,0 +1,4637 @@
+{
+  "exclusions": [
+    {
+      "source": "crud",
+      "id": "64fa9b27b82641eb8ecbe2a2",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc13c6",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf9c1",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf8b4",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b28b82641eb8ecbe594",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b31b82641eb8ecc078b",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2bb82641eb8ecbed52",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2cb82641eb8ecbefa5",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b28b82641eb8ecbe79f",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc13ba",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf6bf",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b27b82641eb8ecbe25b",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc1382",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2eb82641eb8ecbfabd",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b32b82641eb8ecc08b5",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2bb82641eb8ecbeb89",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2fb82641eb8ecc00a4",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b32b82641eb8ecc0d98",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf750",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b34b82641eb8ecc16ec",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc13eb",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf467",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc149c",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2fb82641eb8ecc01fc",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b27b82641eb8ecbe485",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b32b82641eb8ecc0952",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b28b82641eb8ecbe7a0",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2fb82641eb8ecc0097",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc10fc",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc11db",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2fb82641eb8ecbff7b",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b32b82641eb8ecc0e82",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b28b82641eb8ecbe937",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2fb82641eb8ecbff82",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b32b82641eb8ecc0a71",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b32b82641eb8ecc0a5b",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2cb82641eb8ecbef2e",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2cb82641eb8ecbeeee",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b32b82641eb8ecc0aa4",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2bb82641eb8ecbebd0",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2eb82641eb8ecbfdea",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2cb82641eb8ecbeee3",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2eb82641eb8ecbfc24",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2cb82641eb8ecbeece",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2cb82641eb8ecbf02a",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b31b82641eb8ecc0661",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc1418",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b27b82641eb8ecbe190",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2cb82641eb8ecbf26a",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf528",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf6d9",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2bb82641eb8ecbed59",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2bb82641eb8ecbed0b",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2eb82641eb8ecbfdce",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b31b82641eb8ecc0580",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b27b82641eb8ecbe51d",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b31b82641eb8ecc04d2",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc14ff",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc11cc",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b32b82641eb8ecc0d2b",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf440",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2eb82641eb8ecbfbc0",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2eb82641eb8ecbfddc",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf3e3",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b33b82641eb8ecc1141",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b30b82641eb8ecc041e",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b31b82641eb8ecc05fd",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2fb82641eb8ecc010a",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2cb82641eb8ecbef62",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf5b0",
+      "reason": "weak_answer_to_source_alignment"
+    },
+    {
+      "source": "multihop",
+      "id": 1453,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1031,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 178,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1228,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1368,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 90,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1622,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 577,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 865,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2090,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2086,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1006,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2304,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2545,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1642,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 922,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1687,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 854,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1437,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 101,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 293,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1640,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 972,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2497,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 515,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 256,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1759,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 559,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1003,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 724,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2177,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1039,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2190,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 616,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 126,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 389,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 393,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 757,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2390,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1648,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2515,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 696,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1282,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1541,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1427,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 744,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1263,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1688,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2340,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1269,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1055,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2413,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2243,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 174,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 272,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2048,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1447,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 594,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1332,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2315,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1097,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1628,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 31,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 609,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1233,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1030,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1493,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1661,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 953,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1137,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 102,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2271,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 80,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 980,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2239,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 933,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 595,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1692,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1791,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1637,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2316,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1909,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 567,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 589,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1255,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2451,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 768,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 305,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2494,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2554,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 87,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2187,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 905,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 235,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 484,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 394,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 446,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2011,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 542,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2199,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 332,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 555,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2328,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1179,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1748,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2393,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2524,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1742,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1501,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1698,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1586,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1146,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2477,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 635,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 349,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1910,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1555,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1372,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 500,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1218,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1932,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 191,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 544,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1429,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1139,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 529,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 874,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1337,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 249,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2040,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1530,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1227,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2308,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 415,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 30,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1615,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2201,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2221,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 670,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2194,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 116,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1961,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1333,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1521,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1099,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 672,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1455,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 913,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 541,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1191,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2429,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1499,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2050,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 222,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1042,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2132,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1813,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2240,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 915,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1014,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 565,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1869,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2359,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1537,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 327,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2224,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1685,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2091,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1840,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 548,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1599,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1997,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1607,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 720,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1719,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2138,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 336,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1329,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 876,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1967,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2320,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 262,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2504,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1888,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1235,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 824,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1643,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 798,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2260,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 382,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1610,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 32,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1654,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 239,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1276,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 405,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2175,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 258,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1410,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 879,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1745,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 908,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2435,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 615,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1943,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1876,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 288,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1939,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 268,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 551,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 819,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1705,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1855,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2268,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1790,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1890,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1966,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 464,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 554,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1468,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 266,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1861,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 190,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2299,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 575,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 499,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1972,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2041,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1823,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2006,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2249,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 66,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2548,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1327,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1350,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1508,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1634,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1549,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 617,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1538,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2196,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 77,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 487,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1743,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1821,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2125,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1666,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2218,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 9,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 867,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1431,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1331,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 781,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1194,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2106,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 671,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1060,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1054,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 195,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1155,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 441,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 971,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2446,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 74,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2356,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 632,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1358,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1839,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2105,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2475,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 22,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 759,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 379,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2417,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 463,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 733,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 129,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 679,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 796,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1449,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 906,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1187,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2403,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 728,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1724,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2449,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 897,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1777,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1370,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1158,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2469,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1652,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 206,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1362,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 774,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1935,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 944,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 44,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1583,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 893,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1090,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1956,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1298,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2364,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1380,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2384,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 990,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2277,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1023,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 918,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 510,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2439,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 920,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 984,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 942,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1579,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2423,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 183,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1770,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2017,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1682,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2312,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1445,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 653,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 341,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 252,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1792,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1674,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 93,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1265,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1807,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 399,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1192,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1756,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1785,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1671,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1907,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2374,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 107,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 250,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 801,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1383,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1145,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1993,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1436,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1425,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1392,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 147,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2462,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 329,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 521,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2343,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 348,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 283,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1585,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1278,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1955,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2095,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2456,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1323,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 585,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1598,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1460,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1008,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1424,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 644,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1080,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 860,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2229,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 33,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1980,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2081,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 210,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 4,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2222,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1095,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 277,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2437,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1195,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2530,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 468,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1625,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2025,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2326,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1271,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1923,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1264,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 910,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 165,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1970,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2459,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2023,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 111,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2551,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2430,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1989,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 480,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 954,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1171,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2116,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1594,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 432,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 251,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1338,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 472,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1024,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 975,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1814,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1533,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 706,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1166,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2103,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 152,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1174,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 697,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1757,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 613,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1716,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 686,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2202,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1406,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 278,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2219,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 694,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2505,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2216,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1962,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1469,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2421,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1058,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 138,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2526,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 753,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1186,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 540,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2250,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 431,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1824,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 383,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 669,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1398,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 710,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 761,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2088,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 581,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2160,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 321,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 834,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 762,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 793,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 445,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1127,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1740,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1566,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 688,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 265,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 75,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1036,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 371,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 274,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2235,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1417,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2264,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1401,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2521,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1550,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2287,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1627,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2234,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2078,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 773,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1395,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 136,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 535,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 215,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1118,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2349,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 702,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1852,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1829,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 462,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2314,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1620,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2150,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2400,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 134,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2246,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1020,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2111,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2000,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1115,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1490,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1603,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1247,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2258,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1440,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2149,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1720,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 708,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 396,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 885,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 390,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 703,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1905,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 493,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 665,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2195,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2433,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 522,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 769,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2130,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1886,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2335,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1381,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1545,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1190,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 297,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1340,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2147,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1611,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1394,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1356,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 994,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 325,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 848,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1113,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1659,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2174,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 481,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1681,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1794,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 843,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2434,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 586,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 15,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1689,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2064,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1477,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 930,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1892,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 45,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 779,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2280,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 658,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1421,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1446,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2192,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1915,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2118,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 123,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 135,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1500,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 203,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1418,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2267,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 974,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2094,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 738,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1859,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1084,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 309,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1653,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1343,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 387,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 693,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2493,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2151,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 61,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1124,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1559,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1412,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2512,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 418,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1614,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 303,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1872,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1330,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 65,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1522,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2309,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 506,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 231,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1975,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1728,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1183,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2157,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2019,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2350,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2404,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 765,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1443,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 991,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2389,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 426,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2077,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1289,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1400,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 492,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 657,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 115,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 187,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 154,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2553,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 790,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2236,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 0,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1608,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1941,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1828,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 290,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 56,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 167,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2478,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1761,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 820,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1456,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1665,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1106,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 979,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1834,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1998,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2237,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 469,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1922,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 889,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1763,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2346,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1419,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1193,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 663,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 236,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 64,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1854,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1753,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2225,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 404,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1149,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 310,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2471,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2496,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1856,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 691,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2365,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1222,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2495,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 223,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 847,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2135,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 579,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2257,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1374,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 651,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2391,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 993,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1927,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2266,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 804,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 108,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1035,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 8,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 435,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 63,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1544,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1185,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 478,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2333,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2137,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2318,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 870,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2381,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2422,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1775,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 331,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1285,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 929,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2161,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1153,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 711,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1016,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1977,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1968,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1746,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1451,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2473,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1657,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1904,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2207,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1497,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 88,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 531,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 978,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1056,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 650,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1641,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1646,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2156,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1512,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1567,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1210,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 482,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1357,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 543,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 386,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1105,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 883,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1957,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1644,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1101,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 845,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1911,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 618,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1597,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 118,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2302,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 748,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2142,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1709,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2122,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1577,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 776,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1442,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1116,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1428,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 571,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 316,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2248,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2520,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2080,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1001,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 829,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 716,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1100,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1212,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2552,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1734,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1290,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 598,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1480,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1897,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 739,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 998,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2334,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 963,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 286,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1128,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1929,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 269,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1534,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 643,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 78,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 517,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 460,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 995,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 509,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2549,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2285,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1138,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 97,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2336,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1903,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 546,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 289,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 60,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1655,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2045,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1304,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1475,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2293,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2538,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 636,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1121,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 121,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 198,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1837,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 783,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2200,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 925,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2024,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1804,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1326,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1236,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1647,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1845,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2463,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 553,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2165,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 780,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1947,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2275,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1108,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 742,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2273,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2395,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 520,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 479,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 999,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2427,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 248,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2173,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1144,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1632,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1309,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 718,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 668,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1223,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 411,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 5,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2307,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1063,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2331,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 947,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 358,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 103,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1112,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2373,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 584,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1699,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 853,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 70,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 455,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1569,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 704,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1048,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 936,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1313,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2405,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2394,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 713,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1601,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1299,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1110,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2292,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1295,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1702,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1250,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1433,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2539,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 648,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2412,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 873,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1373,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 900,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 2217,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1292,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "multihop",
+      "id": 1505,
+      "reason": "shared_evidence_family"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf867",
+      "reason": "question_conflates_publication_and_event_date"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b32b82641eb8ecc09dc",
+      "reason": "overlapping_event_with_different_forecasts"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2bb82641eb8ecbebe2",
+      "reason": "question_omits_existing_app_scope"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2fb82641eb8ecc0089",
+      "reason": "question_implies_unestablished_company_relationship"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b31b82641eb8ecc0654",
+      "reason": "question_names_wrong_responsible_body"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2cb82641eb8ecbefdf",
+      "reason": "reference_answer_broadens_clinical_scope"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b2db82641eb8ecbf567",
+      "reason": "question_conflates_statement_with_reporter_summary"
+    },
+    {
+      "source": "crud",
+      "id": "64fa9b31b82641eb8ecc0734",
+      "reason": "reference_says_greater_than_exact_source_area"
+    }
+  ],
+  "additional_source_decisions": [
+    {
+      "source": "ALCE",
+      "included": false,
+      "reason": "Pilot revealed answer-string matches without relational support; citation stratum uses disjoint MultiHop-RAG questions instead."
+    }
+  ],
+  "openrag_filter": "text only; reject formulas, malformed language, tautologies and yes/no-only labels; review selected relevant sections against original PDF."
+}

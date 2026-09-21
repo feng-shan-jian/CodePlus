@@ -127,7 +127,7 @@ SentenceSplitter 默认剥离空白，且文本查找无法可靠定位重复段
 
 ## 7. 实验范围
 
-日常使用支持更新文档。`python -m codeplus.knowledge evaluate --fixtures <目录>` 通过现有 KnowledgeService 导入临时库，复用 documents 的分块/来源范围、LocalEmbedding 和 MilvusStore。`--fixtures` 与 `--replay <frozen.json>` 必选其一；公开样例位于仓库 `tests/fixtures/knowledge`，不作为 wheel 的运行期依赖。
+日常使用支持更新文档。`python -m codeplus.knowledge evaluate --fixtures <目录>` 通过现有 KnowledgeService 导入临时库，复用 documents 的分块/来源范围、LocalEmbedding 和 MilvusStore。`--fixtures` 与 `--replay <frozen.json>` 必选其一；旧独立样例已移除，当前 RAG 质量题库统一位于 `eval/RAG-eval/`，通过 benchmark 运行；evaluate 的 Markdown 实验格式尚未接入该混合格式题库，不作为另一套质量题源。
 
 实验输出写入当前工作目录被忽略的 `.codeplus/knowledge/experiments/<run>/`。frozen.json 保存完整原文、原文范围标注、profile、文档/查询向量和来源映射；report.json 保存稳定的 corpus_sha256、冻结内容校验和、运行配置、各路原始结果、分词、失败和耗时。语料哈希仅依赖排序后的文件名与原文 SHA256；完整快照/行哈希包含本轮实际身份。replay 只使用冻结内容及冻结 profile，无需旧临时路径、当前 fixtures 或 Embedding 加载；当前配置只用于连接等运行参数。
 
@@ -141,7 +141,7 @@ SentenceSplitter 默认剥离空白，且文本查找无法可靠定位重复段
 
 S6 固定 16 个中英文问题、18 处原文证据范围，包含两题无答案和一题需要五处证据的跨文档问题。Evidence Recall@K 的分母是有答案问题的全部标注范围数；同一来源范围须由前 K 个结果的区间并集完整覆盖，部分覆盖不计。请求失败按零命中保留在固定分母，并单独报告失败率与成功请求召回；无标准答案的召回为 null，不计满分。重复测时不重复扩大证据分母。ANN Recall@K 另以同范围 FLAT 实际返回的 K 内 ID 集合作参照，空参照不可用。
 
-`evaluate` 的模式/候选参数仅控制该次独立实验，RRF 复用日常相同的纯函数。实验报告额外保留两路原始分数/排名与状态：正常空路记 no_hits，任一路异常时 hybrid 记 unavailable。日常模式由 knowledge 配置控制，`SearchKnowledge` 参数和会话绑定结构保持不变；`benchmark` 通过同一服务比较日常策略，仅在本次运行覆盖配置，说明见 [标准回归评测](knowledge-benchmark.md)。
+`evaluate` 的模式/候选参数仅控制该次独立实验，RRF 复用日常相同的纯函数。实验报告额外保留两路原始分数/排名与状态：正常空路记 no_hits，任一路异常时 hybrid 记 unavailable。日常模式由 knowledge 配置控制，`SearchKnowledge` 参数和会话绑定结构保持不变；`benchmark` 通过同一服务比较日常策略，仅在本次运行覆盖配置，说明见 [标准回归评测](../eval/RAG-eval/benchmark.md)。
 
 固定背景目录包含 1040 条短小虚构展品，让真实分块达到当前 Milvus 建索引规模。小集合可能显示 Finished/indexed_rows、非零 index_id 和 HNSW index_name，却跳过 HNSW 构建；报告保留 loaded segment/index 信息，将 ANN 数值明确标为配置集合的邻居重合率，execution_verified=false，不能仅凭公共 API 当作已验证的 HNSW 比较。实际本轮类型须结合服务端对应集合的 build/load 日志确认，验收证据记录在 setup。禁止为实验改变共享 Milvus 全局阈值。微型合成集的 P50/P95 不用于生产性能结论。
 
@@ -151,7 +151,7 @@ BM25 创建条件以 [官方全文检索文档](https://milvus.io/docs/full-text
 
 TUI、Remote、非交互 CLI 均经 `KnowledgeContext`、`SearchKnowledge` 与 `KnowledgeService.search` 消费同一检索结果；`Agent.run` 与 `run_to_completion` 共用知识上下文准备函数。独立 search CLI 直接调用该服务；引用 ID、来源读取和工具错误协议保持不变。
 
-H05 在同一真实库完成三策略对照，功能链路通过；默认 hybrid 有改善也有退步，本回归集建议显式 dense，未改变 auto 默认或用户配置。指标和本地报告入口见 [实际对照](knowledge-benchmark.md#h05-真实资料对照2026-09-21)。文件名未进入检索正文，追问仅评测最后一句的首次检索；未执行本轮回答模型、桌面 UI、生产规模/吞吐及调参热重复，不据此宣称回答质量或全面召回提升。
+混合检索功能链路的历史实现验证已完成。当前质量评测仅使用 [新分场景题库](../eval/RAG-eval/benchmark.md#当前唯一题库)，旧个人资料库与报告已退役。新题库尚未执行真实检索或回答评测，不沿用旧策略排名。文件名仍未进入检索正文；完整会话及状态流程的评测执行器尚待接入。
 
 首版暂缓：扫描件 OCR、复杂版面、多用户权限、退出后继续运行的导入服务、自动历史清理、整库版本回滚、第二种数据库。
 

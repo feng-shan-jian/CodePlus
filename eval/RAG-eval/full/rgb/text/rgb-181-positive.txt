@@ -1,0 +1,1 @@
+CVPR 2022 将于2022年 6 月 21-24 日在美国的新奥尔良举行。CVPR是IEEE Conference on Computer Vision and Pattern Recognition的缩写，即IEEE国际计算机视觉与模式识别会议。该会议是由IEEE举办的计算机视觉和模式识别领域的顶级会议，会议的主要内容是计算机视觉与模式识别技术。CVPR 2022 一共有2067篇论文被接收，接收论文数量相比去年增长了24% https://openaccess.thecvf.

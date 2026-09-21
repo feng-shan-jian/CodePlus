@@ -1,0 +1,2563 @@
+{
+  "questions": [
+    {
+      "id": "C-S01-001",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：即将在沙特举行的和平会议是由哪些国家发起的，计划在哪个城市举行，以及有多少个国家参加？",
+      "reference_answer": "和平会议是由西方国家及乌克兰发起的，计划在沙特的吉达举行，约有30个国家参加。",
+      "gold": [
+        {
+          "id": "C-S01-001-E1",
+          "source_id": "crud-64fa9b32b82641eb8ecc08d8",
+          "char_start": 0,
+          "char_end": 76,
+          "quote": "2023-08-03 17:26，正文：乌克兰方面近日证实，由西方国家及乌克兰发起的和平会议将在沙特举行，另有消息人士透露，此次会谈并未邀请俄罗斯参与。"
+        },
+        {
+          "id": "C-S01-001-E2",
+          "source_id": "crud-64fa9b32b82641eb8ecc08d8",
+          "char_start": 186,
+          "char_end": 271,
+          "quote": "美国《华尔街日报》此前援引消息人士的话称，此次针对乌克兰问题的和平会议将于8月5-6日在沙特吉达举行，约有30个国家参会，其中包括美国以及欧洲、亚洲、非洲和拉丁美洲国家。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc08d8",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc08d8",
+        "original_query": "即将在沙特举行的和平会议是由哪些国家发起的，计划在哪个城市举行，以及有多少个国家参加？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-002",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在2023年7月28日发生的澳美军事演习中，哪型澳大利亚军用直升机坠海，导致了多少人失踪？",
+      "reference_answer": "MRH-90型澳大利亚军用直升机在演习中坠海，导致机上4人失踪。",
+      "gold": [
+        {
+          "id": "C-S01-002-E1",
+          "source_id": "crud-64fa9b32b82641eb8ecc0b5e",
+          "char_start": 79,
+          "char_end": 148,
+          "quote": "澳大利亚国防部长理查德·马尔斯29日说，这架MRH-90型直升机28日大约22时30分在澳东部昆士兰州附近海面迫降，机上4人暂时下落不明。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0b5e",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0b5e",
+        "original_query": "在2023年7月28日发生的澳美军事演习中，哪型澳大利亚军用直升机坠海，导致了多少人失踪？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-003",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：2023年上半年，全国市场监管部门在食品安全监督抽检中发现的不合格样品批次数是多少，不合格率是多少？",
+      "reference_answer": "2023年上半年，全国市场监管部门在食品安全监督抽检中发现不合格样品70174批次，不合格率为2.40%。",
+      "gold": [
+        {
+          "id": "C-S01-003-E1",
+          "source_id": "crud-64fa9b2eb82641eb8ecbfc1d",
+          "char_start": 0,
+          "char_end": 149,
+          "quote": "2023-08-14，正文：中新网8月14日电 据市场监管总局网站消息，2023年上半年，全国市场监管部门坚持以问题为导向，完成食品安全监督抽检2921763批次，依据有关食品安全国家标准等进行检验，发现不合格样品70174批次，监督抽检不合格率为2.40%，较2022年同期下降0.11个百分点。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "crud-event-64fa9b2eb82641eb8ecbfc1d",
+      "provenance": {
+        "upstream_id": "64fa9b2eb82641eb8ecbfc1d",
+        "original_query": "2023年上半年，全国市场监管部门在食品安全监督抽检中发现的不合格样品批次数是多少，不合格率是多少？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-004",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：根据美国加州大学伯克利分校研究人员在《自然-气候变化》上发表的研究，wMel菌株在哪两个城市已经成功开展过田野试验，并且预计在哪个未来的十年热浪的持续时间会对wMel产生更大的负面影响？",
+      "reference_answer": "wMel菌株已经在澳大利亚凯恩斯和越南芽庄市成功开展过田野试验。预计在2050年代的热浪持续时间会比2030年代的更久，对wMel产生更大的负面影响。",
+      "gold": [
+        {
+          "id": "C-S01-004-E1",
+          "source_id": "crud-64fa9b32b82641eb8ecc091f",
+          "char_start": 598,
+          "char_end": 662,
+          "quote": "论文作者预计，2050年代的热浪可能会比2030年代(平均9.7天)的持续时间更久(平均24天)，而这会对wMel产生负面影响。"
+        },
+        {
+          "id": "C-S01-004-E2",
+          "source_id": "crud-64fa9b32b82641eb8ecc091f",
+          "char_start": 387,
+          "char_end": 531,
+          "quote": "论文第一作者和通讯作者、美国加州大学伯克利分校Váleri N. Vásquez和同事及合作者一起，利用实验室温度对wMel影响的数据以及对未来热浪严重程度的预测，建立了一个蚊子种群动力学模型，以理解澳大利亚凯恩斯和越南芽庄市的升温对wMel的可能影响，这两个城市已经成功开展过田野试验。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc091f",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc091f",
+        "original_query": "根据美国加州大学伯克利分校研究人员在《自然-气候变化》上发表的研究，wMel菌株在哪两个城市已经成功开展过田野试验，并且预计在哪个未来的十年热浪的持续时间会对wMel产生更大的负面影响？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-005",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：国家防总在2023年8月3日发出的通知中，要求各地各部门全面落实哪个责任制，并要求责任细化到防汛救灾的哪些方面？",
+      "reference_answer": "国家防总要求各地各部门全面落实以行政首长负责制为核心的各项防汛责任制，并要求责任细化到防汛救灾全过程、各层级。",
+      "gold": [
+        {
+          "id": "C-S01-005-E1",
+          "source_id": "crud-64fa9b31b82641eb8ecc078f",
+          "char_start": 302,
+          "char_end": 383,
+          "quote": "通知要求，各地各部门要全面落实以行政首长负责制为核心的各项防汛责任制，把责任细化到防汛救灾全过程、各层级，各级包保责任人要深入一线、靠前指挥、履职尽责、守土负责。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "crud-event-64fa9b31b82641eb8ecc078f",
+      "provenance": {
+        "upstream_id": "64fa9b31b82641eb8ecc078f",
+        "original_query": "国家防总在2023年8月3日发出的通知中，要求各地各部门全面落实哪个责任制，并要求责任细化到防汛救灾的哪些方面？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-006",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：第五届“嘉庚风·中华情”香港集美校友后裔夏令营的开营仪式在哪个地点举行，并且这次夏令营活动将在哪些地方开展？",
+      "reference_answer": "第五届“嘉庚风·中华情”香港集美校友后裔夏令营的开营仪式在集美闽台研学总部|万千极美营地举行，这次夏令营活动将在厦门、泉州、漳州三地开展。",
+      "gold": [
+        {
+          "id": "C-S01-006-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe49f",
+          "char_start": 780,
+          "char_end": 826,
+          "quote": "本次“嘉庚风·中华情”香港集美校友后裔夏令营于7月19日至25日在厦门、泉州、漳州三地开展。"
+        },
+        {
+          "id": "C-S01-006-E2",
+          "source_id": "crud-64fa9b27b82641eb8ecbe49f",
+          "char_start": 65,
+          "char_end": 205,
+          "quote": "中国侨网厦门7月21日电(张玲)据厦门集美区侨联消息，20日上午，由集美区海外联谊会、集美区归国华侨联合会主办，厦门万千研学教育科技有限公司承办，集美校友总会、集美区关心下一代工作委员会协办的第五届“嘉庚风·中华情”香港集美校友后裔夏令营在集美闽台研学总部|万千极美营地正式开营。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe49f",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe49f",
+        "original_query": "第五届“嘉庚风·中华情”香港集美校友后裔夏令营的开营仪式在哪个地点举行，并且这次夏令营活动将在哪些地方开展？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-007",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：朗进科技在哪一年首次将液冷方案应用于中国第一代氢能源轨道车辆，并且这一技术的应用是在哪个领域的首次？",
+      "reference_answer": "朗进科技在2013年首次将液冷方案应用于中国第一代氢能源轨道车辆，这是业内首家将液冷技术应用到轨道交通领域的企业。",
+      "gold": [
+        {
+          "id": "C-S01-007-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0e80",
+          "char_start": 139,
+          "char_end": 230,
+          "quote": "在热管理领域，从最初的风冷温控解决方案逐步迭代到全新液冷温控解决方案，朗进科技在2013年率先将液冷方案应用于中国第一代氢能源轨道车辆，是业内首家将液冷技术应用到轨道交通领域的企业。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0e80",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0e80",
+        "original_query": "朗进科技在哪一年首次将液冷方案应用于中国第一代氢能源轨道车辆，并且这一技术的应用是在哪个领域的首次？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-008",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：中央政法委在全体会议中提出要依法从重打击哪些违法犯罪活动，以维护人民群众的哪些利益？",
+      "reference_answer": "中央政法委提出要依法从重打击境外电信网络诈骗等违法犯罪活动，以及境内协同犯罪人员，以维护人民群众的切身利益。",
+      "gold": [
+        {
+          "id": "C-S01-008-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf9ea",
+          "char_start": 0,
+          "char_end": 105,
+          "quote": "2023年08月06日 06:11，正文：中央政法委日前召开全体会议提出，要坚持系统治理、依法治理、源头治理，依法从重打击境外电信网络诈骗等违法犯罪活动，依法从重打击境内协同犯罪人员，坚决维护人民群众切身利益。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf9ea",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf9ea",
+        "original_query": "中央政法委在全体会议中提出要依法从重打击哪些违法犯罪活动，以维护人民群众的哪些利益？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-009",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：为了抑制通胀，印度最近出台了哪项禁令，并且这项禁令大约占到了印度大米出口的多少百分比？",
+      "reference_answer": "印度出台了禁止出口除印度香米以外的大米的禁令，这大约占到了印度大米出口的25%。",
+      "gold": [
+        {
+          "id": "C-S01-009-E1",
+          "source_id": "crud-64fa9b2fb82641eb8ecc007c",
+          "char_start": 461,
+          "char_end": 547,
+          "quote": "根据印度食品部的数据，今年迄今为止，印度全国的大米零售价格上涨了大约9%，为了抑制通胀，印度上周出台了禁令，禁止出口除印度香米以外的大米，这大约占到了印度大米出口的25%。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2fb82641eb8ecc007c",
+      "provenance": {
+        "upstream_id": "64fa9b2fb82641eb8ecc007c",
+        "original_query": "为了抑制通胀，印度最近出台了哪项禁令，并且这项禁令大约占到了印度大米出口的多少百分比？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-010",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：国家发展改革委在《关于实施促进民营经济发展近期若干举措的通知》中提出了多少条具体措施，旨在解决哪些方面的突出问题？",
+      "reference_answer": "国家发展改革委在《关于实施促进民营经济发展近期若干举措的通知》中提出了28条具体措施，旨在解决民营经济发展中的突出问题，激发民营经济发展活力，提振民营经济发展信心。",
+      "gold": [
+        {
+          "id": "C-S01-010-E1",
+          "source_id": "crud-64fa9b2eb82641eb8ecbfb6b",
+          "char_start": 0,
+          "char_end": 122,
+          "quote": "2023-08-02，正文：新华社北京8月1日电 国家发展改革委等部门《关于实施促进民营经济发展近期若干举措的通知》8月1日发布，围绕5个方面提出28条具体措施，推动破解民营经济发展中面临的突出问题，激发民营经济发展活力，提振民营经济发展信心。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2eb82641eb8ecbfb6b",
+      "provenance": {
+        "upstream_id": "64fa9b2eb82641eb8ecbfb6b",
+        "original_query": "国家发展改革委在《关于实施促进民营经济发展近期若干举措的通知》中提出了多少条具体措施，旨在解决哪些方面的突出问题？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-011",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：河南籍作家张惠雯的短篇小说集《在北方》由哪家出版社出版，并主要聚焦于哪个群体的生活？",
+      "reference_answer": "《在北方》由北京十月文艺出版社出版，主要聚焦生活在美国的华人群体，尤其是中年女性的情感与婚姻生活。",
+      "gold": [
+        {
+          "id": "C-S01-011-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe3a3",
+          "char_start": 195,
+          "char_end": 269,
+          "quote": "《在北方》包括《雪从南方来》《二人世界》《黑鸟》《玫瑰玫瑰》等9篇，主要聚焦生活在美国的华人群体，以人到中年的女性为主角，讲述她们的情感与婚姻生活。"
+        },
+        {
+          "id": "C-S01-011-E2",
+          "source_id": "crud-64fa9b27b82641eb8ecbe3a3",
+          "char_start": 59,
+          "char_end": 99,
+          "quote": "本报电 (张嘉幸)近日，作家张惠雯短篇小说集《在北方》由北京十月文艺出版社出版。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe3a3",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe3a3",
+        "original_query": "河南籍作家张惠雯的短篇小说集《在北方》由哪家出版社出版，并主要聚焦于哪个群体的生活？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-012",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：第二届全国人力资源服务业发展大会将在哪个城市举办，以及由哪些机构共同主办？",
+      "reference_answer": "第二届全国人力资源服务业发展大会将在深圳举办，由人力资源社会保障部、广东省人民政府共同主办。",
+      "gold": [
+        {
+          "id": "C-S01-012-E1",
+          "source_id": "crud-64fa9b28b82641eb8ecbe8a0",
+          "char_start": 53,
+          "char_end": 111,
+          "quote": "据悉，第二届全国人力资源服务业发展大会以“激发人力资源动能，汇聚强国建设力量”为主题，将于今年11月下旬在深圳举办。"
+        },
+        {
+          "id": "C-S01-012-E2",
+          "source_id": "crud-64fa9b28b82641eb8ecbe8a0",
+          "char_start": 510,
+          "char_end": 700,
+          "quote": "据了解，本届大会由人力资源社会保障部、广东省人民政府共同主办，人力资源社会保障部流动管理司、广东省人力资源社会保障厅、深圳市人民政府承办，将设置人力资源服务业高质量发展研讨交流活动、人力资源服务供需洽谈对接和展示活动、人力资源服务创新创业和技能大赛、粤港澳大湾区青年人才招聘活动等重点活动，以推动人力资源服务业高质量发展，为促进高质量充分就业、强化现代化建设人才支撑发挥更大作用。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b28b82641eb8ecbe8a0",
+      "provenance": {
+        "upstream_id": "64fa9b28b82641eb8ecbe8a0",
+        "original_query": "第二届全国人力资源服务业发展大会将在哪个城市举办，以及由哪些机构共同主办？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-013",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：武汉轨道交通12号线中，青菱站至罗家村站区间右线的盾构区间顺利贯通是由哪些单位投资建设的，并且该区间全长多少米？",
+      "reference_answer": "武汉轨道交通12号线青菱站至罗家村站区间右线的盾构区间是由武汉地铁集团、中铁开投集团投资建设的，该区间全长874米。",
+      "gold": [
+        {
+          "id": "C-S01-013-E1",
+          "source_id": "crud-64fa9b2cb82641eb8ecbef2b",
+          "char_start": 212,
+          "char_end": 309,
+          "quote": "上午10时许，由武汉地铁集团、中铁开投集团参与投资建设、中铁四局承建的武汉轨道交通12号线青菱站至罗家村站区间右线顺利贯通，为武汉地铁首条环线12号线首个贯通的盾构区间，工程建设全面进入快车道。"
+        },
+        {
+          "id": "C-S01-013-E2",
+          "source_id": "crud-64fa9b2cb82641eb8ecbef2b",
+          "char_start": 416,
+          "char_end": 491,
+          "quote": "施工方中铁四局项目总工程师张舵介绍，此次洞通的青菱站至罗家村站区间右线全长874米，该区间穿越富水砂层及淤泥质不良地层，盾构掘进有如“在泥浆中滑行”。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2cb82641eb8ecbef2b",
+      "provenance": {
+        "upstream_id": "64fa9b2cb82641eb8ecbef2b",
+        "original_query": "武汉轨道交通12号线中，青菱站至罗家村站区间右线的盾构区间顺利贯通是由哪些单位投资建设的，并且该区间全长多少米？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-014",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：中国商务部在2023年8月11日发布的《美国履行世贸规则义务情况报告》中，指责美国在哪些方面破坏了多边贸易体制？",
+      "reference_answer": "在《美国履行世贸规则义务情况报告》中，中国商务部指责美国破坏多边贸易体制的方面包括：实施单边贸易霸凌、操纵产业政策双重标准、扰乱全球产业链供应链，以及选择性执行世贸组织裁决、阻挠上诉机构成员遴选导致其陷入“瘫痪”。",
+      "gold": [
+        {
+          "id": "C-S01-014-E1",
+          "source_id": "crud-64fa9b2fb82641eb8ecbff9d",
+          "char_start": 0,
+          "char_end": 141,
+          "quote": "2023年08月11日 17:26，正文：今天(8月11日)，中国商务部发布《美国履行世贸规则义务情况报告》(以下简称《报告》)，梳理美国履行世贸组织规则义务概况，并作总体评价，表达对美破坏多边贸易体制、实施单边贸易霸凌、操纵产业政策双重标准、扰乱全球产业链供应链等政策措施的关注。"
+        },
+        {
+          "id": "C-S01-014-E2",
+          "source_id": "crud-64fa9b2fb82641eb8ecbff9d",
+          "char_start": 141,
+          "char_end": 222,
+          "quote": "《报告》指出，美国作为被世贸组织成员发起争端解决最多的成员，不仅选择性执行世贸组织裁决，还执意阻挠上诉机构成员遴选并导致其陷入“瘫痪”，是“多边贸易体制破坏者”。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2fb82641eb8ecbff9d",
+      "provenance": {
+        "upstream_id": "64fa9b2fb82641eb8ecbff9d",
+        "original_query": "中国商务部在2023年8月11日发布的《美国履行世贸规则义务情况报告》中，指责美国在哪些方面破坏了多边贸易体制？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-015",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：尼泊尔共产党（马列）总书记迈纳利在专访中提到了中国共产党在哪些领域取得了突破性进展？",
+      "reference_answer": "迈纳利提到中国共产党在消除贫困、科技创新、应对气候变化等领域取得了突破性进展。",
+      "gold": [
+        {
+          "id": "C-S01-015-E1",
+          "source_id": "crud-64fa9b30b82641eb8ecc029d",
+          "char_start": 508,
+          "char_end": 539,
+          "quote": "“中国在消除贫困、科技创新、应对气候变化等领域取得突破性进展。"
+        },
+        {
+          "id": "C-S01-015-E2",
+          "source_id": "crud-64fa9b30b82641eb8ecc029d",
+          "char_start": 560,
+          "char_end": 607,
+          "quote": "”迈纳利表示，在中国共产党坚强领导下，中国取得举世瞩目的发展成就，在国际舞台日益发挥重要作用。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b30b82641eb8ecc029d",
+      "provenance": {
+        "upstream_id": "64fa9b30b82641eb8ecc029d",
+        "original_query": "尼泊尔共产党（马列）总书记迈纳利在专访中提到了中国共产党在哪些领域取得了突破性进展？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-016",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：国际原子能机构的专家在乌克兰扎波罗热核电站外围发现了什么类型的地雷，并且这些地雷是朝向哪个方向？",
+      "reference_answer": "国际原子能机构的专家在乌克兰扎波罗热核电站外围发现了定向杀伤地雷，这些地雷朝向远离厂址的方向。",
+      "gold": [
+        {
+          "id": "C-S01-016-E1",
+          "source_id": "crud-64fa9b2fb82641eb8ecc0099",
+          "char_start": 0,
+          "char_end": 74,
+          "quote": "2023-07-25 17:56，正文：当地时间7月24日，国际原子能机构总干事格罗西表示，该机构的专家在乌克兰扎波罗热核电站外围发现定向杀伤地雷。"
+        },
+        {
+          "id": "C-S01-016-E2",
+          "source_id": "crud-64fa9b2fb82641eb8ecc0099",
+          "char_start": 187,
+          "char_end": 230,
+          "quote": "专家们报告说，这些地雷位于核电站工作人员无法进入的限制区域内，而且朝向远离厂址的方向。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2fb82641eb8ecc0099",
+      "provenance": {
+        "upstream_id": "64fa9b2fb82641eb8ecc0099",
+        "original_query": "国际原子能机构的专家在乌克兰扎波罗热核电站外围发现了什么类型的地雷，并且这些地雷是朝向哪个方向？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-017",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在共青团广东省第十五届委员会第二次全体（扩大）会议上，团广东省委书记冉波提出了哪个工作总目标，并列举了哪些主要工作内容？",
+      "reference_answer": "团广东省委书记冉波提出的工作总目标是“走在前列·青春建功”，主要工作内容包括增强六大工作本领、执行广东省委“1310”具体部署、做好“八大领域”工作、实施青少年培根铸魂工程、助力粤港澳大湾区建设、助力“百千万工程”、助力绿美广东生态建设、完善12355工作体系、激活基层团组织功能、深化共青团改革、推动党团队一体化育人链条全贯通。",
+      "gold": [
+        {
+          "id": "C-S01-017-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf79c",
+          "char_start": 273,
+          "char_end": 505,
+          "quote": "要把广东省委“1310”具体部署作为工作主线，做好“八大领域”工作，实施青少年培根铸魂工程，强化政治学校功能；实施“青年融湾发展工程”，助力粤港澳大湾区建设；实施“三乡行动”，助力“百千万工程”；实施“绿美广东 青年先行”青少年植树爱绿志愿行动，助力绿美广东生态建设；着力化解青年“急难愁盼”，不断完善12355 工作体系；大力开展团的基层建设，激活基层强化功能；全面从严治团深化共青团改革，锻造先进组织；履行全团带队政治责任，着力推动党团队一体化育人链条全贯通。"
+        },
+        {
+          "id": "C-S01-017-E2",
+          "source_id": "crud-64fa9b2db82641eb8ecbf79c",
+          "char_start": 91,
+          "char_end": 159,
+          "quote": "会议指出，广东共青团要以“走在前列·青春建功”为工作总目标，带领全省广大团员青年在广东锚定、实现“走在前列”总目标中挺膺担当、接续奋斗。"
+        },
+        {
+          "id": "C-S01-017-E3",
+          "source_id": "crud-64fa9b2db82641eb8ecbf79c",
+          "char_start": 164,
+          "char_end": 273,
+          "quote": "团广东省委供图会议强调，新时代新征程对共青团工作提出更高要求，各级团干部要增强政治工作本领、提升改革攻坚本领、提高调查研究本领、提高群众工作本领、加强抓落实本领、提升防范化解青年领域风险本领，全面锻造“六大工作本领”。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf79c",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf79c",
+        "original_query": "在共青团广东省第十五届委员会第二次全体（扩大）会议上，团广东省委书记冉波提出了哪个工作总目标，并列举了哪些主要工作内容？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-018",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在2023年7月30日发生的印第安纳州曼西城市大型街区派对枪击事件中，有多少人死亡和受伤？",
+      "reference_answer": "在印第安纳州曼西城市的大型街区派对枪击事件中，造成1人死亡、数十人受伤。",
+      "gold": [
+        {
+          "id": "C-S01-018-E1",
+          "source_id": "crud-64fa9b2fb82641eb8ecc022c",
+          "char_start": 229,
+          "char_end": 266,
+          "quote": "7月30日，当地一个大型街区派对上发生枪击事件，造成1人死亡、数十人受伤。"
+        },
+        {
+          "id": "C-S01-018-E2",
+          "source_id": "crud-64fa9b2fb82641eb8ecc022c",
+          "char_start": 199,
+          "char_end": 229,
+          "quote": "报道称，最严重的暴力事件之一发生在印第安纳州中东部城市曼西。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2fb82641eb8ecc022c",
+      "provenance": {
+        "upstream_id": "64fa9b2fb82641eb8ecc022c",
+        "original_query": "在2023年7月30日发生的印第安纳州曼西城市大型街区派对枪击事件中，有多少人死亡和受伤？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-019",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在巴巴多斯首都布里奇敦举行的会议中，哪些组织共同呼吁前殖民国家为历史罪行作出赔偿？",
+      "reference_answer": "巴巴多斯政府、非洲联盟（非盟）经济、社会和文化理事会以及加勒比地区自治性区域大学西印度群岛大学共同呼吁前殖民国家为历史罪行作出赔偿。",
+      "gold": [
+        {
+          "id": "C-S01-019-E1",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf272",
+          "char_start": 129,
+          "char_end": 197,
+          "quote": "巴巴多斯政府，非洲联盟（非盟）经济、社会和文化理事会，加勒比地区自治性区域大学西印度群岛大学等共同呼吁前殖民国家“为历史罪行作出赔偿”。"
+        },
+        {
+          "id": "C-S01-019-E2",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf272",
+          "char_start": 0,
+          "char_end": 109,
+          "quote": "07/29  07:45，正文：新华社墨西哥城7月28日电（记者宣力祺）布里奇敦消息：来自非洲和加勒比海地区的多国代表日前在巴巴多斯首都布里奇敦举行会议，呼吁前殖民国家为贩卖奴隶以及奴隶制对当今社会造成的影响进行赔偿。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2cb82641eb8ecbf272",
+      "provenance": {
+        "upstream_id": "64fa9b2cb82641eb8ecbf272",
+        "original_query": "在巴巴多斯首都布里奇敦举行的会议中，哪些组织共同呼吁前殖民国家为历史罪行作出赔偿？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-020",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：全加促进中国和平统一委员会(卡尔加里区)在其声明中谴责了民进党2024年台湾地区领导人选举参选人赖清德，请问具体谴责的是哪一论调，并指出这种论调的本质是什么？",
+      "reference_answer": "全加促进中国和平统一委员会(卡尔加里区)谴责了赖清德提出的所谓“四大支柱”论调，并指出这种论调的本质是换汤不换药的坚持“台独”理念，打着“和平”旗号的反和平“纲领”。",
+      "gold": [
+        {
+          "id": "C-S01-020-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe3a2",
+          "char_start": 43,
+          "char_end": 184,
+          "quote": "中国侨网多伦多7月20日电 针对民进党2024年台湾地区领导人选举参选人赖清德日前投书美国《华尔街日报》并提出所谓“四大支柱”论调，全加促进中国和平统一委员会(卡尔加里区)近日发出声明予以谴责，并指出，其言论实为换汤不换药的坚持“台独”理念，本质是打着“和平”旗号的反和平“纲领”。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe3a2",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe3a2",
+        "original_query": "全加促进中国和平统一委员会(卡尔加里区)在其声明中谴责了民进党2024年台湾地区领导人选举参选人赖清德，请问具体谴责的是哪一论调，并指出这种论调的本质是什么？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-021",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：\"2023沪港明日领袖实习计划\"由哪两个组织合办？哪家企业提供主要实习机会？",
+      "reference_answer": "\"2023沪港明日领袖实习计划\"由上海市海外联谊会和沪港青年会合办，主要实习机会由东亚银行(中国)有限公司提供。",
+      "gold": [
+        {
+          "id": "C-S01-021-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0eab",
+          "char_start": 0,
+          "char_end": 62,
+          "quote": "08-02 11:53，正文：近日,由上海市海外联谊会牵头,沪港青年会合办的“2023沪港明日领袖实习计划”在上海成功举行。"
+        },
+        {
+          "id": "C-S01-021-E2",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0eab",
+          "char_start": 62,
+          "char_end": 139,
+          "quote": "东亚银行(中国)有限公司(“东亚中国”)作为本次活动的主要实习企业之一,为来自香港大学、香港科技大学、香港都会大学等在内的青年学子提供为期八周的实习之旅。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0eab",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0eab",
+        "original_query": "\"2023沪港明日领袖实习计划\"由哪两个组织合办？哪家企业提供主要实习机会？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-022",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：广东职业技术学院的“柚”提兴农团队采用了哪种方法从废果弃果中成功提取高价值精油？",
+      "reference_answer": "“柚”提兴农团队采用了“三步提取法”，包括便捷无损压榨提取、高效低耗超声提取、安全无毒水蒸气提取，从废果弃果中成功提取高价值精油。",
+      "gold": [
+        {
+          "id": "C-S01-022-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf7b7",
+          "char_start": 131,
+          "char_end": 266,
+          "quote": "针对这个问题，广东职业技术学院“柚”提兴农团队前往梅州考察调研，了解农户实际需求和生产痛点，并根据实际情况，运用“三步提取法”——便捷无损压榨提取、高效低耗超声提取、安全无毒水蒸气提取，成功从废果弃果中提取出高价值精油，拓宽了农民增收致富渠道，促进了梅州柚产业转型升级。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf7b7",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf7b7",
+        "original_query": "广东职业技术学院的“柚”提兴农团队采用了哪种方法从废果弃果中成功提取高价值精油？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-023",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：华侨大学与社会科学文献出版社发布的《华侨华人蓝皮书：华侨华人研究报告(2022)》中提到华人移民网络在降低中国与各国间进行投资的成本与风险方面，主要通过哪三种途径发挥作用？",
+      "reference_answer": "华人移民网络主要通过改善双边制度差异、消除双边信息不对称、弥合双边文化距离这三种途径降低了中国与各国间进行投资的成本与风险。",
+      "gold": [
+        {
+          "id": "C-S01-023-E1",
+          "source_id": "crud-64fa9b2bb82641eb8ecbed0d",
+          "char_start": 274,
+          "char_end": 366,
+          "quote": "总体来看，蓝皮书认为，华人移民网络主要是通过改善双边制度差异、消除双边信息不对称、弥合双边文化距离这三种途径降低了中国与各国间进行投资的成本与风险，进而发挥了对双边经贸的“桥梁”作用。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2bb82641eb8ecbed0d",
+      "provenance": {
+        "upstream_id": "64fa9b2bb82641eb8ecbed0d",
+        "original_query": "华侨大学与社会科学文献出版社发布的《华侨华人蓝皮书：华侨华人研究报告(2022)》中提到华人移民网络在降低中国与各国间进行投资的成本与风险方面，主要通过哪三种途径发挥作用？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-024",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：沙特阿拉伯航空公司在2023年8月3日开通了哪条新的直飞航线，并且这条航线预计将为多少人口提供直达沙特的途径？",
+      "reference_answer": "沙特阿拉伯航空公司开通了吉达至北京的直飞航线，预计将为中国北部约1.65亿人口提供直达沙特的途径。",
+      "gold": [
+        {
+          "id": "C-S01-024-E1",
+          "source_id": "crud-64fa9b32b82641eb8ecc0909",
+          "char_start": 173,
+          "char_end": 226,
+          "quote": "新航线于当地时间8月3日正式开通，首航航班由吉达直飞北京，将为中国北部约1.65亿人口提供直达沙特的途径。"
+        },
+        {
+          "id": "C-S01-024-E2",
+          "source_id": "crud-64fa9b32b82641eb8ecc0909",
+          "char_start": 0,
+          "char_end": 80,
+          "quote": "2023-08-04 12:26，正文：当地时间8月3日，沙特阿拉伯国营载旗航空公司——沙特阿拉伯航空公司联合沙特航空连通计划（ACP）新开吉达至北京直飞航班。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0909",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0909",
+        "original_query": "沙特阿拉伯航空公司在2023年8月3日开通了哪条新的直飞航线，并且这条航线预计将为多少人口提供直达沙特的途径？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-025",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：中国驻澳大利亚使馆为了提醒留学生防范电信网络诈骗，推广了哪个口诀，并且在哪个活动中进行了专题宣讲？",
+      "reference_answer": "中国驻澳大利亚使馆推广了“不轻信、不转账、不透露”的“三不”口诀，并在面向新生的“迎新日”活动中进行了“提高防范意识，警惕电信诈骗”专题宣讲。",
+      "gold": [
+        {
+          "id": "C-S01-025-E1",
+          "source_id": "crud-64fa9b31b82641eb8ecc04ca",
+          "char_start": 257,
+          "char_end": 346,
+          "quote": "同时，使馆在面向新生的“迎新日”活动中，开展“提高防范意识，警惕电信诈骗”专题宣讲，介绍在澳高发的几种电信诈骗案例，分析案情，讲解防范要点与应对措施，提醒留学生切实提高防范意识。"
+        },
+        {
+          "id": "C-S01-025-E2",
+          "source_id": "crud-64fa9b31b82641eb8ecc04ca",
+          "char_start": 191,
+          "char_end": 257,
+          "quote": "中国驻澳大利亚使馆制作了“你我同心，全民反诈”的小贴士，广泛向在澳留学生发放，希望大家牢记“不轻信、不转帐、不透露”的“三不”口诀。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b31b82641eb8ecc04ca",
+      "provenance": {
+        "upstream_id": "64fa9b31b82641eb8ecc04ca",
+        "original_query": "中国驻澳大利亚使馆为了提醒留学生防范电信网络诈骗，推广了哪个口诀，并且在哪个活动中进行了专题宣讲？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-026",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在2023年8月2日，萨尔瓦多政府为了围捕帮派成员，派遣了多少名士兵和警察包围卡瓦尼亚斯省农业区？",
+      "reference_answer": "萨尔瓦多政府派遣了大约8000名士兵和警察包围卡瓦尼亚斯省农业区以围捕帮派成员。",
+      "gold": [
+        {
+          "id": "C-S01-026-E1",
+          "source_id": "crud-64fa9b32b82641eb8ecc08f2",
+          "char_start": 0,
+          "char_end": 80,
+          "quote": "2023-08-04 09:21，正文：当地时间8月2日，萨尔瓦多政府派出约8000名士兵与警察，包围了卡瓦尼亚斯省农业区，以围捕帮派成员，当地约有15万人口。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc08f2",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc08f2",
+        "original_query": "在2023年8月2日，萨尔瓦多政府为了围捕帮派成员，派遣了多少名士兵和警察包围卡瓦尼亚斯省农业区？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-027",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在2023年7月20日，两台大功率和谐内3型内燃机车首次在中老铁路哪个地点停靠，并将执行哪些任务？",
+      "reference_answer": "两台大功率和谐内3型内燃机车首次在中老铁路的老挝段磨丁口岸站停靠，并将赴孟赛、蓬洪、万象南等站执行列车解编及小运转拉运任务。",
+      "gold": [
+        {
+          "id": "C-S01-027-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf52a",
+          "char_start": 109,
+          "char_end": 199,
+          "quote": "届时，这两台大功率内燃机车即将赴孟赛、蓬洪、万象南等站执行列车解编及小运转拉运任务，将有效缓解中老铁路老挝段大吨位运输“瓶颈”制约，为即将到来的老挝、泰国农产品运输注入了强劲动力。"
+        },
+        {
+          "id": "C-S01-027-E2",
+          "source_id": "crud-64fa9b2db82641eb8ecbf52a",
+          "char_start": 1,
+          "char_end": 109,
+          "quote": "[ 2023-07-21 13：57 ] ，正文：人民网万象7月21日电 （记者孙广勇）7月20日18时许，随着一声清脆的鸣笛，两台大功率和谐内3型内燃机车首次经中老铁路友谊隧道驶出后，缓缓地停靠在老挝段磨丁口岸站。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf52a",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf52a",
+        "original_query": "在2023年7月20日，两台大功率和谐内3型内燃机车首次在中老铁路哪个地点停靠，并将执行哪些任务？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-028",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在2023-2024学年，有多少名越南赴华留学生获得了中国政府奖学金，并且这些奖学金的颁发仪式是在哪个城市举行的？",
+      "reference_answer": "41名越南赴华留学生获得了2023-2024学年的中国政府奖学金，颁发仪式在河内举行。",
+      "gold": [
+        {
+          "id": "C-S01-028-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0c3a",
+          "char_start": 1,
+          "char_end": 109,
+          "quote": "[ 2023-08-03 13：24 ] ，正文：新华社河内8月3日电（记者胡佳丽）中国驻越南大使馆2日在河内举行2023-2024学年中国政府奖学金录取通知书颁发仪式，41名越南赴华留学生获得本学年中国政府奖学金。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0c3a",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0c3a",
+        "original_query": "在2023-2024学年，有多少名越南赴华留学生获得了中国政府奖学金，并且这些奖学金的颁发仪式是在哪个城市举行的？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-029",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：普源精电获得第二十四届中国专利金奖是基于哪个机构的决定，以及该奖项是由哪两个组织共同评选的？",
+      "reference_answer": "普源精电获得第二十四届中国专利金奖的决定是由国家知识产权局发布的，该奖项是由国家知识产权局与世界知识产权组织共同评选的。",
+      "gold": [
+        {
+          "id": "C-S01-029-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0df6",
+          "char_start": 0,
+          "char_end": 98,
+          "quote": "07-27 09:16，正文：近日，普源精电发布公告，根据国家知识产权局发布的《国家知识产权局关于第二十四届中国专利奖授奖的决定》（国知发运字〔2023〕30号），公司获得第二十四届中国专利金奖。"
+        },
+        {
+          "id": "C-S01-029-E2",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0df6",
+          "char_start": 98,
+          "char_end": 211,
+          "quote": "据悉，中国专利奖由国家知识产权局与世界知识产权组织共同评选，旨在引导和推进知识产权工作对创新型国家建设，以及促进经济发展方式转变发挥重要作用；鼓励和表彰专利权人和发明人（设计人）对技术（设计）创新及经济社会发展做出的突出贡献。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0df6",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0df6",
+        "original_query": "普源精电获得第二十四届中国专利金奖是基于哪个机构的决定，以及该奖项是由哪两个组织共同评选的？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-030",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：江苏凤凰置业投资股份有限公司在2023年第二季度的商品房合同销售面积和销售金额分别增长了多少百分比？",
+      "reference_answer": "江苏凤凰置业投资股份有限公司在2023年第二季度的商品房合同销售面积增长了102.14%，销售金额增长了116.87%。",
+      "gold": [
+        {
+          "id": "C-S01-030-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0e0c",
+          "char_start": 417,
+          "char_end": 510,
+          "quote": "三、房地产项目销售情况2023年4-6月：公司商品房合同销售面积8771.65平方米，较上年同期增加102.14%；商品房合同销售金额12386.78万元，较上年同期增加116.87%。"
+        },
+        {
+          "id": "C-S01-030-E2",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0e0c",
+          "char_start": 160,
+          "char_end": 252,
+          "quote": "根据上海证券交易所《上市公司行业信息披露指引第二号——房地产》等要求，现将江苏凤凰置业投资股份有限公司（以下简称“公司”或“本公司”）2023年第二季度房地产业务主要经营数据公告如下。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0e0c",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0e0c",
+        "original_query": "江苏凤凰置业投资股份有限公司在2023年第二季度的商品房合同销售面积和销售金额分别增长了多少百分比？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-031",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：美国国会参议院司法委员会在2023年7月20日表决通过的议案，旨在对哪个机构的成员设置职业道德准则？",
+      "reference_answer": "该议案旨在对联邦最高法院的大法官设置职业道德准则。",
+      "gold": [
+        {
+          "id": "C-S01-031-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe44f",
+          "char_start": 43,
+          "char_end": 112,
+          "quote": "中新社华盛顿7月20日电 (记者 沙晗汀)美国国会参议院司法委员会当地时间20日表决通过一项议案，拟对联邦最高法院大法官设置职业道德准则。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe44f",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe44f",
+        "original_query": "美国国会参议院司法委员会在2023年7月20日表决通过的议案，旨在对哪个机构的成员设置职业道德准则？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-032",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：2023年春运期间，湖北省共发送旅客多少万人次，与2019年相比恢复到了多少百分比？",
+      "reference_answer": "2023年春运期间，湖北省共发送旅客3465.028万人次，同比增长28.08%，恢复到2019年的53.4%。",
+      "gold": [
+        {
+          "id": "C-S01-032-E1",
+          "source_id": "crud-64fa9b2cb82641eb8ecbef1d",
+          "char_start": 584,
+          "char_end": 648,
+          "quote": "据统计，今年春运期间，湖北省铁、水、公、空共发送旅客3465.028万人次，同比增长28.08%，恢复到2019年的53.4%。"
+        },
+        {
+          "id": "C-S01-032-E2",
+          "source_id": "crud-64fa9b2cb82641eb8ecbef1d",
+          "char_start": 0,
+          "char_end": 133,
+          "quote": "2023-08-02 21:03:47，正文：极目新闻记者 康旭阳通讯员 潘庆芳 陈杭7月28日，交通运输部、中华全国总工会、国家铁路局、中国民用航空局、国家邮政局联合发布《关于表扬2023年综合运输春运成绩突出集体和个人的通报》，湖北省5个集体和6名个人榜上有名。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2cb82641eb8ecbef1d",
+      "provenance": {
+        "upstream_id": "64fa9b2cb82641eb8ecbef1d",
+        "original_query": "2023年春运期间，湖北省共发送旅客多少万人次，与2019年相比恢复到了多少百分比？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-033",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：普洛斯产融科技在2023年8月2日在上海证券交易所成功发行的储架式车险分期资产支持专项计划（ABS）的首期发行规模是多少，并且优先A级资产获得了什么评级？",
+      "reference_answer": "普洛斯产融科技在2023年8月2日成功发行的储架式车险分期资产支持专项计划（ABS）的首期发行规模是2.36亿元，其中优先A级资产获得了AAA评级。",
+      "gold": [
+        {
+          "id": "C-S01-033-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0ec0",
+          "char_start": 0,
+          "char_end": 128,
+          "quote": "08-02 14:44，正文：8月2日，普洛斯产融科技在上海证券交易所成功发行第二单储架式车险分期资产支持专项计划（ABS），储架规模为30亿元，首期发行规模2.36亿元，其中优先A级2.14亿元，获得AAA评级，发行利率3.8%，创下同类资产的历史新低。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0ec0",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0ec0",
+        "original_query": "普洛斯产融科技在2023年8月2日在上海证券交易所成功发行的储架式车险分期资产支持专项计划（ABS）的首期发行规模是多少，并且优先A级资产获得了什么评级？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-034",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：国家主席习近平在2023年7月24日给香港培侨中学高一年级全体学生回信中提到了哪些活动，使学生们更加深刻体会到身为中国人的自豪和身为香港年轻一代的使命与担当？",
+      "reference_answer": "习近平提到学生们通过参与在韩志愿军烈士遗骸归国安葬仪式、与“天宫”航天员互动等活动，使他们更加深刻体会到身为中国人的自豪和身为香港年轻一代的使命与担当。",
+      "gold": [
+        {
+          "id": "C-S01-034-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf6d7",
+          "char_start": 56,
+          "char_end": 139,
+          "quote": "习近平在回信中说，得知你们通过参与在韩志愿军烈士遗骸归国安葬仪式、与“天宫”航天员互动等活动，更加深刻体会到身为中国人的自豪、身为香港年轻一代的使命与担当，我很欣慰。"
+        },
+        {
+          "id": "C-S01-034-E2",
+          "source_id": "crud-64fa9b2db82641eb8ecbf6d7",
+          "char_start": 0,
+          "char_end": 56,
+          "quote": "，正文：新华社北京7月25日电 国家主席习近平7月24日给香港培侨中学高一年级全体学生回信，对他们予以亲切勉励。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf6d7",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf6d7",
+        "original_query": "国家主席习近平在2023年7月24日给香港培侨中学高一年级全体学生回信中提到了哪些活动，使学生们更加深刻体会到身为中国人的自豪和身为香港年轻一代的使命与担当？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-035",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：由于气候变化导致的干旱和高温，伊拉克大约有多少水产养殖场被迫关闭？",
+      "reference_answer": "大约有2500处水产养殖场被迫关闭。",
+      "gold": [
+        {
+          "id": "C-S01-035-E1",
+          "source_id": "crud-64fa9b32b82641eb8ecc09e6",
+          "char_start": 285,
+          "char_end": 329,
+          "quote": "伊拉克水利部发言人哈立德·沙迈勒表示，目前，伊拉克已有大约2500处水产养殖场被迫关闭。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc09e6",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc09e6",
+        "original_query": "由于气候变化导致的干旱和高温，伊拉克大约有多少水产养殖场被迫关闭？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-036",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：匈牙利国会未能在7月31日的特别会议上批准瑞典加入北约的提案，这是由于哪个党派的成员缺席？",
+      "reference_answer": "由于执政党成员缺席，匈牙利国会未能在7月31日的特别会议上批准瑞典加入北约的提案。",
+      "gold": [
+        {
+          "id": "C-S01-036-E1",
+          "source_id": "crud-64fa9b2fb82641eb8ecc0228",
+          "char_start": 0,
+          "char_end": 102,
+          "quote": "2023-08-01 08:46，正文：中新网8月1日电 综合外媒报道，由于匈牙利执政党的缺席，匈牙利国会在7月31日举行的特别会议上未能就批准瑞典加入北约的提案进行投票，瑞典加入北约的申请由此再遭推迟。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2fb82641eb8ecc0228",
+      "provenance": {
+        "upstream_id": "64fa9b2fb82641eb8ecc0228",
+        "original_query": "匈牙利国会未能在7月31日的特别会议上批准瑞典加入北约的提案，这是由于哪个党派的成员缺席？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-037",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：根据中南大学湘雅三医院眼科副主任医师曹燕娜的说法，儿童青少年患上干眼症的原因有哪些？",
+      "reference_answer": "儿童青少年患上干眼症的原因包括长时间用眼、使用电子产品，屈光不正，戴接触镜，结膜过敏等。",
+      "gold": [
+        {
+          "id": "C-S01-037-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe1e6",
+          "char_start": 571,
+          "char_end": 617,
+          "quote": "“儿童青少年患上干眼症多是由于长时间用眼、使用电子产品，屈光不正，戴接触镜，结膜过敏等原因。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe1e6",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe1e6",
+        "original_query": "根据中南大学湘雅三医院眼科副主任医师曹燕娜的说法，儿童青少年患上干眼症的原因有哪些？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-038",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：湘江欢乐城在庆祝开业三周年庆典时邀请了哪些明星和乐队？",
+      "reference_answer": "湘江欢乐城在开业三周年庆典上邀请了中国说唱巅峰对决2023嘉宾于意YEE、西奥SIO以及校园网红乐队和谐里乐队。",
+      "gold": [
+        {
+          "id": "C-S01-038-E1",
+          "source_id": "crud-qa-64fa9b34b82641eb8ecc164c",
+          "char_start": 46,
+          "char_end": 190,
+          "quote": "红网时刻新闻7月24日讯（通讯员 桂思雨）阳光之下酷爽冲浪，滑雪道上驭雪飞驰，音浪声中纵情起舞……7月22日，“‘3’耀欢乐城，当红大王山”湘江欢乐城开业三周年庆典举办，中国说唱巅峰对决2023嘉宾于意YEE、西奥SIO、校园网红乐队和谐里乐队等明星嘉宾空降欢乐水寨，用音乐点燃夏夜热浪。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b34b82641eb8ecc164c",
+      "provenance": {
+        "upstream_id": "64fa9b34b82641eb8ecc164c",
+        "original_query": "湘江欢乐城在庆祝开业三周年庆典时邀请了哪些明星和乐队？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-039",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：截至2023年6月末，上海市本外币贷款余额同比增长了多少百分比？上海市企业贷款加权平均利率相比上年同期下降了多少个基点？",
+      "reference_answer": "截至2023年6月末，上海市本外币贷款余额同比增长了7.7%，企业贷款加权平均利率相比上年同期下降了15个基点。",
+      "gold": [
+        {
+          "id": "C-S01-039-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0e2b",
+          "char_start": 276,
+          "char_end": 329,
+          "quote": "6月上海市企业贷款加权平均利率为3.60%，比上年同期下降15个基点，处于历史低位，也是全国最低地区之一。"
+        },
+        {
+          "id": "C-S01-039-E2",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0e2b",
+          "char_start": 72,
+          "char_end": 126,
+          "quote": "数据显示，截至6月末，上海市本外币贷款余额10.91万亿元，同比增长7.7%，增速比上年末高0.3个百分点。"
+        },
+        {
+          "id": "C-S01-039-E3",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0e2b",
+          "char_start": 0,
+          "char_end": 72,
+          "quote": "07-28 10:31，正文：7月27日下午，中国人民银行上海总部召开2023年第三季度例行新闻发布会，介绍2023年上半年上海市金融运行情况。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0e2b",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0e2b",
+        "original_query": "截至2023年6月末，上海市本外币贷款余额同比增长了多少百分比？上海市企业贷款加权平均利率相比上年同期下降了多少个基点？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-040",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：UDE2023第四届国际半导体显示博览会在深圳召开时，有多少家展商参与，并且这些展商主要展示了哪些新型显示技术？",
+      "reference_answer": "近千家展商参与了UDE2023第四届国际半导体显示博览会，并主要展示了Mini/Micro LED、OLED、激光显示、微显示等新型显示技术。",
+      "gold": [
+        {
+          "id": "C-S01-040-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0d85",
+          "char_start": 0,
+          "char_end": 104,
+          "quote": "07-22 07:10，正文：日前，UDE2023第四届国际半导体显示博览会在深圳召开，聚焦Mini/Micro LED、OLED、激光显示、微显示等新型显示技术，近千家展商带来了行业内最新的产品和技术展示。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0d85",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0d85",
+        "original_query": "UDE2023第四届国际半导体显示博览会在深圳召开时，有多少家展商参与，并且这些展商主要展示了哪些新型显示技术？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-041",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：2023年在哈萨克斯坦首都阿斯塔纳举办的中资企业与哈萨克斯坦高校及留华毕业生招聘交流会是由哪两个组织主办的？",
+      "reference_answer": "该招聘交流会是由哈萨克斯坦中国总商会与哈萨克斯坦留华毕业生协会“汉语桥”俱乐部阿斯塔纳站共同主办的。",
+      "gold": [
+        {
+          "id": "C-S01-041-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf64b",
+          "char_start": 100,
+          "char_end": 252,
+          "quote": "此次活动由哈萨克斯坦中国总商会与哈萨克斯坦留华毕业生协会“汉语桥”俱乐部阿斯塔纳站主办，共有21家中国企业以线上线下相结合的方式参加招聘活动，中国驻哈萨克斯坦大使张霄、哈博拉沙克国际项目中心主席萨肯诺夫、中国贸促会驻哈萨克斯坦首席代表陈鸿强、哈萨克斯坦留华毕业生协会主席扎美丽亚·叶刘西昨娃等出席并致辞。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf64b",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf64b",
+        "original_query": "2023年在哈萨克斯坦首都阿斯塔纳举办的中资企业与哈萨克斯坦高校及留华毕业生招聘交流会是由哪两个组织主办的？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-042",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：津药药业的子公司金耀药业收到国家药品监督管理局签发的哪种药品的《药品补充申请批准通知书》，并且该药品通过了哪项评价？",
+      "reference_answer": "金耀药业收到的是关于氟尿嘧啶注射液的《药品补充申请批准通知书》，该药品通过了仿制药质量和疗效一致性评价。",
+      "gold": [
+        {
+          "id": "C-S01-042-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0e85",
+          "char_start": 0,
+          "char_end": 109,
+          "quote": "08-01 09:14，正文：7月31日晚间，津药药业（600488）发布公告称，子公司金耀药业收到国家药品监督管理局核准签发的关于氟尿嘧啶注射液的《药品补充申请批准通知书》，批准该药品通过仿制药质量和疗效一致性评价。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0e85",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0e85",
+        "original_query": "津药药业的子公司金耀药业收到国家药品监督管理局签发的哪种药品的《药品补充申请批准通知书》，并且该药品通过了哪项评价？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-043",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在第一届全国学生（青年）运动会手球女子组比赛中，广西北海队以多少比分战胜了中国香港队？",
+      "reference_answer": "广西北海队以52∶3的大比分战胜了中国香港队。",
+      "gold": [
+        {
+          "id": "C-S01-043-E1",
+          "source_id": "crud-qa-64fa9b34b82641eb8ecc1624",
+          "char_start": 162,
+          "char_end": 184,
+          "quote": "广西北海队则以52∶3大比分战胜中国香港队。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b34b82641eb8ecc1624",
+      "provenance": {
+        "upstream_id": "64fa9b34b82641eb8ecc1624",
+        "original_query": "在第一届全国学生（青年）运动会手球女子组比赛中，广西北海队以多少比分战胜了中国香港队？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-044",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在2023年7月28日，乌克兰使用的哪种改装导弹袭击了俄罗斯罗斯托夫州塔甘罗格市，并导致多少人受伤？",
+      "reference_answer": "乌克兰使用改装为打击型的S-200防空导弹袭击了俄罗斯罗斯托夫州塔甘罗格市，导致15人轻度受伤。",
+      "gold": [
+        {
+          "id": "C-S01-044-E1",
+          "source_id": "crud-64fa9b2fb82641eb8ecc018f",
+          "char_start": 0,
+          "char_end": 127,
+          "quote": "2023-07-29 04:05，正文：中新社莫斯科7月29日电  俄罗斯国防部28日发表声明称，乌克兰方面使用改装为打击型的S-200防空导弹对俄罗斯罗斯托夫州塔甘罗格市的民用基础设施实施打击，但导弹被俄军防空系统拦截，其残骸坠入市区，导致十余人受伤。"
+        },
+        {
+          "id": "C-S01-044-E2",
+          "source_id": "crud-64fa9b2fb82641eb8ecc018f",
+          "char_start": 247,
+          "char_end": 292,
+          "quote": "罗斯托夫州州长戈卢别夫在社交平台发文称，该事件造成15人轻度受伤，医务人员正开展救治工作。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2fb82641eb8ecc018f",
+      "provenance": {
+        "upstream_id": "64fa9b2fb82641eb8ecc018f",
+        "original_query": "在2023年7月28日，乌克兰使用的哪种改装导弹袭击了俄罗斯罗斯托夫州塔甘罗格市，并导致多少人受伤？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-045",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：湖北省防汛抗旱指挥部要求各市（州）防指在模拟历史极端强降雨防范应对的复盘推演工作中，主要包括哪些内容？",
+      "reference_answer": "湖北省防汛抗旱指挥部要求各市（州）防指在模拟历史极端强降雨防范应对的复盘推演工作中主要包括防范准备、监测预报、预警叫应、应急响应、响应联动、洪水调度、蓄滞洪区运用、巡查防守、人员转移避险、应急抢险救援、救灾安置、职责责任等内容，并形成复盘推演报告。",
+      "gold": [
+        {
+          "id": "C-S01-045-E1",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf02f",
+          "char_start": 545,
+          "char_end": 653,
+          "quote": "根据安排，各地要结合本地防汛工作重点开展复盘推演，主要包括防范准备、监测预报、预警叫应、应急响应、响应联动、洪水调度、蓄滞洪区运用、巡查防守、人员转移避险、应急抢险救援、救灾安置、职责责任等内容，并形成复盘推演报告。"
+        },
+        {
+          "id": "C-S01-045-E2",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf02f",
+          "char_start": 0,
+          "char_end": 111,
+          "quote": "2023-08-11 19:40:33，正文：极目新闻记者 黄忠8月10日，湖北省防汛抗旱指挥部发布通知，全面开展模拟历史极端强降雨防范应对的复盘推演工作，深入排查防范应对工作中的短板弱项，切实提升防范应对极端强降雨能力。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2cb82641eb8ecbf02f",
+      "provenance": {
+        "upstream_id": "64fa9b2cb82641eb8ecbf02f",
+        "original_query": "湖北省防汛抗旱指挥部要求各市（州）防指在模拟历史极端强降雨防范应对的复盘推演工作中，主要包括哪些内容？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-046",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：截至目前，中国在南亚地区累计投资了多少美元，并且完成了多少亿美元的工程承包营业额？",
+      "reference_answer": "中国在南亚地区累计投资接近150亿美元，并完成了超过2000亿美元的工程承包营业额。",
+      "gold": [
+        {
+          "id": "C-S01-046-E1",
+          "source_id": "crud-64fa9b2bb82641eb8ecbed2e",
+          "char_start": 43,
+          "char_end": 124,
+          "quote": "中新社北京7月25日电 (记者 李晓喻)中国商务部副部长李飞25日在北京称，截至目前中国在南亚地区累计投资接近150亿美元，完成工程承包营业额超过2000亿美元。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2bb82641eb8ecbed2e",
+      "provenance": {
+        "upstream_id": "64fa9b2bb82641eb8ecbed2e",
+        "original_query": "截至目前，中国在南亚地区累计投资了多少美元，并且完成了多少亿美元的工程承包营业额？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-047",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：河北省农林科学院针对受灾农作物提出的减灾防灾措施中，对于玉米应采取哪些技术措施？",
+      "reference_answer": "针对玉米，河北省农林科学院建议应密切关注田间病虫草害发生趋势，并及时采取“一喷多防”技术措施防控病虫草害。",
+      "gold": [
+        {
+          "id": "C-S01-047-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe2f7",
+          "char_start": 228,
+          "char_end": 322,
+          "quote": "不同作物的防灾减灾措施如下——当前玉米正处在大喇叭口期到散粉期的关键生长时期，高温高湿环境极易造成病虫害流行发生，应密切关注田间病虫草害发生趋势，及时采取“一喷多防”技术措施防控病虫草害。"
+        },
+        {
+          "id": "C-S01-047-E2",
+          "source_id": "crud-64fa9b27b82641eb8ecbe2f7",
+          "char_start": 61,
+          "char_end": 131,
+          "quote": "专家这样支招河北日报讯（记者马朝丽）日前，省农林科学院组织专家团队开展灾情调查摸底和减灾防灾技术指导，对主要农作物如何减灾防灾提出具体建议。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe2f7",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe2f7",
+        "original_query": "河北省农林科学院针对受灾农作物提出的减灾防灾措施中，对于玉米应采取哪些技术措施？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-048",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：根据中央气象台发布的台风红色预警，第5号台风“杜苏芮”预计将于何时何地登陆？",
+      "reference_answer": "台风“杜苏芮”预计将于2023年7月28日早晨到上午在福建福清到广东饶平一带沿海登陆，最大可能在福建东山到惠安沿海登陆。",
+      "gold": [
+        {
+          "id": "C-S01-048-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf8db",
+          "char_start": 214,
+          "char_end": 338,
+          "quote": "预计，“杜苏芮”将以每小时10-15公里的速度向西北方向移动，强度将有所增强，然后逐渐向福建福清到广东饶平一带沿海靠近，并将于28日早晨到上午在上述沿海登陆，最大可能在福建东山到惠安沿海登陆（强台风级或超强台风级，45-52米/秒，14-16级）。"
+        },
+        {
+          "id": "C-S01-048-E2",
+          "source_id": "crud-64fa9b2db82641eb8ecbf8db",
+          "char_start": 0,
+          "char_end": 214,
+          "quote": "2023年07月27日 11:18，正文：中央气象台7月27日10时继续发布台风红色预警：今年第5号台风“杜苏芮”（DOKSURI）（强台风级）的中心今天（27日）上午10点钟位于福建厦门南偏东方向大约440公里的南海东北部海面，就是北纬20.8度、东经119.7度，中心附近最大风力有15级（50米/秒），中心最低气压940百帕，七级风圈半径300-450公里，十级风圈半径120-160公里，十二级风圈半径90-100公里。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf8db",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf8db",
+        "original_query": "根据中央气象台发布的台风红色预警，第5号台风“杜苏芮”预计将于何时何地登陆？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-049",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：新兴市场国家和发展中国家（EMDC）发展合作北京论坛的主题是什么，以及这个论坛由哪些机构共同主办？",
+      "reference_answer": "新兴市场国家和发展中国家（EMDC）发展合作北京论坛的主题是“深化团结协作 汇聚增长合力”，这个论坛由新华通讯社、北京市人民政府和中国人民对外友好协会共同主办。",
+      "gold": [
+        {
+          "id": "C-S01-049-E1",
+          "source_id": "crud-64fa9b28b82641eb8ecbe751",
+          "char_start": 669,
+          "char_end": 761,
+          "quote": "EMDC发展合作北京论坛由新华通讯社、北京市人民政府和中国人民对外友好协会共同主办，包括开幕式暨主论坛以及3场分论坛，旨在搭建新兴市场国家和发展中国家间宽领域深层次务实合作的高端平台。"
+        },
+        {
+          "id": "C-S01-049-E2",
+          "source_id": "crud-64fa9b28b82641eb8ecbe751",
+          "char_start": 68,
+          "char_end": 127,
+          "quote": "围绕“深化团结协作 汇聚增长合力”主题，来自政府部门、行业协会、智库、媒体、企业等300余位中外嘉宾展开深入研讨交流。"
+        },
+        {
+          "id": "C-S01-049-E3",
+          "source_id": "crud-64fa9b28b82641eb8ecbe751",
+          "char_start": 0,
+          "char_end": 68,
+          "quote": "2023-07-26，正文：新华社北京7月25日电（记者潘洁、吉宁）新兴市场国家和发展中国家（EMDC）发展合作北京论坛25日在京举行。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b28b82641eb8ecbe751",
+      "provenance": {
+        "upstream_id": "64fa9b28b82641eb8ecbe751",
+        "original_query": "新兴市场国家和发展中国家（EMDC）发展合作北京论坛的主题是什么，以及这个论坛由哪些机构共同主办？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-050",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：根据国际安全教育专家王学军的建议，留学生在出国前和出国后应该采取哪些措施来提高自身的安全素养？",
+      "reference_answer": "在出国前，留学生应加强安全教育，主动提升安全素养。出国后，在遵守所在国法律法规的前提下，应多关注治安问题和案例，有助于识别不法分子的共性和犯罪心理，不断研判、刻意练习，提升远离风险、智慧避险、紧急脱险的安全能力。",
+      "gold": [
+        {
+          "id": "C-S01-050-E1",
+          "source_id": "crud-64fa9b29b82641eb8ecbea70",
+          "char_start": 597,
+          "char_end": 710,
+          "quote": "“在出国前，建议加强安全教育，主动提升安全素养；出国后，在遵守所在国法律法规的前提下，留学生可以多关注治安问题和案例，有助于识别不法分子的共性和犯罪心理，在生活中不断研判、刻意练习，提升远离风险、智慧避险、紧急脱险的安全能力。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b29b82641eb8ecbea70",
+      "provenance": {
+        "upstream_id": "64fa9b29b82641eb8ecbea70",
+        "original_query": "根据国际安全教育专家王学军的建议，留学生在出国前和出国后应该采取哪些措施来提高自身的安全素养？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-051",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在法国摩泽尔省福尔巴赫，一名德国男子因为何种罪行被捕？",
+      "reference_answer": "德国男子因绑架、严重强奸以及使用酷刑和野蛮行为罪被捕，他将他的妻子囚禁了12年。",
+      "gold": [
+        {
+          "id": "C-S01-051-E1",
+          "source_id": "crud-64fa9b32b82641eb8ecc0a04",
+          "char_start": 287,
+          "char_end": 355,
+          "quote": "法国BFMTV广播公司称，该女子的丈夫，即涉事的德国男子被指控犯有绑架、严重强奸以及使用酷刑和野蛮行为罪，目前被关押于法国东部城市梅斯。"
+        },
+        {
+          "id": "C-S01-051-E2",
+          "source_id": "crud-64fa9b32b82641eb8ecc0a04",
+          "char_start": 0,
+          "char_end": 81,
+          "quote": "2023-08-08 14:51，正文：当地时间8月7日，德国现年55岁的一名男子因将自己的妻子囚禁在法国家中12年而被捕，该女子被警方发现时有明显的被虐待痕迹。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0a04",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0a04",
+        "original_query": "在法国摩泽尔省福尔巴赫，一名德国男子因为何种罪行被捕？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-052",
+      "track": "S01",
+      "query": "根据2023年8月7日的报道，日本政府计划在哪个时间段进行福岛核污染水的排海工作，并且首相岸田文雄计划在何时何地向国际社会做出说明？",
+      "reference_answer": "日本政府计划在2023年8月下旬至9月上半月进行福岛核污染水的排海工作。首相岸田文雄计划在2023年8月18日于美国举行的日美韩首脑会谈上向国际社会做出说明。",
+      "gold": [
+        {
+          "id": "C-S01-052-E1",
+          "source_id": "crud-64fa9b32b82641eb8ecc09ba",
+          "char_start": 69,
+          "char_end": 123,
+          "quote": "报道称，日本政府设想的是，首相岸田文雄先在8月18日于美国举行的日美韩首脑会谈上做出说明，回国后再敲定方针。"
+        },
+        {
+          "id": "C-S01-052-E2",
+          "source_id": "crud-64fa9b32b82641eb8ecc09ba",
+          "char_start": 0,
+          "char_end": 69,
+          "quote": "2023-08-07 14:29，正文：据共同社8月7日消息，日本政府正计划于8月下旬至9月上半月这一时间段内进行福岛核污染水的排海工作。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc09ba",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc09ba",
+        "original_query": "日本政府计划在哪个时间段进行福岛核污染水的排海工作，并且首相岸田文雄计划在何时何地向国际社会做出说明？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-053",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：张国清副总理在2023年8月1日赶赴北京市门头沟区指导防汛抢险救灾工作时，提出了哪些主要要求？",
+      "reference_answer": "张国清副总理提出的主要要求包括全力做好抢险救援应急处置，尽快恢复正常生产生活秩序，确保人民群众生命财产安全，确保社会大局稳定。他还强调了救人放在第一位，加强统筹指挥调度，充分发挥各类救援队伍作用，争分夺秒搜救失联、被困人员，最大限度减少人员伤亡，以及加快输送食品、饮用水、药品等物资到受灾群众转移安置点，保障受灾群众基本生活需要。",
+      "gold": [
+        {
+          "id": "C-S01-053-E1",
+          "source_id": "crud-64fa9b28b82641eb8ecbe859",
+          "char_start": 353,
+          "char_end": 419,
+          "quote": "他强调，当前要把救人放在第一位，进一步加强统筹指挥调度，充分发挥各类救援队伍作用，争分夺秒搜救失联、被困人员，最大限度减少人员伤亡。"
+        },
+        {
+          "id": "C-S01-053-E2",
+          "source_id": "crud-64fa9b28b82641eb8ecbe859",
+          "char_start": 139,
+          "char_end": 230,
+          "quote": "他强调，要坚决贯彻习近平总书记重要指示精神，落实李强总理要求，积极应对极端强降雨影响，全力做好抢险救援应急处置，尽快恢复正常生产生活秩序，确保人民群众生命财产安全，确保社会大局稳定。"
+        },
+        {
+          "id": "C-S01-053-E3",
+          "source_id": "crud-64fa9b28b82641eb8ecbe859",
+          "char_start": 419,
+          "char_end": 479,
+          "quote": "要想尽一切可能办法，用尽一切可能措施，加快把食品、饮用水、药品等物资输送到受灾群众转移安置点，保障受灾群众基本生活需要。"
+        },
+        {
+          "id": "C-S01-053-E4",
+          "source_id": "crud-64fa9b28b82641eb8ecbe859",
+          "char_start": 48,
+          "char_end": 139,
+          "quote": "尽快恢复正常生产生活秩序新华社北京8月1日电 受党中央、国务院委派，中共中央政治局委员、国务院副总理张国清8月1日中午率有关方面负责同志，紧急赶赴北京市门头沟区指导防汛抢险救灾工作。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b28b82641eb8ecbe859",
+      "provenance": {
+        "upstream_id": "64fa9b28b82641eb8ecbe859",
+        "original_query": "张国清副总理在2023年8月1日赶赴北京市门头沟区指导防汛抢险救灾工作时，提出了哪些主要要求？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-054",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：二三线城市举办商业演出活动的直接原因是什么？",
+      "reference_answer": "二三线城市举办商业演出活动的直接原因是一线城市演出市场“井喷式”复苏带来的溢出效应。",
+      "gold": [
+        {
+          "id": "C-S01-054-E1",
+          "source_id": "crud-qa-64fa9b2db82641eb8ecbf9ad",
+          "char_start": 118,
+          "char_end": 161,
+          "quote": "演出活动大量转战二三线城市，直接原因在于一线城市演出市场“井喷式”复苏带来的溢出效应。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf9ad",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf9ad",
+        "original_query": "二三线城市举办商业演出活动的直接原因是什么？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-055",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：本雅明·内塔尼亚胡因为什么原因推迟了原定本周对塞浦路斯和土耳其的访问？",
+      "reference_answer": "本雅明·内塔尼亚胡推迟了原定本周对塞浦路斯和土耳其的访问，因为他在谢巴医疗中心接受了心脏起搏器植入手术。",
+      "gold": [
+        {
+          "id": "C-S01-055-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf5cc",
+          "char_start": 1,
+          "char_end": 108,
+          "quote": "[ 2023-07-25 08：38 ] ，正文：新华社耶路撒冷7月24日电（记者王卓伦） 以色列多家媒体23日透露，总理本雅明·内塔尼亚胡推迟原定本周对塞浦路斯和土耳其的访问，原因是他刚刚接受心脏起搏器植入手术。"
+        },
+        {
+          "id": "C-S01-055-E2",
+          "source_id": "crud-64fa9b2db82641eb8ecbf5cc",
+          "char_start": 108,
+          "char_end": 157,
+          "quote": "根据以色列总理府当天先后发表的几份声明，内塔尼亚胡23日凌晨在谢巴医疗中心接受心脏起搏器植入手术。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf5cc",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf5cc",
+        "original_query": "本雅明·内塔尼亚胡因为什么原因推迟了原定本周对塞浦路斯和土耳其的访问？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-056",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：The Laundress在天津发布首批焕新升级产品的同时，还揭幕了哪一个重要设施？",
+      "reference_answer": "The Laundress在天津发布首批焕新升级产品的同时，揭幕了The Laundress亚洲研发中心。",
+      "gold": [
+        {
+          "id": "C-S01-056-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0eac",
+          "char_start": 0,
+          "char_end": 118,
+          "quote": "08-02 11:52，正文：7月25日,来自纽约的高端衣物洗护品牌The Laundress在天津成功举办“洗涤行业高质量发展论坛”,并正式发布了首批焕新升级产品,同时邀请了行业大咖共同见证The Laundress亚洲研发中心揭幕。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0eac",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0eac",
+        "original_query": "The Laundress在天津发布首批焕新升级产品的同时，还揭幕了哪一个重要设施？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-057",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：西非国家经济共同体（ECOWAS）要求尼日尔新任军事领导人在多长时间内恢复被推翻的民选总统穆罕默德·巴祖姆的职务，否则将采取什么措施？",
+      "reference_answer": "西非国家经济共同体（ECOWAS）要求尼日尔新任军事领导人在一周内恢复被推翻的民选总统穆罕默德·巴祖姆的职务，否则将考虑采取武力手段干预。",
+      "gold": [
+        {
+          "id": "C-S01-057-E1",
+          "source_id": "crud-64fa9b2fb82641eb8ecc01f6",
+          "char_start": 0,
+          "char_end": 140,
+          "quote": "2023-07-31 10:11，正文：随着西非地区国家对尼日尔新任军事领导人实施经济制裁，日前，西非国家经济共同体（ECOWAS，简称西共体）要求尼日尔政变领导人恢复前段时间被推翻下台的尼日尔总统穆罕默德·巴祖姆（Mohamed Bazoum）的职务，否则将考虑以武力手段干预。"
+        },
+        {
+          "id": "C-S01-057-E2",
+          "source_id": "crud-64fa9b2fb82641eb8ecc01f6",
+          "char_start": 140,
+          "char_end": 231,
+          "quote": "据半岛电视台7月30日报道，西非地区一些国家已对尼日尔新任军事领导人实施制裁，并威胁称，如果尼日尔当局不能在一周内恢复被推翻的民选总统穆罕默德·巴祖姆的职务，他们将使用武力手段干预。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2fb82641eb8ecc01f6",
+      "provenance": {
+        "upstream_id": "64fa9b2fb82641eb8ecc01f6",
+        "original_query": "西非国家经济共同体（ECOWAS）要求尼日尔新任军事领导人在多长时间内恢复被推翻的民选总统穆罕默德·巴祖姆的职务，否则将采取什么措施？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-058",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：中国常驻联合国副代表耿爽在安理会审议乌克兰问题时表示支持哪位联合国官员争取早日恢复俄罗斯和乌克兰的哪些产品出口？",
+      "reference_answer": "耿爽表示支持联合国秘书长古特雷斯争取早日恢复俄罗斯和乌克兰的粮食化肥出口。",
+      "gold": [
+        {
+          "id": "C-S01-058-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf653",
+          "char_start": 1,
+          "char_end": 102,
+          "quote": "[ 2023-07-27 08：26 ] ，正文：新华社联合国7月26日电（记者王建刚）中国常驻联合国副代表耿爽26日表示，中方支持联合国秘书长古特雷斯争取早日恢复俄罗斯和乌克兰粮食化肥出口作出的努力。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf653",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf653",
+        "original_query": "中国常驻联合国副代表耿爽在安理会审议乌克兰问题时表示支持哪位联合国官员争取早日恢复俄罗斯和乌克兰的哪些产品出口？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-059",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：首届中国国际供应链促进博览会英国站路演在伦敦举办的日期是什么时候？",
+      "reference_answer": "首届中国国际供应链促进博览会英国站路演在伦敦举办的日期是2023年7月19日。",
+      "gold": [
+        {
+          "id": "C-S01-059-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe3ca",
+          "char_start": 43,
+          "char_end": 103,
+          "quote": "中新社伦敦7月19日电 (记者 欧阳开宇)首届中国国际供应链促进博览会(以下简称“链博会”)英国站路演19日在伦敦举办。"
+        },
+        {
+          "id": "C-S01-059-E2",
+          "source_id": "crud-64fa9b27b82641eb8ecbe3ca",
+          "char_start": 0,
+          "char_end": 19,
+          "quote": "2023-7-20 09:49，正文："
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe3ca",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe3ca",
+        "original_query": "首届中国国际供应链促进博览会英国站路演在伦敦举办的日期是什么时候？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-060",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：埃隆·马斯克在2023年7月23日宣布将推特公司的名称及标识更改为什么，并且他预计将推特变成一个以哪些功能为中心的“超级应用程序”？",
+      "reference_answer": "埃隆·马斯克宣布将推特公司的名称及标识更改为“X”，并且他的目标是将推特变成一个以音频、视频、消息传送、支付以及银行为中心的“超级应用程序”。",
+      "gold": [
+        {
+          "id": "C-S01-060-E1",
+          "source_id": "crud-64fa9b2fb82641eb8ecc0092",
+          "char_start": 319,
+          "char_end": 348,
+          "quote": "马斯克此前表示，他的目标是将推特变成一个“超级应用程序”。"
+        },
+        {
+          "id": "C-S01-060-E2",
+          "source_id": "crud-64fa9b2fb82641eb8ecc0092",
+          "char_start": 348,
+          "char_end": 428,
+          "quote": "推特首席执行官琳达·雅克里诺23日说，“X”是无限交互的未来形态，它将以音频、视频、消息传送、支付以及银行为中心，创造一个有关创意、商品、服务和机会的全球市场。"
+        },
+        {
+          "id": "C-S01-060-E3",
+          "source_id": "crud-64fa9b2fb82641eb8ecc0092",
+          "char_start": 0,
+          "char_end": 81,
+          "quote": "2023-07-25 16:56，正文：中新社旧金山7月24日电 (记者 刘关关)美国企业家埃隆·马斯克当地时间23日宣布，将用“X”取代推特公司原有名称及标识。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2fb82641eb8ecc0092",
+      "provenance": {
+        "upstream_id": "64fa9b2fb82641eb8ecc0092",
+        "original_query": "埃隆·马斯克在2023年7月23日宣布将推特公司的名称及标识更改为什么，并且他预计将推特变成一个以哪些功能为中心的“超级应用程序”？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-061",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在2023年8月8日举行的《亚马逊合作条约》（ACT）会议上，八个国家的代表未能就哪个共同目标达成一致，并提出了什么新的联盟？",
+      "reference_answer": "代表们未能就结束森林砍伐的共同目标达成一致，并提出了创立一个打击森林破坏的联盟，允许各国制定自己的结束森林砍伐目标。",
+      "gold": [
+        {
+          "id": "C-S01-061-E1",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc11d2",
+          "char_start": 412,
+          "char_end": 465,
+          "quote": "但8月8日会议后八国发表的联合声明提出，将创立一个打击森林破坏的联盟，允许各国制定自己的结束森林砍伐目标。"
+        },
+        {
+          "id": "C-S01-061-E2",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc11d2",
+          "char_start": 102,
+          "char_end": 150,
+          "quote": "此次会议上，八国针对区域合作形成了一系列统一的政策措施，但未能就结束森林砍伐的共同目标达成一致。"
+        },
+        {
+          "id": "C-S01-061-E3",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc11d2",
+          "char_start": 0,
+          "char_end": 102,
+          "quote": "2023-08-09 12:31，正文：当地时间8月8日，《亚马逊合作条约》（ACT）会议在巴西北部城市贝伦举行，来自玻利维亚、巴西、哥伦比亚、厄瓜多尔、圭亚那、秘鲁、苏里南和委内瑞拉八国的代表参加会议。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b33b82641eb8ecc11d2",
+      "provenance": {
+        "upstream_id": "64fa9b33b82641eb8ecc11d2",
+        "original_query": "在2023年8月8日举行的《亚马逊合作条约》（ACT）会议上，八个国家的代表未能就哪个共同目标达成一致，并提出了什么新的联盟？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-062",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：菲律宾火山地震研究所在2023年7月21日观测到马荣火山顶部火山口发生了什么现象，持续了多长时间？",
+      "reference_answer": "菲律宾火山地震研究所观测到马荣火山顶部火山口发生了持续28秒的短时熔岩喷射。",
+      "gold": [
+        {
+          "id": "C-S01-062-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe582",
+          "char_start": 43,
+          "char_end": 120,
+          "quote": "中新社马尼拉7月22日 (记者 张兴龙)菲律宾火山地震研究所22日发布消息称，该所于21日19时56分在马荣火山顶部火山口观测到持续28秒的短时熔岩喷射。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe582",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe582",
+        "original_query": "菲律宾火山地震研究所在2023年7月21日观测到马荣火山顶部火山口发生了什么现象，持续了多长时间？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-063",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：北汽蓝谷与华为终端有限公司宣布开展的智选合作，旨在打造哪一类车型，并且这款车型的生产将由哪个工厂负责？",
+      "reference_answer": "北汽蓝谷与华为终端有限公司的智选合作旨在打造高端智能纯电动轿车，这款车型的生产将由北京高端智能生态工厂负责。",
+      "gold": [
+        {
+          "id": "C-S01-063-E1",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc14db",
+          "char_start": 0,
+          "char_end": 99,
+          "quote": "08-15 11:47，正文：8月14日，北汽蓝谷发布公告称，为进一步深化合作，北汽新能源在与华为技术有限公司现有战略合作基础上，将与华为终端有限公司开展智选合作，首款车型定位为高端智能纯电动轿车。"
+        },
+        {
+          "id": "C-S01-063-E2",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc14db",
+          "char_start": 99,
+          "char_end": 187,
+          "quote": "为满足新车型设计及投产需求，公司将现有 BE22 平台全方位升级，打造北汽新能源新一代高端纯电动智能网联汽车平台，升级后的 BE22 平台产品将由北京高端智能生态工厂负责生产。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b33b82641eb8ecc14db",
+      "provenance": {
+        "upstream_id": "64fa9b33b82641eb8ecc14db",
+        "original_query": "北汽蓝谷与华为终端有限公司宣布开展的智选合作，旨在打造哪一类车型，并且这款车型的生产将由哪个工厂负责？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-064",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：\"跟着总书记脚步看吉林\"2023年全国大学生\"三下乡\"主题社会实践活动中，有多少支来自吉林省外的高校团队参与了活动？",
+      "reference_answer": "参与\"跟着总书记脚步看吉林\"2023年全国大学生\"三下乡\"主题社会实践活动的吉林省外高校团队共有107支。",
+      "gold": [
+        {
+          "id": "C-S01-064-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf6b9",
+          "char_start": 518,
+          "char_end": 606,
+          "quote": "据了解，为深入学习宣传党的二十大精神，贯彻落实习近平总书记视察吉林重要讲话重要指示精神，团中央设立了“跟着总书记脚步看吉林”2023年全国大学生“三下乡”主题社会实践活动专项。"
+        },
+        {
+          "id": "C-S01-064-E2",
+          "source_id": "crud-64fa9b2db82641eb8ecbf6b9",
+          "char_start": 606,
+          "char_end": 702,
+          "quote": "教育部全国高校大学生马克思主义理论学习夏令营、107支吉林省外高校团队和2690支吉林省内高校团队，将围绕“红色吉林”“产业吉林”“粮仓吉林”“大美吉林”等调研主题，在吉林省各地开展实践活动。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf6b9",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf6b9",
+        "original_query": "\"跟着总书记脚步看吉林\"2023年全国大学生\"三下乡\"主题社会实践活动中，有多少支来自吉林省外的高校团队参与了活动？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-065",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：美国国防部在向乌克兰提供的价值13亿美元的新一批军事装备中，包括了几套名为“吸血鬼”的反无人机系统？",
+      "reference_answer": "美国国防部提供给乌克兰的新一批军事装备中包括了4套名为“吸血鬼”的反无人机系统。",
+      "gold": [
+        {
+          "id": "C-S01-065-E1",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf1a3",
+          "char_start": 0,
+          "char_end": 75,
+          "quote": "07/21  10:24，正文：美国国防部当地时间19日宣布，向乌克兰提供价值13亿美元的新一批军事装备，其中包括了一种名为“吸血鬼”的反无人机系统。"
+        },
+        {
+          "id": "C-S01-065-E2",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf1a3",
+          "char_start": 212,
+          "char_end": 241,
+          "quote": "值得注意的是，这批装备中还包括4套“吸血鬼”反无人机系统。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2cb82641eb8ecbf1a3",
+      "provenance": {
+        "upstream_id": "64fa9b2cb82641eb8ecbf1a3",
+        "original_query": "美国国防部在向乌克兰提供的价值13亿美元的新一批军事装备中，包括了几套名为“吸血鬼”的反无人机系统？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-066",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：《食用农产品市场销售质量安全监督管理办法》将于哪一年的哪一天起正式实施？",
+      "reference_answer": "《食用农产品市场销售质量安全监督管理办法》将于2023年12月1日起正式实施。",
+      "gold": [
+        {
+          "id": "C-S01-066-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe249",
+          "char_start": 0,
+          "char_end": 102,
+          "quote": "2023-07-24 09:10:57来源：农民日报客户端    ，正文：近日，市场监管总局公布《食用农产品市场销售质量安全监督管理办法》（以下简称《办法》），《办法》共51条，将于今年12月1日起施行。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe249",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe249",
+        "original_query": "《食用农产品市场销售质量安全监督管理办法》将于哪一年的哪一天起正式实施？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-067",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：尼日利亚首都阿布贾瓜瓜拉达天然气发电站一期项目的装机容量预计是多少兆瓦，由哪家公司承建，且合同工期为多少个月？",
+      "reference_answer": "瓜瓜拉达天然气发电站一期项目的装机容量预计约为350兆瓦，由中国机械设备工程股份有限公司承建，合同工期为36个月。",
+      "gold": [
+        {
+          "id": "C-S01-067-E1",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0c92",
+          "char_start": 490,
+          "char_end": 570,
+          "quote": "据中国机械设备工程股份有限公司介绍，瓜瓜拉达电站项目是一个天然气联合循环电站项目，一期计划建设装机容量约为350兆瓦，采用业主自有资金建设，合同工期为36个月。"
+        },
+        {
+          "id": "C-S01-067-E2",
+          "source_id": "crud-qa-64fa9b32b82641eb8ecc0c92",
+          "char_start": 1,
+          "char_end": 136,
+          "quote": "[ 2023-08-05 06：59 ] ，正文：新华社阿布贾8月4日电（记者郭骏）中国机械设备工程股份有限公司承建的尼日利亚首都阿布贾瓜瓜拉达天然气发电站项目一期4日举行开工仪式，尼日利亚总统提努布、中国驻尼日利亚大使崔建春、多名尼政府高级官员以及中企代表等出席仪式。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b32b82641eb8ecc0c92",
+      "provenance": {
+        "upstream_id": "64fa9b32b82641eb8ecc0c92",
+        "original_query": "尼日利亚首都阿布贾瓜瓜拉达天然气发电站一期项目的装机容量预计是多少兆瓦，由哪家公司承建，且合同工期为多少个月？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-068",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：“工控杯”2023年广州市职工羽毛球邀请赛的冠军是由哪个单位获得的？",
+      "reference_answer": "“工控杯”2023年广州市职工羽毛球邀请赛的冠军由广州工业投资控股集团有限公司工会获得。",
+      "gold": [
+        {
+          "id": "C-S01-068-E1",
+          "source_id": "crud-64fa9b28b82641eb8ecbe8c4",
+          "char_start": 366,
+          "char_end": 519,
+          "quote": "“工控杯”2023年广州市职工羽毛球邀请赛冠军由广州工业投资控股集团有限公司工会收入囊中；广州市建筑集团有限公司工会委员会夺得亚军；黄埔区总工会和南沙区总工会获得季军；广州环保投资集团有限公司工会委员会等20个单位获得了优秀组织奖；广州市城市管理和综合执法局系统工会委员会等18个单位获得了体育道德风尚奖。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b28b82641eb8ecbe8c4",
+      "provenance": {
+        "upstream_id": "64fa9b28b82641eb8ecbe8c4",
+        "original_query": "“工控杯”2023年广州市职工羽毛球邀请赛的冠军是由哪个单位获得的？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-069",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：根据美国疾病控制与预防中心的数据，枪支已经连续多少年成为美国儿童死亡的首要原因？",
+      "reference_answer": "枪支已经连续三年成为美国儿童死亡的首要原因。",
+      "gold": [
+        {
+          "id": "C-S01-069-E1",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf1a2",
+          "char_start": 388,
+          "char_end": 450,
+          "quote": "但是在美国，根据美国疾病控制与预防中心（CDC）自2022年开始的临时性数据，枪支已经连续第三年成为该国儿童死亡的首要原因。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2cb82641eb8ecbf1a2",
+      "provenance": {
+        "upstream_id": "64fa9b2cb82641eb8ecbf1a2",
+        "original_query": "根据美国疾病控制与预防中心的数据，枪支已经连续多少年成为美国儿童死亡的首要原因？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-070",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：鸿达助学第二届主题夏令营的主题是什么，以及参加这次夏令营的学生主要来自哪些地方？",
+      "reference_answer": "鸿达助学第二届主题夏令营的主题是“与科技同行，让梦想放飞”。参加这次夏令营的学生主要来自安庆市的岳西、宿松、太湖和马鞍山市的含山、当涂、和县。",
+      "gold": [
+        {
+          "id": "C-S01-070-E1",
+          "source_id": "crud-qa-64fa9b2db82641eb8ecbf748",
+          "char_start": 88,
+          "char_end": 190,
+          "quote": "来自安庆市岳西、宿松、太湖和马鞍山市含山、当涂、和县的受助学生，在各地团县委工作人员带领下参加了本届夏令营，此外参加活动的还有安徽工业大学研究生组成的志愿者团队，以及来自马鞍山、合肥、上海等地的助学会员。"
+        },
+        {
+          "id": "C-S01-070-E2",
+          "source_id": "crud-qa-64fa9b2db82641eb8ecbf748",
+          "char_start": 192,
+          "char_end": 231,
+          "quote": "继去年首届红色夏令营之后，今年的科技夏令营主题是：“与科技同行，让梦想放飞”。"
+        },
+        {
+          "id": "C-S01-070-E3",
+          "source_id": "crud-qa-64fa9b2db82641eb8ecbf748",
+          "char_start": 22,
+          "char_end": 88,
+          "quote": "主办方供图        中国青年报客户端讯(中青报·中青网记者 王磊 王海涵) 近日，鸿达助学第二届主题夏令营在安徽省会合肥开营。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf748",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf748",
+        "original_query": "鸿达助学第二届主题夏令营的主题是什么，以及参加这次夏令营的学生主要来自哪些地方？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-071",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在2023年8月18日召开的中央和国家机关部门党组（党委）落实机关党建主体责任座谈交流会上，哪位中共中央政治局常委强调了全面提高中央和国家机关党的建设质量？",
+      "reference_answer": "蔡奇，中共中央政治局常委及中央和国家机关工委书记，在会议上强调了全面提高中央和国家机关党的建设质量。",
+      "gold": [
+        {
+          "id": "C-S01-071-E1",
+          "source_id": "crud-64fa9b2eb82641eb8ecbfc91",
+          "char_start": 137,
+          "char_end": 168,
+          "quote": "中共中央政治局常委、中央和国家机关工委书记蔡奇出席会议并讲话。"
+        },
+        {
+          "id": "C-S01-071-E2",
+          "source_id": "crud-64fa9b2eb82641eb8ecbfc91",
+          "char_start": 0,
+          "char_end": 137,
+          "quote": "2023-08-19，正文：蔡奇在中央和国家机关部门党组（党委）落实机关党建主体责任座谈交流会上强调压实部门党组（党委）机关党建主体责任 全面提高中央和国家机关党的建设质量新华社北京8月18日电  中央和国家机关部门党组（党委）落实机关党建主体责任座谈交流会18日在京召开。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2eb82641eb8ecbfc91",
+      "provenance": {
+        "upstream_id": "64fa9b2eb82641eb8ecbfc91",
+        "original_query": "在2023年8月18日召开的中央和国家机关部门党组（党委）落实机关党建主体责任座谈交流会上，哪位中共中央政治局常委强调了全面提高中央和国家机关党的建设质量？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-072",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在山东省第一届智力运动会“泰山秀城杯”五子棋比赛中，哪位选手夺得了公开个人组的冠军？",
+      "reference_answer": "日照东港的侨眷刘延波夺得了公开个人组的冠军。",
+      "gold": [
+        {
+          "id": "C-S01-072-E1",
+          "source_id": "crud-64fa9b29b82641eb8ecbeaa4",
+          "char_start": 129,
+          "char_end": 157,
+          "quote": "经过激烈角逐，日照东港的侨眷刘延波夺得公开个人组的冠军。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b29b82641eb8ecbeaa4",
+      "provenance": {
+        "upstream_id": "64fa9b29b82641eb8ecbeaa4",
+        "original_query": "在山东省第一届智力运动会“泰山秀城杯”五子棋比赛中，哪位选手夺得了公开个人组的冠军？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-073",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：山东省应急管理厅在主题教育调研成果交流暨典型案例剖析会上讨论了哪些主题，并且提出了哪些类型的案例进行学习研讨？",
+      "reference_answer": "在会上，山东省应急管理厅领导班子成员讨论了“加强功能区安全生产责任落实”、“重大灾害事故处置”和“全省危险化学品安全生产‘三化’安全技术改造”等主题，并提出了“非煤矿山领域‘四位一体’整治经验案例”和“烟台栖霞笏山金矿及招远曹家洼金矿安全生产问题分析”等典型案例进行学习研讨。",
+      "gold": [
+        {
+          "id": "C-S01-073-E1",
+          "source_id": "crud-64fa9b31b82641eb8ecc076e",
+          "char_start": 197,
+          "char_end": 361,
+          "quote": "会上，该厅领导班子成员围绕“加强功能区安全生产责任落实”“重大灾害事故处置”“全省危险化学品安全生产‘三化’安全技术改造”等调研主题逐一交流调研成果，集体研究对策；围绕“非煤矿山领域‘四位一体’整治经验案例”“烟台栖霞笏山金矿及招远曹家洼金矿安全生产问题分析”典型案例开展学习研讨，总结教训启示，检视差距不足，研究提出改进措施。"
+        },
+        {
+          "id": "C-S01-073-E2",
+          "source_id": "crud-64fa9b31b82641eb8ecc076e",
+          "char_start": 0,
+          "char_end": 65,
+          "quote": "2023-08-03 14:26，正文：本报讯 实习记者刘琦报道 近日，山东省应急管理厅召开主题教育调研成果交流暨典型案例剖析会。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b31b82641eb8ecc076e",
+      "provenance": {
+        "upstream_id": "64fa9b31b82641eb8ecc076e",
+        "original_query": "山东省应急管理厅在主题教育调研成果交流暨典型案例剖析会上讨论了哪些主题，并且提出了哪些类型的案例进行学习研讨？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-074",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：广州市白云区市场监管局立案查处的个人房东违反了哪项《广州市供用电条例》的规定，并且是以多少元每度的价格非法收取租客电费？",
+      "reference_answer": "该个人房东违反了《广州市供用电条例》第三十三条第一款的规定，非法以1.28元/度的价格收取租客电费。",
+      "gold": [
+        {
+          "id": "C-S01-074-E1",
+          "source_id": "crud-64fa9b28b82641eb8ecbe8e6",
+          "char_start": 431,
+          "char_end": 565,
+          "quote": "经核查，当事人为个人房产出租的房东，自《条例》实施后，未按照《广州市市场监督管理局关于贯彻执行<广州市供用电条例>规范电费收费行为的提醒告知书》自查整改，仍以1.28元/度的价格收取承租人电费，涉嫌违反《条例》第三十三条第一款有关规定，且经多次联系提醒，拒不配合调查。"
+        },
+        {
+          "id": "C-S01-074-E2",
+          "source_id": "crud-64fa9b28b82641eb8ecbe8e6",
+          "char_start": 172,
+          "char_end": 235,
+          "quote": "8月2日，笔者从广州市白云区市场监管局获悉，该局于近日对一起个人房东违反国家电价政策，加价收取租客电费的违法行为予以立案查处。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b28b82641eb8ecbe8e6",
+      "provenance": {
+        "upstream_id": "64fa9b28b82641eb8ecbe8e6",
+        "original_query": "广州市白云区市场监管局立案查处的个人房东违反了哪项《广州市供用电条例》的规定，并且是以多少元每度的价格非法收取租客电费？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-075",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：最近，陕西省西安市发放大量了体育类电子消费券，供市民使用。这些电子消费券的具体金额是多少？可以在多少家体育场馆使用？",
+      "reference_answer": "陕西西安市发放了500万元体育类电子消费券，市民可以在全市173家体育场馆使用这些消费券。",
+      "gold": [
+        {
+          "id": "C-S01-075-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe14d",
+          "char_start": 171,
+          "char_end": 216,
+          "quote": "近日，陕西西安市发放500万元体育类电子消费券，市民领取后，可在全市173家体育场馆使用。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe14d",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe14d",
+        "original_query": "最近，陕西省西安市发放大量了体育类电子消费券，供市民使用。这些电子消费券的具体金额是多少？可以在多少家体育场馆使用？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-076",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在第31届世界大学生夏季运动会游泳比赛中，河北选手李冰洁共获得了多少枚金牌？",
+      "reference_answer": "李冰洁在本届大运会共收获8金。",
+      "gold": [
+        {
+          "id": "C-S01-076-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe2fe",
+          "char_start": 135,
+          "char_end": 195,
+          "quote": "其中，河北选手李冰洁在当天的比赛中收获了女子400米自由泳和女子x100米混合泳接力的金牌，至此她本届大运会共收获8金。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe2fe",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe2fe",
+        "original_query": "在第31届世界大学生夏季运动会游泳比赛中，河北选手李冰洁共获得了多少枚金牌？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-077",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：2023年甘肃省临夏市青年发展大会的主旨是什么，以及大会期望在临夏市实现的青年与城市的关系是怎样的？",
+      "reference_answer": "2023年甘肃省临夏市青年发展大会的主旨是讨论青年发展并希望看到更多青年与城市双向奔赴的生动实践。大会期望推动城市与青年“双向奔赴”，让青年人才发展和城市发展同频共振。",
+      "gold": [
+        {
+          "id": "C-S01-077-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf7cc",
+          "char_start": 127,
+          "char_end": 212,
+          "quote": "团临夏市委供图大会主旨演讲环节，团中央维护青少年权益部研究协调处处长张豪表示，希望大家能有更多的机会去讨论青年发展，更希望在临夏能够看到更多青年与城市双向奔赴的生动实践。"
+        },
+        {
+          "id": "C-S01-077-E2",
+          "source_id": "crud-64fa9b2db82641eb8ecbf7cc",
+          "char_start": 274,
+          "char_end": 370,
+          "quote": "据介绍，近年来，借着青年发展型城市建设的东风，临夏市在提升青年获得感、幸福感、归属感的基础上，不断激发青年人才奋进之志、实干之心，推动城市与青年“双向奔赴”，让青年人才发展和城市发展同频共振。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf7cc",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf7cc",
+        "original_query": "2023年甘肃省临夏市青年发展大会的主旨是什么，以及大会期望在临夏市实现的青年与城市的关系是怎样的？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-078",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：哪家私营防务公司向一些欧盟国家出售了数十辆二手坦克，并且这些坦克最初属于哪个国家的军队？",
+      "reference_answer": "私营防务公司OIP Land System向一些欧盟国家出售了数十辆二手坦克，这些坦克最初属于比利时的军队。",
+      "gold": [
+        {
+          "id": "C-S01-078-E1",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc11d6",
+          "char_start": 83,
+          "char_end": 140,
+          "quote": "近日，私营防务公司OIP Land System表示，一些欧盟国家购买了数十辆二手坦克，并计划将其投入乌克兰战场。"
+        },
+        {
+          "id": "C-S01-078-E2",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc11d6",
+          "char_start": 140,
+          "char_end": 214,
+          "quote": "据《卫报》8月8日报道，私营防务公司OIP Land System表示，数十辆曾经属于比利时的二手豹1坦克，被一个欧洲大国购买并转交给了乌克兰军队。"
+        },
+        {
+          "id": "C-S01-078-E3",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc11d6",
+          "char_start": 214,
+          "char_end": 298,
+          "quote": "该公司首席执行官弗雷迪·弗斯吕伊斯（Freddy Versluys）表示，他还向另一个欧洲国家出售了49辆坦克，但由于保密协议，他无法透露具体是买家以及详细的成交价格。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b33b82641eb8ecc11d6",
+      "provenance": {
+        "upstream_id": "64fa9b33b82641eb8ecc11d6",
+        "original_query": "哪家私营防务公司向一些欧盟国家出售了数十辆二手坦克，并且这些坦克最初属于哪个国家的军队？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-079",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：根据教育部印发的《关于进一步落实落细各级各类学校防汛救灾措施的通知》，各级教育行政部门需要与哪些相关部门加强沟通配合，以确保师生生命财产安全？",
+      "reference_answer": "各级教育行政部门需要与应急管理、气象、水利、地震等相关部门加强沟通配合，以确保师生生命财产安全。",
+      "gold": [
+        {
+          "id": "C-S01-079-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf833",
+          "char_start": 101,
+          "char_end": 288,
+          "quote": "通知要求，各级教育行政部门要指导各级各类学校主动加强与应急管理、气象、水利、地震等相关部门的沟通配合，在灾情预警、灾情应对、应急救援、灾后重建工作中协同一致，凝聚学校防汛救灾工作最大合力；要第一时间报送灾情信息，进一步完善纵向联动、横向贯通的防汛工作机制；要按照“宁可备而不用、不可用而无备”的原则做好物资储备，必要时刻果断转移受威胁师生，牢牢守住不发生师生伤亡的安全底线。"
+        },
+        {
+          "id": "C-S01-079-E2",
+          "source_id": "crud-64fa9b2db82641eb8ecbf833",
+          "char_start": 0,
+          "char_end": 101,
+          "quote": "，正文：本报北京8月10日电（中青报·中青网记者 叶雨婷）教育部近日印发《关于进一步落实落细各级各类学校防汛救灾措施的通知》，要求各地各学校全力抓好防汛救灾各项工作，确保师生生命财产安全和教育大局稳定。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf833",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf833",
+        "original_query": "根据教育部印发的《关于进一步落实落细各级各类学校防汛救灾措施的通知》，各级教育行政部门需要与哪些相关部门加强沟通配合，以确保师生生命财产安全？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-080",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：广西首家国家级人力资源服务产业园在哪个城市开园运营，并且该产业园的建设目标是什么？",
+      "reference_answer": "广西首家国家级人力资源服务产业园在柳州市开园运营，其建设目标是“立足广西、融入湾区、面向全国、联通东盟”，打造全国乃至东盟区域技能型人才培养和输出基地。",
+      "gold": [
+        {
+          "id": "C-S01-080-E1",
+          "source_id": "crud-64fa9b31b82641eb8ecc04c4",
+          "char_start": 42,
+          "char_end": 112,
+          "quote": "中新网柳州8月1日电 (林馨)8月1日，广西首家国家级人力资源服务产业园在广西柳州市开园运营，打造全国乃至东盟区域技能型人才培养和输出基地。"
+        },
+        {
+          "id": "C-S01-080-E2",
+          "source_id": "crud-64fa9b31b82641eb8ecc04c4",
+          "char_start": 167,
+          "char_end": 257,
+          "quote": "其以“立足广西、融入湾区、面向全国、联通东盟”为建设目标，依托柳州工业基础、职业(技工)教育基础，打造全国乃至东盟区域技能型人才培养和输出基地，与国际接轨的跨境人力资源服务产业园。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b31b82641eb8ecc04c4",
+      "provenance": {
+        "upstream_id": "64fa9b31b82641eb8ecc04c4",
+        "original_query": "广西首家国家级人力资源服务产业园在哪个城市开园运营，并且该产业园的建设目标是什么？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-081",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：由大连重工自主研制的全球首套大角度敞集多功能双车翻车机在哪家公司成功下线，并通过了哪家权威机构的检验？",
+      "reference_answer": "全球首套大角度敞集多功能双车翻车机在河南中誉国信能源有限公司成功下线，并顺利通过了中铁检验认证（青岛）车辆检验站有限公司的检验。",
+      "gold": [
+        {
+          "id": "C-S01-081-E1",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc14e8",
+          "char_start": 0,
+          "char_end": 97,
+          "quote": "08-16 09:31，正文：8月15日，由大连重工自主研制的首套大角度敞集多功能双车翻车机在河南中誉国信能源有限公司成功下线，并顺利通过权威机构——中铁检验认证(青岛)车辆检验站有限公司检验。"
+        },
+        {
+          "id": "C-S01-081-E2",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc14e8",
+          "char_start": 97,
+          "char_end": 124,
+          "quote": "此举标志着全球首套大角度敞集多功能双车翻车机成功问世。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b33b82641eb8ecc14e8",
+      "provenance": {
+        "upstream_id": "64fa9b33b82641eb8ecc14e8",
+        "original_query": "由大连重工自主研制的全球首套大角度敞集多功能双车翻车机在哪家公司成功下线，并通过了哪家权威机构的检验？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-082",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：迈克尔·乔丹将NBA黄蜂队出售给了哪两位领头的集团成员，并且这笔交易的预计估值是多少美元？",
+      "reference_answer": "迈克尔·乔丹将NBA黄蜂队出售给了加布·普洛特金和里克·施纳尔领头的集团，这笔交易的预计估值为30亿美元。",
+      "gold": [
+        {
+          "id": "C-S01-082-E1",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf208",
+          "char_start": 38,
+          "char_end": 86,
+          "quote": "NBA董事会23日批准黄蜂老板迈克尔·乔丹将球队出售给由加布·普洛特金和里克·施纳尔领头的集团。"
+        },
+        {
+          "id": "C-S01-082-E2",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf208",
+          "char_start": 162,
+          "char_end": 216,
+          "quote": "消息人士称，乔丹将出售大部分股权，预计估值为30亿美元（约合216亿元人民币），交易会在未来1至2周内完成。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2cb82641eb8ecbf208",
+      "provenance": {
+        "upstream_id": "64fa9b2cb82641eb8ecbf208",
+        "original_query": "迈克尔·乔丹将NBA黄蜂队出售给了哪两位领头的集团成员，并且这笔交易的预计估值是多少美元？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-083",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在2023年7月26日的新闻发布会上，由于健康原因长时间僵住的美国国会参议院共和党领袖是谁？",
+      "reference_answer": "长时间僵住的美国国会参议院共和党领袖是米奇·麦康奈尔（Mitch McConnell）。",
+      "gold": [
+        {
+          "id": "C-S01-083-E1",
+          "source_id": "crud-64fa9b2fb82641eb8ecc0208",
+          "char_start": 92,
+          "char_end": 165,
+          "quote": "视觉中国  资料图近日，81岁的美国国会参议院共和党领袖米奇·麦康奈尔（Mitch McConnell）因健康原因在美国国会大厦讲话时长时间僵住。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2fb82641eb8ecc0208",
+      "provenance": {
+        "upstream_id": "64fa9b2fb82641eb8ecc0208",
+        "original_query": "在2023年7月26日的新闻发布会上，由于健康原因长时间僵住的美国国会参议院共和党领袖是谁？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-084",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：2023年8月8日在郑州举行的青年企业家助力河南高质量发展暨河南青年创新创业论坛是由哪些组织联合主办的？",
+      "reference_answer": "青年企业家助力河南高质量发展暨河南青年创新创业论坛是由中国青年企业家协会、团河南省委、河南省科技厅联合主办的。",
+      "gold": [
+        {
+          "id": "C-S01-084-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf83a",
+          "char_start": 0,
+          "char_end": 173,
+          "quote": "2023年08月12日，正文：中国青年报客户端讯（中青报·中青网记者潘志贤）为培育一流青年创新创业人才，构建一流青年创新创业生态，促进大学生创业就业，引领和激励广大青年在中国式现代化建设河南实践中争当排头兵和生力军，8月8日，由中国青年企业家协会、团河南省委、河南省科技厅等联合主办的青年企业家助力河南高质量发展暨河南青年创新创业论坛在郑州举行。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf83a",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf83a",
+        "original_query": "2023年8月8日在郑州举行的青年企业家助力河南高质量发展暨河南青年创新创业论坛是由哪些组织联合主办的？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-085",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：在泰国政府公共关系部举办的泰式美食体验活动中，彭威·瑟拉恩提到今年1至5月泰国食品出口总额是多少亿美元，以及他们有望达到的年度目标是多少亿美元？",
+      "reference_answer": "今年1至5月，泰国食品出口总额为173.7514亿美元，有望达到395.6774亿美元的年度目标。",
+      "gold": [
+        {
+          "id": "C-S01-085-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf4c8",
+          "char_start": 167,
+          "char_end": 220,
+          "quote": "据彭威介绍，今年1至5月，泰国食品出口总额为173.7514亿美元，有望达到395.6774亿美元的目标。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf4c8",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf4c8",
+        "original_query": "在泰国政府公共关系部举办的泰式美食体验活动中，彭威·瑟拉恩提到今年1至5月泰国食品出口总额是多少亿美元，以及他们有望达到的年度目标是多少亿美元？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-086",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：第五届海峡两岸中华传统文化学生文艺营是由哪些学校共同举办的？",
+      "reference_answer": "第五届海峡两岸中华传统文化学生文艺营是由北京市京源学校、台北私立静心中学、济南汇才学校和天津英华实验学校共同举办的。",
+      "gold": [
+        {
+          "id": "C-S01-086-E1",
+          "source_id": "crud-64fa9b27b82641eb8ecbe53a",
+          "char_start": 0,
+          "char_end": 121,
+          "quote": "2023-7-22 10:15，正文：\n\n                    \n\n中新网北京7月21日电 由北京市京源学校、台北私立静心中学、济南汇才学校和天津英华实验学校共同举办的第五届海峡两岸中华传统文化学生文艺营20日在京落下帷幕。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b27b82641eb8ecbe53a",
+      "provenance": {
+        "upstream_id": "64fa9b27b82641eb8ecbe53a",
+        "original_query": "第五届海峡两岸中华传统文化学生文艺营是由哪些学校共同举办的？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-087",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：迈克尔·埃祖仑在《中国日报》中提到，自“一带一路”倡议从2013年提出以来，中国已经与多少个国家和国际组织签署了共建“一带一路”合作文件？",
+      "reference_answer": "自2013年“一带一路”倡议提出以来，中国已经与151个国家和32个国际组织签署了200余份共建“一带一路”合作文件。",
+      "gold": [
+        {
+          "id": "C-S01-087-E1",
+          "source_id": "crud-64fa9b2cb82641eb8ecbf1f4",
+          "char_start": 110,
+          "char_end": 184,
+          "quote": "“一带一路”扎实推进文章指出，自2013年 “一带一路”倡议提出以来，中国已同151个国家和32个国际组织签署了200余份共建“一带一路”合作文件。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2cb82641eb8ecbf1f4",
+      "provenance": {
+        "upstream_id": "64fa9b2cb82641eb8ecbf1f4",
+        "original_query": "迈克尔·埃祖仑在《中国日报》中提到，自“一带一路”倡议从2013年提出以来，中国已经与多少个国家和国际组织签署了共建“一带一路”合作文件？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-088",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：中国在哪些绿色发展领域处于世界领先地位，并且新能源汽车产销量连续多少年位居全球第一？",
+      "reference_answer": "中国在太阳能、风能等可再生能源以及绿色交通领域处于世界领先地位，新能源汽车产销量已连续8年位居全球第一。",
+      "gold": [
+        {
+          "id": "C-S01-088-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf68b",
+          "char_start": 298,
+          "char_end": 353,
+          "quote": "目前，中国在太阳能、风能等可再生能源以及绿色交通领域处于世界领先地位，新能源汽车产销量已连续8年位居全球第一。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf68b",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf68b",
+        "original_query": "中国在哪些绿色发展领域处于世界领先地位，并且新能源汽车产销量连续多少年位居全球第一？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-089",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：根据德国联邦统计局的数据，2023年7月德国申请标准破产程序的企业数量比去年同期增长了多少百分比？",
+      "reference_answer": "2023年7月德国申请标准破产程序的企业数量比去年同期增长了23.8%。",
+      "gold": [
+        {
+          "id": "C-S01-089-E1",
+          "source_id": "crud-qa-64fa9b33b82641eb8ecc12e7",
+          "char_start": 0,
+          "char_end": 98,
+          "quote": "2023-08-11 23:15，正文：中新社柏林8月11日电 根据德国联邦统计局11日公布的初步数据，7月德国申请标准破产程序的企业数量比去年同期增长了23.8%，6月时该同比数值为13.9%。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b33b82641eb8ecc12e7",
+      "provenance": {
+        "upstream_id": "64fa9b33b82641eb8ecc12e7",
+        "original_query": "根据德国联邦统计局的数据，2023年7月德国申请标准破产程序的企业数量比去年同期增长了多少百分比？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    },
+    {
+      "id": "C-S01-090",
+      "track": "S01",
+      "query": "仅依据资料中的历史报道回答，不推断最新情况：教育部职业教育与成人教育司副司长林宇在内蒙古鄂尔多斯市的会议上强调了职业教育的根本任务是什么？",
+      "reference_answer": "职业教育的根本任务是培养技术技能人才。",
+      "gold": [
+        {
+          "id": "C-S01-090-E1",
+          "source_id": "crud-64fa9b2db82641eb8ecbf84f",
+          "char_start": 52,
+          "char_end": 147,
+          "quote": "”近日，在内蒙古鄂尔多斯市召开的“深化现代职业教育体系建设改革暨能源、化工、装备制造类专业建设经验交流会”上，教育部职业教育与成人教育司副司长林宇谈到，职业教育的根本任务是培养技术技能人才。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "crud-event-64fa9b2db82641eb8ecbf84f",
+      "provenance": {
+        "upstream_id": "64fa9b2db82641eb8ecbf84f",
+        "original_query": "教育部职业教育与成人教育司副司长林宇在内蒙古鄂尔多斯市的会议上强调了职业教育的根本任务是什么？",
+        "adaptation": "archival_scope_and_reviewed_minimal_evidence"
+      }
+    }
+  ]
+}

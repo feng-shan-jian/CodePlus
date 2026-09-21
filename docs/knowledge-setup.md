@@ -24,7 +24,7 @@ knowledge:
 
 相对 `data_dir` 在启动时解析。多个启动目录要共用库时，改为同一绝对路径，例如 `D:/CodePlus/.codeplus/knowledge`。默认 Embedding 是本地 Qwen3-Embedding-0.6B，固定 revision `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3`、CPU、1024 维；首次准备可能下载模型，后续复用 HF 缓存。回答使用原有 provider。已建库绑定模型与分块配置，修改这些参数须建新库重新导入。
 
-`retrieval_mode` 默认 `auto`：新混合库用 hybrid，已知旧向量库用 dense。可显式设置 `dense`（向量）、`bm25`（正文关键词）或 `hybrid`（两路 RRF）；旧库显式使用 bm25/hybrid 会报错，升级见 [旧库兼容与重建](#旧库兼容与重建)。**H05 的真实 workbin-v1 回归集建议显式设为 `dense`**，默认 hybrid 未全面改善该集；没有改动现有用户配置。
+`retrieval_mode` 默认 `auto`：新混合库用 hybrid，已知旧向量库用 dense。可显式设置 `dense`（向量）、`bm25`（正文关键词）或 `hybrid`（两路 RRF）；旧库显式使用 bm25/hybrid 会报错，升级见 [旧库兼容与重建](#旧库兼容与重建)。当前质量评测统一使用 [新分场景题库](../eval/RAG-eval/README.md)；新题库尚未形成策略质量排名，不沿用已退役个人题库的选择建议。
 
 hybrid 每路候选数为 `max(retrieval_candidates, 本次 top_k)`，融合后返回 Top-K；候选数必须是 1–16384 的整数，`rrf_k` 必须是有限正数。dense/bm25 仅取该路 Top-K，不使用候选数或 RRF 参数。修改检索参数后重启应用即可生效，无需重建库。TUI、CLI、Remote 和 Agent 共用配置，工具参数及会话绑定不新增模式字段。纯 BM25 的 search 不编码查询，现有 prepare 仍会准备模型。
 
@@ -107,17 +107,11 @@ off 关闭当前会话知识模式并清空当前回答上下文，历史记录�
 
 create 会立即选中新库；导入全部原件、核对数量、状态与引用后，其他会话用 `use <新库ID>` 切换。独立 CLI 对应 `python -m codeplus.knowledge create "资料库 混合检索"` 和逐文件 `python -m codeplus.knowledge import <新库ID> <原件路径>`；问答 CLI 使用 `codeplus -p '问题' --knowledge <新库ID>`。保留旧库，旧报告中的 `K:<旧库ID>:<chunk_id>` 继续指向旧代；不要手改旧 profile、覆盖原件或删除旧库目录。原来源路径丢失时，可从旧库 status 的 `original_path` 取保存原件导入新库。
 
-评测重建使用冻结数据集 corpus 原件和独立新库，将新 ID 通过 `benchmark --kb-id <新库ID>` 传入；无需修改现有 binding.json、问题、参考答案、解析文本或历史结果。
+评测统一使用 `eval/RAG-eval/full/<分区>/corpus/` 原件和分区独立新库，将新 ID 通过固定入口 `run.ps1 -Dataset <分区> -KbId <新库ID>` 传入。不要导入题目、答案或冻结文本，不再使用旧个人评测库 ID。
 
-### 分块升级实测（2026-09-20，历史 dense 库）
+### 分块升级历史
 
-本次实现者实测（2026-09-20，leader 已验收通过）：Python 3.14.3 安装及 `uv lock --check` 通过；知识库相关回归 47 passed / 4 skipped。独立新库用真实 Qwen/Milvus 导入冻结 31 份资料，789 → 742 个片段，含特殊 token 的最大长度 509；导入耗时 989.18 秒，环境准备另计 57.68 秒。原基线未记录可比导入耗时，不作加速结论。
-
-原 benchmark 全部 32 题零查询错误；单轮找齐题数 20/25 → 20/25，指定证据覆盖 27/34 → 28/34；追问均为 1/3。仅 Q28 从 0/2 改善到 1/2，无证据覆盖退步题；Q28 仍未找齐全部依据。4 道无答案题不自动判拒答通过，这些指标不是回答正确率。原库真实检索及基线 112 个不同引用可用，新结果的 108 个不同引用经应用 preview 入口核对；原库状态、32 个原库文件与 76 个既有评测文件核对未变。详细对照与逐文件耗时位于本机 `.codeplus/benchmarks/workbin-v1/runs/sentence_upgrade_20260920T111625Z/`，原 benchmark 新报告位于 `runs/20260920T113421Z_eec171/`。未执行回答模型或桌面点击验收，4 个独立 opt-in 测试的 skipped 不计为通过。
-
-Leader 独立复核：上述 47/4 回归与锁文件检查结果一致；两份报告重算、实现源码指纹及 108 个保全文件指纹均一致。核对全部 742 个新片段的真实 token 长度与来源范围，另验 9 组真实 tokenizer 边界样例，并对新旧库各执行一次真实查询与来源读取；均通过。本轮未重复完整导入、回答模型或桌面点击验收。
-
-Leader 临时核验脚本已删除；系统临时目录 `C:\Users\18221\AppData\Local\Temp\codeplus-leader-sentence-review-20260920` 的清理被自动审批拒绝（未提供具体原因），暂保留，不纳入提交。
+SentenceSplitter 升级于 2026-09-20 完成，相关功能与旧库兼容回归通过。原个人资料质量题库、来源副本、索引与报告已于 2026-09-21 按用户要求清除；历史成绩不纳入当前新题库。当前评测范围和未执行项见 [运行说明](../eval/RAG-eval/README.md)。
 
 ### 4. 非交互 CLI 与 Remote
 
@@ -144,24 +138,18 @@ uv run --extra knowledge python -m codeplus.knowledge --help
 
 ### 5. 冻结评测与三路实验
 
-真实资料的固定回归集使用 `python -m codeplus.knowledge benchmark`，支持原件/引用检查、日常检索复跑和离线重算；题目、版本及单轮/追问/无答案评分口径见[标准回归评测说明](knowledge-benchmark.md)。个人语料保存在本地，不纳入公共测试样例。
+真实资料的固定回归集使用 `python -m codeplus.knowledge benchmark`，支持原件/引用检查、日常检索复跑和离线重算；题目、版本及单轮/追问/无答案评分口径见[标准回归评测说明](../eval/RAG-eval/benchmark.md)。题目与原件统一存放于 `eval/RAG-eval/`。
 
 在仓库根目录运行；仅安装 wheel 的用户需提供自己的 fixtures 或冻结文件：
 
 ```powershell
-uv run --extra knowledge python -m codeplus.knowledge evaluate --fixtures tests/fixtures/knowledge --mode all
-uv run --extra knowledge python -m codeplus.knowledge evaluate --replay '<上次输出的 frozen.json 绝对路径>' --mode hybrid --ef 16 64
+pwsh -File eval/RAG-eval/run.ps1 -Check
+pwsh -File eval/RAG-eval/run.ps1 -Dataset original -KbId <新库ID> -Mode hybrid -ManagedLocal
 ```
 
-首次运行保存原文、标注、profile 和真实文档/问题向量；replay 不加载模型、不读取原 fixtures。输出在当前目录 `.codeplus/knowledge/experiments/<run>/`，含 frozen.json 和 report.json。未传 `--config` 的 evaluate 使用本地默认连接，不要求回答 provider。
+上例仅导入 `full/original/corpus/`，结果保存在 `full/original/runs/`；其他检索分区显式指定 `crud`、`multihop` 或 `openrag`。RGB 采用受控上下文协议，不可将其整池入库评拒答。上述入口检验检索证据覆盖，不调用回答模型。索引实验 evaluate 的原有接口保留，但旧样例与历史 frozen 文件不再作为当前质量题源。
 
-三路为 dense、Milvus BM25、RRF hybrid；evaluate 的 `--mode` 选择附加证据检索路线，**所有模式仍保留 dense/FLAT 与 HNSW 的 ANN 对照**。实验另建临时集合，不修改日常库或绑定；日常检索策略的同库比较用 benchmark，旧库升级用前述 create/import/use。配置为 HNSW、SDK 显示 Finished 不足以确认真实执行类型；S6 已用 1066 个片段及对应服务端构建/加载日志核实。完整历史结果和冻结路径见下方 S6，不用小集合指标推断生产性能。
-
-### H05 混合检索实测与交付边界（2026-09-21）
-
-真实 Qwen/Milvus 功能与六组同库报告已通过 leader review；默认 hybrid 有改善也有退步，本集建议 dense。简要指标、正式新库 ID、切换命令和本地 ignored 报告入口集中在 [标准回归评测说明](knowledge-benchmark.md#h05-真实资料对照2026-09-21)，私人原文与失败片段仅保留在本地报告。
-
-H06 仅调整文档和示例注释，复用 leader 对 H01–H04 最终生产代码的全仓结果：`python -m pytest -q` **814 passed / 10 skipped / 1 warning**（88.89 秒）；唯一 warning 是既有未注册 `pytest.mark.timeout`。H04 knowledge/config 为 **151 passed / 7 skipped**。真实 Milvus/Qwen 与恢复证据单列在 [计划执行记录](knowledge-hybrid-retrieval-plan.md#执行记录leader-维护)，skip 不计通过。H05 临时入口已清理；H01 `.h01-pytest-service` 的 32 个只读测试原件曾被自动审批以 `blocked by policy` 拒绝删除，仍为遗留限制，本阶段未触碰。
+三路为 dense、Milvus BM25、RRF hybrid；evaluate 的 `--mode` 选择附加证据检索路线，**所有模式仍保留 dense/FLAT 与 HNSW 的 ANN 对照**。实验另建临时集合，不修改日常库或绑定；日常检索策略的同库比较用 benchmark，旧库升级用前述 create/import/use。配置为 HNSW、SDK 显示 Finished 不足以确认真实执行类型；S6 已用 1066 个片段及对应服务端构建/加载日志核实。历史实验不纳入当前质量排名，不用小集合指标推断生产性能。
 
 ### 范围限制
 
@@ -664,89 +652,7 @@ leader 独立验收：新建真实 Qwen/Milvus 单文档库，以独立子进程
 
 ### 运行与冻结
 
-使用本 worktree 原生 Windows `.venv`，`uv sync --locked --extra knowledge`。仓库样例是 `tests/fixtures/knowledge/`；wheel 不包含 tests，安装后需显式提供自己的样例目录或冻结文件。示例在 PowerShell 中运行：
-
-```powershell
-$env:HF_HUB_OFFLINE = '1'
-uv run --extra knowledge python -m codeplus.knowledge evaluate --fixtures tests/fixtures/knowledge
-uv run --extra knowledge python -m codeplus.knowledge evaluate --replay '<上次输出的 frozen.json 绝对路径>' --mode hybrid --ef 16 64
-Remove-Item Env:HF_HUB_OFFLINE
-```
-
-`evaluate` 不需要回答模型或 provider YAML；未传 `--config` 时显式采用本地 KnowledgeConfig 默认值。若传已有 `--config <YAML>`，仍复用现有加载器并要求该配置启用 knowledge，但不调用回答模型。`--fixtures` 和 `--replay` 必选其一。实验数据固定写到本次工作目录的 `.codeplus/knowledge/experiments/<UTC时间_随机后缀>/`，受既有 Git 忽略规则覆盖，不写日常 data_dir。
-
-- `frozen.json`：完整 UTF-8 原文、每份原件 SHA256、原文字符范围/quote 标注、profile、真实分块来源映射、文档向量、问题向量及查询编码耗时。冻结来自真实 KnowledgeService 导入、source 读取和 Milvus 行读取，不自制另一套分块/来源映射。保存后不依赖已删除的临时路径。
-- `report.json`：稳定 corpus_sha256、标注/profile/向量校验和、SDK/服务/运行版本、实验集合 schema、索引及 loaded segment、两边 readback 校验和、各问题原始 SDK 分数/排名、范围过滤、分词、预热/正式轮、失败、时间与资源。运行异常也写错误报告；正常返回退出码 0，请求失败等为 1，参数错误为 2。
-- `corpus_sha256` 仅由排序后的文件名和原文 SHA256 计算，排除每轮随机 KB 派生的身份；frozen/rows 哈希标识实际冻结内容。重放采用冻结 profile，即使当前模型配置不同也不把当前标签写成向量来源，不加载 Embedding，也不重读 fixtures。每次新建实验索引，改变同轮的 ef 只发查询，不重建。
-
-固定集有 16 个中英文问题：14 个有答案问题共 18 处证据，另有两题明确无答案；q14 同时要求五份文档中的事实，K=3 时用于观察漏检。5 份短主题文档加 1 份 1040 条虚构展品的背景目录，实际共 1066 chunks；全部公开合成，无 WorkBin 正文、配置或模型缓存入 Git。局部 `.gitattributes` 固定样例 LF，避免 Windows checkout 改换行后破坏字符标注；不改变用户 Markdown 的读取规则。
-
-### 指标与检索约定
-
-Evidence Recall@K 的固定分母是 18 个标注原文区间，不是 chunk ID、问题数或返回片段数。每个区间按同文件前 K 个结果的 source_spans 并集计算，必须覆盖 `[char_start,char_end)` 全部 Unicode 字符；有缺口或只部分覆盖均为零。允许多个片段共同完整覆盖。失败贡献零并留在固定分母，另报成功请求分母/召回和错误数；两题无 gold 为 null，单独统计有没有返回，绝不记成召回 1。证据汇总使用首个正式轮，每个问题仅计一次；所有重复轮原始结果保留。
-
-ANN Recall@K 单独计算：分母为同一文档范围内 FLAT 实际返回的前 K 个不同 ID 数，分子为 HNSW 前 K 的交集数；不足 K 时不额外扣分，FLAT 空返回或请求失败时参照不可用。它衡量向量近邻，不等同于找全原文。SDK 返回的 FLAT ID 是精确参照；边界同分时未另行扩展全部并列近邻。
-
-默认 K=3，两路各取 6 个候选；`--mode all` 输出 dense、bm25、hybrid，选择单一模式只减少相应证据路输出，所有模式仍运行 FLAT/HNSW 对照。HNSW 构建参数 `M=16, efConstruction=128`；查询 `ef=16,64`。RRF 等权使用一基排名 `1/(60+dense_rank)+1/(60+bm25_rank)`，缺席项贡献零，平分按 chunk ID 排序，保留两路原始排名和分数。一次有效 BM25 空返回为 no_hits，可与 dense 正常融合并记录路状态；任一路异常则 hybrid unavailable，不把单路降级写成成功混合。
-
-两路共用参数化 `doc_id in {doc_ids}`；q06/q08/q13/q16 的文档范围分别约束质量、运维、园艺和差旅，返回来源逐项核对。BM25 使用真实 Milvus `FunctionType.BM25`、`SPARSE_FLOAT_VECTOR`、`SPARSE_INVERTED_INDEX`、`DAAT_MAXSCORE`、k1=1.2、b=0.75。text analyzer 为 Jieba search/hmm=false + lowercase；没有 Python BM25。依据 [官方全文检索](https://milvus.io/docs/full-text-search.md)、[Jieba](https://milvus.io/docs/jieba-tokenizer.md) 和 [HNSW](https://milvus.io/docs/hnsw.md)，实际以本机 SDK 3.0.2 / 服务 3.0.1 验证。
-
-### 本轮真实结果
-
-最终报告目录：`C:\Users\18221\.codex\worktrees\7aef\CodePlus\.codeplus\knowledge\experiments\20260919T173947Z_e1ff51df\`。其中 `frozen.json`、`report.json`、`server-evidence.json` 可复核；摘要如下，报告与向量不提交 Git。
-
-| 冻结项目 | 值 |
-| --- | --- |
-| 稳定语料 SHA256 | `77f3f5d466bdf759d6a480e0e48917670ea2da74b206015f25068af2fdb5ce46` |
-| 标注 SHA256 | `24b7293cc3490dfb2231580ced81f9085abc4335e0519e60d7c182169c6f6e56` |
-| 完整冻结 SHA256 | `05e37acd1a23b991df10ffda20d09ebf41c782963d5d8f69914d2a0e762df8fb` |
-| 文档向量行 SHA256（两实验库 readback 均相同） | `3b4bca92782a8fb4bf69862ca7807f98d714610feb8e178149b7e20cc2030ce5` |
-| 查询向量 SHA256（两库所有 ef 共用） | `3a6251eabd6a32dab99fcccffd5a87b7fa15a03bfc9e2dece2947150139a3752` |
-| 模型 / revision | Qwen3-Embedding-0.6B / `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3` |
-| profile / 分块 | CPU float32、1024 维、L2；512 tokens / overlap 64；原有 structure-offsets-v1 |
-
-预热完整 16 题一轮，正式 3 轮，每路 48 次；单客户端顺序发送 FLAT、BM25、HNSW ef16、ef64。耗时包含 SDK 请求与冻结来源映射，不包含编码/构建/预热；hybrid 是两路顺序耗时加融合。百分位按 `(n-1)*p` 线性插值。
-
-| 检索路 | Evidence Recall@3 | ANN Recall@3 | P50 / P95（ms） |
-| --- | --- | --- | --- |
-| FLAT dense | 16/18 = 88.89% | 精确参照 | 2.575 / 2.996 |
-| Milvus BM25 | 12/18 = 66.67% | 不适用 | 2.154 / 2.600 |
-| RRF hybrid | 15/18 = 83.33% | 不适用 | 4.642 / 5.384 |
-| HNSW ef16 | 13/18 = 72.22% | 111/144 = 77.08% | 2.078 / 2.426 |
-| HNSW ef64 | 15/18 = 83.33% | 129/144 = 89.58% | 2.097 / 2.492 |
-
-正式及预热请求均无异常；无 gold 两题不参与证据召回。BM25 共两题正常空返回：无答案 nonce q15，以及中文问题检索英文原文的 q08；q16 在限定差旅范围仍返回无关材料，不能视为已回答。BM25 还漏掉英文询问中文票据的 q03。q14 五处证据分别覆盖 dense 3/5、BM25 1/5、hybrid 2/5。因此本集 RRF 未提高 dense 召回，未作“混合一定更好”的结论。
-
-服务端 analyzer 输出包含：差旅报销 → `差旅, 报销`；APQP → `apqp`；QMS-204 → `qms, -, 204`；SLA → `sla`；API-429 → `api, -, 429`；NPK-712 → `npk, -, 712`。完整问题分词包含空格和标点 token，按实际输出保留，未把编号说成单一 token。上述缩写/编号的 q04/q05/q06/q09/q10/q13 均检查了真实 BM25 命中。
-
-**HNSW 实际执行证据与小集合陷阱**：最初 25 chunks 在 `describe_index` 上也显示 `indexed_rows=25/total_rows=25/Finished`；loaded segment 同样有非零 index_id 和 HNSW 名称。但服务日志 `task_index.go:276` 明确 `numRows=25/minRowsToBuildIndex=1024/indexDataBelowThreshold=true` 并跳过构建。25 行 ANN=1 不作为 HNSW 结论。
-
-扩展到 1066 个真实 Qwen 向量后，独立两库各单 shard，整批 insert 后 flush 一次，每库一个 1066 行 sealed segment，indexed_rows=total_rows=1066、pending=0。最终 HNSW 集合 `codeplus_eval_71a50bb87b06408d97812a3be9cdd43e_hnsw`，collection ID `469193619236545634`，segment `469193619236545651`，index ID `469193619236605664`。UTC 17:40:00 的服务日志明确加载 1 个索引文件，文件路径以 `/HNSW` 结尾，配置 `index_type=HNSW/M=16/efConstruction=128/COSINE`，随后成功加载该 1066 行 segment。三条原始日志保存在 server-evidence.json；本轮实际 HNSW 已据此核实。两组 ef 查询前后索引描述完全相同，没有重建。
-
-生产报告保留 `execution_verified=false`，表示仅靠 SDK 不能独立保证服务器真实执行类型；这不是上述已核对日志的否定。不能把小集合 Finished、固定 1024 阈值或非零 index_id 编成所有服务器都适用的保证。另一次对同一冻结向量重建 HNSW 的结果与本轮不同，重放保证输入与证据可复核，不承诺近似图重建后排名逐位相同。
-
-首次真实导入/编码/冻结准备耗时 218.827 秒，Windows 进程峰值 working set 2993.81 MiB。最终不加载模型的 replay 全程 18.340 秒，进程峰值 337.28 MiB；两实验库 create/insert/build/load 分别为 6.442 秒、5.526 秒（非独立纯建索引耗时）。验收期间一次 Docker 观察：Milvus 421.1 MiB、MinIO 306.6 MiB、etcd 26.6 MiB；这些是共享服务瞬时值，含缓存且不是实验独占资源。此微型合成数据、固定顺序、热缓存下的 48 次样本只证明实验可运行，不能形成吞吐、生产延迟或模型优劣结论。
-
-### 日常隔离、回归与清理
-
-开始前真实 Milvus 集合列表为空，未声称已经验证某个长期日常库。正式 opt-in 用例另建真实 Qwen 日常 FLAT 库，导入一份合成 Markdown，再禁止 `LocalEmbedding._load`、令当前 model/revision/dimension 不同并指定不存在的 fixtures，成功从冻结文件运行三路与 ANN。前后绑定、READY/revision、完整向量行及原文相同；schema 仍是原日常 FLAT。真实向日常库请求不存在的 sparse 字段返回 SDK 错误，实验记录为 error，hybrid 为 unavailable；没有偷偷修改日常 schema。
-
-相关默认回归：57 passed / 4 skipped（17.18 秒），覆盖 knowledge、service、evaluate 和命令注册；未 opt-in 的真实测试明确跳过。`CODEPLUS_TEST_EVAL_FROZEN=<上述 frozen.json>` 与 `CODEPLUS_TEST_MILVUS_URI=http://127.0.0.1:19530` 显式 opt-in 后，运行 `tests/test_knowledge_evaluate.py` 及原有 `tests/test_knowledge_service.py::test_real_store_document_isolation_and_binding`：4 passed / 240.78 秒，含上述真实重放哨兵和原 SDK 四次进程硬退出后的显式恢复。每轮 pytest 在本轮 TemporaryDirectory 内指定独立 `--basetemp`，不触发全局旧目录保留清理。
-
-本轮自建集合均在 finally 中按名字删除并确认不存在；临时导入库及 pytest TemporaryDirectory 正常收尾。正式冻结、报告及服务证据摘要保留在 Git 忽略目录。没有修改共享容器配置、既有 WSL keepalive、主工作区或任何旧 S2/S3/S4 policy 拒绝路径。**S6 当时不支持日常 BM25/hybrid，未实现显式迁移**；本阶段仅交付实验集合路径，不提前扩展精排、模型/分块对照或大规模迁移系统。当前能力与重建步骤见本文开头。
-
-**S6 本轮清理阻塞**：收尾时提交的 PowerShell 命令计划先保存准备阶段资源摘要，再核对绝对目标均在本 worktree 内，以 Remove-Item 删除以下中间目录和测试缓存；整条命令在执行前被自动审批以 `blocked by policy` 拒绝，未给出进一步原因。因此资源摘要新文件未创建，下列清理未执行；不更换工具、不缩小范围重试，也不触碰旧拒绝路径。
-
-- `C:\Users\18221\.codex\worktrees\7aef\CodePlus\.codeplus\knowledge\experiments\20260919T172643Z_9274f5a8`
-- `C:\Users\18221\.codex\worktrees\7aef\CodePlus\.codeplus\knowledge\experiments\20260919T173030Z_45f0aa4b`
-- `C:\Users\18221\.codex\worktrees\7aef\CodePlus\.codeplus\knowledge\experiments\20260919T173153Z_445ebc89`
-- `C:\Users\18221\.codex\worktrees\7aef\CodePlus\.codeplus\knowledge\experiments\20260919T173410Z_3140d0c3`
-- `C:\Users\18221\.codex\worktrees\7aef\CodePlus\.codeplus\knowledge\experiments\20260919T173526Z_5fe896ab`
-- `C:\Users\18221\.codex\worktrees\7aef\CodePlus\.pytest_cache`
-
-这些中间副本均为本阶段合成数据，不纳入 Git；首轮 SDK 序列化失败的两个目录只保存了 frozen.json。旧小集合报告不作为真实 HNSW 结论。1066 行首次准备资源值仍可从 `20260919T173526Z_5fe896ab/report.json` 核对；最终可交付结果只使用 `20260919T173947Z_e1ff51df` 下的报告与对应服务日志。
-
-leader S6 独立验收：在新的 TemporaryDirectory 禁止模型加载并修改当前模型配置，从最终冻结文件重建两库。两边 1066 行完整读回哈希一致，按原文字位置集合独立复算 Evidence Recall 和 RRF 排名，复得 dense 16/18、BM25 12/18、hybrid 15/18。另选 ef12/48 的 ANN 为 34/48、37/48，重建近似图不保证复现旧排名。对应 segment 469193619237779068 的 UTC 17:47:51–53 服务日志确认构建、保存 HNSW 文件并加载；所有自建集合、临时目录与独立脚本正常清理。四文件回归 57 passed / 4 skipped（16.95 秒）。逐项审查复用、失败统计、冻结重放和日常隔离后，功能与代码质量通过。
+本阶段历史实现了冻结向量重放、三路检索和 FLAT/HNSW 实验接口；接口与算法回归测试保留。原独立 16 题样例及其使用命令已退役，历史分数不用于当前系统验收。后续所有 RAG 质量评测统一到 [分场景题库](../eval/RAG-eval/README.md)，不能将旧 frozen 文件与新题库混用。该混合格式题库当前通过 benchmark 运行；evaluate 仍只接受其原有 Markdown 格式，未接入新题库。
 
 ## S7 组合验收与文档收尾（K36）
 

@@ -2,6 +2,8 @@
 
 状态：H01–H06 实现及 review 完成，已按阶段本地提交，未推送；H01 临时文件清理受审批阻塞，见执行记录。基线：`ef6bd17`，2026-09-20。初始工作区仅本计划未跟踪，暂存区为空；保留他人已有修改。
 
+评测更新（2026-09-21）：本文件保留 H01–H06 的实施历史；旧个人题库、旧专用索引与历史报告已按用户要求删除。所有后续质量评测以 [分场景题库](../eval/RAG-eval/README.md) 为准，历史保全要求不再要求恢复被明确退役的数据。
+
 目标：将现有实验中的 BM25 和 RRF 接入日常知识库搜索，并用真实资料判断效果。分块、Embedding、追问处理、文档范围检索、精排模型和回答模型不在本轮范围。
 
 ## 1. 统一实现约定
@@ -87,7 +89,7 @@ knowledge:
 ### 执行记录（leader 维护）
 
 - 基线：`ef6bd17f066e86e0cddd21d1ab5a6a5672f66d0a`，分支 `codex/rag`；knowledge 回归 **47 passed / 4 skipped**，配置所在 `tests/test_mcp.py` **24 passed**。真实 opt-in 未执行，不计通过。
-- 冻结集检查：31 文档、32 问题；指纹 `c428780933edf5f7bb2c4c35ad9928c87449d32e915eba1e9ed498d23da0fd1f`。
+- 当时的旧冻结集已校验；该题库现在已退役，不再提供运行入口。
 - H01 实现任务：`01a0bf6b-0ba0-7a01-8c68-ff5a7f20180a`；独立工作树 `C:/Users/18221/.codex/worktrees/4469/CodePlus`，已由 leader 对齐上述基线，分支 `c-woker/knowledge-h01`。
 - H01 验收：RRF 原函数迁移、共享分词/BM25 参数与配置入口审查通过；`tests/test_mcp.py tests/test_knowledge_evaluate.py tests/test_knowledge.py::test_disabled_knowledge_has_no_optional_imports_or_network` 为 **51 passed / 1 skipped**（leader 独立复跑一致）；service/prepare/benchmark 为 **30 passed / 1 skipped**。日常检索仍为 dense；`git diff --check` 通过。必要调用方包含 `milvus_store.py` 和实验 CLI 的默认 RRF 参数。
 - H01 清理限制：工作树 `.h01-pytest` 已删除；`C:/Users/18221/.codex/worktrees/4469/CodePlus/.h01-pytest-service` 尚有 32 个测试生成只读原件。自动审批拒绝强制及逐文件删除，仅返回 `blocked by policy`；普通删除因只读属性失败。该临时目录不复制、不提交；清理未完成不能记为通过。
@@ -100,17 +102,13 @@ knowledge:
 - H03 主目录复验：`test_knowledge_service.py test_knowledge_interaction.py test_knowledge_commands.py` **63 passed / 4 skipped**，临时根自动清理，`git diff --check` 通过。
 - H03 本地提交：`ffaafe1`。H04 实现任务：`01a0bf95-12ec-76d0-a071-3de1067141e1`，从此提交继续；未推送。
 - H04 验收：指定 4 文件变更，CLI 运行时覆盖复用 `replace` 与 `validate_knowledge`，检索和评分继续调用原实现；JSON/Markdown 记录请求与实际策略，离线 check/replay 拒绝检索覆盖，旧报告不补造缺失字段。全部 knowledge/config **151 passed / 7 skipped**（37.13 秒）；leader 在实施工作树和主目录分别验证 benchmark **29 passed**，主目录冻结集指纹仍为基线值（31 文档/32 问题）。临时测试入口/数据/报告已清理，`git diff --check` 通过。
-- H04 本地提交：`8ceb8e5`。H05 实现任务：`01a0bf9e-a6a4-7d60-a1c8-9c4b85038542`，从此提交继续；未推送。进入 H05 前，两座旧库 `a277068d07cf48ca9ad61127181d50b0`、`0cb2b2683d454857bdd5bc3ba2f2a0ca` 均为 READY/revision 31/31 文档；用户 knowledge 配置仍关闭，真实验收只在进程内启用。
+- H04 本地提交：`8ceb8e5`。H05 实现任务：`01a0bf9e-a6a4-7d60-a1c8-9c4b85038542`，从此提交继续；未推送。H05 当时使用的三个专用评测库现已退役。
 
 - 集成回归（H05 导入期间）：leader 在主目录对 H01–H04 最终代码执行全仓 pytest，**814 passed / 10 skipped / 1 warning**（88.89 秒），退出 0；临时测试根自动清理。警告为既有 `tests/test_consolidation.py` 的未注册 `pytest.mark.timeout`。真实环境开关未启用的用例与平台/环境跳过不计通过；真实链路单列 H02/H03/H05 证据。此回归在 H05 热查询计时前结束，H06 若仅调整文档则复用该结果。
-- H05 真实功能：固定 Qwen revision 与 Milvus 3.0.1；8 文档小库通过中文 BM25、独有 Top-3、共享 RRF 精确排名/分数和纯 BM25 无查询编码。新混合/旧 dense 均通过真实更新、删除、upsert 后故障、重开 service 后 retry、历史及已删除引用读取；两个独占集合和临时目录已清理。正式混合库 `1955508ffde242ccafed2a6193c1f300` 真实重编码导入 31 份原件、742 个片段，READY/revision 31；准备 64.97 秒，导入 988.58 秒（短暂与回归并行，不作速度提升结论）。
-- H05 质量：同库、同 revision、Top-5 的 dense/BM25/默认 hybrid 分别为单轮 **20/25、19/25、20/25**，证据 **28/34、26/34、27/34**，追问 **1/3、0/3、0/3**；全部零查询错误。默认 hybrid 改善 Q20，退步 Q14/Q27；Q28 虽仍 1/2，却由英文 D12 证据换成中文 D08。三组有限参数对照（N20/RRF20、N20/RRF60、N50/RRF20）均为 21/25、28/34、追问 0/3，仍有退步。功能通过不代表质量提升；本资料集建议显式 `dense`，保留计划规定的 auto 默认和可选混合能力，不修改用户配置。
-- H05 耗时与证据：每模式完整预热 32 题后两轮重复、第二轮逆序，64 个热样本；dense/BM25/hybrid 的 P50/P95 为 **128.61/148.55、18.32/29.03、136.03/164.74 ms**，包含查询编码、校验、检索、融合与来源读取。6 份正式报告及逐题、冷启动、热记录、保全清单均保存于 `.codeplus/benchmarks/workbin-v1/runs/h05_20260921_qwen_hybrid/` 的索引文件所指路径；不调用回答模型，不宣称回答或拒答正确率提升。
-- H05 leader 独立复核：全部 6 份正式报告和 9 轮记录评分/耗时重算一致；177 个既有文件哈希、两旧库 status/chunks 逻辑哈希相同，Milvus 前后行/schema/index 快照相同；187 个新引用和 220 个旧引用的来源与原件核对通过。工作树与主目录 12 个源码文件统一换行后完全一致，保留各自真实字节指纹（工作树 `1396db7b9ad30816dcd551c29b01cfc67451bcf2fd3ae38c7591616683e79e2a`，主目录 `5854855751e517c3ec997d5deff29a3d24b83a273b76c26f8fd8a84529a35dec`）。独立证据为同目录 `leader-review.json`，leader 临时复核与 pytest 入口已删除。
-- H05 交付 review 通过：正式汇总为上述验收目录 `summary.md` / `summary.json`；3 个执行者临时脚本已删除，工作树及暂存区干净，无产品或正式测试 diff。正式新库和报告保留；现有用户配置、绑定、旧库、历史报告均未修改。未执行回答模型、桌面 UI、生产规模/吞吐和调参热重复，H05 异常注入不冒充 H02 的进程硬退出验证。H01 已被审批拒绝的遗留目录仍单独记录。
+- H05 历史功能验收覆盖真实 BM25、RRF、纯关键词查询、更新、删除、retry 及历史引用；当时完成的个人资料质量对照及报告已退役，不作为新题库成绩或策略建议。未执行回答模型、桌面 UI 或生产吞吐；异常注入不冒充进程硬退出验证。
 - H05 本地提交：`56070b9`。H06 实现任务：`01a0bfc3-9aff-7931-aa5d-416e28104359`，从此提交继续；未推送。
 - H06 review 通过：仅修改 `.codeplus/config.yaml.example`、`README.md`、架构/使用/评测说明及本计划 6 个文件；删除过时的日常 dense-only 说明，统一旧库重建流程，保留历史验收时间边界与真实效果退步。复核共享规则、旧 profile/pending、同锁检索、来源/引用与三入口后，未发现需追加修复的产品缺陷；生产及测试代码未变，复用上述全仓结果。
-- H06 实际验证：13 项命令帮助、52 处本地 Markdown 链接/锚点、示例与使用说明 YAML 校验、生产源码一致性、冻结集 `--check`（31 文档/32 问题及原指纹）、`git diff --check` 均通过。执行者临时脚本及 2 个帮助命令日志已删除，leader 集成 patch 已删除；H01 被审批拒绝的目录未触碰。6 个阶段任务按顺序独立执行、由 leader review 后精确提交；正式 H05 库和报告保留，用户配置、绑定、旧库与历史结果不变。
+- H06 实际验证：13 项命令帮助、52 处本地 Markdown 链接/锚点、示例与使用说明 YAML 校验、生产源码一致性、冻结集 `--check`（31 文档/32 问题及原指纹）、`git diff --check` 均通过。执行者临时脚本及 2 个帮助命令日志已删除，leader 集成 patch 已删除；H01 被审批拒绝的目录未触碰。6 个阶段任务按顺序独立执行、由 leader review 后精确提交；当时保全状态仅代表 H06 完成时；后续退役范围以本文顶部评测更新为准。
 
 ### H01：共享规则和配置
 
@@ -154,7 +152,7 @@ knowledge:
 
 ### H04：复用 benchmark 做策略对照
 
-**修改范围**：`benchmark.py`、`__main__.py` 的 benchmark 参数、`tests/test_knowledge_benchmark.py`、`docs/knowledge-benchmark.md`。
+**修改范围**：`benchmark.py`、`__main__.py` 的 benchmark 参数、`tests/test_knowledge_benchmark.py`、`eval/RAG-eval/benchmark.md`。
 
 **执行步骤**：
 
@@ -174,7 +172,7 @@ knowledge:
 
 1. 使用 Windows 原生 `.venv`。通过现有受管部署入口准备 Milvus，使用已固定的本地 Qwen；不升级依赖或替换环境。
 2. 用独立小库验证真实中文分词、BM25 独有命中、融合、更新删除、pending 恢复和引用读取。额外构造旧 dense 库验证能力识别及原有读写行为。
-3. 读取冻结数据集 `.codeplus/benchmarks/workbin-v1`，核对原件和问题指纹。另建一个明确命名的混合验收库，导入 corpus 中同一批 31 份原件；保留旧库及既有绑定。
+3. 读取唯一题库的原创分区 `eval/RAG-eval/full/original`，核对原件和问题指纹。另建明确命名的混合验收库，只导入 manifest 指定的 corpus 原件；不得复用旧个人题库或旧库 ID。
 4. 在同一个新库、同一版资料和相同 Top-5 下运行 dense、BM25、hybrid。主对照以本轮同库的 dense 结果为准，历史报告只作为回归参考；不能把旧库与新库的差异全部归因于检索策略。
 5. 固定默认 N=50、RRF=60 完成第一组。复用现有进程内 service 进行预热和少量完整重复，分别统计冷启动与热查询耗时；BM25/模型预热开销不能混入不同策略的热查询对比。
 6. 输出逐题覆盖变化，重点检查 Q20、Q21、Q23、Q28、Q29，同时检查所有原先通过的题。阅读失败样本的实际片段，不只比较汇总数字。
@@ -195,7 +193,7 @@ knowledge:
 
 ### H06：集成审查与交付
 
-**修改范围**：本轮 diff、`docs/knowledge-architecture.md`、`docs/knowledge-setup.md`、`docs/knowledge-benchmark.md`、示例配置与本计划状态。
+**修改范围**：本轮 diff、`docs/knowledge-architecture.md`、`docs/knowledge-setup.md`、`eval/RAG-eval/benchmark.md`、示例配置与本计划状态。
 
 **执行步骤**：
 
@@ -216,22 +214,22 @@ Set-Location D:/CodePlus
 git status --short
 git diff --cached --stat
 git log -1 --oneline
-.\.venv\Scripts\python.exe -m codeplus.knowledge benchmark --dataset .codeplus/benchmarks/workbin-v1 --check
+.\.venv\Scripts\python.exe -m codeplus.knowledge benchmark --dataset eval/RAG-eval/full/original --check
 $knowledgeTests = @(Get-ChildItem tests/test_knowledge*.py | ForEach-Object { $_.FullName })
 .\.venv\Scripts\python.exe -m pytest @knowledgeTests -q
 ```
 
-H04 参数已可用，以下使用 H05 正式新库，仅供需要再次运行时参考；既有六份报告与结论见 [评测说明](knowledge-benchmark.md#h05-真实资料对照2026-09-21)。运行前沿用现有配置确认服务地址和数据目录，不打印凭据、不覆盖旧报告。
+H04 参数已可用。以下命令用于当前新题库的独立混合库，运行前确认服务地址和新库 ID；历史个人题库及报告已退役。
 
 ```powershell
-$datasetPath = '.codeplus/benchmarks/workbin-v1'
-$hybridKbId = '1955508ffde242ccafed2a6193c1f300'
+$datasetPath = 'eval/RAG-eval/full/original'
+$hybridKbId = '<新建评测库ID>'
 .\.venv\Scripts\python.exe -m codeplus.knowledge benchmark --dataset $datasetPath --kb-id $hybridKbId --managed-local --mode dense
 .\.venv\Scripts\python.exe -m codeplus.knowledge benchmark --dataset $datasetPath --kb-id $hybridKbId --managed-local --mode bm25
 .\.venv\Scripts\python.exe -m codeplus.knowledge benchmark --dataset $datasetPath --kb-id $hybridKbId --managed-local --mode hybrid --candidates 50 --rrf-k 60
 ```
 
-以上三条通过同一服务分别生成正式检索报告；独立 CLI 进程的模型加载和首题耗时不能直接作为稳定性能结论，热查询对照按 H05 的进程内预热方案执行。会话切换命令为 `/knowledge use 1955508ffde242ccafed2a6193c1f300`，本轮未改用户绑定；auto 会在该库选择 hybrid，本回归集实际建议显式 dense。旧库升级复用 [create/import/use 流程](knowledge-setup.md#旧库兼容与重建)。
+以上三条通过同一服务分别生成正式检索报告；独立 CLI 进程的模型加载和首题耗时不能直接作为稳定性能结论，热查询对照按 H05 的进程内预热方案执行。新库 ID 由本轮 create 返回，不恢复旧评测绑定；auto 使用 hybrid，不预设新题库策略优劣。
 
 最后核对 diff 与状态；全仓 pytest 仅在最终代码尚未验证或代码修正需要重验时执行：
 

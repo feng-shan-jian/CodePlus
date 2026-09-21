@@ -1,0 +1,14 @@
+{
+  "origin": "original_fictional_fixtures",
+  "created": "2026-09-21",
+  "legacy_personal_sources_used": false,
+  "public_dataset_samples_downloaded": false,
+  "full_dataset_target": {
+    "single_questions": 300,
+    "sessions": 20,
+    "workflows": 20
+  },
+  "annotation_review": "machine_validated_exact_quotes; human_acceptance_pending",
+  "holdout": "none; all smoke items belong to development only",
+  "scope": "32-question development subset only; canonical sessions and workflows are at suite root."
+}

@@ -1,0 +1,85 @@
+{
+  "status": "passed",
+  "scope": "offline_dataset_integrity_only",
+  "questions": 300,
+  "suite_sha256": "9840c20837ce710153e7a5c869867ee5862b2ac43cb7128356ae439c9d436131",
+  "artifact_sha256": {
+    "suite.json": "5ba3c1a0409bd97eaec5e259b0fb27b6a279f0387feac192d95b3ef3eb3c3d72",
+    "source-lock.json": "98ad52e2d43675710a699af2175ed17e1b5190fdcb04e8ef01e7e97a84427957",
+    "quality-review.json": "cdd4c297124ba875babcee0406daeef27fb988ac2361da0e91b3160417484649",
+    "sessions.json": "7672bcc927426b81196187ccc9585137efffcd2517594a26f0ba1ea195618a63",
+    "workflows.json": "1b4c2ea334e10c15b1784f50b193a3a99acf0380d906cc9ecc4ad4648aa274cf",
+    "check.py": "1f3045be392ac4d2064eba9c74d7aeafac717be21f83638e0e2ec2ef63d71ed5",
+    "run.ps1": "bd830bfd8817c04ccc52d89ca3039ebf06717d6fda08d67ddd493823993eb3d1",
+    "full/original/rubrics.json": "da1710033f05ab9cbd6bc705cda4adf4fb4c04bbcec5cbb3e06d226d9a319bd0",
+    "full/crud/rubrics.json": "f83d38b0416d453ad553fa59b92bf4ccf7dab14222e64ff5bd1ab8da6f8e25bc",
+    "full/multihop/rubrics.json": "003c5aed5619188e52e75b522b1bb8324e622cee62421896aefeec5cdf753960",
+    "full/openrag/rubrics.json": "38dc9bcd5ed88b4ff9109667808c6e908f9c25e2df8e17f8385e749aff7df2dd",
+    "full/rgb/rubrics.json": "02d12e225153467061413a71222058ba3e13091aaebab0663762c5c4100db845"
+  },
+  "retrieval_questions": 250,
+  "retrieval_questions_with_gold": 247,
+  "provided_context_questions": 50,
+  "source_mix": {
+    "public_derived": 260,
+    "original": 40
+  },
+  "splits": {
+    "development": 60,
+    "holdout": 240
+  },
+  "scenarios": {
+    "S01": 94,
+    "S02": 8,
+    "S03": 84,
+    "S04": 24,
+    "S05": 24,
+    "S06": 24,
+    "S07": 34,
+    "S08": 8
+  },
+  "sessions": 20,
+  "session_turns": 60,
+  "workflows": 20,
+  "datasets": [
+    {
+      "name": "original",
+      "questions": 40,
+      "documents": 22,
+      "dataset_sha256": "cd76c4eb7593efc532ead1219ccb40bb536d2ff19472577a4959db075cdd981f"
+    },
+    {
+      "name": "crud",
+      "questions": 90,
+      "documents": 2020,
+      "dataset_sha256": "777deb718194dba15075764d491e914021fe1edb895e99c57db062b8e0ca6474"
+    },
+    {
+      "name": "multihop",
+      "questions": 100,
+      "documents": 609,
+      "dataset_sha256": "c24ce5fd732e8b2e57ab2d7ef5c5fe99ed4141ca9c7a32a5c44043baab0956b7"
+    },
+    {
+      "name": "openrag",
+      "questions": 20,
+      "documents": 20,
+      "dataset_sha256": "29c9b64f5a8d12e8a0e90fdd83e7eb0542abb14f7b25859d792fa3b541968ab3"
+    },
+    {
+      "name": "rgb",
+      "questions": 50,
+      "documents": 230,
+      "dataset_sha256": "818fdc9dece31c8620e96e5bafabfdc4613aad66f49e63b3a4ad47bafd786c9d"
+    }
+  ],
+  "model_called": false,
+  "database_called": false,
+  "independent_human_review": "pending",
+  "system_evaluation": {
+    "retrieval": "not_executed",
+    "answers": "not_executed",
+    "sessions": "not_executed",
+    "workflows": "not_executed"
+  }
+}

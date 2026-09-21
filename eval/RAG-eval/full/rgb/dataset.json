@@ -1,0 +1,3052 @@
+{
+  "id": "rag-scenarios-v1-rgb",
+  "version": "1.0.0",
+  "format_version": 1,
+  "status": "curated_candidate",
+  "origin": "RGB",
+  "protocol": {
+    "top_k": 5,
+    "scoring": "source-content-v1",
+    "scope": "provided_context_only",
+    "answer_model": "not_called",
+    "followup_query": "sessions_separate"
+  },
+  "documents": [
+    {
+      "id": "rgb-240-negative-1",
+      "file": "rgb-240-negative-1.md",
+      "path": "corpus/rgb-240-negative-1.md",
+      "sha256": "35e9be2fec2d3bca8957d5e03f5866edc303dcb6369b573b346ecfbd2a0061bd",
+      "text_path": "text/rgb-240-negative-1.txt",
+      "text_sha256": "35e9be2fec2d3bca8957d5e03f5866edc303dcb6369b573b346ecfbd2a0061bd",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 240,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-240-negative-2",
+      "file": "rgb-240-negative-2.md",
+      "path": "corpus/rgb-240-negative-2.md",
+      "sha256": "92769a520a139c0b703e024266cb2f401fd879445cee3a960536f9a52f390a9c",
+      "text_path": "text/rgb-240-negative-2.txt",
+      "text_sha256": "92769a520a139c0b703e024266cb2f401fd879445cee3a960536f9a52f390a9c",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 240,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-240-negative-3",
+      "file": "rgb-240-negative-3.md",
+      "path": "corpus/rgb-240-negative-3.md",
+      "sha256": "94e92646022dc5ac95af154b82c1806315483c07498f9447eb2e0e314d4bcf88",
+      "text_path": "text/rgb-240-negative-3.txt",
+      "text_sha256": "94e92646022dc5ac95af154b82c1806315483c07498f9447eb2e0e314d4bcf88",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 240,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-240-negative-4",
+      "file": "rgb-240-negative-4.md",
+      "path": "corpus/rgb-240-negative-4.md",
+      "sha256": "c8ff12f91629646a74b5c9fe21ffe091cf2b15fd00f25006206ed3e332ac1ed8",
+      "text_path": "text/rgb-240-negative-4.txt",
+      "text_sha256": "c8ff12f91629646a74b5c9fe21ffe091cf2b15fd00f25006206ed3e332ac1ed8",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 240,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-294-negative-1",
+      "file": "rgb-294-negative-1.md",
+      "path": "corpus/rgb-294-negative-1.md",
+      "sha256": "8da615591db39008d8b63bbd3b828060a10866fdce211939919451ddf61f4f06",
+      "text_path": "text/rgb-294-negative-1.txt",
+      "text_sha256": "8da615591db39008d8b63bbd3b828060a10866fdce211939919451ddf61f4f06",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 294,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-294-negative-2",
+      "file": "rgb-294-negative-2.md",
+      "path": "corpus/rgb-294-negative-2.md",
+      "sha256": "4364b0cf357b08a4c89df2193cc2cc3ffb62da3a489f29cf3322fe079d30506c",
+      "text_path": "text/rgb-294-negative-2.txt",
+      "text_sha256": "4364b0cf357b08a4c89df2193cc2cc3ffb62da3a489f29cf3322fe079d30506c",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 294,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-294-negative-3",
+      "file": "rgb-294-negative-3.md",
+      "path": "corpus/rgb-294-negative-3.md",
+      "sha256": "2f498d98fccd588e7319821cd422896dc8ecfab491e5a7b2394f299d791ec8f9",
+      "text_path": "text/rgb-294-negative-3.txt",
+      "text_sha256": "2f498d98fccd588e7319821cd422896dc8ecfab491e5a7b2394f299d791ec8f9",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 294,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-294-negative-4",
+      "file": "rgb-294-negative-4.md",
+      "path": "corpus/rgb-294-negative-4.md",
+      "sha256": "e391b08c9f05f6d3e11f713e9300c710d5dee1ab06bb6fcb2cdec08ebb7ba09e",
+      "text_path": "text/rgb-294-negative-4.txt",
+      "text_sha256": "e391b08c9f05f6d3e11f713e9300c710d5dee1ab06bb6fcb2cdec08ebb7ba09e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 294,
+        "field": "negative",
+        "field_index": 4,
+        "review_reason": "Replace answer leakage, duplicate distractor, or unsupported positive relation."
+      }
+    },
+    {
+      "id": "rgb-220-negative-1",
+      "file": "rgb-220-negative-1.md",
+      "path": "corpus/rgb-220-negative-1.md",
+      "sha256": "75d30e670ce79fc37d170897e85d494d4e70d39a309e265cd6e19afdc35ad6c4",
+      "text_path": "text/rgb-220-negative-1.txt",
+      "text_sha256": "75d30e670ce79fc37d170897e85d494d4e70d39a309e265cd6e19afdc35ad6c4",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 220,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-220-negative-2",
+      "file": "rgb-220-negative-2.md",
+      "path": "corpus/rgb-220-negative-2.md",
+      "sha256": "0e3a3c53c8694d186431940e4a75f4e00cda7374bb5c09fb4b371ff22c7bf116",
+      "text_path": "text/rgb-220-negative-2.txt",
+      "text_sha256": "0e3a3c53c8694d186431940e4a75f4e00cda7374bb5c09fb4b371ff22c7bf116",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 220,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-220-negative-3",
+      "file": "rgb-220-negative-3.md",
+      "path": "corpus/rgb-220-negative-3.md",
+      "sha256": "f672b0df59bf8901c6a4de1a5f27a182771bac2b58aded8e1c940402fcabde17",
+      "text_path": "text/rgb-220-negative-3.txt",
+      "text_sha256": "f672b0df59bf8901c6a4de1a5f27a182771bac2b58aded8e1c940402fcabde17",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 220,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-220-negative-4",
+      "file": "rgb-220-negative-4.md",
+      "path": "corpus/rgb-220-negative-4.md",
+      "sha256": "a30048d31ccf3ba153e4013c64389eab78d4caa9095b2ab97fe6449ef76c8d75",
+      "text_path": "text/rgb-220-negative-4.txt",
+      "text_sha256": "a30048d31ccf3ba153e4013c64389eab78d4caa9095b2ab97fe6449ef76c8d75",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 220,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-153-negative-1",
+      "file": "rgb-153-negative-1.md",
+      "path": "corpus/rgb-153-negative-1.md",
+      "sha256": "a435f656f0e3a7cc3b8425a1342210d3a597cc53cf0d9b951a440d7b6cd666cf",
+      "text_path": "text/rgb-153-negative-1.txt",
+      "text_sha256": "a435f656f0e3a7cc3b8425a1342210d3a597cc53cf0d9b951a440d7b6cd666cf",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 153,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-153-negative-2",
+      "file": "rgb-153-negative-2.md",
+      "path": "corpus/rgb-153-negative-2.md",
+      "sha256": "2b58ac3a6dffe52ef459fafacd734c6e99ce33fe1ab2451b02eeb17ddbb4e060",
+      "text_path": "text/rgb-153-negative-2.txt",
+      "text_sha256": "2b58ac3a6dffe52ef459fafacd734c6e99ce33fe1ab2451b02eeb17ddbb4e060",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 153,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-153-negative-3",
+      "file": "rgb-153-negative-3.md",
+      "path": "corpus/rgb-153-negative-3.md",
+      "sha256": "681f71e3df8d921ac30a2caeb9bc703982e67024c4ae4bb3b065e478f658aa77",
+      "text_path": "text/rgb-153-negative-3.txt",
+      "text_sha256": "681f71e3df8d921ac30a2caeb9bc703982e67024c4ae4bb3b065e478f658aa77",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 153,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-153-negative-4",
+      "file": "rgb-153-negative-4.md",
+      "path": "corpus/rgb-153-negative-4.md",
+      "sha256": "2d3d8bab22579203d580a2a1e1f3dd6e00b9974b9152faac3c033f787a1426f9",
+      "text_path": "text/rgb-153-negative-4.txt",
+      "text_sha256": "2d3d8bab22579203d580a2a1e1f3dd6e00b9974b9152faac3c033f787a1426f9",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 153,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-111-negative-1",
+      "file": "rgb-111-negative-1.md",
+      "path": "corpus/rgb-111-negative-1.md",
+      "sha256": "e58ec45c98357d0cf843b2e8cf305621f7bb86fab133e87ed8c1dfb987b82f71",
+      "text_path": "text/rgb-111-negative-1.txt",
+      "text_sha256": "e58ec45c98357d0cf843b2e8cf305621f7bb86fab133e87ed8c1dfb987b82f71",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 111,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-111-negative-2",
+      "file": "rgb-111-negative-2.md",
+      "path": "corpus/rgb-111-negative-2.md",
+      "sha256": "1e5b6aa34c8995a8c7dc7ba91cfcefb2b807c690ce9b3eae6c6875998e987718",
+      "text_path": "text/rgb-111-negative-2.txt",
+      "text_sha256": "1e5b6aa34c8995a8c7dc7ba91cfcefb2b807c690ce9b3eae6c6875998e987718",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 111,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-111-negative-3",
+      "file": "rgb-111-negative-3.md",
+      "path": "corpus/rgb-111-negative-3.md",
+      "sha256": "7b76bfd5e6513e4c3dd2a46ab73867061d95f70359cd3865227ffe869b798d2e",
+      "text_path": "text/rgb-111-negative-3.txt",
+      "text_sha256": "7b76bfd5e6513e4c3dd2a46ab73867061d95f70359cd3865227ffe869b798d2e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 111,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-111-negative-4",
+      "file": "rgb-111-negative-4.md",
+      "path": "corpus/rgb-111-negative-4.md",
+      "sha256": "b99e16a39c9cad8f06e24123af57bc3a034a203147ce66d5d27d9ec9204e3b33",
+      "text_path": "text/rgb-111-negative-4.txt",
+      "text_sha256": "b99e16a39c9cad8f06e24123af57bc3a034a203147ce66d5d27d9ec9204e3b33",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 111,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-102-negative-1",
+      "file": "rgb-102-negative-1.md",
+      "path": "corpus/rgb-102-negative-1.md",
+      "sha256": "7ac24be436f3355d837c24300a0358007f2fa7cac979decfeb2197d6a95504cb",
+      "text_path": "text/rgb-102-negative-1.txt",
+      "text_sha256": "7ac24be436f3355d837c24300a0358007f2fa7cac979decfeb2197d6a95504cb",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 102,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-102-negative-2",
+      "file": "rgb-102-negative-2.md",
+      "path": "corpus/rgb-102-negative-2.md",
+      "sha256": "3b41bcce2a790311905c4b95646ed3f3f9789763357d74579a6e713802855960",
+      "text_path": "text/rgb-102-negative-2.txt",
+      "text_sha256": "3b41bcce2a790311905c4b95646ed3f3f9789763357d74579a6e713802855960",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 102,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-102-negative-3",
+      "file": "rgb-102-negative-3.md",
+      "path": "corpus/rgb-102-negative-3.md",
+      "sha256": "5827d9d9a4e2e8f651baa8a28577bd484db7993eedef0458aa589c7d7fe31937",
+      "text_path": "text/rgb-102-negative-3.txt",
+      "text_sha256": "5827d9d9a4e2e8f651baa8a28577bd484db7993eedef0458aa589c7d7fe31937",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 102,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-102-negative-4",
+      "file": "rgb-102-negative-4.md",
+      "path": "corpus/rgb-102-negative-4.md",
+      "sha256": "526fe2d4e646ee09faf56093ff9608a58702fba4a13ee42be743f1bb6c8b136b",
+      "text_path": "text/rgb-102-negative-4.txt",
+      "text_sha256": "526fe2d4e646ee09faf56093ff9608a58702fba4a13ee42be743f1bb6c8b136b",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 102,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-119-negative-1",
+      "file": "rgb-119-negative-1.md",
+      "path": "corpus/rgb-119-negative-1.md",
+      "sha256": "dca3acef1469a4fbebac6fcc100ae9921dc34da1cd0815e9bb19fbbe915f1718",
+      "text_path": "text/rgb-119-negative-1.txt",
+      "text_sha256": "dca3acef1469a4fbebac6fcc100ae9921dc34da1cd0815e9bb19fbbe915f1718",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 119,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-119-negative-2",
+      "file": "rgb-119-negative-2.md",
+      "path": "corpus/rgb-119-negative-2.md",
+      "sha256": "c35972a427a81ee9118deb90f2d71b126aa778c589d840be4acb5b1d5ad62d79",
+      "text_path": "text/rgb-119-negative-2.txt",
+      "text_sha256": "c35972a427a81ee9118deb90f2d71b126aa778c589d840be4acb5b1d5ad62d79",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 119,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-119-negative-3",
+      "file": "rgb-119-negative-3.md",
+      "path": "corpus/rgb-119-negative-3.md",
+      "sha256": "1b1022fad6fe068caebb95c4e83e5dc9706554b5a1c0763af8a736b53bad5258",
+      "text_path": "text/rgb-119-negative-3.txt",
+      "text_sha256": "1b1022fad6fe068caebb95c4e83e5dc9706554b5a1c0763af8a736b53bad5258",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 119,
+        "field": "negative",
+        "field_index": 4,
+        "review_reason": "Replace answer leakage, duplicate distractor, or unsupported positive relation."
+      }
+    },
+    {
+      "id": "rgb-119-negative-4",
+      "file": "rgb-119-negative-4.md",
+      "path": "corpus/rgb-119-negative-4.md",
+      "sha256": "191f9288e40b453e09999da50036e538b7fbc96c4ba70c583533861ab9a2fa59",
+      "text_path": "text/rgb-119-negative-4.txt",
+      "text_sha256": "191f9288e40b453e09999da50036e538b7fbc96c4ba70c583533861ab9a2fa59",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 119,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-118-negative-1",
+      "file": "rgb-118-negative-1.md",
+      "path": "corpus/rgb-118-negative-1.md",
+      "sha256": "ec0c002fb5491fde4687f4b1d1a2e3b8b6fe29c2aec16517efe3932ba1af5276",
+      "text_path": "text/rgb-118-negative-1.txt",
+      "text_sha256": "ec0c002fb5491fde4687f4b1d1a2e3b8b6fe29c2aec16517efe3932ba1af5276",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 118,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-118-negative-2",
+      "file": "rgb-118-negative-2.md",
+      "path": "corpus/rgb-118-negative-2.md",
+      "sha256": "ed4c3157e146c1bc3e6e7531a4526b7a3a3d1dd63488f4c9feb3bd206899267e",
+      "text_path": "text/rgb-118-negative-2.txt",
+      "text_sha256": "ed4c3157e146c1bc3e6e7531a4526b7a3a3d1dd63488f4c9feb3bd206899267e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 118,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-118-negative-3",
+      "file": "rgb-118-negative-3.md",
+      "path": "corpus/rgb-118-negative-3.md",
+      "sha256": "bf078d7287f697682a30ac175c80e0ce99abd53e1347424f05c103a664634b4d",
+      "text_path": "text/rgb-118-negative-3.txt",
+      "text_sha256": "bf078d7287f697682a30ac175c80e0ce99abd53e1347424f05c103a664634b4d",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 118,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-118-negative-4",
+      "file": "rgb-118-negative-4.md",
+      "path": "corpus/rgb-118-negative-4.md",
+      "sha256": "4d88d2e04506367794d1af4237f101999661c813e1d9b091c84672d1996d1158",
+      "text_path": "text/rgb-118-negative-4.txt",
+      "text_sha256": "4d88d2e04506367794d1af4237f101999661c813e1d9b091c84672d1996d1158",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 118,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-135-negative-1",
+      "file": "rgb-135-negative-1.md",
+      "path": "corpus/rgb-135-negative-1.md",
+      "sha256": "cab9a4e3e536f5115de654d79047d97c4715ba0ffb4dc300e927b35ff6bdbb4a",
+      "text_path": "text/rgb-135-negative-1.txt",
+      "text_sha256": "cab9a4e3e536f5115de654d79047d97c4715ba0ffb4dc300e927b35ff6bdbb4a",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 135,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-135-negative-2",
+      "file": "rgb-135-negative-2.md",
+      "path": "corpus/rgb-135-negative-2.md",
+      "sha256": "11aea9c878dd8db442bb77761f9ed35269408335bd9146cf2368cf14c6c47566",
+      "text_path": "text/rgb-135-negative-2.txt",
+      "text_sha256": "11aea9c878dd8db442bb77761f9ed35269408335bd9146cf2368cf14c6c47566",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 135,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-135-negative-3",
+      "file": "rgb-135-negative-3.md",
+      "path": "corpus/rgb-135-negative-3.md",
+      "sha256": "88fe9a25f918287be49c2e3b48f4cb77f52bad58e29395314f27d0cfde05c558",
+      "text_path": "text/rgb-135-negative-3.txt",
+      "text_sha256": "88fe9a25f918287be49c2e3b48f4cb77f52bad58e29395314f27d0cfde05c558",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 135,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-135-negative-4",
+      "file": "rgb-135-negative-4.md",
+      "path": "corpus/rgb-135-negative-4.md",
+      "sha256": "81a95f201b5b282fe734841a28761b53dfd60bde9ec3c7398721d8c6d1337ba3",
+      "text_path": "text/rgb-135-negative-4.txt",
+      "text_sha256": "81a95f201b5b282fe734841a28761b53dfd60bde9ec3c7398721d8c6d1337ba3",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 135,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-249-negative-1",
+      "file": "rgb-249-negative-1.md",
+      "path": "corpus/rgb-249-negative-1.md",
+      "sha256": "cc2acfb0bbb2cab816b23e4732abffae201f6484f7762ef208adacaa0c40e21f",
+      "text_path": "text/rgb-249-negative-1.txt",
+      "text_sha256": "cc2acfb0bbb2cab816b23e4732abffae201f6484f7762ef208adacaa0c40e21f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 249,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-249-negative-2",
+      "file": "rgb-249-negative-2.md",
+      "path": "corpus/rgb-249-negative-2.md",
+      "sha256": "94d18cecb789a635a080db8e820fba7eb865f06185d8fa47793c57bf893f5830",
+      "text_path": "text/rgb-249-negative-2.txt",
+      "text_sha256": "94d18cecb789a635a080db8e820fba7eb865f06185d8fa47793c57bf893f5830",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 249,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-249-negative-3",
+      "file": "rgb-249-negative-3.md",
+      "path": "corpus/rgb-249-negative-3.md",
+      "sha256": "70ee50d30fd3be07777065d9052ecc3a30181c0d679b9757ef02a55127fce04e",
+      "text_path": "text/rgb-249-negative-3.txt",
+      "text_sha256": "70ee50d30fd3be07777065d9052ecc3a30181c0d679b9757ef02a55127fce04e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 249,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-249-negative-4",
+      "file": "rgb-249-negative-4.md",
+      "path": "corpus/rgb-249-negative-4.md",
+      "sha256": "117227e5fefbca8fa928a77f0a87a551cd815f04710a3555fc6814cf5e2cc465",
+      "text_path": "text/rgb-249-negative-4.txt",
+      "text_sha256": "117227e5fefbca8fa928a77f0a87a551cd815f04710a3555fc6814cf5e2cc465",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 249,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-231-negative-1",
+      "file": "rgb-231-negative-1.md",
+      "path": "corpus/rgb-231-negative-1.md",
+      "sha256": "19f53c7c01c860e8944a3ab2188ced9416ffb69bdad6631d26b11c0ed531349f",
+      "text_path": "text/rgb-231-negative-1.txt",
+      "text_sha256": "19f53c7c01c860e8944a3ab2188ced9416ffb69bdad6631d26b11c0ed531349f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 231,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-231-negative-2",
+      "file": "rgb-231-negative-2.md",
+      "path": "corpus/rgb-231-negative-2.md",
+      "sha256": "53ce6558c18f06b10cd823f3ec7f5d18ff4c779b123840045f712b3d6f90e402",
+      "text_path": "text/rgb-231-negative-2.txt",
+      "text_sha256": "53ce6558c18f06b10cd823f3ec7f5d18ff4c779b123840045f712b3d6f90e402",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 231,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-231-negative-3",
+      "file": "rgb-231-negative-3.md",
+      "path": "corpus/rgb-231-negative-3.md",
+      "sha256": "3486e5cce0d8328ddb91546a89290bf8e444f3f09d9c6482683e991244a7729e",
+      "text_path": "text/rgb-231-negative-3.txt",
+      "text_sha256": "3486e5cce0d8328ddb91546a89290bf8e444f3f09d9c6482683e991244a7729e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 231,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-231-negative-4",
+      "file": "rgb-231-negative-4.md",
+      "path": "corpus/rgb-231-negative-4.md",
+      "sha256": "f4427153e57b6fdc7494301b09c552c4ddd525c12080417899ec7b59e15dfda5",
+      "text_path": "text/rgb-231-negative-4.txt",
+      "text_sha256": "f4427153e57b6fdc7494301b09c552c4ddd525c12080417899ec7b59e15dfda5",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 231,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-41-negative-1",
+      "file": "rgb-41-negative-1.md",
+      "path": "corpus/rgb-41-negative-1.md",
+      "sha256": "ed3fb2267c2e60c8efa585d89dd392ab5a662912e3cea00d059527fb06af7fa0",
+      "text_path": "text/rgb-41-negative-1.txt",
+      "text_sha256": "ed3fb2267c2e60c8efa585d89dd392ab5a662912e3cea00d059527fb06af7fa0",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 41,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-41-negative-2",
+      "file": "rgb-41-negative-2.md",
+      "path": "corpus/rgb-41-negative-2.md",
+      "sha256": "2d29c154562b729b579ad61eef8e42d885b78c813e9f9a7a29bed9ee89989957",
+      "text_path": "text/rgb-41-negative-2.txt",
+      "text_sha256": "2d29c154562b729b579ad61eef8e42d885b78c813e9f9a7a29bed9ee89989957",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 41,
+        "field": "negative",
+        "field_index": 4,
+        "review_reason": "Replace answer leakage, duplicate distractor, or unsupported positive relation."
+      }
+    },
+    {
+      "id": "rgb-41-negative-3",
+      "file": "rgb-41-negative-3.md",
+      "path": "corpus/rgb-41-negative-3.md",
+      "sha256": "1d3faf5db78fcfbb1ec2c46c80d129d5eaf54bff47691dba6ce1b905b38847fe",
+      "text_path": "text/rgb-41-negative-3.txt",
+      "text_sha256": "1d3faf5db78fcfbb1ec2c46c80d129d5eaf54bff47691dba6ce1b905b38847fe",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 41,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-41-negative-4",
+      "file": "rgb-41-negative-4.md",
+      "path": "corpus/rgb-41-negative-4.md",
+      "sha256": "86f7afe5c2d04f992bee941a4d8360130ab3ccfeb9afcc867c7789689f15d72a",
+      "text_path": "text/rgb-41-negative-4.txt",
+      "text_sha256": "86f7afe5c2d04f992bee941a4d8360130ab3ccfeb9afcc867c7789689f15d72a",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 41,
+        "field": "negative",
+        "field_index": 5,
+        "review_reason": "Replace answer leakage, duplicate distractor, or unsupported positive relation."
+      }
+    },
+    {
+      "id": "rgb-134-negative-1",
+      "file": "rgb-134-negative-1.md",
+      "path": "corpus/rgb-134-negative-1.md",
+      "sha256": "4263ecd47e2d0939e975d1bc6083e381f27f82954fb6706be8a0d5e4f4921728",
+      "text_path": "text/rgb-134-negative-1.txt",
+      "text_sha256": "4263ecd47e2d0939e975d1bc6083e381f27f82954fb6706be8a0d5e4f4921728",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 134,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-134-negative-2",
+      "file": "rgb-134-negative-2.md",
+      "path": "corpus/rgb-134-negative-2.md",
+      "sha256": "758b306476d00d4b426a34b55524d7cf40f9e2c20a6910dbb85751e127a7d537",
+      "text_path": "text/rgb-134-negative-2.txt",
+      "text_sha256": "758b306476d00d4b426a34b55524d7cf40f9e2c20a6910dbb85751e127a7d537",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 134,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-134-negative-3",
+      "file": "rgb-134-negative-3.md",
+      "path": "corpus/rgb-134-negative-3.md",
+      "sha256": "ea1caf9b15bb4e93cc6c205cf460117249b4f318da9476afce6a3a3332a86dd2",
+      "text_path": "text/rgb-134-negative-3.txt",
+      "text_sha256": "ea1caf9b15bb4e93cc6c205cf460117249b4f318da9476afce6a3a3332a86dd2",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 134,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-134-negative-4",
+      "file": "rgb-134-negative-4.md",
+      "path": "corpus/rgb-134-negative-4.md",
+      "sha256": "913d37ce85a489f12e355526abbbed6b39fffa8fa4e42964e3e12b08dcecf301",
+      "text_path": "text/rgb-134-negative-4.txt",
+      "text_sha256": "913d37ce85a489f12e355526abbbed6b39fffa8fa4e42964e3e12b08dcecf301",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 134,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-172-negative-1",
+      "file": "rgb-172-negative-1.md",
+      "path": "corpus/rgb-172-negative-1.md",
+      "sha256": "f4405e886d2462f7cc3274e2ac5ffdbddd2d609f98e8969690a99d394258efa2",
+      "text_path": "text/rgb-172-negative-1.txt",
+      "text_sha256": "f4405e886d2462f7cc3274e2ac5ffdbddd2d609f98e8969690a99d394258efa2",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 172,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-172-negative-2",
+      "file": "rgb-172-negative-2.md",
+      "path": "corpus/rgb-172-negative-2.md",
+      "sha256": "3a43898ec695272affdf4abb38a52fa6d14573023c35432a11781028e5a62095",
+      "text_path": "text/rgb-172-negative-2.txt",
+      "text_sha256": "3a43898ec695272affdf4abb38a52fa6d14573023c35432a11781028e5a62095",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 172,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-172-negative-3",
+      "file": "rgb-172-negative-3.md",
+      "path": "corpus/rgb-172-negative-3.md",
+      "sha256": "40e6942429d307e8f829c569b021be74ed6a592a073832f8b81ae46fb08a9cf1",
+      "text_path": "text/rgb-172-negative-3.txt",
+      "text_sha256": "40e6942429d307e8f829c569b021be74ed6a592a073832f8b81ae46fb08a9cf1",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 172,
+        "field": "negative",
+        "field_index": 7,
+        "review_reason": "Replace answer leakage, duplicate distractor, or unsupported positive relation."
+      }
+    },
+    {
+      "id": "rgb-172-negative-4",
+      "file": "rgb-172-negative-4.md",
+      "path": "corpus/rgb-172-negative-4.md",
+      "sha256": "247de57cb3bea8b802619f955755c01d69511ee6ce3e679e83331f28545df1c3",
+      "text_path": "text/rgb-172-negative-4.txt",
+      "text_sha256": "247de57cb3bea8b802619f955755c01d69511ee6ce3e679e83331f28545df1c3",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 172,
+        "field": "negative",
+        "field_index": 10,
+        "review_reason": "Replace answer leakage, duplicate distractor, or unsupported positive relation."
+      }
+    },
+    {
+      "id": "rgb-147-negative-1",
+      "file": "rgb-147-negative-1.md",
+      "path": "corpus/rgb-147-negative-1.md",
+      "sha256": "c5ed07af0e57e3881316d70ada892803b79d0cc1df545aa3958d7b7c01e2cce6",
+      "text_path": "text/rgb-147-negative-1.txt",
+      "text_sha256": "c5ed07af0e57e3881316d70ada892803b79d0cc1df545aa3958d7b7c01e2cce6",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 147,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-147-negative-2",
+      "file": "rgb-147-negative-2.md",
+      "path": "corpus/rgb-147-negative-2.md",
+      "sha256": "4fc55c25a8b1067a077cad0e2611289f76e49a3dbf7060da005e9900bc0434a9",
+      "text_path": "text/rgb-147-negative-2.txt",
+      "text_sha256": "4fc55c25a8b1067a077cad0e2611289f76e49a3dbf7060da005e9900bc0434a9",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 147,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-147-negative-3",
+      "file": "rgb-147-negative-3.md",
+      "path": "corpus/rgb-147-negative-3.md",
+      "sha256": "c3e9d79f9771a2bba485140e48a54de8a3b7cd6f9a3fa4578837da436809f96c",
+      "text_path": "text/rgb-147-negative-3.txt",
+      "text_sha256": "c3e9d79f9771a2bba485140e48a54de8a3b7cd6f9a3fa4578837da436809f96c",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 147,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-147-negative-4",
+      "file": "rgb-147-negative-4.md",
+      "path": "corpus/rgb-147-negative-4.md",
+      "sha256": "dcf704d63ba9b87cb119837552627fcb1b53b8f3f7f0c71b9a1514ab0cb42f3e",
+      "text_path": "text/rgb-147-negative-4.txt",
+      "text_sha256": "dcf704d63ba9b87cb119837552627fcb1b53b8f3f7f0c71b9a1514ab0cb42f3e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 147,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-209-negative-1",
+      "file": "rgb-209-negative-1.md",
+      "path": "corpus/rgb-209-negative-1.md",
+      "sha256": "087850f44c0535b6442b685a9f98137b3fb2cedaba98e31a42fc6b9f803d4b64",
+      "text_path": "text/rgb-209-negative-1.txt",
+      "text_sha256": "087850f44c0535b6442b685a9f98137b3fb2cedaba98e31a42fc6b9f803d4b64",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 209,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-209-negative-2",
+      "file": "rgb-209-negative-2.md",
+      "path": "corpus/rgb-209-negative-2.md",
+      "sha256": "ed77d1bef36fd940a51ab79623f679e663c31d6b4341b5c31c39f0d611377843",
+      "text_path": "text/rgb-209-negative-2.txt",
+      "text_sha256": "ed77d1bef36fd940a51ab79623f679e663c31d6b4341b5c31c39f0d611377843",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 209,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-209-negative-3",
+      "file": "rgb-209-negative-3.md",
+      "path": "corpus/rgb-209-negative-3.md",
+      "sha256": "1f37d4f04533405324d6b4f05061ed6b27e21f33d0baef5e03065623c96d8c76",
+      "text_path": "text/rgb-209-negative-3.txt",
+      "text_sha256": "1f37d4f04533405324d6b4f05061ed6b27e21f33d0baef5e03065623c96d8c76",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 209,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-209-negative-4",
+      "file": "rgb-209-negative-4.md",
+      "path": "corpus/rgb-209-negative-4.md",
+      "sha256": "91d92525fe23da855c2e9f433aa700eed058fc8177d0832311e42b3c3a72094a",
+      "text_path": "text/rgb-209-negative-4.txt",
+      "text_sha256": "91d92525fe23da855c2e9f433aa700eed058fc8177d0832311e42b3c3a72094a",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 209,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-250-negative-1",
+      "file": "rgb-250-negative-1.md",
+      "path": "corpus/rgb-250-negative-1.md",
+      "sha256": "1330743e2634658bf23a3f7362c79b9ce90fd460c6e68db9cb855b1c3bdc237b",
+      "text_path": "text/rgb-250-negative-1.txt",
+      "text_sha256": "1330743e2634658bf23a3f7362c79b9ce90fd460c6e68db9cb855b1c3bdc237b",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 250,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-250-negative-2",
+      "file": "rgb-250-negative-2.md",
+      "path": "corpus/rgb-250-negative-2.md",
+      "sha256": "d21302ac80a80b968fd39146af0ac510aa7bbf7004c033deda49da1a691582d2",
+      "text_path": "text/rgb-250-negative-2.txt",
+      "text_sha256": "d21302ac80a80b968fd39146af0ac510aa7bbf7004c033deda49da1a691582d2",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 250,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-250-negative-3",
+      "file": "rgb-250-negative-3.md",
+      "path": "corpus/rgb-250-negative-3.md",
+      "sha256": "b7b7128dfb4b4c8df82e3a78751e2d3f87f233847d6bb0d48f9053ea70965717",
+      "text_path": "text/rgb-250-negative-3.txt",
+      "text_sha256": "b7b7128dfb4b4c8df82e3a78751e2d3f87f233847d6bb0d48f9053ea70965717",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 250,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-250-negative-4",
+      "file": "rgb-250-negative-4.md",
+      "path": "corpus/rgb-250-negative-4.md",
+      "sha256": "adcd7a07f3261e9ab59ef364ee519b187965634af312eaadc924868d17a8fc97",
+      "text_path": "text/rgb-250-negative-4.txt",
+      "text_sha256": "adcd7a07f3261e9ab59ef364ee519b187965634af312eaadc924868d17a8fc97",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 250,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-284-negative-1",
+      "file": "rgb-284-negative-1.md",
+      "path": "corpus/rgb-284-negative-1.md",
+      "sha256": "3049297c11511770b810b36aee9b5e2f55c9d66a3e631874417a72a5734c1e32",
+      "text_path": "text/rgb-284-negative-1.txt",
+      "text_sha256": "3049297c11511770b810b36aee9b5e2f55c9d66a3e631874417a72a5734c1e32",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 284,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-284-negative-2",
+      "file": "rgb-284-negative-2.md",
+      "path": "corpus/rgb-284-negative-2.md",
+      "sha256": "53adf27d0f37e9ac44ec7d8b852e995522ad38e5bf9351bfe46b7c063cf195e5",
+      "text_path": "text/rgb-284-negative-2.txt",
+      "text_sha256": "53adf27d0f37e9ac44ec7d8b852e995522ad38e5bf9351bfe46b7c063cf195e5",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 284,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-284-negative-3",
+      "file": "rgb-284-negative-3.md",
+      "path": "corpus/rgb-284-negative-3.md",
+      "sha256": "772b27c174c198a63f5c1bcd686ffa4ddf49bd30c5a86c1a76794d12fdcc379e",
+      "text_path": "text/rgb-284-negative-3.txt",
+      "text_sha256": "772b27c174c198a63f5c1bcd686ffa4ddf49bd30c5a86c1a76794d12fdcc379e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 284,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-284-negative-4",
+      "file": "rgb-284-negative-4.md",
+      "path": "corpus/rgb-284-negative-4.md",
+      "sha256": "b5f520579c41c21a2b8704589c7ebd68dfd6f50dec1464c83d5b2e827412aa0f",
+      "text_path": "text/rgb-284-negative-4.txt",
+      "text_sha256": "b5f520579c41c21a2b8704589c7ebd68dfd6f50dec1464c83d5b2e827412aa0f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 284,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-130-negative-1",
+      "file": "rgb-130-negative-1.md",
+      "path": "corpus/rgb-130-negative-1.md",
+      "sha256": "ba46aa65d409a083eb6a409264bb3db9b133fb1d6e1ddc9c2916eda20dc8de6d",
+      "text_path": "text/rgb-130-negative-1.txt",
+      "text_sha256": "ba46aa65d409a083eb6a409264bb3db9b133fb1d6e1ddc9c2916eda20dc8de6d",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 130,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-130-negative-2",
+      "file": "rgb-130-negative-2.md",
+      "path": "corpus/rgb-130-negative-2.md",
+      "sha256": "0fa10a7dedf954f425472fd982638cde8c59c7ed4a7224aa8d4ad680d796145a",
+      "text_path": "text/rgb-130-negative-2.txt",
+      "text_sha256": "0fa10a7dedf954f425472fd982638cde8c59c7ed4a7224aa8d4ad680d796145a",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 130,
+        "field": "negative",
+        "field_index": 5,
+        "review_reason": "Replace answer leakage, duplicate distractor, or unsupported positive relation."
+      }
+    },
+    {
+      "id": "rgb-130-negative-3",
+      "file": "rgb-130-negative-3.md",
+      "path": "corpus/rgb-130-negative-3.md",
+      "sha256": "1f52c73b7a84483a021c6acb6e8c6ef783d471ba1f0cec0b537cab9f77082c00",
+      "text_path": "text/rgb-130-negative-3.txt",
+      "text_sha256": "1f52c73b7a84483a021c6acb6e8c6ef783d471ba1f0cec0b537cab9f77082c00",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 130,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-130-negative-4",
+      "file": "rgb-130-negative-4.md",
+      "path": "corpus/rgb-130-negative-4.md",
+      "sha256": "b6e008f8d957fe26f641d9f873cac81b2b06b538ed714849deaed6d980636e8d",
+      "text_path": "text/rgb-130-negative-4.txt",
+      "text_sha256": "b6e008f8d957fe26f641d9f873cac81b2b06b538ed714849deaed6d980636e8d",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 130,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-179-negative-1",
+      "file": "rgb-179-negative-1.md",
+      "path": "corpus/rgb-179-negative-1.md",
+      "sha256": "d8caf0316979566e6bd2abca37dda510b6628fdc3af6ce26aedd3afe2a44f352",
+      "text_path": "text/rgb-179-negative-1.txt",
+      "text_sha256": "d8caf0316979566e6bd2abca37dda510b6628fdc3af6ce26aedd3afe2a44f352",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 179,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-179-negative-2",
+      "file": "rgb-179-negative-2.md",
+      "path": "corpus/rgb-179-negative-2.md",
+      "sha256": "33d4d42ec0e6f0d1ad5ddce7c156d59ad3dd86b93925bd3b6822b75a78b0a0af",
+      "text_path": "text/rgb-179-negative-2.txt",
+      "text_sha256": "33d4d42ec0e6f0d1ad5ddce7c156d59ad3dd86b93925bd3b6822b75a78b0a0af",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 179,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-179-negative-3",
+      "file": "rgb-179-negative-3.md",
+      "path": "corpus/rgb-179-negative-3.md",
+      "sha256": "2783afe2efae040ddda004d107f2013ecd84b1f15a258fbf9df2d84f4faab916",
+      "text_path": "text/rgb-179-negative-3.txt",
+      "text_sha256": "2783afe2efae040ddda004d107f2013ecd84b1f15a258fbf9df2d84f4faab916",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 179,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-179-negative-4",
+      "file": "rgb-179-negative-4.md",
+      "path": "corpus/rgb-179-negative-4.md",
+      "sha256": "23570292740afd8ff1e8d17f3ab2092a6f33731aaedb332ef4208668b432b3e5",
+      "text_path": "text/rgb-179-negative-4.txt",
+      "text_sha256": "23570292740afd8ff1e8d17f3ab2092a6f33731aaedb332ef4208668b432b3e5",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 179,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-164-positive",
+      "file": "rgb-164-positive.md",
+      "path": "corpus/rgb-164-positive.md",
+      "sha256": "809616e125410b6bd52c8277f0a9e7fbff6b8c47849b17837351aa7d81698d56",
+      "text_path": "text/rgb-164-positive.txt",
+      "text_sha256": "809616e125410b6bd52c8277f0a9e7fbff6b8c47849b17837351aa7d81698d56",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 164,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-164-negative-1",
+      "file": "rgb-164-negative-1.md",
+      "path": "corpus/rgb-164-negative-1.md",
+      "sha256": "b5d40958ef9fd63c77e9a95524e01d68fb5bb6bb1b543d0eea122930d6572563",
+      "text_path": "text/rgb-164-negative-1.txt",
+      "text_sha256": "b5d40958ef9fd63c77e9a95524e01d68fb5bb6bb1b543d0eea122930d6572563",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 164,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-164-negative-2",
+      "file": "rgb-164-negative-2.md",
+      "path": "corpus/rgb-164-negative-2.md",
+      "sha256": "a1972b3b1aae690150638ac00f8ec3b4a318d2ab80010cae172c2fb8bff03f69",
+      "text_path": "text/rgb-164-negative-2.txt",
+      "text_sha256": "a1972b3b1aae690150638ac00f8ec3b4a318d2ab80010cae172c2fb8bff03f69",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 164,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-164-negative-3",
+      "file": "rgb-164-negative-3.md",
+      "path": "corpus/rgb-164-negative-3.md",
+      "sha256": "f1dcbbb1b0d3c4202724e3673e3d938522d65ff601641fd1978adffd9677d9fa",
+      "text_path": "text/rgb-164-negative-3.txt",
+      "text_sha256": "f1dcbbb1b0d3c4202724e3673e3d938522d65ff601641fd1978adffd9677d9fa",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 164,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-164-negative-4",
+      "file": "rgb-164-negative-4.md",
+      "path": "corpus/rgb-164-negative-4.md",
+      "sha256": "02b859fc8cfa157eee5d2d6db1f48903a00cd609251e708fda5849873451b5f7",
+      "text_path": "text/rgb-164-negative-4.txt",
+      "text_sha256": "02b859fc8cfa157eee5d2d6db1f48903a00cd609251e708fda5849873451b5f7",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 164,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-223-positive",
+      "file": "rgb-223-positive.md",
+      "path": "corpus/rgb-223-positive.md",
+      "sha256": "cc44d137e65d37c3eb64f9cfba8193dd585acf8382c6ed2295e5dd8431f4e37b",
+      "text_path": "text/rgb-223-positive.txt",
+      "text_sha256": "cc44d137e65d37c3eb64f9cfba8193dd585acf8382c6ed2295e5dd8431f4e37b",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 223,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-223-negative-1",
+      "file": "rgb-223-negative-1.md",
+      "path": "corpus/rgb-223-negative-1.md",
+      "sha256": "ac3bef11e7ad3068e03163a03f2eb8c86f60b72cb5c20029f3fed88fc9de919c",
+      "text_path": "text/rgb-223-negative-1.txt",
+      "text_sha256": "ac3bef11e7ad3068e03163a03f2eb8c86f60b72cb5c20029f3fed88fc9de919c",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 223,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-223-negative-2",
+      "file": "rgb-223-negative-2.md",
+      "path": "corpus/rgb-223-negative-2.md",
+      "sha256": "4ea76cfc0f886d4c4077162d59d1a4c182a2008dd071d9e76faf8a9071b140a0",
+      "text_path": "text/rgb-223-negative-2.txt",
+      "text_sha256": "4ea76cfc0f886d4c4077162d59d1a4c182a2008dd071d9e76faf8a9071b140a0",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 223,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-223-negative-3",
+      "file": "rgb-223-negative-3.md",
+      "path": "corpus/rgb-223-negative-3.md",
+      "sha256": "1e0fb3d7f2c820b2b397fa71672b593ed9c374f833dc4828865306da1f91a187",
+      "text_path": "text/rgb-223-negative-3.txt",
+      "text_sha256": "1e0fb3d7f2c820b2b397fa71672b593ed9c374f833dc4828865306da1f91a187",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 223,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-223-negative-4",
+      "file": "rgb-223-negative-4.md",
+      "path": "corpus/rgb-223-negative-4.md",
+      "sha256": "b731f80c659e51357f028e93a32ba06d4fcc4dd991794aaf42ab935c1b3177cc",
+      "text_path": "text/rgb-223-negative-4.txt",
+      "text_sha256": "b731f80c659e51357f028e93a32ba06d4fcc4dd991794aaf42ab935c1b3177cc",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 223,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-226-positive",
+      "file": "rgb-226-positive.md",
+      "path": "corpus/rgb-226-positive.md",
+      "sha256": "ee4fbd80d66a326ae87c553c56d4147ce875aa9ec121a70a6bcfcb4bfc90e53f",
+      "text_path": "text/rgb-226-positive.txt",
+      "text_sha256": "ee4fbd80d66a326ae87c553c56d4147ce875aa9ec121a70a6bcfcb4bfc90e53f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 226,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-226-negative-1",
+      "file": "rgb-226-negative-1.md",
+      "path": "corpus/rgb-226-negative-1.md",
+      "sha256": "d574c6da170c87ad44193f499c93a37d5ae50b41e7aa7ea496d393d337c1fc42",
+      "text_path": "text/rgb-226-negative-1.txt",
+      "text_sha256": "d574c6da170c87ad44193f499c93a37d5ae50b41e7aa7ea496d393d337c1fc42",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 226,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-226-negative-2",
+      "file": "rgb-226-negative-2.md",
+      "path": "corpus/rgb-226-negative-2.md",
+      "sha256": "efa27759035ebb908ee6c44f2ae1942b331dd7ec8fa8fed6428c6775799d2a12",
+      "text_path": "text/rgb-226-negative-2.txt",
+      "text_sha256": "efa27759035ebb908ee6c44f2ae1942b331dd7ec8fa8fed6428c6775799d2a12",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 226,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-226-negative-3",
+      "file": "rgb-226-negative-3.md",
+      "path": "corpus/rgb-226-negative-3.md",
+      "sha256": "37ae6e1420a6319edbd5be0c22312b20f8beb623525e4ce94e86969ef29a1eda",
+      "text_path": "text/rgb-226-negative-3.txt",
+      "text_sha256": "37ae6e1420a6319edbd5be0c22312b20f8beb623525e4ce94e86969ef29a1eda",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 226,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-226-negative-4",
+      "file": "rgb-226-negative-4.md",
+      "path": "corpus/rgb-226-negative-4.md",
+      "sha256": "8e2a770570ad6eb9f1bb1e57e990ca72944e8bf119eb9bb716b8936fd67a1843",
+      "text_path": "text/rgb-226-negative-4.txt",
+      "text_sha256": "8e2a770570ad6eb9f1bb1e57e990ca72944e8bf119eb9bb716b8936fd67a1843",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 226,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-42-positive",
+      "file": "rgb-42-positive.md",
+      "path": "corpus/rgb-42-positive.md",
+      "sha256": "edfa43a39375f44c888df74b9a5fdf24781d059130f0d1ad341c7328130b3a14",
+      "text_path": "text/rgb-42-positive.txt",
+      "text_sha256": "edfa43a39375f44c888df74b9a5fdf24781d059130f0d1ad341c7328130b3a14",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 42,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-42-negative-1",
+      "file": "rgb-42-negative-1.md",
+      "path": "corpus/rgb-42-negative-1.md",
+      "sha256": "ffb977b55dca9bab1fdd6c17bd6a90d43b307e0e4db58800a42635e2362f0790",
+      "text_path": "text/rgb-42-negative-1.txt",
+      "text_sha256": "ffb977b55dca9bab1fdd6c17bd6a90d43b307e0e4db58800a42635e2362f0790",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 42,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-42-negative-2",
+      "file": "rgb-42-negative-2.md",
+      "path": "corpus/rgb-42-negative-2.md",
+      "sha256": "8284e3ed7eb5c5b813d2e509399d165e388750c8f73f5001de6a4033dee77f12",
+      "text_path": "text/rgb-42-negative-2.txt",
+      "text_sha256": "8284e3ed7eb5c5b813d2e509399d165e388750c8f73f5001de6a4033dee77f12",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 42,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-42-negative-3",
+      "file": "rgb-42-negative-3.md",
+      "path": "corpus/rgb-42-negative-3.md",
+      "sha256": "a9baef705a76a46037171f6f678a9d6c9788e54878abc9ca52dd0f951c75149d",
+      "text_path": "text/rgb-42-negative-3.txt",
+      "text_sha256": "a9baef705a76a46037171f6f678a9d6c9788e54878abc9ca52dd0f951c75149d",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 42,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-42-negative-4",
+      "file": "rgb-42-negative-4.md",
+      "path": "corpus/rgb-42-negative-4.md",
+      "sha256": "f2240bb895929000fd93f0eb304ddfb580e81bfdbb58d972a03a44e0a1a5ea7e",
+      "text_path": "text/rgb-42-negative-4.txt",
+      "text_sha256": "f2240bb895929000fd93f0eb304ddfb580e81bfdbb58d972a03a44e0a1a5ea7e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 42,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-3-positive",
+      "file": "rgb-3-positive.md",
+      "path": "corpus/rgb-3-positive.md",
+      "sha256": "6ff1361c760702c06ab54b39f65eb7cec9f678a8a624948e77bc65ef45a71d8d",
+      "text_path": "text/rgb-3-positive.txt",
+      "text_sha256": "6ff1361c760702c06ab54b39f65eb7cec9f678a8a624948e77bc65ef45a71d8d",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 3,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-3-negative-1",
+      "file": "rgb-3-negative-1.md",
+      "path": "corpus/rgb-3-negative-1.md",
+      "sha256": "c04bf6bc551b703809e76b42704958590f685fbf879bd083f1ec513e17d1aa69",
+      "text_path": "text/rgb-3-negative-1.txt",
+      "text_sha256": "c04bf6bc551b703809e76b42704958590f685fbf879bd083f1ec513e17d1aa69",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 3,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-3-negative-2",
+      "file": "rgb-3-negative-2.md",
+      "path": "corpus/rgb-3-negative-2.md",
+      "sha256": "88c72c91d7bc336aa2e7ed1df90ef492ee46c10011be2f96d33236162aae881b",
+      "text_path": "text/rgb-3-negative-2.txt",
+      "text_sha256": "88c72c91d7bc336aa2e7ed1df90ef492ee46c10011be2f96d33236162aae881b",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 3,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-3-negative-3",
+      "file": "rgb-3-negative-3.md",
+      "path": "corpus/rgb-3-negative-3.md",
+      "sha256": "1e67a54a707ad5087ad42ad256621cef95792a5c5d19699839b544143f847100",
+      "text_path": "text/rgb-3-negative-3.txt",
+      "text_sha256": "1e67a54a707ad5087ad42ad256621cef95792a5c5d19699839b544143f847100",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 3,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-3-negative-4",
+      "file": "rgb-3-negative-4.md",
+      "path": "corpus/rgb-3-negative-4.md",
+      "sha256": "7fd3eb88ea554565fdaedb3f5a0f300d938a2e2460f1cacf7e5dd3b064783842",
+      "text_path": "text/rgb-3-negative-4.txt",
+      "text_sha256": "7fd3eb88ea554565fdaedb3f5a0f300d938a2e2460f1cacf7e5dd3b064783842",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 3,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-24-positive",
+      "file": "rgb-24-positive.md",
+      "path": "corpus/rgb-24-positive.md",
+      "sha256": "8209b6c40c19e3b5c1a1d8bc5f67b482004447fbd8faed454f36c4c123a04884",
+      "text_path": "text/rgb-24-positive.txt",
+      "text_sha256": "8209b6c40c19e3b5c1a1d8bc5f67b482004447fbd8faed454f36c4c123a04884",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 24,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-24-negative-1",
+      "file": "rgb-24-negative-1.md",
+      "path": "corpus/rgb-24-negative-1.md",
+      "sha256": "c6b2d1bcdd01da13ed93c9ae49b36addcd4a3c2d212cbf28ffd9b8e852376174",
+      "text_path": "text/rgb-24-negative-1.txt",
+      "text_sha256": "c6b2d1bcdd01da13ed93c9ae49b36addcd4a3c2d212cbf28ffd9b8e852376174",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 24,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-24-negative-2",
+      "file": "rgb-24-negative-2.md",
+      "path": "corpus/rgb-24-negative-2.md",
+      "sha256": "c843ad0c13d8dd6b0ffcd80ad2a1075d02302357f88b6b9b49a9ef1e25920925",
+      "text_path": "text/rgb-24-negative-2.txt",
+      "text_sha256": "c843ad0c13d8dd6b0ffcd80ad2a1075d02302357f88b6b9b49a9ef1e25920925",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 24,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-24-negative-3",
+      "file": "rgb-24-negative-3.md",
+      "path": "corpus/rgb-24-negative-3.md",
+      "sha256": "1d8aad6879c08ade2747e7037fda105950e2c8bc1e3b79ec6841863ebb4188c5",
+      "text_path": "text/rgb-24-negative-3.txt",
+      "text_sha256": "1d8aad6879c08ade2747e7037fda105950e2c8bc1e3b79ec6841863ebb4188c5",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 24,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-24-negative-4",
+      "file": "rgb-24-negative-4.md",
+      "path": "corpus/rgb-24-negative-4.md",
+      "sha256": "42bd1b255d04e7719d03176620573fbadf1470df4d96c66b939378eebdb4a54a",
+      "text_path": "text/rgb-24-negative-4.txt",
+      "text_sha256": "42bd1b255d04e7719d03176620573fbadf1470df4d96c66b939378eebdb4a54a",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 24,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-229-positive",
+      "file": "rgb-229-positive.md",
+      "path": "corpus/rgb-229-positive.md",
+      "sha256": "5db48fc578802f7cb5a1ee33fe08e2586da6297a79367427998591a3f5807438",
+      "text_path": "text/rgb-229-positive.txt",
+      "text_sha256": "5db48fc578802f7cb5a1ee33fe08e2586da6297a79367427998591a3f5807438",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 229,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-229-negative-1",
+      "file": "rgb-229-negative-1.md",
+      "path": "corpus/rgb-229-negative-1.md",
+      "sha256": "0ced1cab3a0533ffcfe5ea3e89593cebca07005be75432ec337ccc27b24be9c7",
+      "text_path": "text/rgb-229-negative-1.txt",
+      "text_sha256": "0ced1cab3a0533ffcfe5ea3e89593cebca07005be75432ec337ccc27b24be9c7",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 229,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-229-negative-2",
+      "file": "rgb-229-negative-2.md",
+      "path": "corpus/rgb-229-negative-2.md",
+      "sha256": "ebe5c054343424792cf8f9d3feb70f1dd1eae6eaf25cb3c4f5bfb75db8745cba",
+      "text_path": "text/rgb-229-negative-2.txt",
+      "text_sha256": "ebe5c054343424792cf8f9d3feb70f1dd1eae6eaf25cb3c4f5bfb75db8745cba",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 229,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-229-negative-3",
+      "file": "rgb-229-negative-3.md",
+      "path": "corpus/rgb-229-negative-3.md",
+      "sha256": "c4ff06d7839fa5aa7cbd81bcf3222b6971589e48275fa37d1ce16ad5b08bc38f",
+      "text_path": "text/rgb-229-negative-3.txt",
+      "text_sha256": "c4ff06d7839fa5aa7cbd81bcf3222b6971589e48275fa37d1ce16ad5b08bc38f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 229,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-229-negative-4",
+      "file": "rgb-229-negative-4.md",
+      "path": "corpus/rgb-229-negative-4.md",
+      "sha256": "679f7157088411bd69459301cdcaa7ed91e4a4b2016e11af982bda57b9b1884d",
+      "text_path": "text/rgb-229-negative-4.txt",
+      "text_sha256": "679f7157088411bd69459301cdcaa7ed91e4a4b2016e11af982bda57b9b1884d",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 229,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-275-positive",
+      "file": "rgb-275-positive.md",
+      "path": "corpus/rgb-275-positive.md",
+      "sha256": "97ab6102de2f2d7e5cc69fc928beb26541f9c93888630d4b540156535d257520",
+      "text_path": "text/rgb-275-positive.txt",
+      "text_sha256": "97ab6102de2f2d7e5cc69fc928beb26541f9c93888630d4b540156535d257520",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 275,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-275-negative-1",
+      "file": "rgb-275-negative-1.md",
+      "path": "corpus/rgb-275-negative-1.md",
+      "sha256": "3ab65000fba7a97ccd9c2d1ad9315d02050df7ac3e2c780a85ec3dd6b213f139",
+      "text_path": "text/rgb-275-negative-1.txt",
+      "text_sha256": "3ab65000fba7a97ccd9c2d1ad9315d02050df7ac3e2c780a85ec3dd6b213f139",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 275,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-275-negative-2",
+      "file": "rgb-275-negative-2.md",
+      "path": "corpus/rgb-275-negative-2.md",
+      "sha256": "75a3817ca1d31548207416d8a22bd9d6de6454e061191cb2bc54941d760cf513",
+      "text_path": "text/rgb-275-negative-2.txt",
+      "text_sha256": "75a3817ca1d31548207416d8a22bd9d6de6454e061191cb2bc54941d760cf513",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 275,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-275-negative-3",
+      "file": "rgb-275-negative-3.md",
+      "path": "corpus/rgb-275-negative-3.md",
+      "sha256": "0bde9223f7119591eaa74fbd70680ada8d41764a0e8060b28537cf78bdfb6797",
+      "text_path": "text/rgb-275-negative-3.txt",
+      "text_sha256": "0bde9223f7119591eaa74fbd70680ada8d41764a0e8060b28537cf78bdfb6797",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 275,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-275-negative-4",
+      "file": "rgb-275-negative-4.md",
+      "path": "corpus/rgb-275-negative-4.md",
+      "sha256": "ef41634f87819c377d7683ed127918510b29631bfc9c4238fa54181450847084",
+      "text_path": "text/rgb-275-negative-4.txt",
+      "text_sha256": "ef41634f87819c377d7683ed127918510b29631bfc9c4238fa54181450847084",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 275,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-78-positive",
+      "file": "rgb-78-positive.md",
+      "path": "corpus/rgb-78-positive.md",
+      "sha256": "18615a307260e038a86bd376c878cdfcbdb7c403f7ffb9159c7ff8dca6e7d0f4",
+      "text_path": "text/rgb-78-positive.txt",
+      "text_sha256": "18615a307260e038a86bd376c878cdfcbdb7c403f7ffb9159c7ff8dca6e7d0f4",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 78,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-78-negative-1",
+      "file": "rgb-78-negative-1.md",
+      "path": "corpus/rgb-78-negative-1.md",
+      "sha256": "9abfbf592994a6a89a7e68ee0afb811b8a7d58f9540e890d849e550d310ce15f",
+      "text_path": "text/rgb-78-negative-1.txt",
+      "text_sha256": "9abfbf592994a6a89a7e68ee0afb811b8a7d58f9540e890d849e550d310ce15f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 78,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-78-negative-2",
+      "file": "rgb-78-negative-2.md",
+      "path": "corpus/rgb-78-negative-2.md",
+      "sha256": "ae8a1c5a6dd9812003e53214463d021162c5043f0b8399f325c10e4026d3be84",
+      "text_path": "text/rgb-78-negative-2.txt",
+      "text_sha256": "ae8a1c5a6dd9812003e53214463d021162c5043f0b8399f325c10e4026d3be84",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 78,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-78-negative-3",
+      "file": "rgb-78-negative-3.md",
+      "path": "corpus/rgb-78-negative-3.md",
+      "sha256": "bd1ef0cad48d4cd0f7a82e3278c1ce1d7c88bc6f9df730e9d65ace30540d9c87",
+      "text_path": "text/rgb-78-negative-3.txt",
+      "text_sha256": "bd1ef0cad48d4cd0f7a82e3278c1ce1d7c88bc6f9df730e9d65ace30540d9c87",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 78,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-78-negative-4",
+      "file": "rgb-78-negative-4.md",
+      "path": "corpus/rgb-78-negative-4.md",
+      "sha256": "ec86f2eb0e9dff3a730fba73e46486aa715e1cddf54ff8efb13fe5af75a47f2f",
+      "text_path": "text/rgb-78-negative-4.txt",
+      "text_sha256": "ec86f2eb0e9dff3a730fba73e46486aa715e1cddf54ff8efb13fe5af75a47f2f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 78,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-83-positive",
+      "file": "rgb-83-positive.md",
+      "path": "corpus/rgb-83-positive.md",
+      "sha256": "511619651fdbb9ab4e79d9bae8bfdb1378753a17e36a699abbad78c79ec86123",
+      "text_path": "text/rgb-83-positive.txt",
+      "text_sha256": "511619651fdbb9ab4e79d9bae8bfdb1378753a17e36a699abbad78c79ec86123",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 83,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-83-negative-1",
+      "file": "rgb-83-negative-1.md",
+      "path": "corpus/rgb-83-negative-1.md",
+      "sha256": "f3cd803b8e8f7a30cf9efa48a75ebbf371dc1bbef42f7998fe6fb9a1fdde28b4",
+      "text_path": "text/rgb-83-negative-1.txt",
+      "text_sha256": "f3cd803b8e8f7a30cf9efa48a75ebbf371dc1bbef42f7998fe6fb9a1fdde28b4",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 83,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-83-negative-2",
+      "file": "rgb-83-negative-2.md",
+      "path": "corpus/rgb-83-negative-2.md",
+      "sha256": "6acad9f734a887916260480f62985beb8db968382323735d1c9a4548d3315c3b",
+      "text_path": "text/rgb-83-negative-2.txt",
+      "text_sha256": "6acad9f734a887916260480f62985beb8db968382323735d1c9a4548d3315c3b",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 83,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-83-negative-3",
+      "file": "rgb-83-negative-3.md",
+      "path": "corpus/rgb-83-negative-3.md",
+      "sha256": "05390e463121831b109d6c6b5f68f259600ce9fae46674e2e08207a31361104f",
+      "text_path": "text/rgb-83-negative-3.txt",
+      "text_sha256": "05390e463121831b109d6c6b5f68f259600ce9fae46674e2e08207a31361104f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 83,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-83-negative-4",
+      "file": "rgb-83-negative-4.md",
+      "path": "corpus/rgb-83-negative-4.md",
+      "sha256": "5dc37476442295e8fbf2d4549a653e304dbbd427f915624ef78d1476e1538844",
+      "text_path": "text/rgb-83-negative-4.txt",
+      "text_sha256": "5dc37476442295e8fbf2d4549a653e304dbbd427f915624ef78d1476e1538844",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 83,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-185-positive",
+      "file": "rgb-185-positive.md",
+      "path": "corpus/rgb-185-positive.md",
+      "sha256": "30fffa014fdc16b368051eeb880b686d011a58b27a2906bd7008117c9546129e",
+      "text_path": "text/rgb-185-positive.txt",
+      "text_sha256": "30fffa014fdc16b368051eeb880b686d011a58b27a2906bd7008117c9546129e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 185,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-185-negative-1",
+      "file": "rgb-185-negative-1.md",
+      "path": "corpus/rgb-185-negative-1.md",
+      "sha256": "0908db5926af903be65936f7ad9fab48a069ce77b56e38e286a0b9a4eb54c5be",
+      "text_path": "text/rgb-185-negative-1.txt",
+      "text_sha256": "0908db5926af903be65936f7ad9fab48a069ce77b56e38e286a0b9a4eb54c5be",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 185,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-185-negative-2",
+      "file": "rgb-185-negative-2.md",
+      "path": "corpus/rgb-185-negative-2.md",
+      "sha256": "d8df66453bf786a33fa4fb8ca08e53a7dc716d226cddb1ff8182445b7fc1af19",
+      "text_path": "text/rgb-185-negative-2.txt",
+      "text_sha256": "d8df66453bf786a33fa4fb8ca08e53a7dc716d226cddb1ff8182445b7fc1af19",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 185,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-185-negative-3",
+      "file": "rgb-185-negative-3.md",
+      "path": "corpus/rgb-185-negative-3.md",
+      "sha256": "c7c03d2a2a0e7b8e1c05fc4407d9538548d1d26f79ae57c7f36914571ae07d2f",
+      "text_path": "text/rgb-185-negative-3.txt",
+      "text_sha256": "c7c03d2a2a0e7b8e1c05fc4407d9538548d1d26f79ae57c7f36914571ae07d2f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 185,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-185-negative-4",
+      "file": "rgb-185-negative-4.md",
+      "path": "corpus/rgb-185-negative-4.md",
+      "sha256": "ee71f4598c9aed315d28b421c2a0bb060d8aa7f287dc7fdd81af44041cc236db",
+      "text_path": "text/rgb-185-negative-4.txt",
+      "text_sha256": "ee71f4598c9aed315d28b421c2a0bb060d8aa7f287dc7fdd81af44041cc236db",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 185,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-106-positive",
+      "file": "rgb-106-positive.md",
+      "path": "corpus/rgb-106-positive.md",
+      "sha256": "a3360f6615afbe5868426cc4eed8b7f2cc194550c831862341b3e23bf355e489",
+      "text_path": "text/rgb-106-positive.txt",
+      "text_sha256": "a3360f6615afbe5868426cc4eed8b7f2cc194550c831862341b3e23bf355e489",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 106,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-106-negative-1",
+      "file": "rgb-106-negative-1.md",
+      "path": "corpus/rgb-106-negative-1.md",
+      "sha256": "ca80c4eba694aec76f5c91812a3cb85e5d99f31257a18c320138eb95ed35d000",
+      "text_path": "text/rgb-106-negative-1.txt",
+      "text_sha256": "ca80c4eba694aec76f5c91812a3cb85e5d99f31257a18c320138eb95ed35d000",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 106,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-106-negative-2",
+      "file": "rgb-106-negative-2.md",
+      "path": "corpus/rgb-106-negative-2.md",
+      "sha256": "c510bca75e1b38cc402f9a5f53c75fb545dcc6b3bd04b5c663a5794bdc1898e8",
+      "text_path": "text/rgb-106-negative-2.txt",
+      "text_sha256": "c510bca75e1b38cc402f9a5f53c75fb545dcc6b3bd04b5c663a5794bdc1898e8",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 106,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-106-negative-3",
+      "file": "rgb-106-negative-3.md",
+      "path": "corpus/rgb-106-negative-3.md",
+      "sha256": "85540ea16177158c3e0fc52cdf5a37fd2b0b08df912a3213c5dd82d290cb41bd",
+      "text_path": "text/rgb-106-negative-3.txt",
+      "text_sha256": "85540ea16177158c3e0fc52cdf5a37fd2b0b08df912a3213c5dd82d290cb41bd",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 106,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-106-negative-4",
+      "file": "rgb-106-negative-4.md",
+      "path": "corpus/rgb-106-negative-4.md",
+      "sha256": "9d7ac1eea593067cedcde0d3e28c6689c53bca550f02845ffdcf523e8776fd3b",
+      "text_path": "text/rgb-106-negative-4.txt",
+      "text_sha256": "9d7ac1eea593067cedcde0d3e28c6689c53bca550f02845ffdcf523e8776fd3b",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 106,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-71-positive",
+      "file": "rgb-71-positive.md",
+      "path": "corpus/rgb-71-positive.md",
+      "sha256": "3a8ba2d8fe2c3294f895fd8bf3308f73801ecb93d5f2a62fa0eb8ff216d3616c",
+      "text_path": "text/rgb-71-positive.txt",
+      "text_sha256": "3a8ba2d8fe2c3294f895fd8bf3308f73801ecb93d5f2a62fa0eb8ff216d3616c",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 71,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-71-negative-1",
+      "file": "rgb-71-negative-1.md",
+      "path": "corpus/rgb-71-negative-1.md",
+      "sha256": "d54cf5a490095e806c6f8a5203a53f710fa387012011fa708ecf6d8a30394709",
+      "text_path": "text/rgb-71-negative-1.txt",
+      "text_sha256": "d54cf5a490095e806c6f8a5203a53f710fa387012011fa708ecf6d8a30394709",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 71,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-71-negative-2",
+      "file": "rgb-71-negative-2.md",
+      "path": "corpus/rgb-71-negative-2.md",
+      "sha256": "eea4d82f4e8b8c983e8232d3df07f31b81b5fd6d17c7226a33978af554926711",
+      "text_path": "text/rgb-71-negative-2.txt",
+      "text_sha256": "eea4d82f4e8b8c983e8232d3df07f31b81b5fd6d17c7226a33978af554926711",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 71,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-71-negative-3",
+      "file": "rgb-71-negative-3.md",
+      "path": "corpus/rgb-71-negative-3.md",
+      "sha256": "8dfd5da67dd6d9d38580b1e5ef3bcd2861612f371e867e165fb3df82eee417bd",
+      "text_path": "text/rgb-71-negative-3.txt",
+      "text_sha256": "8dfd5da67dd6d9d38580b1e5ef3bcd2861612f371e867e165fb3df82eee417bd",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 71,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-71-negative-4",
+      "file": "rgb-71-negative-4.md",
+      "path": "corpus/rgb-71-negative-4.md",
+      "sha256": "857629994a989ba5f28e465a5155ab7ba670519f54025e1de213ec2e11c800bc",
+      "text_path": "text/rgb-71-negative-4.txt",
+      "text_sha256": "857629994a989ba5f28e465a5155ab7ba670519f54025e1de213ec2e11c800bc",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 71,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-132-positive",
+      "file": "rgb-132-positive.md",
+      "path": "corpus/rgb-132-positive.md",
+      "sha256": "d7428f696c9672c5e82cf1e40c49151b294581d89386e18c19471a360a9b9005",
+      "text_path": "text/rgb-132-positive.txt",
+      "text_sha256": "d7428f696c9672c5e82cf1e40c49151b294581d89386e18c19471a360a9b9005",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 132,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-132-negative-1",
+      "file": "rgb-132-negative-1.md",
+      "path": "corpus/rgb-132-negative-1.md",
+      "sha256": "23dbe74e2b9213e3703fcd301cf9e0ae263958b17f88ef9ada64061620272eef",
+      "text_path": "text/rgb-132-negative-1.txt",
+      "text_sha256": "23dbe74e2b9213e3703fcd301cf9e0ae263958b17f88ef9ada64061620272eef",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 132,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-132-negative-2",
+      "file": "rgb-132-negative-2.md",
+      "path": "corpus/rgb-132-negative-2.md",
+      "sha256": "40868b2b8dbc58c89c5e5bf001062ab3e1bb1042460b3d54fffc16cb42162abe",
+      "text_path": "text/rgb-132-negative-2.txt",
+      "text_sha256": "40868b2b8dbc58c89c5e5bf001062ab3e1bb1042460b3d54fffc16cb42162abe",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 132,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-132-negative-3",
+      "file": "rgb-132-negative-3.md",
+      "path": "corpus/rgb-132-negative-3.md",
+      "sha256": "3f6c23ad1e10185dcf86cf04c9206285dcccdd3e235dcb0537897112a4eaa3a5",
+      "text_path": "text/rgb-132-negative-3.txt",
+      "text_sha256": "3f6c23ad1e10185dcf86cf04c9206285dcccdd3e235dcb0537897112a4eaa3a5",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 132,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-132-negative-4",
+      "file": "rgb-132-negative-4.md",
+      "path": "corpus/rgb-132-negative-4.md",
+      "sha256": "dac867b95dc359316f2602377406f7181c498df32f0d14e92d1afbcaab45d4ff",
+      "text_path": "text/rgb-132-negative-4.txt",
+      "text_sha256": "dac867b95dc359316f2602377406f7181c498df32f0d14e92d1afbcaab45d4ff",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 132,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-154-positive",
+      "file": "rgb-154-positive.md",
+      "path": "corpus/rgb-154-positive.md",
+      "sha256": "3d387ded218cc92a611a07ab74659903e3ceae9711b441db805b851b9461ec8b",
+      "text_path": "text/rgb-154-positive.txt",
+      "text_sha256": "3d387ded218cc92a611a07ab74659903e3ceae9711b441db805b851b9461ec8b",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 154,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-154-negative-1",
+      "file": "rgb-154-negative-1.md",
+      "path": "corpus/rgb-154-negative-1.md",
+      "sha256": "eeba8c865ee305df812ddfa17c484baf9abbb2fbdea1aa50672a8819cd60e95f",
+      "text_path": "text/rgb-154-negative-1.txt",
+      "text_sha256": "eeba8c865ee305df812ddfa17c484baf9abbb2fbdea1aa50672a8819cd60e95f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 154,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-154-negative-2",
+      "file": "rgb-154-negative-2.md",
+      "path": "corpus/rgb-154-negative-2.md",
+      "sha256": "4e2999424d35e4b5189218e6b67184a3457db9ccec33ac8649ebad54f90620ed",
+      "text_path": "text/rgb-154-negative-2.txt",
+      "text_sha256": "4e2999424d35e4b5189218e6b67184a3457db9ccec33ac8649ebad54f90620ed",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 154,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-154-negative-3",
+      "file": "rgb-154-negative-3.md",
+      "path": "corpus/rgb-154-negative-3.md",
+      "sha256": "9a2d1997795308a187301fd0eebda0d87c36f985725e72285cc319b4f0c67692",
+      "text_path": "text/rgb-154-negative-3.txt",
+      "text_sha256": "9a2d1997795308a187301fd0eebda0d87c36f985725e72285cc319b4f0c67692",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 154,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-154-negative-4",
+      "file": "rgb-154-negative-4.md",
+      "path": "corpus/rgb-154-negative-4.md",
+      "sha256": "144d8c9ecbef8dcd2548f35a54dee74ea556dba5ea1b66d75f52491d4dcf9eaf",
+      "text_path": "text/rgb-154-negative-4.txt",
+      "text_sha256": "144d8c9ecbef8dcd2548f35a54dee74ea556dba5ea1b66d75f52491d4dcf9eaf",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 154,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-56-positive",
+      "file": "rgb-56-positive.md",
+      "path": "corpus/rgb-56-positive.md",
+      "sha256": "d3c54d47d720472cd46e6eb74e7e57811dceb89ef7694cc4fc4265e669f53342",
+      "text_path": "text/rgb-56-positive.txt",
+      "text_sha256": "d3c54d47d720472cd46e6eb74e7e57811dceb89ef7694cc4fc4265e669f53342",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 56,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-56-negative-1",
+      "file": "rgb-56-negative-1.md",
+      "path": "corpus/rgb-56-negative-1.md",
+      "sha256": "29a52518b0e746e61596c15cdbce01ed8e578286e5d0457b1b42b388ff61c916",
+      "text_path": "text/rgb-56-negative-1.txt",
+      "text_sha256": "29a52518b0e746e61596c15cdbce01ed8e578286e5d0457b1b42b388ff61c916",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 56,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-56-negative-2",
+      "file": "rgb-56-negative-2.md",
+      "path": "corpus/rgb-56-negative-2.md",
+      "sha256": "65e025de0286ddcf83b322b97281868e12144981afeca13fc7880fff986a2f15",
+      "text_path": "text/rgb-56-negative-2.txt",
+      "text_sha256": "65e025de0286ddcf83b322b97281868e12144981afeca13fc7880fff986a2f15",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 56,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-56-negative-3",
+      "file": "rgb-56-negative-3.md",
+      "path": "corpus/rgb-56-negative-3.md",
+      "sha256": "95edba26785e96cc67ae4a8978a91b53048dffc0ab8f4ad4a369ebfa25f1030a",
+      "text_path": "text/rgb-56-negative-3.txt",
+      "text_sha256": "95edba26785e96cc67ae4a8978a91b53048dffc0ab8f4ad4a369ebfa25f1030a",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 56,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-56-negative-4",
+      "file": "rgb-56-negative-4.md",
+      "path": "corpus/rgb-56-negative-4.md",
+      "sha256": "c016a9182031387a77ba50eb2472bac5de0bc4388898274d7e0b8232512e0ad2",
+      "text_path": "text/rgb-56-negative-4.txt",
+      "text_sha256": "c016a9182031387a77ba50eb2472bac5de0bc4388898274d7e0b8232512e0ad2",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 56,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-277-positive",
+      "file": "rgb-277-positive.md",
+      "path": "corpus/rgb-277-positive.md",
+      "sha256": "01751f970c3c9cd89f207d7d60e069bdfc4aa63a41faf15a7a8c444e93393faa",
+      "text_path": "text/rgb-277-positive.txt",
+      "text_sha256": "01751f970c3c9cd89f207d7d60e069bdfc4aa63a41faf15a7a8c444e93393faa",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 277,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-277-negative-1",
+      "file": "rgb-277-negative-1.md",
+      "path": "corpus/rgb-277-negative-1.md",
+      "sha256": "a2b0e4b5d81887464c13b580b8c738a78a5a3316cd083805d41fe6641b29b739",
+      "text_path": "text/rgb-277-negative-1.txt",
+      "text_sha256": "a2b0e4b5d81887464c13b580b8c738a78a5a3316cd083805d41fe6641b29b739",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 277,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-277-negative-2",
+      "file": "rgb-277-negative-2.md",
+      "path": "corpus/rgb-277-negative-2.md",
+      "sha256": "0c40f46739dabf1d42369e056fcc4bd802a047692b739d68b9e152212ac812c1",
+      "text_path": "text/rgb-277-negative-2.txt",
+      "text_sha256": "0c40f46739dabf1d42369e056fcc4bd802a047692b739d68b9e152212ac812c1",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 277,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-277-negative-3",
+      "file": "rgb-277-negative-3.md",
+      "path": "corpus/rgb-277-negative-3.md",
+      "sha256": "557d3eea008aa9a80fd307c798c011919e52d68c1246e4c89e426e62871ed4b4",
+      "text_path": "text/rgb-277-negative-3.txt",
+      "text_sha256": "557d3eea008aa9a80fd307c798c011919e52d68c1246e4c89e426e62871ed4b4",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 277,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-277-negative-4",
+      "file": "rgb-277-negative-4.md",
+      "path": "corpus/rgb-277-negative-4.md",
+      "sha256": "7096294033c1d5518fa2eaf99229988a4e436fb5f598b97cfb4ae761ca623583",
+      "text_path": "text/rgb-277-negative-4.txt",
+      "text_sha256": "7096294033c1d5518fa2eaf99229988a4e436fb5f598b97cfb4ae761ca623583",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 277,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-281-positive",
+      "file": "rgb-281-positive.md",
+      "path": "corpus/rgb-281-positive.md",
+      "sha256": "8a1d3449313d1b1121d9323d1dee20fdedb1be6802ead03645956ac5264baeb2",
+      "text_path": "text/rgb-281-positive.txt",
+      "text_sha256": "8a1d3449313d1b1121d9323d1dee20fdedb1be6802ead03645956ac5264baeb2",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 281,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-281-negative-1",
+      "file": "rgb-281-negative-1.md",
+      "path": "corpus/rgb-281-negative-1.md",
+      "sha256": "b35e0121f38776cc0ac3d82690dc2ba95764b84b8221df94e85efdbd6136738a",
+      "text_path": "text/rgb-281-negative-1.txt",
+      "text_sha256": "b35e0121f38776cc0ac3d82690dc2ba95764b84b8221df94e85efdbd6136738a",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 281,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-281-negative-2",
+      "file": "rgb-281-negative-2.md",
+      "path": "corpus/rgb-281-negative-2.md",
+      "sha256": "29a83bb1d7731098c1a4208d518718eb2b70ad8e5716f32b33fe20282b435fac",
+      "text_path": "text/rgb-281-negative-2.txt",
+      "text_sha256": "29a83bb1d7731098c1a4208d518718eb2b70ad8e5716f32b33fe20282b435fac",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 281,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-281-negative-3",
+      "file": "rgb-281-negative-3.md",
+      "path": "corpus/rgb-281-negative-3.md",
+      "sha256": "bea1425a2963965d2664ec65b07f07d444d8c14cd4f973161d9d8e7265300986",
+      "text_path": "text/rgb-281-negative-3.txt",
+      "text_sha256": "bea1425a2963965d2664ec65b07f07d444d8c14cd4f973161d9d8e7265300986",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 281,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-281-negative-4",
+      "file": "rgb-281-negative-4.md",
+      "path": "corpus/rgb-281-negative-4.md",
+      "sha256": "0dbf4fa72956697c810e95c768fe940ee3bd1fce4bec7877056c4adf267a47eb",
+      "text_path": "text/rgb-281-negative-4.txt",
+      "text_sha256": "0dbf4fa72956697c810e95c768fe940ee3bd1fce4bec7877056c4adf267a47eb",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 281,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-139-positive",
+      "file": "rgb-139-positive.md",
+      "path": "corpus/rgb-139-positive.md",
+      "sha256": "991ce7ea5aac80d135e071bee2f101a6443f1826194a81b7847a16250132c19f",
+      "text_path": "text/rgb-139-positive.txt",
+      "text_sha256": "991ce7ea5aac80d135e071bee2f101a6443f1826194a81b7847a16250132c19f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 139,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-139-negative-1",
+      "file": "rgb-139-negative-1.md",
+      "path": "corpus/rgb-139-negative-1.md",
+      "sha256": "0d0a3ea3f71c24c3afab6401a7e151ac71c5356364e8f56b4724ab04b1da1859",
+      "text_path": "text/rgb-139-negative-1.txt",
+      "text_sha256": "0d0a3ea3f71c24c3afab6401a7e151ac71c5356364e8f56b4724ab04b1da1859",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 139,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-139-negative-2",
+      "file": "rgb-139-negative-2.md",
+      "path": "corpus/rgb-139-negative-2.md",
+      "sha256": "6f238cce6bb9db9f90188d87a45eb3819ff0bcdc0c02c64a1050a527bcbf6ad7",
+      "text_path": "text/rgb-139-negative-2.txt",
+      "text_sha256": "6f238cce6bb9db9f90188d87a45eb3819ff0bcdc0c02c64a1050a527bcbf6ad7",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 139,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-139-negative-3",
+      "file": "rgb-139-negative-3.md",
+      "path": "corpus/rgb-139-negative-3.md",
+      "sha256": "5a2c4bf1e18a85461fbd312c29a14a312230056bdc9cc079aeb99e8715fc85f4",
+      "text_path": "text/rgb-139-negative-3.txt",
+      "text_sha256": "5a2c4bf1e18a85461fbd312c29a14a312230056bdc9cc079aeb99e8715fc85f4",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 139,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-139-negative-4",
+      "file": "rgb-139-negative-4.md",
+      "path": "corpus/rgb-139-negative-4.md",
+      "sha256": "5cecb0cefdd24be8d46f919c325e7260cf82eaa17785fb924ffe5d273a787ec3",
+      "text_path": "text/rgb-139-negative-4.txt",
+      "text_sha256": "5cecb0cefdd24be8d46f919c325e7260cf82eaa17785fb924ffe5d273a787ec3",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 139,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-282-positive",
+      "file": "rgb-282-positive.md",
+      "path": "corpus/rgb-282-positive.md",
+      "sha256": "8e57d23ea7091ea91e816526db43a4bdd48c78fa9d625279fedcbcb3159616db",
+      "text_path": "text/rgb-282-positive.txt",
+      "text_sha256": "8e57d23ea7091ea91e816526db43a4bdd48c78fa9d625279fedcbcb3159616db",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 282,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-282-negative-1",
+      "file": "rgb-282-negative-1.md",
+      "path": "corpus/rgb-282-negative-1.md",
+      "sha256": "4ffdf7a782bcc2914b25d7bf9e95be7ae8a4c3fd785ee8819085ea1acf78c7bb",
+      "text_path": "text/rgb-282-negative-1.txt",
+      "text_sha256": "4ffdf7a782bcc2914b25d7bf9e95be7ae8a4c3fd785ee8819085ea1acf78c7bb",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 282,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-282-negative-2",
+      "file": "rgb-282-negative-2.md",
+      "path": "corpus/rgb-282-negative-2.md",
+      "sha256": "15701d2686ef17329cad2d7013e28bb3665de29ec73bd7d5b0198c0be842a5ac",
+      "text_path": "text/rgb-282-negative-2.txt",
+      "text_sha256": "15701d2686ef17329cad2d7013e28bb3665de29ec73bd7d5b0198c0be842a5ac",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 282,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-282-negative-3",
+      "file": "rgb-282-negative-3.md",
+      "path": "corpus/rgb-282-negative-3.md",
+      "sha256": "65b0ccd4500eb26a6ced5e39b3fda193ccfe56647959eced0230394b62a0182e",
+      "text_path": "text/rgb-282-negative-3.txt",
+      "text_sha256": "65b0ccd4500eb26a6ced5e39b3fda193ccfe56647959eced0230394b62a0182e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 282,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-282-negative-4",
+      "file": "rgb-282-negative-4.md",
+      "path": "corpus/rgb-282-negative-4.md",
+      "sha256": "a198476292b44a36be825c6fcb22d3ef39a183fd7a02e641c88fe888ef78dcd4",
+      "text_path": "text/rgb-282-negative-4.txt",
+      "text_sha256": "a198476292b44a36be825c6fcb22d3ef39a183fd7a02e641c88fe888ef78dcd4",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 282,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-245-positive",
+      "file": "rgb-245-positive.md",
+      "path": "corpus/rgb-245-positive.md",
+      "sha256": "1c38c5cfc02fdbe283842cbf74b05e718a3279eeca9e628875c8b4971d467117",
+      "text_path": "text/rgb-245-positive.txt",
+      "text_sha256": "1c38c5cfc02fdbe283842cbf74b05e718a3279eeca9e628875c8b4971d467117",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 245,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-245-negative-1",
+      "file": "rgb-245-negative-1.md",
+      "path": "corpus/rgb-245-negative-1.md",
+      "sha256": "ec704c287ada9d7b75fb02480dc5e92e80b9d273104c9802fb9e94ff51450332",
+      "text_path": "text/rgb-245-negative-1.txt",
+      "text_sha256": "ec704c287ada9d7b75fb02480dc5e92e80b9d273104c9802fb9e94ff51450332",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 245,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-245-negative-2",
+      "file": "rgb-245-negative-2.md",
+      "path": "corpus/rgb-245-negative-2.md",
+      "sha256": "f2690478ca852b3a5b346ee4b24e365fb185cf90d939ebbe6457affffa785a50",
+      "text_path": "text/rgb-245-negative-2.txt",
+      "text_sha256": "f2690478ca852b3a5b346ee4b24e365fb185cf90d939ebbe6457affffa785a50",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 245,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-245-negative-3",
+      "file": "rgb-245-negative-3.md",
+      "path": "corpus/rgb-245-negative-3.md",
+      "sha256": "ae081d4a12adadb7567e70cd19a310da597d86e6db89e78a95a0e564253592bd",
+      "text_path": "text/rgb-245-negative-3.txt",
+      "text_sha256": "ae081d4a12adadb7567e70cd19a310da597d86e6db89e78a95a0e564253592bd",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 245,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-245-negative-4",
+      "file": "rgb-245-negative-4.md",
+      "path": "corpus/rgb-245-negative-4.md",
+      "sha256": "217dcdbc14f3b143073b8914e7a3a97d4629f86e8567dbaad42251533273c12f",
+      "text_path": "text/rgb-245-negative-4.txt",
+      "text_sha256": "217dcdbc14f3b143073b8914e7a3a97d4629f86e8567dbaad42251533273c12f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 245,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-181-positive",
+      "file": "rgb-181-positive.md",
+      "path": "corpus/rgb-181-positive.md",
+      "sha256": "5f17bdea3aaffacd839a7f1782d1153be82ca9f79a38cd4a38376229ed615778",
+      "text_path": "text/rgb-181-positive.txt",
+      "text_sha256": "5f17bdea3aaffacd839a7f1782d1153be82ca9f79a38cd4a38376229ed615778",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 181,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-181-negative-1",
+      "file": "rgb-181-negative-1.md",
+      "path": "corpus/rgb-181-negative-1.md",
+      "sha256": "73930b2cfef6384404e28e32694a05fc8d7d0e0853ab12ee49ebaa2f09b40fa9",
+      "text_path": "text/rgb-181-negative-1.txt",
+      "text_sha256": "73930b2cfef6384404e28e32694a05fc8d7d0e0853ab12ee49ebaa2f09b40fa9",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 181,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-181-negative-2",
+      "file": "rgb-181-negative-2.md",
+      "path": "corpus/rgb-181-negative-2.md",
+      "sha256": "a3d7a7cc0d72500cd0fe2375aa500ae5bfe075aba4d708488305bedc917df034",
+      "text_path": "text/rgb-181-negative-2.txt",
+      "text_sha256": "a3d7a7cc0d72500cd0fe2375aa500ae5bfe075aba4d708488305bedc917df034",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 181,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-181-negative-3",
+      "file": "rgb-181-negative-3.md",
+      "path": "corpus/rgb-181-negative-3.md",
+      "sha256": "8297888fcce158f0ad65828f67193983bdfc3c5b39402042a7bcfe1ad0a7b42f",
+      "text_path": "text/rgb-181-negative-3.txt",
+      "text_sha256": "8297888fcce158f0ad65828f67193983bdfc3c5b39402042a7bcfe1ad0a7b42f",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 181,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-181-negative-4",
+      "file": "rgb-181-negative-4.md",
+      "path": "corpus/rgb-181-negative-4.md",
+      "sha256": "796798dcaa0152289781e1672b801c1641ad3fd3b06dc026226b36626b802d75",
+      "text_path": "text/rgb-181-negative-4.txt",
+      "text_sha256": "796798dcaa0152289781e1672b801c1641ad3fd3b06dc026226b36626b802d75",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 181,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-107-positive",
+      "file": "rgb-107-positive.md",
+      "path": "corpus/rgb-107-positive.md",
+      "sha256": "feffeb09014752a0a1c3d23604aa539215f2d0fa6ba62e65fc06afbfbcbe98b3",
+      "text_path": "text/rgb-107-positive.txt",
+      "text_sha256": "feffeb09014752a0a1c3d23604aa539215f2d0fa6ba62e65fc06afbfbcbe98b3",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 107,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-107-negative-1",
+      "file": "rgb-107-negative-1.md",
+      "path": "corpus/rgb-107-negative-1.md",
+      "sha256": "6d0eb718be29929f0c07c8788bb84b2224398f683c436a36fef664f83d7fc156",
+      "text_path": "text/rgb-107-negative-1.txt",
+      "text_sha256": "6d0eb718be29929f0c07c8788bb84b2224398f683c436a36fef664f83d7fc156",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 107,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-107-negative-2",
+      "file": "rgb-107-negative-2.md",
+      "path": "corpus/rgb-107-negative-2.md",
+      "sha256": "698b1ce7b6a0ad5c2bf45c5474cb8a3e12a8b05a215cd0a23dbc76d040907ef3",
+      "text_path": "text/rgb-107-negative-2.txt",
+      "text_sha256": "698b1ce7b6a0ad5c2bf45c5474cb8a3e12a8b05a215cd0a23dbc76d040907ef3",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 107,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-107-negative-3",
+      "file": "rgb-107-negative-3.md",
+      "path": "corpus/rgb-107-negative-3.md",
+      "sha256": "7d70d659dc82c4879063780d8338c44a58ff0c697ba794967a716bf65aefaa27",
+      "text_path": "text/rgb-107-negative-3.txt",
+      "text_sha256": "7d70d659dc82c4879063780d8338c44a58ff0c697ba794967a716bf65aefaa27",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 107,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-107-negative-4",
+      "file": "rgb-107-negative-4.md",
+      "path": "corpus/rgb-107-negative-4.md",
+      "sha256": "f7e17956dcecf84bb5cca8822c2aaaed9d227111ad063d34b1a07be88752e492",
+      "text_path": "text/rgb-107-negative-4.txt",
+      "text_sha256": "f7e17956dcecf84bb5cca8822c2aaaed9d227111ad063d34b1a07be88752e492",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 107,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-228-positive",
+      "file": "rgb-228-positive.md",
+      "path": "corpus/rgb-228-positive.md",
+      "sha256": "8d2e9bcac072163b13e54d5949f04f7d49d40e98b105171a3831eec7288c1e2c",
+      "text_path": "text/rgb-228-positive.txt",
+      "text_sha256": "8d2e9bcac072163b13e54d5949f04f7d49d40e98b105171a3831eec7288c1e2c",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 228,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-228-negative-1",
+      "file": "rgb-228-negative-1.md",
+      "path": "corpus/rgb-228-negative-1.md",
+      "sha256": "dc831c8492132eef5c62c1ac23ada0e60c6bc1be49c3918d696295e83b59d24e",
+      "text_path": "text/rgb-228-negative-1.txt",
+      "text_sha256": "dc831c8492132eef5c62c1ac23ada0e60c6bc1be49c3918d696295e83b59d24e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 228,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-228-negative-2",
+      "file": "rgb-228-negative-2.md",
+      "path": "corpus/rgb-228-negative-2.md",
+      "sha256": "dc831c8492132eef5c62c1ac23ada0e60c6bc1be49c3918d696295e83b59d24e",
+      "text_path": "text/rgb-228-negative-2.txt",
+      "text_sha256": "dc831c8492132eef5c62c1ac23ada0e60c6bc1be49c3918d696295e83b59d24e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 228,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-228-negative-3",
+      "file": "rgb-228-negative-3.md",
+      "path": "corpus/rgb-228-negative-3.md",
+      "sha256": "e8245aa1737916ba561fa7bc2404ce6e44b46639f1be968ad0d81ca9e99ae687",
+      "text_path": "text/rgb-228-negative-3.txt",
+      "text_sha256": "e8245aa1737916ba561fa7bc2404ce6e44b46639f1be968ad0d81ca9e99ae687",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 228,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-228-negative-4",
+      "file": "rgb-228-negative-4.md",
+      "path": "corpus/rgb-228-negative-4.md",
+      "sha256": "618a1ac2b5065b1142d60d0d54ee4a52351f265555cf7c0a421a4c3afa2952aa",
+      "text_path": "text/rgb-228-negative-4.txt",
+      "text_sha256": "618a1ac2b5065b1142d60d0d54ee4a52351f265555cf7c0a421a4c3afa2952aa",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 228,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-149-positive",
+      "file": "rgb-149-positive.md",
+      "path": "corpus/rgb-149-positive.md",
+      "sha256": "0e8e15963518f077d8b0d27312aa9b425fc1266e4775f4aeace62181ea96d203",
+      "text_path": "text/rgb-149-positive.txt",
+      "text_sha256": "0e8e15963518f077d8b0d27312aa9b425fc1266e4775f4aeace62181ea96d203",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 149,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-149-negative-1",
+      "file": "rgb-149-negative-1.md",
+      "path": "corpus/rgb-149-negative-1.md",
+      "sha256": "86f98aaa0da80b43bd4e74c683bb1a7537a921ab1321156e2b5f45cb244a17e2",
+      "text_path": "text/rgb-149-negative-1.txt",
+      "text_sha256": "86f98aaa0da80b43bd4e74c683bb1a7537a921ab1321156e2b5f45cb244a17e2",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 149,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-149-negative-2",
+      "file": "rgb-149-negative-2.md",
+      "path": "corpus/rgb-149-negative-2.md",
+      "sha256": "431811d6f0b18cd639d5e75a14abdf50550b9abe91ef1d264a1cf706a17fec58",
+      "text_path": "text/rgb-149-negative-2.txt",
+      "text_sha256": "431811d6f0b18cd639d5e75a14abdf50550b9abe91ef1d264a1cf706a17fec58",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 149,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-149-negative-3",
+      "file": "rgb-149-negative-3.md",
+      "path": "corpus/rgb-149-negative-3.md",
+      "sha256": "6bccf9b0448fe1d9d970b4ad1a1d2df33efea80e584bc03f6fe16484bca9faaa",
+      "text_path": "text/rgb-149-negative-3.txt",
+      "text_sha256": "6bccf9b0448fe1d9d970b4ad1a1d2df33efea80e584bc03f6fe16484bca9faaa",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 149,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-149-negative-4",
+      "file": "rgb-149-negative-4.md",
+      "path": "corpus/rgb-149-negative-4.md",
+      "sha256": "4a1a2934aef03962449109476351ff25688ef2e933224a7df72c735120935d73",
+      "text_path": "text/rgb-149-negative-4.txt",
+      "text_sha256": "4a1a2934aef03962449109476351ff25688ef2e933224a7df72c735120935d73",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 149,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-110-positive",
+      "file": "rgb-110-positive.md",
+      "path": "corpus/rgb-110-positive.md",
+      "sha256": "65af74716a910dab7d84b51e31e6d7313e3720812ccd69d6e1e3eab708f9a3e6",
+      "text_path": "text/rgb-110-positive.txt",
+      "text_sha256": "65af74716a910dab7d84b51e31e6d7313e3720812ccd69d6e1e3eab708f9a3e6",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 110,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-110-negative-1",
+      "file": "rgb-110-negative-1.md",
+      "path": "corpus/rgb-110-negative-1.md",
+      "sha256": "7ecfe8f3330868e36262b1b5e2ff236723d2bbed19be81d0bfbb352de63f0c95",
+      "text_path": "text/rgb-110-negative-1.txt",
+      "text_sha256": "7ecfe8f3330868e36262b1b5e2ff236723d2bbed19be81d0bfbb352de63f0c95",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 110,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-110-negative-2",
+      "file": "rgb-110-negative-2.md",
+      "path": "corpus/rgb-110-negative-2.md",
+      "sha256": "998753e9b0c472e0f15c88058820a814508ce5543b3d1f91464875a87b3bffef",
+      "text_path": "text/rgb-110-negative-2.txt",
+      "text_sha256": "998753e9b0c472e0f15c88058820a814508ce5543b3d1f91464875a87b3bffef",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 110,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-110-negative-3",
+      "file": "rgb-110-negative-3.md",
+      "path": "corpus/rgb-110-negative-3.md",
+      "sha256": "0e957c425cc6bf6b8e99ed0dc0e69682fdcb918b75fe13a04c5545a712b1123c",
+      "text_path": "text/rgb-110-negative-3.txt",
+      "text_sha256": "0e957c425cc6bf6b8e99ed0dc0e69682fdcb918b75fe13a04c5545a712b1123c",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 110,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-110-negative-4",
+      "file": "rgb-110-negative-4.md",
+      "path": "corpus/rgb-110-negative-4.md",
+      "sha256": "a788a7a7361ca6a726c4169e3a12da85416df020baad2d0010f22f62bdbc11b2",
+      "text_path": "text/rgb-110-negative-4.txt",
+      "text_sha256": "a788a7a7361ca6a726c4169e3a12da85416df020baad2d0010f22f62bdbc11b2",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 110,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-7-positive",
+      "file": "rgb-7-positive.md",
+      "path": "corpus/rgb-7-positive.md",
+      "sha256": "3678a62800f6405e8e774ef5efa657af0cf02b2cca4e9bb79cfb84171d3d15b1",
+      "text_path": "text/rgb-7-positive.txt",
+      "text_sha256": "3678a62800f6405e8e774ef5efa657af0cf02b2cca4e9bb79cfb84171d3d15b1",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 7,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-7-negative-1",
+      "file": "rgb-7-negative-1.md",
+      "path": "corpus/rgb-7-negative-1.md",
+      "sha256": "5a258c3574b6f1d2c0deb7ee49312f3c232edc7b4521442be31bcf61007c1802",
+      "text_path": "text/rgb-7-negative-1.txt",
+      "text_sha256": "5a258c3574b6f1d2c0deb7ee49312f3c232edc7b4521442be31bcf61007c1802",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 7,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-7-negative-2",
+      "file": "rgb-7-negative-2.md",
+      "path": "corpus/rgb-7-negative-2.md",
+      "sha256": "619270ea5364ff0b92914ba4c1d01a2d6902f3da35d67403442597978e404e82",
+      "text_path": "text/rgb-7-negative-2.txt",
+      "text_sha256": "619270ea5364ff0b92914ba4c1d01a2d6902f3da35d67403442597978e404e82",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 7,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-7-negative-3",
+      "file": "rgb-7-negative-3.md",
+      "path": "corpus/rgb-7-negative-3.md",
+      "sha256": "75a604cdc0d4f309bb71c66e0997d1b4731de3ceca87e19d337774f51ecd9225",
+      "text_path": "text/rgb-7-negative-3.txt",
+      "text_sha256": "75a604cdc0d4f309bb71c66e0997d1b4731de3ceca87e19d337774f51ecd9225",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 7,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-7-negative-4",
+      "file": "rgb-7-negative-4.md",
+      "path": "corpus/rgb-7-negative-4.md",
+      "sha256": "3211ccaa2baf108e17fa5d99d02bc42bc9f0b095047ad1cc8cb54dbeb7ffe21e",
+      "text_path": "text/rgb-7-negative-4.txt",
+      "text_sha256": "3211ccaa2baf108e17fa5d99d02bc42bc9f0b095047ad1cc8cb54dbeb7ffe21e",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 7,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-61-positive",
+      "file": "rgb-61-positive.md",
+      "path": "corpus/rgb-61-positive.md",
+      "sha256": "61bf6daa34222531827d9fa900b9f0a6b10f5fcd607654092943f4bbbffc1666",
+      "text_path": "text/rgb-61-positive.txt",
+      "text_sha256": "61bf6daa34222531827d9fa900b9f0a6b10f5fcd607654092943f4bbbffc1666",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 61,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-61-negative-1",
+      "file": "rgb-61-negative-1.md",
+      "path": "corpus/rgb-61-negative-1.md",
+      "sha256": "b5bef95def21abd2500794ed3e335b42e0c1dfb60645c0fbd025d3bb946e4611",
+      "text_path": "text/rgb-61-negative-1.txt",
+      "text_sha256": "b5bef95def21abd2500794ed3e335b42e0c1dfb60645c0fbd025d3bb946e4611",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 61,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-61-negative-2",
+      "file": "rgb-61-negative-2.md",
+      "path": "corpus/rgb-61-negative-2.md",
+      "sha256": "ff4f61b78314d249beed21b30fb1089b3b48490a352cc751dc84a8cb9d3e5c40",
+      "text_path": "text/rgb-61-negative-2.txt",
+      "text_sha256": "ff4f61b78314d249beed21b30fb1089b3b48490a352cc751dc84a8cb9d3e5c40",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 61,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-61-negative-3",
+      "file": "rgb-61-negative-3.md",
+      "path": "corpus/rgb-61-negative-3.md",
+      "sha256": "010cf5ab9316e7133396e6d732d84494af902e96b1fb77cb066fc181262f4818",
+      "text_path": "text/rgb-61-negative-3.txt",
+      "text_sha256": "010cf5ab9316e7133396e6d732d84494af902e96b1fb77cb066fc181262f4818",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 61,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-61-negative-4",
+      "file": "rgb-61-negative-4.md",
+      "path": "corpus/rgb-61-negative-4.md",
+      "sha256": "08219db35f9807f4e9271835d48cdb6463725742188b35adaf550090c9550cb7",
+      "text_path": "text/rgb-61-negative-4.txt",
+      "text_sha256": "08219db35f9807f4e9271835d48cdb6463725742188b35adaf550090c9550cb7",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 61,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-25-positive",
+      "file": "rgb-25-positive.md",
+      "path": "corpus/rgb-25-positive.md",
+      "sha256": "2d0ced471dbc22ff63e72920cac392c3870ad4e33da7cd688b7fb99d47a7a8c0",
+      "text_path": "text/rgb-25-positive.txt",
+      "text_sha256": "2d0ced471dbc22ff63e72920cac392c3870ad4e33da7cd688b7fb99d47a7a8c0",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 25,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered"
+      }
+    },
+    {
+      "id": "rgb-25-negative-1",
+      "file": "rgb-25-negative-1.md",
+      "path": "corpus/rgb-25-negative-1.md",
+      "sha256": "169258f8a64cd283206fca395f53b9da3263c518cb6caea64c9eba7b4403e8e2",
+      "text_path": "text/rgb-25-negative-1.txt",
+      "text_sha256": "169258f8a64cd283206fca395f53b9da3263c518cb6caea64c9eba7b4403e8e2",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 25,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-25-negative-2",
+      "file": "rgb-25-negative-2.md",
+      "path": "corpus/rgb-25-negative-2.md",
+      "sha256": "28aed3572918d0eb81670673a3cbe05cccaf425ffd7b0a57d76e53f01d518962",
+      "text_path": "text/rgb-25-negative-2.txt",
+      "text_sha256": "28aed3572918d0eb81670673a3cbe05cccaf425ffd7b0a57d76e53f01d518962",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 25,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-25-negative-3",
+      "file": "rgb-25-negative-3.md",
+      "path": "corpus/rgb-25-negative-3.md",
+      "sha256": "41562b3a90dcdb10d4dd4b6e75bed670dd684ce239f091d7d696cd482ec2c739",
+      "text_path": "text/rgb-25-negative-3.txt",
+      "text_sha256": "41562b3a90dcdb10d4dd4b6e75bed670dd684ce239f091d7d696cd482ec2c739",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 25,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-25-negative-4",
+      "file": "rgb-25-negative-4.md",
+      "path": "corpus/rgb-25-negative-4.md",
+      "sha256": "2ba90309273c93e19281be83321953dd24c6dfb724f678c9ca8ea85a5099b378",
+      "text_path": "text/rgb-25-negative-4.txt",
+      "text_sha256": "2ba90309273c93e19281be83321953dd24c6dfb724f678c9ca8ea85a5099b378",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 25,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-272-positive",
+      "file": "rgb-272-positive.md",
+      "path": "corpus/rgb-272-positive.md",
+      "sha256": "70532d592e2979ed59d198027b74bc5ac223565cf60c894fa7c6456d618e3918",
+      "text_path": "text/rgb-272-positive.txt",
+      "text_sha256": "70532d592e2979ed59d198027b74bc5ac223565cf60c894fa7c6456d618e3918",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 272,
+        "field": "positive",
+        "selection": "first_all_answer_groups_covered",
+        "field_index": 2,
+        "review_reason": "Replace answer leakage, duplicate distractor, or unsupported positive relation."
+      }
+    },
+    {
+      "id": "rgb-272-negative-1",
+      "file": "rgb-272-negative-1.md",
+      "path": "corpus/rgb-272-negative-1.md",
+      "sha256": "6f342a25539f1d4d2e08077a91ca375be3afe194c962b7fc8747160dbb8a5482",
+      "text_path": "text/rgb-272-negative-1.txt",
+      "text_sha256": "6f342a25539f1d4d2e08077a91ca375be3afe194c962b7fc8747160dbb8a5482",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 272,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-272-negative-2",
+      "file": "rgb-272-negative-2.md",
+      "path": "corpus/rgb-272-negative-2.md",
+      "sha256": "9534edd0c45bf3869cd55a1290f6079e724677dbc97c0019bcb2f25a03289d58",
+      "text_path": "text/rgb-272-negative-2.txt",
+      "text_sha256": "9534edd0c45bf3869cd55a1290f6079e724677dbc97c0019bcb2f25a03289d58",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 272,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-272-negative-3",
+      "file": "rgb-272-negative-3.md",
+      "path": "corpus/rgb-272-negative-3.md",
+      "sha256": "2d1cd79f7548fbbd5b7f818f3b0812495f61797a4a18b539162e9c127c676e47",
+      "text_path": "text/rgb-272-negative-3.txt",
+      "text_sha256": "2d1cd79f7548fbbd5b7f818f3b0812495f61797a4a18b539162e9c127c676e47",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 272,
+        "field": "negative"
+      }
+    },
+    {
+      "id": "rgb-272-negative-4",
+      "file": "rgb-272-negative-4.md",
+      "path": "corpus/rgb-272-negative-4.md",
+      "sha256": "1b38b90b88c6a3846813eaaba6ef00b797dabfc166831d2edf1a18b81de59a88",
+      "text_path": "text/rgb-272-negative-4.txt",
+      "text_sha256": "1b38b90b88c6a3846813eaaba6ef00b797dabfc166831d2edf1a18b81de59a88",
+      "origin": "RGB",
+      "provenance": {
+        "upstream_id": 272,
+        "field": "negative"
+      }
+    }
+  ]
+}

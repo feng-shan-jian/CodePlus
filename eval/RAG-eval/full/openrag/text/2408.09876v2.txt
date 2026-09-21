@@ -1,0 +1,1731 @@
+IMPROVING GENOMIC PREDICTION USING HIGH-DIMENSIONAL
+SECONDARY PHENOTYPES: THE GENETIC LATENT FACTOR
+APPROACH
+KILLIAN A.C. MELSEN 1∗, JONATHAN F. KUNST 1, JOS ´E CROSSA2, MARGARET R. KRAUSE 3,
+FRED A. VAN EEUWIJK1, WILLEM KRUIJER 1, AND CAREL F.W. PEETERS 1
+Abstract. Decreasing costs and new technologies have led to an increase in the amount of
+data available to plant breeding programs. High-throughput phenotyping (HTP) platforms
+routinely generate high-dimensional datasets of secondary features that may be used to im-
+prove genomic prediction accuracy. However, integration of these data comes with challenges
+such as multicollinearity, parameter estimation in p > n settings, and the computational com-
+plexity of many standard approaches. Several methods have emerged to analyze such data,
+but interpretation of model parameters often remains challenging. We propose genetic latent
+factor best linear unbiased prediction (glfBLUP), a prediction pipeline that reduces the di-
+mensionality of the original secondary HTP data using generative factor analysis. In short,
+glfBLUP uses redundancy filtered and regularized genetic and residual correlation matrices to
+fit a maximum likelihood factor model and estimate genetic latent factor scores. These latent
+factors are subsequently used in multi-trait genomic prediction. Our approach performs better
+than alternatives in extensive simulations and a real-world application, while producing eas-
+ily interpretable and biologically relevant parameters. We discuss several possible extensions
+and highlight glfBLUP as the basis for a flexible and modular multi-trait genomic prediction
+framework.
+Key words: Empirical Bayes; Factor analysis; Genomic prediction; High-dimensional data
+1. Introduction
+Genomic prediction has revolutionized plant breeding programs over the past two decades.
+Its use allows maintaining and evaluating breeding populations larger than ever before. As a
+result, breeding programs have seen increases in efficiency leading to more rapid development of
+varieties that meet today’s challenges [6]. Genomic prediction is a powerful tool in ensuring food
+security in the face of a growing population and more extreme climate conditions [14].
+The practice of genomic prediction involves training a statistical model using evaluated geno-
+types, followed by making trait predictions for untrialed test genotypes [25]. The model is mainly
+used in a univariate form (gBLUP, genomic best linear unbiased prediction) where the predic-
+tions are sums of genomic marker effects [11]. These predictions allow breeders to make selections
+without the need for extensive field trials.
+Recent years have seen an increase in the use of high-throughput phenotyping (HTP) tech-
+nologies resulting in the characterization of individuals in more aspects than just those of the
+genomic and trait phenotypic data. Examples include the collection of hyperspectral reflectivity
+measurements on the crop canopy in large field trials, metabolic profiling of plant leaves, and
+gene expression profiling using DNA microarrays [e.g., 19]. These secondary phenotypes can be
+1Mathematical & Statistical Methods Group (Biometris), W ageningen University & Research, PO
+Box 16, 6700 AA, W ageningen, The Netherlands
+2Global Wheat Program, International Maize and Wheat Improvement Centre (CIMMYT), Tex-
+coco, Mexico
+3College of Agricultural Sciences, Oregon State University, Corvallis, OR, USA
+E-mail addresses: ∗killian.melsen@wur.nl.
+1
+arXiv:2408.09876v2  [stat.ME]  4 Mar 2025
+2 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+collected for either the training set alone (termed CV1, cross-validation scenario 1), or both the
+training and test individuals (CV2, cross-validation scenario 2) [36]. If of sufficient quality, the
+secondary data can contain valuable information that readily improves genomic predictions for
+the trait of interest (focal trait). There are several such examples where integration of genomic
+and phenomic data leads to higher accuracies [1]
+Univariate genomic prediction uses only genomic information and focal trait information to
+obtain predictions. To integrate phenomics and genomics, the univariate model can be extended
+to a multivariate form relatively easily by modeling the focal trait as well as the secondary
+phenotypes as functions of the SNP markers [3]. Direct integration of HTP data to improve
+predictions is challenging for several reasons, however. First of all, secondary HTP data are
+often high-dimensional complicating parameter estimation. Second, subsets of secondary features
+are often highly correlated. This multicollinearity can greatly complicate the interpretation
+of model parameters [13]. Finally, even if the number of observations were greater than the
+number of features, and features were not highly correlated, direct integration would still be
+computationally demanding as the calculation of the BLUPs requires inverting a symmetric
+matrix whose dimension equals the number of genotypes times the number of features.
+1.1. Current methodology. A number of methods have been developed to deal with the high
+dimensionality, multicollinearity, and computational complexity. Lopez-Cruz et al. [22] proposed
+linearly combining the secondary features into a single regularized selection index (siBLUP),
+thereby reducing the dimensionality to one. The lsBLUP method introduced by Arouisse et al.
+[3] is similar in the sense that it reduces the dimensionality to one, but uses a LASSO prediction
+of the focal trait using the HTP features instead of a regularized selection index. Another
+alternative is MegaLMM as proposed by Runcie et al. [37]. MegaLMM constructs an arbitrary
+number of independent factors and unique trait contributions that are linear combinations of
+the original features. Neural networks and deep learning have also been investigated as options
+for the integration of secondary HTP and genomic data [41]. Due to their flexible nature they
+present an attractive option to model complex interactions between many features.
+1.2. The proposed model & overview. We introduce glfBLUP (genetic latent factor BLUP)
+to deal with the challenges of secondary HTP data. It is based on the idea that HTP features
+typically form a set of many noisy measurements of a much lower dimensional set of latent features
+[29]. In short, we use factor analysis to reduce the dimensionality of the HTP data to a data-
+driven number of uncorrelated latent factors which are subsequently used in multivariate genomic
+prediction. We avoid any manual hyperparameter tuning by using a data-driven approach to
+determine the dimensionality of the factor model. Our approach is also flexible in the sense
+that it can accommodate latent structures of any dimension lower than the Ledermann bound
+[21]. This flexibility means that complex structures underlying high-dimensional data can be
+accurately modeled. Furthermore, the factor loadings and genetic correlations between factors
+and the focal trait are interpretable and reveal the relevant biological patterns in the otherwise
+noisy HTP data.
+The remainder of this paper is organized as follows. We elaborate the used notation and
+the proposed factor analytic multivariate genomic prediction approach in Section 2. Section 3
+provides details and results on a comprehensive simulation study comparing the performances
+of different methods as well as the importance of various genetic parameters. In Section 4
+we apply glfBLUP and alternatives to a wheat yield and hyperspectral reflectivities dataset
+to evaluate their real-world performance and show how glfBLUP produces biologically relevant
+and interpretable parameters. Finally, we discuss several possible extensions to the proposed
+approach in Section 5.
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 3
+2. Model
+2.1. Notation. We denote matrices and vectors by boldface upper- and lower-case symbols,
+and scalars by lower-case symbols. Furthermore, we use Σ and R to denote covariance and
+correlation matrices. We additionally use the superscripts p, g, and ϵ to denote phenotypic,
+genetic, and residual covariance and correlation matrices. For example, the symbol Σϵ denotes
+the residual covariance matrix.
+Let A∈ Rn×(p+1) be some data matrix containingp secondary features and a single focal trait
+forn individuals. While we thus use p for the number of secondary features as well as phenotypic
+covariance matrices, its meaning should be clear from the context. We assume that genotypes are
+replicated r times following a balanced design so that the total number of individuals n =ngr,
+whereng andr represent the number of genotypes and number of replicates per genotype. Note
+that we assume a balanced design for notational simplicity, but that it is not a requirement.
+We use two indices to specify the rows of data matrices so that a(i|j) represents the 1× (p + 1)
+data vector for replicate i given genotype j. We use the subscripts s and f to denote a matrix
+containing only secondary features or a vector containing only the focal trait. As an example,
+As is a data matrix containing secondary features, and as(i|j) is the row vector of secondary
+features for genotype j, replicate i. The kinship matrix is denoted by K.
+We use◦ and⊗ to denote the Hadamard and Kronecker products. We usediag(s11,...,s pp) to
+refer to a p-dimensional diagonal matrix with elements s11,...,s pp. We denote the column-wise
+vectorization of a matrix by vec(A) and use vec−1(A) for the reverse operation. The cardinality
+of a set A is denoted by card(A). Some further information and examples on the partitioning
+of data and covariance matrices, as well as some general background information on genomic
+prediction, can be found in SM Section 1.
+2.2. Modeling of secondary features. The pipeline we propose uses a fully unsupervised di-
+mensionality reduction before including factor scores as additional traits in multi-variate genomic
+prediction. This section contains details on the steps involved in the dimensionality reduction.
+Section 2.3 then provides some details on the multivariate genomic prediction.
+2.2.1. Model and assumptions. Consider the secondary feature phenotypic data matrix Ys ∈
+Rn×p. We assume a balanced design for simplicity, but note that this is not required. In a
+balanced design n = ngr, i.e., the number of observations is equal to the number of genotypes
+multiplied by the number of replicates per genotype. Assuming no covariates, all secondary
+phenotypes are composed of genetic and residual components:
+Ys = Gs + Es.
+We assume that the genetic components are independent of the residual components so that
+vec(Ys) = vec(Gs) + vec(Es)∼N np(0, Σg
+ss⊗ ZKZ⊤ + Σϵ
+ss⊗ In),
+where ZKZ⊤ and In are the row covariances of Gs and Es, respectively. The n×ng incidence
+matrix Z links individuals to genotypes. Similarly, Σg
+ss and Σϵ
+ss are the column covariances of
+Gs and Es. We use the subscript ss to denote that Σg
+ss and Σϵ
+ss contain genetic and residual
+covariances among secondary features.
+While we require plot-level data to estimate covariance matrices, two-stage genomic prediction
+typically uses best linear unbiased estimates (BLUEs). For a completely randomized design we
+can obtain these BLUEs for a single genotype j by simply taking the genotypic mean of all
+replicates i = 1,...,r [20]:
+(1) ¯ys(j) = gs(j) + ¯ϵs(j) = gs(j) + 1
+r
+rX
+i=1
+ϵs(i|j).
+4 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+Note that as the residual vectors ϵs(i|j) of the replicates of genotype j are iid random vectors,
+basic covariance algebra shows that the covariance of¯ϵs(j) is simplyr−1Σϵ
+ss [20] (see also Supple-
+mentary Material (SM) Section 2). As a result, ¯ys(j)∼N p(0, Σp
+ss), where Σp
+ss = Σg
+ss +r−1Σϵ
+ss,
+assuming for a moment that K◦ Ing = Ing.
+In glfBLUP, we use a factor analytic structure for Σg
+ss. This follows from the assumption that
+the genetic components gs(j) can be written as a weighted sum of m latent factors and p factor
+model errors:
+(2) g⊤
+s(j) = Λξj +εj,
+where Λ is ap×m matrix containing factor loadings,ξj is anm× 1 vector containing the latent
+factor scores for genotype j, and εj contains the factor model errors. Substituting (2) into (1)
+gives us the full model for the secondary phenotypic data:
+(3) ¯y⊤
+s(j) = Λξj +εj + ¯ϵ⊤
+s(j).
+We now make the following assumptions: (i) rank( Λ) = m<p , (ii) εj∼N p(0, Ψ), where Ψ =
+E(εjε⊤
+j ) and Ψ≡diag(ψ11,...,ψ pp) withψqq > 0,∀qq, (iii)ξj∼N m(0, Im), (iv)ξj /upmodelsεj′,∀j,j′,
+(v)ξj /upmodels¯ϵs(j′),∀j,j′, and (vi) εj /upmodels¯ϵs(j′),∀j,j′.
+These assumptions imply that the genetic covariance matrix Σg
+ss equals the model-implied
+genetic covariance matrix Σg
+ss(Θ) = ΛΛ⊤ + Ψ = E
+
+(Λξj +εj)(Λξj +εj)⊤
+where Θ =
+{m, Λ, Ψ}. Therefore, ¯ys(j)∼N p(0, ΛΛ⊤ + Ψ +r−1Σϵ
+ss). The covariance of the genetic com-
+ponents gs(j) can thus be decomposed into common ( ΛΛ⊤) and unique ( Ψ) elements.
+We will use the model above to project the observed secondary features onto a lower-
+dimensional latent space in six steps.We first use the plot-level data to obtain estimates for
+the genetic and residual correlation matrices of the observed secondary features (I). We then re-
+dundancy filter the secondary data (II) to ensure there are no pairs of features with near perfect
+genetic correlations, followed by regularization of the filtered genetic and residual correlation
+matrices (III). We then estimate the latent dimension (IV) and fit the factor model (V). Next,
+we obtain estimates for the latent factor scores (VI), completing the dimension reduction. The
+remainder of this section is devoted to the details of these six steps.
+2.2.2. Covariance matrix estimation (step I). The factor analytic approach in glfBLUP largely
+revolves around the genetic and residual covariance matrices of the observed secondary data.
+We can obtain estimates of these matrices by using REML (restricted maximum likelihood) and
+the kinship matrix K for a small number of features. When the number of secondary features
+p exceeds 5-10, however, the computational complexity quickly becomes prohibitive and REML
+estimates can no longer be obtained [46]. As this is usually the case for high-dimensional HTP
+data, we use data containing genotypic replicates and correct for experimental design factors
+and spatial trends to obtain pseudo-CRD (pseudo completely randomized design) data as a pre-
+processing step. Note again that in this case, assuming balanced data, the total number of
+records is simply the number of genotypes times the number of replicates, i.e., n =ngr. We then
+assume that ZKZ⊤ = ZZ⊤, i.e., K = Ing, and obtain estimates for Σg
+ss and Σϵ
+ss using sums of
+squares as measures for between and within-genotype variation [30]:
+MSg
+ss = ( ¯Yg
+s− ¯Ys)⊤( ¯Yg
+s− ¯Ys)(ng− 1)−1
+MSϵ
+ss = ( ¯Yg
+s− Ys)⊤( ¯Yg
+s− Ys)(n−ng)−1
+ˆΣg
+ss = (MSg
+ss− MSϵ
+ss)r−1
+ˆΣϵ
+ss = MSϵ
+ss,
+(4)
+where Ys is then×p data matrix containing the secondary features. Overall means and genotypic
+means are located in ¯Ys and ¯Yg
+s, respectively. A well-known issue with the estimation of such
+covariance matrices using multivariate sums of squares is the fact that sufficient within-genotype
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 5
+variation can result in ˆΣg
+ss having negative eigenvalues [26] as it is not a moment matrix but
+rather the difference of two moment matrices (as opposed to ˆΣϵ
+ss which is a moment matrix and
+therefore at worst positive-semidefinite if p>n ). We deal with this issue by simply finding the
+nearest positive-definite matrix using Higham’s algorithm [15]. From here on, ˆΣg
+ss refers to this
+nearest positive definite matrix.
+We scale the covariance matrices as our approach requires them to be on the correlation scale
+for regularization:
+ˆRg
+ss = ( ˆΣg
+ss◦ Ip)−1/2 ˆΣg
+ss( ˆΣg
+ss◦ Ip)−1/2
+ˆRϵ
+ss = ( ˆΣϵ
+ss◦ Ip)−1/2 ˆΣϵ
+ss( ˆΣϵ
+ss◦ Ip)−1/2.
+We emphasize that the assumption of independent genetic effects is only made for the genetic
+and residual covariance estimators in equation (4). We use a marker-based kinship matrix in
+the final genomic prediction step. The assumption of diagonal kinship ( K = Ing) in (4) simply
+means that the subsequent factor analysis is based on the covariance between the total (rather
+than only the additive) genetic effects.
+2.2.3. Redundancy filtering (step II). Given the fact that multicollinearity is common in HTP
+data, some of the p secondary features will likely show near perfect genetic correlation and are
+therefore redundant. We filter the genetic correlation matrix using the algorithm described by
+Peeters et al. [33] with an absolute genetic correlation threshold τ (i.e., after filtering, no two
+features will have an absolute genetic correlation|ρg| equal to, or exceedingτ). This filtering step
+produces ˆRg∗
+ss∈ Rp∗×p∗
+containing only the p∗ secondary features that pass filtering ( p∗≤ p).
+We subset the residual correlation matrix and data matrix so they too only contain the remaining
+p∗ features.
+2.2.4. Regularization (step III). The filtered estimates ˆRg∗
+ss and ˆRϵ∗
+ss may still be ill-conditioned
+or singular which is why regularization is required. To achieve this, we use penalized maximum
+likelihood forms in the remainder of the glfBLUP method [33, 43]:
+ˆRg∗
+ss(ϑg) = (1−ϑg) ˆRg∗
+ss +ϑgIp∗
+ˆRϵ∗
+ss(ϑϵ) = (1−ϑϵ) ˆRϵ∗
+ss +ϑϵIp∗,
+(5)
+where ϑg,ϑϵ∈ (0, 1]. We find the optimal values for the penalty parameters ϑ‡
+g and ϑ‡
+ϵ through
+K-fold cross-validation where we split the data by dividing the ng genotypes over K disjoint
+folds and minimize the following expression using Brent’s algorithm [5]:
+(6) φK(ϑ) := 1
+K
+KX
+k=1
+wk
+
+ln
+
+
+R∗
+ss(ϑ)
+
+¬k
+ + tr
+
+R∗
+ss
+
+k
+
+R∗
+ss(ϑ)
+−1
+¬k
+
+,
+where (R∗
+ss(ϑ))¬k is the penalized genetic or residual correlation matrix given the corresponding
+penalty ϑ estimated using the K− 1 folds. The non-penalized correlation matrix ( R∗
+ss)k is
+estimated using the left-out fold. Each left-out fold is weighed by wk, which is equal to the
+number of genotypes or individuals in that fold for the genetic and residual correlation matrix,
+respectively. See Peeters et al. [33] for further details. We use an efficient implementation
+to minimize (6) which results in iterations of complexity O(p∗) as opposed to O(p∗3) due to
+the repeated inversion of R∗
+ss(ϑ)¬k required in the naive minimization. This leads to faster
+optimization, especially if optimal penalty values are close to the bounds. Details regarding our
+implementation can be found in SM Section 3. Note that both ˆRg∗
+ss(ϑ‡
+g) and ˆRϵ∗
+ss(ϑ‡
+ϵ) balance the
+unbiased but high-variance estimated correlation matrices with the biased but stable identity
+matrix, optimizing the bias-variance trade-off. While our approach uses the identity matrix,
+we may use another target matrix T in (5) instead if prior information is available in the form
+6 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+of, for example, covariance estimates from earlier trials. The only requirement is that T is a
+positive-definite correlation matrix.
+2.2.5. Latent dimension (step IV). In principle, the model specified in (3) is valid for any latent
+dimension m≤ 1
+2
+
+2p + 1− (8p + 1)1/2
+[21]. We must specify an estimate for m prior to fitting
+the factor model and obtaining an estimate for the other parameters in Θ, however. To do so
+we use a lower eigenvalue bound based on the Marchenko-Pastur distribution [24]:
+ω+ =
+ 
+1 +
+s
+p∗
+ng
+!2
+,
+whereng is the number of genotypes used to estimate the genetic covariance matrix as described
+in Section 2.2.2. We then determine ˜m:
+˜m := card
+n
+d
+h
+ˆRg∗
+ss(ϑ‡
+g)
+i
+>ω +
+o
+,
+where d[ ˆRg∗
+ss(ϑ‡
+g)] are the eigenvalues of ˆRg∗
+ss(ϑ‡
+g). Consequently, the latent dimension we use is
+simply the number of eigenvalues of the regularized correlation-scale estimate for Σg∗
+ss, ˆRg∗
+ss(ϑ‡
+g),
+that exceed ω+.
+2.2.6. Factor analytic modeling (step V). With regularized estimates for the correlation matrices
+and latent dimension available, we now proceed with the factor analytic dimension reduction
+of the redundancy filtered secondary data. In the context of plant breeding, we are mainly
+interested in genetic correlations and will therefore fit the factor model using a reduced form
+of the secondary data covariance matrix. Recall that the full covariance of the BLUEs given in
+Section 2.2.1 was Σp∗
+ss = Σg∗
+ss +r−1Σϵ∗
+ss, with stars added to denote the redundancy filtering. The
+reduced covariance that we use to fit the factor model is thus Σp∗
+ss−r−1Σϵ∗
+ss = Σg∗
+ss = ΛΛ⊤ + Ψ.
+Given the fact that maximum-likelihood estimation of Θ is scale-free [32], we opt to estimate the
+loadings and uniquenesses using correlation rather than covariance matrices. We denote these
+correlation-scale parameters by ΘR ={m, ΛR, ΨR}. Furthermore, we recognize that the sample
+genetic correlation matrix ˆRg∗
+ss is a sufficient statistic for the population correlation matrix Rg∗
+ss,
+meaning the maximum likelihood estimate ˆΘR, given a latent dimension ˜m, can be found by
+minimizing the following discrepancy function [17]:
+(7) F
+h
+Rg∗
+ss(ΘR); ˆRg∗
+ss; ˜m
+i
+= ln
+Rg∗
+ss(ΘR)
+ + tr
+h
+ˆRg∗
+ssRg∗
+ss(ΘR)−1
+i
+− ln
+ ˆRg∗
+ss
+−p∗,
+where we constrain Λ⊤
+RΨ−1
+R ΛR to be a diagonal matrix with ordered diagonal elements for
+identification. We replace ˆRg∗
+ss by the regularized estimate ˆRg∗
+ss(ϑ‡
+g) as minimizing (7) requires a
+positive-definite and ideally well-conditioned sample genetic correlation matrix [33]. We employ a
+Varimax rotation once we have obtained the estimates forΛR and ΨR to facilitate interpretability
+[18]. In essence, the varimax rotation attempts to bring the loadings matrix close to having simple
+structure, i.e., a structure in which variables load highly on a single factor and have near zero
+loadings on the other factors. To avoid notational clutter we simply use ˆΛR to refer to either the
+rotated or non-rotated estimated loadings. The described factor analytic model is implemented
+using an efficient matrix-free estimation method [10].
+2.2.7. Estimation of factor scores (step VI). We would now like to obtain estimates for the
+factor scores ξj. These factor scores are essentially estimates of the locations of genotypes in
+latent space, based on the many noisy but observable secondary feature measurements. They
+can thus be viewed as the unobserved phenotypes of a small number of latent traits that generate
+the observed phenotypes for the many secondary features. We will use the joint distribution of
+the secondary feature BLUEs and latent factors (9) in a slightly modified Thomson regression
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 7
+approach [40] to obtain ˆξj. Recalling that we estimated ΘR on the correlation scale, we first
+convert ˆΛR and ˆΨR back to the covariance scale:
+ˆΛ = D ˆΛR and ˆΨ = D ˆΨRD, where D = ( ˆΣg∗
+ss◦ Ip∗)1/2.
+We also scale back the regularized residual correlation matrix obtained using (4) and (5):
+(8) ˆΣϵ
+ss(ϑ‡
+ϵ) = ( ˆΣϵ∗
+ss◦ Ip∗)1/2 ˆRϵ∗
+ss(ϑ‡
+ϵ)( ˆΣϵ∗
+ss◦ Ip∗)1/2.
+We can now obtain the matrix P mapping the redundancy filtered secondary features to their
+projections on the lower-dimensional latent space through E(ξj|¯y∗
+s(j)). To obtain this expecta-
+tion, we first use standard covariance algebra to obtain the joint distribution of the secondary
+feature BLUEs and latent factors as
+(9)
+¯y⊤
+s(j)
+ξj
+
+∼N p+m
+h
+0, Σ(Θ)y
+ξ
+i
+,
+where
+Σ(Θ)y
+ξ =
+Σ(Θ)yy Σ(Θ)yξ
+Σ(Θ)ξy Σ(Θ)ξξ
+
+=
+ΛΛ⊤ + Ψ +r−1Σϵ
+ss Λ
+Λ⊤ Im
+
+=
+Σg
+ss +r−1Σϵ
+ss Λ
+Λ⊤ Im
+
+.
+Given that the joint distribution (9) is normal, we can obtain the conditional expectation as
+Σ(Θ)ξy [Σ(Θ)yy]−1 ¯y∗
+s(j) [2]. Using the Woodbury matrix identity [44], we rewrite this last
+expression to produce:
+˜ξj =
+h
+I ˜m + ˆΛ⊤( ˆΨ +r−1 ˆΣϵ∗
+ss)−1 ˆΛ
+i−1
+ˆΛ⊤( ˆΨ +r−1 ˆΣϵ∗
+ss)−1¯y∗⊤
+s(j)
+= P⊤¯y∗⊤
+s(j).
+Replacing ˆΣϵ∗
+ss by the regularized estimate obtained using (4), (5), and (8) gives us the final
+expression for the estimation of the factor scores for all genotypes:
+˜Ξ = ¯Y∗
+s
+h
+ˆΨ +r−1 ˆΣϵ∗
+ss(ϑ‡
+ϵ)
+i−1
+ˆΛ
+
+I ˜m + ˆΛ⊤
+h
+ˆΨ +r−1 ˆΣϵ∗
+ss(ϑ‡
+ϵ)
+i−1
+ˆΛ
+−1
+= ¯Y∗
+sP.
+(10)
+Through this projection we thus obtain factor scores that are essentially posterior estimates of
+latent phenotypes given the observed data. Instead of a full Bayesian approach we use empirical
+Bayes by using the maximum likelihood estimates of the parameters associated with the factor
+model in (10). Furthermore, note that var( ¯y∗
+s(j))→ Σg∗
+ss as r→∞ , and as a result the projec-
+tion P approaches the matrix that would be obtained using the ordinary Thomson regression
+approach. We thus account for the extra uncertainty due to a limited number of genotypic
+replicates.
+In (10) we apply the projection to the BLUEs (that is, the genotypic means). In practice we
+project the plot-level data, however, to obtain plot level factor scores ˜Ξ∈ Rn× ˜m. We later use
+these plot-level factor scores and sums of squares to obtain estimates for the genetic and residual
+covariances of the latent factors and focal trait.
+One of the characteristics of Thomson regression that we maintain in our modified approach
+is the orthogonality of the factor scores. We have thus reduced the possibly high-dimensional
+and collinear secondary data to a much smaller set of orthogonal factors, without losing in-
+terpretability. These orthogonal factors can easily and effectively be used in any multivariate
+genomic prediction approach. We use the next section to describe the multivariate genomic pre-
+diction step using the factor scores, target trait, and marker-based kinship matrix, thus finally
+integrating genomic and secondary feature data.
+8 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+2.3. Modeling of latent factors and focal trait. Having reduced the dimensionality of the
+secondary data we now proceed with the multivariate genomic prediction. The remainder of this
+section contains a description of the model and assumptions, estimation of covariance matrices,
+selection of relevant factors, and calculations resulting in the final focal trait predictions.
+2.3.1. Model and assumptions. Consider the data matrix Y˜Ξf∈ Rn×( ˜m+1) containing the latent
+factor scores and focal trait. The matrix Y˜Ξf can be partitioned:
+(11) Y˜Ξf =
+Y˜Ξ yf
+
+,
+where the matrix Y˜Ξ is the n× ˜m matrix containing the plot-level factor scores and yf is the
+n×1 column vector containing the focal trait. Like for the secondary features, these factor scores
+and focal trait are composed of genetic and residual components:
+Y˜Ξf = G˜Ξf + E˜Ξf.
+We again assume that the genetic components are independent of the residual components so
+that
+vec(Y˜Ξf) = vec(G˜Ξf) + vec(E˜Ξf)∼N np(0, Σg⊗ ZKZ⊤ + Σϵ⊗ In),
+where ZKZ⊤ and In are the row covariances of G˜Ξf and E˜Ξf, respectively. The n×ng incidence
+matrix Z links individuals to genotypes. Similarly, Σg and Σϵ are the column covariances of
+G˜Ξf and E˜Ξf. These covariance matrices can be block-partitioned:
+Σg =
+ 
+Σg
+˜Ξ˜Ξ σg
+˜Ξf
+σg
+f ˜Ξ σg
+ff
+!
+=
+Σg
+˜Ξ.
+σg
+f.
+
+Σϵ =
+ 
+Σϵ
+˜Ξ˜Ξ σϵ
+˜Ξf
+σϵ
+f ˜Ξ σϵ
+ff
+!
+=
+Σϵ
+˜Ξ.
+σϵ
+f.
+
+,
+where Σg
+˜Ξ˜Ξ and Σϵ
+˜Ξ˜Ξ contain the genetic and residual covariances among the latent factors
+present in the sample, σg
+ff and σϵ
+ff are the scalar focal trait genetic and residual variances, and
+σg
+˜Ξf = (σg
+f s)⊤ and σϵ
+sf = (σϵ
+f s)⊤ contain the genetic and residual covariances between latent
+factors and the focal trait. We estimate the above covariance matrices using the plot-level data
+as described in Section 2.2.2.
+2.3.2. Factor selection and multivariate genomic prediction. We now convert the plot-level data
+to BLUEs ¯Y˜Ξf by taking the genotypic means. Note that we have not used the focal trait data
+yf in the modeling of the secondary features. As a result, not all of the ˜m factors may be relevant
+to the multivariate genomic prediction problem. As a basic form of subset selection we perform
+an exhaustive search for the best subset of ˜m⋆≤ ˜m factors for predicting the focal trait BLUEs
+¯yf using the factor score BLUEs ¯Y˜Ξ in multiple linear regression, using adjusted R2 as the
+accuracy measure [23]. Following this search, we subset the BLUEs to obtain ¯Y˜Ξ⋆f∈ Rn×( ˜m⋆+1)
+and subset the estimated covariance matrices of factor scores and focal trait accordingly:
+ˆΣg⋆ =
+ ˆΣg
+˜Ξ⋆ ˜Ξ⋆ ˆσg
+˜Ξ⋆f
+ˆσg
+f ˜Ξ⋆ ˆσg
+ff
+!
+ˆΣϵ⋆ =
+ ˆΣϵ
+˜Ξ⋆ ˜Ξ⋆ ˆσϵ
+˜Ξ⋆f
+ˆσϵ
+f ˜Ξ⋆ ˆσϵ
+ff
+!
+.
+We finally divide ˆΣϵ⋆ by the number of replicates and combine secondary and genomic data
+using the standard multivariate BLUP equations (see SM Section 1 and, e.g., [36, 3]).
+The integration of secondary and genomic data thus follows from the use of the marker-based
+kinship matrix and the inclusion of the factor scores as additional traits in the multivariate
+genomic prediction. If secondary data are only available for the training set (CV1), the extra
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 9
+features refine estimates of genetic (i.e., marker) effects for training genotypes. These improved
+training set estimates are then translated to test set estimates. In CV2, where secondary data
+are available for the test set too, the extra features provide direct information on the genetic
+effects for the test set, improving estimates of the focal trait directly. To evaluate the BLUP
+equations described in SM Section 1 we use a fast algorithm that decreases the complexity of
+these calculations from O(n3
+g( ˜m + 1)3) to O(ng( ˜m + 1)2 + ( ˜m + 1)3) [9].
+On a final note, consider that as the dimensionality reduction described in Section 2.2 is
+entirely unsupervised, glfBLUP is flexible with regards to what secondary feature data are used.
+If secondary features are only available for the training set (CV1), estimation of the covariance
+matrices, redundancy filtering, regularization, estimation of Θ, etc. is based only on training data
+and factor scores are only obtained for the training set. In CV2, where secondary features are
+also available for the test set, these data can be included effortlessly as well using the multivariate
+BLUP equations found in SM Section 1.
+3. Simulations
+We compared glfBLUP to a number of alternative approaches in terms of performance in
+different high-dimensional data settings. We compared glfBLUP to siBLUP, lsBLUP, MegaLMM,
+deep learning (multiMLP: multivariate multilayer perceptron), and the univariate gBLUP model,
+see SM Section 4 for details on these methods. The following two subsections provide details on
+the simulation process as well as the results.
+3.1. Setup. We simulated a range of different high-dimensional datasets to evaluate model per-
+formance under varying circumstances (Figure 1). We used ng = 500 randomly selected geno-
+types (1500 SNP markers) from the RegMap Arabidopsis thaliana panel [16] to construct a
+kinship matrix and simulated r = 2 replicates for a total number of n =ngr = 1000 individuals.
+Consider the model for the observed secondary features and focal trait:
+(12) Y = Z
+ 
+ΞΛ⊤ + Γ
+
+Sg
++ ESϵ,
+where Y ∈ Rn×(p+1) is the data matrix, Ξ is the ng×m matrix of factor scores, Λ is the
+(p + 1)×m matrix of loadings, Γ∈ Rng×(p+1) is the matrix containing factor model errors, and
+E is the n× (p + 1) matrix containing correlation scale residuals. The n×ng design matrix Z
+links records to genotypes. The matrices Sg and Sϵ are diagonal matrices containing the genetic
+and residual standard deviations of the secondary features and focal trait. The correlation scale
+genetic components of the phenotypes are thus defined as G = ΞΛ⊤ + Γ.
+To simulate the data we first randomly sampled m = 8 factor scores for each genotype from a
+multivariate normal distribution taking relationships between genotypes as defined in the kinship
+into account:
+(13) vec( Ξ)∼N ngm (0, Φ⊗ K) ,
+where Φ = Im, thus assuming that factors are independent. Next we sampled the factor model
+errors:
+(14) vec( Γ)∼N ngp (0, Ψ⊗ K) ,
+where Ψ≡ diag(ψ1,...,ψ p+1) is a diagonal matrix with unique variances. The first p = 800
+unique variances corresponding to the secondary features are sampled from a uniform distribu-
+tion: ψq∼U
+
+1− (0.3)2, 1− (0.8)2
+, ensuring that the loadings for these features are between
+0.3 and 0.8 given that features load on a single factor as described next. The last unique variance
+corresponding to the focal trait is one of the parameters we varied so that ψp+1∈{ 0.8, 0.5, 0.2}.
+We constructed the loadings matrix Λ∈ R(p+1)×m so that eight blocks of 100 secondary
+features (s1,...,s p) load on m = 8 genetic latent factors with a single feature loading on a
+single factor. Part of the focal trait ( y) phenotype is generated by ms = 4 latent signal factors
+(LSF ) through loadings. The focal trait does not load on the remaining mn = 4 factors (latent
+10 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+noise factors, LNF ), meaning that the 400 secondary features generated by the LNFs are not
+genetically correlated to the focal trait. The loading for each of the secondary features sq was
+obtained as
+p
+1−ψq and given a random sign ensuring that the genetic component of each
+secondary feature is simulated on the correlation scale. The loadings of the focal trait on the
+ms = 4 latent signal factors were obtained as
+p
+(1−ψp+1)/ms. The focal trait thus loads equally
+on all four latent signal factors.
+The genetic components and corresponding correlation matrix can now be obtained as G =
+ΞΛ⊤ + Γ and Rg = ΛΦΛ⊤ + Ψ. The non-genetic or residual components are sampled from a
+multivariate normal distribution:
+(15) vec( E)∼N np (0, Rϵ⊗ In) ,
+where Rϵ is a correlation matrix containing random residual correlations (mean of 0 and standard
+deviation of approximately 0 .05) among the 800 observed features and between those features
+and the focal trait. Whe then finally obtain the phenotypic data:
+(16) Y = Z (GSg) + ESϵ,
+where the genetic and residual standard deviations in Sg and Sϵ are obtained through the her-
+itabilities of the secondary features and focal trait. Using the secondary feature heritabilities
+h2(s)∈{ 0.5, 0.7, 0.9} we obtain the genetic and residual standard deviations as σg(s) =
+p
+h2(s)
+andσϵ(s) =
+p
+1−h2(s), given that we restrict σ2
+g(s) +σ2
+ϵ (s) to be 1. We use the focal trait her-
+itabilities h2(y)∈{ 0.1, 0.3, 0.5, 0.7, 0.9} to similarly obtain the standard deviations for the focal
+trait. These heritabilities together with the focal trait unique variance are the three parameters
+we vary. Figure 1 provides a graphical overview of the simulation setting.
+We generated 100 datasets for each of the 45 combinations obtained by varying the
+secondary feature heritabilities h2(s) ∈ {0.5, 0.7, 0.9}, focal trait heritabilities h2(y) ∈
+{0.1, 0.3, 0.5, 0.7, 0.9}, and focal trait unique variances ψp+1∈{ 0.8, 0.5, 0.2}. These combi-
+nations represent a realistic spectrum of data settings ranging from settings where the quality
+of secondary features is high while focal trait measurements are noisy, to settings where the
+opposite is true. For each of the 4 ,500 datasets, 300 genotypes were randomly selected as the
+training set. Prediction accuracy was calculated as the Pearson correlation between predictions
+and the simulated focal trait genetic component for the test set. We did not redundancy filter
+the simulated data for any of the methods. In addition to the models, we obtained benchmark
+predictions by using the true simulated latent signal factors as secondary features in the BLUP
+equations. We only evaluated MegaLMM and the neural networks for the first 20 datasets of
+each combination due to time and computational constraints.
+3.2. Results. The impact of genetic parameters like the focal trait heritability and unique vari-
+ance is clear (Figure 2). With the exception of the high focal trait unique variance setting, the
+CV1 accuracy of most multivariate approaches is, at worst, on par with that of the univariate
+model across the range of focal trait heritabilities. Furthermore, CV1 accuracies of all meth-
+ods, except the neural networks, converge to more or less the same point ( ρ≈ 0.64) as h2(y)
+increases, highlighting that secondary features bring the biggest benefit when the focal trait is
+hard to measure accurately and thus has a low heritability.
+Most methods significantly outperform the univariate model in CV2, provided the quality of
+the secondary features is high enough. Looking at the setting with the highest quality secondary
+features, i.e., ψy = 0.2, improvements with respect to the univariate approach reach approx-
+imately 40% to 125% depending on the focal trait heritability and model. Overall, glfBLUP
+performs best, closely followed by MegaLMM. The difference between MegaLMM and glfBLUP
+is mainly visible at the lowest focal trait heritability. This might be due to the supervised nature
+of MegaLMM, where noisy focal trait data is detrimental when included in the modelling. The
+lsBLUP and siBLUP approaches show similar performance with siBLUP being slightly better.
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 11
+s1,...,s 100
+s101,...,s 200
+s201,...,s 300
+s301,...,s 400
+s401,...,s 500
+s501,...,s 600
+s601,...,s 700
+s701,...,s 800
+LSF1
+LSF2
+LSF3
+LSF4
+LNF1
+LNF2
+LNF3
+LNF4
+y
+h2(s)∈{ 0.5, 0.7, 0.9}
+σ2
+g(s) +σ2
+ϵ (s) = 1
+h2(y)∈{ 0.1, 0.3, 0.5, 0.7, 0.9}
+σ2
+g(y) +σ2
+ϵ (y) = 1
+ψp+1∈{ 0.8, 0.5, 0.2}
+ψq∼±U
+
+1− (0.3)2, 1− (0.8)2
+Figure 1. The basic model underlying the simulated datasets. Groups of ob-
+served secondary features are shown as rectangles while genetic latent factors
+are shown as circles. Secondary feature unique variances ψq were sampled from
+a uniform distribution ψq∼U
+
+1− (0.3)2, 1− (0.8)2
+. The focal trait unique
+variance ψp+1 was 0.8, 0.5, or 0.2. Note that the latent noise factors ( LNF )
+and thus S401,...,S 800 are not genetically correlated to the focal trait. Ran-
+dom residual correlations among secondary features and between the secondary
+features and focal trait are not shown.
+While the CV2 accuracy for the neural networks is higher than its CV1 accuracy, both are sig-
+nificantly lower than any of the other models, including the univariate approach. We provide
+results for two more secondary feature heritabilities in the Appendix.
+4. Analysis of CIMMYT wheat data
+In addition to the extensive simulations provided in the previous section we also evaluated
+the different approaches in terms of accuracy and interpretability using wheat data from Centro
+Internacional de Mejoramiento de Ma´ ız y Trigo (CIMMYT) [19]. The following two sections
+provide details on the dataset, pre-processing, and results.
+4.1. Data description and pre-processing. The CIMMYT wheat dataset contains measure-
+ments on grain yield and crop canopy hyperspectral reflectivity at 62 wavelengths between 398nm
+and 847nm. The data were collected for four breeding cycles and five managed treatments within
+each cycle. We limited ourselves to two subsets of the data to compare glfBLUP and the other
+methods. The subsets we analyzed (breeding cycle 2014–2015, treatment B5IR and HEAT) con-
+tain 39 trials, 1094 unique genotypes, and reflectance measurements at ten and four timepoints
+for a total of 620 and 248 timepoint-wavelength combinations (referred to as the secondary fea-
+tures), respectively. The B5IR treatment represents optimal growing conditions with five flood
+irrigations during the growth cycle with sowing in Late November/early December. The HEAT
+treatment consists of five furrow irrigations and a sowing date in late February, resulting in
+higher temperatures throughout the growth cycle. Note that “trial” refers to a factor that is
+12 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+Figure 2. Prediction accuracies for several methods in the CV1 and CV2 sce-
+narios as we vary the focal trait communality and heritability at a secondary
+feature heritability of 0 .7. The benchmark predictions use the true simulated
+factor scores and covariance matrices for multivariate genomic prediction. Fur-
+ther details regarding these simulations can be found in Section 3.1. Results for
+more secondary feature heritabilities can be found in the Appendix
+part of the experimental design and not a trial in the multi-environment trial (MET) context.
+The timepoints span the vegetative, heading (flowering), and grain-filling growth phases. Each
+trial had 28 trial-specific genotypes and two check genotypes that occurred in every trial, all
+replicated three times. Trials were structured according to a resolvable incomplete block design.
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 13
+Marker data were available for 1033 of the 1094 genotypes. One genotype had missing yield for
+the B5IR treatment, leaving us with 1032 genotypes for that subset. Yield was missing for 214
+of 1033 genotypes for the HEAT treatment, leaving us with 819 for further analyses.
+We first resolved the experimental design for each secondary feature and yield using the
+following SpATS (Spatial Analysis of Field Trials with Splines) model implemented in LMMsolver
+[35, 34, 4]:
+(17) y(i|j)klmt =µ +gjt +tkt +rlt +cmt +ft (r,c ) +ϵ(i|j)klmt,
+wherey(i|j)klmt is yield or any of the secondary features for replicate i given genotypej in trialk
+with row numberl and column numberm, measured at timepointt. The overall mean is given by
+µ andgjt is the fixed genotypic effect. The random trial effecttkt is assumed to be independently,
+identically, and normally distributed with mean zero and variance σ2
+t : tk∼N (0,σ 2
+t ). Similarly,
+rlt∼N (0,σ 2
+r),cmt∼N (0,σ 2
+c), andϵ(i|j)klmt∼N (0,σ 2
+ϵ ) for the random row and column effects,
+as well as the residual effect. The two-dimensional smooth surface over row and column positions
+is defined byft (r,c ). We then created the pseudo-CRD data for each timepoint by simply adding
+the estimated genetic effects and residuals from model (17):
+y(q|j)t =µ + ˆgjt + ˆϵ(i|j)klmt.
+Note that due to the elimination of the design factors we can replace the indices i, k, l, and
+m by a single index q that denotes replicate q of genotype j. For the secondary features we
+then fit three-level nested hierarchical growth models through the ten (B5IR) and four (HEAT)
+timepoints and took fitted values as our final corrected data [34]. We finally created 250 datasets
+for each managed treatment by randomly sampling 12 trials as the test set and the remaining
+trials as the training set. We note that by creating training and test sets after pre-processing
+the data we are violating the independence between training and test set to some extent. Fully
+separated pre-processing of the training and test data is infeasible, however, as we need the
+complete data to perform the spatial corrections. Furthermore, full separation would require
+fitting an infeasibly large number of linear mixed models for pre-processing.
+We scaled and centered yield as well as the hyperspectral features separately for the training
+and test set prior to analyzing the data. We calculated the CV1 prediction accuracy as the
+correlation between predictions and the BLUEs (ˆgj) obtained from model (17). For the CV2
+prediction accuracies we used the parametric correction described by Runcie and Cheng [36]. In
+addition to including test set hyperspectral measurements from all timepoints (CV2), we also
+evaluated the impact of including only measurements from the vegetative phase (CV2VEG),
+again using the parametric correction. We used a redundancy filtering threshold τ = 0.95 for all
+multivariate approaches as this provides a good trade-off between excluding redundant features,
+reducing computational complexity, and maintaining enough features to identify latent factors.
+Details on the methods other than glfBLUP can be found in SM Section 4.
+4.2. Results. The relative performance of the different models clearly depends on the subset of
+the data and thus the managed treatment (Figure 3). Our proposed pipeline performs best in
+the HEAT treatment while lsBLUP performs best for B5IR. All multivariate approaches show
+CV1 performances that are more or less similar to the performance of the univariate model, with
+the exception of the deep learner which performs significantly worse in all scenarios. For the
+other approaches CV2 performance is clearly higher than the univariate model, especially in the
+B5IR treatment. Only including test set hyperspectral measurements from the vegetative phase
+provided a benefit in B5IR but not in the HEAT treatment, possibly due to the fact that there
+was only a single measuring point during the vegetative phase for HEAT.
+The pattern of wavelengths that were retained after redundancy filtering was not constant
+across the ten dates for B5IR and four dates for HEAT, although most retained wavelengths
+represented the blue, red, and near infra-red part of the spectrum. A graphical overview of what
+features were retained after filtering can be found in SM Section 7.
+14 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+Figure 3. Prediction accuracies for several methods in the CV1, CV2, and
+CV2VEG scenarios for two managed treatments for the wheat yield and hy-
+perspectral reflectivities dataset. Redundancy filtering was carried out for all
+multivariate analyses with a threshold τ = 0.95.
+We reanalyzed the data from one of the timepoints (10-03-2015) of the B5IR treatment to
+assess the interpretability of glfBLUP and the other approaches. We omitted the redundancy
+filtering step, resulting in 62 wavelengths. Figure 4 shows the glfBLUP factor loadings obtained
+through this analysis. All three factors were highly heritable atH2 = 0.98 for factor 1,H2 = 0.96
+for factor 2, andH2 = 0.95 for factor 3, whereH2 denotes the wide-sense heritability as variances
+were estimated using sums of squares and are thus not additive only. Genetic correlations between
+the factors and yield were −0.67 for factor 1, 0 .26 for factor 2, and 0 .16 for factor 3. Through
+these correlations and the factor loadings, it is immediately clear that higher yielding genotypes
+tended to have lower reflectivities in the green-red part of the spectrum or higher reflectivities
+in the near-infrared (NIR) part. These results are somewhat reminiscent of the normalized
+difference vegetation index (NDVI) that is highly correlated with yield and is high itself for
+crop canopies with high NIR reflectivity and low red light reflectivity [39]. This showcases the
+ability of glfBLUP to reveal biologically relevant patterns in high-throughput phenotyping data.
+We provide details on the interpretability of the other approaches in SM Section 5. We did
+not include deep learning here as it was impossible to extract any biological meaning from the
+parameters of the neural networks. We provide some data on the computational complexity of
+glfBLUP and other methods in SM Section 6.
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 15
+Figure 4. Loadings for the 62 wavelengths and three factors found using glf-
+BLUP and the hyperspectral data from 10-03-2015. Estimated genetic correla-
+tions between the three factors and yield are also shown.
+5. Discussion
+With the recent innovations in HTP techniques and the corresponding increase in data avail-
+able to plant breeders, the development of methodology for integrating these data has become
+increasingly relevant. We have shown that the proposed methodology glfBLUP performs on par
+or better than alternatives and is able to integrate secondary HTP data efficiently without loss
+of interpretability.
+We used simulations to evaluate the impact of several genetic parameters on model perfor-
+mance. Of these parameters, the focal trait heritability is of particular interest. One of the key
+motivations for the use of secondary data in multivariate genomic prediction is the belief that
+these data can improve predictions in cases where the focal trait phenotype has low heritability
+[22]. The proposed glfBLUP performs well in such cases due to its unsupervised nature. It does
+not suffer from overfitting at low focal trait heritabilities like some alternative approaches seem
+to do.
+Our approach also does not rely as heavily on hyperparameter tuning as approaches such as
+deep learning. The performance of the neural networks on both the simulated data as well as the
+real data was significantly lower than any of the other models. This could very well be a result
+of the chosen architecture and hyperparameters not being optimal. This result immediately
+showcases the difficulty with many machine learning approaches. Proper hyperparameter tuning
+is either time consuming, computationaly expensive, or both. We thus view the minimal required
+tuning in glfBLUP as a major advantage.
+Another advantage of glfBLUP over machine learning approaches is the interpretability. We
+evaluated interpretability by analyzing a wheat yield and hyperspectral reflectivity dataset. We
+found that two of the three obtained factors were responsible for the (co)variation in reflectivities
+of visible and NIR light. Combined with the genetic correlations between these factors and yield
+we found a pattern similar to the NDVI which is known to be a good indicator of yield [27].
+As large-scale data collection becomes increasingly accessible, the complexity of datasets and
+the importance of understanding biological implications increases as well [8]. Given the results
+obtained here, incorporating generative factor analysis in genomic prediction seems an effective
+way of tackling these challenges.
+Regarding factor analysis, we opted to use maximum likelihood estimation and a modified
+Thomson regression approach to obtain estimates of the loadings, unique variances, and factor
+scores [17, 40]. Other approaches based on principal component analysis exist as well [e.g., 45, 12]
+16 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+and may be an alternative to obtain estimates in cases where the data contains heteroskedastic
+noise.
+There are other implementations of the factor model too [38, 42]. These models provide an
+attractive single-step approach to modelling multi-trait data by assuming a factor analytic struc-
+ture for the genetic covariance matrix of traits and estimating any parameters using restricted
+maximum likelihood. While the single-step nature of these models is attractive, their compu-
+tational complexity means they are typically not used for data with hundreds or potentially
+thousands of traits [37]. The approach we present here combines the attractive properties of
+factor analysis with a pipeline that avoids the computationally complex characteristics of the
+single-step mixed model approaches.
+We recognize several options to extend the proposed methodology. While the unsupervised
+approach of glfBLUP worked well here, likely due to the noisy nature of the focal trait data, there
+are benefits to using a supervised approach. One way of achieving this would be to use a factor
+regression approach [29]. Conditioning on the prediction target may lead to higher accuracy when
+the focal trait training data is of sufficient quality. Another option would be to consider several
+ways of integrating multiple data modalities as opposed to using a single (e.g., hyperspectral)
+modality as we did here. There are various methods that can generally be categorized into early
+integration, intermediate integration, or late integration [31]. These integration approaches each
+try to balance parsimony and accuracy. It may be fruitful to develop methodology that finds the
+right balance between the parsimony and accuracy of different integration approaches within the
+context of genomic prediction. Finally, there is the issue of multi-year, multi-environment trials
+[7]. By analyzing a trait of interest measured in several environments using a multivariate model,
+glfBLUP could reveal latent drivers of environment-specific variety performance. Combining this
+approach with dynamic factor analysis [28] would provide a promising framework to model the
+main source of data in large breeding programs.
+In any case, the glfBLUP methodology we propose here is a robust and relatively efficient
+approach to obtaining multivariate genomic predictions with several promising options regarding
+extensions and further research.
+6. Data availability
+Code to generate the data and results presented in this paper are available at https://
+github.com/KillianMelsen/glfBLUP_2025. The full hyperspectral dataset is available upon
+reasonable request from J. Crossa. The proposed approach glfBLUP has been implemented in
+an R-package available at https://github.com/KillianMelsen/glfBLUP.
+Appendix: Additional simulation results
+Here we provide some additional results using the simulated data (Figure 5). Compared to the
+h2(s) = 0.7 setting the conclusions for h2(s) = 0.5 and h2(s) = 0.9 are largely similar. Overall,
+there is a slight decrease in accuracy when the heritability of the secondary features drops,
+but the focal trait unique variance and thus the degree to which the focal trait is genetically
+correlated to the secondary features is far more important.
+References
+[1] Adak, A., Kang, M., Anderson, S.L., Murray, S.C., Jarquin, D., Wong, R.K.W., and Katzfuß, M. (2023). Phe-
+nomic data-driven biological prediction of maize through field-based high-throughput phenotyping integration
+with genomic data. Journal of Experimental Botany 74, 5307–5326. https://doi.org/10.1093/jxb/erad216
+[2] Anderson, W.T. (2003). An introduction to multivariate statistical analysis. Wiley, 3rd ed., Hoboken, NJ,
+USA.
+[3] Arouisse, B., Theeuwen, T.P.J.M., van Eeuwijk, F.A., and Kruijer, W. (2021). Improving genomic prediction
+using high-dimensional secondary phenotypes. Frontiers in Genetics 12, 667358. https://doi.org/10.3389/
+fgene.2021.667358
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 17
+Figure 5. Prediction accuracies for several methods in the CV1 and CV2 sce-
+narios as we vary the focal trait communality, focal trait heritability, and sec-
+ondary feature heritabilities. The benchmark predictions use the true simulated
+factor scores and covariance matrices for multivariate genomic prediction. Fur-
+ther details regarding these simulations can be found in Section 3.1.
+[4] Boer, M.P. (2023). Tensor product P-splines using a sparse mixed model formulation. Statistical Modelling
+23, 465–479. https://doi.org/10.1177/1471082X231178591
+[5] Brent, R.P. (1973). ”Chapter 5: An algorithm with guaranteed convergence for finding a minimum of a
+function of one variable”, Algorithms for minimization without derivatives. Prentice-Hall, Englewood Cliffs,
+NJ, USA.
+18 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+[6] Crossa, J., P´ erez, P., Hickey, J., Burgue˜ no, J., Ornella, L., Cer´ on-Rojas, J., Zhang, X., Dreisigacker, S.,
+Babu, R., Li, Y., Bonnett, D., and Mathews, K. (2013). Genomic prediction in CIMMYT maize and wheat
+breeding programs. Heredity 112, 48–60. https://doi.org/10.1038/hdy.2013.16
+[7] Cullis, B.R., Jefferson, P., Thompson, R., and Smith, A.B. (2014). Factor analytic and reduced animal
+models for the investigation of additive genotype-by-environment interaction in outcrossing plant species
+with application to a Pinus radiata breeding programme. Theoretical and Applied Genetics 127, 2193–2210.
+https://doi.org/10.1007/s00122-014-2373-0
+[8] Danilevicz, M.F., Gill, M., Anderson, R., Batley, J., Bennamoun, M., Bayer, B.E., and Edwards, D. (2022).
+Plant genotype to phenotype prediction using machine learning. Frontiers in Genetics 13, 822173. https:
+//doi.org/10.3389/fgene.2022.822173
+[9] Dahl, A., Hore, V., Iotchkova, V., and Marchini, J. (2013). Network inference in matrix-variate Gaussian
+models with non-independent noise. arXiv, 1312.1622. https://doi.org/10.48550/arXiv.1312.1622
+[10] Dai, F., Dutta, S., and Maitra, R. (2020). A matrix-free likelihood method for exploratory factor analysis
+of high-dimensional gaussian data. Journal of Computational and Graphical Statistics 29, 675–680. https:
+//doi.org/10.1080/10618600.2019.1704296
+[11] Endelman, J.B. (2011). Ridge regression and other kernels for genomic selection with R-package rrBLUP.
+The Plant Genome 4, 250–255. https://doi.org/10.3835/plantgenome2011.08.0024
+[12] Fan, J., Wang, K., Zhong, Y., and Zhu, Z. (2022). Robust high dimensional factor models with applications
+to statistical machine learning. Statistical Science 36, 303–327. https://doi.org/10.1214/20-STS785
+[13] Fotheringham, A.S., and Oshan, T.M. (2016). Geographically weighed regression and multicollinear-
+ity: dispelling the myth. Journal of Geographical Systems 18, 303–329. https://doi.org/10.1007/
+s10109-016-0239-5
+[14] Harfouche, A.L., Jacobson, D.A., Kainer, D., Romero, J.C., Harfouche, A.H., Mugnozza, G.S., Moshelion,
+M., Tuskan, G.A., Keurentjes, J.J.B., and Altman, A. (2019). Accelerating climate resilient plant breeding
+by applying next-generation artificial intelligence. Trends in Biotechnology 37, 1217–1235. https://doi.
+org/10.1016/j.tibtech.2019.05.007
+[15] Higham, N.J. (2002). Computing the nearest correlation matrix - a problem from finance. IMA Journal of
+Numerical Analysis 22, 329–343. https://doi.org/10.1093/imanum/22.3.329
+[16] Horton, M.W., Hancock, A.M., Huang, Y.S., Toomajian, C., Atwell, S., Auton, A., Muliyati, N.W., Platt,
+A., Sperone, F.G., Vilhj´ almsson, B.J., Nordborg, M., Borevitz, J.O., and Bergelson, J. (2012). Genome-wide
+patterns of genetic variation in worldwide Arabidopsis thaliana accessions from the RegMap panel. Nature
+Genetics 44, 212–217. https://doi.org/10.1038/ng.1042
+[17] J¨ oreskog, K.G. (1967). Some contributions to maximum likelihood factor analysis. Psychometrika 32, 443–
+482. https://doi.org/10.1007/BF02289658
+[18] Kaiser, H.F. (1958). The varimax criterion for analytic rotation in factor analysis. Psychometrika 23, 187–
+200. https://doi.org/10.1007/BF02289233
+[19] Krause, M.R., Gonz´ alez-P´ erez, L., Crossa, J., P´ erez-Rodr´ ıguez, P., Montesinos-L´ opez, O., Singh, R.P.,
+Dreisigacker, S., Poland, J., Rutkoski, J., Sorrells, M., Gore, M.A., and Mondal, S. (2019). Hyperspectral
+reflectance-derived relationship matrices for genomic prediction of grain yield in wheat. G3 9, 1231–1247.
+https://doi.org/10.1534/g3.118.200856
+[20] Kruijer, W., Behrouzi, P., Bustos-Korts, D., Rodr´ ıguez-´Alvarez, M.X., Mahmoudi, S.M., Yandell, B., Wit, E.,
+and van Eeuwijk, F.A. (2020). Reconstruction of networks with direct and indirect genetic effects. Genetics
+214, 781–807. https://doi.org/10.1534/genetics.119.302949
+[21] Ledermann, W. (1937). On the rank of the reduced correlational matrix in multiple-factor analysis. Psy-
+chometrika 2, 85–93. https://doi.org/10.1007/BF02288062
+[22] Lopez-Cruz, M., Olson, E., Rovere, G., Crossa, J., Dreisigacker, S., Mondal, S., Singh, R., and de los
+Campos, G. (2020). Regularized selection indices for breeding value prediction using hyper-spectral image
+data. Scientific Reports 10, 8195. https://doi.org/10.1038/s41598-020-65011-2
+[23] Lumley, T. (2020). leaps: regression subset selection.. R-package version 3.1, https://CRAN.R-project.org/
+package=leaps https://doi.org/10.32614/CRAN.package.leaps
+[24] Marˇ cenko, V.A., and Pastur, L.A. (1967). Distribution of eigenvalues for some sets of random matrices.
+Mathematics of the USSR-Sbornik 1, 457–483. https://doi.org/10.1070/SM1967v001n04ABEH001994
+[25] Meuwissen, T.H., Hayes, B.J., and Goddard, M.E. (2001). Prediction of total genetic value using genome-
+wide dense marker maps. Genetics 157, 1819–1829. https://doi.org/10.1093/genetics/157.4.1819
+[26] Meyer, K., and Kirkpatrick, M. (2010). Better estimates of genetic covariance matrices by ”bending” using
+penalized maximum likelihood. Genetics 185, 1097–1110. https://doi.org/10.1534/genetics.109.113381
+[27] Mkhabela, M.S., Bullock, P., Raj, S., Wang, S., and Yang, Y. Crop yield forecasting on the Canadian prairies
+using MODIS NDVI data. Agricultural and Forest Meteorology 151, 385–393. https://doi.org/10.1016/j.
+agrformet.2010.11.012
+[28] Molenaar, P.C. (1985). A dynamic factor model for the analysis of multivariate time series. Psychometrika
+50, 181–202. https://doi.org/10.1007/BF02294246
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 19
+[29] M¨ unch, M.M., van de Wiel, M.A., van der Vaart, A.W., and Peeters, C.F.W. (2022). Semi-supervised
+empirical Bayes group-regularized factor regression. Biometrical Journal 64, 1289–1306. https://doi.org/
+10.1002/bimj.202100105
+[30] Ott, R., and Longnecker, M. (2015). An introduction to statistical methods and data analysis. Cengage
+Learning, 7th ed., Boston, MA, USA.
+[31] Pavlidis, P., Weston, J., Cai, J., and Grundy, W.N. (2001). Gene functional classification from heterogeneous
+data. In: Proceedings of the fifth annual international conference on computational biology. Association for
+Computing Machinery, New York, NY, USA. https://doi.org/10.1145/369133.369228
+[32] Peeters, C.F.W. (2012). Bayesian exploratory and confirmatory factor analysis. PhD thesis, Utrecht Univer-
+sity, the Netherlands.
+[33] Peeters, C.F.W., ¨Ubelh¨ or, C., Mes, S.W., Martens, R., Koopman, T., de Graaf, P., van Velden, F.H.P.,
+Boellaard, R., Castelijns, J.A., te Beest, D.E., Heymans, M.W., and van de Wiel, M.A. (2019). Stable
+prediction with radiomics data. arXiv, 1903.11696. https://doi.org/10.48550/arXiv.1903.11696
+[34] P´ erez-Valencia, D.M., Rodr´ ıguez-´Alvarez, M.X., Boer, M.P., Kronenberg, L., Hund, A., Cabrera-Bosquet,
+L., Millet, E.J., and van Eeuwijk, F.A. (2022). A two-stage approach for the spatio-temporal analysis of high-
+throughput phenotyping data. Scientific Reports 12, 3177. https://doi.org/10.1038/s41598-022-06935-9
+[35] Rodr´ ıguez-´Alvarez, M.X., Boer, M.P., van Eeuwijk, F.A., and Eilers, P.H.C. (2018). Correcting for spatial
+heterogeneity in plant breeding experiments with P-splines. Spatial Statistics 23, 52–71. https://doi.org/
+10.1016/j.spasta.2017.10.003
+[36] Runcie, D., and Cheng, H. (2019). Pitfalls and remedies for cross validation with multi-trait genomic pre-
+diction methods. G3 9, 3727–3741. https://doi.org/10.1534/g3.119.400598
+[37] Runcie, D.E., Qu, J.Q., Cheng, H., Crawford, L. (2021). MegaLMM: Mega-scale linear mixed models
+for genomic predictions with thousands of traits. Genome Biology 22, 213. https://doi.org/10.1186/
+s13059-021-02416-w
+[38] Smith, A., Cullis, B., and Thompson, R. (2001). Analyzing variety by environment data using multiplicative
+mixed models and adjustments for spatial field trend. Biometrics 57, 1138–1147. https://doi.org/10.1111/
+j.0006-341X.2001.01138.x
+[39] Teal, R.K., Tubana, B., Girma, K., Freeman, K.W., Arnall, D.B., Walsh, O., and Raun, W.R. (2006).
+In-season prediction of corn grain yield potential using normalized difference vegetation index. Agronomy
+Journal 98, 1488–1494. https://doi.org/10.2134/agronj2006.0103
+[40] Thomson, G. (1939). The factorial analysis of human ability. University of London Press, London, UK.
+[41] Togninalli. M., Wang, X., Kucera, T., Shrestha, S., Juliana, P., Mondal, S., Pinto, F., Govindan, V., Crespo-
+Herrera, L., Huerta-Espino, J., Singh, R.P., Borgwardt, K., Poland, J. (2023). Multi-modal deep learning
+improves grain yield prediction in wheat breeding by fusing genomics and phenomics. Bioinformatics 39,
+btad336. https://doi.org/10.1093/bioinformatics/btad336
+[42] Tolhurst, D.J., Mathews, K.L., Smith, A.B., and Cullis, B.R. (2019). Genomic selection in multi-environment
+plant breeding trials using a factor analytic linear mixed model. Journal of Animal Breeding and Genetics
+136, 279–300. https://doi.org/10.1111/jbg.12404
+[43] van Wieringen, W.N., and Peeters, C.F.W. (2016). Ridge estimation of inverse covariance matrices from high-
+dimensional data. Computational Statistics & Data Analysis 103, 284–303. https://doi.org/10.1016/j.
+csda.2016.05.012
+[44] Woodbury, M.A. (1950). Inverting modified matrices. Memorandum Report 42, Statistical Research Group,
+Princeton University, Princeton, NJ, USA.
+[45] Zhang, A.R, Cai, T.T., and Wu, Y. (2022). Heteroskedastic PCA: Algorithm, optimality, and applications.
+Annals of Statistics 50, 53–80. https://doi.org/10.1214/21-AOS2074
+[46] Zhou, X, and Stephens, M. (2014). Efficient multivariate linear mixed model algorithms for genome-wide
+association studies. Nature methods 11, 407–409. https://doi.org/10.1038/nmeth.2848
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 1
+Supplementary Material: Improving Genomic Prediction using
+High-dimensional Secondary Phenotypes: the Genetic Latent Factor
+Approach
+S.1. Genomic prediction
+We more or less follow the notation of Runcie and Cheng [S9] and Arouisseet al. [S2]. Let Y∈
+Rn×(p+1) be the data matrix containing unreplicated, mean-centered, and scaled measurements
+onp secondary features and the focal trait for n genotypes. We can divide the n genotypes into
+a test and training set so that n =nt +no (t for test and o for the observed training set). The
+matrix Y can then be partitioned as:
+Y =
+Yst yft
+Yso yfo
+
+=
+Y.t
+Y.o
+
+,
+where Yst and Yso (s for secondary) are the sub-matrices containing the HTP features for the
+test and training set, respectively. Similarly, yft and yfo (f for focal) are the column vectors
+containing the focal trait for the test and training set.
+The measurements in the data matrix Y are composed of genetic effects, residual effects, and
+possibly covariates so that Y = Xβ + G + E. The random matrices for the genetic and residual
+effects come from matrix normal distributions:
+G∼MN n,p+1(0, K, Σg)
+E∼MN n,p+1(0, In, Σϵ),
+where the row-covariances are the kinship matrix K and the identity matrix In for the genetic
+and residual effects. The column-covariances are the genetic and residual covariance matrices
+of the secondary features and focal trait. Assuming that Y is only composed of genetic and
+residual effects, a standard result shows that the column-wise vectorization of Y, denoted as
+vec(Y), follows a multivariate normal distribution:
+vec(Y) = vec(G) + vec(E)∼N n(p+1)(0, Σg⊗ K + Σϵ⊗ In),
+where⊗ denotes the Kronecker product. Similarly to the data matrix itself, we can partition
+the kinship and covariance matrices as well:
+K =
+Ktt Kto
+Kot Koo
+
+,
+where Ktt and Koo contain the genetic relatedness coefficients within the test and training sets,
+respectively. The genetic relatedness coefficients between test and training genotypes are given
+by Kto = (Kot)⊤. Furthermore,
+Σg =
+Σg
+ss σg
+sf
+σg
+fs σg
+ff
+
+=
+σg
+s.
+σg
+f.
+
+Σϵ =
+Σϵ
+ss σϵ
+sf
+σϵ
+fs σϵ
+ff
+
+=
+σϵ
+s.
+σϵ
+f.
+
+,
+where Σg
+ss and Σϵ
+ss contain the genetic and residual covariances among secondary features,
+σg
+ff and σϵ
+ff are the scalar focal trait genetic and residual variances, and σg
+sf = (σg
+fs)⊤ and
+σϵ
+sf = (σϵ
+fs)⊤ contain the genetic and residual covariances between secondary features and the
+focal trait.
+As mentioned above, there are generally speaking three genomic prediction scenarios depend-
+ing on whether secondary data is available for just the training set (CV1), both training and test
+set (CV2), or not at all (univariate genomic prediction). We now review the expressions for the
+training (Go) and test set ( Gt) BLUPs in these three scenarios.
+2 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+In the univariate scenario, we only use information on the focal trait of the training set ( yfo)
+to obtain predictions for the test set:
+ˆV = ˆσg
+ff⊗ Koo + ˆσϵ
+ff⊗ Ino
+ˆg(uni)
+fo =
+
+ˆσg
+ff⊗ Koo
+
+ˆV−1
+
+yfo− Xo ˆβf
+
+ˆg(uni)
+ft = E
+
+gft|yfo
+
+=
+
+ˆσg
+ff⊗ Kto
+
+ˆV−1
+
+yfo− Xo ˆβf
+
+= KtoK−1
+oo ˆg(uni)
+fo ,
+(S1)
+where ˆg(uni)
+fo and ˆg(uni)
+ft are the focal trait univariate BLUPs for the training and test set. Note
+that covariates can be included in the term Xo ˆβf. Also note that as ˆσg
+ff and ˆσϵ
+ff are scalars,
+ˆV = ˆσg
+ff Koo + ˆσϵ
+ff Ino.
+In the multivariate CV1 scenario where secondary features are only available for the training
+set, predictions can be obtained using:
+ˆV = ˆΣg⊗ Koo + ˆΣϵ⊗ Ino
+ˆg(CV 1)
+fo =
+
+ˆσg
+f.⊗ Koo
+
+ˆV−1 vec
+
+Y.o− Xo ˆβ
+
+ˆg(CV 1)
+ft = E
+
+gft|Y.o
+
+=
+
+ˆσg
+f.⊗ Kto
+
+ˆV−1 vec
+
+ˆY.o− Xo ˆβ
+
+= KtoK−1
+oo ˆg(CV 1)
+fo ,
+(S2)
+where Y.o− Xo ˆβ is vectorized. Expression (S2) can be evaluated using a fast algorithm that
+decreases the time complexity for the calculation of the focal trait training set BLUPs ˆg(CV 1)
+fo
+from O(n3
+op3) to O(nop2 +p3) by avoiding the naive inversion of ˆV [S5].
+The CV2 multivariate predictions can be obtained directly [S2] or through a two-step approach
+[S9]. We prefer the two-step approach because the fast algorithm can be used to obtain all CV1
+training set BLUPs, ˆG(CV 1)
+.o :
+ˆV = ˆΣg⊗ Koo + ˆΣϵ⊗ Ino
+ˆG(CV 1)
+.o = vec−1
+h
+ˆΣg⊗ Koo
+
+ˆV−1 vec
+
+Y.o− Xo ˆβ
+i
+.
+(S3)
+We then convert these training set BLUPs to intermediate CV1 test set BLUPs and combine
+those with the observed secondary features for the test set to finally obtain CV2 BLUPs for the
+test set focal trait:
+ˆV = ˆΣg
+ss⊗ K−1
+tt + ˆΣϵ
+ss⊗ Int
+ˆg(CV 2)
+ft = E
+
+gft|Yst, Y.o
+
+= KtoK−1
+oo ˆg(CV 1)
+fo +
+
+ˆσg
+fs⊗ K−1
+tt
+
+ˆV−1 vec
+
+Yst− KtoK−1
+oo ˆG(CV 1)
+so
+
+.
+(S4)
+In all cases, Σg and Σϵ must be estimated from the data.
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 3
+S.2. Covariance of BLUEs
+Consider the secondary feature BLUEs for genotype j which are simply the genotypic means
+in the case of a completely randomized experimental design:
+¯ys(j) = gs(j) + ¯ϵs(j) = gs(j) + 1
+r
+rX
+i=1
+ϵs(i|j),
+where gs(j)∼N p(0, Σg
+ss) and ϵs(i|j)∼N p(0, Σϵ
+ss). All r residual vectors for the replicates of
+genotype j are assumed iid, meaning var(ϵs(i|j)) = var(ϵs(i′|j)) = Σϵ
+ss and the cross-covariance
+matrix for any two replicates of genotype j, cov(ϵs(i|j),ϵs(i′|j)), is a zero matrix. As a result,
+var
+ rX
+i=1
+ϵs(i|j)
+!
+=
+rX
+i=1
+var
+ 
+ϵs(i|j)
+
+=rΣϵ
+ss.
+Now we divide the sum of the r residual vectors for genotype j by the number of replicates r to
+obtain the vector of mean residuals for genotype j:
+¯ϵs(j) = 1
+r
+rX
+i=1
+ϵs(i|j).
+Using the fact that var(ax) =a2var(x) for some scalar a and random vector x, we find that
+var
+ ¯ϵs(j)
+
+=
+1
+r
+2
+var
+ rX
+i=1
+ϵs(i|j)
+!
+=r−2rΣϵ
+ss =r−1Σϵ
+ss.
+Combined with the assumptions that gs(j) /upmodelsϵs(i|j), and thus that gs(j) /upmodels¯ϵs(j), we obtain the
+covariance of the BLUEs as
+var
+ ¯ys(j)
+
+= var
+ 
+gs(j)
+
++ var
+ ¯ϵs(j)
+
+= Σg
+ss +r−1Σϵ
+ss.
+S.3. Penalty optimization
+We use Brent’s algorithm [S3] implemented in theoptimize() function in R to find the optimal
+values for ϑg and ϑϵ as described in the main text. In a naive implementation we obtain the
+mean cross-validated negative log-likelihood at each iteration as:
+(S5) φK(ϑ) = 1
+K
+KX
+k=1
+wk
+
+ln
+
+
+R(ϑ)
+
+¬k
+ + tr
+
+Rk
+
+R(ϑ)
+−1
+¬k
+
+,
+where we have omitted some sub- and superscripts for clarity. Note that ( R(ϑ))¬k∈ Rp×p is
+the penalized genetic or residual correlation matrix given the corresponding penalty ϑ at the
+current iteration. Naive minimization thus requires inverting ( R(ϑ))¬k = (1−ϑ) R¬k +ϑI at
+each iteration. Note that h
+R(ϑ)
+i−1
+¬k
+= U
+h
+Λ(ϑ)
+i−1
+U⊤,
+where U contains the eigenvectors of the unregularized correlation matrix R¬k and
+Λ(ϑ) = (1−ϑ) Λ +ϑIp
+with Λ a diagonal matrix containing the eigenvalues of R¬k. We now rewrite (S5) as:
+(S6) φK(ϑ) = 1
+K
+KX
+k=1
+wk
+(
+ln
+pY
+i=1
+Λ(ϑ)ii + tr
+
+RkU
+
+Λ(ϑ)
+−1
+U⊤
+)
+.
+We can then use the invariance of the trace operator to cyclic permutations to rewrite (S6) as:
+(S7) φK(ϑ) = 1
+K
+KX
+k=1
+wk
+(
+ln
+pY
+i=1
+Λ(ϑ)ii + tr
+
+Λ(ϑ)
+−1
+A
+)
+,
+4 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+where A = U⊤RkU. Within the trace operation in (S7) we are now calculating the matrix
+product of the diagonal matrix ( Λ(ϑ))−1 and the non-diagonal matrix A, of which the latter is
+independent of ϑ. This can be rewritten as a summation of divisions:
+(S8) φK(ϑ) = 1
+K
+KX
+k=1
+wk
+
+ln
+pY
+i=1
+Λ(ϑ)ii +
+pX
+j=1
+Ajj
+Λ(ϑ)jj
+
+ .
+We can calculate the eigenvalues Λ as well as the diagonal entries of A = U⊤RkU before
+starting the optimization. As a result, each iteration scales linearly with p resulting in faster
+optimization, especially if the optimal penalty values are near the bounds.
+S.4. Alternative methods
+S.4.1. Univariate gBLUP. The baseline model that we compare all multivariate approaches
+to is the standard univariate gBLUP model:
+y = Zu +ϵ,
+where y is the n× 1 vector containing the mean-centered and scaled focal trait phenotypes, Z is
+the incidence matrix linking individuals to the BLUPs in u∼N ng(0,σ 2
+gK), andϵ∼N n(0,σ 2
+ϵIn)
+contains the residuals. We used the R-package rrBLUP version 4.6.1 [S6] to fit univariate gBLUP
+models (see S1). The marker-based kinship matrix was created using the R-package statgenGWAS
+version 1.0.9.
+S.4.2. siBLUP. The first alternative multivariate approach that we included is a modified ver-
+sion of the bivariate gBLUP model using a regularized selection index as proposed by Lopez-Cruz
+et al. [S8] and also implemented by Arouisse et al. [S2]. In short, siBLUP uses a regularized
+phenotypic covariance matrix of the secondary features and their genetic covariances with the
+focal trait to obtain a weight for every secondary feature. We use these weights to calculate a
+single linear combination of the secondary features for each individual termed the (regularized)
+selection index. We then use this index as the single secondary feature in the multivariate gBLUP
+equations (SM Section S.1).
+Like glfBLUP, the modified version of siBLUP takes data containing replicates from a com-
+pletely randomized design. Next, we obtain ˆΣg
+ss and ˆΣϵ
+ss using sums of squares, after which
+we redundancy filter the dataset so that no two of the remaining secondary features have an
+absolute genetic correlation|ρg| equal to, or exceeding a threshold τ.
+We then convert the redundancy filtered, plot-levelphenotypic covariance matrix ˆΣp∗
+ss = ˆΣg∗
+ss +
+ˆΣϵ∗
+ss of the remaining secondary features to a correlation matrix which is regularized:
+ˆRp∗
+ss(ϑp) = (1−ϑp) ˆRp∗
+ss +ϑpIp∗,
+where the optimal penalty ϑ‡
+p is found using 5-fold cross validation as described in the main
+text using the number of individuals in each fold as the weights wk. We then reconvert the
+resulting regularized phenotypic correlation matrix to the covariance matrix ˆΣp∗
+ss(ϑ‡
+p) and use it
+to calculate the vector of selection index weights ˆγSI .
+To calculate the selection index weights, we first obtain thep∗×1 column vector ˆσg∗
+sf containing
+the genetic covariances between the remaining secondary features and the focal trait using sums
+of squares. Next, we calculate the vector of selection index weights ˆγSI :
+ˆγSI =
+h
+ˆΣp∗
+ss(ϑ‡
+p)
+i−1
+ˆσg∗
+sf ,
+and use it to calculate the plot-level selection indices:
+ˆySI = Y∗
+s ˆγSI ,
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 5
+where ˆySI is the n× 1 column vector containing the selection index for each individual. The
+n×p∗ matrix Y∗
+s contains the original (redundancy filtered) secondary features.
+We can now replace the original secondary features in the data matrix Ysf by the selection
+indices:
+YSI,f =
+ˆySI yf
+
+,
+followed by using sums of squares to obtain ˆΣg and ˆΣϵ which give us the genetic and residual
+covariances between the selection index and the focal trait. We then reduce the data to BLUEs
+¯YSI,y by calculating the genoypic means, divide ˆΣϵ by the number of replicates, and combine
+the data, covariance matrices, and the kinship K in the BLUP equations (see SM Section S.1)
+to obtain test set predictions.
+S.4.3. lsBLUP. lsBLUP also reduces the secondary features to a single dimension [S2]. For
+lsBLUP, this secondary feature is a LASSO regression prediction of the focal trait using the
+redundancy filtered set of secondary features.
+We use sums of squares obtained from replicated completely randomized design data to esti-
+mate Σg
+ss. We then use this genetic covariance matrix of the original secondary features (con-
+verted to the correlation scale) to redundancy filter the data. After filtering, the LASSO regres-
+sion coefficients ˆβLS are obtained using the R-package glmnet version 4.1.6 [S7]. To do so, we
+first reduce the redundancy filtered data to genotypic means. We then use the cv.glmnet()
+function to determine the optimal (i.e., minimum mean cross-validated error) LASSO penalty
+λ‡ using 5-fold cross-validation, thereby obtaining the vector of coefficients given this optimal
+penalty ˆβLS(λ‡).
+If all coefficients have been regularized to 0, lsBLUP returns simple univariate gBLUP pre-
+dictions for the test set using the rrBLUP R -package [S6]. If not, we calculate plot-level LASSO
+predictions:
+ˆyLS = Y∗
+s ˆβLS(λ‡),
+where Y∗
+s is the matrix containing the redundancy filtered observed secondary features. We then
+replace the original secondary features in the data matrix Ysf by the LASSO predictions:
+YLS,y =
+ˆyLS yf
+
+,
+and compute the CV1 or CV2 test set focal trait BLUPs as described for siBLUP and glfBLUP,
+using ˆyLSP as the single secondary feature.
+S.4.4. MegaLMM. MegaLMM was introduced as a method to make genomic predictions using
+many secondary features [S10]. In essence, it decomposes the p original features into two parts.
+One part is projected onto M latent factors while the other part represents the p independent
+errors for each secondary feature. Independent linear mixed models are then fit for these M +p
+decorrelated traits. For the full details on MegaLMM see Runcie et al. [S10].
+To be able to make consistent comparisons, we redundancy filtered the full set of secondary
+features as we did for other methods prior to calculating the BLUEs and running MegaLMM.
+We initialized and ran MegaLMM with default settings. The number of modeled latent factors
+M (argument K) was set to 16 for the simulated data and 20 for the hyperspectral data. For the
+priors we again used the default settings.
+After initializing MegaLMM we first ran 1000 burn-in iterations, reordering the factors after
+each 100 iterations, for both simulated and hyperspectral data. We then ran another 500 itera-
+tions for the posterior samples. Posterior predictions for each genotype were calculated at each
+iteration, with the final predictions being equal to the posterior means. We used version 0.1.0 of
+the MegaLMM R-package [S11].
+6 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+S.4.5. Deep learning. Deep learning provides a flexible, non-parametric alternative to the mod-
+els described above. Here, we limited ourselves to CV1 and CV2 versions of a simple multilayer
+perceptron (multiMLP). The only difference between these versions is the inclusion of the scaled
+and centered, redundancy filtered set of secondary features in the output layer (CV1) or input
+layer (CV2).
+We considered the number of hidden layers, number of neurons per hidden layer, and the
+dropout regularization rate as the hyperparameters to be tuned separately for each (simulated)
+dataset. Other hyperparameters such as the learning rate, early stopping patience, optimizer,
+etc. were fixed. After an initial exploration of possible hyperparameter values, we decided to use
+either 4 or 8 hidden layers, with 16 or 64 neurons each. The dropout rate was set to either 0 .1
+or 0.3. In addition to these values, we opted for the root mean squared propagation optimizer
+(RMSProp), a learning rate of 5 × 10−4, the rectified linear unit (ReLU) activation function in
+all relevant layers, a batch size of 128, and mean squared error (mse) for the loss function.
+To obtain predictions for each dataset, we first redundancy filtered the secondary features
+like in the other multivariate approaches, followed by reducing the data to BLUEs. We then
+divided the training individuals over five folds to determine the within-training set mean cross
+validated prediction accuracy for the eight different hyperparameter combinations. We trained
+each of the eight networks five times (once for each fold) for at most 25 epochs. Training could
+be stopped early based on the loss for a 10% validation split using a patience of 10 epochs. We
+then determined the combination of hyperparameter values giving the highest mean prediction
+accuracy to be used for training the final network on the full training set. This was done for at
+most 100 epochs using early stopping with a patience of 20 epochs and a 10% validation split.
+We then obtained test set predictions by feeding the SNP marker matrix (and filtered secondary
+features for the CV2 multiMLP) for the test set into the trained networks.
+We used the keras (v2.15.0), tensorflow (v2.16.0), and reticulate (v1.40.0) R packages
+as an interface to Python (v3.10.16) and TensorFlow (v2.15.1) to implement the deep learning
+[S4, S1].
+S.5. Interpretability
+We have stressed the great ease of interpreting glfBLUP’s model parameters in terms of
+biological relevance. Here we present some additional results with regards to interpretability of
+the approaches that we compared glfBLUP to. We ran si-, lsBLUP, and MegaLMM on the non-
+redundancy filtered B5IR hyperspectral data from 10-03-2015 as we did for glfBLUP. We then
+looked at the relevant model parameters that included the selection index weights for siBLUP,
+LASSO coefficients for lsBLUP, and (mean) posterior loadings for MegaLMM.
+Starting with lsBLUP and siBLUP (Figure S1) we immediately recognize the difficulties as-
+sociated with compressing the collinear data to a single dimension. In the case of lsBLUP we
+see sign-flipping in the coefficients around the 760nm wavelength. Reflectivities around 660nm,
+720nm, and 760nm show a negative relationship with yield following from the genetic correlation
+of 0.81 between the LASSO prediction and yield. After 760nm the relationship rapidly becomes
+positive, before moving towards 0 again.
+The selection index weights of siBLUP are difficult to interpret as well. The relationship
+between hyperspectral reflectivity and yield follows a highly irregular pattern along the spectrum.
+While si- and lsBLUP require minimal hyperparameter tuning, their lack of flexibility with re-
+gards to the selection of an appropriate number of dimensions clearly limits their interpretability
+in the case of more complex data.
+MegaLMM does provide the flexibility of choosing the number of factors ( M) and thereby
+the dimensionality, but leaves this choice to the user. As a result, the ease of interpretation
+heavily relies on an appropriate choice of M, which may not be easy to make without any prior
+knowledge (Figure S2). We opted for values of M = 3, M = 5, and M = 10, which seemed
+appropriate given the fact we found 3 factors using glfBLUP. Note that while the main factors
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 7
+representing the infrared and visible part of the spectrum are still present (F1 and F2 forM = 3,
+F1, F2, and F3 for M = 5, F6, F3, F2, F5, and F4 for M = 10), ease of interpretation quickly
+goes down as the number of factors increases. This is mainly due to the loadings of yield, which
+are analogous to the genetic correlations between yield and factors in glfBLUP, becoming divided
+over a large number of factors. We also stress that the choice to use a relatively low number
+of factors here was informed by the results obtained using glfBLUP. Runcie et al. [S10] use 100
+factors to analyze the hyperspectral data in their paper, which would likely make interpretation
+even more difficult.
+Furthermore, we observe non-stationary behavior in the loading MCMC chains for M = 3
+(Figure S3),M = 5 (Figure S4), as well asM = 10 (Figure S5 and S6), even after 10,000 burn-in
+and a further 100 ,000 posterior iterations for wavelengths around 700nm (thinning rate of 2).
+Non-stationarity is also visible in the traceplots for the loadings of yield on the different factors
+(Figure S7).
+Figure S1. LASSO regression coefficients (A) and selection index weights (B)
+for the 62 wavelengths obtained from running lsBLUP and siBLUP on the B5IR
+hyperspectral data from 10-03-2015. Estimated genetic correlations between the
+LASSO prediction (LS) or selection index (SI) and yield (Y) are also shown.
+S.6. Computational complexity
+Obtaining test set predictions for a single CV2 hyperspectral dataset (including all 620
+wavelength-date features) took approximately 1.5 seconds for the univariate gBLUP model, 7 sec-
+onds for lsBLUP, 200 seconds for siBLUP, 34 seconds for glfBLUP, 1090 seconds for MegaLMM,
+and 60 seconds for the CV2 multivariate MLP.
+We also simulated datasets containing p = 100 to p = 2500 secondary features representing
+10 underlying factors. We analyzed these datasets using glfBLUP, obtaining five runtime mea-
+surements (after a single warmup run) for each step in the glfBLUP prediction pipeline at each
+value of p, showing that the regularization dominates the pipeline’s total runtime throughout
+the range of p (Figure S8).
+All computational times were obtained on Windows 11 Pro 23H2, R v4.2.2, using an Intel
+i5-13600KF CPU.
+8 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+Figure S2. MegaLMM mean posterior loadings for the 62 wavelengths on the 3
+(A), 5 (B), and 10 (C) factors used to run MegaLMM on the B5IR hyperspectral
+data from 10-03-2015. Mean posterior loadings of yield on the factors are also
+shown.
+S.7. Redundancy filtering
+Figures S9 and S10 provide graphical overviews of the features that remained after redundancy
+filtering at a threshold of τ = 0.95 for both managed treatments B5IR and HEAT.
+References
+[S1] Abadi, M., Barham, P., Chen, J., Chen, Z., Davis, A., Dean, J., Devin, M., Ghemawat, S., Irving, G., Isard,
+M., Kudlur, M., Levenberg, J., Monga, R., Moore, S., Murray, D.G., Steiner, B., Tucker, P., Vasudevan,
+V., Warden, P., Wicke, M., Yu, Y., and Zheng, X. (2016). TensorFlow: A system for large-scale ma-
+chine learning. In 12th USENIX Symposium on Operating Systems Design and Implementation (OSDI 16)
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 9
+(pp. 265-283). USENIX Association. https://www.usenix.org/conference/osdi16/technical-sessions/
+presentation/abadi
+[S2] Arouisse, B., Theeuwen, T.P.J.M., van Eeuwijk, F.A., and Kruijer, W. (2021). Improving genomic prediction
+using high-dimensional secondary phenotypes. Frontiers in Genetics 12, 667358. https://doi.org/10.
+3389/fgene.2021.667358
+[S3] Brent, R.P. (1973). ”Chapter 5: An algorithm with guaranteed convergence for finding a minimum of a
+function of one variable”, Algorithms for minimization without derivatives. Prentice-Hall, Englewood Cliffs,
+NJ, USA.
+[S4] Chollet, F., et al. (2015). Keras. https://keras.io/.
+[S5] Dahl, A., Hore, V., Iotchkova, V., and Marchini, J. (2013). Network inference in matrix-variate Gaussian
+models with non-independent noise. arXiv, 1312.1622. https://doi.org/10.48550/arXiv.1312.1622
+[S6] Endelman, J.B. (2011). Ridge regression and other kernels for genomic selection with R-package rrBLUP.
+The Plant Genome 4, 250–255. https://doi.org/10.3835/plantgenome2011.08.0024
+[S7] Friedman, J., Hastie, T., and Tibshirani, R. (2010). Regularization paths for generalized linear models via
+coordinate descent. Journal of Statistical Software 33, 1–22. https://doi.org/10.18637/jss.v033.i01
+[S8] Lopez-Cruz, M., Olson, E., Rovere, G., Crossa, J., Dreisigacker, S., Mondal, S., Singh, R., and de los
+Campos, G. (2020). Regularized selection indices for breeding value prediction using hyper-spectral image
+data. Scientific Reports 10, 8195. https://doi.org/10.1038/s41598-020-65011-2
+[S9] Runcie, D., and Cheng, H. (2019). Pitfalls and remedies for cross validation with multi-trait genomic
+prediction methods. G3 9, 3727–3741. https://doi.org/10.1534/g3.119.400598
+[S10] Runcie, D.E., Qu, J.Q., Cheng, H., Crawford, L. (2021). MegaLMM: Mega-scale linear mixed models
+for genomic predictions with thousands of traits. Genome Biology 22, 213. https://doi.org/10.1186/
+s13059-021-02416-w
+[S11] Runcie, D.E. (2022). MegaLMM: MegaLMM . R-package version 0.1.0.
+10 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+Figure S3. MegaLMM (3 factors, 100 ,000 iterations with thinning rate of 2
+after 10,000 burn-in iterations) traceplots for the posterior samples for loadings
+of wavelengths around 700 nm on the 3 factors (top to bottom).
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 11
+Figure S4. MegaLMM (5 factors, 100 ,000 iterations with thinning rate of 2
+after 10,000 burn-in iterations) traceplots for the posterior samples for loadings
+of wavelengths around 700 nm on the 5 factors (top to bottom).
+12 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+Figure S5. MegaLMM (10 factors, 100,000 iterations with thinning rate of 2
+after 10,000 burn-in iterations) traceplots for the posterior samples for loadings
+of wavelengths around 700 nm on factor 1 - 5. (Continues on next page) .
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 13
+Figure S6. (Continued). MegaLMM (10 factors, 100,000 iterations with thin-
+ning rate of 2 after 10,000 burn-in iterations) traceplots for the posterior samples
+for loadings of wavelengths around 700 nm on factor 6 - 10.
+14 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+Figure S7. MegaLMM posterior iterations for the loadings of yield on the
+factors for M = 3 (A), M = 5 (B), and M = 10 (C) for the B5IR hyperspectral
+data from 10-03-2015.
+GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH 15
+Figure S8. Composition of total runtime of glfBLUP at different numbers of
+secondary features p. The red line shows the total runtime in seconds.
+16 GENOMIC PREDICTION: GENETIC LATENT FACTOR APPROACH
+Figure S9. Features (wavelength-date combinations) that remain after redun-
+dancy filtering using a threshold of τ = 0.95 for the B5IR treatment.
+Figure S10. Features (wavelength-date combinations) that remain after re-
+dundancy filtering using a threshold of τ = 0.95 for the HEAT treatment.

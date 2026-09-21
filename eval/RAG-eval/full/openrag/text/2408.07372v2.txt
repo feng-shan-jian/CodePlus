@@ -1,0 +1,2221 @@
+An Adaptive Importance Sampling for Locally
+Stable Point Processes
+Hee-Geon Kang 1 and Sunggon Kim 1*
+1 Department of Statistics, University of Seoul, 163 Seoulsiripdaero,
+Dongdaemun-gu, 02504, Seoul, Republic of Korea.
+*Corresponding author(s). E-mail(s): sgkim@uos.ac.kr;
+Contributing authors: hgkang28@uos.ac.kr;
+Abstract
+The problem of finding the expected value of a statistic of a locally stable point
+process in a bounded region is addressed. We propose an adaptive importance
+sampling for solving the problem. In our proposal, we restrict the importance
+point process to the family of homogeneous Poisson point processes, which enables
+us to generate quickly independent samples of the importance point process. The
+optimal intensity of the importance point process is found by applying the cross-
+entropy minimization method. In the proposed scheme, the expected value of
+the statistic and the optimal intensity are iteratively estimated in an adaptive
+manner. We show that the proposed estimator converges to the target value
+almost surely, and prove the asymptotic normality of it. We explain how to apply
+the proposed scheme to the estimation of the intensity of a stationary pairwise
+interaction point process. The performance of the proposed scheme is compared
+numerically with Markov chain Monte Carlo simulation and perfect sampling.
+Keywords: locally stable point process, pairwise interaction point process, Monte
+Carlo method, adaptive importance sampling, cross entropy minimization
+Statements and Declarations
+Conflicts of interest All authors declare that they have no conflicts of interest.
+1
+arXiv:2408.07372v2  [stat.ML]  1 Mar 2025
+1 Introduction
+Stationary pairwise interaction point processes are important stochastic models in the
+study of spatial point patterns (Baddeley et al. (2016)). The summary characteristics
+such as the intensity and higher moments are usually unknown. Such statistic can be
+estimated by restricting the process to a sufficiently large bounded region (Baddeley
+et al. (2016), Illian et al. (2008)). The probability density function (pdf) of a finite
+pairwise interaction point process is usually known up to constant. In order to find the
+explicit form of the normalization constant, the intensity, or some higher moments,
+we need to integrate a function of the point process with respect to the unnormalized
+pdf, which is not an easy task. The same is the case with locally stable point processes
+which are general point processes including stationary interaction point processes. The
+pdf of a locally stable point process in a bounded region is also usually known up to
+constant, and it is hard to find the explicit form of the normalization constant and
+the expected value of a statistic of the locally stable point process. Instead of finding
+exactly the integral value, one can resort to Monte Carlo methods such as Markov
+chain Monte Carlo and perfect sampling (Møller and Waagepetersen (2003)).
+In this paper, we propose an adaptive importance sampling for finding the expected
+value of a statistic of a locally stable point process or a real-valued function of a locally
+stable point process in a bounded region. By restricting the importance sampling point
+process to the family of homogeneous Poisson point processes in our proposal, we can
+quickly generate sample point processes. The optimal intensity of the importance point
+process is found by applying the cross-entropy minimization method. In the proposed
+scheme, the expected value of the function and the optimal intensity are iteratively
+estimated in an adaptive manner. We show that the proposed estimator converges to
+the target value almost surely, and prove the asymptotic normality of it.
+Anderssen et al. (2014) and Baddeley and Nair (2012) proposed the Poisson-
+saddlepoint approximation method to approximate the intensity of a stationary Gibbs
+point process. The method was extended to the case of a stationary Gibbs point pro-
+cess with any order by Baddeley and Nair (2017). In order to obtain sample point
+processes following the pdf of a locally stable point process, Markov chain Monte
+Carlo (MCMC) methods were proposed. Geyer and Møller (1994) and Møller (1999)
+proposed the birth-death Metropolis-Hastings algorithm. Kelly and Ripley (1976) and
+Ripley (1977) proposed a spatial birth and death process. However, these methods may
+suffer from the slow convergence to the stationary distribution and a strong autocor-
+relation existing in generated sample point processes, which leads to a large number of
+samples required to obtain an accurate estimate to the target value. In order to obtain
+a random samples from the target distribution, perfect sampling is proposed (Robert
+et al. (1999)). It has been studied to apply perfect sampling to generate independent
+samples following exactly the pdf of a locally stable point process. To this end, Kendall
+and Møller (2000a; 2000b) gave a general formulation of the method of dominated
+coupling from the past (CFTP) and applied it to the problem of perfect sampling of
+locally stable point processes. However, it takes a very long time to generate samples
+of point processes by applying perfect sampling (Møller and Waagepetersen (2003)).
+Importance sampling is a Monte Carlo method to estimate the integral value
+of a function with respect to the nominal distribution (Robert and Casella (1999),
+2
+Rubinstein and Kroese (2016)). Instead of generating samples following the nominal
+distribution, it generates samples from an appropriately selected distribution called
+an importance sampling distribution. By restricting the importance sampling distri-
+bution to a parametric family of distributions, one can find the optimal parameter of
+the importance sampling distribution. Variance minimization and cross-entropy min-
+imization methods are used generally to find the optimal parameter (De Boer et al.
+(2005)). However, in many situations, it is difficult to find the optimal parameter
+explicitly, or it needs a large number of samples to estimate it accurately. Starting from
+a somewhat arbitrary parameter, adaptive importance sampling adjusts the parame-
+ter of the importance sampling distribution during the sampling process (Bugallo et
+al. (2017)). In adaptive importance sampling, the importance sampling distribution is
+updated iteratively, and generates more samples of higher importance. In this way, the
+efficiency of the estimation continues to improve with each iteration. Oh and Berger
+(1992) showed the convergence of the adaptive importance sampling estimator to the
+target value and the asymptotic normality of it. We extend their results to the case
+of locally stable point processes defined in a bounded region.
+This paper is organized as follows. In Section 2, we describe the birth-death
+Metropolis-Hastings algorithm and the dominated CFTP algorithm to estimate the
+expected value of a function of a locally stable point process in a bounded region.
+We introduce our proposed estimator, and prove some asymptotic properties of it in
+Sections 3 and 4. We explain how to apply the proposed scheme to estimate the inten-
+sity of a stationary pairwise interaction point process in Section 5. In Section 6, the
+performance of the proposed scheme is compared numerically with the birth-death
+Metropolis-Hastings simulation and the perfect sampling. In the latter simulation,
+point processes are generated by the dominated CFTP algorithm. Finally, we conclude
+the paper in Section 7.
+2 Monte Carlo methods for locally stable point
+processes
+Suppose that S is a bounded region on Rd. A point process on S is a set of random
+number of points randomly located on S. A simple point process on S is a homoge-
+neous Poisson point process, which is a completely random point process on S in the
+sense that the points of the process occur independently of one another. If X is the
+homogeneous Poisson point process with intensityρ (ρ> 0) onS, then for a subregion
+A of S, the number of points of X belonging to A follows the Poisson distribution
+with mean ρ|A|, where|A| is the volume or the Lebesgue measure of A. For a collec-
+tion of disjoint subregions of S, the number of points of X belonging to a subregion
+is independent with those of other subregions. In the case of ρ = 1, it is called the
+standard homogeneous Poisson point process.
+We call a set of finite points on S a point pattern, and denote byN the collection
+of point patterns on S, i.e. N ={x⊂ S;n(x) <∞}, where n(x) is the number of
+3
+points of x. Then,N is also represented as follows:
+N =
+∞[
+n=0
+Sn,
+where Sn =S×···× S, the n-fold Cartesian product of S with itself, and S0 is the
+empty set∅.
+LetX be the homogeneous Poisson point process with intensity ρ onS. Then, the
+probability density function (pdf) of X is as follows:
+fP (x;ρ) = ρn(x)e−ρ|S|
+n(x)! , x ∈N . (1)
+We can see that fP (x;ρ) does not depend on x, but depends on n(x), and that if the
+number of points of X is given, then the points of X are uniformly distributed on S,
+and their locations are mutually independent.
+The pdf fP (·;ρ) in Eq (1) induces a probability measure on N , i.e. Pr(X∈dx) =
+fP (x;ρ)dx, x∈N . Then, it follows that for A⊂N ,
+Pr(X∈A ) =
+∞X
+n=0
+ρne−ρ|S|
+n!
+Z
+Sn
+IA(x)dx, (2)
+where IA(x) is the indicator function of A. In the above equation,
+R
+S0IA(x)dx is
+defined to be 1 if A contains the empty set. We denote by Poi( S,ρ ) the probability
+measure defined in Eq (2), and call that a point process X follows Poi(S,ρ ) if X
+satisfies Eq (2).
+For a point process X on S, the pdf of X with respect to Poi(S, 1) is defined as a
+function f onN satisfying that forA⊂N ,
+Pr(X∈A ) =
+∞X
+n=0
+e−|S|
+n!
+Z
+Sn
+IA(x)f(x)dx. (3)
+Due to Eq (2), the above equation can be rewritten as follows: for Y the standard
+homogeneous Poisson point process on S,
+Pr(X∈A ) =E[I(Y ∈A )f(Y )], A⊂N . (4)
+We assume that f(x) has the following form:
+f(x) = 1
+cf
+h(x), x∈N , (5)
+where h(∅) = 1 for the empty set ∅. By substitutingN forA in Eq (4), we have that
+cf =E[h(Y )]. (6)
+4
+We also assume that the normalizing constant cf is unknown.
+The Papangelou conditional intensity of X is defined as
+λf(x,ξ ) = f(x∪ξ)
+f(x) , x ∈N , ξ∈S\x. (7)
+λf(x,ξ ) can be considered as the ratio of the point patterns of x∪ξ to x in a huge
+collection of random copies of X with pdf f. λf(x,ξ ) represents the intensity that
+ξ will occur additionally given that the rest of X is x. Note that the Papangelou
+conditional intensity does not depend on cf.
+If λf(x,ξ ) is bounded by an integrable function of ξ, i.e. for a function ϕ defined
+on S such that
+R
+Sϕ(ξ)dξ <∞,
+λf(x,ξ )≤ϕ(ξ), x ∈N , ξ∈S\x, (8)
+then f is said to be ϕ-locally stable, and the point process with pdf f is said to be
+locally stable. In order for the pdf f in Eq (5) to be well-defined, cf should be finite.
+In this case, it follows from Eq (3) that f induces a probability measure on N with
+respect to Poi(S, 1). A sufficient condition for cf to be finite is that X is locally stable
+(Møller and Waagepetersen, 2003, Chapter 6.1).
+A particular example of a locally stable point process is the stationary Strauss
+point process (Strauss (1975)). LetX be a finite stationary Strauss point process onS,
+and let R be the range of interaction of X. Then, the pdf X with respect to Poi(S, 1)
+is as follows: for β >0, 0≤γ≤ 1, and R> 0,
+f(x;β,γ,R )∝βn(x)γD(x), x ∈N , (9)
+whereD(x) =P
+{ξ,η}⊆xI(∥ξ−η∥≤R). In the above pdf, β controls how denseX is,
+and γ controls how regular X is. If γ = 0, the process is called the hard-core process.
+If γ = 1, the process is equivalent to the homogeneous Poisson point process with
+intensityβ.
+Applying the pdf (9) to Eq (7) gives that the Papangelou conditional intensity of
+X is
+λf(x,ξ ) =βγ
+P
+η∈xI(∥ξ−η∥≤R), x ∈N ,ξ∈S\x. (10)
+Since 0 ≤ γ ≤ 1, it satisfies that λf(x,ξ )≤ β. It implies that a finite stationary
+Strauss point process is locally stable.
+Figure 1 illustrates the realizations of stationary Strauss point processes on unit
+square with varying values of the parameters β, γ, and R. The left two panels in the
+figure show that the more points occurred with increased value ofβ. By comparing top
+two panels, we can see that the distance between two neighboring points has decreased
+by increasing the value of γ from 0.2 to 0.8. In the two panels in the bottom of the
+figure, the range of interactions is 0 .1 for the left, and 0 .025 for the right. We can
+see that decreasing the range of interaction also resulted in decreasing the distance
+between two neighboring points.
+We consider a locally stable point process X on S. We assume that f, the pdf of
+X, is ϕ-locally stable for an integrable function ϕ on S. For a real-valued function
+5
+(a) β = 25, γ = 0.2, R = 0.1
+ (b) β = 25, γ = 0.8, R = 0.1
+(c) β = 100, γ = 0.2, R = 0.1
+ (d) β = 100, γ = 0.2, R = 0.025
+Fig. 1 : Realizations of stationary Strauss point processes on the unit square with
+varying values of the parameters β, γ, R.
+K defined onN , we will denote by Ef[K(X)] the expected value of K(X). Let µ =
+Ef[K(X)]. It follows from Eq (3) that
+µ =
+∞X
+n=0
+e−|S|
+n!
+Z
+Sn
+K(x)f(x)dx,
+equivalently,
+µ =E[K(X)f(X)],
+whereE[·] is the expectation with respect to Poi(S, 1). It follows from Eqs (5) and (6)
+that
+µ = E[K(X)h(X)]
+E[h(X)] . (11)
+In what follows, we assume that
+Ef[K 2(X)]<∞, (12)
+and that
+Ef[n2(X)]<∞. (13)
+6
+2.1 Metropolis-Hastings algorithm for the estimation of
+Ef [K(X)]
+The birth-death Metropolis-Hastings algorithm is a type of Metropolis-Hastings
+algorithm for generating samples of a locally stable point process (Møller and
+Waagepetersen, 2003). In this algorithm, samples of point processes following a given
+pdf f which is ϕ-locally stable are sequentially generated.
+At the initial step, we may generate a point pattern following a homogeneous
+Poisson point process with an appropriate intensity. Suppose that we have generated
+Xn, the point process at the n-th step. Then, Xn+1 is generated by adding a point to
+Xn, deleting a point from Xn, or keeping Xn the same. The first is called a birth of a
+point, and the second a death of a point. Either of a birth or a death is proposed at
+each step. IfXn =∅, then only a birth proposal is possible. Let p be the probability of
+proposing a birth. Suppose that Xn =x. If a birth of a point is proposed in this step,
+then we generate a point ξ with pdf qb(x,ξ ) =ϕ(ξ)/c∗, where c∗ =
+R
+Sϕ(ξ)dξ, as the
+candidate to be added. If a death of a point from x is proposed, then we choose each
+point belonging to x uniformly as the candidate to be deleted, i.e. qd(x,η ) = 1/n(x)
+is the probability mass function for choosing a point η∈x in a death proposal.
+In the case of the birth proposal, we compute the acceptance ratio of the birth of
+ξ given by
+rb(x,ξ ) = λf(x,ξ )qd(x∪ξ)(1−p)
+qb(x,ξ )p ,
+and let Xn+1 =Xn∪ξ with probability min{1,rb(x,ξ )}, and Xn+1 =Xn with prob-
+ability 1− min{1,rb(x,ξ )}. In the other case, we compute the acceptance ratio of the
+death of η given by
+rd(x,η ) = 1
+rb(x\η,η ),
+and let Xn+1 = Xn\η with probability min {1,rd(x,η )}, and Xn+1 = Xn with
+probability 1− min{1,rd(x,η )}.
+When a sequence of samples {X1,X 2,...,X n} is generated by the birth-death
+Metropolis-Hastings algorithm described above, they are dependent on each other, and
+do not follow f exactly, but their stationary pdf is f. We remove some initial samples
+from{X1,X 2,...,X n} that may not follow the stationary distribution. We apply
+subsampling from the remaining samples at fixed intervals to reduce the dependence
+between successive samples.
+LetY1,Y 2,...,Y n be the resulting samples. Then, they are near independent with
+stationary pdf f. The sample mean of K(Y1),K (Y2),... , K(Yn) is an estimator of µ.
+We denote it by ˆµMH, i.e,
+ˆµMH = 1
+n
+nX
+i=1
+K(Yi). (14)
+We denote by MH method the sampling scheme described above.
+2.2 Perfect sampling for the estimation of Ef [K(X)]
+The dominated coupling from the past (CFTP) algorithm is a perfect sampling for
+generating random samples of a locally stable point process with pdf f on a bounded
+7
+regionS (Kendall and Møller, 2000a,b). This algorithm constructs the backward step
+to generate a birth-death process and the forward step to update the dominating
+processes in reverse order of the birth-death process. To reduce the computational
+time, we employ the doubling scheme introduced by Propp and Wilson (1996). We
+denote the upper process as U and the lower process as L, which are the dominating
+processes. Let c∗ =
+R
+Sϕ(ξ)dξ where ϕ(·) is a ϕ-function in Eq (8).
+The CFTP algorithm with doubling scheme proceeds as follows.
+1. At the initial stage, we generate X0∼ Poi(S,ϕ (ξ)). If X0 =∅, then we return ∅,
+and stop the procedure. Otherwise, at each stage j = 1, 2,..., we first execute the
+backward step, and then the forward step, which are described below. Set T0 = 0,
+Tj = 2j–1 for j = 1, 2,....
+2. In the backward step of the j-th stage, we initialize X−Tj−1 as the starting
+point process, and sequentially generate Xt from time −Tj−1− 1 to −Tj. For
+t∈ {−Tj−1,..., −Tj + 1}, the death of a point in Xt is proposed with proba-
+bility 1–c∗/(c∗ + n(Xt)). In this case, we randomly choose ξt–1 ∈ Xt, and set
+Xt–1 =Xt\ξt–1. We also assign a uniform random variableRt−1 on [0, 1] to the point
+ξt–1. Otherwise, we generate a pointηt–1 from pdfϕ(η)/c∗, and setXt−1 =Xt∪ηt–1.
+3. In the forward step of the j-th stage, we update sequentially the upper and the
+lower processes from time −Tj to−1. Let Ut
+−Tj and Lt
+−Tj be the upper and lower
+processes ofXt, respectively. At time−Tj, we initializeU−Tj
+−Tj =X−Tj andL−Tj
+−Tj =∅.
+If the death of a point was proposed at time t∈{− Tj,..., −1} in the backward
+step, i.e.,Xt+1\ξt =Xt, then the upper and lower processes are updated as follows:
+Ut+1
+−Tj =
+Ut
+−Tj∪ξt if Rt≤rU
+Ut
+−Tj otherwise ,
+and
+Lt+1
+−Tj =
+Lt
+−Tj∪ξt if Rt≤rL
+Lt
+−Tj otherwise ,
+where rU = λf(Lt
+−Tj,ξt)/ϕ(ξt), rL = λf(Ut
+−Tj,ξt)/ϕ(ξt), and Rt is the uniform
+random variable assigned to ξt in the backward step. Otherwise (i.e., Xt+1∪ηt =
+Xt), the processes are updated as Ut+1
+−Tj =Ut
+−Tj\ηt and Lt+1
+−Tj =Lt
+−Tj\ηt.
+4. If U 0
+−Tj = L0
+−Tj, then we return U 0
+−Tj. Otherwise, we go to the next stage with
+setting j←j + 1. We repeat the above procedure until U 0
+−Tj =L0
+−Tj is satisfied.
+Let X1,X 2,...,X n be the samples generated by applying the dominated CFTP
+algorithm with the doubling scheme. Then, an estimator of µ is given by
+ˆµCFTP = 1
+n
+nX
+i=1
+K(Xi). (15)
+The CFTP estimator in Eq (15) gives a more reliable estimate toµ than ˆµMH in terms
+of variance reduction. We denote by CFTP method the sampling scheme described
+above.
+8
+3 The proposed estimator
+3.1 Importance sampling for the estimation of Ef [K(X)]
+Suppose that g(x) is an importance sampling pdf of X, and that it dominates the
+nominal pdf f, i.e. f(x)> 0 implies g(x)> 0. It follows from Eq (11) that
+µ = Eg[K(X)w(X)]
+Eg[w(X)] , (16)
+where w(x) is the unnormalized likelihood ratio of sample x, i.e.
+w(x) = h(x)
+g(x).
+In Hesterberg (1995), if X1,...,X n are samples from the importance sampling
+pdf g(x), then the self-normalized importance sampling estimator of µ is given as
+ˆµIS =
+Pn
+i=1K(Xi)w(Xi)Pn
+i=1w(Xi) . (17)
+Clearly, ˆµIS converges toµ with probability 1 as n goes to the infinity (Owen (2013)).
+Under additional assumptions, the central limit theorem for ˆ µIS was obtained by
+Geweke (1989).
+According to Oh and Berger (1992) and Owen (2013), an approximate variance of
+ˆµIS is given by σ2/n, where
+σ2 = Eg
+
+(K(X)−µ)2w(X)2
+Eg [w(X)]2 , (18)
+or equivalently
+σ2 = Varg[K(X)w(X)]− 2µCovg[K(X)w(X),w (X)] +µ2Varg[w(X)]
+Eg [w(X)]2 ,
+where Varg[·] and Covg[·,·] mean the variance and the covariance with respect to pdf
+g(x), respectively. The value of σ2 is estimated by
+ˆσ2 = nPn
+i=1(K(Xi)− ˆµ)2w(Xi)2
+ Pn
+i=1w(Xi)
+2
+=
+dVarg[K(X)w(X)]− 2ˆµdCovg[K(X)w(X),w (X)] + ˆµ2dVarg[w(X)]
+¯w2 ,
+(19)
+9
+where
+¯w = 1
+n
+nX
+i=1
+w(Xi),
+dVarg[K(X)w(X)] = 1
+n
+nX
+i=1
+K 2(Xi)w2(Xi)− ˆµ2 ¯w2,
+dCovg[K(X)w(X),w (X)] = 1
+n
+nX
+i=1
+K(Xi)w2(Xi)− ˆµ ¯w2,
+dVarg[w(X)] = 1
+n
+nX
+i=1
+w2(Xi)− ¯w2.
+Let f∗(x) be the optimal importance sampling pdf for ˆ µIS in terms of variance
+minimization. Hesterberg (1995) showed that
+f∗(x)∝|K(x)−µ|h(x), x ∈N .
+Since the pdff∗(x) includes the unknown valueµ, it can not be used as the importance
+sampling pdf.
+3.2 An adaptive importance sampling estimator
+In our proposal, we restrict the point process of the importance samples to the family
+of homogeneous Poisson point processes onS. Suppose thatX follows Poi(S,ρ ). Then,
+it follows from Eqs (2) and (3) that the pdf of X with respect to Poi(S, 1) is
+g(x;ρ) = exp((1−ρ)|S|)ρn(x), x ∈N . (20)
+The value of intensityρ minimizing the cross-entropy ofg(x;ρ) relative tof∗(x) is
+found by solving the following optimization problem (Rubinstein and Kroese, 2016):
+maximize
+ρ
+Ef[|K(X)−µ| logg(X;ρ)]. (21)
+From Eq (20), the above problem is rewritten as
+maximize
+ρ
+Ef[|K(X)−µ|]|S|(1−ρ) +Ef[n(X)|K(X)−µ|] logρ.
+By differentiating the objective function of the above problem with respect to ρ, we
+obtain the solution to the above problem as follows:
+ρ∗ = 1
+|S|
+Ef [n(X)|K(X)−µ|]
+Ef [|K(X)−µ|] .
+10
+Sinceµ is unknown, it is not an easy task to get a consistent estimator of ρ∗. If we
+knew the normalization constantcf, then the optimal importance sampling pdf would
+be as follows (Rubinstein and Kroese, 2016, Chapter 5):
+f∗(x) =|K(x)|h(x)
+cf
+, x ∈N .
+Then, the value of intensityρ minimizing the cross-entropy ofg(x;ρ) relative tof∗(x)
+in the above equation is found by solving the following optimization problem instead
+of Eq (21):
+maximize
+ρ
+Ef[|K(X)| logg(X;ρ)].
+In the same manner as the above, it can be shown that the optimal intensity in this
+case is given by
+ρ′ = 1
+|S|
+Ef [n(X)|K(X)|]
+Ef [|K(X)|] . (22)
+We considerρ′ as a pseudo-optimal parameter of the importance sampling pdf g(x;ρ).
+Eqs (12) and (13) show the existence of ρ′.
+We propose an adaptive importance sampling to estimate µ. In the proposed
+method, the value of µ is estimated iteratively, and the importance sampling pdf at
+each step is a homogeneous Poisson process whose intensity converges to a value close
+toρ′. Let ˆρt,t = 1, 2,..., be the estimator of ρ′ at the t-th step. Then, we generate a
+number ofnt samples of point processes independently from the importance sampling
+pdf g(x; ˆρt−1) at the t-th step. In order to get a consistent estimator of µ, we restrict
+the value of ˆρt to the interval [mρ,Mρ] for a sufficiently small mρ and a sufficiently
+large Mρ. Initially, we choose ˆρ0∈ [mρ,Mρ].
+Let X (t)
+1 ,...,X (t)
+nt be the generated samples at the t-th step. The unnormalized
+likelihood ratio of X (t)
+i is given by
+wt(X (t)
+i ) = h(X (t)
+i )
+g(X (t)
+i ; ˆρt−1)
+.
+The estimator of µ at the t-th step is given by
+ˆµt =
+Pt
+j=1
+Pnj
+i=1K(X (j)
+i )wj(X (j)
+i )
+Pt
+j=1
+Pnj
+i=1wj(X (j)
+i )
+. (23)
+If we set ˆρt to be the plug-in estimator of ρ′ given in Eq (22), then it cannot be
+guaranteed that ˆρt∈ [mρ,Mρ]. Instead, we define ˜n(x) as the truncated value of n(x)
+with lower bound of mρ|S| and upper bound of Mρ|S|, and set
+ˆρt = 1
+|S|
+Pt
+j=1
+Pnj
+i=1 ˜n(X (j)
+i )|K(X (j)
+i )|wj(X (j)
+i )
+Pt
+j=1
+Pnj
+i=1|K(X (j)
+i )|wj(X (j)
+i )
+. (24)
+11
+Algorithm 1 AIS for locally stable processes
+Require: h(x),K (x),mρ,Mρ,{n1,n 2,... }, η1,η 2
+Ensure: ˆµt
+1: Choose ˆρ0∈ [mρ,Mρ]
+2: Set t = 1
+3: repeat
+4: Generate X (t)
+1 ,X (t)
+2 ,...,X (t)
+nt independently from g(x; ˆρt−1)
+5: Set wt(X (t)
+i ) = h(X (t)
+i )
+g(X (t)
+i ; ˆρt−1) for i = 1, 2,...,n t
+6: Compute
+ˆµt =
+Pt
+j=1
+Pnj
+i=1K(X (j)
+i )wj(X (j)
+i )
+Pt
+j=1
+Pnj
+i=1wj(X (j)
+i )
+7: Set ˜n(X (t)
+i ) = median{mρ|S|,n (X (t)
+i ),Mρ|S|} for i = 1, 2,...,n t
+8: Compute
+ˆρt = 1
+|S|
+Pt
+j=1
+Pnj
+i=1 ˜n(X (j)
+i )|K(X (j)
+i )|wj(X (j)
+i )
+Pt
+j=1
+Pnj
+i=1|K(X (j)
+i )|wj(X (j)
+i )
+9: Set n(t) =Pt
+j=1nj
+10: Compute
+ˆσ2
+t =
+n(t)Pt
+j=1
+Pnj
+i=1
+
+K(X (j)
+i )− ˆµt
+2
+w2
+j (X (j)
+i )
+Pt
+j=1
+Pnj
+i=1wj(X (j)
+i )
+2
+11: Set t =t + 1
+12: until ˆσ2
+t
+n(t) ˆµ2
+t
+≤η1 and | ˆρt− ˆρt−1|
+ˆρt−1
+≤η2
+13: Return ˆµt
+Then, it can be easily checked that ˆρt∈ [mρ,Mρ].
+We denote by n(t) the number of samples of X until the t-th step, i.e, n(t) =Pt
+j=1nj. It follows from Eq (19) that the approximate variance of ˆµt is estimated as
+ˆσ2
+t/n(t), where
+ˆσ2
+t =
+n(t)Pt
+j=1
+Pnj
+i=1
+
+K(X (j)
+i )− ˆµt
+2
+w2
+j (X (j)
+i )
+Pt
+j=1
+Pnj
+i=1wj(X (j)
+i )
+2 . (25)
+12
+The iterative estimation of µ and ρ′ continues until both the following conditions are
+satisfied;
+ˆσ2
+t
+n(t)ˆµ2
+t
+≤η1 (26)
+and
+|ˆρt− ˆρt−1|
+ˆρt−1
+≤η2. (27)
+The value of η1 is determined as follows: for a sufficiently small ϵ> 0,
+η1 =
+ ϵ
+zα/2
+2
+,
+where zα/2 is the
+ 
+1− α
+2
+
+quantile of the standard normal distribution. The term in
+the left-hand side of Eq (26) is the squared relative standard error of ˆµt. We determine
+the values of ϵ and α appropriately so that if the squared relative standard error
+is sufficiently small, then the iteration stops. A small constant is assigned as the
+value of η2 so that the sufficiently small change of ˆρt makes the iteration stop. The
+condition (26) can be considered as the condition on the relative error of ˆµt as well as
+on the relative standard error. It will be explained in Section 4.3 how the condition (26)
+regulates the relative error of the final estimate toµ, and how the values ofϵ andα are
+determined. Why we should consider the condition (27) as well as the condition (26)
+will be explained also in the section. Algorithm 1 shows the procedure to obtain the
+proposed estimator, which will be denoted by AIS estimator.
+We assume that the sample sizes n1,n 2,..., satisfy the following three conditions:
+sup
+t≥1
+tnt
+n(t) <∞, (28)
+sup
+t≥2
+1
+n(t)
+t−1X
+j=1
+j|nj+1−nj|<∞, (29)
+and
+lim
+t→∞
+1
+(n(t))2
+tX
+j=1
+n2
+j = 0. (30)
+Under the conditions (28) and (29), Etemadi (2006, Theorem 1) showed that for
+a sequence of random variables {Yi,i = 1, 2,... }, if Pt
+i=1Yi/t converges to a random
+variableY0 almost surely, then
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njYj =Y0, a.s.
+The above three conditions on the sample sizes combined with some other con-
+ditions on the functions K and ϕ guarantee the almost sure convergence of {ˆµt,t =
+1, 2,... } to the target value µ, and also the asymptotic normality of it, which will be
+shown in the next section.
+13
+According to Oh and Berger (1992), if the sample size in the first step is small,
+then the estimator ˆµt may have a large error, and it slows down the convergence of
+ˆµt. Thus, we also assume that n1 is sufficiently large in Algorithm 1.
+4 Asymptotic properties of the proposed estimator
+In this section, we prove that both {ˆµt,t = 1, 2,... } and{ˆρt,t = 1, 2,... } converge
+almost surely, also prove the asymptotic normality of{ˆµt,t = 1, 2,... }. In Section 4.1,
+we construct a martingale difference sequence of functionals of {X (j)
+i ,j = 1, 2,...,i =
+1,...,n j}, and show the almost-sure convergence of it by applying the technique
+described in Feller (1991, Theorem 3, p.243). Then, it gives that the denominator and
+the nominator of ˆµt converge to E[K(X)h(X)] and E[h(X)] almost surely, respec-
+tively, which leads to the almost-sure convergence of {ˆµt,t = 1, 2,... } to µ. In the
+similar manner to this, we also show that ˆρt converges to a value close to ρ′ almost
+surely. In Section 4.2, we construct a martingale triangular array of functionals of
+{X (j)
+i ,j = 1, 2,...,i = 1,...,n j}, and show that the array is a zero-mean square
+integrable martingale, and converges to a normal random in distribution. As an imme-
+diate corollary, the asymptotic normality of{ˆµt,t = 1, 2,..., } follows. Proofs for these
+results are basically in the same line with Oh and Berger (1992).
+4.1 Convergence of the proposed estimator
+LetXt ={X (t)
+i ,i = 1,...,n t}, t = 1, 2,..., be the nt number of point processes
+generated at the t-th step in Algorithm 1. We define Ft as the σ-algebra generated
+by{Xj,j = 1, 2,...,t }. Then,{Ft,t = 1, 2,... } is a filtration. We also define F∞ as
+the smallest σ-algebra containing{Ft,t = 1, 2,... }. Let Y be the stochastic process
+{X1,X2,... } of the generated point processes. We define Ω as the set of the possible
+sample paths of Y , and define G as the probability measure induced by Y . Then,
+(Ω,F∞,G ) is a probability space.
+For a F∞-measurable function H, we denote by EG[H(Y )] the expectation of
+H(Y ) with respect to measureG, and byEG[H(Y )|Ft] the conditional expectation of
+H(Y ) with respect toFt. Since ˆρt is a function of{X1,X2,..., Xt} and the stochastic
+behavior ofXt+1 is completely determined by ˆρt,EG[H(Xt+1)|Ft] can be considered as
+the expectation with respect to pdf g(x; ˆρt), i.e. the expected value of H(Xt+1) when
+X (t+1)
+i ,i = 1,...,n t+1, followsg(x; ˆρt). For sake of notation, we let EG[H(X1)|F0] be
+the expectation with respect to g(·; ˆρ0).
+For the sample point processes{X (t)
+i ,i = 1,...,n t}, we defineψt and Ψt as follows:
+for t = 1, 2,...,
+ψt(X (t)
+i ) =K(X (t)
+i )wt(X (t)
+i )−EG[K(X (t)
+i )wt(X (t)
+i )|Ft−1],
+Ψt =
+ntX
+i=1
+ψt(X (t)
+i ).
+(31)
+14
+Note that both ψt and Ψt are functionals depending on the function K(x), and that
+EG[K(X (t)
+i )wt(X (t)
+i )|Ft−1] is equal to Egt−1[K(X (t)
+i )wt(X (t)
+i )], whereEgt−1[·] denotes
+the expectation with respect tog(x; ˆρt−1). Sincewt(x) =h(x)/g(x; ˆρt−1), we have that
+EG[K(X (t)
+i )wt(X (t)
+i )|Ft−1] =E[K(X)h(X)].
+Then, Eq (31) is rewritten as
+ψt(X (t)
+i ) =K(X (t)
+i )wt(X (t)
+i )−E[K(X)h(X)],
+Ψt =
+ntX
+i=1
+K(X (t)
+i )wt(X (t)
+i )−ntE[K(X)h(X)].
+Suppose that for a non-negative valued function ρ(ξ) on S,
+R
+Sρ(ξ)dξ <∞. Then,
+the pdf of the non-homogeneous Poisson point process with intensity function ρ(ξ),
+ξ∈S, with respect to Poi(S, 1) is as follows (Møller and Waagepetersen, 2003):
+p(x;ρ(ξ)) = exp
+
+|S|−
+Z
+S
+ρ(ξ)dξ
+Y
+ξ∈x
+ρ(ξ), x ∈N . (32)
+For convenience of presentation, we denote byqi(x) the pdf p
+
+x, 1
+miρ
+ϕi+1(ξ)
+
+, and by
+Eqi[·] the expectation with respect to qi(x) for i = 1, 2, 3.
+Theorem 1. Suppose that
+R
+Sϕ2(ξ)dξ <∞ and Eq1[K(X)2]<∞. Then, for a point
+processX following Poi (S, 1),
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njX
+i=1
+K(X (j)
+i )wj(X (j)
+i ) =E[K(X)h(X)], a.s. (33)
+Proof. We can see from the form of Ψ t given in Eq (31) that Eq (33) is equivalent to
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+Ψj = 0, a.s.
+Eq (31) gives that
+EG[ψt(X (t)
+i )|Ft−1] = 0, i = 1,...,n t, (34)
+and that
+EG[Ψt|Ft−1] = 0, t = 1, 2,....
+Then, due to Feller (1991, Theorem 3, p.243), it is sufficient to show that
+∞X
+t=1
+EG[Ψ2
+t ]
+(n(t))2 <∞.
+15
+We will first show that EG[ψ2
+t (X (t)
+i )], t≥ 1, is bounded above by a constant. It
+can be easily shown from the definition of ψt(x) that
+EG[ψ2
+t (X (t)
+i )
+Ft−1]≤EG[K 2(X (t)
+i )w2
+t (X (t)
+i )|Ft−1]. (35)
+It follows from Eqs (7) and (8) that
+h(x)≤
+Y
+ξ∈x
+ϕ(ξ), x ∈N . (36)
+Note that wt(x) =h(x)/g(x; ˆρt−1). Then, Eqs (20) and (36) imply that
+wt(x)< exp (ˆρt−1|S|)
+Y
+ξ∈x
+ϕ(ξ)
+ˆρt−1
+.
+Since mρ≤ ˆρt−1≤Mρ, we have that
+wt(x)< exp (Mρ|S|)
+Y
+ξ∈x
+ϕ(ξ)
+mρ
+. (37)
+Then, we have from Eq (32) that
+wt(x)h(x)< exp
+
+Mρ|S| + 1
+mρ
+Z
+S
+ϕ2(ξ)dξ
+
+q1(x). (38)
+Since w2
+t (x) =wt(x)h(x)/g(x; ˆρt−1), we have that
+EG[K 2(X (t)
+i )w2
+t (X (t)
+i )|Ft−1]
+< exp
+
+Mρ|S| + 1
+mρ
+Z
+S
+ϕ2(ξ)dξ
+
+EG
+"
+K 2(X (t)
+i )q1(X (t)
+i )
+g(X (t)
+i ; ˆρt−1)
+Ft−1
+#
+.
+We obtain from the above equation that
+EG[K 2(X (t)
+i )w2
+t (X (t)
+i )|Ft−1]< exp
+
+Mρ|S| + 1
+mρ
+Z
+S
+ϕ2(ξ)dξ
+
+Eq1
+
+K 2(X)
+
+.
+We denote byC the right hand side of the above equation. Then, C is finite from the
+assumptions on ϕ and K. Eq (35) shows that for i = 1, 2,...,n t,
+EG[ψ2
+t (X (t)
+i )]<C. (39)
+Since ψt(X (t)
+1 ),...,ψ t(X (t)
+nt ) given ˆρt−1 are conditionally i.i.d. with mean zero, it
+follows that
+EG[Ψ2
+t
+Ft−1] =ntEG[ψt(X (t))2Ft−1],
+16
+where X (t) is a point process following g(x; ˆρt−1). Then, we obtain that EG[Ψ2
+t ] =
+ntEG[ψt(X (t))2], which implies that
+EG[Ψ2
+t ]<n tC.
+Let u0 = supt≥1tnt/n(t). Then, nt/n(t)≤u0/t for t≥ 1. Since n(t)≥t, we have that
+nt
+(n(t))2≤ u0
+t2, t ≥ 1.
+Condition (28) implies that
+∞X
+t=1
+nt
+(n(t))2 <∞. (40)
+Then, we can see that P∞
+t=1EG[Ψ2
+t ]/(n(t))2 is finite.
+By exploiting Theorem 1, we can show the almost sure convergence of {ˆµt,t =
+1, 2,... } in Eq (23) under the same condition as Theorem 1.
+Theorem 2. Suppose that
+R
+Sϕ2(ξ)dξ <∞ and Eq1[K(X)2]<∞. Then,
+lim
+t→∞
+ˆµt =µ, a.s.
+Proof. Letting K(X) = 1 in Theorem 1, we obtain that
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njX
+i=1
+wj(X (j)
+i ) =E[h(X)], a.s. (41)
+Theorem 1 and the above equation give that
+lim
+t→∞
+Pt
+j=1
+Pnj
+i=1K(X (j)
+i )wj(X (j)
+i )
+Pt
+j=1
+Pnj
+i=1wj(X (j)
+i )
+= E[K(X)h(X)]
+E[h(X)] , a.s.
+The right-hand side of the above equation is equal to µ in Eq (11), which completes
+the proof.
+In the proposed adaptive importance sampling shown in Algorithm 1, the impor-
+tance samples of X generated at the t-th step are the homogeneous Poisson point
+processes with intensity ˆρt in Eq (24). As mentioned in Section 3.2, the pseudo-optimal
+value of the intensity is ρ′ in Eq (22). However,{ˆρt,t = 1, 2,... } does not converge to
+ρ′, but converges to a value close to it. We define ˜ρ as follows:
+˜ρ = 1
+|S|
+Ef[˜n(X)|K(X)|]
+Ef[|K(X)|] .
+The following theorem shows that ˆρt converges to ˜ρ as t goes to the infinity.
+17
+Theorem 3. Under the same condition as Theorem 2, we have that
+lim
+t→∞
+ˆρt = ˜ρ, a.s.
+Proof. Suppose that
+R
+Sϕ2(ξ)dξ <∞ and Eq1[K 2(X)] <∞. Since ˜n(x), x∈N , is
+bounded above by Mρ, we also have that Eq1[˜n2(X)K 2(X)] <∞. By substituting
+˜n(x)|K(x)| for K(x) in Theorem 1, we obtain that
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njX
+i=1
+˜n(X (j)
+i )|K(X (j)
+i )|wj(X (j)
+i ) =E[˜n(X)|K(X)|h(X)], a.s.
+By substituting|K(x)| for K(x) in Theorem 1, we obtain that
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njX
+i=1
+|K(X (j)
+i )|wj(X (j)
+i ) =E[|K(X)|h(X)], a.s.
+The above two equations give that
+lim
+t→∞
+1
+|S|
+Pt
+j=1
+Pnj
+i=1 ˜n(X (j)
+i )|K(X (j)
+i )|wj(X (j)
+i )
+Pt
+j=1
+Pnj
+i=1|K(X (j)
+i )|wj(X (j)
+i )
+= 1
+|S|
+E[˜n(X)|K(X)|h(X)]
+E[|K(X)|h(X)] , a.s.
+Since the right-hand side in the above equation is equal to ˜ρ, the proof is complete.
+An upper bound on the difference between ρ′ and ˜ρ is obtained as follows:
+|ρ′− ˜ρ|≤ 1
+|S|
+Ef[|n(X)− ˜n(X)||K(X)|]
+Ef[|K(X)|] .
+Since we have chosen a sufficiently small mρ and a sufficiently large Mρ, ˜n(X) and
+n(X) are the same with a probability close to 1, and ˜ ρ may be close to ρ′. Thus, in
+Algorithm 1, the importance samples ofX are generated near optimally as steps go by.
+The importance sampling pdf g(x;ρ) in Eq (20) is continuous with respect to ρ.
+Due to Theorem 3, we can see that for x∈N ,
+lim
+t→∞
+g(x; ˆρt) =g(x; ˜ρ), a.s.
+The above equation implies that X (t), the importance sample generated from
+g(x; ˆρt−1), converges in distribution as t→∞ , and that g(x; ˜ρ) is the limiting pdf.
+For a point process X following g(x; ˜ρ) and a function H(x), x∈N , we denote by
+E˜g[H(X)] the expected value of H(X).
+4.2 Asymptotic normality of the proposed estimator
+We have shown that ˆµt converged toµ almost surely as t→∞ in Theorem 2. In this
+subsection, we will show the asymptotic normality of {ˆµt,t = 1, 2,... }. Let K′(x) =
+18
+a1 +a2K(x), x∈N , for real-valued constantsa1 anda2. We defineψK′
+j (X) as ψj(X)
+with K(X) being substituted with K′(X). For a positive integer τ, we define
+r(τ )
+j = 1√
+n(τ )
+njX
+i=1
+ψK′
+j (X (j)
+i ), j = 1, 2,...,τ,
+and
+Sτ,t =
+tX
+j=1
+r(τ )
+j , t = 1, 2,...,τ.
+Theorem 4. Under the same condition as Theorem 2, we have that for a positive
+integerτ,{Sτ,t,t = 1, 2,...,τ } is a zero-mean square integrable martingale with respect
+to the filtration {Ft,t = 1, 2,... }.
+Proof. By substituting ψK′
+t (x) for ψt(x) in Eq (34), we have that
+EG[ψK′
+t (X (t)
+i )|Ft−1] = 0 for i = 1, 2,...,n t, which means that EG[r(τ )
+t |Ft−1] = 0 for
+t = 1, 2,...,τ . Then, it follows that for t = 2, 3,...,
+EG[Sτ,t|Ft−1] =EG
+h
+Sτ,t−1 +r(τ )
+t
+Ft−1
+i
+=Sτ,t−1 +EG
+h
+r(τ )
+t
+Ft−1
+i
+=Sτ,t−1.
+Since EG[Sτ,1] = 0, we have that
+EG[Sτ,t] = 0, for t = 1, 2,...,τ.
+Thus,{Sτ,t,t = 1, 2,...,τ } is a zero-mean martingale.
+SinceψK′
+t (X (t)
+1 ),...,ψ K′
+t (X (t)
+nt ) given ˆρt−1 are i.i.d with mean zero, it follows that
+EG
+
+r(τ )
+t
+2Ft−1
+
+= 1
+n(τ )
+ntX
+i=1
+EG
+h
+ψK′
+t (X (t)
+i )2|Ft−1
+i
+= nt
+n(τ )EG
+h
+ψK′
+t (X (t))2|Ft−1
+i
+,
+(42)
+which gives that
+EG
+
+r(τ )
+t
+2
+= nt
+n(τ )EG
+h
+ψK′
+t (X (t))2
+i
+, t = 1, 2,...,τ.
+Eq (39) implies that
+EG
+
+r(τ )
+t
+2
+≤ nt
+n(τ )C, (43)
+19
+whereC = exp
+
+M|S| + 1
+mρ
+R
+Sϕ2(ξ)dξ
+
+(a2
+1 + 2a1a2Eq1[K(X)] +a2
+2Eq1[K(X)2]). The
+conditional expectation of S2
+τ,t is represented as follows:
+EG[S2
+τ,t|Ft−1] =EG
+
+Sτ,t−1 +r(τ )
+t
+2Ft−1
+
+=EG[S2
+τ,t−1|Ft−1] + 2EG
+h
+Sτ,t−1r(τ )
+t
+Ft−1
+i
++EG
+
+r(τ )
+t
+2Ft−1
+
+.
+Since EG
+h
+Sτ,t−1r(τ )
+t
+Ft−1
+i
+= Sτ,t−1EG
+h
+r(τ )
+t
+Ft−1
+i
+and EG
+h
+r(τ )
+t
+Ft−1
+i
+= 0, the
+above equation is rewritten as
+EG[S2
+τ,t|Ft−1] =EG[S2
+τ,t−1|Ft−1] +EG
+
+r(τ )
+t
+2Ft−1
+
+, (44)
+which gives that
+EG[S2
+τ,t] =EG[S2
+τ,t−1] +EG
+
+r(τ )
+t
+2
+, t= 2, 3,...,τ.
+Note that Sτ,1 =r(τ )
+1 . Then, it follows from the above recurrence relation that
+EG
+
+S2
+τ,t
+
+=
+tX
+j=1
+EG
+
+r(τ )
+j
+2
+, t= 1, 2,...,τ.
+By applying Eq (43) to the above equation, we obtain that
+EG
+
+S2
+τ,t
+
+≤C, t= 1, 2,...,τ,
+which completes the proof.
+In our proposed method, the importance sampling pdf of X at each step converges
+to g(x; ˜ρ), the pdf of the homogeneous Poisson point process with intensity ˜ ρ. Let
+ˆµ ˜ρ be the importance sampling estimator of µ when the importance sampling pdf
+of X is equal to g(x; ˜ρ). In this case, the unnormalized likelihood ratio is given by
+˜w(x) = h(x)/g(x; ˜ρ). The exact form of ˆ µ ˜ρ is given by substituting ˜w(x) for w(x)
+in Eq (17). An approximate variance of ˆ µ ˜ρ can be found from Eq (18). Since the
+unnormalized likelihood ratio is ˜w(x), the approximate variance of ˆµ ˜ρ is as follows:
+˜σ2 = E˜g[(K(X)−µ)2 ˜w2(X)]
+E˜g[ ˜w(X)]2 . (45)
+20
+We let
+˜σ2
+1 =E˜g[ ˜w(X)2]−E˜g[ ˜w(X)]2,
+˜σ12 =E˜g[K(X) ˜w2(X)]−E˜g[K(X) ˜w(X)]E˜g[ ˜w(X)],
+˜σ2
+2 =E˜g[K 2(X) ˜w2(X)]−E˜g[K(X) ˜w(X)]2.
+(46)
+Then, it can be easily checked that
+˜σ2 = µ2˜σ2
+1− 2µ˜σ12 + ˜σ2
+2
+E˜g[ ˜w(X)]2 . (47)
+Theorem 5. Suppose that
+R
+Sϕ4(ξ)dξ <∞, Eqi[K(X)i+1]<∞ for i = 1, 2, 3. Then,
+we have that for arbitrary constants a1,a 2,
+St,t→N(0,a 2
+1˜σ2
+1 + 2a1a2˜σ12 +a2
+2˜σ2
+2) indist,
+whereN(µ,σ 2) is the normal distribution with mean µ and variance σ2.
+Proof. It follows from the definition of ψK′
+t (X (t)
+i ) that for i = 1, 2,...,n t,
+EG[ψK′
+t (X (t)
+i )2|Ft−1]
+=EG[K′(X (t)
+i )2w2
+t (X (t)
+i )|Ft−1]−EG[K′(X (t)
+i )wt(X (t)
+i )|Ft−1]2.
+(48)
+We have that
+EG[K′(X (t)
+i )2w2
+t (X (t)
+i )|Ft−1] =EG
+"
+K′(X (t)
+i )2 h2(X (t)
+i )
+g2(X (t)
+i ; ˆρt−1)
+|Ft−1
+#
+=E
+
+K′(X)2 h2(X)
+g(X; ˆρt−1)
+
+.
+Sinceg(x;ρ) in Eq (20) is a continuous function of ρ, and ˆρt converges to ˜ρ almost
+surely, we have that for x∈N ,
+lim
+t→∞
+K′(x)2 h2(x)
+g(x; ˆρt−1) =K′(x)2 h2(x)
+g(x; ˜ρ), a.s.
+We defineζ(x) as follows:
+ζ(x) = exp
+
+Mρ|S| + 1
+mρ
+Z
+S
+ϕ2(ξ)dξ
+
+K′(x)2q1(x), x ∈N .
+Eq (38) shows that for t = 1, 2,...,
+K′(x)2 h2(x)
+g(x; ˆρt−1) <ζ (x), x ∈N .
+21
+We have from the assumptions of the theorem that both
+R
+Sϕ2(ξ)dξ and
+Eq1[K 2(X)] are finite, which gives that E[ζ(X)] is also finite. Then, it follows from
+the dominated convergence theorem that
+lim
+t→∞
+E
+
+K′(X)2 h2(X)
+g(X; ˆρt−1)
+
+=E
+
+K′(X)2 h2(X)
+g(X; ˜ρ)
+
+, a.s.,
+equivalently, fori = 1, 2,...,n t,
+lim
+t→∞
+EG[K′(X (t)
+i )2w2
+t (X (t)
+i )|Ft−1] =E˜g[K′(X)2 ˜w2(X)], a.s. (49)
+Note that EG[K′(X (t)
+i )wt(X (t)
+i )|Ft−1] =E[K′(X)h(X)], which gives that
+EG[K′(X (t)
+i )wt(X (t)
+i )|Ft−1] =E˜g[K′(X) ˜w(X)].
+Then, it follows from Eq (48) and the above two equations that
+lim
+t→∞
+EG[ψK′
+t (X (t)
+i )2|Ft−1] =E˜g[K′(X)2 ˜w2(X)]−E˜g[K′(X) ˜w(X)]2, a.s.
+Due to Eq (46), the right-hand side of the above equation is computed to be
+a2
+1˜σ2
+1 + 2a1a2˜σ12 +a2
+2˜σ2
+2. Then, we obtain that
+lim
+t→∞
+1
+t
+tX
+j=1
+EG[ψK′
+j (X (j))2|Fj−1] =a2
+1˜σ2
+1 + 2a1a2˜σ12 +a2
+2˜σ2
+2, a.s.
+Eqs (44) and (42) give that
+EG
+
+S2
+t,t
+Ft−1
+
+=
+tX
+j=1
+EG
+
+r(t)
+j
+2Ft−1
+
+= 1
+n(t)
+tX
+j=1
+njEG
+h
+ψK′
+j (X (j))2Fj−1
+i
+.
+Due to Etemadi (2006, Theorem 1), the above two equations imply that
+lim
+t→∞
+EG
+
+S2
+t,t
+Ft−1
+
+=a2
+1˜σ2
+1 + 2a1a2˜σ12 +a2
+2˜σ2
+2, a.s.
+Note that{Sτ,t,t = 1, 2,...,τ } is a square integrable martingale for givenτ. Then,
+by Hall et al. (2014, Corollary 3.1, p.58), it is sufficient to show that
+lim
+t→∞
+tX
+j=1
+EG
+
+r(t)
+j
+4Fj−1
+
+= 0,
+22
+for the completion of the proof. Since EG[ψK′
+j (X (j)
+i )|Fj−1] = 0, we have that
+tX
+j=1
+EG
+
+r(t)
+j
+4Fj−1
+
+= 1
+(n(t))2
+tX
+j=1
+EG
+
+
+ njX
+i=1
+ψK′
+j (X (j)
+i )
+!4Fj−1
+
+
+= 1
+(n(t))2
+tX
+j=1
+ 
+njEG
+h
+ψK′
+j (X (j))4Fj−1
+i
++ 6nj(nj− 1)EG
+h
+ψK′
+j (X (j))2Fj−1
+i2
+!
+.
+By applying the Jensen’s inequality to EG
+h
+ψK′
+j (X (j))2Fj−1
+i2
+, we obtain that
+tX
+j=1
+EG
+
+r(t)
+j
+4Fj−1
+
+< 6
+(n(t))2
+tX
+j=1
+n2
+jEG
+h
+ψK′
+j (X (j))4Fj−1
+i
+. (50)
+Eqs (36) and (37) imply that
+EG
+h
+ψK′
+j (X (j))4|Fj−1
+i
+=EG
+
+K′(X (j))wj(X (j))−E[K′(X)h(X)]
+4Fj−1
+
+≤ exp
+
+3Mρ|S| + 1
+m3ρ
+Z
+S
+ϕ4(ξ)dξ
+
+Eq3[K′(X)4]
++ 4
+exp
+
+2Mρ|S| + 1
+m2ρ
+Z
+S
+ϕ3(ξ)dξ
+
+Eq2[K′(X)3]E[K′(X)h(X)]
+
++ 6 exp
+
+Mρ|S| + 1
+mρ
+Z
+S
+ϕ2(ξ)dξ
+
+Eq1[K′(X)2]E[K′(X)h(X)]2
++ 5E[K′(X)h(X)]4.
+We denote by C the right hand side of the above inequality. Then, C is finite from
+the assumption of the theorem. Eq (50) gives that
+tX
+j=1
+EG
+
+r(t)
+j
+4Fj−1
+
+< 6C
+(n(t))2
+tX
+j=1
+n2
+j.
+Applying condition (30) to the above inequality completes the proof.
+Now, we obtain the asymptotic normality of {ˆµt,t = 1, 2,... } from Theorem 5 as
+follows.
+Corollary 1. Under the same conditions as Theorem 5, we have that
+p
+n(t)(ˆµt−µ)→N(0, ˜σ2), in dist.
+23
+Proof. Let K′(x) =K(x)−µ. Then, Ef[K′(X)] = 0, which gives that
+EG[K′(X (t))wt(X (t))|Ft−1] = 0.
+It follows from Eq (31) that
+ψK′
+t (X (t)
+i ) = (K(X (t)
+i )−µ)wt(X (t)
+i ).
+Theorem 5 says that
+1√
+n(t)
+tX
+j=1
+njX
+i=1
+(K(X (t)
+i )−µ)wt(X (t)
+i )→N(0,µ 2˜σ2
+1− 2µ˜σ12 + ˜σ2
+2), indist.
+Dividing the left hand side of the above equation by Pt
+j=1
+Pnj
+i=1wj(X (j)
+i )/n(t) gives√
+n(t)(ˆµt−µ). Eq (41) says that Pt
+j=1
+Pnj
+i=1wj(X (j)
+i )/n(t) converges to E˜g[ ˜w(X)]
+almost surely. We have from the Slutsky theorem that
+p
+n(t) (ˆµt−µ)→N
+
+0,µ2˜σ2
+1− 2µ˜σ12 + ˜σ2
+2
+E˜g[ ˜w(X)]2
+
+, indist.
+The variance of the above normal distribution is equal to ˜σ2 according to Eq (47).
+Given the importance samples of X generated until the t-th step in Algorithm 1,
+the approximate variance of ˆµt is computed from Eq (25). The following theorem
+shows that the approximate variance of ˆµt converges to ˜σ2 almost surely.
+Theorem 6. Under the same conditions as Theorem 5, we have that
+lim
+t→∞
+ˆσ2
+t = ˜σ2, a.s.,
+where ˆσ2
+t is the estimator in Eq (25).
+Proof. We defineθj(X (j)
+i ) as follows: for j = 1, 2,... , and i = 1, 2,...,n j,
+θj(X (j)
+i ) =K 2(X (j)
+i )w2
+j (X (j)
+i )−EG
+h
+K 2(X (j)
+i )w2
+j (X (j)
+i )
+Fj−1
+i
+.
+Let Θj =Pnj
+i=1θj(X (j)
+i ). Since EG[θj(X (j)
+i )|Fj−1] = 0, we obtain that
+EG[Θ2
+j|Fj−1] =
+njX
+i=1
+EG[θ2
+j (X (j)
+i )|Fj−1],
+≤njEG
+h
+K 4(X (j))w4
+j (X (j))|Fj−1
+i
+.
+24
+Eqs (36) and (37) show that
+EG
+h
+K 4(X (j))w4
+j (X (j)
+i )|Fj−1
+i
+< exp{3Mρ|S|}E
+
+K 4(X)
+Y
+ξ∈X
+ϕ4(ξ)
+m3ρ
+
+.
+The right hand side of the above inequality is equal to
+C = exp
+
+(3Mρ− 1)|S| + 1
+m3ρ
+Z
+S
+ϕ4(ξ)dξ
+
+Eq3[K 4(X)],
+which is finite from the assumption of the theorem. SinceEG[EG[Θ2
+j|Fj−1]] =EG
+
+Θ2
+j
+
+,
+we have that
+EG
+
+Θ2
+j
+
+<n jC.
+By applying Eq (40) to the above equation, we obtain that P∞
+j=1EG
+
+Θ2
+j
+
+/(n(j))2 is
+finite. Then, it follows from Feller (1991, Theorem 3, p.243) that
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+Θj = 0.
+We obtain from the above equation that
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njX
+i=1
+K 2(X (j)
+i )w2
+j (X (j)
+i )
+= lim
+t→∞
+1
+n(t)
+tX
+j=1
+njEG
+h
+K 2(X (j))w2
+j (X (j))
+Fj−1
+i
+a.s.,
+if the right hand side of the above equation exists. We have from Eq (49) that the
+right hand side of the above equation converges to E˜g[K 2(X) ˜w2(X)] almost surely
+(Etemadi (2006, Theorem 1)). Then, we obtain that
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njX
+i=1
+K 2(X (j)
+i )w2
+j (X (j)
+i ) =E˜g[K 2(X) ˜w2(X)], a.s.
+In obtaining the above convergence on the weighted average of {K 2(X (j)
+i ),j =
+1, 2,...,t,i = 1, 2,...,n j}, we have assumed that Eq3[K 4(X)] is finite. Due to the
+Liaponov inequality (Chung, 1974, p.50), Eq3[K 2(X)] is also finite. Thus, we can
+replace K 2(x) with K(x) in the above equation, which gives that
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njX
+i=1
+K(X (j)
+i )w2
+j (X (j)
+i ) =E˜g[K(X) ˜w2(X)], a.s.
+25
+Letting K(x) = 1 in the above equation gives that
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njX
+i=1
+w2
+j (X (j)
+i ) =E˜g[ ˜w2(X)], a.s.
+It follows from the above three equations and Theorem 2 that
+lim
+t→∞
+1
+n(t)
+tX
+j=1
+njX
+i=1
+(K(X (j)
+i )− ˆµt)2w2
+j (X (j)
+i ) =E˜g[(K(X)−µ)2 ˜w2(X)], a.s.
+Eq (41) and the above equation imply that
+lim
+t→∞
+ˆσ2
+t = E˜g[(K(X)−µ)2 ˜w2(X)]
+E˜g[ ˜w(X)]2 , a.s.
+The right hand side of the above equation is equal to ˜σ2 given in Eq (45).
+4.3 Stopping criteria
+Oh and Berger (1992) suggested that the iterative estimation of µ should continue
+until the following condition is satisfied: for a sufficiently small values of ϵ and α,
+Pr
+
+ˆµt−µ
+µ
+≤ϵ
+
+≥ 1−α.
+In other words, if the relative error of ˆµt is very small with a probability close to 1,
+then the iterative estimation of µ stops, and the current value of ˆµt is the estimate to
+µ. Due to the asymptotic normality of ˆµt given in Corollary 1, the above condition is
+converted to that
+˜σ2
+n(t)µ2≤
+ ϵ
+zα/2
+2
+.
+By substituting ˆµt forµ and substituting ˆσ2
+t for ˜σ2 in the above condition, we obtain
+the stopping criterion on ˆµt given in Algorithm 1. In the numerical study in Section 6,
+we set ϵ = 0.09 and α = 0.01, which implies that η1≈ (0.05)2.
+The stopping criterion obtained above is valid only when µt and ˆσ2
+t are sufficiently
+close to µ and ˜σ2, respectively. These events may occur when ˆρt is very close to ˜ρ. In
+order to check this, we add the following condition on ˆρt to the stopping criterion: for
+a small η2 > 0,
+|ˆρt− ˆρt−1|
+ˆρt−1
+≤η2. (51)
+If both the stopping conditions described above are satisfied, then we stop the iterative
+estimation of µ, and return the final value of ˆµt as the estimate to µ.
+26
+5 Estimation of the intensity of a stationary
+pairwise interaction point process
+In this section, we assume that X is a stationary pairwise interaction point process
+defined on Rd. Letν be the interaction function ofX, andβ be the activity parameter
+of it. We assume that ν(ξ,η ), ξ,η ∈ Rd, only depends on the distance between ξ and
+η, i.e. ν(ξ,η ) = ν(∥ξ−η∥). We also assume that X is repulsive with finite range of
+interactionr. Since the number of points of X is infinite on Rd, the pdf of X in Rd is
+not well defined (Chiu et al., 2013, Chapter 5.5.3). Instead, the Papangelou conditional
+intensity defined for a finite point process can be extended to X as follows (Møller
+and Waagepetersen, 2003):
+λ∗(x,ξ ) =β
+Y
+η∈x
+ν (∥η−ξ∥), x ∈N lf, ξ∈ Rd, (52)
+whereNlf is the set of locally finite point patterns on Rd, i.e. Nlf = {x ⊂ Rd :
+n(x∩B)<∞, for all bounded region B∈ Rd}. Since the range of interaction is finite,
+we can see that the value of λ∗(x,ξ ) is determined by the product of finite number of
+interactions and β.
+The intensity of X is defined as the expected number of points occurring per unit
+region, i.e. for any bounded region B∈ Rd,
+λ = the expected number of points of X on B
+|B| .
+Clearly, the value of λ does not depend on the choice of B due to the stationarity
+ofX. Let o be the origin, and B(o,r ) be the ball with center o and radius r. Then, it
+follows from Eq (52) that λ∗(X,o ) is represented as
+λ∗(X,o ) =β
+Y
+η∈X∩B(o,r)
+ν(∥η∥).
+Let f∗ be the pdf of X on B(o,r ). Then, λ is represented by Georggii-Nguyen-Zessin
+formula (Nguyen and Zessin, 1979; Georgii, 1976) as follows:
+λ =Ef∗[λ∗(X,o )]. (53)
+Bounded regions are considered as the domain of the process for the estimation of
+the summary characteristics such as the intensity and the higher order moments of
+X (Illian et al., 2008)). Suppose that XS =X∩S is a finite pairwise interaction point
+process defined on a bounded region S, and that XS has the same parameters as X.
+Then, the pdf of XS with respect to Poi(S, 1) is defined, for β >0, as
+f(x)∝βn(x) Y
+{ξ,η}⊆x
+ν(∥ξ−η∥), x ∈N . (54)
+27
+Then, the Papangelou conditional intensity of f is obtained as
+λf(x,ξ ) =β
+Y
+η∈x
+ν (∥η−ξ∥), x ∈N , ξ∈S\x.
+Since XS is repulsive, λf is bounded by β, which implies that f is locally stable.
+We chooseS such that it contains the origin, and that it is sufficiently large com-
+pared to B(o,r ). In this case, the Papangelou conditional intensity λ(XS,o ) at the
+origin may have the very similar distribution to λ(X,o ), which enables us to apply
+Eq (53) to XS instead of X for the estimation of λ. By letting K(x) = λf(x,o ) and
+µ =Ef[λf(X,o )], we can apply the proposed scheme as well as the MH and the CFTP
+methods to estimate the value of λ.
+6 Numerical results
+In this section, we estimate the intensity for a stationary Strauss point process, and
+estimate the expected number of points in a region for a non-stationary Strauss point
+process. We apply the estimators described in Sections 2 and 3; the MH estimator
+in Eq (14), the CFTP estimator in Eq (15), and the AIS estimator in Algorithm 1.
+The efficiency of the estimators is compared in terms of the simulation time to get the
+same level of accuracy. This type of efficiency can be measured by the product of the
+squared standard error of the estimate and the simulation time to get the estimate
+(Glynn and Whitt (1992), Sak and H¨ ormann (2012)). We denote it by time-variance.
+The smaller the time-variance of an estimator is, the more efficient the estimator is.
+For pair comparison of the time-variance performance, we implemented the algorithms
+of three estimation methods using R (2021) instead of using the built-in functions
+provided by the R package spatstat (2005).
+6.1 Estimation of the intensity of a stationary Strauss point
+process
+We consider a finite Strauss point process X on a bounded region S = [−0.5, 0.5]×
+[−0.5, 0.5]. The range of interaction of X is 0.1. Let o be the origin (0, 0). It follows
+from Eq (10) that if X does not contain o, the Papangelou conditional intensity of X
+is given by
+λf(x,o ) =βγ
+P
+ηI(∥η∥<0.1).
+By applying the three estimation methods withK(x) =λf(x,o ), we have estimated
+the value ofEf[λf(X,o )] with various values ofβ andγ. Then, these estimated values
+can be considered as the estimates to λ, the intensity of the stationary Strauss point
+process with the same parameters. The number of sample point processes generated
+for obtaining an estimate to λ was determined so that the estimate has a relative
+standard error of about 0 .05 or less, i.e. s.e./ ˆλ≤ 0.05. Table 1 shows ˆλMH, ˆλCFTP,
+and ˆλAIS for each pair of β and γ, and shows their standard errors. The simulation
+times in second and the numbers of samples generated to obtain ˆλMH, ˆλCFTP, and
+ˆλAIS, respectively, are also shown in Table 1.
+28
+Table 1: The estimate to λ, its standard error, and some metrics related to the
+corresponding simulation
+β = 50
+γ method ˆλ s.e simulation time number of samples time-variance t-v ratio
+0.2
+MH 23.6 1.2 292 313 408 2.1
+CFTP 23.6 1.2 3211 309 4510 23
+AIS 24.8 1.2 129 9.1 ×104 199 1
+0.4
+MH 25.6 1.3 176 184 286 22
+CFTP 28.0 1.4 1558 164 3034 237
+AIS 28.9 1.4 6.3 4000 13 1
+0.6
+MH 30.5 1.5 92 87 209 58
+CFTP 31.5 1.6 566 71 1387 385
+AIS 30.0 1.5 1.7 1100 3.6 1
+0.8
+MH 38.5 1.9 34 21 123 44
+CFTP 37.2 1.8 193 29 629 225
+AIS 39.3 1.4 1.4 900 2.8 1
+β = 100
+0.2
+MH 31.1 1.6 822 558 1981 0.01
+CFTP 35.4 1.8 4 .0 × 104 460 1 .3 × 105 0.7
+AIS 34.0 1.7 6 .2 × 104 5.2 × 106 1.8 × 105 1
+0.4
+MH 38.8 1.9 445 284 1670 5.1
+CFTP 39.9 2.0 1 .2 × 104 220 4 .8 × 104 147
+AIS 42.3 2.1 73 3 .3 × 104 328 1
+0.6
+MH 47.8 2.4 206 125 1172 25
+CFTP 47.2 2.3 3141 82 1 .7 × 104 368
+AIS 45.9 2.3 9.0 3500 48 1
+0.8
+MH 62.6 3.1 85 40 826 33
+CFTP 64.4 3.2 999 34 1 .0 × 105 410
+AIS 62.5 2.8 3.2 1200 25 1
+In order to get ˆλMH for a pair ofβ andγ, samples ofX were generated by applying
+the MH algorithm described in Section 2. We set the probability of a birth proposal
+to be 0.5. The generated samples of X follow the pdf f in Eq (9) asymptotically. We
+set the burn-in period to be 3000 and choose each 200-th sample of the remaining
+samples for obtaining ˆλMH. Let{Y1,Y 2,...,Y n} be the resulting samples. Then, the
+sample mean of{λ(Y1,o ),λ (Y2,o ),...,λ (Yn,o )} is the MH estimate to λ. In order to
+get ˆλCFTP for a pair of β and γ, we have generated independent random copies of
+X following the pdf f in Eq (9). In the generation of a sample point process of X,
+we applied the CFTP method. We computed the value of λ(X,o ) for each sample of
+X. The sample mean of λ(X,o )’s is the CFTP estimate to λ. In obtaining ˆλAIS, we
+have generated samples of homogeneous Poisson point processes with varying values
+of intensity using Algorithm 1. The number of samples in step t, t≥ 1, was set to be
+n1 = 500 in the first step, and n2 =n3 =... = 100 in the following steps. By setting
+η1 = 0.052, the relative standard error of ˆλAIS was intended to be 0.05 or less. We also
+set ˆρ0 =β/3,mρ = 10−10,Mρ = 1010, andη2 = 0.01. In the cases of (β,γ ) = (50, 0.8)
+and (β,γ ) = (100 , 0.8), the relative standard errors of ˆλAIS are less than 0.05, the
+required relative standard error. In the two cases, more iterations were required to
+satisfy the other stopping criterion that |ˆρt− ˆρt−1|/ˆρt−1 should be less than η2.
+29
+Table 1 shows that the three estimators give similar estimates to λ for all pairs of
+β and γ. Note that both ˆλMH and ˆλAIS are asymptotically unbiased estimator of λ,
+while ˆλCFTP is an unbiased estimator of λ for any finite number of samples. Since the
+relative standard error of ˆλCFTP is sufficiently small in this example, the estimated
+value of λ by the CFTP method may be close to the true value of λ for given pair of
+β andγ, which means that both ˆλMH and ˆλAIS gave reliable estimates of λ. Thus, we
+can see that we have done a sufficient number of iterations in obtaining ˆλMH, and that
+the estimator ˆλMH worked well. This conclusion also holds for the estimator ˆλAIS.
+Contrary to the fact that both the CFTP and the MH methods require approxi-
+mately the same number of samples to get an estimate to λ, the simulation time to
+get ˆλCFTP is much larger than that of ˆλMH. This is because it takes a very long time
+to generate a sample point process of X using the CFTP method compared to the
+MH method. We can see from Table 1 that it took a little time to get an estimate of λ
+using the AIS method except the cases of γ = 0.2. Since it takes a very little time to
+generate a homogeneous Poisson point process, the AIS method is much faster than
+the MH and the CFTP methods in generation of a sample point process. This explains
+why the simulation time of the AIS method is smaller than the other methods except
+the cases of γ = 0.2. In the cases of γ = 0.2, the required number of samples for
+ˆλAIS to have the desired relative standard error is huge and it took very long time to
+generate the required number of samples.
+We can see from Table 1 that the number of samples required for ˆλAIS is larger
+than those of ˆλMH and ˆλCFTP for all pairs ofβ andγ. This is due to the fact that in the
+AIS method the generated point processes do not follow the pdf f in Eq (9) but follow
+a homogeneous Poisson point process. This makes the variance of the likelihood ratio
+wt(X) for a generated sample X in Algorithm 1 be large, which results in the large
+value of ˆσ2
+t in Algorithm 1. By generating a large number of sample point processes,
+the AIS method reduces the relative standard error of ˆλAIS. The sample point pro-
+cesses generated by the CFTP method follow the pdf f exactly, and those of the MH
+method follow the pdf f asymptotically. This explains why the two methods require
+approximately the same number of samples to get the same relative standard error.
+Figure 2 illustrates realizations of Strauss point processes and homogeneous Pois-
+son point processes. The top-left panel of the figure shows a realization of the Strauss
+point process with β = 100 and γ = 0.2, and the top-right panel with β = 100 and
+γ = 0.8. The bottom-left panel of the figure shows a realization of the homogeneous
+Poisson point process with intensity 34, which is the estimated value ofλ of the Strauss
+point process shown on the top-left panel. This is the same with the bottom-right
+panel, where the intensity is 62. The estimated λ’s of the Strauss point processes on
+the top panels can be found in Table 1.
+We can see that that the left two panels of Figure 2 look very different from each
+other. It implies that for a point process X generated from Poi(S, 34), the likelihood
+ratio w(X) computed in Algorithm 1 for the estimation of λ of the Strauss point
+process shown on the top-left panel may be very small, which results in the degeneracy,
+and leads a large variance of ˆ µt. The right two panels of the figure look similar to
+each other. It implies that the degeneracy does not occur, and that the variance of the
+30
+(a)
+ (b)
+(c)
+ (d)
+Fig. 2: Plots of realizations for point processes on the unit square: (a) the stationary
+Strauss point process with β = 100 and γ = 0.2, (b) the stationary Strauss point
+process with β = 100 and γ = 0.8, (c) the Poisson point process with ρ = 34, and (d)
+the Poisson point process with ρ = 62.
+estimator will not take a large value. Thus, we needed much more importance samples
+of X in the former case in order to get the desired relative error.
+Table 1 shows the time-variances of ˆλMH, ˆλCFTP, and ˆλAIS. For the cases with
+(β,γ )̸= (100, 0.2), the table shows that the time-variances of ˆλAIS are 2 to 58 times
+smaller than those of ˆλMH, and they are 23 to 410 times smaller than those of ˆλCFTP.
+This means that the AIS method is 2 to 58 times faster than the MH method, and
+that it is 23 to 410 times faster than the CFTP method in terms of the simulation
+time to get the same level of accuracy. Thus, in the case of (β,γ )̸= (100, 0.2), the AIS
+method is more efficient than the CFTP and the MH methods.
+For the pair of ( β,γ ) = (100, 0.2), the ratio of the time-variance of ˆλMH to that
+of ˆλAIS is 0.01. Thus, the MH method is more efficient than the AIS method in
+these cases. The ratio of the time-variance of ˆλCFTP to that of ˆλAIS for the pair of
+(β,γ ) = (100, 0.2) is 0.7, which means that the CFTP method is more efficient than
+the AIS method in this pair. In conclusion, we can see that the AIS method is more
+efficient than the other methods in the case with large values of γ, and that the larger
+the value of γ is, the more efficient the AIS method is.
+31
+Table 2: The estimate to µ, its standard error, and some metrics related to the corre-
+sponding simulation
+β = 50
+γ method ˆµ s.e simulation time number of samples time-variance t-v ratio
+0.4
+MH 0.61 0.031 861 623 0.8 83
+CFTP 0.64 0.032 6556 622 6.6 678
+AIS 0.61 0.030 11 1 .8 × 104 0.01 1
+0.8
+MH 0.69 0.035 1001 596 1.2 891
+CFTP 0.72 0.036 5174 579 6.7 5028
+AIS 0.69 0.033 1.2 2000 0.001 1
+β = 100
+0.4
+MH 1.00 0.050 790 395 2.0 16
+CFTP 1.06 0.053 6 .3 × 105 420 1740 1 .4 × 104
+AIS 0.96 0.048 54 8 .8 × 104 0.12 1
+0.8
+MH 1.16 0.058 963 342 3.3 771
+CFTP 1.46 0.073 1 .4 × 105 261 723 1 .7 × 105
+AIS 1.20 0.059 1.2 1800 0.004 1
+6.2 Estimation of the expected number of points for an
+inhomogeneous Strauss point process
+In this subsection, we consider an inhomogeneous Strauss point process X on a
+bounded region S = [−0.5, 0.5]× [−0.5, 0.5]. The range of interaction of X is 0.1. The
+pdf of X is as follows: for β >0, 0 <γ < 1,
+f(x;β,γ )∝βn(x)γD(x)Y
+ξ∈x
+exp
+ 
+−αξ2
+2
+
+, x ∈N , (55)
+where D(x) = P
+{ξ,η}⊂xI(∥ ξ−η∥≤ 0.1) and ξ2 is the y-coordinate of a point ξ.
+Then, the Papangelou conditional intensity is given by
+λf(x,ξ ) =βγ
+P
+η∈xI(∥ξ−η∥≤0.1) exp
+ 
+−ξ2
+2
+
+, x ∈N , ξ∈S\x.
+Note that λf(x,ξ )≤ β. This implies that X is a locally stable point process. Let
+Sb ={ξ∈ S;|ξ2|≥ 0.49}. If we define K(x) = P
+ξ∈xI (ξ∈Sb), then the expected
+number of points of X belonging to Sb is represented as
+µ =Ef [K(X)].
+For various values ofβ andγ, we estimated the value of µ by the three estimation
+methods. As in the previous example, the number of sample point processes generated
+for obtaining an estimate was determined so that the estimate has a relative standard
+error of about 0.05 or less. In obtaining ˆµMH, ˆµCFTP, and ˆµAIS, we applied the same
+procedures as described in the previous subsection. Table 2 shows ˆ µMH, ˆµCFTP, and
+ˆµAIS for each pair of β and γ, and shows their standard errors. The simulation times
+and the numbers of samples generated to obtain ˆµMH, ˆµCFTP, and ˆµAIS, respectively,
+are also shown in Table 2.
+32
+In Table 2, we can see that the three estimators gave similar estimates to µ for
+all pairs of β and γ. In the same reason as in the previous subsection, ˆ µCFTP is a
+reliable estimate to µ, which implies that ˆµMH and ˆµAIS are also reliable estimates to
+µ. As expected, the number of samples for ˆµAIS is much larger than those of ˆµMH and
+ˆµCFTP for all pairs of β, γ. However, it took very little time to get a single estimate
+toµ using the AIS method compared to those of the CFTP and the MH methods for
+all pairs of β and γ.
+Table 2 shows that the time-variances of ˆµAIS are 16 to 891 times smaller than
+those of ˆµMH, and they are 678 to 1 .7× 105 times smaller than those of ˆµCFTP. In
+order to get an estimate with the same relative standard error, the AIS method is 16
+to 891 times faster than the MH method, and that it is 678 to 1 .7× 105 times faster
+than the CFTP method in terms of the simulation time. Thus, the AIS method is
+more efficient than both the CFTP and the MH methods.
+7 Conclusion
+For a statistic of a locally stable point process in a bounded region, we proposed an
+adaptive importance sampling for the estimation of the expected value of the statis-
+tic. In our proposal, the importance sampling point process is restricted to the family
+of homogeneous Poisson point processes. We applied the cross-entropy minimization
+method to find the optimal intensity of the importance point process. In the proposed
+scheme, the expected value of the statistic and the optimal intensity are iteratively
+estimated in an adaptive manner. We proved the consistency of the proposed esti-
+mator and the asymptotic normality of it. In the numerical study, we considered two
+examples, in which we applied the proposed scheme to the estimation of the intensity
+of a stationary Strauss point process, and to the estimation of the expected number
+of points belonging to a subregion for an inhomogeneous Strauss point process on a
+bounded region. Numerical results showed that the proposed estimator is more efficient
+than the CFTP and the MH estimators in terms of the time-variance performance.
+This is due to the fact that it takes very little time to generate a sample point process
+following a homogeneous Poisson point process. However, if the stochastic property
+of the nominal density is too different from that of the homogeneous Poisson point
+process, then the variance of likelihood ratio becomes large, which results in requir-
+ing a large number of samples in order to get a reliable estimate, and thus makes the
+proposed scheme inefficient.
+As for further research, we suggest to apply the sequential importance resampling
+when generating sample point processes. Through the method, we expect to generate
+sample point processes whose stochastic property is similar to that of the nominal
+point process, or to that of a desired distribution.
+Acknowledgements. This research was supported by the 2023 Research Fund
+of the University of Seoul. We would like to thank the three anonymous referees.
+Their comments on the first draft of the paper are critical and helpful for the great
+improvement in the representation of the paper.
+33
+References
+Anderssen, R., Baddeley, A., Hoog, F.d., Nair, G.: Numerical solution of an integral
+equation from point process theory. Journal of Integral Equations and Applications
+26(4), 437–452 (2014)
+Bugallo, M.F., Elvira, V., Martino, L., Luengo, D., Miguez, J., Djuric, P.M.: Adaptive
+importance sampling: The past, the present, and the future. IEEE Signal Processing
+Magazine 34(4), 60–79 (2017)
+Baddeley, A., Nair, G.: Fast approximation of the intensity of Gibbs point processes.
+Electronic Journal of Statistics 6, 1155–1169 (2012)
+Baddeley, A., Nair, G.: Poisson-saddlepoint approximation for Gibbs point pro-
+cesses with infinite-order interaction: in memory of Peter Hall. Journal of Applied
+Probability 54(4), 1008–1026 (2017)
+Baddeley, A., Rubak, E., Turner, R.: Spatial Point Patterns: Methodology and
+Applications with R. CRC press, Boca Raton (2016)
+Baddeley, A., Turner, R.: spatstat: An R package for analyzing spatial point patterns.
+Journal of Statistical Software 12(6), 1–42 (2005)
+Chung, K.L.: A Course in Probability Theory, 2nd edn. Academic Press, San Diego
+(1974)
+Chiu, S.N., Stoyan, D., Kendall, W.S., Mecke, J.: Stochastic Geometry and Its
+Applications, 3rd edn. John Wiley & Sons, Chichester (2013)
+De Boer, P.-T., Kroese, D.P., Mannor, S., Rubinstein, R.Y.: A tutorial on the cross-
+entropy method. Annals of Operations Research 134, 19–67 (2005)
+Etemadi, N.: Convergence of weighted averages of random variables revisited. Pro-
+ceedings of the American Mathematical Society 134, 2739–2744 (2006)
+Feller, W.: An Introduction to Probability Theory and Its Applications vol. 2, 2nd
+edn. John Wiley & Sons, New York (1991)
+Georgii, H.-O.: Canonical and grand canonical Gibbs states for continuum systems.
+Communications in Mathematical Physics 48(1), 31–51 (1976)
+Geweke, J.: Bayesian inference in econometric models using Monte Carlo integration.
+Econometrica: Journal of the Econometric Society 57(6), 1317–1339 (1989)
+Geyer, C.J., Møller, J.: Simulation procedures and likelihood inference for spatial point
+processes. Scandinavian Journal of Statistics 21(4), 359–373 (1994)
+34
+Glynn, P.W., Whitt, W.: The asymptotic efficiency of simulation estimators. Opera-
+tions Research 40(3), 505–520 (1992)
+Hesterberg, T.: Weighted average importance sampling and defensive mixture distri-
+butions. Technometrics 37(2), 185–194 (1995)
+Hall, P., Heyde, C.C.: Martingale Limit Theory and Its Application. Academic press,
+New York (2014)
+Illian, J., Penttinen, A., Stoyan, H., Stoyan, D.: Statistical Analysis and Modelling of
+Spatial Point Patterns. John Wiley & Sons, Chichester (2008)
+Kendall, W.S., Møller, J.: Perfect Metropolis-Hastings Simulation of Locally Sta-
+ble Point Processes. University of Aarhus. Centre for Mathematical Physics and
+Stochastics, Aarhus (2000)
+Kendall, W.S., Møller, J.: Perfect simulation using dominating processes on ordered
+spaces, with application to locally stable point processes. Advances in Applied
+Probability 32(3), 844–865 (2000)
+Kelly, F.P., Ripley, B.D.: A note on strauss’s model for clustering. Biometrika 63(2),
+357–360 (1976)
+Møller, J.: Markov chain Monte Carlo and spatial point processes. In: Stochastic
+Geometry, pp. 141–172. Chapman & Hall/CRC Press, Boca Raton (1999)
+Møller, J., Waagepetersen, R.P.: Statistical Inference and Simulation for Spatial Point
+Processes. CRC Press, Boca Raton (2003)
+Nguyen, X.X., Zessin, H.: Ergodic theorems for spatial processes. Zeitschrift f¨ ur
+Wahrscheinlichkeitstheorie und verwandte Gebiete 48(2), 133–158 (1979)
+Oh, M.-S., Berger, J.O.: Adaptive importance sampling in monte carlo integration.
+Journal of Statistical Computation and Simulation 41(3-4), 143–168 (1992)
+Owen, A.B.: Monte Carlo Theory, Methods and Examples, (2013). https://artowen.
+su.domains/mc/
+Propp, J.G., Wilson, D.B.: Exact sampling with coupled Markov chains and appli-
+cations to statistical mechanics. Random Structures & Algorithms 9(1-2), 223–252
+(1996)
+R Core Team: R: A Language and Environment for Statistical Computing. R Foun-
+dation for Statistical Computing, Vienna (2021). R Foundation for Statistical
+Computing. https://www.R-project.org/
+Robert, C.P., Casella, G.: Monte Carlo Statistical Methods, 2nd edn. Springer, New
+York (1999)
+35
+Ripley, B.D.: Modelling spatial patterns. Journal of the Royal Statistical Society:
+Series B (Methodological) 39(2), 172–192 (1977)
+Rubinstein, R.Y., Kroese, D.P.: Simulation and the Monte Carlo Method, 3rd edn.
+John Wiley & Sons, Hoboken (2016)
+Sak, H., H¨ ormann, W.: Fast simulations in credit risk. Quantitative Finance 12(10),
+1557–1569 (2012)
+Strauss, D.J.: A model for clustering. Biometrika 62(2), 467–475 (1975)
+36

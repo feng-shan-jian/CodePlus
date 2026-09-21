@@ -1,0 +1,296 @@
+{
+  "id": "rag-scenarios-v1-openrag",
+  "version": "1.0.0",
+  "format_version": 1,
+  "status": "curated_candidate",
+  "origin": "Open-RAG-Benchmark",
+  "protocol": {
+    "top_k": 5,
+    "scoring": "source-content-v1",
+    "scope": "corpus_retrieval",
+    "answer_model": "not_called",
+    "followup_query": "sessions_separate"
+  },
+  "documents": [
+    {
+      "id": "2408.07372v2",
+      "file": "2408.07372v2.pdf",
+      "path": "corpus/2408.07372v2.pdf",
+      "sha256": "3f66a93eafbf78a1653e8e75ce8625ec5aa664209fcfaa4c4de3930cd67abc87",
+      "text_path": "text/2408.07372v2.txt",
+      "text_sha256": "bec45c985836f71a198ce825e60adcadb598f718dd724ba6f0f8d345120847e1",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2408.07372v2",
+        "title": "An Adaptive Importance Sampling for Locally Stable Point Processes",
+        "upstream_section_id": 0
+      }
+    },
+    {
+      "id": "2411.08777v2",
+      "file": "2411.08777v2.pdf",
+      "path": "corpus/2411.08777v2.pdf",
+      "sha256": "c8463c8f1f7ea88d6a5c681c4b2ea37ec0c45bffccbcd353b975f4e2d17d489a",
+      "text_path": "text/2411.08777v2.txt",
+      "text_sha256": "7d76bf0b823b215fd48fa89cff9e5dec8da1e2dff265d746040993389ef2ed37",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2411.08777v2",
+        "title": "LUDO: Low-Latency Understanding of Deformable Objects using Point Cloud\n  Occupancy Functions",
+        "upstream_section_id": 29
+      }
+    },
+    {
+      "id": "2409.16507v2",
+      "file": "2409.16507v2.pdf",
+      "path": "corpus/2409.16507v2.pdf",
+      "sha256": "11c800b0799bf3678ea14df460557a3c5d5fa5dd5b99f1bc02a1c602e1b8fb7a",
+      "text_path": "text/2409.16507v2.txt",
+      "text_sha256": "0dc679b43d3dc44bf53c97e65a43af4b739a14d72c3a114459a821ac2b668928",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2409.16507v2",
+        "title": "Center-fixing of tropical cyclones using uncertainty-aware deep learning\n  applied to high-temporal-resolution geostationary satellite imagery",
+        "upstream_section_id": 5
+      }
+    },
+    {
+      "id": "2407.16566v5",
+      "file": "2407.16566v5.pdf",
+      "path": "corpus/2407.16566v5.pdf",
+      "sha256": "ca7248e286fc8ef552b668ec0c4635e0e88161087faddab346c99e065665007d",
+      "text_path": "text/2407.16566v5.txt",
+      "text_sha256": "31d2f95c39bd57fdc1a0397510b04fb270850dfd2028b01116af019f7cf6d3f4",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2407.16566v5",
+        "title": "Alleviating Non-identifiability: a High-fidelity Calibration Objective\n  for Financial Market Simulation with Multivariate Time Series Data",
+        "upstream_section_id": 4
+      }
+    },
+    {
+      "id": "2408.13000v2",
+      "file": "2408.13000v2.pdf",
+      "path": "corpus/2408.13000v2.pdf",
+      "sha256": "7163c565edb679e1c7147a989450381cb069b3198af835a2696cb5687495dfe9",
+      "text_path": "text/2408.13000v2.txt",
+      "text_sha256": "295513df1109c6e5e71a4524cbcd80407b3682f6d88a9512b2208e96ff14b69d",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2408.13000v2",
+        "title": "Air-HOLP: Adaptive Regularized Feature Screening for High Dimensional\n  Correlated Data",
+        "upstream_section_id": 9
+      }
+    },
+    {
+      "id": "2408.09876v2",
+      "file": "2408.09876v2.pdf",
+      "path": "corpus/2408.09876v2.pdf",
+      "sha256": "f3e4a124eb914273beb4e5b39899d958c51d0a97d06807d4785f119e7ca95cd2",
+      "text_path": "text/2408.09876v2.txt",
+      "text_sha256": "927c83c18bf56586084e88845c5f0c9fd8f189e79b53a3753bfff3ce2a35cf99",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2408.09876v2",
+        "title": "Improving Genomic Prediction using High-dimensional Secondary\n  Phenotypes: the Genetic Latent Factor Approach",
+        "upstream_section_id": 0
+      }
+    },
+    {
+      "id": "2405.17070v2",
+      "file": "2405.17070v2.pdf",
+      "path": "corpus/2405.17070v2.pdf",
+      "sha256": "c4775c4e01c0eaf60fd5619356e586e1a2b92a1369190bb24bee10b82beb330f",
+      "text_path": "text/2405.17070v2.txt",
+      "text_sha256": "073015c30c7292fa9d0950a48934f831a9e77f839b2e497183465a7b261475bb",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2405.17070v2",
+        "title": "Efficient mid-term forecasting of hourly electricity load using\n  generalized additive models",
+        "upstream_section_id": 0
+      }
+    },
+    {
+      "id": "2409.15621v2",
+      "file": "2409.15621v2.pdf",
+      "path": "corpus/2409.15621v2.pdf",
+      "sha256": "a1087f676a19f310aad45648d98c212b3dfb8089c737d514d2d6c310f450643e",
+      "text_path": "text/2409.15621v2.txt",
+      "text_sha256": "1f5b05c8b965b8ebd34410ae3d6801b01a6399d5c3d097a64b33756ef0940494",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2409.15621v2",
+        "title": "Three-dimensional varying-order NURBS discretization method for enhanced\n  IGA of large deformation frictional contact problems",
+        "upstream_section_id": 12
+      }
+    },
+    {
+      "id": "2410.11074v3",
+      "file": "2410.11074v3.pdf",
+      "path": "corpus/2410.11074v3.pdf",
+      "sha256": "e5d68583face9c11d5be4d9bbef01fa222569d3698a6f4f9baf83e8991c10cc4",
+      "text_path": "text/2410.11074v3.txt",
+      "text_sha256": "3e19820b28a73d9b0c6710861371e978a77ab48b86e5f183fd19d3c890b0031c",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2410.11074v3",
+        "title": "Phenomenology of the semileptonic $Σ_{b}^{*0}\\,\\rightarrow\\,\n  Σ_{c}^{+}\\,\\ell\\,\\barν_{\\ell}$ transition within QCD sum rules",
+        "upstream_section_id": 1
+      }
+    },
+    {
+      "id": "2407.02511v2",
+      "file": "2407.02511v2.pdf",
+      "path": "corpus/2407.02511v2.pdf",
+      "sha256": "9b38a0e695e6f53f62902b6019ba19641beeacdf161778f49863d4c0f679cc14",
+      "text_path": "text/2407.02511v2.txt",
+      "text_sha256": "cb7d2e2e5a0ed801f1409f65106dd6d20ad117d6a58173842273faeef20926af",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2407.02511v2",
+        "title": "LLM-A*: Large Language Model Enhanced Incremental Heuristic Search on\n  Path Planning",
+        "upstream_section_id": 11
+      }
+    },
+    {
+      "id": "2412.11355v2",
+      "file": "2412.11355v2.pdf",
+      "path": "corpus/2412.11355v2.pdf",
+      "sha256": "6448f985dd73d76cdda5200627ab31cada347a865396be0bf283f0ed82570fd9",
+      "text_path": "text/2412.11355v2.txt",
+      "text_sha256": "1662c60452c3d45f19b5088d919e8f5ad12ab0e249ec4a425fada2582733bde6",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2412.11355v2",
+        "title": "Chopin: An Open Source R-language Tool to Support Spatial Analysis on\n  Parallelizable Infrastructure",
+        "upstream_section_id": 16
+      }
+    },
+    {
+      "id": "2404.18137v2",
+      "file": "2404.18137v2.pdf",
+      "path": "corpus/2404.18137v2.pdf",
+      "sha256": "8d8df18ca888886dd88e9329b0e3684ded5cf4cf30ecdfb4f2fb1695d285e9a5",
+      "text_path": "text/2404.18137v2.txt",
+      "text_sha256": "a4e9348f7a79eb9a99a85dda321ccdfc71c2adf00edf8d72ca3ad25afe316a17",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2404.18137v2",
+        "title": "The role of substitution elasticity in Domar aggregation",
+        "upstream_section_id": 0
+      }
+    },
+    {
+      "id": "2412.08927v2",
+      "file": "2412.08927v2.pdf",
+      "path": "corpus/2412.08927v2.pdf",
+      "sha256": "b256962e55701aabaa7b2890ba94c7de32195ad6fc81c72702f515c24ba66688",
+      "text_path": "text/2412.08927v2.txt",
+      "text_sha256": "dee521556aaa3d71da1a37babca75e9ac873d60c23f0fdfb6c5c8baefaf1f08c",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2412.08927v2",
+        "title": "Estimating excess mortality during the Covid-19 pandemic in Aotearoa New\n  Zealand",
+        "upstream_section_id": 2
+      }
+    },
+    {
+      "id": "2412.06360v4",
+      "file": "2412.06360v4.pdf",
+      "path": "corpus/2412.06360v4.pdf",
+      "sha256": "133927dc5add2eec0e29935bdb27bd3995f31c16b064fbd5baa2bda1be384c4c",
+      "text_path": "text/2412.06360v4.txt",
+      "text_sha256": "81590894d39641dc139d5d72e8743ee4a1beb73cde4f8071cc1b4eaf4d89f1f9",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2412.06360v4",
+        "title": "India's residential space cooling transition: Decarbonization ambitions\n  since the turn of millennium",
+        "upstream_section_id": 3
+      }
+    },
+    {
+      "id": "2501.00398v2",
+      "file": "2501.00398v2.pdf",
+      "path": "corpus/2501.00398v2.pdf",
+      "sha256": "9c49a3ebc2d770b34885042f540af52e996ceee5345386edf73646aeefc6c21a",
+      "text_path": "text/2501.00398v2.txt",
+      "text_sha256": "89fe85695d75608926b024f27317821078ec85b74baf3c11b13c9317a57e483f",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2501.00398v2",
+        "title": "TSPE: Task-Specific Prompt Ensemble for Improved Zero-Shot Audio\n  Classification",
+        "upstream_section_id": 7
+      }
+    },
+    {
+      "id": "2407.02507v2",
+      "file": "2407.02507v2.pdf",
+      "path": "corpus/2407.02507v2.pdf",
+      "sha256": "7266a611636d01909bbaee4f66bd174f6faaa856cc7f4b6fd708d7cf159d6546",
+      "text_path": "text/2407.02507v2.txt",
+      "text_sha256": "25bfa8cd5252e2263ff883a45b2e8dbd7c44cc2e62ae6dd55666c6f1d8ac4909",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2407.02507v2",
+        "title": "On foundations for deductive mathematics",
+        "upstream_section_id": 2
+      }
+    },
+    {
+      "id": "2412.13892v2",
+      "file": "2412.13892v2.pdf",
+      "path": "corpus/2412.13892v2.pdf",
+      "sha256": "26c22b5c6619ca397012da8a7c7c2daf68b8502a7d3867be7a356160907a95c9",
+      "text_path": "text/2412.13892v2.txt",
+      "text_sha256": "afc78db3801db5b59f7dab72678b10c9c5b0eb5ec993e5863bc67e2c84efb024",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2412.13892v2",
+        "title": "Minimum Data Rate Maximization for Uplink Pinching-Antenna Systems",
+        "upstream_section_id": 0
+      }
+    },
+    {
+      "id": "2408.13427v2",
+      "file": "2408.13427v2.pdf",
+      "path": "corpus/2408.13427v2.pdf",
+      "sha256": "904da88aa51a4af3e1e1a2d0bb73d5648c727bc38fa701d8395fb9c552c0e63d",
+      "text_path": "text/2408.13427v2.txt",
+      "text_sha256": "ee10d76f29fe764ce8a91a8972ad42cb700e7b3e3caece3d51ac6e2fa2d61421",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2408.13427v2",
+        "title": "Evidence of Dark Energy Prior to its Discovery",
+        "upstream_section_id": 7
+      }
+    },
+    {
+      "id": "2410.05454v2",
+      "file": "2410.05454v2.pdf",
+      "path": "corpus/2410.05454v2.pdf",
+      "sha256": "1b7d15ad1c57ca307531f9c68315092a9d014978a534089979716f8fa6faf29e",
+      "text_path": "text/2410.05454v2.txt",
+      "text_sha256": "392a56057aa6b079824f7f322ed853d837b8d2f3e7a3c75721791413c53c50e3",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2410.05454v2",
+        "title": "Meta-Dynamical State Space Models for Integrative Neural Data Analysis",
+        "upstream_section_id": 16
+      }
+    },
+    {
+      "id": "2408.09838v2",
+      "file": "2408.09838v2.pdf",
+      "path": "corpus/2408.09838v2.pdf",
+      "sha256": "8f73f7911269486fd9a75f5525596bfcb5468542a83bc422ee5dbd87401314bb",
+      "text_path": "text/2408.09838v2.txt",
+      "text_sha256": "ab6ab838da08dc8e5c408dba5900764293fc060abb5896d386f8d50369cd0876",
+      "origin": "Open-RAG-Benchmark",
+      "provenance": {
+        "url": "https://arxiv.org/pdf/2408.09838v2",
+        "title": "Mitigating the Stability-Plasticity Dilemma in Adaptive Train Scheduling\n  with Curriculum-Driven Continual DQN Expansion",
+        "upstream_section_id": 19
+      }
+    }
+  ]
+}

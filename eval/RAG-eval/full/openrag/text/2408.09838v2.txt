@@ -1,0 +1,862 @@
+Preprint.
+MITIGATING THE STABILITY -PLASTICITY DILEMMA IN
+ADAPTIVE TRAIN SCHEDULING WITH CURRICULUM -D RIVEN
+CONTINUAL DQN E XPANSION
+Achref Jaziri1∗, Etienne K¨unzel1∗, Visvanathan Ramesh1,2
+1 Department of Computer Science and Mathematics, Goethe University,
+2 HessianAI, Frankfurt am Main, Germany
+{jaziri, vramesh}@em.uni-frankfurt.de
+ABSTRACT
+A continual learning agent builds on previous experiences to develop increasingly complex behav-
+iors by adapting to non-stationary and dynamic environments while preserving previously acquired
+knowledge. However, scaling these systems presents significant challenges, particularly in balancing
+the preservation of previous policies with the adaptation of new ones to current environments. This
+balance, known as the stability-plasticity dilemma, is especially pronounced in complex multi-agent
+domains such as the train scheduling problem, where environmental and agent behaviors are con-
+stantly changing, and the search space is vast. In this work, we propose addressing these challenges
+in the train scheduling problem using curriculum learning. We design a curriculum with adjacent
+skills that build on each other to improve generalization performance. Introducing a curriculum
+with distinct tasks introduces non-stationarity, which we address by proposing a new algorithm:
+Continual Deep Q-Network (DQN) Expansion (CDE). Our approach dynamically generates and ad-
+justs Q-function subspaces to handle environmental changes and task requirements. CDE mitigates
+catastrophic forgetting through EWC while ensuring high plasticity using adaptive rational activa-
+tion functions. Experimental results demonstrate significant improvements in learning efficiency
+and adaptability compared to RL baselines and other adapted methods for continual learning, high-
+lighting the potential of our method in managing the stability-plasticity dilemma in the adaptive train
+scheduling setting.
+1 I NTRODUCTION
+Continual learning agents, capable of acquiring new knowledge and skills over time, are essential for environments
+that constantly change Abel et al. (2024); Khetarpal et al. (2022). One central challenge for continual learning systems
+is balancing the retention of previously learned knowledge with the acquisition of new knowledge—a concept known
+as the stability-plasticity dilemma Schwarz et al. (2018). This dilemma is relevant in many application domains such
+as the train scheduling problem (TSP), where environmental conditions (i.e. routes, schedules) and agent behaviors
+(i.e. train characteristics) are constantly changing, and the search space is vast. TSP is inherently complex. Even in
+simplified scenarios, agents often require considerable time to converge to optimal solutions Toth & Vigo (2002).
+One approach to address the complexity of TSP is curriculum learning, which introduces a sequence of environments
+that gradually increase in difficulty, allowing the agent to build upon previously acquired skills Narvekar et al. (2020).
+This approach mirrors how humans learn, starting with simpler concepts and progressively tackling more complex
+ones. However, curriculum learning introduces its own set of challenges regarding non-stationary learning.
+Various continual reinforcement learning (CRL) approaches have been proposed to mitigate catastrophic forgetting,
+improve plasticity, facilitate transfer learning across new tasks, and scale effectively to handle multiple tasks. Current
+methods can be categorized into fixed-size approaches, which do not change the size of the network for new tasks
+(i.e., regularization-based approaches or optimization-based methods), and network expansion approaches. While
+network expansion approaches are more likely to achieve better performance, they may suffer from scaling issues as
+the number of tasks increases Wang et al. (2023).
+To address this, recent studies in the mode connectivity literature have investigated whether multitask and continual
+solutions are connected by a manifold of low error. Results show that different optima obtained by gradient-based
+∗ Equal contribution.
+1
+arXiv:2408.09838v2  [cs.LG]  5 Mar 2025
+Preprint.
+Figure 1: Diagram illustrating the Continual DQN Expansion Algorithm. When a new task or a change in the en-
+vironment occurs, a new subspace with anchor θ is initialized. The new Q-function is trained with adaptive rational
+activation functions (θHP
+i ) to enhance plasticity and achieve faster convergence on the new task. Simultaneously, the
+previous subspaces are further adapted on the new task by training Q-functions ( θCF
+i ) using elastic weight consoli-
+dation (EWC) regularization to mitigate catastrophic forgetting on previous tasks. Depending on the performance of
+different subspaces, the subspace set is either extended or pruned.
+optimization methods are connected by simple paths of non-increasing loss Mirzadeh et al. (2020). Inspired by this,
+various works have demonstrated how to efficiently build simplicial complexes for fast ensembling and adaptively
+grow the subspace as the system encounters new tasks. This can be leveraged to develop neural systems that scale
+better while maintaining good performance across multiple tasks Benton et al. (2021); Gaya et al. (2022).
+While previous works focused on continual learning with distinct tasks, a curriculum does not involve distinct tasks
+with clear boundaries but rather a series of adjacent skills that build on top of each other, such as pathfinding, dealing
+with unexpected malfunctions, or avoiding deadlocks in TSP. This introduces a unique type of non-stationarity, where
+agents are learning interrelated skills. The challenge lies in effectively sequencing these skills to maximize learning
+efficiency and performance while also addressing the stability-plasticity dilemma for the learning agents.
+In this work, we propose a well-structured curriculum for the train scheduling problem, decomposing it into vari-
+ous skills like pathfinding, malfunction handling, and deadlock avoidance. Furthermore, we investigate different ap-
+proaches to leverage this curriculum and introduce the Continual Deep Q-Network Expansion (CDE) algorithm. The
+core idea of our CDE approach is to dynamically expand, adjust, and prune Q-function subspaces based on current task
+changes in the environment. The decision-making process within CDE involves determining whether a pre-existing
+Q-function subspace is effective for a new task and thus adapting it, or if a new subspace needs to be created for faster
+learning. The pre-existing Q-function subspaces are adapted to new tasks with elastic weight consolidation to avoid
+catastrophic forgetting. while the newly created subspaces are trained with adaptive rational activation functions for
+higher plasticity. In the pruning step, we retain only the best Q-networks to maintain sublinear scaling. Experimen-
+tal results demonstrate significant improvements compared to other approaches, highlighting the potential of CDE to
+balance stability and plasticity, leading to more efficient and adaptable learning1.
+2 R ELATED WORK
+Continual Learning Traditional RL methods, which assume static environments, often lead to models prone to over-
+fitting and lacking adaptability to new, varying contexts. Continual RL (CRL) aims to develop adaptive models that
+learn from a continuous data stream and evolve across multiple tasks by leveraging accumulated knowledge, thereby
+overcoming the limitations of static-task assumptions Abel et al. (2024).
+Addressing Catastrophic Forgetting: Efforts such as those by Rusu et al. (2016), Cheung et al. (2019), and
+Wortsman et al. (2020) aim to preserve model parameters from previously learned tasks but often do not scale
+well with an increasing number of tasks mainly due to substantial computational and memory requirements. Other
+1A link to the code will be added in the camera ready version.
+2
+Preprint.
+(a)
+ (b)
+ (c)
+ (d)
+Figure 2: Illustration of the curriculum designed for TSP through distinct environments. (a) Pathfinding Environ-
+ment: A grid where a single agent navigates from start to destination, emphasizing efficient route planning. (b)
+Malfunctions and Train Speeds Environment: A setting where agents deal with random malfunctions and varying
+train speeds, requiring adaptive responses and strategic planning to minimize delays. (c) Deadlocks Environment:
+Scenarios focusing on common deadlock situations, gradually increasing in complexity with more agents and fewer
+switches, to train agents in avoiding gridlock. (d) Full Task Evaluation Environment: An integrated setting com-
+bining pathfinding, malfunctions, train speeds, and deadlock scenarios to evaluate the agents. The curriculum envi-
+ronments (a-c) are available in multiple sizes to provide diverse training scenarios, as detailed in the appendix. This
+curriculum structure improves learning efficiency and performance on the full task evaluation environment (d).
+strategies, like maintaining a memory buffer of prior experiences Lopez-Paz & Ranzato (2017); Isele & Cosgun
+(2018); Caccia et al. (2020), also face scalability issues as memory costs increase with task complexity and number.
+Methods enhancing transfer to new tasks, such as fine-tuning, are scalable and adaptable but prone to catastrophic
+forgetting. Elastic weight consolidation Kirkpatrick et al. (2017) addresses this by limiting weight modifications,
+although it may reduce the network plasticity as the number of tasks increases. Knowledge distillation techniques, as
+discussed in Rusu et al. (2015); Li & Hoiem (2017); Rolnick et al. (2019), and methods leveraging similarities across
+tasks Xu & Zhu (2018); Pasunuru & Bansal (2019), have been utilized to improve CRL performance. Meta-learning
+and generative models also enhance adaptability and learning efficiency Javed & White (2019); Beaulieu et al. (2020);
+Shin et al. (2017). However, practical application challenges persist, as indicated by Lee et al. (2020), who propose
+an iteratively expanding network model primarily for supervised learning without distinct task boundaries.
+Addressing Neural Plasticity: While addressing catastrophic forgetting is essential for non-stationary agents, exten-
+sive neural plasticity is required due to inherent distribution shifts during agent training, such as input and output drifts
+Mnih et al. (2015). These shifts are exemplified by various environment dynamics as agents adapt to changing states
+and rewards. Recent studies have explored approaches to increase plasticity and allow faster adaptation to changing
+environments, such as concatenated ReLU Abbas et al. (2023) and the introduction of new trainable weights Nikishin
+et al. (2024). Additionally, techniques like continual backpropagation Dohare et al. (2023) and dynamic hyperparam-
+eter and activation function adaptation Loni et al. (2023); Delfosse et al. (2021) highlight the potential of dynamically
+altering the weight optimization landscape.
+Curriculum Learning Curriculum learning arranges training data in gradually increasing difficulty to introduce con-
+cepts incrementally and improve learning outcomes Bengio et al. (2009). It has demonstrated enhanced sample ef-
+ficiency and convergence across various machine learning applications Soviany et al. (2022); Wang et al. (2021). In
+reinforcement learning (RL), curriculum learning can boost efficiency and performance Narvekar et al. (2020). Early
+RL curricula were manually designed by domain experts, for instance in Stanley & Miikkulainen (2005), where video
+game agents were trained via expert-crafted task sequences.
+Recent work has shifted toward automated curriculum generation. For example, Narvekar & Stone (2019) introduced
+a Curriculum Markov Decision Process that selects subsequent tasks based on learning progress. Other approaches
+cast curriculum sequencing as a combinatorial optimization problem, using metaheuristics like beam search or genetic
+algorithms to identify optimal task orders Foglino et al. (2019a;b). Florensa et al. (2017) proposed “reverse” training,
+starting from goal states and progressively moving to initial states farther from the goal, thus automatically adapting
+the curriculum to the agent’s performance. Nevertheless, learning a separate curriculum policy for each agent and
+task is computationally expensive Narvekar & Stone (2019), and catastrophic forgetting can occur when transitioning
+between tasks. Furthermore, when tasks differ in state and action spaces, transferring high-level knowledge (e.g.,
+partial policies or options) becomes critical Yang & Asada (1996); Zimmer et al. (2018).
+3
+Preprint.
+3 T RAIN SCHEDULING PROBLEM
+3.1 M ATHEMATICAL FORMULATION
+TSP is an NP-Hard optimization problem focused on the optimal assignment of trains to routes and their scheduling
+across a railway network while adhering to diverse constraints Caprara et al. (2002). It requires dynamic replanning to
+adapt to unforeseen disruptions. This issue integrates aspects of Multi-Agent Pathfinding and the Vehicle Rescheduling
+Problem Cai & Goh (1994).
+Consider a network of yards indexed from0 ton. Each trainTk is assigned a route (i,j ) wherei andj are yards in the
+network. Trains have varying speeds and malfunction rates. In the case of a malfunction, a train is halted for a certain
+number of time steps.
+GivenK (number of trains),N ={1,...,n } (set of yards),Sk (stop-schedule for traink),vk (speed of traink),mk
+(malfunction rate of train k),hk (time steps train k is halted in case of a malfunction), dij (distance between yards i
+andj),xk
+ij (binary variable indicating if traink travels directly from yardi to yardj), the objective is to minimize the
+total travel time for all trains, including delays due to malfunctions. The mathematical formulation is as follows:
+min
+KX
+k=1
+X
+(i,j)∈Sk
+dij
+vk
++mkhk
+
+xk
+ij
+subject to:
+X
+j∈N
+xk
+ij = 1 ∀k = 1,...,K, ∀i∈N
+X
+i∈N
+xk
+ij = 1 ∀k = 1,...,K, ∀j∈N
+X
+i∈N
+xk
+ij≤ 1 ∀k = 1,...,K, ∀j∈N
+(1)
+The first two constraints ensure that each train must have a complete route from a source yard to a destination yard.
+The third constraint ensures that a train cannot visit a yard more than once.
+Traditionally, Operations Research (OR) techniques are employed to tackle the TSP, leveraging mathematical model-
+ing and optimization to systematically improve train path scheduling Lusby et al. (2011); Dong et al. (2020). These
+methods break down the TSP into a graph optimization problem to identify non-intersecting routes for trains in time
+and space. While OR methods provide structured solutions, they face notable limitations, particularly in computational
+efficiency and adaptability. Computing exact solutions incurs high overhead, and frequent rescheduling is required in
+this domain to accommodate disruptions such as infrastructure failures, or train delays Khadilkar (2018).
+3.2 F LATLAND SIMULATOR
+The Flatland Simulator is a two-dimensional simplified grid environment that allows for faster and diverse experimen-
+tation in TSP. Flatland provides an easy-to-use interface to test novel approaches for the TSP Mohanty et al. (2020).
+Agents are tasked with efficiently navigating trains from start to finish. The score is computed based on the successful
+routing of trains to their destinations and the completion of scenarios, where all trains within an environment reach
+their respective endpoints.
+4 C URRICULUM DESIGN FOR THE TRAIN SCHEDULING PROBLEM
+To construct an effective curriculum, it is essential to consider task generation, sequencing, and transfer learning.
+A well-designed curriculum improves both accuracy and speed by breaking down the train scheduling problem into
+distinct subproblems enabling better performance and faster convergence. Our approach specifically targets four key
+challenges essential for TSP:
+• Pathfinding: An agent is expected to navigate the network efficiently from start to destination without un-
+necessary detours, recognizing that optimal pathfinding is foundational to handling complex scheduling sce-
+narios.
+4
+Preprint.
+• Train-Speed Differences: An agent should also address conflicts arising from varying train speeds. Slower
+trains can hinder the progress of faster ones, necessitating strategic planning to mitigate such issues.
+• Malfunctions: An agent should be able to handle random malfunctions, necessitating adaptive responses to
+avoid delays.
+• Deadlocks: It is critical that an agent efficiently handles various types of deadlocks (common, cyclic, and
+track-caused). An agent should efficiently plan and avoid paths that might lead to these scenarios, even at the
+cost of increased travel time for some trains.
+These challenges often occur in combination, requiring agents to make decisions that minimize the impact of such
+scenarios on overall system efficiency. We design a curriculum tailored to address specific problems by alternating
+between three specialized environment types focused on pathfinding, malfunctions and train-speed differences, and
+deadlocks (see Figure 2).
+• Pathfinding starts with a simple 4x4 environment focusing on single-agent navigation, gradually increasing
+in size to enhance the agent’s goal-reaching capabilities.
+• Malfunctions and train-speed differences are taught in a unified setting due to their overlapping problem-
+solving strategies, emphasizing decision-making between following closely and opting for longer, less con-
+gested routes.
+• Deadlock avoidance focuses on the most common deadlock scenarios, where two or more trains become
+mutually blocked at junctions or intersections and preventing any movement.
+We sequence the tasks in the following way: Pathfinding, malfunctions and train-speed adjustments, and deadlock
+avoidance. We posit that starting with pathfinding is the most sensible choice, as all other tasks require an efficient
+pathfinding strategy. We leave deadlock avoidance for last, as it requires the agent to master the skills of pathfinding
+and handling malfunctions and various train speeds.
+Furthermore, we consider two versions of our curriculum: with and without rehearsal. Rehearsal involves revisiting
+earlier tasks to reinforce learning, aiming to examine its impact on knowledge retention and application across varying
+complexities. The curriculum’s structure is designed to equally distribute learning across different environments. See
+the Appendix for detailed parameters of the curriculum.
+Algorithm 1 Continual DQN Expansion (CDE)
+Require: θ1,...,θ j (previous Q- Approximators),ϵ (threshold), New Taskk,
+1: Initialize replay bufferRk←∅
+2: Initialize:θj+1← 1
+j
+Pj
+i=1θi with learnable Rational Activation Functions
+3: for Episodee = 1 ...E do
+4: Initialize a random processN for action exploration
+5: Receive initial observation states1∼pK(s1) for the new taskk.
+6: fort = 1 ...Tk do
+7: Select a random indexi∈{ 0,...,j + 1}
+8: Select actionat =µ(st|θµ
+i ) +Nt
+9: Executeat and observert andst+1
+10: Store transition (st,at,rt,st+1) inRk
+11: end for
+12: if Weight Update Step then
+13: Update The Q-Network with weightsθj+1 and their adaptive activation functions.
+14: Update The previous Q-Networksθ1,...,θ j with LossL(θi) = LB(θi) +P
+k
+λ
+2Fi(θi−θ∗
+i )2 whereθ∗
+i are
+the weights of the models trained on the previous task.
+15: end if
+16: end for
+17: ifWϕ(θj+1)>ϵ ·Wϕ(θi) for all i∈{ 1,...,j } then
+18: find k = arg mini∈{1,...,j}Wϕ(θi)
+19: returnθ1,...,θ k−1,θk+1,...,θ j,θj+1;
+20: else
+21: returnθ1,...,θ j;
+22: end if
+5
+Preprint.
+5 C ONTINUAL DQN E XPANSION ALGORITHM
+We propose a novel approach for adaptively constructing Q-function subspaces to address the challenges of non-
+stationary environments. Our Continual Deep Q-Network (DQN) Expansion (CDE) approach dynamically generates
+and adjusts Q- function subspaces, denoted as Θ1,..., ΘN , based on environmental changes and task requirements.
+By selectively expanding these subspaces and employing elastic weight consolidation (EWC), our method mitigates
+catastrophic forgetting, while a rational adaptive activation function enhances plasticity for rapid task adaptation. In
+the following sections, we review EWC and Pad´e activation units (PAU) and describe how our methodology integrates
+subspace expansion with PAU and EWC.
+5.1 F ORMALISATION OF THE CONTINUAL REINFORCEMENT LEARNING PROBLEM
+A continual reinforcement learning scenario is characterized by a sequence of N tasks or instances. Each task k is
+described through a Markov Decision Process (MDP) Mk =⟨Sk,Ak,Tk,rk,γ⟩, which encompasses a set of states
+Sk, a set of actionsAk, a transition functionTk :Sk×Ak→P (Sk), and a reward functionrk :Sk×Ak→ R. We
+assume in our case that all tasks share identical state and action spaces.
+A global Q-function Q : [1..N]×Z → (S×A→ R) is defined. This function accepts a task identifier k and a
+sequence of tasksZ as inputs, yielding a Q-value representing the expected future rewards for interacting with the
+environment ofkth task. The output is a real-valued estimate of the expected return from taking actionA in stateS.
+For each new task, we reset the replay buffer. Meaning that upon transitioning to task k + 1, the transitions from the
+previous MDPMi are no longer accessible to the agent.
+5.2 E LASTIC WEIGHT CONSOLIDATION
+The main idea behind EWC is that given a sequence of tasks, after learning task k, the parameters θ of the neural
+network are adjusted not only based on the current task’s loss but also considering the importance of these parameters
+to the previously learned tasks 1,...,k − 1. EWC introduces a regularization term to the loss function Kirkpatrick
+et al. (2017). The regularization term is computed based on the Fisher information matrix F from the previous tasks,
+which estimates the importance of each parameter to the tasks already learned.
+This term effectively constrains the parameter updates, favoring updates that have minimal impact on the performance
+of past tasks. The loss functionL(θ) that we minimize in EWC is defined as:
+L(θ) =LB(θ) +
+X
+j
+λ
+2Fj(θi−θ∗
+j,k)2 (2)
+where Lk(θ) is the loss for task k only,λ sets the importance of the old task relative to the new one. Fj(θ) is a
+regularization term that penalizes changes to parameters that are critical for the performance on taskj.
+When moving to the next task, EWC aims to keep the network parameters close to the learned parameters of previous
+tasks. This can be enforced either with two separate penalties or as one by noting that the sum of two quadratic
+penalties is itself a quadratic penalty.
+5.3 P AD ´E ACTIVATION UNITS
+Pad´e activation units (PAU) enhance the adaptability and efficacy of neural networks in continual reinforcement learn-
+ing environments Delfosse et al. (2021). PAUs, defined as the ratio of two polynomial functions, offer a flexible and
+learnable activation mechanism that can dynamically adjust to varying task complexities. This adaptability is particu-
+larly beneficial in continual RL settings, where the agent encounters a sequence of tasks, each potentially differing in
+its dynamics and objectives.
+In a continual RL setting, employing PAUs allows for the modulation of the activation functions based on the specific
+requirements of each task, thus improving the plasticity of neural networks. Formally, PAU is defined as:
+R(x) =
+Pm
+j=0ajxj
+1 +Pn
+k=1bkxk (3)
+where aj and bk are the learnable parameters that determine the shape of the activation function. The adaptability
+of PAUs lies in their ability to represent a wide range of nonlinear relationships through the adjustment of these
+parameters, thereby enabling a neural network to maintain robust performance across a continuum of RL tasks and
+non-stationary environments.
+6
+Preprint.
+5.4 S UBSPACE EXPANSION OF Q-F UNCTIONS
+We introduce the Continual Deep Q-Network (DQN) Expansion (CDE) approach, a novel method designed to adap-
+tively construct Q-function subspaces for continual reinforcement learning. Our approach facilitates sequential task
+learning by an agent. The pseudo-code is provided in Algorithm 1.
+The CDE algorithm generates a sequence of subspaces, denoted as Θ1,..., ΘN , each corresponding to a new change
+in the agent’s environment. The dynamic expansion process involves the integration of new anchorsθ function, defined
+by a neural network. A new anchor is added only if it demonstrates a superior performance over the previous anchors
+within the existing subspace, ensuring sublinear expansion of the number of anchors. Our expansion is limited to
+exactly N networks as we remove the worst-performing anchors each time we add new ones. N is a hyperparamter
+that depends on the continual learning task. In our main results, we setN = 2. We further analyze expansion size and
+timing (subtask vs main-task expansion) in the ablation study.
+CDE maintains the current anchors set composed of the weight vectors {θ1,...,θ N} that delineate the optimal Q-
+functions for previously encountered tasks. Upon the introduction of a new task or subtask, denoted as k + 1, the
+models creates a preliminary new subspaceΘj+1. We initialize the weights of the new Q-function network as follows:
+θj+1 = 1
+j
+jX
+i=1
+ωi·θi
+whereωi is the coefficient of each previous anchor. To mitigate catastrophic forgetting of previous tasks, the weights
+{θ1,...,θ N} of the previous subspaces are refined using an EWC regularized loss. The anchor θj+1 for the new
+subspace is optimized with rational adaptive activations to enhance plasticity and accelerate the adaptation process.
+The decision-making process within CDE involves either identifying an effective pre-existing Q-function for the new
+task within the current subspace or creating a new subspace with a more adequate anchorθj+1 for the new task. If the
+new subspace achieves higher performance and we have already reached the maximum subspace size, we remove the
+worst-performing subspace in the pruning step.
+Our approach can be summarized in three main steps: (1) expanding the current subspace by introducing a new
+anchor, (2) training and adjusting all anchors for the current task, and (3) evaluating the efficacy of the new anchor
+relative to the optimal anchor function within the existing subspace.
+Based on this comparison, CDE determines whether the subspace should be further extended (i.e., adding a new anchor
+to the subspace set) or reverted to its previous configuration (keeping the subspace set as it is) or pruned (adding a new
+anchor and removing the worst-performing anchor). This ensures a balanced adaptation to new tasks while preserving
+previously acquired relevant knowledge.
+6 E XPERIMENTS
+6.1 T RAINING CURRICULA
+The standard approach to training TSP reinforcement learning agents is to train them directly in the target environment
+without preliminary steps. For Flatland, this involves generating 64×64 environments with 14 agents using a sparse
+line generator. However, the large search space leads to worse generalization and slower convergence. We train and
+evaluate various reinforcement learning algorithms under the following learning conditions: (1) no curriculum, (2)
+dynamic or naive environment curriculum, and (3) our proposed custom curriculum. Further details are in Table 3.
+The dynamic environment curriculum begins with less complex environments and progressively increases in difficulty
+by enlarging the environment size and agent count. This gradual introduction of complexity helps agents adapt to more
+challenging scenarios. Our proposed custom curriculum addresses specific TSP challenges by alternating between
+three specialized environment types focused on pathfinding, malfunctions and train-speed differences, and deadlocks.
+6.2 E XPERIMENTAL SETTING
+To evaluate the performance of different algorithms, we utilize a simulated environment that replicates a realistic and
+complex railway system. Each algorithm is tested without undergoing a prior adaptation phase on the test environment.
+We use the score and completion rate as metrics in our evaluation. The score is the total reward per episode averaged
+across agents, while the completion rate measures the percentage of trains reaching their destination. Notably, a higher
+score does not always indicate a higher completion rate, as the score reflects proximity to the destination. Small score
+improvements often require significant completion rate gains, and completion rate variance between runs is high.
+7
+Preprint.
+6.3 B ASELINES AND HYPERPARAMTERS
+Our baselines consist of an Advantage Actor-Critic (A2C), Proximal Policy Optimization (PPO) , and Deep Q-Network
+(DQN) algorithm Schulman et al. (2017); Mnih et al. (2015). Each algorithm utilizes two hidden layers with 1024
+units each, a replay buffer of size 1 million a batch size of 128, and a learning rate of 5· 10−5. We use a simulated
+annealing exploration strategy. In addition, we include PackNet Mallya & Lazebnik (2018) and BFF Schwarzer et al.
+(2023) baselines, following their original implementations.
+For PAUs, we setm = 5 andn = 4, initialize them with the shape of a standard RELU. For EWC, we use λ = 0.5.
+During the expansion step of CDE, new anchors are initialized with binary coefficients ωi, meaning we copy the
+weights of the most recent anchors as a starting point. Further implementation details are included in the appendix.
+6.4 R ESULTS AND DISCUSSION
+Method No Curric. Naive Curric. Custom Curric. Custom Curric. (Rehear.)
+A2C 0.06± 0.01 0 .07± 0.03 0 .05± 0.02 0 .06± 0.02
+PPO 0.06± 0.02 0 .06± 0.02 0 .06± 0.02 0 .06± 0.03
+DQN 0.04± 0.07 0 .08± 0.04 0 .10± 0.04 0.19± 0.09
+Table 1: Performance comparison of different baselines trained with a range of curricula. The completion rate (higher
+is better↑) is reported. An extended version of the table with the scores is found in the The best score and completion
+rate are highlighted in bold. We see that the custom curriculum with decomposed tasks (see Figure 2) achieves the
+highest performance. Further improvements are observed for the custom curriculum with rehearsal in the case DQN.
+Table 1 compares the performance of standard RL algorithms under different curricula on the evaluation environment.
+Incorporating a curriculum consistently improves scores and completions for all baselines. For instance, DQN achieves
+a score of 0.04± 0.07 without a curriculum, compared to 0.19± 0.09 with a curriculum. Notably, our proposed
+curriculum yields greater improvements in DQN than a naive curriculum, highlighting the benefits of a more structured
+approach. However, for PPO and A2C, the gains remain within the margin of error, suggesting that curriculum design
+should align closely with the underlying algorithm.
+Furthermore, we observe that rehearsal significantly improves DQN’s performance, nearly doubling the completion
+rate from 0.10 with the proposed custom curriculum to 0.19 with the proposed custom curriculum plus rehearsal.
+This underscores the need to address catastrophic forgetting to learn a more generalizable strategy, which we aim
+to achieve with our proposed method, CDE. In the proposed curriculum, specific skills are learned in each new
+environment, so it is crucial to ensure the agent retains previous skills. For example, pathfinding skills are essential
+for handling varying train speeds, illustrating how tasks build on each other.
+In Table 2, we extend DQN with different techniques and compare the generalization performance when training
+using our custom curricula. We observe that increasing plasticity (DQN +PAU) or mitigating catastrophic forgetting
+(DQN +EWC) helps achieve more generalizable minima compared to a simple DQN. However, both methods perform
+worse than simple rehearsal (0.19 completion for DQN +EWC and 0.12 for DQN +PAU compared to 0.19 for DQN
+with rehearsal). Additionally, in this scenario, addressing catastrophic forgetting is more beneficial than enhancing
+plasticity. This is because rational activations are most advantageous when the neural network begins to lose plasticity
+after a large number of tasks (e.g., more than 10 tasks). In contrast, our curriculum involves only three tasks, each
+comprising four different environment sizes.
+A naive combination of both approaches for plasticity (PAU) and stability (EWC) results in performance degradation
+for DQN +EWC+PAU compared to just DQN +EWC. This can be explained by the opposing effects of rational activa-
+tions and elastic weight consolidation, where changing activations render the Fisher matrix weights for EWC obsolete.
+Instead, our method (CDE) ensures the network remains both plastic and stable depending on the current task. CDE
+achieves the best performance, with almost a 50% improvement in the completion rate compared to DQN with
+rehearsal, even without using curriculum rehearsal during training of CDE. Our approach balances plasticity and
+stability by expanding the network in a targeted manner based on the current task and the performance of pre-existing
+subspaces. Further results in the appendix show that CDE switches between more stable and more plastic networks
+depending on the task requirements, is less affected by the task ordering.
+We refine network expansion in CDE by comparing two strategies: expanding with every environmental change (e.g.,
+adding agents or increasing size) versus expanding only for distinct tasks as presented in Figure 2.
+8
+Preprint.
+(a)
+ (b)
+Figure 3: Comparison of performance metrics for different CDE expansion strategies. The plots show the mean score
+(left) and completion rate (right) as a function of the number of expansions. The methods are abbreviated as follows:
+CDE-BN (subtask expansion with best network selection), CDE-MV (subtask expansion with majority vote), and
+CDE-STAN (standard task expansion).
+In Figure 3, we observe that expansions triggered by changes in the size of the environment do not consistently
+increase performance and often increase variance. Although increasing the size of the anchor set eventually recovers
+performance comparable to the original CDE, it also raises computational overhead due to a larger number of anchors
+to update. This indicates that catastrophic forgetting is less problematic when tasks change minimally, and expansions
+offer greater benefits when tasks shift substantially (e.g., from pathfinding to managing malfunctions).
+Method Score Completion Rate
+DQN 0.34 ± 0.01 0.10 ± 0.04
+DQN w/ Rehear. 0.31 ± 0.02 0.19 ± 0.04
+DQN +EWC Kirkpatrick et al. (2017) 0.31 ± 0.01 0.19 ± 0.08
+DQN +MAS Aljundi et al. (2018) 0.33 ± 0.01 0.13 ± 0.03
+DQN +PAU Delfosse et al. (2021) 0.32 ± 0.01 0.12 ± 0.04
+DQN +CBP Dohare et al. (2021) 0.34 ± 0.01 0.09 ± 0.05
+PackNet Mallya & Lazebnik (2018) 0.34 ± 0.01 0.16 ± 0.05
+BFF Schwarzer et al. (2023) 0.31 ± 0.01 0.19 ± 0.04
+DQN +PAU+EWC 0.32 ± 0.01 0.18 ± 0.05
+CDE (ours) 0.29 ± 0.01 0.28 ± 0.06
+Table 2: Performance comparison of different algorithms trained using our custom curriculum without rehearsal. The
+score (lower is better↓) and completion rate (higher is better↑) are reported. The best score and completion rate are
+highlighted in bold. We see that our proposed method CDE achieves the highest performance and benefits the most
+from the custom curriculum.
+7 C ONCLUSION
+We presented a curriculum for TSP and a continual expansion approach to further improve the performance. Our
+curriculum design philosophy emphasizes a comprehensive approach to agent training, addressing key skills to
+enhance generalization to more complex environments. Our results show that curriculum design should transcend
+increasing the size of the environment and instead be tailored to the specific application domain. Fully leveraging such
+curricula requires a careful balance between retaining previous skills and acquiring new ones, ensuring that agents
+can adapt to dynamic challenges without falling into suboptimal policies. Our Continual DQN Expansion approach
+effectively manages the interplay between plasticity and stability. By demonstrating superior improvements and
+minimal forgetting, our method addresses the limitations of previous approaches. Our results highlight the importance
+of a holistic curriculum and algorithm design for improved generalization. Thus, there is a need for ongoing research
+to scale these approaches across different domains for more robust and domain specific continual learning agents.
+9
+Preprint.
+8 A CKNOWLEDGMENTS
+This work was supported by the KIBA Project (K ¨unstliche Intelligenz und diskrete Beladeoptimierungsmodelle zur
+Auslastungssteigerung im Kombinierten Verkehr - KIBA) under reference number 45KI16E051, funded by the Ger-
+man Ministry of Transportation.
+REFERENCES
+Zaheer Abbas, Rosie Zhao, Joseph Modayil, Adam White, and Marlos C Machado. Loss of plasticity in continual
+deep reinforcement learning. In Conference on Lifelong Learning Agents, pp. 620–636. PMLR, 2023.
+David Abel, Andr´e Barreto, Benjamin Van Roy, Doina Precup, Hado P van Hasselt, and Satinder Singh. A definition
+of continual reinforcement learning. Advances in Neural Information Processing Systems, 36, 2024.
+Rahaf Aljundi, Francesca Babiloni, Mohamed Elhoseiny, Marcus Rohrbach, and Tinne Tuytelaars. Memory aware
+synapses: Learning what (not) to forget. In Proceedings of the European conference on computer vision (ECCV) ,
+pp. 139–154, 2018.
+Shawn Beaulieu, Lapo Frati, Thomas Miconi, Joel Lehman, Kenneth O Stanley, Jeff Clune, and Nick Cheney. Learning
+to continually learn. arXiv preprint arXiv:2002.09571, 2020.
+Yoshua Bengio, J´erˆome Louradour, Ronan Collobert, and Jason Weston. Curriculum learning. In Proceedings of the
+26th annual international conference on machine learning, pp. 41–48, 2009.
+Gregory Benton, Wesley Maddox, Sanae Lotfi, and Andrew Gordon Gordon Wilson. Loss surface simplexes for mode
+connecting volumes and fast ensembling. In International Conference on Machine Learning, pp. 769–779. PMLR,
+2021.
+Lucas Caccia, Eugene Belilovsky, Massimo Caccia, and Joelle Pineau. Online learned continual compression with
+adaptive quantization modules. In International conference on machine learning, pp. 1240–1250. PMLR, 2020.
+Xiaoqiang Cai and CJ Goh. A fast heuristic for the train scheduling problem. Computers & Operations Research, 21
+(5):499–510, 1994.
+Alberto Caprara, Matteo Fischetti, and Paolo Toth. Modeling and solving the train timetabling problem. Operations
+research, 50(5):851–861, 2002.
+Brian Cheung, Alexander Terekhov, Yubei Chen, Pulkit Agrawal, and Bruno Olshausen. Superposition of many
+models into one. Advances in neural information processing systems, 32, 2019.
+Quentin Delfosse, Patrick Schramowski, Martin Mundt, Alejandro Molina, and Kristian Kersting. Adaptive rational
+activations to boost deep reinforcement learning. arXiv preprint arXiv:2102.09407, 2021.
+Shibhansh Dohare, Richard S Sutton, and A Rupam Mahmood. Continual backprop: Stochastic gradient descent with
+persistent randomness. arXiv preprint arXiv:2108.06325, 2021.
+Shibhansh Dohare, J Fernando Hernandez-Garcia, Parash Rahman, Richard S Sutton, and A Rupam Mahmood. Main-
+taining plasticity in deep continual learning. arXiv preprint arXiv:2306.13812, 2023.
+Xinlei Dong, Dewei Li, Yonghao Yin, Shishun Ding, and Zhichao Cao. Integrated optimization of train stop plan-
+ning and timetabling for commuter railways with an extended adaptive large neighborhood search metaheuristic
+approach. Transportation Research Part C: Emerging Technologies, 117:102681, 2020.
+Carlos Florensa, David Held, Markus Wulfmeier, Michael Zhang, and Pieter Abbeel. Reverse curriculum generation
+for reinforcement learning. In Conference on robot learning, pp. 482–495. PMLR, 2017.
+Francesco Foglino, Christiano Coletto Christakou, and Matteo Leonetti. An optimization framework for task sequenc-
+ing in curriculum learning. In 2019 Joint IEEE 9th International Conference on Development and Learning and
+Epigenetic Robotics (ICDL-EpiRob), pp. 11–18. IEEE, 2019a.
+Francesco Foglino, Christiano Coletto Christakou, Ricardo Luna Gutierrez, and Matteo Leonetti. Curriculum learn-
+ing for cumulative return maximization. In Proceedings of the 28th International Joint Conference on Artificial
+Intelligence (IJCAI), pp. 22–28. IJCAI, 2019b.
+10
+Preprint.
+Jean-Baptiste Gaya, Thang Doan, Lucas Caccia, Laure Soulier, Ludovic Denoyer, and Roberta Raileanu. Building a
+subspace of policies for scalable continual learning. arXiv preprint arXiv:2211.10445, 2022.
+David Isele and Akansel Cosgun. Selective experience replay for lifelong learning. In Proceedings of the AAAI
+Conference on Artificial Intelligence, volume 32, 2018.
+Khurram Javed and Martha White. Meta-learning representations for continual learning. Advances in neural informa-
+tion processing systems, 32, 2019.
+Harshad Khadilkar. A scalable reinforcement learning algorithm for scheduling railway lines. IEEE Transactions on
+Intelligent Transportation Systems, 20(2):727–736, 2018.
+Khimya Khetarpal, Matthew Riemer, Irina Rish, and Doina Precup. Towards continual reinforcement learning: A
+review and perspectives. Journal of Artificial Intelligence Research, 75:1401–1476, 2022.
+James Kirkpatrick, Razvan Pascanu, Neil Rabinowitz, Joel Veness, Guillaume Desjardins, Andrei A Rusu, Kieran
+Milan, John Quan, Tiago Ramalho, Agnieszka Grabska-Barwinska, et al. Overcoming catastrophic forgetting in
+neural networks. Proceedings of the national academy of sciences, 114(13):3521–3526, 2017.
+Soochan Lee, Junsoo Ha, Dongsu Zhang, and Gunhee Kim. A neural dirichlet process mixture model for task-free
+continual learning. arXiv preprint arXiv:2001.00689, 2020.
+Zhizhong Li and Derek Hoiem. Learning without forgetting. IEEE transactions on pattern analysis and machine
+intelligence, 40(12):2935–2947, 2017.
+Mohammad Loni, Aditya Mohan, Mehdi Asadi, and Marius Lindauer. Learning activation functions for sparse neural
+networks. In International Conference on Automated Machine Learning, pp. 16–1. PMLR, 2023.
+David Lopez-Paz and Marc’Aurelio Ranzato. Gradient episodic memory for continual learning. Advances in neural
+information processing systems, 30, 2017.
+Richard M Lusby, Jesper Larsen, Matthias Ehrgott, and David Ryan. Railway track allocation: models and methods.
+OR spectrum, 33:843–883, 2011.
+Arun Mallya and Svetlana Lazebnik. Packnet: Adding multiple tasks to a single network by iterative pruning. In
+Proceedings of the IEEE conference on Computer Vision and Pattern Recognition, pp. 7765–7773, 2018.
+Seyed Iman Mirzadeh, Mehrdad Farajtabar, Dilan Gorur, Razvan Pascanu, and Hassan Ghasemzadeh. Linear mode
+connectivity in multitask and continual learning. arXiv preprint arXiv:2010.04495, 2020.
+V olodymyr Mnih, Koray Kavukcuoglu, David Silver, Andrei A Rusu, Joel Veness, Marc G Bellemare, Alex Graves,
+Martin Riedmiller, Andreas K Fidjeland, Georg Ostrovski, et al. Human-level control through deep reinforcement
+learning. nature, 518(7540):529–533, 2015.
+Sharada Mohanty, Erik Nygren, Florian Laurent, Manuel Schneider, Christian Scheller, Nilabha Bhattacharya, Jeremy
+Watson, Adrian Egli, Christian Eichenberger, Christian Baumberger, et al. Flatland-rl: Multi-agent reinforcement
+learning on trains. arXiv preprint arXiv:2012.05893, 2020.
+Sanmit Narvekar and Peter Stone. Learning curriculum policies for reinforcement learning. InProceedings of the 18th
+International Conference on Autonomous Agents and MultiAgent Systems, pp. 25–33, 2019.
+Sanmit Narvekar, Bei Peng, Matteo Leonetti, Jivko Sinapov, Matthew E Taylor, and Peter Stone. Curriculum learning
+for reinforcement learning domains: A framework and survey. The Journal of Machine Learning Research, 21(1):
+7382–7431, 2020.
+Evgenii Nikishin, Junhyuk Oh, Georg Ostrovski, Clare Lyle, Razvan Pascanu, Will Dabney, and Andr´e Barreto. Deep
+reinforcement learning with plasticity injection. Advances in Neural Information Processing Systems, 36, 2024.
+Ramakanth Pasunuru and Mohit Bansal. Continual and multi-task architecture search. arXiv preprint
+arXiv:1906.05226, 2019.
+David Rolnick, Arun Ahuja, Jonathan Schwarz, Timothy Lillicrap, and Gregory Wayne. Experience replay for con-
+tinual learning. Advances in neural information processing systems, 32, 2019.
+11
+Preprint.
+Andrei A Rusu, Sergio Gomez Colmenarejo, Caglar Gulcehre, Guillaume Desjardins, James Kirkpatrick, Raz-
+van Pascanu, V olodymyr Mnih, Koray Kavukcuoglu, and Raia Hadsell. Policy distillation. arXiv preprint
+arXiv:1511.06295, 2015.
+Andrei A Rusu, Neil C Rabinowitz, Guillaume Desjardins, Hubert Soyer, James Kirkpatrick, Koray Kavukcuoglu,
+Razvan Pascanu, and Raia Hadsell. Progressive neural networks. arXiv preprint arXiv:1606.04671, 2016.
+John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization
+algorithms. arXiv preprint arXiv:1707.06347, 2017.
+Jonathan Schwarz, Wojciech Czarnecki, Jelena Luketina, Agnieszka Grabska-Barwinska, Yee Whye Teh, Razvan
+Pascanu, and Raia Hadsell. Progress & compress: A scalable framework for continual learning. In International
+conference on machine learning, pp. 4528–4537. PMLR, 2018.
+Max Schwarzer, Johan Samir Obando Ceron, Aaron Courville, Marc G Bellemare, Rishabh Agarwal, and
+Pablo Samuel Castro. Bigger, better, faster: Human-level atari with human-level efficiency. In International Con-
+ference on Machine Learning, pp. 30365–30380. PMLR, 2023.
+Hanul Shin, Jung Kwon Lee, Jaehong Kim, and Jiwon Kim. Continual learning with deep generative replay.Advances
+in neural information processing systems, 30, 2017.
+Petru Soviany, Radu Tudor Ionescu, Paolo Rota, and Nicu Sebe. Curriculum learning: A survey.International Journal
+of Computer Vision, 130(6):1526–1565, 2022.
+Kenneth O Stanley and Risto Miikkulainen. Evolving neural networks through augmenting topologies. Evolutionary
+computation, 10(2):99–127, 2005.
+Paolo Toth and Daniele Vigo. The vehicle routing problem. SIAM, 2002.
+Liyuan Wang, Xingxing Zhang, Hang Su, and Jun Zhu. A comprehensive survey of continual learning: Theory.
+Method and Application. arXiv, 2302:v2, 2023.
+Xin Wang, Yudong Chen, and Wenwu Zhu. A survey on curriculum learning. IEEE Transactions on Pattern Analysis
+and Machine Intelligence, 44(9):4555–4576, 2021.
+Mitchell Wortsman, Vivek Ramanujan, Rosanne Liu, Aniruddha Kembhavi, Mohammad Rastegari, Jason Yosinski,
+and Ali Farhadi. Supermasks in superposition. Advances in Neural Information Processing Systems , 33:15173–
+15184, 2020.
+Ju Xu and Zhanxing Zhu. Reinforced continual learning. Advances in neural information processing systems , 31,
+2018.
+J Yang and H Asada. Impedance learning in cooperative human-robot environments. Proceedings of the 1996 IEEE
+International Conference on Robotics and Automation, pp. 1237–1242, 1996.
+Manuel Zimmer, Christian Wirth, I Fuerer, R Goetschalckx, Gerhard Neumann, Andrea Coninx, and Alois Knoll.
+Learning continuous states and actions in a hierarchical framework. In Proceedings of the 27th International Joint
+Conference on Artificial Intelligence (IJCAI), pp. 23–30. IJCAI, 2018.
+A A PPENDIX : M ITIGATING THE STABILITY -P LASTICITY DILEMMA IN ADAPTIVE TRAIN
+SCHEDULING WITH CURRICULUM -DRIVEN CONTINUAL DQN E XPANSION
+In the supplementary material, we provide additional details, experimental setup and descriptions for the various parts
+of our proposed frameworks as well as discuss some additional results. The structure is as follows:
+• Implementation Details for Continual DQN Expansion Algorithm (CDE)
+• Hyperparameter Selection Process
+• Compute Resources
+• Curriculum Details
+• Additional Experiments
+• Limitations and Future Works
+• Reproducibility checklist
+12
+Preprint.
+CONTINUAL DQN E XPANSION (CDE) A LGORITHM
+The Continual DQN Expansion (CDE) algorithm manages and expands a set of subspaces defined by their anchors,
+which are Q-Function networks that are adapted to new tasks while retaining knowledge from previous ones. Below
+is a detailed breakdown of the CDE process:
+SUBSPACE SET MANAGEMENT
+The subspace set is implemented in PyTorch as a list of lists, where each sublist contains Q-networks. These networks
+are dynamically managed and expanded as learning progresses. During training, actions are selected using the network
+indicated by the act rotation index, which cyclically rotates among the available networks. After each action,
+the current network’s performance (score and completion) is updated, and the rotation index ( act rotation) is
+incremented, allowing for the cyclical usage of multiple networks.
+LEARNING PROCESS
+Experience replay is utilized during training, ensuring that each network in the current list is updated with the latest
+experiences. The learn method performs Q-learning updates and can incorporate Elastic Weight Consolidation
+(EWC) regularization to safeguard against catastrophic forgetting, preserving knowledge from previously established
+anchors. In contrast, newly initialized anchors are equipped with adaptive rational activation functions, enhancing
+their plasticity and enabling faster adaptation to new tasks. See Figure 8 for a visualization of the evolution of the
+activation functions of various anchors as the training progresses.
+NETWORK EXPANSION STRATEGIES
+A novel aspect of CDE is its ability to expand the set of networks when new tasks are encountered, coupled with
+the continuous adaptation of existing anchors through regularization methods. During the expansion process, two key
+strategies are employed:
+1. Elastic Weight Consolidation (EWC):
+Previous anchors are trained using EWC, which helps preserve important knowledge from previous tasks
+by penalizing significant changes to parameters deemed important (as identified by the Fisher Information
+Matrix).
+2. Pade Activation Units (PAU):
+Another version of the network, which denotes the anchors of the new subspace, is trained using Pade Ac-
+tivation Units (PAU). PAUs offer a more flexible and expressive form of activation function, allowing the
+network to better adapt to complex tasks and maintain high plasticity during later tasks.
+During expansion, the algorithm evaluates the performance of the current networks and retains the top performers.
+The expansion process adds new networks to the set, initialized with parameters derived from the best-performing
+networks, and trains them using both EWC and PAU. When in evaluation mode, the system selects the best-performing
+network based on the average score. This network is then used to determine the action.
+Below is a high level pseudocode for the CDE implementation in Pytorch:
+Continual_DQN_Expansion:
+Initialize:
+- state_size, action_size, parameters, evaluation_mode
+- networks = [[]]
+- Add initial policy network to networks[0]
+- Initialize various variables: act_rotation, networkEP, networkEP_scores,
+networkEP_completions
+act(handle, state, epsilon=0, eval=False):
+if eval:
+- Select the network with the best average score
+- Return action from the selected network
+else:
+- Return action from the current network in rotation
+13
+Preprint.
+network_rotation(score, completions):
+- Update the score (networkEP_scores) and completions (networkEP_completions)
+for the current network
+- Increment act_rotation to the next network
+step(handle, state, action, reward, next_state, done):
+- Update all networks in the current list with the new experience.
+expansion_and_pruning():
+- Prune: Select top n networks based on a defined score metric.
+- Update the network list with the selected networks.
+- Initialize the Fisher Matrix for EWC updates for each network.
+- Freeze adaptive activations for each network in the list.
+- Expand: Add new networks with adaptive activation functions.
+- Adjust act_rotation accordingly.
+HYPERPARAMTERS SELECTION
+In this work, we selected the hyperparameters for the different algorithms to ensure optimal performance, reproducible
+results and stable convergence. These values were chosen based on hyperparameter sweeps provided by the Flatland
+Community 2. We use the same hyperparameters for our CDE algorithm and other extensions mentioned in the main
+body.
+The learning rate was set to 0.00005. The discount factor (gamma) was set to 0.99. For exploration, the epsilon-greedy
+strategy was employed, with the initial exploration rate (ϵ) set to 1.0 to ensure sufficient exploration in the early stages
+of training. The epsilon value was then decayed according to the formula ϵ(x) = 1
+1.000005x , where x represents the
+number of steps taken. This exponential decay gradually reduces epsilon, allowing the agent to shift its focus from
+exploration to exploitation as it gains more experience.
+The weights of the Q-network were updated every 8 steps with batch of size 128. Additionally, the replay buffer size
+was set to 1000,000. We note that we empty the replay buffer when we change the task, ensuring that we only use
+experience from the current task.
+COMPUTE RESOURCES
+Each algorithm was trained using one Intel Xeon Gold 5218 CPU @ 2.3Ghz and one NVIDIA V100 SXM2 32GB
+GPU. Each run took between approximately 3 hours to complete. We repeat each of the experiments 10 times.
+CURRICULUM DETAILS
+Table 3 presents details for the various curriculum strategies applied used in the main body. The experiments are
+divided into four categories: No Curriculum, Simple Curriculum, Custom Curriculum without Rehearsal , and
+Custom Curriculum with Rehearsal. Each category outlines specific configurations for the environment, including
+the environment size, the number of agents, the training speed, malfunction rates, and the total number of network
+steps.
+In the No Curriculum setting, a sparse-generator environment of size 64x64 with 14 agents was tested, with a consis-
+tent training speed across all agents, a malfunction rate of 1 per 1000 steps, and a total of 960,000 network steps.
+The Simple Curriculum approach gradually increases the complexity of the environment, starting from a 16x18
+environment with 1 agent and ending with the same 64x64 environment used in the No Curriculum setting. This
+approach shows a progressive increase in the number of agents and the complexity of the tasks, with consistent training
+speeds and malfunction rates.
+The Custom Curriculum without Rehearsalinvolves different environment types, such as Pathfinding, Malfunction,
+and Deadlock, each tested with varying sizes and agent counts. In this strategy, the environment complexity and agent
+2https://wandb.ai/masterscrat/flatland-examples-reinforcement_learning/reports/
+Flatland-Starter-Kit-Training-in-environments-of-various-sizes--VmlldzoxNjgxMTk
+14
+Preprint.
+number increase, with fixed training speeds and malfunction rates. The network steps in these scenarios are capped at
+80,000.
+Lastly, the Custom Curriculum with Rehearsal revisits earlier stages in the curriculum, allowing the model to
+reinforce previously learned tasks while introducing new challenges. The setup is similar to the Custom Curriculum
+without Rehearsal but with slightly reduced network steps (64,000) to account for the rehearsal process.
+This comparison allows for an assessment of how different curriculum learning strategies impact the efficiency and
+effectiveness of the training process across various scenarios, highlighting the benefits of gradual complexity increase
+and the potential advantages of rehearsal in maintaining performance on previously learned tasks.
+No Curriculum
+Env Size Agents TrainSpeed Malfunction Networksteps
+sparse-generator 64x64 14 25/25/25/25 1/1000 960.000
+Simple Curriculum
+sparse-generator 16x18 1 00/0/0/100 0 192.000
+sparse-generator 28x28 3 50/00/0/50 1/1000 192.000
+sparse-generator 40x40 6 50/00/25/25 1/1000 192.000
+sparse-generator 52x52 10 25/25/25/25 1/1000 192.000
+sparse-generator 64x64 14 25/25/25/25 1/1000 192.000
+Custom Curriculum without Rehearsal
+Pathfinding 4x4 1 00/00/00/100 0 80.000
+Pathfinding 8x8 1 00/00/00/100 0 80.000
+Pathfinding 16x16 1 00/00/00/100 0 80.000
+Pathfinding 32x32 1 00/00/00/100 0 80.000
+Malfunction 12x5 5 00/00/00/100 1/100 80.000
+Malfunction 12x5 6 50/00/00/50 1/100 80.000
+Malfunction 12x5 7 50/00/25/25 1/100 80.000
+Malfunction 12x5 8 25/25/25/25 1/100 80.000
+Deadlock 32x2 2 00/00/00/100 1/64 80.000
+Deadlock 32x2 4 50/00/00/50 1/64 80.000
+Deadlock 32x4 8 50/00/25/25 1/64 80.000
+Deadlock 32x4 16 25/25/25/25 1/64 80.000
+Custom Curriculum with Rehearsal
+Pathfinding 4x4 1 00/00/00/100 0 64.000
+Pathfinding 8x8 1 00/00/00/100 0 64.000
+Pathfinding 16x16 1 00/00/00/100 0 64.000
+Pathfinding 32x32 1 00/00/00/100 0 64.000
+Malfunction 12x5 5 00/00/00/100 1/100 64.000
+Malfunction 12x5 6 50/00/00/50 1/100 64.000
+Malfunction 12x5 7 50/00/25/25 1/100 64.000
+Malfunction 12x5 8 25/25/25/25 1/100 64.000
+Pathfinding 32x32 1 00/00/00/100 0 64.000
+Deadlock 32x2 2 00/00/00/100 1/64 64.000
+Deadlock 32x2 4 50/00/00/50 1/64 64.000
+Deadlock 32x4 8 50/00/25/25 1/64 64.000
+Deadlock 32x4 16 25/25/25/25 1/64 64.000
+Pathfinding 32x32 1 00/00/00/100 0 64.000
+Malfunction 12x5 8 25/25/25/25 1/100 64.000
+Table 3: Table details the different parameters used for each the curricula used in this paper.
+ADDITIONAL EXPERIMENTS
+In Table 4, we present an extended version where we show why scores are not as informative as the completion rates.
+In Figure 4, we present a comparison of various standard reinforcement learning algorithms trained with different
+curricula on the evaluation environment. The boxplots illustrate that the incorporation of a curriculum significantly
+enhances the performance of all baselines in terms of scores and completion rates. Specifically, our proposed cur-
+15
+Preprint.
+Figure 4: Multiple graphs in a single figure. The first row contains the first two graphs, while the second row contains
+the last two graphs. Each graph represents different completion rates and scores obtained using various configurations
+of the DQN algorithm.
+Method No Curric. Naive Curric. Custom Curric. Custom Curric. (Rehear.)
+Score Completion Score Completion Score Completion Score Completion
+A2C 0.34 ± 0.01 0.06 ± 0.01 0.34± 0.01 0 .07± 0.03 0 .35± 0.01 0 .05± 0.02 0 .34± 0.01 0 .06± 0.02
+PPO 0.34 ± 0.01 0.06 ± 0.02 0.35± 0.01 0 .06± 0.02 0 .35± 0.01 0 .06± 0.02 0 .34± 0.01 0 .06± 0.03
+DQN 0.35 ± 0.01 0.04 ± 0.07 0.35± 0.01 0 .08± 0.04 0 .34± 0.01 0 .10± 0.04 0.31± 0.02 0 .19± 0.09
+Table 4: Performance comparison of different baselines trained with a range of curricula. The score (lower is better
+↓) and completion rate (higher is better ↑) are reported. The best score and completion rate are highlighted in bold.
+We see that the custom curriculum with decomposed tasks (see Figure 2) achieves the highest performance. Further
+improvements are observed for the custom curriculum with rehearsal in the case DQN.
+riculum, combined with rehearsal, substantially improves the performance of the DQN algorithm, both in scores and
+completions, compared to a simpler curriculum. This underscores the benefits of a structured learning approach.
+However, the improvements observed for PPO and A2C are less pronounced, generally remaining within the margin
+of error. This highlights the necessity of aligning curricula with algorithms that are appropriately suited to the specific
+task at hand.
+The second set of boxplots in Figure 4 further extends this analysis by comparing DQN with various enhancements,
+specifically assessing generalization performance using our custom curricula. Notably, our proposed method, Contin-
+ual DQN Expansion (CDE), demonstrates superior performance, achieving nearly a 50% improvement in completion
+rates compared to the baseline DQN with rehearsal.
+Task Ordering: Figure 5 explores the impact of task ordering on generalization as well as the extent of catastrophic
+forgetting across previous tasks for DQN baseline. The results indicate that the performance of DQN on the test envi-
+ronment (the dotted purple line) fluctuates significantly depending on the task sequence. On average, some degree of
+forgetting is observed when DQN transitions to a new task as evidenced by the drop in performance in the pathfinding,
+malfunction and deadlocks environment. Nevertheless, it seems that DQN experiences overfitting on the pathfinding
+environment.
+In contrast, Figure 6 demonstrates that CDE is considerably less sensitive to task ordering, consistently achieving
+similar performance on the final test environment, regardless of the task sequence used. For instance, when com-
+paring the PMD (Pathfinding, Malfunctions, and Deadlocks) and MPD (Malfunctions, Pathfinding, and Deadlocks)
+curricula, CDE effectively builds on previously acquired skills, gradually improving completion rates in zero-shot test
+environments.
+Skill Retention: Figure 7 illustrates the retention of skills across previous tasks for DQN, DQN(EWC), DQN(PAU),
+and CDE. The orange line represents performance on the Pathfinding environment, the dotted red line corresponds
+to the Malfunction environment, the dotted pink line indicates the Deadlock environment, and the dotted purple line
+denotes the evaluation environment.
+For the Pathfinding task (orange line), a noticeable performance drop is observed for both CDE and DQN(EWC) when
+transitioning to subsequent tasks, as marked by the vertical black line. We hypothesize that this suggests that while
+16
+Preprint.
+these methods adapt to new skills, some trade-off in retaining earlier skills occurs. In contrast, DQN maintains the
+highest performance on the Pathfinding environment, indicating a tendency to overfit this task. This overfitting ham-
+pers the model’s plasticity, making the acquisition of new skills more challenging and resulting in poorer performance
+on the generalization environment (dotted purple line).
+Although CDE experiences a performance drop in the Pathfinding task when transitioning to new tasks, this decline
+can be likely attributed to the algorithm’s ability to adapt and acquire new skills, such as handling malfunctions
+and deadlocks. CDE effectively retains core skills while simultaneously learning to manage newer challenges, such
+as varying train speeds. Consequently, the single-agent Pathfinding skill becomes less critical in subsequent tasks,
+as evidenced by the steadily increasing performance in the generalization environment (purple dotted line). This
+demonstrates the flexibility of CDE and how it effectively balances stability and plasticity, retaining essential skills
+from previous tasks while selectively forgetting less relevant aspects. Thus, compared to other approaches, CDE
+achieves a better balance between stability and adaptability.
+Figure 5: Task ordering impact analysis for DQN baseline across different curricula: PMD, MPD, and MDP (from
+left to right, top to bottom). Here, P stands for Pathfinding, M for Malfunctions with varying train speeds, and D
+for Deadlocks. The dotted purple line represents performance on the final test environment, while the orange, red,
+and pink lines correspond to the Pathfinding, Malfunction, and Deadlock environments, respectively. Vertical black
+lines indicate transitions to new tasks. The results highlight significant fluctuations in DQN’s performance on the test
+environment depending on the task sequence. A noticeable performance drop is observed when DQN transitions to
+a new task, suggesting some degree of catastrophic forgetting. Furthermore, DQN appears to overfit the Pathfinding
+environment, which compromises its generalization capability.
+LIMITATIONS AND FUTURE WORKS
+While our approach demonstrates promising results, there are several points to consider:
+17
+Preprint.
+Figure 6: Task ordering impact analysis for CDE across different curricula: PMD, MPD, and MDP (from left to right,
+top to bottom). Here, P stands for Pathfinding, M for Malfunctions with varying train speeds, and D for Deadlocks.
+The dotted purple line represents performance on the final test environment, while the orange, red, and pink lines
+correspond to the Pathfinding, Malfunction, and Deadlock environments, respectively. Vertical black lines indicate
+transitions to new tasks. The results demonstrate that CDE is less sensitive to task ordering, consistently achieving
+stable performance on the test environment regardless of the task sequence. CDE effectively builds on previously ac-
+quired skills, gradually improving completion rates across zero-shot test environments, and showing resilience against
+catastrophic forgetting.
+18
+Preprint.
+Figure 7: From left to right, top to bottom: skill retention analysis for DQN, CDE, DQN(EWC), and DQN(PAU) across
+different environments. The orange line represents performance on the Pathfinding environment, the dotted red line
+indicates the Malfunction environment, the dotted pink line corresponds to the Deadlock environment, and the dotted
+purple line represents generalization performance on the evaluation environment. Vertical black lines mark transitions
+to new tasks, which follow the order: Pathfinding, Malfunctions with varying train speeds, and Deadlocks. While DQN
+maintains the highest performance on the Pathfinding task, suggesting potential overfitting and reduced plasticity,
+CDE shows a balanced approach, effectively retaining core skills while adapting to new challenges, as indicated by
+steady improvements in generalization performance (purple line). Similar trends are observed for DQN(EWC) and
+DQN(PAU), but they achieve lower generalization performance compared to CDE. See the main body for detailed
+results with error margins.
+19
+Preprint.
+Figure 8: Evolution of learned activation functions for CDE. The plots show how newer anchors are added as the
+number of tasks increases, with each developing distinct activation units indicated by the different colors. Over time,
+some anchors maintain fixed activations, while others continue to evolve with newer tasks (orange vs. red, or green vs.
+blue). This demonstrates how CDE effectively creates varied subspaces, represented by anchors in the form of neural
+networks.
+20
+Preprint.
+1. Computational Overhead: Introducing more subspaces in the CDE framework inevitably leads to increased
+computational overhead. Although we partially mitigate this issue by limiting the number of subspaces and rotating
+the acting network during training, the computational demands remain significant.
+2. Balancing Catastrophic Forgetting and Adaptability: In this work, our goal extended beyond merely addressing
+catastrophic forgetting; we aimed to develop a system that retains relevant ”skills” from previous tasks and adapts to
+new tasks when necessary. This approach differs from the traditional continual learning paradigm, where the primary
+objective is to preserve as much knowledge as possible from previous tasks while learning new ones. A core challenge
+for continual learning research in understanding and better categorizing different continual learning scenarios and thus
+creating more holistic systems capable of tackling a variety of open-world challenges.
+3. Longer Curricula and Task Non-Stationarity: This work primarily focuses on a single type of non-stationary
+continual learning scenario. It remains an open question how the system would perform with much longer curricula or
+in scenarios where non-stationarity is expressed through changing tasks like in ATARI games. Future investigations
+should consider these factors to enhance the system’s adaptability across a wider range of continual learning settings.
+4. Comparison to Operations Research Approaches: Despite achieving good results on the train scheduling prob-
+lem, our system still exhibits a performance gap compared to traditional operations research methods. There are still
+open questions on how to best solve this problem while ensuring that the system remains highly adaptable and capable
+of generalizing across diverse tasks.
+21

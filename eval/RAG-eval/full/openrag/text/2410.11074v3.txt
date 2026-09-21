@@ -1,0 +1,2942 @@
+arXiv:2410.11074v3  [hep-ph]  8 Apr 2025
+Phenomenology of the semileptonic Σ ∗0
+b → Σ +
+c ℓ ¯νℓ transition within QCD sum rules
+L. Khajouei a ∗ and K. Azizi a,b †
+aDepartment of Physics, University of Tehran, North Karegar Avenue, Tehran 14395-547, Iran
+bDepartment of Physics, Dogus University, Dudullu- ¨Umraniye, 34775 Istanbul, T¨ urkiye
+(Dated: April 9, 2025)
+We conduct an investigation on the spin 3
+2 → 1
+2 semileptonic weak transition of single heavy
+baryons for the exclusive decay Σ ∗0
+b → Σ +
+c ℓ ¯νℓ in three possible lepton channels within the three
+point QCD sum rule method. We compute the responsible form fa ctors of this semileptonic decay
+by incorporating both perturbative and nonperturbative co ntributions of the operator product ex-
+pansion series up to a mass dimension six. Having acquired th e form factors, the decay widths of the
+processes in all lepton channels are determined. Our ﬁnding s as well as possible future experimental
+information can be employed in order to check the SM predicti ons and explore the possibility of
+new physics in heavy baryonic decay channels.
+I. INTRODUCTION
+Probing hadronic structures, as a primary purpose of various exp eriments and research, can be accomplished by
+systematic studies of heavy hadrons. Particularly, singly heavy ba ryons have provoked a great deal of interest. Due
+to prominent experimental progress, a wide range of these singly h eavy baryons have been established in the ground
+and excited states. The BABAR Collaboration [ 1] observed the Ω c [2] and discovered the Ω ∗
+c state [3] in the radiative
+decay Ω 0
+c γ, where the Ω 0
+c baryon is reconstructed in the decays to the ﬁnal states Ω −π+ , Ω −π+π0, Ω −π+π−π+,
+and Ξ −K −π+π+. Ξ c(3055) and Ξ c(3123) were observed by BABAR Collaboration [ 4] and extremely narrow states,
+Ω c(3000), Ω c(3050), Ω c(3066), Ω c(3090), and Ω c(3119) observed by LHCb [ 5]. The Belle Collaboration found evidence
+for two excited charm-strange baryon states, Ξ c(2980) and Ξ c(3077), decaying strongly to Λ +
+c K 0 π− and Λ +
+c K − π+
+[6]. In the bottom sector, Ξ −
+b [7, 8] was observed by D0 [ 9] and CDF [ 10] Collaborations. LHCb established Λ b(5912)
+and Λ b(5920) in the Λ 0
+b π+ π− spectrum [ 11]. It also reported the discovery of the Ξ b(6327) and Ξ b(6333) [ 12]. The
+CDF Collaboration presented an observation of four Λ 0
+b π± resonances interpreted as Σ ±
+b and Σ ∗±
+b baryons in the
+reconstructed decay mode Λ 0
+b → Λ +
+c π−, where Λ +
+c → pK −π+ [13].
+The study of singly heavy baryons from diﬀerent aspects, especia lly decay properties, is of crucial importance.
+A variety of theoretical investigations into the strong, weak, and radiative decays of the singly heavy baryons can
+be found in the literature[ 14–24]. Weak decays of singly heavy baryons receive great concentratio n since a detailed
+experimental survey on various weak decay channels can be employ ed to obtain the standard model (SM) parameters,
+such as the CKM matrix elements. Any obvious deviation from SM pred ictions, clarify the feasible existence of new
+physics eﬀects beyond the standard model (BSM). In particular, the semileptonic weak decays provide us with a lot of
+useful information, and they have been discussed within several a pproaches such as the relativistic quark model [ 25],
+covariant conﬁned quark model [ 26], light cone QCD sum rules [ 27–30], nonrelativistic quark model [ 31], light front
+∗Electronic address: leila.khajooee@ut.ac.ir
+†Electronic address: kazem.azizi@ut.ac.ir; Corresponding author
+2
+quark model [ 32], and lattice QCD [ 33]. Most of these studies concentrate on spin 1
+2 → 1
+2 and 1
+2 → 3
+2 transitions,
+which the total angular momentum of the initial singly heavy baryon is 1
+2 .
+In this work, we study the semileptonic weak decay of a singly heavy b aryon with total angular momentum J = 3
+2 ,
+Σ ∗0
+b , into a singly heavy baryon with J = 1
+2 , Σ +
+c , within the three point QCD sum rule method. This approach is a
+powerful and predictive nonperturbative method in which a hadron -to-hadron transition matrix element is expressed in
+terms of a correlation function in both hadronic and quark-gluon lev el. Considering the previous consistent predictions
+of this method with the experiments, it is found to be a reliable approa ch and can be employed to determine diﬀerent
+hadronic parameters [ 27, 34–39]. In particular, we consider the b → c transition at quark level in semileptonic weak
+decay Σ ∗0
+b → Σ +
+c ℓ¯νℓ and compute the responsible form factors and decay widths in thre e lepton channels.
+The structure of this paper is organized as follows. In Sec. II, the construction of the QCD sum rules for corre-
+sponding form factors of the Σ ∗0
+b → Σ +
+c ℓ ¯νℓ transition is explained. Numerical results after analyzing the obtain ed
+sum rules for transition form factors and ﬁxing the working regions of auxiliary parameters, are exhibited in Sec.
+III. Utilizing the ﬁt functions of form factors in terms of transferred momentum squared, the decay widths of these
+processes in all lepton channels are calculated in Sec. IV. Finally, Sec. V is dedicated to the Summary and Conclusion;
+and some features of the computations are presented in the Appe ndixes.
+II. THE METHOD
+A. W eak transition form factors
+The semileptonic weak transitions originate from a quark weak curre nt, which is connected with a leptonic weak
+current via a W boson. Due to the large W-boson’s mass, an eﬀective lepton-quark interaction may occur, and it can
+be described by an eﬀective Hamiltonian.
+In the present study, we focus on the semileptonic weak decay of t he Σ ∗0
+b that is a single heavy baryon with one b
+heavy quark (See Table I).
+Baryon Quark content Charge Quark model Spin parity
+Σ ∗0
+b (udb ) 0 sextet 3
+2
++
+TABLE I: Quantum numbers and quark content of Σ ∗0
+b .
+We consider the b → c ℓ ¯νℓ transition in Σ ∗0
+b → Σ +
+c ℓ ¯νℓ decay channel which the Σ +
+c is also a single heavy baryon
+with one c heavy quark (See Table II).
+Baryon Quark content Charge Quark model Spin parity
+Σ +
+c (udc ) +1 sextet 1
+2
++
+TABLE II: Quantum numbers and quark content of Σ +
+c .
+An eﬀective quark-lepton interaction, as the source of b → c ℓ ¯νℓ transition, can be described by the Hamiltonian,
+Hef f = GF√
+2 Vcb ¯c γµ ( 1 − γ5 ) b ¯ℓ γµ ( 1 − γ5 ) νℓ, (1)
+where GF is the Fermi coupling constant and Vcb is one of the elements of the CKM matrix which parametrizes the
+quark-ﬂavor mixing in SM. By putting this eﬀective Hamiltonian betwee n the initial and ﬁnal baryonic states, the
+3
+amplitude of this decay mode is found,
+M = ⟨Σ +
+c | Hef f | Σ ∗0
+b ⟩, (2)
+where the pointlike leptonic parts, go out of the matrix element and t he other parts are parametrized, considering
+the Lorentz invariance and parity requirements, in terms of eight f orm factors; four for vector current, J V
+µ , which are
+F1(q2), F2(q2), F3(q2), F4(q2), and the other four for axial-vector current, J A
+µ , which are G1(q2), G2(q2), G3(q2), and
+G4(q2),
+⟨Σ +
+c (p′, s′) | J V
+µ | Σ ∗0
+b (p, s) ⟩ = ⟨Σ +
+c (p′, s′) | ¯c γµ b | Σ ∗0
+b (p, s) ⟩
+= ¯uΣ +
+c
+(p′, s′)
+[
+gµα F1(q2) + γµ
+p′
+α
+MΣ +
+c
+F2(q2) + p′
+α pµ
+M 2
+Σ +
+c
+F3(q2) + p′
+α qµ
+M 2
+Σ +
+c
+F4(q2)
+]
+γ5 uα
+Σ ∗0
+b
+(p, s),
+⟨Σ +
+c (p′, s′) | J A
+µ | Σ ∗0
+b (p, s) ⟩ = ⟨Σ +
+c (p′, s′) | ¯c γµ γ5 b | Σ ∗0
+b (p, s) ⟩
+= ¯uΣ +
+c
+(p′, s′)
+[
+gµα G1(q2) + γµ
+p′
+α
+MΣ +
+c
+G2(q2) + p′
+α pµ
+M 2
+Σ +
+c
+G3(q2) + p′
+α qµ
+M 2
+Σ +
+c
+G4(q2)
+]
+uα
+Σ ∗0
+b
+(p, s), (3)
+where q = p − p′ is the momentum transferred to the lepton and corresponding ant ineutrino. uΣ +
+c
+(p′, s′) and
+uα
+Σ ∗0
+b
+(p, s) are Dirac spinor of the ﬁnal baryonic state with momentum p′ and spin s′ and Rarita-Schwinger spinor of
+the initial state with momentum p and spin s, respectively. Form factors are building blocks of the transitions u nder
+study, and they are Lorentz invariant.
+The principal aim of this work is to compute these transition form fac tors via the three-point QCD sum rules
+method [ 40–43]. Being based on the QCD Lagrangian is the interest of this nonpertu rbative framework. In this
+approach, a baryonic transition is described by a correlation funct ion incorporating the initial and ﬁnal baryonic
+currents connected with a transition one.
+We consider the following three-point correlation function:
+Π µν (p, p′, q2) = i2
+∫
+d4x e−ip.x
+∫
+d4y eip′.y ⟨0 | T
+{
+J Σ +
+c (y) J tr
+µ (0) ¯J Σ ∗0
+b
+ν (x)
+}
+| 0 ⟩, (4)
+where T stands for the time-ordering operator and J Σ ∗0
+b and J Σ +
+c are the interpolating currents for the initial and ﬁnal
+baryons, respectively, and J tr
+µ is the transition current. The correlation function is a function of q2. If q2 is shifted
+from spacelike to timelike region, the long-distance quark-gloun inte ractions become dominant and hadrons are formed.
+In this framework, the correlation function is computed ﬁrst in had ronic level, which is called phenomenological or
+physical side and then in quark-gluon level, using the operator prod uct expansion (OPE), that is named theoretical
+or QCD side. These two representations are then matched to give Q CD sum rules for the form factors.
+B. Phenomenological side
+The correlation function receives contributions of the ground sta te, excited, and a continuum of many-body hadron
+states. A proper way to quantify the complex hadronic content of the correlation function is provided by the unitarity
+relation that is obtained by inserting complete sets of the hadronic s tates with the same quantum numbers as the
+interpolating currents of the initial and ﬁnal hadrons into the corr elation function [ 44, 45],
+1 = | 0⟩ ⟨0 | +
+∑
+h
+∫ d4ph
+(2π)4 2π δ(p2
+h − m2
+h)| h(ph) ⟩ ⟨h(ph) | + higher Fock states , (5)
+4
+where | h(ph)⟩ denotes the possible hadronic state with momentum ph.
+After inserting the complete sets in the correlation function, Eq. ( 4), and performing the Fourier transformation
+by integrating over four-x and -y, we obtain
+Π P hys.
+µν (p, p′, q2) = ⟨0 | J Σ +
+c (0) | Σ +
+c (p′) ⟩ ⟨Σ +
+c (p′)|J tr
+µ (0)|Σ ∗0
+b (p) ⟩ ⟨Σ ∗0
+b (p)| ¯J Σ ∗0
+b
+ν (0) | 0⟩
+(p′2 − m2
+Σ +
+c
+)(p2 − m2
+Σ ∗0
+b
+) + · · · , (6)
+where the · · · denote the higher states and continuum.
+The matrix element ⟨0 | J Σ +
+c (0) | Σ +
+c (p′) ⟩ is deﬁned in terms of the residue of the ﬁnal baryonic state, λ′
+Σ +
+c
+, as,
+⟨0 | J Σ +
+c (0) | Σ +
+c (p′) ⟩ = λ′
+Σ +
+c
+uΣ +
+c
+(p′, s′), (7)
+and ⟨Σ ∗0
+b (p) | ¯JνΣ ∗0
+b
+(0) | 0 ⟩ can be parametrized in terms of the residue of the initial state, λΣ ∗0
+b
+,
+⟨Σ ∗0
+b (p) | ¯J Σ ∗0
+b
+ν (0) | 0 ⟩ = λ†
+Σ ∗0
+b
+¯uνΣ ∗0
+b
+(p, s), (8)
+After substituting Eqs. ( 3), ( 7), and ( 8) in Eq. ( 6), since the initial and ﬁnal baryons are unpolarized, we utilize
+the summation relations over Dirac spinors for ﬁnal baryon with spin 1
+2 ,
+∑
+s′
+uΣ +
+c
+(p′, s′) ¯uΣ +
+c
+(p′, s′) = ( /p′ + mΣ +
+c
+), (9)
+and Rarita-Schwinger spinors for initial baryon with spin 3
+2 ,
+∑
+s
+uα Σ ∗0
+b
+(p, s) ¯uν Σ ∗0
+b
+(p, s) = −(/p + mΣ ∗0
+b
+)
+(
+gαν − γαγν
+3 − 2
+3
+pαpν
+m2
+Σ ∗0
+b
++ 1
+3
+pαγν − pνγα
+mΣ ∗0
+b
+)
+, (10)
+to obtain the physical side of the correlation function.
+Before proceeding with more computations, we make the following re marks. First, the interpolating current of the
+spin 3
+2 initial baryon, couples not only to spin 3
+2 state, but also to spin 1
+2 state. Imposing the condition γνJν = 0,
+these contributions can be written as
+⟨0 |J Σ ∗0
+b
+ν | (p, s = 1
+2 )⟩ = ( αγν − 4α
+m pν ) u(p, s = 1
+2 ). (11)
+It expresses that the Lorentz structures γν and pν have contributions of spin- 1
+2 baryons. Hence, the structures
+proportional to γν at the far right end or pν must be eliminated properly. Second, the structures, which appea r in
+the phenomenological or physical side of the correlation function, are not all independent, and it is essential to order
+the matrices in a speciﬁc form. In this work, the matrices are order ed in the form γµ/p/p′γνγ5.
+In the three-point QCD sum rule method, there are three kinds of a uxiliary parameters, the Borel mass parameters
+(M 2, M ′2) and the continuum thresholds ( s0, s ′
+0) for initial and ﬁnal baryonic channels, respectively which have bee n
+brought by applying the Borel transformation and the continuum s ubtraction to suppress the contributions coming
+from the higher states and continuum, and the third one is β, a mathematical mixing parameter inside the current of
+spin 1
+2 state. The working regions of these parameters are ﬁxed by requ iring that the physical observables be possibly
+independent of them as well as making use of other related prescrip tions that will be discussed later.
+We apply the double Borel transformation to the physical side using [46]
+ˆB 1
+(p2 − m2)m
+1
+(p′2 − m′2)n − →(−1)m+n 1
+Γ[ m] Γ[n]
+1
+(M 2)m−1
+1
+(M ′2)n−1 e−m2/M2
+e−m′2/M′2
+, (12)
+5
+where M 2 and M ′2 are Borel mass parameters and m and m′ are the masses of the initial and ﬁnal baryons.
+Utilization of all mentioned above leads us to the ﬁnal form of the phe nomenological side of the correlation function
+as
+ˆB Π P hys.
+µν (p, p′, q2) = λΣ ∗0
+b
+λΣ +
+c
+e−
+m2
+Σ ∗0
+b
+M 2 e−
+m2
+Σ +c
+M ′2
+[
+F1
+(
+− mΣ ∗0
+b
+mΣ +
+c
+gµν γ5 + mΣ +
+c
+gµν /p γ5 − mΣ ∗0
+b
+gµν /p′ γ5 − gµν /p /p′ γ5
+)
++
+F2
+(
+− mΣ ∗0
+b
+p′
+ν γµ γ5 + p′
+ν γµ /p γ5 +
+mΣ ∗0
+b
+mΣ +
+c
+p′
+ν γµ /p′ γ5 + 1
+mΣ +
+c
+p′
+ν γµ /p /p′ γ5
+)
++ F3
+(
+−
+mΣ ∗0
+b
+mΣ +
+c
+pµ p′
+ν γ5 + 1
+mΣ +
+c
+pµ p′
+ν /p γ5 −
+mΣ ∗0
+b
+m2
+Σ +
+c
+pµ p′
+ν/p′ γ5 − 1
+m2
+Σ +
+c
+pµ p′
+ν /p /p′ γ5
+)
++ F4
+(mΣ ∗0
+b
+m2
+Σ +
+c
+p′
+µ p′
+ν /p′ γ5 −
+mΣ ∗0
+b
+m2
+Σ +
+c
+pµ p′
+ν /p′ γ5 − 1
+m2
+Σ +
+c
+pµ p′
+ν /p /p′ γ5 + 1
+m2
+Σ +
+c
+p′
+µ p′
+ν /p /p′ γ5
+)
+−G1
+(
+− mΣ ∗0
+b
+mΣ +
+c
+gµν − mΣ +
+c
+gµν /p − mΣ ∗0
+b
+gµν /p′ + gµν /p /p′
+)
+− G2
+(
+− mΣ ∗0
+b
+p′
+ν γµ − p′
+ν γµ /p +
+mΣ ∗0
+b
+mΣ +
+c
+p′
+ν γµ /p′
+− 1
+mΣ +
+c
+p′
+ν γµ /p /p′
+)
+− G3
+(
+−
+mΣ ∗0
+b
+mΣ +
+c
+pµ p′
+ν − 1
+mΣ +
+c
+pµ p′
+ν /p −
+mΣ ∗0
+b
+m2
+Σ +
+c
+pµ p′
+ν/p′ + 1
+m2
+Σ +
+c
+pµ p′
+ν /p /p′
+)
+− G4
+(mΣ ∗0
+b
+m2
+Σ +
+c
+p′
+µ p′
+ν /p′
+−
+mΣ ∗0
+b
+m2
+Σ +
+c
+pµ p′
+ν /p′ + 1
+m2
+Σ +
+c
+pµ p′
+ν /p /p′ − 1
+m2
+Σ +
+c
+p′
+µ p′
+ν /p /p′
+)]
++ · · · , (13)
+where we omitted the q2 dependence of form factors for simplicity.
+C. Theoretical side
+As mentioned in Sec. II A, the correlation function is also deﬁned at negative values of q2. In a deep Euclidean
+region, Q2 = −q2 ≫ Λ 2
+QCD , the correlation function can be expressed in terms of the quark a nd gluon ﬁelds,
+considering the QCD - vacuum ﬂuctuations and both perturbative a nd nonperturbative eﬀects, and computed using
+the OPE,
+Π( q2) =
+∑
+d
+Cd(q2) ⟨0 |Od| 0⟩, (14)
+where Cd(q2) are Wilson coeﬃcients and the operators Od are arranged according to their dimension d and the vacuum
+expectation values of these operators are denoted in a variety of vacuum condensates . Thus the next step, in the
+three-point QCD sum rules method, is to compute the theoretical o r QCD ‌ side of the correlation function. For this
+goal, the explicit forms of the interpolating currents of the initial an d ﬁnal baryons are embedded into the correlation
+function, Eq. ( 4). These currents are expressed by the corresponding quark ﬁe lds and given as
+J Σ ∗0
+b
+µ (x) =
+√
+2
+3 ǫabc
+{(
+uaT (x)Cγµ db(x)
+)
+bc(x) +
+(
+daT (x)Cγµ bb(x)
+)
+uc(x) +
+(
+baT (x)Cγµ ub(x)
+)
+dc(x)
+}
+, (15)
+for the initial singly heavy baryon with spin 3
+2 (for details see the Appendix A) and
+J Σ +
+c (y) = − 1√
+2
+ǫabc
+{(
+uaT (y)C cb(y)
+)
+γ5dc(y) + β
+(
+uaT (y)Cγ5 cb(y)
+)
+dc(y)
+−
+(
+caT (y)C db(y)
+)
+γ5 uc(y) − β
+(
+caT (y) C γ5 db(y)
+)
+uc(y)
+}
+, (16)
+for the ﬁnal singly heavy baryon with spin 1
+2 , where a, b, and c are color indices, C is the charge conjugation operator,
+and u(x), d(x), c(x), and b(x) are quark ﬁelds. After substituting Eqs. ( 15) and ( 16) in Eq.( 4) and contracting
+6
+the related quark ﬁelds, we acquire the QCD side of the correlation f unction in terms of the heavy and light quark
+propagators in coordinate space in the following form:
+Π QCD
+µν (p, p′, q2) = i2
+∫
+d4x e−ipx
+∫
+d4y eip′y 1√
+3 ǫabc ǫa′b′c′
+{
+γ5 Scb′
+d (y − x) γν
+∼
+S
+aa′
+u (y − x) Sbi
+c (y)
+(
+γµ (1 − γ5)
+)
+Sic′
+b (−x)
+−γ5 Sca′
+d (y − x) γν
+∼
+S
+ib′
+b (−x)
+(
+(1 − γ5)γµ
+)∼
+S
+bi
+c (y)Sac′
+u (y − x)
+−γ5 Scc′
+d (y − x) T r[ Sab′
+u (y − x)γν
+∼
+S
+ia′
+b (−x)
+(
+1 − γ5)γµ
+)∼
+S
+bi
+c (y)]
++β S cb′
+d (y − x) γν
+∼
+S
+aa′
+u (y − x)γ5Sbi
+c (y)
+(
+γµ (1 − γ5)
+)
+Sic′
+b (−x)
+−β S ca′
+d (y − x) γν
+∼
+S
+ib′
+b (−x)
+(
+(1 − γ5)γµ
+)∼
+S
+bi
+c (y)γ5Sac′
+u (y − x)
+−β S cc′
+d (y − x)T r[ γν
+∼
+S
+ia′
+b (−x)
+(
+(1 − γ5)γµ
+)∼
+S
+bi
+c (y)γ5Sab′
+u (y − x)]
++γ5 Sca′
+u (y − x) γν
+∼
+S
+bb′
+d (y − x) Sai
+c (y)
+(
+γµ (1 − γ5)
+)
+Sic′
+b (−x)
+−T r[ Sba′
+d (y − x) γν
+∼
+S
+ib′
+b (−x)
+(
+(1 − γ5)γµ
+)∼
+S
+ai
+c (y)] γ5Scc′
+u (y − x)
+−γ5 Scb′
+u (y − x) γν
+∼
+S
+ia′
+b (−x)
+(
+(1 − γ5)γµ
+)∼
+S
+ai
+c (y)Sbc′
+d (y − x)
++β S ca′
+u (y − x) γν
+∼
+S
+bb′
+d (y − x)γ5Sai
+c (y)
+(
+γµ (1 − γ5)
+)
+Sic′
+b (−x)
+−T r[ Sba′
+d (y − x) γν
+∼
+S
+ib′
+b (−x)
+(
+(1 − γ5)γµ
+)∼
+S
+ai
+c (y)γ5] Scc′
+u (y − x)
+−β S cb′
+u (y − x) γν
+∼
+S
+ia′
+b (−x)
+(
+(1 − γ5)γµ
+)∼
+S
+ai
+c (y) γ5Sbc′
+d (y − x)
+}
+, (17)
+where
+∼
+Sq = C S T C. The light quark propagator is deﬁned as [ 47]
+Sab
+q (x) = i δab
+/x
+2π2x4 − δab
+mq
+4π2x2 − δab
+⟨¯qq⟩
+12 + iδab
+/x mq⟨¯qq⟩
+48 − δab
+x2
+192 ⟨¯qgsσGq⟩
++iδab
+x2/xmq
+1152 < ¯qgsσGq > −i gs Gµν
+ab
+32π2x2 [/x σµν + σµν /x] − iδab
+x2/xg2
+s ⟨¯qq⟩2
+7776 − δab
+x4⟨¯qq⟩ ⟨g2
+s G2⟩
+27648 + · · · , (18)
+and the heavy quark propagator has the following representation [47]:
+Sab
+Q (x) = i
+∫ d4k
+(2π)4 e−ikx
+{
+δab(/k + mQ)
+k2 − m2
+Q
+− gs Gµν
+ab
+4
+σµν (/k + mQ) + ( /k + mQ)σµν
+(k2 − m2
+Q)2
++ g2
+s G2
+12 δab mQ
+k2 + mQ/k
+(k2 − m2
+Q)4 + g3
+s G3
+48 δab
+(/k + mQ)
+(k2 − m2
+Q)6 [ /k(k2 − 3m2
+Q) + 2 mQ(2k2 − m2
+Q)](/k + mQ) + · · ·
+}
+, (19)
+where mq and mQ indicate the light and heavy quark masses and k represents the four-momentum of heavy quark.
+We also deﬁne
+Gµν
+ab ≡ Gµν
+A tA
+ab, G 2 = GA
+µν Gµν
+A , (20)
+with , tA = λA/2 where λA denotes the Gell-Mann matrices with A = 1 , 2...8 and µ and ν are Lorentz indices. The
+gluon ﬁeld strength tensor GA
+µν = GA
+µν (0) is ﬁxed at x = 0.
+By substituting the heavy and light quark propagators in Eq. ( 17), we obtain all the perturbative and nonperturba-
+tive contributions with diﬀerent mass dimensions in the OPE. The lowes t-dimension operator, d = 0, is related to the
+7
+perturbative contribution and the high-dimensional operators co rrespond to the non-perturbative eﬀects. They are
+associated with the vacuum condensates, such as quark condens ate with d = 3 , ⟨¯qq⟩, gluon condensate, d = 4 , ⟨G2⟩,
+quark-gluon condensate, d = 5 , ⟨¯qgσGq ⟩, and two-times quark condensate, d = 6 , ⟨¯qq⟩2. In this study, the nonper-
+turbative eﬀects up to six mass dimensions are considered in the calc ulations.
+Our study proceeds by evaluating the four-integrals of the form,
+∫
+d4k
+∫
+d4k′
+∫
+d4x ei (k−p).x
+∫
+d4y ei (−k′+p′).y xµ yν kα k′
+β
+(k2 − m2
+b)l (k′2 − m2c)m [(y − x)2]n . (21)
+In the ﬁrst step, we utilize the identity [ 48],
+1
+[(y − x)2]n =
+∫ dDt
+(2π)D e−i t.(y−x) i (−1)n+1 2D−2n πD/2 Γ( D/2 − n)
+Γ( n) (− 1
+t2 )D/2−n, (22)
+to write a part of the denominators in exponential forms.
+After substituting xµ → i ∂
+∂pµ
+and yµ → − i ∂
+∂p′µ
+and performing the Fourier integrals by employing the deﬁnition
+of the four-dimensional Dirac delta function, we evaluate the integ rals over four k and k′. The ultimate expressions
+are then computed via the Feynman parametrization and the followin g formula [ 48]:
+∫
+dDt (t2)m
+(t2 + ∆) n = i π2 (−1)m−n Γ( m + 2) Γ( n − m − 2)
+Γ(2) Γ( n) [−∆] n−m−2 , (23)
+and the imaginary parts of the results are extracted by applying th e identity [ 48],
+Γ[ D
+2 − n] (− 1
+∆ )D/2−n = (−1)n−1
+(n − 2)! (−∆) n−2 ln[−∆] . (24)
+Finally, the QCD side of the correlation function is acquired in terms of thirty-two diﬀerent Lorentz structures as
+follows:
+Π QCD
+µν (p, p′, q2) = Π QCD
+pµp′ν
+(p2, p′2, q2) pµp′
+ν + Π QCD
+p′µp′ν
+(p2, p′2, q2) p′
+µp′
+ν + Π QCD
+gµν (p2, p′2, q2) gµν + Π QCD
+pµp′ν γ5(p2, p′2, q2)
+pµp′
+νγ5 + Π QCD
+p′µp′ν γ5 (p2, p′2, q2) p′
+µp′
+νγ5 + Π QCD
+gµν γ5(p2, p′2, q2) gµνγ5 + Π QCD
+pµp′ν /p(p2, p′2, q2) pµp′
+ν /p + Π QCD
+p′µp′ν /p(p2, p′2, q2)
+p′
+µp′
+ν/p + Π QCD
+gµν /p (p2, p′2, q2) gµν/p + Π QCD
+pµp′ν /p′ (p2, p′2, q2) pµp′
+ν/p′ + Π QCD
+p′µp′ν /p′ (p2, p′2, q2) p′
+µp′
+ν /p′ + Π QCD
+gµν /p′(p2, p′2, q2)
+gµν /p′ + Π QCD
+p′ν γµ (p2, p′2, q2) p′
+νγµ + Π QCD
+pµp′ν /pγ5(p2, p′2, q2) pµp′
+ν/pγ5 + Π QCD
+p′µp′ν /pγ5 (p2, p′2, q2) p′
+µp′
+ν/pγ5 + Π QCD
+gµν /pγ5(p2, p′2, q2)
+gµν /pγ5 + Π QCD
+pµp′
+ν /p/p′ (p2, p′2, q2) pµp′
+ν/p/p′ + Π QCD
+p′
+µp′
+ν /p/p′ (p2, p′2, q2) p′
+µp′
+ν/p/p′ + Π QCD
+gµν /p/p′(p2, p′2, q2) gµν/p/p′ +
+Π QCD
+pµp′ν /p′γ5 (p2, p′2, q2) pµp′
+ν /p′γ5 + Π QCD
+p′µp′ν /p′γ5 (p2, p′2, q2) p′
+µp′
+ν/p′γ5 + Π QCD
+gµν /p′γ5(p2, p′2, q2) gµν/p′γ5 +
+Π QCD
+p′ν γµγ5(p2, p′2, q2) p′
+νγµγ5 + Π QCD
+p′ν γµ/p(p2, p′2, q2) p′
+ν γµ/p + Π QCD
+p′ν γµ/p′(p2, p′2, q2) p′
+νγµ/p′ +
+Π QCD
+pµp′ν /p/p′γ5 (p2, p′2, q2) pµp′
+ν/p/p′γ5 + Π QCD
+p′µp′ν /p/p′γ5(p2, p′2, q2) p′
+µp′
+ν/p/p′γ5 + Π QCD
+gµν /p/p′γ5(p2, p′2, q2) gµν/p/p′γ5 +
+Π QCD
+p′ν γµ/pγ5 (p2, p′2, q2) p′
+νγµ/pγ5 + Π QCD
+p′ν γµ/p/p′ (p2, p′2, q2) p′
+νγµ/p/p′ + Π QCD
+p′ν γµ/p′γ5(p2, p′2, q2) p′
+νγµ/p′γ5 +
+Π QCD
+p′ν γµ/p/p′γ5(p2, p′2, q2) p′
+νγµ/p/p′γ5 , (25)
+where the invariant functions Π QCD
+i (p2, p′2, q2), ( i denotes individual structures) are described in terms of double
+dispersion integrals,
+Π QCD
+i (p2, p′2, q2) =
+∫ ∞
+smin
+ds
+∫ ∞
+s′
+min
+ds′ ρQCD
+i (s, s′, q2)
+(s − p2)(s′ − p′2) + Γ i(p2, p′2, q2), (26)
+where smin = m2
+b, s′
+min = m2
+c, and ρQCD
+i (s, s′, q2) indicates the spectral densities, obtained by ρQCD
+i (s, s′, q2) =
+1
+π Im Π QCD
+i (p2, p′2, q2). Here, Γ i(p2, p′2, q2) denotes the contributions with no imaginary parts that are direct ly
+8
+computed. By employing the quark-hadron duality assumption, the integrals’ upper limits will be turned to s0 and
+s′
+0 that are known as continuum thresholds of the initial and ﬁnal bary ons, respectively. In calculations, the spectral
+densities decompose as follows:
+ρQCD
+i (s, s′, q2) = ρP ert.
+i (s, s′, q2) +
+6∑
+n=3
+ρn
+i (s, s′, q2), (27)
+where the ﬁrst part, ρP ert.
+i (s, s′, q2), is related to the perturbative contributions and the second par t, as mentioned
+above, denotes the nonperturbative eﬀects and vacuum conden sates including quark, gluon, and mixed condensates.
+In this step, the contributions of the higher states and continuum should be suppressed by applying the double Borel
+transformation, Eq.(12), to the QCD side and employing continuum subtraction arisen from t he quark-hadron duality
+assumption. Therefore, we acquire
+Π QCD
+i (M 2, M ′2, s0, s′
+0, q2) =
+∫ s0
+smin
+ds
+∫ s′
+0
+s′
+min
+ds′ e−s/M2
+e−s′/M′2
+ρQCD
+i (s, s′, q2) + ˆB
+[
+Γ i(p2, p′2, q2)
+]
+, (28)
+where the ﬁnal expressions for the spectral densities, ρi(s, s′, q2), and functions Γ i(p2, p′2, q2) corresponding to the
+structure gµν /p are provided in Appendix B.
+Ultimately, by matching the corresponding coeﬃcients of the distinc tive Lorentz structures from the physical
+and theoretical sides, we acquire the QCD ‌ sum rules to determine the responsible form factors, in terms of QC D
+fundamental parameters, such as the strong coupling constant ; quark, gluon, and mixed condensates; quark masses
+as well as hadronic parameters, such as residues and masses of th e initial and ﬁnal baryons; and ﬁnally, auxiliary
+parameters, s0, s ′
+0, M 2, M ′2, and β. The expressions of the sum rules for the form factors are prese nted in Appendix
+C.
+III. NUMERICAL ANALYSIS OF THE FORM F ACTORS
+As mentioned in Sec. I, the study of the heavy baryons and their decay properties is of c rucial importance in
+probing hadronic structures. The decay width, as an observable q uantity in experiment, is a main source to achieve
+this purpose. In theory, the decay width is obtained by computing t he responsible form factors. In our approach,
+form factors are determined after acquiring the QCD sum rules and analyzing the numerical results. Since the form
+factors are invariant functions of q2, it is essential to analyze their behavior in terms of q2. To this end, some input
+parameters are required that are itemized in Table III.
+In addition, as we previously mentioned, some auxiliary parameters a ppear in the calculations. These are the
+Borel parameters M 2 and M ′2, the continuum thresholds s0 and s′
+0, and the mixing parameter β in the interpolating
+currents of spin- 1
+2 baryons. Based on the standard requirements of the method, ph ysical quantities are supposed to
+possibly show stable behavior with respect to variations of these he lping parameters. This constraint in addition to
+other requirements, including pole dominance, at the initial and ﬁnal channels, and convergence of the OPE, impose
+restrictions on the working domains of these parameters. In this f ramework, the contribution of the ground state,
+i.e. pole contribution, is considered to be larger than the contributio ns of the higher states and continuum. This
+consideration introduces the upper limits of the Borel parameters , M 2 and M ′2 by demanding
+P C = Π QCD (M 2, M ′2, s0, s′
+0)
+Π QCD (M 2, M ′2, ∞, ∞) ≥ 1
+2 . (29)
+On the other hand, the lower limits of the Borel parameters, are ob tained by requiring the convergence of the OPE
+series. It means that the perturbative eﬀects receive more cont ributions than the nonperturbative eﬀects. Moreover,
+9
+TABLE III: The input parameters used in numerical analysis.
+Parameters Values
+mb ( 4.18+0.03
+−0.02 ) GeV [ 49]
+mc (1.27 ± 0.02) GeV[ 49]
+me 0.51 MeV [ 49]
+mµ 105.65 MeV [ 49]
+mτ 1776.93 MeV [ 49]
+mΣ ∗
+b (5830.32 ± 0.27) MeV [ 49]
+mΣ +
+c
+(2452.65+0.22
+−0.16) MeV [ 49]
+λΣ ∗
+b (0.038 ± 0.011) GeV 3 [50]
+λΣ +
+c
+(0.045 ± 0.015) GeV 3 [51]
+GF 1.17 × 10−5 GeV−2 [49]
+Vcb (39 ± 1.1) × 10−3 [49]
+m2
+0 (0.8 ± 0.2) GeV 2 [52–54]
+⟨¯uu⟩ −(0.24 ± 0.01)3 GeV3 [53, 54]
+⟨0 | 1
+παsG2 | 0⟩ (0.012 ± 0.004) GeV 4 [52–54]
+the operators with higher dimensions possess the lower contributio ns in the OPE series. Hence, we employ the
+following constraint:
+R ( M 2, M ′2 ) = Π QCD −dim6(M 2, M ′2, s0, s′
+0)
+Π QCD (M 2, M ′2, s0, s′
+0) ≤ 0.05. (30)
+By applying all these conditions, we acquire practical intervals of th e Borel parameters as 9 GeV 2 ≤ M 2 ≤ 12 GeV2
+and 6 GeV 2 ≤ M ′2 ≤ 9 GeV2. The continuum thresholds, s0 and s′
+0, which are introduced by the quark-hadron
+duality assumption, restrict the upper limits of the integrals in calcula tions in order to eliminate any contributions
+to the ﬁrst excited state and the other higher states and continu um in the initial and ﬁnal channels. Considering
+that the sum rules are expected to be stable within the allowed interv als of the Borel parameters, M 2 and M ′2, the
+continuum thresholds, s0 and s′
+0, are also determined through conditions satisfying this stability. We ﬁnd
+( mΣ ∗0
+b
++ 0 .3 )2 GeV2 ≤ s0 ≤ ( mΣ ∗0
+b
++ 0 .5 )2 GeV2,
+( mΣ +
+c
++ 0 .3 )2 GeV2 ≤ s′
+0 ≤ ( mΣ +
+c
++ 0 .5 )2 GeV2. (31)
+As depicted in Figs. 1, 2, 3, and 4, the form factors have very weak dependence on variations of s0, s ′
+0, M 2, and M ′2
+within their practical intervals that can be interpreted as an accep table consistency between the chosen ranges of the
+parameters and the requirements of the method.
+Another parameter that is required to be speciﬁed, in the QCD sum r ules method, is the mixing parameter β.
+It is a mathematical parameter that arises from an arbitrary linear combination in interpolating currents of spin- 1
+2
+baryons. Therefore, it belongs to an extensive range from −∞ to +∞. In order to restrict the β parameter, we deﬁne
+x = cos θ, where θ = tan −1 β. According to the requirements of the method, the working domain of this parameter,
+β, is properly chosen in such a way that the behavior of the form fact ors, within the selected area, be rather stable.
+Hence, the practical interval of the x parameter, is determined as −1.0 ≤ x ≤ − 0.5. We utilize this condition for
+computing all the form factors. It is worth mentioning that x = −0.71, corresponding to β = −1 in the Ioﬀe current,
+is incorporated in the selected region.
+10
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.00
+5
+10
+15
+20
+M2(GeV2)
+F1
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-5
+-4
+-3
+-2
+-1
+0
+M2(GeV2)
+F2
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-3.0
+-2.5
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+F3
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+F4
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.00
+2
+4
+6
+8
+10
+12
+M2(GeV2)
+G1
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+G2
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+G3
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+G4
+FIG. 1: Variations of the form factors with respect to the Bor el parameter M 2 for a variety of the parameter
+s0, q2 = 0, and the central values of the other auxiliary parameters at Ioﬀe point. The ﬁgures relate to the
+structures gµν/pγ5, p′
+νγµ/p/p′γ5, pµp′
+ν/p/p′γ5, p′
+µp′
+ν/p/p′γ5, gµν/p, p′
+µp′
+ν/p, pµp′
+ν/p′, and p′
+µp′
+ν/p/p′ corresponding to the form factors
+F1, F2, F3, F4, G1, G2, G3, and G4, respectively (see Table IV).
+After establishing the proper regions of the auxiliary parameters, we study the behavior of the form factors with
+respect to q2 that is deﬁned in whole physical region, m2
+ℓ ≤ q2 ≤ (mΣ ∗0
+b
+− mΣ +
+c
+)2. In this region, the maximal value
+of q2 is q2
+max = 11.42 GeV2, and the lowest value of q2 is the squared lepton’s mass, listed in Table III. Following our
+examination, it is found that the form factors are well ﬁtted to the function as follows:
+F (q2) = F (0)(
+1 − a1
+q2
+m2
+Σ ∗0
+b
++ a2
+q4
+m4
+Σ ∗0
+b
++ a3
+q6
+m6
+Σ ∗0
+b
++ a4
+q8
+m8
+Σ ∗0
+b
+). (32)
+The values of the parameters, F (0), a 1, a 2, a 3, and a4, obtained by employing the central values of the auxiliary
+11
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.00
+5
+10
+15
+20
+M2(GeV2)
+F1
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-5
+-4
+-3
+-2
+-1
+0
+M2(GeV2)
+F2 s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-3.0
+-2.5
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+F3
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+F4
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.00
+5
+10
+15
+M2(GeV2)
+G1
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+G2
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+G3
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+9.0 9.5 10.0 10.5 11.0 11.5 12.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M2(GeV2)
+G4
+FIG. 2: Variations of the form factors with respect to the Bor el parameter M 2 for a variety of the parameter
+s′
+0, q2 = 0, and the central values of the other auxiliary parameters at Ioﬀe point. The ﬁgures relate to the
+structures gµν/pγ5, p′
+νγµ/p/p′γ5, pµp′
+ν/p/p′γ5, p′
+µp′
+ν/p/p′γ5, gµν/p, p′
+µp′
+ν/p, pµp′
+ν/p′, and p′
+µp′
+ν/p/p′ corresponding to the form factors
+F1, F2, F3, F4, G1, G2, G3, and G4, respectively (see Table IV).
+parameters at Ioﬀe point, x = −0.71, are indicated in Table IV. QCD sum rules method for the form factors is based
+on selecting appropriate structures, which lead to the least possib le uncertainties for the form factors by perceiving
+the practical regions of the Borel parameter, continuum thresh old, and the mixing x parameter. As it is obvious
+from the presented results in both the hadronic representation, Eq. ( 13), and the QCD representation, Eq. ( 25),
+the Lorentz structures, in QCD sum rules method, are not unique a nd the form factors are actually structure depen-
+dent. Hence, in this study, we choose the structures gµν /pγ5, p ′
+νγµ/p/p′γ5, p µp′
+ν/p/p′γ5, p ′
+µp′
+ν/p/p′γ5, g µν/p, p ′
+µp′
+ν/p, p µp′
+ν/p′,
+and p′
+µp′
+ν/p/p′, which show more steadiness and less uncertainties with respect to variations of the helping parame-
+12
+TABLE IV: Parameters of the ﬁt functions for the responsible form factors for Σ ∗0
+b → Σ +
+c ℓ ¯νℓ semileptonic decay.
+F1(q2) F2(q2) F3(q2) F4(q2) G1(q2) G2(q2) G3(q2) G4(q2)
+F(q2 = 0) 5.07 ± 0.93 −1.73 ± 0.40 −0.95 ± 0.14 −0.44 ± 0.09 8.17 ± 1.05 −0.48 ± 0.11 −0.49 ± 0.09 −0.44 ± 0.09
+a1 1.99 1.74 1.76 2.51 0.85 0.97 2.22 2.51
+a2 1.66 0.64 0.92 2.097 -0.12 -0.097 1.91 2.097
+a3 -1.11 0.13 -0.10 -0.575 0.029 -0.086 -0.939 -0.575
+a4 0.51 -0.035 -0.022 -0.023 0.035 -0.0097 0.29 -0.023
+ters (for more information about reducing the uncertainties, see , for instance, Ref. [ 55]). The selected structures,
+gµν/pγ5, p ′
+νγµ/p/p′γ5, p µp′
+ν/p/p′γ5, p ′
+µp′
+ν/p/p′γ5, g µν/p, p ′
+µp′
+ν/p, p µp′
+ν/p′, and p′
+µp′
+ν/p/p′, are corresponding to the eight form fac-
+tors F1, F 2, F 3, F 4, G 1, G 2, G 3, and G4, respectively, that are represented in Table IV. The uncertainties of the form
+factors at q2 = 0 originate from the uncertainties appear in determination of the a cceptable regions for the auxiliary
+parameters and errors of the other input values. The behavior of the form factors F1, F 2, F 3, F 4, G 1, G 2, G 3, and
+G4, corresponding to the structures gµν/pγ5, p ′
+νγµ/p/p′γ5, p µp′
+ν /p/p′γ5, p ′
+µp′
+ν /p/p′γ5, g µν /p, p ′
+µp′
+ν /p, p µp′
+ν /p′, and p′
+µp′
+ν/p/p′, as a
+function of q2 at the central values of M 2, M ′2, s 0, s ′
+0, and the Ioﬀe point ( x = −0.71), is illustrated in Figs. 5 and
+6, without and with considering uncertainties, respectively. As Fig. 5 depicts, all the form factors, related to the
+weak transitions, increase by raising q2 that is consistent with the expectations. In the next section, we e mploy the ﬁt
+functions of the form factors in the physical region m2
+ℓ ≤ q2 ≤ (mΣ ∗0
+b
+− mΣ +
+c
+)2 to compute the corresponding decay
+widths in all lepton channels.
+IV. COMPUTATION OF DECAY WIDTH
+The acquired results for the ﬁt functions of the form factors, in t he previous section, enable us to evaluate the
+decay widths of the Σ ∗0
+b → Σ +
+c ℓ ¯νℓ transitions in all lepton channels. To this end, we compute vector an d axial
+vector helicity amplitudes, H V,A
+λ2,λW , represented in respect of linear expressions of the vector, F V
+i ≡ Fi(i = 1 , 2, 3, 4),
+and axial vector, F A
+i ≡ Gi, invariant transition form factors, where λW = t, 0, ±1 and λ2 = ± 1
+2 are the helicity
+components of the virtual W boson and the ﬁnal baryon, respect ively [ 56, 57]. The helicity of the initial baryon, λ1,
+is established by the relation λ1 = λ2 − λW . Vector and axial vector parts of helicity amplitudes are determine d by
+using H V,A
+λ2,λW = M V,A
+µ ¯ǫ∗µ(λW ), where M V,A
+µ , as expressed in Eq. ( 3), are the vector and axial vector currents, J V,A
+µ ,
+which are placed between the initial and ﬁnal baryonic states and ¯ ǫ∗µ is the polarization vector of W boson. Hence,
+we have
+H V
+1
+2 ,t = −
+√
+2
+3 αV
+1
+2 ,t (ω − 1)
+(
+F V
+1 M2 + F V
+2 M+ − F V
+3
+M1
+M2
+(M1 − M2 ω) − F V
+4
+q2
+M2
+)
+,
+H V
+1
+2 ,0 = −
+√
+2
+3 αV
+1
+2 ,0
+(
+F V
+1 (M1 − M2 ω) + F V
+2 (ω + 1)M− − F V
+3 (ω2 − 1)M1
+)
+,
+H V
+1
+2 ,1 = 1√
+6 αV
+1
+2 ,1
+(
+F V
+1 + 2 F V
+2 (ω + 1)
+)
+,
+H V
+1
+2 ,−1 = 1√
+2 αV
+1
+2 ,1 F V
+1 , (33)
+and
+13
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+6.0 6.5 7    7    8.0 8.5 9.00
+5
+10
+15
+20
+M′2(GeV2)
+F1
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+6.0 6.5       8.0 8.5 9.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M′2(GeV2)
+F2
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+6.0 6.5   	   
+ 8.0 8.5 9.0
+-2.5
+-2.0
+-1.5
+-1.0
+-0.5
+M′2(GeV2)
+F
+3
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+6.0 6.5   
+    8.0 8.5 9.0
+-1  
+-1.2
+-1.0
+-0.8
+-0.6
+-
+
+  
+-0.2
+0.0
+M′2(GeV2)
+F
+4
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+6.0 6.5       8.0 8.5 9.00
+5
+10
+15
+20
+M′2(GeV2)
+G1
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+6.0 6.5       8.0 8.5 9.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M′2(GeV2)
+G2
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+6.0 6.5       8.0 8.5 9.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M′2(GeV2)
+G
+
+s0=37.57 GeV 2
+s0=38.81 GeV 2
+s0=40.06 GeV 2
+6.0 6.5       8.0 8.5 9.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M′2(GeV2)
+G
+!
+FIG. 3: Variations of the form factors with respect to the Bor el parameter M ′2 for a variety of the parameter
+s0, q2 = 0, and the central values of the other auxiliary parameters at Ioﬀe point. The ﬁgures relate to the
+structures gµν/pγ5, p′
+νγµ/p/p′γ5, pµp′
+ν/p/p′γ5, p′
+µp′
+ν/p/p′γ5, gµν/p, p′
+µp′
+ν/p, pµp′
+ν/p′, and p′
+µp′
+ν/p/p′ corresponding to the form factors
+F1, F2, F3, F4, G1, G2, G3, and G4, respectively (see Table IV).
+H A
+1
+2 ,t =
+√
+2
+3 αA
+1
+2 ,t (ω + 1)
+(
+F A
+1 M2 − F A
+2 M− − F A
+3
+M1
+M2
+(M1 − M2 ω) − F A
+4
+q2
+M2
+)
+,
+H A
+1
+2 ,0 = −
+√
+2
+3 αA
+1
+2 ,0
+(
+− F A
+1 (M1 − M2 ω) + F A
+2 (ω − 1)M+ + F A
+3 (ω2 − 1)M1
+)
+,
+H A
+1
+2 ,1 = 1√
+6 αA
+1
+2 ,1
+(
+− F A
+1 + 2 F A
+2 (ω − 1)
+)
+,
+H A
+1
+2 ,−1 = − 1√
+2 αA
+1
+2 ,1 F A
+1 , (34)
+14
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+6.0 6.5 " # $ " # % 8.0 8.5 9.00
+5
+10
+15
+20
+M′2(GeV2)
+F1
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+6.0 6.5 & ' ( & ' ) 8.0 8.5 9.0
+-5
+-*
+-+
+-2
+-1
+0
+M′2(GeV2)
+F2
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+6.0 6.5 , - . , - / 8.0 8.5 9.0
+-2.5
+-2.0
+-1.5
+-1.0
+-0.5
+M′2(GeV2)
+F
+0
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+6.0 6.5 2 5 6 2 5 8 8.0 8.5 9.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M′2(GeV2)
+F
+9
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+6.0 6.5 : ; < : ; = 8.0 8.5 9.00
+5
+10
+15
+20
+M′2(GeV2)
+G1
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+6.0 6.5 > ? @ > ? A 8.0 8.5 9.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M′2(GeV2)
+G2
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+6.0 6.5 B C D B C E 8.0 8.5 9.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M′2(GeV2)
+G
+F
+s0
+′ =7.56 GeV 2
+s0
+′ =8.12 GeV 2
+s0
+′ =8.70 GeV 2
+6.0 6.5 G H I G H J 8.0 8.5 9.0
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+M′2(GeV2)
+G
+K
+FIG. 4: Variations of the form factors with respect to the Bor el parameter M ′2 for a variety of the parameter
+s′
+0, q2 = 0, and the central values of the other auxiliary parameters at Ioﬀe point. The ﬁgures relate to the
+structures gµν/pγ5, p′
+νγµ/p/p′γ5, pµp′
+ν/p/p′γ5, p′
+µp′
+ν/p/p′γ5, gµν/p, p′
+µp′
+ν/p, pµp′
+ν/p′, and p′
+µp′
+ν/p/p′ corresponding to the form factors
+F1, F2, F3, F4, G1, G2, G3, and G4, respectively ( see Table IV).
+where the following deﬁnitions are utilized:
+αV
+1
+2 ,t = αA
+1
+2 ,0 =
+√
+2M1M2(ω + 1)
+q2 ,
+αV
+1
+2 ,0 = αA
+1
+2 ,t =
+√
+2M1M2(ω − 1)
+q2 ,
+αV
+1
+2 ,1 = 2
+√
+M1M2(ω − 1),
+αA
+1
+2 ,1 = 2
+√
+M1M2(ω + 1), (35)
+15
+0 2 4 6 8 10
+L
+5
+6
+M
+8
+9
+10
+q2(GeV2)
+F1
+0 2 4 6 8 10
+-
+N O P
+-Q
+O
+R
+-Q
+O P
+-2.5
+-2.0
+-1.5
+-1.0
+q2(GeV2)
+F2
+0 2 4 6 8 10
+-2.0
+-1.8
+-1.6
+-S T U
+-1.2
+-1.0
+q2(GeV2)
+F
+V
+0 2 4 6 8 10
+-1.2
+-1.0
+-0.8
+-0.6
+-W X Y
+-0.2
+q2(GeV2)
+F
+Z
+0 2 4 6 8 10
+[
+8
+9
+10
+11
+12
+q2(GeV2)
+G1
+0 2 4 6 8 10
+-1.0
+-0.9
+-0.8
+-\ ] ^
+-0.6
+-0.5
+-
+\ ]
+_
+-
+\ ] `
+q2(GeV2)
+G2
+0 2 4 6 8 10
+-
+a b c
+-1.2
+-1.0
+-0.8
+-0.6
+-
+d b c
+-0.2
+0.0
+q2(GeV2)
+G
+e
+0 2 4 6 8 10
+-
+f g h
+-1.2
+-1.0
+-0.8
+-0.6
+-i
+g h
+-0.2
+q2(GeV2)
+G
+j
+FIG. 5: The behavior of the form factors F1, F2, F3, F4, G1, G2, G3, and G4, represented in Table IV with respect to q2 at
+the central values of auxiliary parameters, M 2, M′2, s0, s′
+0, and Ioﬀe point.
+with
+M± = M1 ± M2, ω = M 2
+1 + M 2
+2 − q2
+2M1M2
+,
+in which M1 and M2 are the masses of the initial, Σ ∗0
+b , and ﬁnal, Σ +
+c , baryons, respectively. The negative helicity
+amplitudes are expressed as
+H V
+−λ2,−λW = −H V
+λ2,λW , H A
+−λ2,−λW = H A
+λ2,λW . (36)
+Ultimately, the helicity amplitude for the V-A current in weak transitio ns is given as Hλ2,λW = H V
+λ2,λW − H A
+λ2,λW .
+Having obtained the helicity amplitudes, the decay width for the semile ptonic Σ ∗0
+b → Σ +
+c ℓ ¯νℓ transition is computed
+16
+by the following formula [ 56, 57]:
+Γ Σ ∗0
+b →Σ +
+c ℓ ¯νℓ
+= 1
+2
+G2
+F |Vcb|2
+192 π3
+MΣ +
+c
+M 2
+Σ ∗0
+b
+∫ (MΣ ∗0
+b
+−MΣ +c
+)2
+m2
+ℓ
+dq2
+q2 (q2 − m2
+ℓ )2
+√
+ω2 − 1 H3/2→1/2, (37)
+where mℓ represents the lepton mass and H3/2→1/2 includes combinations of the helicity amplitudes,
+H3/2→1/2 = |H 1
+2 ,1|2 + |H− 1
+2 ,−1|2 + |H 1
+2 ,−1|2 + |H− 1
+2 ,1|2 + |H 1
+2 ,0|2 + |H− 1
+2 ,0|2
++ m2
+ℓ
+2q2
+(
+3|H 1
+2 ,t|2 + 3|H− 1
+2 ,t|2 + |H 1
+2 ,1|2 + |H− 1
+2 ,−1|2 + |H 1
+2 ,−1|2 + |H− 1
+2 ,1|2 + |H 1
+2 ,0|2 + |H− 1
+2 ,0|2
+)
+. (38)
+The obtained results are presented in Table V. Our ﬁndings can be examined by upcoming experimental data and th ey
+can provide us with useful information about the inner structures of the Σ ∗0
+b and Σ +
+c baryons. Decay width, as an
+TABLE V: Decay widths of the semileptonic Σ ∗0
+b → Σ +
+c ℓ ¯νℓ transition at diﬀerent lepton channels in units of GeV.
+Γ[ Σ ∗0
+b → Σ +
+c e ¯νe ] × 1012 Γ[ Σ ∗0
+b → Σ +
+c µ ¯νµ ] × 1012 Γ[ Σ ∗0
+b → Σ +
+c τ ¯ντ ] × 1013
+1.34+0.38
+−0.33 1.33+0.38
+−0.33 3.85+1.08
+−0.95
+observable quantity of considerable importance, can be employed t o exhibit the dependency associated with the lepton
+channel. Indeed, the decay width decreases by raising lepton mass that is consistent with the kinematical constraints.
+It is convenient to evaluate the ratio of decay widths since a number of experimental systematic uncertainties will be
+eliminated. Hence, we calculate the ratio of decay width in τ to e/µ channel as follows:
+R = Γ[ Σ ∗0
+b → Σ +
+c τ ¯ντ ]
+Γ[ Σ ∗0
+b → Σ +c e (µ) ¯νe (µ) ] = 0 .29 ± 0.01. (39)
+These results may assist future experiments in searching for thes e decay channels and test the SM prediction. Any
+sizable deviations of the future data from our SM predictions can be consider as a sign for new physics BSM.
+V. CONCLUSION
+Probing structures and properties of the heavy baryons is one of the main aims of various experiments. Consequently,
+the study of heavy baryons from diﬀerent aspects, especially dec ay properties, has triggered considerable theoretical
+interest. The weak decays provide noteworthy information on the structures of the heavy baryons, and they have
+been in concentration of various theoretical studies. In the pres ent work, we explored the b-heavy baryon Σ ∗
+b . Its
+strong and radiative decay modes have been previously analyzed [ 49, 58]; however, there are few detailed analyses of
+its weak decay channels. Hence, we investigated the semileptonic we ak decay of this singly heavy baryon, Σ ∗0
+b , with
+spin 3
+2 , into the singly heavy baryon, Σ +
+c , with spin 1
+2 in the Σ ∗0
+b → Σ +
+c ℓ ¯νℓ transition for three lepton channels within
+the QCD sum rule method. Our computations include both the pertur bative and nonperturbative contributions of
+the OPE series up to mass dimension six. We utilized the interpolating cu rrents of the singly heavy baryons Σ ∗0
+b and
+Σ +
+c as the initial and ﬁnal states, respectively, to produce the sum ru les for the semileptonic weak form factors. After
+ﬁxing the auxiliary parameters of the method, we acquired the ﬁt fu nctions of the eight responsible form factors in
+terms of q2 in the whole kinematic range accessible in semileptonic decays, m2
+ℓ ≤ q2 ≤ (mΣ ∗0
+b
+− mΣ +
+c
+)2. The obtained
+results were employed to evaluate the decay widths in all lepton chan nels. Regarding the signiﬁcant progress made at
+17
+0 2 4 6 8 10
+0
+5
+10
+15
+20
+q2(GeV2)
+F1
+0 2 4 6 8 10
+-6
+-5
+-k
+-l
+-2
+-1
+0
+q2(GeV2)
+F2
+0 2 4 6 8 10
+-
+m
+-n
+-2
+-1
+0
+q2(GeV2)
+F
+o
+0 2 4 6 8 10
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+q2(GeV2)
+F
+p
+0 2 4 6 8 10
+0
+5
+10
+15
+20
+q2(GeV2)
+G1
+0 2 4 6 8 10
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+q2(GeV2)
+G2
+0 2 4 6 8 10
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+q2(GeV2)
+G
+q
+0 2 4 6 8 10
+-2.0
+-1.5
+-1.0
+-0.5
+0.0
+q2(GeV2)
+G
+r
+FIG. 6: The error bands of the form factors F1, F2, F3, F4, G1, G2, G3 and G4, represented in Table IV with respect to q2 at
+the center of values of auxiliary parameters, M 2, M′2, s0, s′
+0 and Ioﬀe point.
+various experiments, it is widely anticipated establishing many more ra re decay channels in future [ 59]. The present
+pioneering research on the considered weak decays can support/ guide various related experiments and lead to the
+identiﬁcation of new decay modes.
+As ﬁnal remark, we would like to provide some information may help exp erimental groups aiming to study the
+properties of Σ ∗
+b baryon or even the decay mode Σ ∗
+b → Σ c ℓ ¯νℓ, investigated in the present work, by considering
+the great new advances in experimental facilities. As previously sta ted, the Σ ∗
+b baryons were produced at the CDF
+Collaboration in the Λ 0
+b π± invariant mass at an integrated luminosity of 1 .1 f b−1 and √s = 1.96 T eV in p¯p collision
+[13]. Among the four produced spin 1
+2 and 3
+2 Σ b states, the average central yield for spin 3
+2 states was roughly
+73 compared to the spin 1
+2 resonances with 46 yield. Considering the LHCb experiment, as an ex ample, with
+18
+integrated luminosity of 9 .56 f b−1 and √s = 13 .6 T eV [60], and the fact that the number of produced events is
+directly proportional to the integrated luminosity and cross sectio n, it is expected more Σ ∗
+b states to be produced
+in the present and future runs of the LHC. One may have some appr oximate estimations on the number of events
+that are produced/to be produced at the present and future ru ns of the LHC compared to the CDF Collaboration
+considering the same cross section. As it is seen, the average yield w ith the present condition of the LHCb experiment
+is roughly 10 times greater than that of the CDF Collaboration, i.e. 73 0 events. The LHCb experiment aims to
+collect a dataset of 300 f b−1 in its high-luminosity phase [ 61]. Considering such a huge luminosity, we expect roughly
+21900 Σ ∗
+b states. By the help of newly developed machine learning techniques s uch as generative adversarial networks
+(GANs) and conditional GANs to augment the dataset, we hope we c an easily study Σ ∗
+b baryon and its decay channels
+in near future.
+The dominant decay channel of Σ ∗
+b is Λ 0
+b π at which the discovery was made [ 49]. However, considering the weak
+tree-level decay channels of this state, which have more contribu tion compared to the loop-level processes, and the
+value of Vcb as the element of CKM matrix, which is 11 times greater than the Vub element, we expect that the b → c
+processes to have more contributions to the total width compare d to the b → u ones as other possible dissociation
+modes of Σ ∗
+b state at quark level. This statement becomes more strong by cons idering the fact that the decay rate
+is proportional to the square of the CKM matrix elements. We have a nother fact that, during the time passed, the
+baryons generally have discovered from the lightest to the heavies t and from the lower spin to the higher spin. This is
+the case for detection of their decay channels as well. Comparing th e order of decay rate for Σ ∗
+b → Σ c ℓ ¯νℓ considered
+in the present work with the Λ b → Λ c ℓ ¯νℓ studied with the same method in Ref. [ 38], we see that the decay rate
+in our case is roughly 10 2 times greater than the latter. The Λ b → Λ c ℓ ¯νℓ processes have been already seen in the
+experiment in all lepton channels [ 49]. Although, the number of Λ b baryons that are produced at diﬀerent experiments
+are very high compared to other b baryons, we expect that we will w itness of observing semileptonic decay channels
+of other members of the 1
+2 and 3
+2 single heavy baryons by the recent experimental progresses mad e. Considering the
+information above on the rate of Σ ∗
+b production in the present and future experiments, we expect to d etect the process
+Σ ∗
+b → Σ c ℓ ¯νℓ and measure its parameters. It is possible to have a rough estimatio n for the number of Σ ∗
+b → Σ c ℓ ¯νℓ
+process that would be produced, for instance, at high-luminosity p hase of LHCb experiment with aforementioned
+conditions, in near future. As previously said, the Λ 0
+b π is not only the dominant decay channel of Σ ∗
+b baryon, but also
+for the Σ b state as well. Unfortunately, we have no enough information about the exact contribution of Σ ∗
+b → Λ 0
+b π
+to the total width of Σ ∗
+b state, but comparing the result obtained for the width of Σ b → Λ 0
+b π in Ref. [ 62] and total
+width of Σ b baryon presented in the particle data group (PDG) [ 49], we see a 76% contribution when the central
+values are considered. If we consider the same amount of contribu tion for the Σ ∗
+b → Λ 0
+b π decay channel from the
+total width of the Σ ∗
+b state, there remains roughly 24% contribution to the weak semilept onic and nonleptonic decays
+of Σ ∗
+b baryon. Looking at the b-baryon decays in PDG, especially the Λ b baryon modes, we see a 8 .55 : 1 ratio for the
+semileptonic to nonleptonic decay modes. As we previously mentioned , the main contribution belongs to the b → c
+based semileptonic transitions. By an approximate calculation, 4706 events would be expected for the Σ ∗
+b → Σ c ℓ ¯νℓ
+process in high luminosity phase of LHCb. The ratio given in Eq. ( 39) or the ratio of the weak semileptonic to weak
+nonleptonic decays will be relatively easy to access in the experiment s. We hope, our results help experimental groups
+in the course of their search for such decay channels.
+19
+ACKNOWLEDGMENTS
+K. Azizi is grateful to the CERN-TH division for their support and wa rm hospitality.
+DATA A V AILABILITY
+No data were created or analyzed in this study.
+Appendix A: THE INTERPOLATING CURRENT OF SPIN- 3
+2 BAR YON
+Interpolating currents, as the primary inputs in the QCD sum rule me thod, are associated with the properties of
+the baryons and expressed in terms of quark contents. Derivatio n of the interpolating current for the Σ ∗
+Q, the single
+heavy baryon with Q = b or c heavy quark and J p = 3
+2
++
+as the spin-parity of this state, is discussed in this appendix.
+First, we consider the construction of a diquark structure with sp in 1 and then the third quark with spin 1
+2 will be
+attached to it. The structure of a diquark is similar to the structur e of a meson that is of the form, Jmeson = ¯q Γ q,
+where Γ = { I , γ 5 , γ µ , γµγ5 , σµν } is Dirac set and q represents the light quark spinor. By replacing the antiquark
+with its charge conjugation analog, ¯q = qT C, the structure of diquark will be obtained as Jdiquark = qT C Γ q, where
+C = iγ2 γ0 is the charge conjugation operator. Attaching the third quark an d considering the color indices, ( a, b, and
+c), the interpolating current has the general form as
+J Σ ∗
+Q ∼ ǫabc{
+( qaT C Γ q′b ) Γ ′ Qc + ( qaT C Γ Qb ) Γ ′ q′c + ( q′aT C Γ Qb ) Γ ′ qc}
+, (A1)
+Considering all quantum numbers and requirements, Γ and Γ ′ will be determined. ǫabc is the Levi-Civita tensor that
+makes the interpolating current, color singlet. In the ﬁrst part of (A1), ( qaT C Γ q′b ) Γ ′ Qc, since the diquark has spin
+1, it should be symmetric under the exchange of the two light quarks q ↔ q′. Transposing leads to
+[ ǫabc ( qaT C Γ q′b )]T = −ǫabc q′bT Γ T C−1 qa = ǫabc q′bT C (C Γ T C−1) qa, (A2)
+where we consider the fact that the quark ﬁelds are Grassmann nu mbers and utilize the identities CT = C−1 and
+C2 = −1. Therefore, we obtain
+C Γ T C−1 =
+
+
+
+Γ for Γ = 1 , γ5, γµγ5,
+−Γ for Γ = γµ, σµν .
+(A3)
+After switching color dummy indices, we acquire
+[ ǫabc ( qaT C Γ q′b )]T = ± ǫabc q′aT C Γ qb, (A4)
+where + sign belongs to Γ = γµ, σµν and − sign is related to Γ = 1 , γ5, γµγ5. By applying the condition of being
+symmetric under the exchange of light quarks to the right-hand sid e of the Eq. ( A4), we have
+[ ǫabc ( qaT C Γ q′b )]T = ± ǫabc qaT C Γ q′b, (A5)
+where the + and − signs are for Γ = γµ, σµν and Γ = 1 , γ5, γµγ5, respectively. Considering that the transposition of a
+(1 × 1) matrix like ǫabc qaT C Γ q′b should be equal to itself, we determine the only possible choice for Γ a s Γ = γµ or
+20
+σµν . These conditions should be applied to the other structures, ( qaT C Γ Qb ) Γ ′ q′c and ( q′aT C Γ Qb ) Γ ′ qc, of ( A1).
+Hence we have two possible forms of the interpolating current as
+ǫabc
+{
+( qaT C γµ q′b ) Γ ′
+1 Qc + ( qaT C γµ Qb ) Γ ′
+1 q′c + ( QaT C γµ q′b ) Γ ′
+1 qc
+}
+,
+ǫabc
+{
+( qaT C σµν q′b ) Γ ′
+2 Qc + ( qaT C σµν Qb ) Γ ′
+2 q′c + ( QaT C σµν q′b ) Γ ′
+2 qc
+}
+. (A6)
+By employing the Lorentz and parity considerations, Γ ′
+1 and Γ ′
+2 are determined. The interpolating current of the
+state with J = 3
+2 has the Lorentz vector structure, therefore, Γ ′
+1 = 1 or γ5 and Γ ′
+2 = γν or γνγ5. After applying the
+parity transformation, we determine Γ ′
+1 and Γ ′
+2 as Γ ′
+1 = 1 and Γ ′
+2 = γν . Ultimately, considering all requirements and
+Fierz identity, we acquire the following form of the interpolating curr ent for a spin- 3
+2 baryon;
+ǫabc
+{
+( qaT C γµ q′b ) Qc + ( qaT C γµ Qb ) q′c + ( QaT C γµ q′b ) qc
+}
+. (A7)
+Particularly, after normalization, for Σ ∗0
+b we have
+J Σ ∗0
+b
+µ (x) =
+√
+2
+3 ǫabc
+{(
+uaT (x)Cγµ db(x)
+)
+bc(x) +
+(
+daT (x)Cγµ bb(x)
+)
+uc(x) +
+(
+baT (x)Cγµ ub(x)
+)
+dc(x)
+}
+. (A8)
+Appendix B: THE EXPRESSIONS ‌ OF THE ‌ PER TURBATIVE AND NONPER TURBATIVE
+CONTRIBUTIONS
+In this appendix, we express the explicit forms of the spectral den sities, ρi(s, s′, q2), and functions Γ i(p2, p′2, q2) as
+an example for the structure gµν /p,
+ρP ert.
+gµν /p (s, s′, q2) =
+∫ 1
+0
+du
+∫ 1−u
+0
+dv 1
+512
+√
+3 π4 F 2
+{
+−
+(
+F
+(
+mbu
+(
+8u
+(
+(1 + 2β) (q2 − s − s′) + 4βs u
+)
++
+(
+−
+(
+(13 + 32β) s′)
++ 32β(−q2 + s + s′)u
+)
+v + 32βs′v2
+)
++mc
+(
+32βs(−1 + u) u2 + 8(−q2 + s + s′) u
+(
+1 + β(−2 + 4u)
+)
+v + s′(13 + 32βu)v2
+)))
++L
+(
+5mcv + 16βmc
+(
+− v + 4uF
+)
++ mbu
+(
+− 5 + 16β(−5 + 6u + 6v)
+))}
+Θ[ L(s, s′, q2)], (B1)
+ρDim−3
+gµν /p (s, s′, q2) =
+∫ 1
+0
+du
+∫ 1−u
+0
+dv −1
+128
+√
+3 π2
+(
+⟨ ¯uu ⟩ + ⟨ ¯dd ⟩
+)(
+− 37 + 48 u + 16 β (−3 + 7 u)
+)
+Θ[ L(s, s′, q2)],(B2)
+ρDim−4
+gµν /p (s, s′, q2) = 0 , (B3)
+ρDim−5
+gµν /p (s, s′, q2) = 0 , (B4)
+Γ Dim−6
+gµν /p (p2, p′2, q2) = 1
+3
+√
+3
+1
+B B′ mc ⟨¯u u ⟩ ⟨¯d d ⟩( −1 + β ), (B5)
+21
+where,
+L(s, s′, q2) = −m2
+b u + su − su2 − m2
+c v + s′v − s u v − s′ u v + q2 u v − s′ v2, (B6)
+and Θ[ ...] denotes the unit step function. We utilize the following deﬁnitions:
+F = −1 + u + v,
+B = p2 − m2
+b,
+B′ = p′2 − m2
+c. (B7)
+Appendix C: THE SUM RULES EXPRESSIONS FOR ‌ THE FORM F ACTORS
+The expressions of the sum rules for the form factors F1, F 2, F 3, F 4, G 1, G 2, G 3, and G4 used in the calculations
+are presented in this appendix,
+F1(q2) = e
+m2
+Σ ∗0
+b
+/M2
+1
+e
+m2
+Σ +c
+/M2
+2
+mΣ +
+c
+λΣ ∗0
+b
+λΣ +
+c
+{[ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+gµν /pγ5(s, s′, q2) + ρDim−3
+gµν /pγ5 (s, s′, q2)
+)]
++ e−m2
+b/M2
+1 e−m2
+c/M2
+2
+mc⟨¯u u ⟩ ⟨¯d d ⟩
+3
+√
+3 (β − 1)
+}
+(C1)
+G1(q2) = e
+m2
+Σ ∗0
+b
+/M2
+1
+e
+m2
+Σ +c
+/M2
+2
+mΣ +
+c
+λΣ ∗0
+b
+λΣ +
+c
+{[ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+gµν /p (s, s′, q2) + ρDim−3
+gµν /p (s, s′, q2)
+)]
++ e−m2
+b/M2
+1 e−m2
+c/M2
+2
+mc⟨¯u u ⟩ ⟨¯d d ⟩
+3
+√
+3 (β − 1)
+}
+(C2)
+F2(q2) =
+e
+m2
+Σ ∗0
+b
+/M2
+1
+e
+m2
+Σ +c
+/M2
+2
+mΣ +
+c
+λΣ ∗0
+b
+λΣ +
+c
+{ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+p′
+ν γµ/p/p′γ5 (s, s′, q2)
+)}
+(C3)
+G2(q2) = 1
+2
+{
+e
+m2
+Σ ∗0
+b
+/M2
+1
+e
+m2
+Σ +c
+/M2
+2
+mΣ +
+c
+λΣ ∗0
+b
+λΣ +
+c
+[ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+p′µp′ν /p(s, s′, q2)
+)]
++
+e
+m2
+Σ ∗0
+b
+/M2
+1
+e
+m2
+Σ +c
+/M2
+2
+m2
+Σ +
+c
+λΣ ∗0
+b
+λΣ +
+c
+[ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+p′µp′ν /p/p′ (s, s′, q2)
+)]}
+(C4)
+F3(q2) =
+e
+m2
+Σ ∗0
+b
+/M2
+1
+e
+m2
+Σ +c
+/M2
+2
+m2
+Σ +
+c
+λΣ ∗0
+b
+λΣ +
+c
+{[
+−
+∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+pµp′ν /p/p′γ5 (s, s′, q2)
+)]
+−
+[ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+p′µp′ν /p/p′γ5(s, s′, q2)
+)]}
+(C5)
+G3(q2) =
+e
+m2
+Σ ∗0
+b
+/M2
+1
+e
+m2
+Σ +c
+/M2
+2
+m2
+Σ +
+c
+λΣ ∗0
+b
+λΣ +
+c
+mΣ ∗0
+b
+{[ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+pµp′ν /p′ (s, s′, q2)
+)]
++
+[ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+p′
+µp′
+ν /p′(s, s′, q2)
+)]}
+(C6)
+22
+F4(q2) =
+e
+m2
+Σ ∗0
+b
+/M2
+1
+e
+m2
+Σ +c
+/M2
+2
+m2
+Σ +
+c
+λΣ ∗0
+b
+λΣ +
+c
+{ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+p′µp′ν /p/p′γ5(s, s′, q2)
+)}
+(C7)
+G4(q2) =
+e
+m2
+Σ ∗0
+b
+/M2
+1
+e
+m2
+Σ +c
+/M2
+2
+m2
+Σ +
+c
+λΣ ∗0
+b
+λΣ +
+c
+{ ∫ s0
+m2
+b
+ds
+∫ s′
+0
+m2c
+ds′ e−s/M2
+1 e−s′/M2
+2
+(
+ρP ert.
+p′µp′ν /p/p′ (s, s′, q2)
+)}
+(C8)
+[1] B. Aubert et al. [BaBar], “The BaBar detector,” Nucl. Instrum. Meth. A 479, 1-116 (2002) ,
+[arXiv:hep-ex/0105044 [hep-ex]] .
+[2] B. Aubert et al. [BaBar], “Production and decay of Omega0(c),” Phys. Rev. Lett. 99, 062001 (2007) ,
+[arXiv:hep-ex/0703030 [hep-ex]] .
+[3] B. Aubert et al. [BaBar], “Observation of an excited charm baryon Omega(C)* decaying to Omega(C)0 gamma,”
+Phys. Rev. Lett. 97, 232001 (2006) , [arXiv:hep-ex/0608055 [hep-ex]] .
+[4] B. Aubert et al. [BaBar], “A Study of Excited Charm-Strange Baryons with Evi dence for new Baryons Xi(c)(3055)+ and
+Xi(c)(3123)+,” Phys. Rev. D 77, 012002 (2008) , [arXiv:0710.5763 [hep-ex]] .
+[5] R. Aaij et al. [LHCb], “Observation of ﬁve new narrow Ω 0
+c states decaying to Ξ +
+cK −,”
+Phys. Rev. Lett. 118, no.18, 182001 (2017) , [arXiv:1703.04639 [hep-ex]] .
+[6] R. Chistov et al. [Belle], “Observation of new states decaying into Lambda(c )+ K- pi+ and Lambda(c)+ K0(S) pi-,”
+Phys. Rev. Lett. 97, 162001 (2006) , [arXiv:hep-ex/0606051 [hep-ex]] .
+[7] R. Mizuk, “Heavy ﬂavor baryons,” [arXiv:0712.0310 [hep-ex]] .
+[8] V. M. Abazov et al. [D0], “Direct observation of the strange b baryon Ξ −
+b ,” Phys. Rev. Lett. 99, 052001 (2007) ,
+[arXiv:0706.1690 [hep-ex]] .
+[9] V. M. Abazov et al. [D0], “The Upgraded D0 detector,” Nucl. Instrum. Meth. A 565, 463-537 (2006) .
+[arXiv:physics/0507191 [physics.ins-det]] .
+[10] D. Acosta et al. [CDF], “Measurement of the J/ψ meson and b−hadron production cross sections in p¯p collisions at
+√s = 1960 GeV,” Phys. Rev. D 71, 032001 (2005) . [arXiv:hep-ex/0412071 [hep-ex]] .
+[11] R. Aaij et al. [LHCb], “Observation of excited Λ 0
+b baryons,” Phys. Rev. Lett. 109, 172003 (2012) ,
+[arXiv:1205.3452 [hep-ex]] .
+[12] R. Aaij et al. [LHCb], “Observation of Two New Excited Ξ 0
+b States Decaying to Λ 0
+bK −π+,”
+Phys. Rev. Lett. 128, no.16, 162001 (2022) , [arXiv:2110.04497 [hep-ex]] .
+[13] T. Aaltonen et al. [CDF], “First observation of heavy baryons Σ b and Σ ∗
+b ,” Phys. Rev. Lett. 99, 202001 (2007) .
+[arXiv:0706.3868 [hep-ex]] .
+[14] T. M. Aliev, K. Azizi and A. Ozpineci, “Radiative Decays of the Heavy Flavored Baryons in Light Cone QCD Sum Rules,”
+Phys. Rev. D 79, 056005 (2009) , [arXiv:0901.0076 [hep-ph]] .
+[15] A. R. Olamaei and K. Azizi, “Radiative Ξ −
+b → Ξ −γ decay,” Eur. Phys. J. C 82, no.1, 68 (2022) ,
+[arXiv:2109.09783 [hep-ph]] .
+[16] H. Garc ´ ıa-Tecocoatzi, A. Giachino, A. Ramirez-Moral es, A. Rivero-Acosta, E. Santopinto and C. A. Vaquera-
+Araujo, “Strong decay widths and mass spectra of the 1D, 2P an d 2S singly bottom baryons,”
+Phys. Rev. D 110, no.11, 114005 (2024) [arXiv:2307.00505 [hep-ph]].
+[17] Y. X. Yao, K. L. Wang and X. H. Zhong, “Strong and radiativ e decays of the low-lying D-wave singly heavy baryons,”
+Phys. Rev. D 98, no.7, 076015 (2018) , [arXiv:1803.00364 [hep-ph]] .
+[18] K. L. Wang, Y. X. Yao, X. H. Zhong and Q. Zhao, “Strong and r adiative decays of the low-lying S- and P -wave singly
+heavy baryons,” Phys. Rev. D 96, no.11, 116016 (2017) , [arXiv:1709.04268 [hep-ph]] .
+23
+[19] G. V. Eﬁmov, M. A. Ivanov, N. B. Kulimanova and V. E. Lyubo vitskij, “B — > C ﬂavor changing decays of baryons
+containing a single heavy quark,” Z. Phys. C 54, 349-356 (1992) .
+[20] T. M. Aliev, K. Azizi and M. Savci, “Strong coupling cons tants of light pseudoscalar mesons with heavy baryons in QCD ,”
+Phys. Lett. B 696, 220-226 (2011) , [arXiv:1009.3658 [hep-ph]] .
+[21] T. M. Aliev, K. Azizi and A. Ozpineci, “Mass and Magnetic Moments of the Heavy Flavored Baryons with J=3/2 in Light
+Cone QCD Sum Rules,” Nucl. Phys. B 808, 137-154 (2009) , [arXiv:0807.3481 [hep-ph]] .
+[22] K. Azizi, M. Bayar, A. Ozpineci, Y. Sarac and H. Sundu, “S emileptonic transition of Σ b to Σ in Light Cone QCD Sum
+Rules,” Phys. Rev. D 85, 016002 (2012) , [arXiv:1112.5147 [hep-ph .
+[23] E. Ortiz-Pacheco and R. Bijker, “Masses and radiative d ecay widths of S- and P-wave singly, doubly, and triply heavy
+charm and bottom baryons,” Phys. Rev. D 108, no.5, 054014 (2023) , [arXiv:2307.04939 [hep-ph]] .
+[24] M. A. Ivanov, V. E. Lyubovitskij, J. G. Korner and P. Krol l, “Heavy baryon transitions in a relativistic three quark m odel,”
+Phys. Rev. D 56, 348-364 (1997) , [arXiv:hep-ph/9612463 [hep-ph]] .
+[25] D. Ebert, R. N. Faustov and V. O. Galkin, “Semileptonic d ecays of heavy baryons in the relativistic quark model,”
+Phys. Rev. D 73, 094002 (2006) , [arXiv:hep-ph/0604017 [hep-ph]] .
+[26] T. Gutsche, M. A. Ivanov, J. G. K¨ orner, V. E. Lyubovitsk ij, P. Santorelli and N. Habyl, “Semileptonic decay Λ b →
+Λ c +τ − + ¯ντ in the covariant conﬁned quark model,” Phys. Rev. D 91, no.7, 074001 (2015) , [arXiv:1502.04864 [hep-ph]] .
+[27] T. M. Aliev, K. Azizi and M. Savci, “Analysis of the Λ b → Λℓ+ℓ− decay in QCD,” Phys. Rev. D 81, 056006 (2010) ,
+[arXiv:1001.0227 [hep-ph]] .
+[28] T. M. Aliev, S. Bilmis and M. Savci, “The study of weak dec ays induced by 1/2+ →3/2− transition in light-cone sum
+rules,” Phys. Lett. B 847, 138287 (2023) , [arXiv:2303.07505 [hep-ph]] .
+[29] K. Azizi, Y. Sarac and H. Sundu, “Light cone QCD sum rules study of the semileptonic heavy Ξ Q and Ξ ′
+Q transitions to
+Ξ and Σ baryons,” Eur. Phys. J. A 48, 2 (2012) , [arXiv:1107.5925 [hep-ph]] .
+[30] Z. G. Wang, “Analysis of the Isgur-Wise function of the L ambda(b) — > Lambda(c) transition with light-cone QCD sum
+rules,” [arXiv:0906.4206 [hep-ph]] .
+[31] H. Y. Cheng and B. Tseng, “1/M corrections to baryonic fo rm-factors in the quark model,” Phys. Rev. D 53, 1457 (1996) ,
+[arXiv:hep-ph/9502391 [hep-ph]] .
+[32] H. W. Ke, N. Hao and X. Q. Li, “Revisiting Λ b → Λ c and Σ b → Σ c weak decays in the light-front quark model,”
+Eur. Phys. J. C 79, no.6, 540 (2019) , [arXiv:1904.05705 [hep-ph]] .
+[33] W. Detmold, C. Lehner and S. Meinel, “Λ b → pℓ−¯νℓ and Λ b → Λ cℓ− ¯νℓ form factors from lattice QCD with relativistic
+heavy quarks,” Phys. Rev. D 92, no.3, 034503 (2015) , [arXiv:1503.01421 [hep-lat]] .
+[34] S. S. Agaev, K. Azizi and H. Sundu, “On the nature of the ne wly discovered Ω states,” EPL 118, no.6, 61001 (2017) ,
+[arXiv:1703.07091 [hep-ph]] .
+[35] S. S. Agaev, K. Azizi and H. Sundu, “Interpretation of th e new Ω 0
+c states via their mass and width,”
+Eur. Phys. J. C 77, no.6, 395 (2017) , [arXiv:1704.04928 [hep-ph]] .
+[36] S. S. Agaev, K. Azizi and H. Sundu, “Strong Z+
+c (3900) → J/ψπ +;ηcρ+ decays in QCD,”
+Phys. Rev. D 93, no.7, 074002 (2016) , [arXiv:1601.03847 [hep-ph]] .
+[37] K. Azizi, Y. Sarac and H. Sundu, “Analysis of P +
+c (4380) and P +
+c (4450) as pentaquark states in the molecular picture with
+QCD sum rules,” Phys. Rev. D 95, no.9, 094016 (2017) , [arXiv:1612.07479 [hep-ph]] .
+[38] K. Azizi and J. Y. S¨ ung¨ u, “Semileptonic Λ b → Λ cℓ¯νℓ Transition in Full QCD,” Phys. Rev. D 97, no.7, 074007 (2018) ,
+[arXiv:1803.02085 [hep-ph]] .
+[39]
+[39] Z. Neishabouri, K. Azizi and H. R. Moshfegh, “Semilepto nic Ωb →Ωcℓν/macron.ts1 ℓ transition in full QCD,”
+Phys. Rev. D 110, no.1, 014010 (2024) , [arXiv:2404.12654 [hep-ph]] .
+[40] M. Shifman, “Vacuum structure and QCD sum rules: Introd uction,” Int. J. Mod. Phys. A 25, 226-235 (2010)
+[41] M. A. Shifman, A. I. Vainshtein and V. I. Zakharov, “QCD a nd Resonance Physics: Applications,”
+Nucl. Phys. B 147, 448-518 (1979) .
+24
+[42] M. A. Shifman, A. I. Vainshtein and V. I. Zakharov, “QCD a nd Resonance Physics. Theoretical Foundations,”
+Nucl. Phys. B 147, 385-447 (1979) .
+[43] F. Gross, E. Klempt, S. J. Brodsky, A. J. Buras, V. D. Burk ert, G. Heinrich, K. Jakobs, C. A. Meyer,
+K. Orginos and M. Strickland, et al. “50 Years of Quantum Chromodynamics,” Eur. Phys. J. C 83, 1125 (2023) ,
+[arXiv:2212.11107 [hep-ph]] .
+[44] A. Khodjamirian, “Hadron Form Factors,” CRC Press, 2020, ISBN 978-1-138-30675-2, 978-1-315-14200 -5.
+[45] P. Colangelo and A. Khodjamirian, “QCD sum rules, a mode rn perspective,” [arXiv:hep-ph/0010175 [hep-ph]] .
+[46] T. M. Aliev, K. Azizi and A. Ozpineci, “Semileptonic B(s ) — > D(sJ)(2460)l nu decay in QCD,”
+Eur. Phys. J. C 51, 593-599 (2007) , [arXiv:hep-ph/0608264 [hep-ph]] .
+[47] S. Agaev, K. Azizi and H. Sundu, “Four-quark exotic meso ns,” Turk. J. Phys. 44, no.2, 95-173 (2020) ,
+[arXiv:2004.12079 [hep-ph]] .
+[48] K. Azizi and N. Er, “X (3872): propagating in a dense medi um,” Nucl. Phys. B 936, 151-168 (2018) ,
+[arXiv:1710.02806 [hep-ph]] .
+[49] S. Navas et al. [Particle Data Group], “Review of particle physics,” Phys. Rev. D 110, no.3, 030001 (2024) .
+[50] Z. G. Wang, “Analysis of the 3
+2
++
+heavy and doubly heavy baryon states with QCD sum rules,”
+Eur. Phys. J. C 68, 459-472 (2010) , [arXiv:1002.2471 [hep-ph]] .
+[51] Z. G. Wang, “Reanalysis of the heavy baryon states Omega (b), Omega(c), Xi’(b), Xi’(c), Sigma(b) and Sigma(c) with
+QCD sum rules,” Phys. Lett. B 685, 59-66 (2010) , [arXiv:0912.1648 [hep-ph]] .
+[52] B. L. Ioﬀe, “QCD at low energies,” Prog. Part. Nucl. Phys. 56, 232-277 (2006) . [arXiv:hep-ph/0502148 [hep-ph]] .
+[53] V. M. Belyaev and B. L. Ioﬀe, “Determination of the baryo n mass and baryon resonances from the quantum-
+chromodynamics sum rule. Strange baryons,” Sov. Phys. JETP 57, 716-721 (1983) ITEP-132-1982.
+[54] V. M. Belyaev and B. L. Ioﬀe, “Determination of Baryon an d Baryonic Resonance Masses from QCD Sum Rules. 1.
+Nonstrange Baryons,” Sov. Phys. JETP 56, 493-501 (1982) ITEP-59-1982.
+[55] A. Khodjamirian, C. Klein, T. Mannel and Y. M. Wang, “For m Factors and Strong Couplings of Heavy Baryons from
+QCD Light-Cone Sum Rules,” JHEP 09, 106 (2011) , [arXiv:1108.2971 [hep-ph]] .
+[56] T. Gutsche, M. A. Ivanov, J. G. K¨ orner, V. E. Lyubovitsk ij, P. Santorelli and C. T. Tran, “Analyzing lepton ﬂavor
+universality in the decays Λ b → Λ (∗)
+c ( 1
+2
+±
+, 3
+2
+−
+) +ℓ ¯νℓ,” Phys. Rev. D 98, no.5, 053003 (2018) , [arXiv:1807.11300 [hep-ph]] .
+[57] A. Faessler, T. Gutsche, M. A. Ivanov, J. G. Korner and V. E. Lyubovitskij, “Semileptonic decays of double heavy bary ons
+in a relativistic constituent three-quark model,” Phys. Rev. D 80, 034025 (2009) , [arXiv:0907.0563 [hep-ph]] .
+[58] Y. Kim, M. Oka, D. Suenaga and K. Suzuki, “Strong decays o f singly heavy baryons from a chiral eﬀective theory of
+diquarks,” Phys. Rev. D 107, no.7, 074015 (2023) , [arXiv:2212.08338 [hep-ph]] .
+[59] S. Kholodenko [NA62], “Recent results and prospects of the NA62 experiment at CERN,”
+PoS ICPPCRubakov2023, 042 (2024) .
+[60] LHCb Collaboration https://lhcb-outreach.web.cern.ch/lhcb-news/.
+[61] D. Manuzzi [LHCb PicoCal Group], “The PicoCal of LHCb Up grade 2,” PoS LHCP2024, 301 (2025)
+[62] K. Azizi, M. Bayar and A. Ozpineci, “Sigma(Q) Lambda(Q) pi Coupling Constant in Light Cone QCD Sum Rules,”
+Phys. Rev. D 79, 056002 (2009) , [arXiv:0811.2695 [hep-ph]] .

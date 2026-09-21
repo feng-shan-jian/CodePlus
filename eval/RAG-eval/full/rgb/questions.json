@@ -1,0 +1,2013 @@
+{
+  "questions": [
+    {
+      "id": "R-S06-001",
+      "track": "S06",
+      "query": "狂飙中的高启强谁演的？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "development",
+      "family_id": "rgb-question-240",
+      "provenance": {
+        "upstream_id": 240,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-240-negative-1",
+          "rgb-240-negative-2",
+          "rgb-240-negative-3",
+          "rgb-240-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "张颂文"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-002",
+      "track": "S06",
+      "query": "消失的她原型事件是什么",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "development",
+      "family_id": "rgb-question-294",
+      "provenance": {
+        "upstream_id": 294,
+        "adaptation": "positive_withheld; context_source_review_revision",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-294-negative-1",
+          "rgb-294-negative-2",
+          "rgb-294-negative-3",
+          "rgb-294-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "泰国坠崖案",
+          "孕妇坠崖案"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-003",
+      "track": "S06",
+      "query": "2023年北美领导人峰会在墨西哥的哪个城市举行？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "development",
+      "family_id": "rgb-question-220",
+      "provenance": {
+        "upstream_id": 220,
+        "adaptation": "positive_withheld; scope_or_answer_revised",
+        "original_query": "2023北美领导人峰会在哪里举行",
+        "original_reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+        "review_reason": "Require the missing city, not a country that can be inferred from supplied passages.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-220-negative-1",
+          "rgb-220-negative-2",
+          "rgb-220-negative-3",
+          "rgb-220-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "墨西哥城"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-004",
+      "track": "S06",
+      "query": "电影《搜救》中男主角阿德由谁饰演？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "development",
+      "family_id": "rgb-question-153",
+      "provenance": {
+        "upstream_id": 153,
+        "adaptation": "positive_withheld; scope_or_answer_revised",
+        "original_query": "电影《搜救》的主演是谁",
+        "original_reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+        "review_reason": "Avoid rejecting a supported partial answer about a different cast member.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-153-negative-1",
+          "rgb-153-negative-2",
+          "rgb-153-negative-3",
+          "rgb-153-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "甄子丹"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-005",
+      "track": "S06",
+      "query": "2022年上半年，西藏经济增长了多少？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-111",
+      "provenance": {
+        "upstream_id": 111,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-111-negative-1",
+          "rgb-111-negative-2",
+          "rgb-111-negative-3",
+          "rgb-111-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "4.8%"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-006",
+      "track": "S06",
+      "query": "谁枪击了安倍晋三？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-102",
+      "provenance": {
+        "upstream_id": 102,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-102-negative-1",
+          "rgb-102-negative-2",
+          "rgb-102-negative-3",
+          "rgb-102-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "山上彻也"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-007",
+      "track": "S06",
+      "query": "零壹空间是谁创立的？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-119",
+      "provenance": {
+        "upstream_id": 119,
+        "adaptation": "positive_withheld; context_source_review_revision",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-119-negative-1",
+          "rgb-119-negative-2",
+          "rgb-119-negative-3",
+          "rgb-119-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "舒畅"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-008",
+      "track": "S06",
+      "query": "北京地铁19号线已建成的一期总共有多少个车站？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-118",
+      "provenance": {
+        "upstream_id": 118,
+        "adaptation": "positive_withheld; scope_or_answer_revised",
+        "original_query": "北京地铁19号线一期总共有多少个车站",
+        "original_reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+        "review_reason": "Distinguish the completed first phase from an earlier whole-line plan.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-118-negative-1",
+          "rgb-118-negative-2",
+          "rgb-118-negative-3",
+          "rgb-118-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "10"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-009",
+      "track": "S06",
+      "query": "欧元区2022年8月通胀率是多少？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-135",
+      "provenance": {
+        "upstream_id": 135,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-135-negative-1",
+          "rgb-135-negative-2",
+          "rgb-135-negative-3",
+          "rgb-135-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "9.1%"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-010",
+      "track": "S06",
+      "query": "三体电视剧古筝行动在哪一集？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-249",
+      "provenance": {
+        "upstream_id": 249,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-249-negative-1",
+          "rgb-249-negative-2",
+          "rgb-249-negative-3",
+          "rgb-249-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "29"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-011",
+      "track": "S06",
+      "query": "2022年中国研发经费总投入量是多少",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-231",
+      "provenance": {
+        "upstream_id": 231,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-231-negative-1",
+          "rgb-231-negative-2",
+          "rgb-231-negative-3",
+          "rgb-231-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "30870亿"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-012",
+      "track": "S06",
+      "query": "北京冬奥会开幕日期是什么时候",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-41",
+      "provenance": {
+        "upstream_id": 41,
+        "adaptation": "positive_withheld; context_source_review_revision",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-41-negative-1",
+          "rgb-41-negative-2",
+          "rgb-41-negative-3",
+          "rgb-41-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "2022年2月4日"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-013",
+      "track": "S06",
+      "query": "戈尔巴乔夫的葬礼将在哪里举行？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-134",
+      "provenance": {
+        "upstream_id": 134,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-134-negative-1",
+          "rgb-134-negative-2",
+          "rgb-134-negative-3",
+          "rgb-134-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "圆柱大厅"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-014",
+      "track": "S06",
+      "query": "2022年世界互联网大会在哪里举办？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-172",
+      "provenance": {
+        "upstream_id": 172,
+        "adaptation": "positive_withheld; context_source_review_revision",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-172-negative-1",
+          "rgb-172-negative-2",
+          "rgb-172-negative-3",
+          "rgb-172-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "乌镇"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-015",
+      "track": "S06",
+      "query": "唐山烧烤店打人案件主犯被判多少年？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-147",
+      "provenance": {
+        "upstream_id": 147,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-147-negative-1",
+          "rgb-147-negative-2",
+          "rgb-147-negative-3",
+          "rgb-147-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "24年"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-016",
+      "track": "S06",
+      "query": "中国新闻周刊2022年度体育人物是谁？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-209",
+      "provenance": {
+        "upstream_id": 209,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-209-negative-1",
+          "rgb-209-negative-2",
+          "rgb-209-negative-3",
+          "rgb-209-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "隋文静"
+        ],
+        [
+          "韩聪"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-017",
+      "track": "S06",
+      "query": "网易2022年全年营收多少？",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-250",
+      "provenance": {
+        "upstream_id": 250,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-250-negative-1",
+          "rgb-250-negative-2",
+          "rgb-250-negative-3",
+          "rgb-250-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "965亿元"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-018",
+      "track": "S06",
+      "query": "流浪地球2俄罗斯上映时间",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-284",
+      "provenance": {
+        "upstream_id": 284,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-284-negative-1",
+          "rgb-284-negative-2",
+          "rgb-284-negative-3",
+          "rgb-284-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "4月12日"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-019",
+      "track": "S06",
+      "query": "一汽解放2022年上半年中重卡销量",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-130",
+      "provenance": {
+        "upstream_id": 130,
+        "adaptation": "positive_withheld; context_source_review_revision",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-130-negative-1",
+          "rgb-130-negative-2",
+          "rgb-130-negative-3",
+          "rgb-130-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "8.5万辆"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S06-020",
+      "track": "S06",
+      "query": "2022年谁当选台北市市长",
+      "reference_answer": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "gold": [],
+      "answerable": false,
+      "no_answer_reason": "给定资料不足以确定答案，应明确说明缺少依据；不能凭模型记忆作答。",
+      "split": "holdout",
+      "family_id": "rgb-question-179",
+      "provenance": {
+        "upstream_id": 179,
+        "adaptation": "positive_withheld",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "negative_only": [
+          "rgb-179-negative-1",
+          "rgb-179-negative-2",
+          "rgb-179-negative-3",
+          "rgb-179-negative-4"
+        ]
+      },
+      "context_order": "negative_only; fixed",
+      "withheld_upstream_answer": [
+        [
+          "蒋万安"
+        ]
+      ],
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-021",
+      "track": "S07",
+      "query": "2022年女篮世界杯中国女篮成绩",
+      "reference_answer": "亚军",
+      "gold": [
+        {
+          "id": "R-S07-021-E1",
+          "source_id": "rgb-164-positive",
+          "char_start": 0,
+          "char_end": 233,
+          "quote": "图片来源：视觉中国 记者｜杨弋 北京时间2022年10月1日下午，刚刚结束的2022年澳大利亚女篮世界杯决赛中，中国女篮以61-83不敌美国女篮，取得亚军。 虽然遗憾错失冠军，但这支中国女篮也打平了历史最佳战绩。本届世界杯的银牌是队史第5枚世界大赛奖牌，同时也是第3枚世界杯奖牌，此前两枚分别为1983年巴西世锦赛上的铜牌和1994年澳大利亚世锦赛上的银牌。 而在奥运会上，中国女篮曾两次获得奖牌，分别是1984年洛杉矶奥运会的铜牌和1992年巴塞罗那奥运会的银牌。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "rgb-question-164",
+      "provenance": {
+        "upstream_id": 164,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-164-positive"
+        ],
+        "one_negative": [
+          "rgb-164-positive",
+          "rgb-164-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-164-positive",
+          "rgb-164-negative-1",
+          "rgb-164-negative-2",
+          "rgb-164-negative-3",
+          "rgb-164-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-022",
+      "track": "S07",
+      "query": "2023年马来西亚公开赛女单冠军是谁？",
+      "reference_answer": "山口茜",
+      "gold": [
+        {
+          "id": "R-S07-022-E1",
+          "source_id": "rgb-223-positive",
+          "char_start": 0,
+          "char_end": 60,
+          "quote": "1月15日，在吉隆坡举行的2023年马来西亚羽毛球公开赛女单决赛中，日本选手山口茜以2比1战胜韩国选手安洗莹，夺得冠军。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "rgb-question-223",
+      "provenance": {
+        "upstream_id": 223,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-223-positive"
+        ],
+        "one_negative": [
+          "rgb-223-positive",
+          "rgb-223-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-223-positive",
+          "rgb-223-negative-1",
+          "rgb-223-negative-2",
+          "rgb-223-negative-3",
+          "rgb-223-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-023",
+      "track": "S07",
+      "query": "根据给定的2023年新华社采访，当时的上海市市长是谁？",
+      "reference_answer": "龚正",
+      "gold": [
+        {
+          "id": "R-S07-023-E1",
+          "source_id": "rgb-226-positive",
+          "char_start": 0,
+          "char_end": 262,
+          "quote": "新华社上海1月12日电  题：勇当推进中国式现代化的开路先锋——访上海市市长龚正 　　新华社记者姜微、何欣荣 　　习近平总书记在党的二十大报告中指出，从现在起，中国共产党的中心任务就是团结带领全国各族人民全面建成社会主义现代化强国、实现第二个百年奋斗目标，以中国式现代化全面推进中华民族伟大复兴。 　　贯彻落实党的二十大精神和中央经济工作会议精神，对上海做好2023年各项工作提出了高要求。在GDP连续两年突破4万亿元之后，上海作为中国经济中心城市，将如何拿出新作为、开创新局面? 新华社记者采访了上海市委副书记、市长龚正。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "rgb-question-226",
+      "provenance": {
+        "upstream_id": 226,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "上海市2023年新任市长是谁？",
+        "original_reference_answer": "龚正",
+        "review_reason": "The passage establishes officeholder identity, not a new appointment.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-226-positive"
+        ],
+        "one_negative": [
+          "rgb-226-positive",
+          "rgb-226-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-226-positive",
+          "rgb-226-negative-1",
+          "rgb-226-negative-2",
+          "rgb-226-negative-3",
+          "rgb-226-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-024",
+      "track": "S07",
+      "query": "2023年春节档首日票房冠军",
+      "reference_answer": "流浪地球2",
+      "gold": [
+        {
+          "id": "R-S07-024-E1",
+          "source_id": "rgb-42-positive",
+          "char_start": 0,
+          "char_end": 206,
+          "quote": "摄影：范剑磊 三天票房突破40亿后，2023年春节档七部新片票房也排位逐渐明朗。 虽然档期首日票房人次低于过往同期水平，但在高口碑影响下，春节档影片努力留住了观众，市场逐渐活跃。头部梯队内，《流浪地球2》初一拿下首日票房冠军，但《满江红》紧随其后，初三实现票房超越，暂列档期票房冠军。《熊出没·伴我“熊芯”》累计票房反超《无名》成为档期第三，累计票房有望突破10亿。而《深海》《无名》则因不符合节日气氛陷入争议。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "development",
+      "family_id": "rgb-question-42",
+      "provenance": {
+        "upstream_id": 42,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-42-positive"
+        ],
+        "one_negative": [
+          "rgb-42-positive",
+          "rgb-42-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-42-positive",
+          "rgb-42-negative-1",
+          "rgb-42-negative-2",
+          "rgb-42-negative-3",
+          "rgb-42-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-025",
+      "track": "S07",
+      "query": "RCEP于2022年1月1日生效后，我国首趟开往RCEP成员国的国际货运班列从哪里出发？",
+      "reference_answer": "南宁国际铁路港",
+      "gold": [
+        {
+          "id": "R-S07-025-E1",
+          "source_id": "rgb-3-positive",
+          "char_start": 0,
+          "char_end": 237,
+          "quote": "2022年1月1日零点刚过，随着汽笛声响，满载800多吨货物的X9101次集装箱班列从南宁国际铁路港开出，一路朝着终点站越南河内进发。  \t这是RCEP(区域全面经济伙伴关系协定)生效后，我国首趟开往RCEP成员国的国际货运班列。    \t我国首趟开往RCEP成员国的国际货运班列从南宁国际铁路港发出(央广网发 冯登海 摄)  \t“南宁国际铁路港自2018年5月开通运营以来，累计到发货物1218万吨，每年到发货物量约270万吨。”广西宁铁国际物流有限公司总经理宋坚强介绍。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-3",
+      "provenance": {
+        "upstream_id": 3,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "首趟RCEP班列的起点？",
+        "original_reference_answer": "南宁",
+        "review_reason": "Specify the date and exact first-train scope.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-3-positive"
+        ],
+        "one_negative": [
+          "rgb-3-positive",
+          "rgb-3-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-3-positive",
+          "rgb-3-negative-1",
+          "rgb-3-negative-2",
+          "rgb-3-negative-3",
+          "rgb-3-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-026",
+      "track": "S07",
+      "query": "河南2021年的粮食总产量是多少？",
+      "reference_answer": "1308.84亿斤 / 6544.2万吨",
+      "gold": [
+        {
+          "id": "R-S07-026-E1",
+          "source_id": "rgb-24-positive",
+          "char_start": 0,
+          "char_end": 269,
+          "quote": "12月10日，记者获悉，河南正式公布2021年全年粮食总产量。国家统计局河南调查总队日前发布数据，经对全省夏、秋粮产量抽样调查样本实割实测和播种面积遥感监测并报国家统计局核准：2021年，河南粮食总产量为1308.84亿斤，比上年减少56.32亿斤，减产4.1%。其中，夏粮总产量为760.64亿斤，比上年增产9.89亿斤，增长1.3%；秋粮总产量为548.20亿斤，比上年减少66.21亿斤，减产10.8%。 　　据了解，今年粮食播种面积稳中有增。2021年，各地认真落实粮食安全责任制，按照党政同责要求，千方百计完成粮食面积目标任务。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-24",
+      "provenance": {
+        "upstream_id": 24,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-24-positive"
+        ],
+        "one_negative": [
+          "rgb-24-positive",
+          "rgb-24-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-24-positive",
+          "rgb-24-negative-1",
+          "rgb-24-negative-2",
+          "rgb-24-negative-3",
+          "rgb-24-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-027",
+      "track": "S07",
+      "query": "果果合唱团是谁创办的？",
+      "reference_answer": "刘超",
+      "gold": [
+        {
+          "id": "R-S07-027-E1",
+          "source_id": "rgb-229-positive",
+          "char_start": 0,
+          "char_end": 232,
+          "quote": "当时刘超发现，这些唱歌的孩子们总是很想跟她说话，但又不太好意思，很害羞。于是，刘超用孩子们最熟悉的方式发出邀请：“那咱们要不然唱个歌？”然后孩子们就围在她身边唱歌，她觉得很治愈。久而久之，孩子们唱着唱着，她心想：“那我们要不然成立一个合唱团？”因为刘超小时候也学过唱歌，她觉得这个目标应该能实现，于是她下定决心，一定要在学校组建一个合唱团，让这些爱唱歌的孩子们能有一个舞台。 2020年9月，喜德县中坝村成立了第一所公立小学。2020年10月左右，果果合唱团成立。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-229",
+      "provenance": {
+        "upstream_id": 229,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-229-positive"
+        ],
+        "one_negative": [
+          "rgb-229-positive",
+          "rgb-229-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-229-positive",
+          "rgb-229-negative-1",
+          "rgb-229-negative-2",
+          "rgb-229-negative-3",
+          "rgb-229-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-028",
+      "track": "S07",
+      "query": "2023年男篮世界杯中国男篮同组对手有谁？",
+      "reference_answer": "塞尔维亚；波多黎各；南苏丹",
+      "gold": [
+        {
+          "id": "R-S07-028-E1",
+          "source_id": "rgb-275-positive",
+          "char_start": 0,
+          "char_end": 222,
+          "quote": "2023年男篮世界杯具体分组情况如下： A组：菲律宾男篮、多米尼加男篮、意大利男篮、安哥拉男篮 B组：塞尔维亚男篮、中国男篮、波多黎各男篮、南苏丹男篮 C组：美国男篮、新西兰男篮、希腊男篮、约旦男篮 D组：立陶宛男篮、墨西哥男篮、黑山男篮、埃及男篮 E组：日本男篮、德国男篮、澳大利亚男篮、芬兰男篮 F组：斯洛文尼亚男篮、格鲁吉亚男篮、委内瑞拉男篮、佛得角男篮 G组：西班牙男篮、伊朗男篮、巴西男篮、科特迪瓦男篮 H组：加拿大男篮、拉脱维亚男�"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-275",
+      "provenance": {
+        "upstream_id": 275,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-275-positive"
+        ],
+        "one_negative": [
+          "rgb-275-positive",
+          "rgb-275-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-275-positive",
+          "rgb-275-negative-1",
+          "rgb-275-negative-2",
+          "rgb-275-negative-3",
+          "rgb-275-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-029",
+      "track": "S07",
+      "query": "2022年一季度中国GDP同比增长率是多少？",
+      "reference_answer": "4.8%",
+      "gold": [
+        {
+          "id": "R-S07-029-E1",
+          "source_id": "rgb-78-positive",
+          "char_start": 0,
+          "char_end": 213,
+          "quote": "新华社北京4月18日电 题：一季度重要数据出炉，如何看待当前经济形势 新华社“新华视点”记者 2022年我国经济首季报18日出炉：国内生产总值（GDP）270178亿元，同比增长4.8%。 面对国际环境更趋复杂严峻和国内疫情频发带来的多重考验，如何看待这份“成绩单”？“新华视点”记者对关键数据进行了梳理。 GDP同比增长4.8% 一季度，我国GDP同比增长4.8%，增速高于2021年四季度0.8个百分点，环比增长1.3%。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-78",
+      "provenance": {
+        "upstream_id": 78,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "2022年一季度中国经济增长率是多少",
+        "original_reference_answer": "4.8%",
+        "review_reason": "Distinguish year-on-year from quarter-on-quarter growth.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-78-positive"
+        ],
+        "one_negative": [
+          "rgb-78-positive",
+          "rgb-78-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-78-positive",
+          "rgb-78-negative-1",
+          "rgb-78-negative-2",
+          "rgb-78-negative-3",
+          "rgb-78-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-030",
+      "track": "S07",
+      "query": "2022年5月11日在喀麦隆失联的飞机上有多少人？",
+      "reference_answer": "11人",
+      "gold": [
+        {
+          "id": "R-S07-030-E1",
+          "source_id": "rgb-83-positive",
+          "char_start": 0,
+          "char_end": 315,
+          "quote": "电子报  当前位置：\r                 京报网首页 >\r                                 世界 >\r                 正文  来源：\r                                 央视新闻客户端  2022-05-12 15:26  喀麦隆交通部当地时间12日表示，11日在该国境内失去联系的一架载有11人的飞机，被证实在喀麦隆中部的森林中坠毁。  喀麦隆交通部在一份声明中说，空管部门当天与一架执飞首都雅温得至东部大区贝拉博航线的飞机失去联系，机上载有11人。经过搜寻，飞机在位于首都雅温得东北约150公里的森林中坠毁，救援人员正在搜寻幸存者。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-83",
+      "provenance": {
+        "upstream_id": 83,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "喀麦隆失联飞机上有多少人",
+        "original_reference_answer": "11人",
+        "review_reason": "Anchor the incident date.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-83-positive"
+        ],
+        "one_negative": [
+          "rgb-83-positive",
+          "rgb-83-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-83-positive",
+          "rgb-83-negative-1",
+          "rgb-83-negative-2",
+          "rgb-83-negative-3",
+          "rgb-83-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-031",
+      "track": "S07",
+      "query": "卡塔尔世界杯四强",
+      "reference_answer": "阿根廷；克罗地亚；摩洛哥；法国",
+      "gold": [
+        {
+          "id": "R-S07-031-E1",
+          "source_id": "rgb-185-positive",
+          "char_start": 0,
+          "char_end": 192,
+          "quote": "莫德里奇、姆巴佩、梅西和布法尔。 2022世界杯进入最后的白热化阶段，残酷的淘汰赛令巴西与英格兰两大夺冠热门提前出局，葡萄牙八强赛落败亦意味着克里斯蒂亚诺·罗纳尔多（Cristiano Ronaldo，基斯坦奴·朗拿度）的世界杯冠军梦碎。 如今战至最后四强，阿根廷、克罗地亚、法国和摩洛哥是目前仍有机会在这个周末的卡塔尔捧起大力神杯的球队。 在此之前将进行半决赛，决出最后决赛的双方。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-185",
+      "provenance": {
+        "upstream_id": 185,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-185-positive"
+        ],
+        "one_negative": [
+          "rgb-185-positive",
+          "rgb-185-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-185-positive",
+          "rgb-185-negative-1",
+          "rgb-185-negative-2",
+          "rgb-185-negative-3",
+          "rgb-185-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-032",
+      "track": "S07",
+      "query": "2022年印度新当选总统是谁",
+      "reference_answer": "德劳帕迪·穆尔穆",
+      "gold": [
+        {
+          "id": "R-S07-032-E1",
+          "source_id": "rgb-106-positive",
+          "char_start": 0,
+          "char_end": 91,
+          "quote": "Jul 22, 2022 ... 穆尔穆当选印度总统---印度总统选举结果21日揭晓，执政的全国民主联盟推举的候选人德劳帕迪·穆尔穆击败反对党联合提名的候选人亚什万特·辛哈， ..."
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-106",
+      "provenance": {
+        "upstream_id": 106,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-106-positive"
+        ],
+        "one_negative": [
+          "rgb-106-positive",
+          "rgb-106-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-106-positive",
+          "rgb-106-negative-1",
+          "rgb-106-negative-2",
+          "rgb-106-negative-3",
+          "rgb-106-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-033",
+      "track": "S07",
+      "query": "神舟十三号飞船的成员有哪些",
+      "reference_answer": "翟志刚；王亚平；叶光富",
+      "gold": [
+        {
+          "id": "R-S07-033-E1",
+          "source_id": "rgb-71-positive",
+          "char_start": 0,
+          "char_end": 249,
+          "quote": "✨圆满完成神舟十三号载人飞行任务的航天员翟志刚、王亚平、叶光富，于2022年4月16日下午乘坐任务飞机平安抵达北京。空间站阶段飞行任务总指挥部领导和成员到机场迎接。  ✨3名航天员抵京后将进入医学隔离期，进行全面的医学检查和健康评估，并安排休养，调整从太空失重  期待神舟十三号能够安全回家  据报道，神舟十三号载人飞船已完成全部既定任务，将于近日择机撤离空间站核心舱组合体，返回东风着陆场。目前，神舟十三号乘组已做好飞船撤离前的各项准备，东风着陆场及工程相关系统正在开展迎接航天员返回的各项准备。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-71",
+      "provenance": {
+        "upstream_id": 71,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-71-positive"
+        ],
+        "one_negative": [
+          "rgb-71-positive",
+          "rgb-71-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-71-positive",
+          "rgb-71-negative-1",
+          "rgb-71-negative-2",
+          "rgb-71-negative-3",
+          "rgb-71-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-034",
+      "track": "S07",
+      "query": "2022年6月我国网民规模有多少人？",
+      "reference_answer": "10.51亿",
+      "gold": [
+        {
+          "id": "R-S07-034-E1",
+          "source_id": "rgb-132-positive",
+          "char_start": 0,
+          "char_end": 323,
+          "quote": "中国互联网络信息中心（CNNIC）31日在京发布了第50次《中国互联网络发展状况统计报告》（以下简称《报告》）。《报告》显示，截至2022年6月，我国网民规模为10.51亿，互联网普及率达74.4%。 在网络基础资源方面，截至2022年6月，我国域名总数为3380万个，“.CN”域名数为1786万个，IPv6地址数量为63079块/32，较2021年12月增长0.04%；在信息基础设施建设方面，截至2022年6月，我国千兆光网具备覆盖超过4亿户家庭的能力，已累计建成开通5G基站185.4万个。 我国网民规模持续提升，网络接入环境更加多元。《报告》显示，我国网民规模较2021年12月新增网民1919万，互联网普及率较2021年12月提升1."
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-132",
+      "provenance": {
+        "upstream_id": 132,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-132-positive"
+        ],
+        "one_negative": [
+          "rgb-132-positive",
+          "rgb-132-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-132-positive",
+          "rgb-132-negative-1",
+          "rgb-132-negative-2",
+          "rgb-132-negative-3",
+          "rgb-132-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-035",
+      "track": "S07",
+      "query": "中共二十大开幕的月日和具体时刻是什么？",
+      "reference_answer": "10月16日上午10时",
+      "gold": [
+        {
+          "id": "R-S07-035-E1",
+          "source_id": "rgb-154-positive",
+          "char_start": 0,
+          "char_end": 38,
+          "quote": "中国共产党第二十次全国代表大会于10月16日上午10时在北京人民大会堂开幕。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-154",
+      "provenance": {
+        "upstream_id": 154,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "二十大开幕时间",
+        "original_reference_answer": "10月16日",
+        "review_reason": "Match the requested precision to the supplied passage.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-154-positive"
+        ],
+        "one_negative": [
+          "rgb-154-positive",
+          "rgb-154-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-154-positive",
+          "rgb-154-negative-1",
+          "rgb-154-negative-2",
+          "rgb-154-negative-3",
+          "rgb-154-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-036",
+      "track": "S07",
+      "query": "2021年全国粮食产量是多少？",
+      "reference_answer": "13657亿斤",
+      "gold": [
+        {
+          "id": "R-S07-036-E1",
+          "source_id": "rgb-56-positive",
+          "char_start": 0,
+          "char_end": 288,
+          "quote": "全国薯类单产277公斤/亩，每亩产量比上年增加0.5公斤，增长0.2%。  粮食总产量增加267亿斤 增长2.0%  \t数据显示，2021年，夏粮和早稻产量分别为2919亿斤和560亿斤，分别比上年增加62亿斤和14亿斤；秋粮产量10178亿斤，比上年增加191亿斤。全年粮食总产量达到13657亿斤，比上年增加267亿斤，增长2.0%。  \t王明华指出，稻谷、小麦、玉米产量均实现增加。2021年，全国谷物产量12655亿斤，比上年增加320亿斤，增长2.6%。其中，稻谷产量4257亿斤，比上年增加20亿斤，增长0.5%；小麦产量2739亿斤，比上年增加54亿斤，增长2."
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-56",
+      "provenance": {
+        "upstream_id": 56,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-56-positive"
+        ],
+        "one_negative": [
+          "rgb-56-positive",
+          "rgb-56-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-56-positive",
+          "rgb-56-negative-1",
+          "rgb-56-negative-2",
+          "rgb-56-negative-3",
+          "rgb-56-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-037",
+      "track": "S07",
+      "query": "2023年五一假期，全国国内旅游出游合计多少人次？",
+      "reference_answer": "2.74亿人次",
+      "gold": [
+        {
+          "id": "R-S07-037-E1",
+          "source_id": "rgb-277-positive",
+          "char_start": 0,
+          "char_end": 263,
+          "quote": "首页 > 信息发布 >> 党政要闻  新华社北京5月4日电 题：强势复苏 体验升级——2023年“五一”假期旅游市场观察 新华社记者 徐壮 从传统旅游热点重现人山人海场面，到新兴旅游城市异军突起；从“特种兵式旅游”出圈，到“味蕾游”兴起；从文博演艺一票难求，到国风国潮热度不减……2023年“五一”假期旅游市场传递出令人振奋的信息。 更多供给、更加惠民，文旅复苏势头强劲—— 据文化和旅游部数据中心测算，2023年“五一”假期，全国国内旅游出游合计2.74亿人次，同比增长70.83%，按可比口径恢复至2019年同期的119."
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-277",
+      "provenance": {
+        "upstream_id": 277,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "2023年五一旅游人次",
+        "original_reference_answer": "2.74亿",
+        "review_reason": "Preserve the domestic-tourism scope and person-trip unit.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-277-positive"
+        ],
+        "one_negative": [
+          "rgb-277-positive",
+          "rgb-277-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-277-positive",
+          "rgb-277-negative-1",
+          "rgb-277-negative-2",
+          "rgb-277-negative-3",
+          "rgb-277-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-038",
+      "track": "S07",
+      "query": "2023亚洲杯中国男足同组对手",
+      "reference_answer": "卡塔尔；塔吉克斯坦；黎巴嫩",
+      "gold": [
+        {
+          "id": "R-S07-038-E1",
+          "source_id": "rgb-281-positive",
+          "char_start": 0,
+          "char_end": 275,
+          "quote": "中新网5月12日电 北京时间12日，亚足联公布了2023年男足亚洲杯开赛时间安排，中国队的三场小组赛比赛时间也随之确定。 　　本届亚洲杯将在卡塔尔举行，由于当地夏季天气炎热，所以2023年亚洲杯的比赛时间为2024年1月12日至2月10日。在昨日进行的分组抽签仪式上，国足与塔吉克斯坦、黎巴嫩以及东道主卡塔尔分在A组。 　　比赛时间上，首场比赛，中国队对阵塔吉克斯坦。比赛将于北京时间2024年1月13日22时30分，在哈里发体育场进行。国足对阵黎巴嫩和卡塔尔的比赛，分别在2024年1月17日19时30分，以及2024年1月22日23时00分进行。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-281",
+      "provenance": {
+        "upstream_id": 281,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-281-positive"
+        ],
+        "one_negative": [
+          "rgb-281-positive",
+          "rgb-281-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-281-positive",
+          "rgb-281-negative-1",
+          "rgb-281-negative-2",
+          "rgb-281-negative-3",
+          "rgb-281-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-039",
+      "track": "S07",
+      "query": "央视中秋晚会《吉庆团圆》是谁唱的",
+      "reference_answer": "蔡国庆；张含韵",
+      "gold": [
+        {
+          "id": "R-S07-039-E1",
+          "source_id": "rgb-139-positive",
+          "char_start": 0,
+          "char_end": 64,
+          "quote": "央视中秋晚会中，蔡国庆张含韵用一首《吉庆团圆》，介绍中秋习俗“请兔儿爷”，让我们跟随歌声一起了解～返回搜狐，查看更多 责任编辑："
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-139",
+      "provenance": {
+        "upstream_id": 139,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-139-positive"
+        ],
+        "one_negative": [
+          "rgb-139-positive",
+          "rgb-139-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-139-positive",
+          "rgb-139-negative-1",
+          "rgb-139-negative-2",
+          "rgb-139-negative-3",
+          "rgb-139-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-040",
+      "track": "S07",
+      "query": "按给定2023年报道，瓦格纳集团属于什么性质的组织？",
+      "reference_answer": "私营军事服务公司",
+      "gold": [
+        {
+          "id": "R-S07-040-E1",
+          "source_id": "rgb-282-positive",
+          "char_start": 0,
+          "char_end": 93,
+          "quote": "Jun 26, 2023 ... 瓦格纳集团是一家私营军事服务公司，代表俄罗斯总统普京在多个大陆执行任务，同时也面临战争罪的指控。 美国、欧盟、联合国和其他国家声称该雇佣军参与了 ..."
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-282",
+      "provenance": {
+        "upstream_id": 282,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "俄罗斯瓦格纳是什么",
+        "original_reference_answer": "私营军事",
+        "review_reason": "Use an informative full answer and historical attribution.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-282-positive"
+        ],
+        "one_negative": [
+          "rgb-282-positive",
+          "rgb-282-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-282-positive",
+          "rgb-282-negative-1",
+          "rgb-282-negative-2",
+          "rgb-282-negative-3",
+          "rgb-282-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-041",
+      "track": "S07",
+      "query": "给定材料中的2023年土耳其—叙利亚强震发生于当地哪月哪日、几点几分？",
+      "reference_answer": "2月6日凌晨4时17分",
+      "gold": [
+        {
+          "id": "R-S07-041-E1",
+          "source_id": "rgb-245-positive",
+          "char_start": 0,
+          "char_end": 225,
+          "quote": "2023年土耳其-叙利亚地震，是指当地时间2023年2月6日凌晨4时17分发生在土耳其南部接壤叙利亚边境的强烈地震。地震震中位于土耳其加济安泰普省（北纬37.174度，东经37.032度）。依据美国地质调查局资料，震级为MW 7.8，震源深度为10.0公里，最大震度为IX（9）度。[3]地震发生后的凌晨4时17分至4时36分共发生3次地震，规模介于5.6至6.7之间。加济安泰普省附近的赛普勒斯、叙利亚、黎巴嫩、以色列、约旦、伊拉克均有震感[4]。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-245",
+      "provenance": {
+        "upstream_id": 245,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "2023年土耳其地震的时间",
+        "original_reference_answer": "2月6日",
+        "review_reason": "Specify the earthquake and local-time precision.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-245-positive"
+        ],
+        "one_negative": [
+          "rgb-245-positive",
+          "rgb-245-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-245-positive",
+          "rgb-245-negative-1",
+          "rgb-245-negative-2",
+          "rgb-245-negative-3",
+          "rgb-245-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-042",
+      "track": "S07",
+      "query": "CVPR2022在哪举办",
+      "reference_answer": "新奥尔良",
+      "gold": [
+        {
+          "id": "R-S07-042-E1",
+          "source_id": "rgb-181-positive",
+          "char_start": 0,
+          "char_end": 245,
+          "quote": "CVPR 2022 将于2022年 6 月 21-24 日在美国的新奥尔良举行。CVPR是IEEE Conference on Computer Vision and Pattern Recognition的缩写，即IEEE国际计算机视觉与模式识别会议。该会议是由IEEE举办的计算机视觉和模式识别领域的顶级会议，会议的主要内容是计算机视觉与模式识别技术。CVPR 2022 一共有2067篇论文被接收，接收论文数量相比去年增长了24% https://openaccess.thecvf."
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-181",
+      "provenance": {
+        "upstream_id": 181,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-181-positive"
+        ],
+        "one_negative": [
+          "rgb-181-positive",
+          "rgb-181-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-181-positive",
+          "rgb-181-negative-1",
+          "rgb-181-negative-2",
+          "rgb-181-negative-3",
+          "rgb-181-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-043",
+      "track": "S07",
+      "query": "KF-21战斗机研发国家",
+      "reference_answer": "韩国；印尼",
+      "gold": [
+        {
+          "id": "R-S07-043-E1",
+          "source_id": "rgb-107-positive",
+          "char_start": 0,
+          "char_end": 234,
+          "quote": "KF-21猎鹰为目前尚在开发中的四代半战斗机，始于2016年由韩国主导、印尼参与研发与投资的KF-X/IF-X战斗机项目[3][4]，目标是作为韩国与印尼空军将来采用的多用途战斗机。  2021年4月KF-X项目的首架原型机出厂[3]，并被正式命名为KF-21猎鹰[4]，并于2022年7月19日进行了首飞[1]，项目表定于2026年完成全部研发工作[5]。  韩国空军预计至2032年底将部署120架KF-21猎鹰[4][6]，印尼空军则预计订购50架量产机[7]。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-107",
+      "provenance": {
+        "upstream_id": 107,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-107-positive"
+        ],
+        "one_negative": [
+          "rgb-107-positive",
+          "rgb-107-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-107-positive",
+          "rgb-107-negative-1",
+          "rgb-107-negative-2",
+          "rgb-107-negative-3",
+          "rgb-107-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-044",
+      "track": "S07",
+      "query": "按给定的《流浪地球2》北美上映报道，领衔主演和特别演出分别是谁？",
+      "reference_answer": "领衔主演：吴京、李雪健、沙溢、王智、宁理；特别演出：刘德华。",
+      "gold": [
+        {
+          "id": "R-S07-044-E1",
+          "source_id": "rgb-228-positive",
+          "char_start": 0,
+          "char_end": 244,
+          "quote": "领跑兔年贺岁大片的《流浪地球2》将于1月22日（农历大年初一）在北美隆重上映。 \r 刘慈欣原著、监制，吴京、李雪健、沙溢、王智、宁理领衔主演，刘德华特别演出。豪华大阵容，倍受期待！ \r 《流浪地球2》，倍受期待   电影《流浪地球2》根据刘慈欣同名小说改编，是2019年《流浪地球》的前传，以提出计划将建造1万座行星发动机的时代为背景蓝图，主要讲述“太阳危机”来袭，世界末日即将降临，人类文明的延续将面临巨大挑战。 \r 人类决定开启流浪地球计划，带着地球离开太阳系，寻找新家园，然而..."
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-228",
+      "provenance": {
+        "upstream_id": 228,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "《流浪地球2》的主演",
+        "original_reference_answer": "吴京；刘德华；李雪健",
+        "review_reason": "Do not treat an incomplete actor alias list as the full cast or merge billing roles.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-228-positive"
+        ],
+        "one_negative": [
+          "rgb-228-positive",
+          "rgb-228-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-228-positive",
+          "rgb-228-negative-1",
+          "rgb-228-negative-2",
+          "rgb-228-negative-3",
+          "rgb-228-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-045",
+      "track": "S07",
+      "query": "中国女篮在2022世界杯小组赛中最终排名？",
+      "reference_answer": "第二",
+      "gold": [
+        {
+          "id": "R-S07-045-E1",
+          "source_id": "rgb-149-positive",
+          "char_start": 0,
+          "char_end": 250,
+          "quote": "2022年国际蓝联女篮世界杯在澳大利亚首都悉尼激战正酣。中国女篮今天迎来了小组赛最后一个对手比利时队。最终中国队以81-55获胜，以小组第二身份锁定四分之一决赛席位。 中国女篮在2022年女篮世界杯小组赛最后一轮继续高奏凯歌。此前4场比赛取得3胜1负的中国队迎来小组赛最后一个对手比利时队的挑战。 比利时队此前的战绩和中国队相同，同样是3胜1负，因此本场比赛是两支球队的小组第二之争。 由于本场比赛的胜负关乎排名因此两队在开场后均略显拘谨，命中率不高。比赛进行3分半中后，中国队2-6落后于比利时队。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-149",
+      "provenance": {
+        "upstream_id": 149,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-149-positive"
+        ],
+        "one_negative": [
+          "rgb-149-positive",
+          "rgb-149-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-149-positive",
+          "rgb-149-negative-1",
+          "rgb-149-negative-2",
+          "rgb-149-negative-3",
+          "rgb-149-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-046",
+      "track": "S07",
+      "query": "2022年百花奖最佳影片奖",
+      "reference_answer": "长津湖",
+      "gold": [
+        {
+          "id": "R-S07-046-E1",
+          "source_id": "rgb-110-positive",
+          "char_start": 0,
+          "char_end": 201,
+          "quote": "获奖名单： 最佳影片奖：长津湖 ​优秀影片奖：你好，李焕英 ​最佳导演奖：文牧野（影片：奇迹·笨小孩） ​最佳编剧将：里八神等（影片：杨名立万） ​最佳男主角奖：张译（影片：悬崖之上） ​最佳女主角奖：袁泉（影片：中国医生） ​最佳男配角奖：侯勇（影片：守岛人） ​最佳女配角奖：朱媛媛（影片：我的姐姐） ​最佳新人奖：陈哈琳（影片：奇迹·笨小孩） 热烈祝贺第三十六届大众电影百花奖电影节圆满成功！！！"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-110",
+      "provenance": {
+        "upstream_id": 110,
+        "adaptation": "context_count_variants; original_positives_and_negatives",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-110-positive"
+        ],
+        "one_negative": [
+          "rgb-110-positive",
+          "rgb-110-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-110-positive",
+          "rgb-110-negative-1",
+          "rgb-110-negative-2",
+          "rgb-110-negative-3",
+          "rgb-110-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-047",
+      "track": "S07",
+      "query": "按给定的2022年春节档收官报道，整个档期的票房冠军是哪部影片？",
+      "reference_answer": "长津湖之水门桥",
+      "gold": [
+        {
+          "id": "R-S07-047-E1",
+          "source_id": "rgb-7-positive",
+          "char_start": 0,
+          "char_end": 147,
+          "quote": "2022年春节档以60.35亿票房收官，2月7日，灯塔研究院和灯塔专业版联合发布《2022春节档电影市场数据洞察报告》（以下简称灯塔报告）。 灯塔报告显示，2月1日大年初一，春节档首日揽下14.5亿票房，与2019年持平，后续走势也与疫情前一样平缓回落。  票房冠军《长津湖之水门桥》斩获25."
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-7",
+      "provenance": {
+        "upstream_id": 7,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "2022年春节档首日票房冠军",
+        "original_reference_answer": "长津湖之水门桥",
+        "review_reason": "The supplied passage supports the whole-window champion, not the first-day champion.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-7-positive"
+        ],
+        "one_negative": [
+          "rgb-7-positive",
+          "rgb-7-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-7-positive",
+          "rgb-7-negative-1",
+          "rgb-7-negative-2",
+          "rgb-7-negative-3",
+          "rgb-7-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-048",
+      "track": "S07",
+      "query": "北京冬残奥会开幕式中国体育代表团的旗手是谁？",
+      "reference_answer": "郭雨洁；汪之栋",
+      "gold": [
+        {
+          "id": "R-S07-048-E1",
+          "source_id": "rgb-61-positive",
+          "char_start": 0,
+          "char_end": 202,
+          "quote": "郭雨洁、汪之栋将担任北京冬残奥会开幕式中国体育代表团旗手。 3日，中国体育代表团宣布，郭雨洁、汪之栋将担任北京冬残奥会开幕式中国体育代表团旗手。 残奥越野滑雪和冬季两项女运动员郭雨洁，2004年3月出生，来自河北，曾获得2021年芬兰欧洲杯冬季两项女子站姿组短距离第三名，在全国第十一届残运会暨第八届特奥会越野滑雪和冬季两项比赛获得3金3银。本届冬残奥会她将参加冬季两项女子站姿组6公里、10公里、12."
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-61",
+      "provenance": {
+        "upstream_id": 61,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "谁是北京冬残奥会中国体育代表团旗手",
+        "original_reference_answer": "郭雨洁；汪之栋",
+        "review_reason": "Distinguish opening from closing ceremonies.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-61-positive"
+        ],
+        "one_negative": [
+          "rgb-61-positive",
+          "rgb-61-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-61-positive",
+          "rgb-61-negative-1",
+          "rgb-61-negative-2",
+          "rgb-61-negative-3",
+          "rgb-61-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-049",
+      "track": "S07",
+      "query": "根据给定的历史报道，苹果M1芯片首席设计师宣布将赴哪家公司任职？",
+      "reference_answer": "英特尔",
+      "gold": [
+        {
+          "id": "R-S07-049-E1",
+          "source_id": "rgb-25-positive",
+          "char_start": 0,
+          "char_end": 269,
+          "quote": "全球PC芯片巨头英特尔竟挖走苹果M1芯片首席设计师，到底想干什么？  近日，苹果Mac(前)系统架构总监宣布，将离开苹果赴任英特尔，担任英特尔院士(Intel Fellow)和设计工程部门的技术总监(CTO)，主要负责所有英特尔客户端系统单晶片(SoC)架构设计。 不仅仅是出现了挖人的动作，英特尔还在1月7日当周发布第12代酷睿移动处理器，一连推出了28款型号的12代酷睿芯片。英特尔还将其中的酷睿i9-12900HK称为“世界最快的移动处理器”。 有业内分析师表示，在过去的两年间，苹果芯片团队陆续有一些工程师出走，后续影响尚未可知。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-25",
+      "provenance": {
+        "upstream_id": 25,
+        "adaptation": "context_count_variants; original_positives_and_negatives; scope_or_answer_revised",
+        "original_query": "苹果M1芯片首席设计师去了哪家公司",
+        "original_reference_answer": "英特尔",
+        "review_reason": "Report the archived announcement rather than claim a current employment status.",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-25-positive"
+        ],
+        "one_negative": [
+          "rgb-25-positive",
+          "rgb-25-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-25-positive",
+          "rgb-25-negative-1",
+          "rgb-25-negative-2",
+          "rgb-25-negative-3",
+          "rgb-25-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    },
+    {
+      "id": "R-S07-050",
+      "track": "S07",
+      "query": "漫长的季节的导演是谁？",
+      "reference_answer": "辛爽",
+      "gold": [
+        {
+          "id": "R-S07-050-E1",
+          "source_id": "rgb-272-positive",
+          "char_start": 0,
+          "char_end": 224,
+          "quote": "《漫长的季节》是一部由企鹅影视出品，由辛爽执导，范伟、秦昊、陈明昊等领衔主演、李庚希、刘奕铁、蒋奇明等特别主演的生活悬疑剧，讲述了一座小城“桦林”中多个人物由于一场碎尸案而跨越近20年的故事[1]。2023年4月22日在腾讯视频独播。  该剧主要人物与故事框架来自于编剧于小千创作的原创故事及剧本《凛冬之刃》，但相对于最初版本，编剧团队及导演对这个剧本进行了大幅度的改编，改动重点包括沈墨的人设、王阳之死、龚彪之死，以及王响与沈墨之间的恩怨[2]。"
+        }
+      ],
+      "answerable": true,
+      "no_answer_reason": "",
+      "split": "holdout",
+      "family_id": "rgb-question-272",
+      "provenance": {
+        "upstream_id": 272,
+        "adaptation": "context_count_variants; original_positives_and_negatives; context_source_review_revision",
+        "review": "Assistant compared all selected positive evidence and all 20 negative-only context sets; independent review pending."
+      },
+      "context_sets": {
+        "clean": [
+          "rgb-272-positive"
+        ],
+        "one_negative": [
+          "rgb-272-positive",
+          "rgb-272-negative-1"
+        ],
+        "four_negatives": [
+          "rgb-272-positive",
+          "rgb-272-negative-1",
+          "rgb-272-negative-2",
+          "rgb-272-negative-3",
+          "rgb-272-negative-4"
+        ]
+      },
+      "context_order": "positive_first; fixed",
+      "withheld_upstream_answer": null,
+      "evidence_granularity": "passage",
+      "limitations": "No exact token-ratio claim. Only assigned context is available; do not search the union corpus."
+    }
+  ]
+}
