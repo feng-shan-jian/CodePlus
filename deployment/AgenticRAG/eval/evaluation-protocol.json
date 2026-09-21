@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "7ef7ee6c26e5a104da212a6b7788d9b884ef04fa",
+  "source_dataset_sha256": "c9cf1a90f31d7944cfa24e3ff14db2ae3fa8b875a1a1c9397f6f6f2221bc73d9",
+  "documents": 609,
+  "questions": 2556,
+  "evidence_ranges": 6084,
+  "tiers": {
+    "lite": {
+      "questions": 50,
+      "retrieval_scored_questions": 44,
+      "dataset_sha256": "cdcbd3c33fef2df6c5406535413df20fd31157a1052d9b05c46f3059044ba9ed"
+    },
+    "medium": {
+      "questions": 200,
+      "retrieval_scored_questions": 177,
+      "dataset_sha256": "f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898"
+    },
+    "full": {
+      "questions": 2556,
+      "retrieval_scored_questions": 2255,
+      "dataset_sha256": "c9cf1a90f31d7944cfa24e3ff14db2ae3fa8b875a1a1c9397f6f6f2221bc73d9"
+    }
+  },
+  "development": {
+    "ids_file": "development-ids.json",
+    "count": 200,
+    "rule": "medium IDs in official question order"
+  },
+  "acceptance": {
+    "ids_file": "acceptance-ids.json",
+    "count": 2356,
+    "rule": "full minus medium in official question order"
+  },
+  "historical_exposure": {
+    "known": [
+      "The inherited official adapter and all full-set evidence were read and validated before R01.",
+      "R00 ran offline integrity checks for lite, medium and full; these are not model evaluations.",
+      "R01 reads all questions, reference answers and gold only in preparation/scoring/tests and validates every runtime query."
+    ],
+    "unknown": [
+      "Prior per-question model execution, tuning, manual inspection and training exposure are not established by the available records."
+    ],
+    "unseen_test_set_claim": false,
+    "interpretation": "Disjoint IDs separate future development and acceptance use; they do not establish an unseen or uncontaminated test set."
+  },
+  "runtime_contract": {
+    "file": "runtime-inputs.json",
+    "sha256": "8db278a920b290ea9d6f63d5bea473960fb20c26fcb41c5078dececa421d4d0d",
+    "root_keys": [
+      "questions",
+      "corpus_paths"
+    ],
+    "question_keys": [
+      "id",
+      "query"
+    ],
+    "scoring_data_reads": false
+  },
+  "scoring": {
+    "official_entry": "eval/RAG-eval/score.py",
+    "top_k": 10,
+    "retrieval_null_queries": "excluded only from retrieval denominator",
+    "request_errors": "retained in the selected task denominator and scored as zero",
+    "answer_metric": "upstream_word_overlap_accuracy, not semantic correctness"
+  },
+  "runtime_status": "not_connected_to_new_core",
+  "model_evaluation": "not_executed"
+}

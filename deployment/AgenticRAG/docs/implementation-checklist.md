@@ -20,8 +20,8 @@
 
 | 任务 | 状态 | 执行会话 | 验收记录 / 补丁标识 | 本地提交 |
 | --- | --- | --- | --- | --- |
-| R00 | ACCEPTED | Leader 01a0c4b0-f1cd-7370-b273-8472a33c46d4 | [R00](implementation-records/R00.md) | 提交后回填，随 R01 持久化 |
-| R01 | TODO | — | — | — |
+| R00 | COMMITTED | Leader 01a0c4b0-f1cd-7370-b273-8472a33c46d4 | [R00](implementation-records/R00.md) | `7ef7ee6c26e5a104da212a6b7788d9b884ef04fa` |
+| R01 | ACCEPTED | /root/r01_evaluation | [R01](implementation-records/R01.md) | 待本地提交 |
 | R02 | TODO | — | — | — |
 | R03 | TODO | — | — | — |
 | R04 | TODO | — | — | — |
@@ -90,11 +90,11 @@
 <a id="r01"></a>
 ### R01：评测解耦
 
-- [ ] 现有检查/评分加载链不再通过旧 `codeplus.knowledge` 业务代码取数据/指纹；以旧模块不可导入的隔离条件验证。
-- [ ] 原 corpus、问题、答案、gold、tiers 及 upstream 内容和顺序未改；解耦前后官方数据/分层指纹一致，集合规模按冻结清单核对。
-- [ ] lite/medium/full 的嵌套关系保留；开发/验收 ID 列表可复算、互斥关系正确，历史暴露如实记录。
-- [ ] 现有检查/评分命令仍可用，未接新核心的执行路径明确标记；失败分母、null_query、Top-K=10 与词重合指标语义未变。
-- [ ] 评分侧才能读取 gold；运行侧输入契约和正式测试防止答案/gold 混入导入或 query 生成。
+- [x] 现有检查/评分加载链不再通过旧 `codeplus.knowledge` 业务代码取数据/指纹；以旧模块不可导入的隔离条件验证。
+- [x] 原 corpus、问题、答案、gold、tiers 及 upstream 内容和顺序未改；解耦前后官方数据/分层指纹一致，集合规模按冻结清单核对。
+- [x] lite/medium/full 的嵌套关系保留；开发/验收 ID 列表可复算、互斥关系正确，历史暴露如实记录。
+- [x] 现有检查/评分命令仍可用，未接新核心的执行路径明确标记；失败分母、null_query、Top-K=10 与词重合指标语义未变。
+- [x] 评分侧才能读取 gold；运行侧输入契约和正式测试防止答案/gold 混入导入或 query 生成。
 
 <a id="r02"></a>
 ### R02：Milvus 验证

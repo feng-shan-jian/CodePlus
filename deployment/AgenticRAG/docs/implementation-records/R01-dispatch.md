@@ -12,7 +12,9 @@
 - `deployment/AgenticRAG/tests/test_evaluation_protocol.py`：新增正式风险测试，含旧模块不可导入、数据一致性和 gold 隔离。
 - `deployment/AgenticRAG/docs/evaluation-protocol.md`、`docs/implementation-records/R01.md` 及本项正式 JSON 证据。
 
-禁止修改 corpus、dataset.json、questions.json、tiers.json、prepare.py、score.py、source-lock.json、upstream、validation.json、既有 tests/test_multihop_evaluation.py 或其他继承变更；禁止修改宿主业务代码。现有 run.ps1 不改执行路由，记录仍连旧引擎且未接新核心，R10/R17 接管。只有确实必要时先把具体例外及证据交 Leader 判断。
+禁止修改 corpus、dataset.json、questions.json、tiers.json、prepare.py、score.py、source-lock.json、upstream、validation.json、既有 tests/test_multihop_evaluation.py 或其他继承变更；禁止修改宿主业务代码。在线检索仍连旧引擎且未接新核心，R10/R17 接管。
+
+执行期间 Leader 已追加两个必要例外并在独立验收时核对：新增 `eval/RAG-eval/replay.py` 标准库离线重放模块，仅在 `run.ps1` 加入 Replay 命令前缀接点，保留其余参数与继承改动；新增 `deployment/AgenticRAG/eval/.gitattributes`，固定 JSON 原字节以消除 Windows checkout 的哈希变化。相关正式测试、协议和证据同步更新。此授权不包含在线检索路由或整套继承评测替换。
 
 ## 必需交付
 

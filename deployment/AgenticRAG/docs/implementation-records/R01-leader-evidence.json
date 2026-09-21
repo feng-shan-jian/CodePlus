@@ -1,0 +1,34 @@
+{
+  "baseline_commit": "7ef7ee6c26e5a104da212a6b7788d9b884ef04fa",
+  "manifest_sha256": "9e62ab0355370c4b85a51217356d24a5382b763138f2997a3bae38f4b3abfc8d",
+  "manifest_files_verified": 15,
+  "protected_inputs": 6553,
+  "authorized_changed_inputs": [
+    "eval/RAG-eval/check.py",
+    "eval/RAG-eval/run.ps1",
+    "deployment/AgenticRAG/docs/implementation-checklist.md",
+    "deployment/AgenticRAG/docs/implementation-task-plan.md"
+  ],
+  "checkout": {
+    "command": "git -c core.autocrlf=true checkout-index --prefix=<isolated-temp>/ -- <exact runtime paths>",
+    "sha256": {
+      "deployment/AgenticRAG/eval/runtime-inputs.json": "8db278a920b290ea9d6f63d5bea473960fb20c26fcb41c5078dececa421d4d0d",
+      "deployment/AgenticRAG/eval/development-ids.json": "57bf63dee62e82108a4d3b3883e448ddeb1ef2b032d1901918716768c08c7478",
+      "deployment/AgenticRAG/eval/acceptance-ids.json": "18b127f6c3558dafc6f447f98666e1bed99c2e0a31a170981659b6fe2ae9acce",
+      "deployment/AgenticRAG/eval/evaluation-protocol.json": "53dddb267e652d4ae8b812e380fd0d8d903ee1aac571dbdc6bd079906a610089"
+    },
+    "runtime_loader_stdout": "2556 609",
+    "exit_code": 0,
+    "temporary_index_and_checkout": "removed"
+  },
+  "task_seams_verified_against_before": true,
+  "proposed_index_patch": "--- a/eval/RAG-eval/check.py\n+++ b/eval/RAG-eval/check.py\n@@ -7,7 +7,7 @@\n \n ROOT = Path(__file__).resolve().parent\n sys.path.insert(0, str(ROOT.parents[1]))\n-from codeplus.knowledge.benchmark import load_dataset\n+from dataset_io import load_dataset\n \n \n def read(path):\n--- a/eval/RAG-eval/run.ps1\n+++ b/eval/RAG-eval/run.ps1\n@@ -21,6 +21,9 @@\n if (-not (Test-Path -LiteralPath $pythonPath -PathType Leaf)) {\n     throw 'Install the project Windows environment: uv sync --locked --extra knowledge'\n }\n+$benchmarkEntry = if ($PSCmdlet.ParameterSetName -eq 'Replay') {\n+    @(Join-Path $PSScriptRoot 'replay.py')\n+} else { @('-m', 'codeplus.knowledge', 'benchmark') }\n if ($Dataset -eq 'all' -and $PSCmdlet.ParameterSetName -ne 'Check') {\n     throw 'Choose one dataset and its dedicated base: -Dataset original|crud|multihop|openrag|smoke'\n }\n@@ -28,7 +31,7 @@\n     throw 'RGB uses assigned context per case. Corpus retrieval would invalidate its no-answer and noise protocol.'\n }\n $datasetPath = if ($Dataset -eq 'smoke') { Join-Path $PSScriptRoot 'smoke' } else { Join-Path $PSScriptRoot \"full/$Dataset\" }\n-$arguments = @('-m', 'codeplus.knowledge', 'benchmark', '--dataset', $datasetPath)\n+$arguments = @($benchmarkEntry) + @('--dataset', $datasetPath)\n switch ($PSCmdlet.ParameterSetName) {\n     'Retrieval' {\n         $arguments += @('--kb-id', $KbId, '--mode', $Mode)\n",
+  "index_patch_sha256": "c095c55d9941a21739bffdcd5d908a182478f5db29d9abc30abc813953afae88",
+  "index_unchanged": true,
+  "leader_pytest": {
+    "command": ".venv/Scripts/python.exe -B -m pytest deployment/AgenticRAG/tests/test_evaluation_protocol.py tests/test_multihop_evaluation.py -q -p no:cacheprovider --basetemp <leader-temp>",
+    "exit_code": 0,
+    "stdout": "77 passed in 10.94s"
+  },
+  "independent_review": "/root/r01_readonly_review: no blocking code defect at unchanged code hashes"
+}

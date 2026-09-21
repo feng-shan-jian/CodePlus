@@ -21,6 +21,9 @@ $pythonPath = Join-Path $projectRoot '.venv/Scripts/python.exe'
 if (-not (Test-Path -LiteralPath $pythonPath -PathType Leaf)) {
     throw 'Install the project Windows environment: uv sync --locked --extra knowledge'
 }
+$benchmarkEntry = if ($PSCmdlet.ParameterSetName -eq 'Replay') {
+    @(Join-Path $PSScriptRoot 'replay.py')
+} else { @('-m', 'codeplus.knowledge', 'benchmark') }
 if ($Dataset -eq 'all' -and $PSCmdlet.ParameterSetName -ne 'Check') {
     throw 'Choose one dataset and its dedicated base: -Dataset original|crud|multihop|openrag|smoke'
 }
@@ -28,7 +31,7 @@ if ($Dataset -eq 'rgb' -and $PSCmdlet.ParameterSetName -ne 'Check') {
     throw 'RGB uses assigned context per case. Corpus retrieval would invalidate its no-answer and noise protocol.'
 }
 $datasetPath = if ($Dataset -eq 'smoke') { Join-Path $PSScriptRoot 'smoke' } else { Join-Path $PSScriptRoot "full/$Dataset" }
-$arguments = @('-m', 'codeplus.knowledge', 'benchmark', '--dataset', $datasetPath)
+$arguments = @($benchmarkEntry) + @('--dataset', $datasetPath)
 switch ($PSCmdlet.ParameterSetName) {
     'Retrieval' {
         $arguments += @('--kb-id', $KbId, '--mode', $Mode)

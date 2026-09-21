@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "7ef7ee6c26e5a104da212a6b7788d9b884ef04fa",
+  "generated_at_utc": "2026-09-21T16:32:42.760607+00:00",
+  "index_action": "none; Leader review and staging pending",
+  "self_hash": "Manifest excludes its own hash to avoid a cycle",
+  "files": [
+    {
+      "path": "eval/RAG-eval/check.py",
+      "sha256": "37eae3805f5f0b3aa1d3efa2ad02fc4e27f66d9412cd7c35f015c81693e8c437",
+      "bytes": 2255,
+      "scope": "R01 hunks only; inherited rest must not be staged"
+    },
+    {
+      "path": "eval/RAG-eval/dataset_io.py",
+      "sha256": "d5d4c188f9bca91f6b4c6b289b68b6da1265c9947068efd4891e9b3b1b6c13e2",
+      "bytes": 1711,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "eval/RAG-eval/replay.py",
+      "sha256": "8be3a6f43a0ef9546b28fac7a54171950f2adc43eb252a470ab498654d7fcfcd",
+      "bytes": 7901,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "eval/RAG-eval/run.ps1",
+      "sha256": "0b09f27535074ff39e3768cb3bd3734406c0efb694f3e967ec40317507df4fa4",
+      "bytes": 3376,
+      "scope": "R01 hunks only; inherited rest must not be staged"
+    },
+    {
+      "path": "deployment/AgenticRAG/eval/runtime_inputs.py",
+      "sha256": "f2550c8ae6341f4f30f12fdc8b11aaf13b39b32def5a2d7f41b54429fd75ec3a",
+      "bytes": 3707,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/eval/runtime-inputs.json",
+      "sha256": "8db278a920b290ea9d6f63d5bea473960fb20c26fcb41c5078dececa421d4d0d",
+      "bytes": 916341,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/eval/development-ids.json",
+      "sha256": "57bf63dee62e82108a4d3b3883e448ddeb1ef2b032d1901918716768c08c7478",
+      "bytes": 2603,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/eval/acceptance-ids.json",
+      "sha256": "18b127f6c3558dafc6f447f98666e1bed99c2e0a31a170981659b6fe2ae9acce",
+      "bytes": 30631,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/eval/evaluation-protocol.json",
+      "sha256": "53dddb267e652d4ae8b812e380fd0d8d903ee1aac571dbdc6bd079906a610089",
+      "bytes": 2520,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_evaluation_protocol.py",
+      "sha256": "ae5d3dd62bc7c78029f2744143375fb6592e8105d748579e15da600257e7cd4f",
+      "bytes": 13359,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/evaluation-protocol.md",
+      "sha256": "94ad711e15adaffc2484fb1a93b119dae0ae4da25b10d6e3418c12853f8a5940",
+      "bytes": 7593,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R01.md",
+      "sha256": "6cf43aff8f0b5fa58dba0098dbaa2479ddd12b8bb7f57a8ca5fd1faf516e00d8",
+      "bytes": 9557,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R01-evidence.json",
+      "sha256": "062404220f5edef4f1254d192a41d03f34555651f6dbc29dfef55fb478aa8da5",
+      "bytes": 229736,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R01-task-hunks.json",
+      "sha256": "5313ea5555ebba3f423a369fc451ce8ac531aa783e4f6b4a8c81d219cb18ce0a",
+      "bytes": 2239,
+      "scope": "R01 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/eval/.gitattributes",
+      "scope": "R01 new file; Leader-authorized checkout newline fix",
+      "sha256": "6f7fdff84df4a81ad7314bfbc0123fb233fbd4382307ade3d8b97a85e30978f1",
+      "bytes": 84
+    }
+  ]
+}

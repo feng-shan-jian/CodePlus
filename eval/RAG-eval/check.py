@@ -7,7 +7,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parents[1]))
-from codeplus.knowledge.benchmark import load_dataset
+from dataset_io import load_dataset
 
 
 def read(path):
