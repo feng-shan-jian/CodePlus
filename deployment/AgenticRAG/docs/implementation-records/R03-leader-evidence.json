@@ -1,0 +1,140 @@
+{
+  "baseline_commit": "776025c30ddbf51ecdcd26b16f9ce891c749b706",
+  "reviewer": "Leader",
+  "manifest_sha256": "9eb74b9a88a29f82ba57f617424b040fe4b29ed7c8d809fad853c88dae2f8b73",
+  "delivery_files_verified": [
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R03-attempt1-observations.json",
+      "sha256": "0fadfc51a050a348e88306adcea5aa6e7500d1e019de8b02f96c23bf6696999b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R03-evidence.json",
+      "sha256": "14039638f49f573433451439d9adefb1932f8f2c6d12dfc688de3d1cf5abe20d"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R03-observations.json",
+      "sha256": "a8cd5695ae7ceb301738efa7d9c6a4398317330060c3c917456a3f680b3a91e1"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R03.md",
+      "sha256": "e94cde9134272dde6c7c01301e2dd0beefd49b4b0cc10cafa7582648863bc229"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/local-model-capabilities.md",
+      "sha256": "308fc891343df8db06670c62fe2905bc68aa8390592d4bedcf8f81ed9ae29cb6"
+    },
+    {
+      "path": "deployment/AgenticRAG/probes/models/assets.py",
+      "sha256": "84c925588f33ab2dcfee05e5d8b3ba5481095e65598c9dd4872c548e9ad006b3"
+    },
+    {
+      "path": "deployment/AgenticRAG/probes/models/environment-win-cuda.freeze.txt",
+      "sha256": "de0425446060a31c5bce60dce845bdd78e6b5dbb660dacda634541bb255c8a8b"
+    },
+    {
+      "path": "deployment/AgenticRAG/probes/models/models.lock.json",
+      "sha256": "d5b53aeea3305fd939e8c52c79fb3b61788d38eac6b33659bb3c595e75be40fe"
+    },
+    {
+      "path": "deployment/AgenticRAG/probes/models/probe.py",
+      "sha256": "24fb3552ff58dfd43ced53efaedaf713f3bc14ebd4e3bcb82bb71c6835d0fb15"
+    },
+    {
+      "path": "deployment/AgenticRAG/probes/models/README.md",
+      "sha256": "0a436226639bdc49fe204a157f1d0e3b672f72ada987005c1bc15352b694cc4b"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_local_model_capabilities.py",
+      "sha256": "7b9b7b5063359fd5a060a3d677fd6cea308c216cc8212e23e865a1dd489bf0e2"
+    }
+  ],
+  "protected_inputs_verified": 6553,
+  "only_previously_authorized_input_changes": [
+    {
+      "path": "eval/RAG-eval/check.py",
+      "sha256": "37eae3805f5f0b3aa1d3efa2ad02fc4e27f66d9412cd7c35f015c81693e8c437"
+    },
+    {
+      "path": "eval/RAG-eval/run.ps1",
+      "sha256": "0b09f27535074ff39e3768cb3bd3734406c0efb694f3e967ec40317507df4fa4"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-checklist.md",
+      "sha256": "76a26043be4c045c306fe2d0eec03299955a4b74e5ca5dd44587a49aa458ebbd"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-task-plan.md",
+      "sha256": "edc82c475c84c9c2abe6baa71b11359037985b098fb8236710c9a6890f35d5f6"
+    }
+  ],
+  "index_empty": true,
+  "observations_sha256": "9ce4476918f3f0aa448c269656d178faa19e07ed194ee03d15f10fc92fec36f6",
+  "independent_probe_pid": 118252,
+  "cleanup": {
+    "download_parts": [],
+    "probe_pycache": [],
+    "pytest_temp_exists": false,
+    "persistent_authorized_paths": [
+      "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda",
+      "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models"
+    ],
+    "main_process_exited": true,
+    "all_failure_children_joined": true,
+    "leader_audit_script_removed": true,
+    "executor_finalize_script_absent": true
+  },
+  "independent_pytest": {
+    "cwd": "D:/CodePlus",
+    "shell": "pwsh7.6.5",
+    "command": "$env:R03_RUN_REAL='1'\n$env:R03_REPORT_PATH='D:/CodePlus/deployment/AgenticRAG/docs/implementation-records/R03-leader-observations.json'\n$env:PYTHONDONTWRITEBYTECODE='1'\nC:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda/Scripts/python.exe -B -m pytest -q --tb=short -p no:cacheprovider deployment/AgenticRAG/tests/test_local_model_capabilities.py --basetemp C:/Users/18221/AppData/Local/Temp/codeplus-r03-leader-validation",
+    "exit_code": 0,
+    "stdout": "......                                                                   [100%]\r\n6 passed in 45.14s"
+  },
+  "static_review": {
+    "reviewer": "/root/r03_readonly_review",
+    "mode": "read-only; no GPU/network/tests or file edits",
+    "findings": [
+      {
+        "issue": "Reranker max_position_embeddings was incorrectly asserted as32768",
+        "resolution": "Fixed per pinned config: embedding32768,reranker40960;2048 probe cap unchanged",
+        "status": "closed"
+      },
+      {
+        "issue": "Primitive torch.empty quota OOM did not exercise model error mapping",
+        "resolution": "Independent32MiBquota child now calls actualLocalProbe.load; real298MiBallocation refused,stage=load,exit2,noresults",
+        "status": "closed to load scope; inference OOM not tested"
+      },
+      {
+        "issue": "Post-unload allocator zero assumption",
+        "resolution": "Actual model-free BF16matmul baseline8.125MiBallocated/20MiBreserved;all3 unloads same baseline,313weakrefs eachall dead",
+        "status": "closed; no claim totalprocessGPUmemoryzero"
+      }
+    ],
+    "finalHashes": {
+      "probe": "24fb3552ff58dfd43ced53efaedaf713f3bc14ebd4e3bcb82bb71c6835d0fb15",
+      "test": "7b9b7b5063359fd5a060a3d677fd6cea308c216cc8212e23e865a1dd489bf0e2",
+      "observations": "a8cd5695ae7ceb301738efa7d9c6a4398317330060c3c917456a3f680b3a91e1"
+    }
+  },
+  "gpu_before": "8188 MiB total,4394 MiB used,3555 MiB free",
+  "gpu_after": "8188 MiB total,4399 MiB used,3550 MiB free",
+  "acceptance": "ACCEPTED for R03 only; shared worker, inference OOM, co-residency, Linux, production retrieval quality are not accepted by this probe.",
+  "prior_independent_success": {
+    "exit_code": 0,
+    "stdout": "6 passed in 46.63s",
+    "probe_sha256": "24fb3552ff58dfd43ced53efaedaf713f3bc14ebd4e3bcb82bb71c6835d0fb15",
+    "observations_sha256": "a1a0b9d5e09c6881aa9ce7dffb44a3102b36f7ff1df33fc071921ae4a4a9d23b"
+  },
+  "final_leader_change": {
+    "path": "deployment/AgenticRAG/probes/models/probe.py",
+    "reason": "Staged diff check found one trailing space at line189. Removed only that space, then repeated full real-GPU acceptance.",
+    "sha256": "ac78a98f06e27a0f156ade2f187263dcaefcab4e15140957d5e80b8eec5a3dd8",
+    "executor_manifest_preserved_as_historical_snapshot": true
+  },
+  "final_staged_scope": {
+    "paths": 17,
+    "deletions": 0,
+    "host_business_changes": 0,
+    "description": "15 R03 new artifacts, checklist, R02 postcommit SHA record"
+  }
+}

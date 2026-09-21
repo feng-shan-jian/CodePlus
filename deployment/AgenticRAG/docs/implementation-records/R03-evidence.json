@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "776025c30ddbf51ecdcd26b16f9ce891c749b706",
+  "executor": "/root/r03_models",
+  "status": "READY_FOR_LEADER_REVIEW",
+  "generated_utc": "2026-09-21T17:41:05.468936+00:00",
+  "cwd": "D:\\CodePlus",
+  "shell": "pwsh 7.6.5",
+  "final_command": "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda/Scripts/python.exe -B -m pytest -q --tb=short -p no:cacheprovider deployment/AgenticRAG/tests/test_local_model_capabilities.py",
+  "environment": {
+    "R03_RUN_REAL": "1",
+    "R03_REPORT_PATH": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R03-observations.json",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "final_exit_code": 0,
+  "final_stdout": "6 passed in 42.39s",
+  "code_sha256": {
+    "probe.py": "24fb3552ff58dfd43ced53efaedaf713f3bc14ebd4e3bcb82bb71c6835d0fb15",
+    "assets.py": "84c925588f33ab2dcfee05e5d8b3ba5481095e65598c9dd4872c548e9ad006b3",
+    "models.lock.json": "d5b53aeea3305fd939e8c52c79fb3b61788d38eac6b33659bb3c595e75be40fe"
+  },
+  "tests_sha256": "7b9b7b5063359fd5a060a3d677fd6cea308c216cc8212e23e865a1dd489bf0e2",
+  "observations_sha256": "a8cd5695ae7ceb301738efa7d9c6a4398317330060c3c917456a3f680b3a91e1",
+  "attempts": [
+    {
+      "result": "6 skipped in 0.02s",
+      "exit_code": 0,
+      "classification": "Not opted in; NOT GPU acceptance"
+    },
+    {
+      "result": "5 passed / 1 failed / 1 warning in 43.95s",
+      "exit_code": 1,
+      "report": "R03-attempt1-observations.json",
+      "reason": "Unload incorrectly required allocator zero; actual process library baseline retained 8.125 MiB. Child stderr GBK decoding also emitted a thread warning.",
+      "repair": "Measure model-free real BF16 matmul baseline before loading; verify all model/parameter/buffer weak references dead and memory returns to baseline. Explicit UTF-8 child environment/decoding and retained stderr."
+    },
+    {
+      "result": "6 passed in 42.39s",
+      "exit_code": 0,
+      "reason": "All six full real-CUDA integration assertions passed after repair; no warnings"
+    }
+  ],
+  "setup_commands": [
+    {
+      "command": "uv venv C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda --python C:/Python314/python.exe",
+      "exit_code": 0
+    },
+    {
+      "command": "uv pip install --python C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda/Scripts/python.exe torch==2.14.0+cu130 --index-url https://download.pytorch.org/whl/cu130",
+      "exit_code": 0,
+      "preparation": "19m00s",
+      "installation": "3.86s"
+    },
+    {
+      "command": "uv pip install --python C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda/Scripts/python.exe transformers==5.17.0 pytest==9.0.3",
+      "exit_code": 0
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B deployment/AgenticRAG/probes/models/assets.py",
+      "exit_code": 0,
+      "history": [
+        "First full Reranker weight stream failed curl 56 (TLS close_notify).",
+        "Bounded full-stream retry interrupted after repeated failure; owned zero-byte .part overwritten by next attempt.",
+        "16 MiB exact Range download completed; transient curl 35 handshake recovered by finite retry. Last range length 405944 bytes; whole official LFS SHA256 matched."
+      ]
+    },
+    {
+      "command": "uv pip install --python C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda/Scripts/python.exe -r deployment/AgenticRAG/probes/models/environment-win-cuda.freeze.txt",
+      "exit_code": 0,
+      "result": "Checked 38 packages in 10ms"
+    }
+  ],
+  "gpu_preflight": {
+    "torch": "2.14.0+cu130",
+    "cuda": "13.0",
+    "available": true,
+    "bf16_supported": true,
+    "nvidia_smi_before": "8188 MiB, 4395 MiB used, 3554 MiB free",
+    "nvidia_smi_after": "8188 MiB, 4406 MiB, 3543 MiB",
+    "cuda_mem_get_info_free_mib": 7068.0,
+    "accounting_note": "Windows WDDM API readings differ; raw OOM NVML process memory sentinel values are not valid measured memory."
+  },
+  "cleanup": {
+    "probe_main_pid": 98400,
+    "main_process_exited": true,
+    "all_failure_children_joined": true,
+    "temporary_download_parts": [],
+    "probe_pycache": [],
+    "temporary_finalizer": "r03-finalize.py removed after use; see handoff verification",
+    "persistent_authorized_paths": [
+      "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda",
+      "C:/Users/18221/.cache/codeplus-agenticrag/models"
+    ],
+    "index_empty": true,
+    "stage_commit_push": "NOT_PERFORMED"
+  },
+  "limitations": [
+    "Synthetic examples only; no scored corpus/gold read or tuning",
+    "No model co-residency, shared worker, scheduler or two-client acceptance",
+    "No Linux/package installation acceptance",
+    "Controlled model-load allocator OOM, not whole-card physical exhaustion",
+    "2 GiB allocator quota does not represent card capacity or all GPU allocations",
+    "New model instances with warm BLAS and unspecified OS file-cache state; n=3 is not a percentile benchmark"
+  ],
+  "leader_acceptance": null
+}

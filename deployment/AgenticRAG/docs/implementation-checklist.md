@@ -22,8 +22,8 @@
 | --- | --- | --- | --- | --- |
 | R00 | COMMITTED | Leader 01a0c4b0-f1cd-7370-b273-8472a33c46d4 | [R00](implementation-records/R00.md) | `7ef7ee6c26e5a104da212a6b7788d9b884ef04fa` |
 | R01 | COMMITTED | /root/r01_evaluation | [R01](implementation-records/R01.md) | `79054d92fa05f06f6b2d0b4deee2a976ac7f7c4f` |
-| R02 | ACCEPTED | /root/r02_milvus | [R02](implementation-records/R02.md) | 待本地提交 |
-| R03 | TODO | — | — | — |
+| R02 | COMMITTED | /root/r02_milvus | [R02](implementation-records/R02.md) | `776025c30ddbf51ecdcd26b16f9ce891c749b706` |
+| R03 | ACCEPTED | /root/r03_models | [独立验收](implementation-records/R03.md) | 待本地提交 |
 | R04 | TODO | — | — | — |
 | R05 | TODO | — | — | — |
 | R06 | TODO | — | — | — |
@@ -108,11 +108,11 @@
 <a id="r03"></a>
 ### R03：本地模型验证
 
-- [ ] 在真实 NVIDIA GPU 上完成文档编码、query 编码和逐候选重排；精确 revision、依赖、设备/dtype 与输入/评分模板可复现。
-- [ ] 实际完整输入按各自 tokenizer 检查；记录维度、归一化及候选 ID 对齐，未用相同维度推断模型兼容。
-- [ ] 测量加载、切换、批次耗时及峰值显存；共同驻留未经验证时不写为已支持。
-- [ ] 超长、设备/依赖不可用和显存问题能明确诊断；没有自动 CPU/API/其他模型回退，未把异常当无命中。
-- [ ] 形成可供 R05/R09 使用的配置约定和有依据的批次范围；探针未代替正式共享 worker 的验收。
+- [x] 在真实 NVIDIA GPU 上完成文档编码、query 编码和逐候选重排；精确 revision、依赖、设备/dtype 与输入/评分模板可复现。
+- [x] 实际完整输入按各自 tokenizer 检查；记录维度、归一化及候选 ID 对齐，未用相同维度推断模型兼容。
+- [x] 测量加载、切换、批次耗时及峰值显存；共同驻留未经验证时不写为已支持。
+- [x] 超长、设备/依赖不可用和显存问题能明确诊断；没有自动 CPU/API/其他模型回退，未把异常当无命中。
+- [x] 形成可供 R05/R09 使用的配置约定和有依据的批次范围；探针未代替正式共享 worker 的验收。
 
 <a id="r04"></a>
 ### R04：宿主和安装契约

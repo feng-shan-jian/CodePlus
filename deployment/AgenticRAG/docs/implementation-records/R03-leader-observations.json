@@ -1,0 +1,1318 @@
+{
+  "schema": 1,
+  "status": "OBSERVATIONS_COMPLETE",
+  "cwd": "D:\\CodePlus",
+  "command": [
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Lib\\site-packages\\pytest\\__main__.py",
+    "-q",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "deployment/AgenticRAG/tests/test_local_model_capabilities.py",
+    "--basetemp",
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r03-leader-validation"
+  ],
+  "started_utc": "2026-09-21T17:46:24Z",
+  "pid": 118252,
+  "code_sha256": {
+    "probe.py": "ac78a98f06e27a0f156ade2f187263dcaefcab4e15140957d5e80b8eec5a3dd8",
+    "assets.py": "84c925588f33ab2dcfee05e5d8b3ba5481095e65598c9dd4872c548e9ad006b3",
+    "models.lock.json": "d5b53aeea3305fd939e8c52c79fb3b61788d38eac6b33659bb3c595e75be40fe"
+  },
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "annotated-doc": "0.0.5",
+    "anyio": "4.15.1",
+    "certifi": "2026.7.22",
+    "click": "8.5.0",
+    "colorama": "0.4.6",
+    "filelock": "3.32.3",
+    "fsspec": "2026.7.0",
+    "h11": "0.16.0",
+    "hf-xet": "1.6.0",
+    "httpcore": "1.0.9",
+    "httpx": "0.28.1",
+    "huggingface_hub": "1.32.0",
+    "idna": "3.20",
+    "iniconfig": "2.3.0",
+    "Jinja2": "3.1.6",
+    "markdown-it-py": "4.2.0",
+    "MarkupSafe": "3.0.3",
+    "mdurl": "0.1.2",
+    "mpmath": "1.3.0",
+    "networkx": "3.6.1",
+    "numpy": "2.5.3",
+    "packaging": "26.3",
+    "pluggy": "1.6.0",
+    "Pygments": "2.21.0",
+    "pytest": "9.0.3",
+    "PyYAML": "6.0.3",
+    "regex": "2026.9.10",
+    "rich": "15.0.0",
+    "safetensors": "0.8.0",
+    "setuptools": "78.1.0",
+    "shellingham": "1.5.4",
+    "sympy": "1.14.0",
+    "tokenizers": "0.23.2",
+    "torch": "2.14.0+cu130",
+    "tqdm": "4.70.1",
+    "transformers": "5.17.0",
+    "typer": "0.27.2",
+    "typing_extensions": "4.16.0"
+  },
+  "limits": {
+    "allocator_cap_mib": 2048,
+    "max_input_tokens": 2048,
+    "max_padded_batch_tokens": 4096,
+    "max_batch_size": 4
+  },
+  "co_residency": "NOT_TESTED",
+  "linux": "NOT_TESTED",
+  "worker": "NOT_IMPLEMENTED",
+  "quality_evaluation": "NOT_EXECUTED; synthetic capability examples only",
+  "models": {
+    "embedding": {
+      "identity": {
+        "model_id": "Qwen/Qwen3-Embedding-0.6B",
+        "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "license": "apache-2.0",
+        "source": "https://huggingface.co/api/models/Qwen/Qwen3-Embedding-0.6B/revision/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3?blobs=true",
+        "relative_cache_path": "Qwen3-Embedding-0.6B/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "files": {
+          "config.json": {
+            "size": 727,
+            "sha256": "b5bf1f51fc45be473a54718cef92448d90a1be001bf9b9a44b8c7f10a19feaa9",
+            "upstream_git_blob": "cef2749ee93607b8f9a58ec72f4f6bfaf874e71d",
+            "upstream_lfs_sha256": null
+          },
+          "generation_config.json": {
+            "size": 117,
+            "sha256": "28396d421a2108acce96383f6a7de78008f7f1b17f807958f3c14c51dbfb65fb",
+            "upstream_git_blob": "d46f1983345269c582611bbedb3ca0a13f8e5f7b",
+            "upstream_lfs_sha256": null
+          },
+          "merges.txt": {
+            "size": 1671853,
+            "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+            "upstream_git_blob": "31349551d90c7606f325fe0f11bbb8bd5fa0d7c7",
+            "upstream_lfs_sha256": null
+          },
+          "model.safetensors": {
+            "size": 1191586416,
+            "sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd",
+            "upstream_git_blob": "9116264a405846ebfe4e95556b63b1ca07c892a0",
+            "upstream_lfs_sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd"
+          },
+          "tokenizer.json": {
+            "size": 11423705,
+            "sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+            "upstream_git_blob": "18a4abbf4a408dc534006a455544dcc195f356d2",
+            "upstream_lfs_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a"
+          },
+          "tokenizer_config.json": {
+            "size": 9706,
+            "sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+            "upstream_git_blob": "7345216a0785dc7086e8c245b2a9d3896ce2b756",
+            "upstream_lfs_sha256": null
+          },
+          "vocab.json": {
+            "size": 2776833,
+            "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+            "upstream_git_blob": "4783fe10ac3adce15ac8f358ef5462739852c569",
+            "upstream_lfs_sha256": null
+          }
+        },
+        "dtype": "bfloat16",
+        "device": "cuda:0",
+        "attention": "sdpa",
+        "use_cache": false,
+        "max_input_tokens": 2048,
+        "max_position_embeddings": 32768,
+        "document_template": "Title: {title}\\n{text} if title else {text}",
+        "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+        "tokenizer_add_special_tokens": true,
+        "padding_side": "left",
+        "truncation": false,
+        "query_template": "Instruct: {instruction}\\nQuery:{query}",
+        "pooling": "last_nonpadding_token",
+        "normalization": "float32_L2",
+        "dimension": 1024,
+        "rerank_prefix": null,
+        "rerank_suffix": null,
+        "rerank_body": "<Instruct>: {instruction}\\n<Query>: {query}\\n<Document>: {document}",
+        "score_type": null,
+        "logits_to_keep": null,
+        "torch": "2.14.0+cu130",
+        "transformers": "5.17.0",
+        "fingerprint": "4a544e0cb32820ce329ee849655a62f1107f6de107542d35185c342923915e3f"
+      },
+      "asset_validation_tokenizer_setup_ms": 1018.8024999806657,
+      "cold_load": {
+        "elapsed_ms": 1571.5078000212088,
+        "allocated_mib": 1144.4931640625,
+        "reserved_mib": 1160.0,
+        "peak_allocated_mib": 1144.4931640625,
+        "peak_reserved_mib": 1160.0,
+        "actual_devices": [
+          "cuda:0"
+        ],
+        "actual_dtypes": [
+          "torch.bfloat16"
+        ],
+        "actual_attention": "sdpa"
+      },
+      "total_model_startup_ms": 2590.3103000018746,
+      "similarities": [
+        {
+          "id": "chunk-beijing",
+          "cosine": 0.860874923438778
+        },
+        {
+          "id": "chunk-gravity",
+          "cosine": 0.14493731989452502
+        },
+        {
+          "id": "chunk-moon",
+          "cosine": 0.25266722425131
+        }
+      ],
+      "query": {
+        "results": [
+          {
+            "id": "query",
+            "input_tokens": 27,
+            "dimension": 1024,
+            "norm": 0.9999999468990648,
+            "vector_sha256": "32836a6562cf9006c0acee252f44c29374b4fdd77d5cd2a96566f622c8f8cdb4",
+            "vector_head": [
+              -0.05099144205451012,
+              -0.029679633677005768,
+              -0.00027170919929631054,
+              -0.026280203834176064,
+              -0.035563260316848755,
+              -0.051514431834220886,
+              0.052037421613931656,
+              0.021573301404714584
+            ]
+          }
+        ],
+        "batches": [
+          {
+            "elapsed_ms": 30.740900081582367,
+            "allocated_mib": 1144.4931640625,
+            "reserved_mib": 1160.0,
+            "peak_allocated_mib": 1145.19775390625,
+            "peak_reserved_mib": 1160.0,
+            "batch_size": 1,
+            "input_tokens": [
+              27
+            ],
+            "padded_batch_tokens": 27
+          }
+        ],
+        "inputs": [
+          {
+            "id": "query",
+            "input_tokens": 27,
+            "complete_input_sha256": "99656e8aa509b851cd2e06950ae59e77c57d9456ef1f266056036b31a85a13e4",
+            "complete_input": "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:What is the capital of China?",
+            "body_sha256": "a700c134227f27b27642c20334042d9a5c68f415f19a4afbd7908a0411a3b6de"
+          }
+        ]
+      },
+      "normal": {
+        "results": [
+          {
+            "id": "chunk-beijing",
+            "input_tokens": 12,
+            "dimension": 1024,
+            "norm": 1.0000000117249188,
+            "vector_sha256": "9d27227ee57135bd3810d26f16e899387725484af27a754e38ab442a1fb495e3",
+            "vector_head": [
+              -0.050726283341646194,
+              -0.02943701483309269,
+              0.0034167964477092028,
+              -0.04573250561952591,
+              -0.04179004579782486,
+              -0.05361741781234741,
+              0.01695256680250168,
+              -0.004632387310266495
+            ]
+          },
+          {
+            "id": "chunk-gravity",
+            "input_tokens": 13,
+            "dimension": 1024,
+            "norm": 1.000000032556689,
+            "vector_sha256": "8e5072a7ba6a0d3e236a2581e940b00b1eea20a7ddf44f73e04e1789fe6f9825",
+            "vector_head": [
+              -0.01480246614664793,
+              -0.05397005379199982,
+              -0.0034058771561831236,
+              0.015260948799550533,
+              0.025282086804509163,
+              0.07073744386434555,
+              0.025282086804509163,
+              -0.0074994792230427265
+            ]
+          },
+          {
+            "id": "chunk-moon",
+            "input_tokens": 7,
+            "dimension": 1024,
+            "norm": 0.9999999835117179,
+            "vector_sha256": "5b7486b1a580a02b71d721d1cc6444473d062acb18d36d011fcbddc0bb0384db",
+            "vector_head": [
+              -0.051070280373096466,
+              0.01244677696377039,
+              0.0007979731308296323,
+              -0.022198891267180443,
+              -0.0004811898397747427,
+              0.02668999694287777,
+              0.010393700562417507,
+              -0.032592590898275375
+            ]
+          }
+        ],
+        "batches": [
+          {
+            "elapsed_ms": 222.40169998258352,
+            "allocated_mib": 1144.4931640625,
+            "reserved_mib": 1160.0,
+            "peak_allocated_mib": 1145.166015625,
+            "peak_reserved_mib": 1160.0,
+            "batch_size": 2,
+            "input_tokens": [
+              12,
+              13
+            ],
+            "padded_batch_tokens": 26
+          },
+          {
+            "elapsed_ms": 63.97260003723204,
+            "allocated_mib": 1144.4931640625,
+            "reserved_mib": 1160.0,
+            "peak_allocated_mib": 1144.67724609375,
+            "peak_reserved_mib": 1160.0,
+            "batch_size": 1,
+            "input_tokens": [
+              7
+            ],
+            "padded_batch_tokens": 7
+          }
+        ],
+        "inputs": [
+          {
+            "id": "chunk-beijing",
+            "input_tokens": 12,
+            "complete_input_sha256": "8d69d5413ec09bfba9329f5c64c2737b59d13b0817294267d409e23211cb309a",
+            "complete_input": "Title: Capital\nThe capital of China is Beijing.",
+            "body_sha256": "85b66db5ba8b586a0f312c3e301de74443d3b0848f23e6cf6a0c4d95be1c6083"
+          },
+          {
+            "id": "chunk-gravity",
+            "input_tokens": 13,
+            "complete_input_sha256": "5eb3eec78d31701e57655f6b606b94992059aa9068ea13ca10dbbeaecb7c4095",
+            "complete_input": "Title: Physics\nGravity attracts two bodies towards each other.",
+            "body_sha256": "b31fd26921d10386cedc3cedb6da7b67ad9e73ccd85f49bee4690dd2afc3b156"
+          },
+          {
+            "id": "chunk-moon",
+            "input_tokens": 7,
+            "complete_input_sha256": "b1fd7c054e70e370d275364b28664607bb5be726551faf1a486055c9ba615745",
+            "complete_input": "The Moon orbits the Earth.",
+            "body_sha256": "b1fd7c054e70e370d275364b28664607bb5be726551faf1a486055c9ba615745"
+          }
+        ]
+      },
+      "benchmarks": [
+        {
+          "batch_size": 1,
+          "trials": [
+            {
+              "elapsed_ms": 40.24540004320443,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1162.0,
+              "peak_allocated_mib": 1147.1484375,
+              "peak_reserved_mib": 1162.0,
+              "batch_size": 1,
+              "input_tokens": [
+                102
+              ],
+              "padded_batch_tokens": 102
+            },
+            {
+              "elapsed_ms": 30.445300042629242,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1162.0,
+              "peak_allocated_mib": 1147.1484375,
+              "peak_reserved_mib": 1162.0,
+              "batch_size": 1,
+              "input_tokens": [
+                102
+              ],
+              "padded_batch_tokens": 102
+            },
+            {
+              "elapsed_ms": 32.432699925266206,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1162.0,
+              "peak_allocated_mib": 1147.1484375,
+              "peak_reserved_mib": 1162.0,
+              "batch_size": 1,
+              "input_tokens": [
+                102
+              ],
+              "padded_batch_tokens": 102
+            }
+          ]
+        },
+        {
+          "batch_size": 2,
+          "trials": [
+            {
+              "elapsed_ms": 46.06800002511591,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1182.0,
+              "peak_allocated_mib": 1165.96337890625,
+              "peak_reserved_mib": 1182.0,
+              "batch_size": 2,
+              "input_tokens": [
+                390,
+                390
+              ],
+              "padded_batch_tokens": 780
+            },
+            {
+              "elapsed_ms": 45.98259995691478,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1182.0,
+              "peak_allocated_mib": 1165.96337890625,
+              "peak_reserved_mib": 1182.0,
+              "batch_size": 2,
+              "input_tokens": [
+                390,
+                390
+              ],
+              "padded_batch_tokens": 780
+            },
+            {
+              "elapsed_ms": 40.45119998045266,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1182.0,
+              "peak_allocated_mib": 1165.96337890625,
+              "peak_reserved_mib": 1182.0,
+              "batch_size": 2,
+              "input_tokens": [
+                390,
+                390
+              ],
+              "padded_batch_tokens": 780
+            }
+          ]
+        },
+        {
+          "batch_size": 4,
+          "trials": [
+            {
+              "elapsed_ms": 201.18970004841685,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1294.0,
+              "peak_allocated_mib": 1223.91259765625,
+              "peak_reserved_mib": 1294.0,
+              "batch_size": 4,
+              "input_tokens": [
+                774,
+                774,
+                774,
+                774
+              ],
+              "padded_batch_tokens": 3096
+            },
+            {
+              "elapsed_ms": 166.12720000557601,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1294.0,
+              "peak_allocated_mib": 1223.91259765625,
+              "peak_reserved_mib": 1294.0,
+              "batch_size": 4,
+              "input_tokens": [
+                774,
+                774,
+                774,
+                774
+              ],
+              "padded_batch_tokens": 3096
+            },
+            {
+              "elapsed_ms": 161.63400001823902,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1294.0,
+              "peak_allocated_mib": 1223.91259765625,
+              "peak_reserved_mib": 1294.0,
+              "batch_size": 4,
+              "input_tokens": [
+                774,
+                774,
+                774,
+                774
+              ],
+              "padded_batch_tokens": 3096
+            }
+          ]
+        }
+      ],
+      "long_boundary": {
+        "results": [
+          {
+            "id": "long-boundary",
+            "input_tokens": 2048,
+            "dimension": 1024,
+            "norm": 0.9999999756328218,
+            "vector_sha256": "b99bd7a24b13b2a4f00204a4824008fba9aa191611f2a6e7bde42bc041836e2d",
+            "vector_head": [
+              -0.01159584615379572,
+              -0.02092117816209793,
+              -0.012650013901293278,
+              -0.05027569830417633,
+              0.06357443332672119,
+              0.032111573964357376,
+              -0.04476158693432808,
+              0.032760292291641235
+            ]
+          }
+        ],
+        "batches": [
+          {
+            "elapsed_ms": 105.13340006582439,
+            "allocated_mib": 1144.4931640625,
+            "reserved_mib": 1296.0,
+            "peak_allocated_mib": 1197.7900390625,
+            "peak_reserved_mib": 1296.0,
+            "batch_size": 1,
+            "input_tokens": [
+              2048
+            ],
+            "padded_batch_tokens": 2048
+          }
+        ],
+        "inputs": [
+          {
+            "id": "long-boundary",
+            "input_tokens": 2048,
+            "complete_input_sha256": "cdaf8a1dbf400d9f4563c4f11c1c6fc3abbe9909f8fd334ca8b14cf4a042b857",
+            "complete_input": "Title: Synthetic boundary\nnebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula ",
+            "body_sha256": "c1beeb50d2f155a67da1a34e1601524dc96fea3a0cb580a72cdad20ba8d5a892"
+          }
+        ]
+      },
+      "long_batch": {
+        "results": [
+          {
+            "id": "long-0",
+            "input_tokens": 2048,
+            "dimension": 1024,
+            "norm": 0.9999999809985554,
+            "vector_sha256": "0a9bdcc4f4f7938ebed6cd6fd588c980c72243cfb7126333bcb2016f81f3f9bf",
+            "vector_head": [
+              -0.011249644681811333,
+              -0.020314104855060577,
+              -0.012382701970636845,
+              -0.0488833449780941,
+              0.06409869343042374,
+              0.03221121057868004,
+              -0.04435111582279205,
+              0.03140188381075859
+            ]
+          },
+          {
+            "id": "long-1",
+            "input_tokens": 2048,
+            "dimension": 1024,
+            "norm": 0.9999999809985554,
+            "vector_sha256": "0a9bdcc4f4f7938ebed6cd6fd588c980c72243cfb7126333bcb2016f81f3f9bf",
+            "vector_head": [
+              -0.011249644681811333,
+              -0.020314104855060577,
+              -0.012382701970636845,
+              -0.0488833449780941,
+              0.06409869343042374,
+              0.03221121057868004,
+              -0.04435111582279205,
+              0.03140188381075859
+            ]
+          }
+        ],
+        "batches": [
+          {
+            "elapsed_ms": 252.68129992764443,
+            "allocated_mib": 1144.4931640625,
+            "reserved_mib": 1360.0,
+            "peak_allocated_mib": 1250.0712890625,
+            "peak_reserved_mib": 1360.0,
+            "batch_size": 2,
+            "input_tokens": [
+              2048,
+              2048
+            ],
+            "padded_batch_tokens": 4096
+          }
+        ],
+        "inputs": [
+          {
+            "id": "long-0",
+            "input_tokens": 2048,
+            "complete_input_sha256": "cdaf8a1dbf400d9f4563c4f11c1c6fc3abbe9909f8fd334ca8b14cf4a042b857",
+            "complete_input": "Title: Synthetic boundary\nnebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula ",
+            "body_sha256": "c1beeb50d2f155a67da1a34e1601524dc96fea3a0cb580a72cdad20ba8d5a892"
+          },
+          {
+            "id": "long-1",
+            "input_tokens": 2048,
+            "complete_input_sha256": "cdaf8a1dbf400d9f4563c4f11c1c6fc3abbe9909f8fd334ca8b14cf4a042b857",
+            "complete_input": "Title: Synthetic boundary\nnebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula ",
+            "body_sha256": "c1beeb50d2f155a67da1a34e1601524dc96fea3a0cb580a72cdad20ba8d5a892"
+          }
+        ]
+      },
+      "errors": {
+        "long_body": {
+          "code": "INPUT_TOO_LONG",
+          "message": "INPUT_TOO_LONG: Complete model input exceeds the frozen probe profile; split upstream",
+          "details": {
+            "candidate_id": "too-long",
+            "input_tokens": 8003,
+            "max_input_tokens": 2048,
+            "architecture_max": 32768,
+            "capability": "embedding"
+          }
+        },
+        "long_title": {
+          "code": "INPUT_TOO_LONG",
+          "message": "INPUT_TOO_LONG: Complete model input exceeds the frozen probe profile; split upstream",
+          "details": {
+            "candidate_id": "too-long-title",
+            "input_tokens": 8005,
+            "max_input_tokens": 2048,
+            "architecture_max": 32768,
+            "capability": "embedding"
+          }
+        },
+        "long_query": {
+          "code": "INPUT_TOO_LONG",
+          "message": "INPUT_TOO_LONG: Complete model input exceeds the frozen probe profile; split upstream",
+          "details": {
+            "candidate_id": "chunk-beijing",
+            "input_tokens": 8022,
+            "max_input_tokens": 2048,
+            "architecture_max": 32768,
+            "capability": "embedding"
+          }
+        },
+        "padded_batch": {
+          "code": "BATCH_TOO_LARGE",
+          "message": "BATCH_TOO_LARGE: Padded batch token budget exceeded",
+          "details": {}
+        },
+        "mixed_batch_atomic": {
+          "code": "INPUT_TOO_LONG",
+          "message": "INPUT_TOO_LONG: Complete model input exceeds the frozen probe profile; split upstream",
+          "details": {
+            "candidate_id": "bad",
+            "input_tokens": 8003,
+            "max_input_tokens": 2048,
+            "architecture_max": 32768,
+            "capability": "embedding"
+          }
+        }
+      },
+      "unload": {
+        "elapsed_ms": 150.94219997990876,
+        "allocated_mib": 8.125,
+        "reserved_mib": 20.0,
+        "peak_allocated_mib": 1144.4931640625,
+        "peak_reserved_mib": 1360.0,
+        "tracked_model_and_tensor_refs": 313,
+        "live_model_and_tensor_refs": 0
+      }
+    },
+    "reranker": {
+      "identity": {
+        "model_id": "Qwen/Qwen3-Reranker-0.6B",
+        "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+        "license": "apache-2.0",
+        "source": "https://huggingface.co/api/models/Qwen/Qwen3-Reranker-0.6B/revision/e61197ed45024b0ed8a2d74b80b4d909f1255473?blobs=true",
+        "relative_cache_path": "Qwen3-Reranker-0.6B/e61197ed45024b0ed8a2d74b80b4d909f1255473",
+        "files": {
+          "chat_template.jinja": {
+            "size": 741,
+            "sha256": "6f682162495ec5b39fd9005c01b6aa2a74669379fe967039f1e2cbbe8752369d",
+            "upstream_git_blob": "63b97f268a9ddb9c6b34e6d7d8ef531d1fee9cf4",
+            "upstream_lfs_sha256": null
+          },
+          "config.json": {
+            "size": 727,
+            "sha256": "d479c427a9ca5295218063d4f9aca4f297ab4ac27487cca7af42c84643d51ef0",
+            "upstream_git_blob": "39784456e9de7a06590f8a4a38760ac1fb38d65e",
+            "upstream_lfs_sha256": null
+          },
+          "generation_config.json": {
+            "size": 214,
+            "sha256": "81051cd3f6e77013827148d0b8a6ead93f8ac390d5ab805f849199f0af6a08db",
+            "upstream_git_blob": "e4f1d3193e99a3e5d7047edf56e93a6e933fa31b",
+            "upstream_lfs_sha256": null
+          },
+          "merges.txt": {
+            "size": 1671853,
+            "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+            "upstream_git_blob": "31349551d90c7606f325fe0f11bbb8bd5fa0d7c7",
+            "upstream_lfs_sha256": null
+          },
+          "model.safetensors": {
+            "size": 1191588280,
+            "sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b",
+            "upstream_git_blob": "c2009afdaf622dc596bec224a625daa46a2b4cc9",
+            "upstream_lfs_sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b"
+          },
+          "tokenizer.json": {
+            "size": 11422654,
+            "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+            "upstream_git_blob": "cd71f61a15a522601badb3dc960d800d9cb3766c",
+            "upstream_lfs_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+          },
+          "tokenizer_config.json": {
+            "size": 9706,
+            "sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+            "upstream_git_blob": "7345216a0785dc7086e8c245b2a9d3896ce2b756",
+            "upstream_lfs_sha256": null
+          },
+          "vocab.json": {
+            "size": 2776833,
+            "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+            "upstream_git_blob": "4783fe10ac3adce15ac8f358ef5462739852c569",
+            "upstream_lfs_sha256": null
+          }
+        },
+        "dtype": "bfloat16",
+        "device": "cuda:0",
+        "attention": "sdpa",
+        "use_cache": false,
+        "max_input_tokens": 2048,
+        "max_position_embeddings": 40960,
+        "document_template": "Title: {title}\\n{text} if title else {text}",
+        "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+        "tokenizer_add_special_tokens": false,
+        "padding_side": "left",
+        "truncation": false,
+        "query_template": "Instruct: {instruction}\\nQuery:{query}",
+        "pooling": null,
+        "normalization": null,
+        "dimension": null,
+        "rerank_prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+        "rerank_suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "rerank_body": "<Instruct>: {instruction}\\n<Query>: {query}\\n<Document>: {document}",
+        "score_type": "softmax_float32([no,yes])[yes]",
+        "logits_to_keep": 1,
+        "torch": "2.14.0+cu130",
+        "transformers": "5.17.0",
+        "fingerprint": "fcee8200279755df6d24611576833e80a317ee28123746b0227f9b5e5d446d99"
+      },
+      "asset_validation_tokenizer_setup_ms": 945.4151000827551,
+      "cold_load": {
+        "elapsed_ms": 1087.783999973908,
+        "allocated_mib": 1144.4931640625,
+        "reserved_mib": 1160.0,
+        "peak_allocated_mib": 1144.4931640625,
+        "peak_reserved_mib": 1160.0,
+        "actual_devices": [
+          "cuda:0"
+        ],
+        "actual_dtypes": [
+          "torch.bfloat16"
+        ],
+        "actual_attention": "sdpa"
+      },
+      "total_model_startup_ms": 2033.1991000566632,
+      "last_logit_oracle": {
+        "full": [
+          {
+            "id": "chunk-beijing",
+            "input_tokens": 89,
+            "score": 0.9978172779083252
+          }
+        ],
+        "kept_last": [
+          {
+            "id": "chunk-beijing",
+            "input_tokens": 89,
+            "score": 0.9978172779083252
+          }
+        ],
+        "max_score_difference": 0.0
+      },
+      "batch_alignment": {
+        "1": [
+          {
+            "id": "chunk-beijing",
+            "input_tokens": 89,
+            "score": 0.9978172779083252
+          },
+          {
+            "id": "chunk-moon",
+            "input_tokens": 84,
+            "score": 3.269927037763409e-05
+          },
+          {
+            "id": "chunk-gravity",
+            "input_tokens": 90,
+            "score": 1.8851367713068612e-05
+          }
+        ],
+        "2": [
+          {
+            "id": "chunk-beijing",
+            "input_tokens": 89,
+            "score": 0.9979493021965027
+          },
+          {
+            "id": "chunk-moon",
+            "input_tokens": 84,
+            "score": 3.269927037763409e-05
+          },
+          {
+            "id": "chunk-gravity",
+            "input_tokens": 90,
+            "score": 1.8851367713068612e-05
+          }
+        ],
+        "3": [
+          {
+            "id": "chunk-beijing",
+            "input_tokens": 89,
+            "score": 0.997368335723877
+          },
+          {
+            "id": "chunk-moon",
+            "input_tokens": 84,
+            "score": 3.453725003055297e-05
+          },
+          {
+            "id": "chunk-gravity",
+            "input_tokens": 90,
+            "score": 1.922317096614279e-05
+          }
+        ]
+      },
+      "normal": {
+        "results": [
+          {
+            "id": "chunk-beijing",
+            "input_tokens": 89,
+            "score": 0.9979493021965027
+          },
+          {
+            "id": "chunk-moon",
+            "input_tokens": 84,
+            "score": 3.269927037763409e-05
+          },
+          {
+            "id": "chunk-gravity",
+            "input_tokens": 90,
+            "score": 1.8851367713068612e-05
+          }
+        ],
+        "batches": [
+          {
+            "elapsed_ms": 53.29349997919053,
+            "allocated_mib": 1144.4931640625,
+            "reserved_mib": 1166.0,
+            "peak_allocated_mib": 1151.609375,
+            "peak_reserved_mib": 1166.0,
+            "batch_size": 2,
+            "input_tokens": [
+              89,
+              90
+            ],
+            "padded_batch_tokens": 180
+          },
+          {
+            "elapsed_ms": 34.19370006304234,
+            "allocated_mib": 1144.4931640625,
+            "reserved_mib": 1166.0,
+            "peak_allocated_mib": 1146.6806640625,
+            "peak_reserved_mib": 1166.0,
+            "batch_size": 1,
+            "input_tokens": [
+              84
+            ],
+            "padded_batch_tokens": 84
+          }
+        ],
+        "inputs": [
+          {
+            "id": "chunk-beijing",
+            "input_tokens": 89,
+            "complete_input_sha256": "7732e6b2d60e0e8165ebedc94975581d5a445ca3488d4d06db42fd9445f039c7",
+            "complete_input": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n<Instruct>: Given a web search query, retrieve relevant passages that answer the query\n<Query>: What is the capital of China?\n<Document>: Title: Capital\nThe capital of China is Beijing.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+            "body_sha256": "85b66db5ba8b586a0f312c3e301de74443d3b0848f23e6cf6a0c4d95be1c6083"
+          },
+          {
+            "id": "chunk-gravity",
+            "input_tokens": 90,
+            "complete_input_sha256": "2ee1b5bb6e6cd18e91dade3f9e6b72eb276894a87b34ebe26ebb47c8ad3cf177",
+            "complete_input": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n<Instruct>: Given a web search query, retrieve relevant passages that answer the query\n<Query>: What is the capital of China?\n<Document>: Title: Physics\nGravity attracts two bodies towards each other.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+            "body_sha256": "b31fd26921d10386cedc3cedb6da7b67ad9e73ccd85f49bee4690dd2afc3b156"
+          },
+          {
+            "id": "chunk-moon",
+            "input_tokens": 84,
+            "complete_input_sha256": "f97e00e9a610826ed8f90f22cd7b30ecbf1c1cfb1017a05327a2e45f6a152262",
+            "complete_input": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n<Instruct>: Given a web search query, retrieve relevant passages that answer the query\n<Query>: What is the capital of China?\n<Document>: The Moon orbits the Earth.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+            "body_sha256": "b1fd7c054e70e370d275364b28664607bb5be726551faf1a486055c9ba615745"
+          }
+        ]
+      },
+      "benchmarks": [
+        {
+          "batch_size": 1,
+          "trials": [
+            {
+              "elapsed_ms": 44.063500012271106,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1192.0,
+              "peak_allocated_mib": 1151.63037109375,
+              "peak_reserved_mib": 1192.0,
+              "batch_size": 1,
+              "input_tokens": [
+                179
+              ],
+              "padded_batch_tokens": 179
+            },
+            {
+              "elapsed_ms": 36.013799952343106,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1192.0,
+              "peak_allocated_mib": 1151.63037109375,
+              "peak_reserved_mib": 1192.0,
+              "batch_size": 1,
+              "input_tokens": [
+                179
+              ],
+              "padded_batch_tokens": 179
+            },
+            {
+              "elapsed_ms": 48.28890005592257,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1192.0,
+              "peak_allocated_mib": 1151.63037109375,
+              "peak_reserved_mib": 1192.0,
+              "batch_size": 1,
+              "input_tokens": [
+                179
+              ],
+              "padded_batch_tokens": 179
+            }
+          ]
+        },
+        {
+          "batch_size": 2,
+          "trials": [
+            {
+              "elapsed_ms": 56.82229995727539,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1192.0,
+              "peak_allocated_mib": 1169.4990234375,
+              "peak_reserved_mib": 1192.0,
+              "batch_size": 2,
+              "input_tokens": [
+                467,
+                467
+              ],
+              "padded_batch_tokens": 934
+            },
+            {
+              "elapsed_ms": 48.50070003885776,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1192.0,
+              "peak_allocated_mib": 1169.4990234375,
+              "peak_reserved_mib": 1192.0,
+              "batch_size": 2,
+              "input_tokens": [
+                467,
+                467
+              ],
+              "padded_batch_tokens": 934
+            },
+            {
+              "elapsed_ms": 50.26050005108118,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1192.0,
+              "peak_allocated_mib": 1169.4990234375,
+              "peak_reserved_mib": 1192.0,
+              "batch_size": 2,
+              "input_tokens": [
+                467,
+                467
+              ],
+              "padded_batch_tokens": 934
+            }
+          ]
+        },
+        {
+          "batch_size": 4,
+          "trials": [
+            {
+              "elapsed_ms": 197.9616000317037,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1330.0,
+              "peak_allocated_mib": 1232.572265625,
+              "peak_reserved_mib": 1330.0,
+              "batch_size": 4,
+              "input_tokens": [
+                851,
+                851,
+                851,
+                851
+              ],
+              "padded_batch_tokens": 3404
+            },
+            {
+              "elapsed_ms": 205.44540008995682,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1330.0,
+              "peak_allocated_mib": 1232.572265625,
+              "peak_reserved_mib": 1330.0,
+              "batch_size": 4,
+              "input_tokens": [
+                851,
+                851,
+                851,
+                851
+              ],
+              "padded_batch_tokens": 3404
+            },
+            {
+              "elapsed_ms": 209.1008999850601,
+              "allocated_mib": 1144.4931640625,
+              "reserved_mib": 1330.0,
+              "peak_allocated_mib": 1232.572265625,
+              "peak_reserved_mib": 1330.0,
+              "batch_size": 4,
+              "input_tokens": [
+                851,
+                851,
+                851,
+                851
+              ],
+              "padded_batch_tokens": 3404
+            }
+          ]
+        }
+      ],
+      "long_boundary": {
+        "results": [
+          {
+            "id": "long-boundary",
+            "input_tokens": 2047,
+            "score": 3.9442587876692414e-05
+          }
+        ],
+        "batches": [
+          {
+            "elapsed_ms": 127.30229995213449,
+            "allocated_mib": 1144.4931640625,
+            "reserved_mib": 1330.0,
+            "peak_allocated_mib": 1197.7685546875,
+            "peak_reserved_mib": 1330.0,
+            "batch_size": 1,
+            "input_tokens": [
+              2047
+            ],
+            "padded_batch_tokens": 2047
+          }
+        ],
+        "inputs": [
+          {
+            "id": "long-boundary",
+            "input_tokens": 2047,
+            "complete_input_sha256": "71f13bbfb09108e7cecb70abb0f8b6aca33e1319e6463e7bb7015085d5071ff9",
+            "complete_input": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n<Instruct>: Given a web search query, retrieve relevant passages that answer the query\n<Query>: What is the capital of China?\n<Document>: Title: Synthetic boundary\nnebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula <|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+            "body_sha256": "9dbddbef7f9ae2a4922f183cdb5dae2b3caa99cc761e7420dc18dea43d886ab7"
+          }
+        ]
+      },
+      "long_batch": {
+        "results": [
+          {
+            "id": "long-0",
+            "input_tokens": 2047,
+            "score": 3.535625000949949e-05
+          },
+          {
+            "id": "long-1",
+            "input_tokens": 2047,
+            "score": 3.535625000949949e-05
+          }
+        ],
+        "batches": [
+          {
+            "elapsed_ms": 294.46160001680255,
+            "allocated_mib": 1144.4931640625,
+            "reserved_mib": 1394.0,
+            "peak_allocated_mib": 1250.0556640625,
+            "peak_reserved_mib": 1394.0,
+            "batch_size": 2,
+            "input_tokens": [
+              2047,
+              2047
+            ],
+            "padded_batch_tokens": 4094
+          }
+        ],
+        "inputs": [
+          {
+            "id": "long-0",
+            "input_tokens": 2047,
+            "complete_input_sha256": "71f13bbfb09108e7cecb70abb0f8b6aca33e1319e6463e7bb7015085d5071ff9",
+            "complete_input": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n<Instruct>: Given a web search query, retrieve relevant passages that answer the query\n<Query>: What is the capital of China?\n<Document>: Title: Synthetic boundary\nnebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula <|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+            "body_sha256": "9dbddbef7f9ae2a4922f183cdb5dae2b3caa99cc761e7420dc18dea43d886ab7"
+          },
+          {
+            "id": "long-1",
+            "input_tokens": 2047,
+            "complete_input_sha256": "71f13bbfb09108e7cecb70abb0f8b6aca33e1319e6463e7bb7015085d5071ff9",
+            "complete_input": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n<Instruct>: Given a web search query, retrieve relevant passages that answer the query\n<Query>: What is the capital of China?\n<Document>: Title: Synthetic boundary\nnebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula nebula <|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+            "body_sha256": "9dbddbef7f9ae2a4922f183cdb5dae2b3caa99cc761e7420dc18dea43d886ab7"
+          }
+        ]
+      },
+      "errors": {
+        "long_body": {
+          "code": "INPUT_TOO_LONG",
+          "message": "INPUT_TOO_LONG: Complete model input exceeds the frozen probe profile; split upstream",
+          "details": {
+            "candidate_id": "too-long",
+            "input_tokens": 8079,
+            "max_input_tokens": 2048,
+            "architecture_max": 40960,
+            "capability": "reranker"
+          }
+        },
+        "long_title": {
+          "code": "INPUT_TOO_LONG",
+          "message": "INPUT_TOO_LONG: Complete model input exceeds the frozen probe profile; split upstream",
+          "details": {
+            "candidate_id": "too-long-title",
+            "input_tokens": 8082,
+            "max_input_tokens": 2048,
+            "architecture_max": 40960,
+            "capability": "reranker"
+          }
+        },
+        "long_query": {
+          "code": "INPUT_TOO_LONG",
+          "message": "INPUT_TOO_LONG: Complete model input exceeds the frozen probe profile; split upstream",
+          "details": {
+            "candidate_id": "chunk-beijing",
+            "input_tokens": 8083,
+            "max_input_tokens": 2048,
+            "architecture_max": 40960,
+            "capability": "reranker"
+          }
+        },
+        "padded_batch": {
+          "code": "BATCH_TOO_LARGE",
+          "message": "BATCH_TOO_LARGE: Padded batch token budget exceeded",
+          "details": {}
+        },
+        "mixed_batch_atomic": {
+          "code": "INPUT_TOO_LONG",
+          "message": "INPUT_TOO_LONG: Complete model input exceeds the frozen probe profile; split upstream",
+          "details": {
+            "candidate_id": "bad",
+            "input_tokens": 8079,
+            "max_input_tokens": 2048,
+            "architecture_max": 40960,
+            "capability": "reranker"
+          }
+        }
+      },
+      "unload": {
+        "elapsed_ms": 162.3676000162959,
+        "allocated_mib": 8.125,
+        "reserved_mib": 20.0,
+        "peak_allocated_mib": 1144.4931640625,
+        "peak_reserved_mib": 1394.0,
+        "tracked_model_and_tensor_refs": 313,
+        "live_model_and_tensor_refs": 0
+      }
+    }
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "total_mib": 8187.5,
+    "free_before_mib": 7068.0,
+    "torch_cuda": "13.0",
+    "cudnn": 92400,
+    "driver": "616.92"
+  },
+  "model_free_allocator_baseline": {
+    "bf16_matmul_finite": true,
+    "measurement": {
+      "elapsed_ms": 137.5154999550432,
+      "allocated_mib": 8.125,
+      "reserved_mib": 22.0,
+      "peak_allocated_mib": 8.1337890625,
+      "peak_reserved_mib": 22.0
+    },
+    "allocated_mib": 8.125,
+    "reserved_mib": 20.0,
+    "configured_cublas_workspace_mib": 8.125
+  },
+  "synthetic_input_hash": "b7aa000dce2b73fe47c45c9e4b9e0a881b67ca376dfca27c56808dd951d4690d",
+  "embedding_reload": {
+    "elapsed_ms": 1249.4239999214187,
+    "allocated_mib": 1144.4931640625,
+    "reserved_mib": 1160.0,
+    "peak_allocated_mib": 1144.4931640625,
+    "peak_reserved_mib": 1160.0,
+    "actual_devices": [
+      "cuda:0"
+    ],
+    "actual_dtypes": [
+      "torch.bfloat16"
+    ],
+    "actual_attention": "sdpa",
+    "asset_validation_tokenizer_setup_ms": 961.2246000906453,
+    "output": {
+      "results": [
+        {
+          "id": "chunk-beijing",
+          "input_tokens": 12,
+          "dimension": 1024,
+          "norm": 0.9999999872744532,
+          "vector_sha256": "d61fac2d308898e939318f8156b97a7dd081637c6274a9c2c83f390530240bcd",
+          "vector_head": [
+            -0.050904110074043274,
+            -0.030595216900110245,
+            0.003873855574056506,
+            -0.044837817549705505,
+            -0.04193654656410217,
+            -0.05433288589119911,
+            0.017143871635198593,
+            -0.003148537827655673
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "elapsed_ms": 42.14240005239844,
+          "allocated_mib": 1144.4931640625,
+          "reserved_mib": 1160.0,
+          "peak_allocated_mib": 1144.80712890625,
+          "peak_reserved_mib": 1160.0,
+          "batch_size": 1,
+          "input_tokens": [
+            12
+          ],
+          "padded_batch_tokens": 12
+        }
+      ],
+      "inputs": [
+        {
+          "id": "chunk-beijing",
+          "input_tokens": 12,
+          "complete_input_sha256": "8d69d5413ec09bfba9329f5c64c2737b59d13b0817294267d409e23211cb309a",
+          "complete_input": "Title: Capital\nThe capital of China is Beijing.",
+          "body_sha256": "85b66db5ba8b586a0f312c3e301de74443d3b0848f23e6cf6a0c4d95be1c6083"
+        }
+      ]
+    },
+    "unload": {
+      "elapsed_ms": 148.21050001773983,
+      "allocated_mib": 8.125,
+      "reserved_mib": 20.0,
+      "peak_allocated_mib": 1144.4931640625,
+      "peak_reserved_mib": 1160.0,
+      "tracked_model_and_tensor_refs": 313,
+      "live_model_and_tensor_refs": 0
+    }
+  },
+  "source_unchanged": true,
+  "failure_children": {
+    "dependency": {
+      "command": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+        "-B",
+        "-S",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\probes\\models\\probe.py",
+        "--failure-child",
+        "dependency",
+        "--cache",
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models"
+      ],
+      "returncode": 2,
+      "child_process_exited": true,
+      "stderr_utf8": "",
+      "error": {
+        "code": "DEPENDENCY_UNAVAILABLE",
+        "message": "DEPENDENCY_UNAVAILABLE: Install the pinned R03 CUDA environment; No module named 'torch'",
+        "details": {}
+      }
+    },
+    "device": {
+      "command": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\probes\\models\\probe.py",
+        "--failure-child",
+        "device",
+        "--cache",
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models"
+      ],
+      "returncode": 2,
+      "child_process_exited": true,
+      "stderr_utf8": "",
+      "error": {
+        "code": "DEVICE_UNAVAILABLE",
+        "message": "DEVICE_UNAVAILABLE: NVIDIA CUDA is required; no fallback",
+        "details": {
+          "torch_cuda": "13.0"
+        }
+      }
+    },
+    "oom": {
+      "command": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\probes\\models\\probe.py",
+        "--failure-child",
+        "oom",
+        "--cache",
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models"
+      ],
+      "returncode": 2,
+      "child_process_exited": true,
+      "stderr_utf8": "\nLoading weights:   0%|          | 0/310 [00:00<?, ?it/s]\nLoading weights:   5%|▌         | 16/310 [00:00<00:01, 155.27it/s]\nLoading weights:  15%|█▍        | 45/310 [00:00<00:01, 222.13it/s]\nLoading weights:  22%|██▏       | 68/310 [00:00<00:01, 180.90it/s]\nLoading weights:  28%|██▊       | 87/310 [00:00<00:01, 166.99it/s]\nLoading weights:  35%|███▌      | 109/310 [00:00<00:01, 180.25it/s]\nLoading weights: 100%|██████████| 310/310 [00:00<00:00, 487.60it/s]\n",
+      "error": {
+        "code": "CUDA_OUT_OF_MEMORY",
+        "message": "CUDA_OUT_OF_MEMORY: Model load exceeded available GPU/allocator budget",
+        "details": {
+          "stage": "load",
+          "cuda_error": "CUDA out of memory. Tried to allocate 298.00 MiB. GPU 0 has a total capacity of 8.00 GiB of which 6.90 GiB is free. Process 2504 has 17179869184.00 GiB memory in use. Process 17168 has 17179869184.00 GiB memory in use. Process 16480 has 17179869184.00 GiB memory in use. Process 20412 has 17179869184.00 GiB memory in use. Process 20388 has 17179869184.00 GiB memory in use. Process 22260 has 17179869184.00 GiB memory in use. Process 26252 has 17179869184.00 GiB memory in use. Process 15456 has 17179869184.00 GiB memory in use. Process 47700 has 17179869184.00 GiB memory in use. Process 31676 has 17179869184.00 GiB memory in use. Process 17580 has 17179869184.00 GiB memory in use. Process 33128 has 17179869184.00 GiB memory in use. Process 31016 has 17179869184.00 GiB memory in use. Process 40280 has 17179869184.00 GiB memory in use. Process 50740 has 17179869184.00 GiB memory in use. Process 47236 has 17179869184.00 GiB memory in use. Process 71884 has 17179869184.00 GiB memory in use. Process 71608 has 17179869184.00 GiB memory in use. Process 103832 has 17179869184.00 GiB memory in use. Process 99016 has 17179869184.00 GiB memory in use. Process 103564 has 17179869184.00 GiB memory in use. Process 101096 has 17179869184.00 GiB memory in use. Process 57880 has 17179869184.00 GiB memory in use. Process 97088 has 17179869184.00 GiB memory in use. Process 79664 has 17179869184.00 GiB memory in use. Process 32184 has 17179869184.00 GiB memory in use. Process 116200 has 17179869184.00 GiB memory in use. Process 86660 has 17179869184.00 GiB memory in use. Process 116060 has 17179869184.00 GiB memory in use. Process 65428 has 17179869184.00 GiB memory in use. Process 15448 has 17179869184.00 GiB memory in use. Process 104548 has 17179869184.00 GiB memory in use. Process 81404 has 17179869184.00 GiB memory in use. Process 109860 has 17179869184.00 GiB memory in use. Process 85996 has 17179869184.00 GiB memory in use. Process 108836 has 17179869184.00 GiB memory in use. Process 115700 has 17179869184.00 GiB memory in use. Process 101616 has 17179869184.00 GiB memory in use. Process 118252 has 17179869184.00 GiB memory in use. Including non-PyTorch memory, this process has 17179869184.00 GiB memory in use. 32.00 MiB allowed; Of the allocated memory 0 bytes is allocated by PyTorch, and 0 bytes is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)",
+          "allocator_cap_mib": 32,
+          "allocated_mib": 0.0,
+          "mechanism": "real model load under CUDA caching allocator quota",
+          "model_results_returned": false
+        }
+      }
+    }
+  },
+  "cleanup": {
+    "allocated_mib": 8.125,
+    "reserved_mib": 20.0
+  },
+  "finished_utc": "2026-09-21T17:47:09Z"
+}
