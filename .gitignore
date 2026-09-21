@@ -31,5 +31,4 @@ config.local.*
 .venv-*/
 
 # Content isolated from the public source tree.
-/SWE-bench/
 /tests/test_packaging.py
