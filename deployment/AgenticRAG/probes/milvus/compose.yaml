@@ -1,0 +1,57 @@
+# R02 owned probe only. No existing CodePlus deployment is managed by this file.
+name: codeplus-r02-probe
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.25
+    environment:
+      ETCD_AUTO_COMPACTION_MODE: revision
+      ETCD_AUTO_COMPACTION_RETENTION: 1000
+      ETCD_QUOTA_BACKEND_BYTES: 4294967296
+      ETCD_SNAPSHOT_COUNT: 50000
+    command: etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    volumes:
+      - etcd:/etcd
+    healthcheck:
+      test: [CMD, etcdctl, endpoint, health]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  minio:
+    image: quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z
+    command: minio server /data --console-address :9001
+    volumes:
+      - minio:/data
+    healthcheck:
+      test: [CMD, curl, -f, http://localhost:9000/minio/health/live]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  standalone:
+    image: milvusdb/milvus:v3.0.1
+    command: [milvus, run, standalone]
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+      MQ_TYPE: woodpecker
+    volumes:
+      - milvus:/var/lib/milvus
+    ports:
+      - 127.0.0.1:19531:19530
+      - 127.0.0.1:9092:9091
+    depends_on:
+      etcd:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, curl, -f, http://localhost:9091/healthz]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+volumes:
+  etcd:
+  minio:
+  milvus:

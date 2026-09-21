@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "79054d92fa05f06f6b2d0b4deee2a976ac7f7c4f",
+  "executor": "/root/r02_milvus",
+  "generated_at_utc": "2026-09-21T17:02:07.940928+00:00",
+  "cwd": "D:\\CodePlus",
+  "shell": "pwsh 7.6.5",
+  "final_command": ".venv/Scripts/python.exe -B -m pytest deployment/AgenticRAG/tests/test_milvus_capabilities.py -q --tb=short -p no:cacheprovider --basetemp C:/Users/18221/AppData/Local/Temp/codeplus-r02-pytest",
+  "environment": {
+    "R02_RUN_REAL": "1",
+    "R02_REPORT_PATH": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R02-observations.json",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "final_exit_code": 0,
+  "final_stdout": "6 passed in 72.06s (0:01:12)",
+  "attempts": [
+    {
+      "result": "6 errors in 1.21s",
+      "exit_code": 1,
+      "reason": "MinIO image declared /data anonymous volume. Ownership preflight rejected unexpected extra volume before database changes.",
+      "repair": "Mount owned named minio volume at /data; recreated only probe MinIO; verified no attached container then removed exact owned anonymous volume 2ef17bbf6e2e302d1e164a5011faa020b76402d5e4d4c1d5af5f4eba71486c77."
+    },
+    {
+      "result": "1 error in 1.54s",
+      "exit_code": 1,
+      "reason": "etcd image has no du executable (exit 127).",
+      "repair": "Use networkless --rm Alpine helper with only verified owned volumes read-only, volume-nocopy."
+    },
+    {
+      "result": "1 error in 28.92s",
+      "exit_code": 1,
+      "reason": "PyMilvus 3.0.2 client does not implement context manager protocol.",
+      "repair": "Explicit close in child finally. Also upgraded indexing evidence per Leader review: above 1024-row threshold, Finished and all actual rows indexed, release/load and sealed segments."
+    },
+    {
+      "result": "1 error in 69.51s",
+      "exit_code": 1,
+      "reason": "After genuine restart, Docker health became healthy before query channel recovery; actual read returned 503.",
+      "repair": "Explicit bounded readiness of same endpoint/collections during restart only, retained transient 503/901 and wait costs."
+    },
+    {
+      "result": "1 failed in 73.22s",
+      "exit_code": 1,
+      "reason": "AnalyzeResult repr resembles list, but object is not list and not iterable.",
+      "repair": "Use documented installed public tokens attribute; save normalized JSON observation structure."
+    },
+    {
+      "result": "3 failed, 3 passed in 72.28s",
+      "exit_code": 1,
+      "reason": "Protobuf repeated names were stringified; HNSW with many identical synthetic vectors lost exact anchor after actual index build.",
+      "repair": "Serialize repeated containers with list; use IVF_FLAT nlist=1/nprobe=1 as deterministic database distance oracle. No production ANN/semantic quality conclusion."
+    },
+    {
+      "result": "6 passed in 72.06s (0:01:12)",
+      "exit_code": 0,
+      "reason": "Full final real-service probe and all six assertions executed after fixes."
+    }
+  ],
+  "resource_commands": [
+    {
+      "command": "docker compose -f deployment/AgenticRAG/probes/milvus/compose.yaml -p codeplus-r02-probe pull",
+      "exit_code": 0,
+      "result": "all three pinned service images pulled"
+    },
+    {
+      "command": "docker compose -f deployment/AgenticRAG/probes/milvus/compose.yaml -p codeplus-r02-probe up -d --wait --wait-timeout 240",
+      "exit_code": 0,
+      "result": "three dedicated containers healthy"
+    },
+    {
+      "command": "docker compose -f deployment/AgenticRAG/probes/milvus/compose.yaml -p codeplus-r02-probe up -d --wait --wait-timeout 180",
+      "exit_code": 0,
+      "result": "owned MinIO recreation for explicit /data mount, other probe services retained"
+    },
+    {
+      "command": "docker ps -a --filter volume=2ef17bbf6e2e302d1e164a5011faa020b76402d5e4d4c1d5af5f4eba71486c77",
+      "exit_code": 0,
+      "result": "no container attached before removal"
+    },
+    {
+      "command": "docker volume rm 2ef17bbf6e2e302d1e164a5011faa020b76402d5e4d4c1d5af5f4eba71486c77",
+      "exit_code": 0,
+      "result": "only owned unused anonymous volume removed"
+    }
+  ],
+  "protection": {
+    "R00_checked_paths": 6542,
+    "R00_approved_prior_task_exclusions": [
+      "eval/RAG-eval/check.py",
+      "eval/RAG-eval/run.ps1",
+      "deployment/AgenticRAG/README.md",
+      "deployment/AgenticRAG/docs/acceptance-and-implementation.md",
+      "deployment/AgenticRAG/docs/architecture-and-contracts.md",
+      "deployment/AgenticRAG/docs/deployment-and-packaging.md",
+      "deployment/AgenticRAG/docs/implementation-checklist.md",
+      "deployment/AgenticRAG/docs/implementation-task-plan.md",
+      "deployment/AgenticRAG/docs/leader-prompt.md",
+      "deployment/AgenticRAG/docs/model-providers.md",
+      "deployment/AgenticRAG/docs/plan.md"
+    ],
+    "R01_checked_paths": [
+      "eval/RAG-eval/check.py",
+      "eval/RAG-eval/dataset_io.py",
+      "eval/RAG-eval/replay.py",
+      "eval/RAG-eval/run.ps1",
+      "deployment/AgenticRAG/eval/runtime_inputs.py",
+      "deployment/AgenticRAG/eval/runtime-inputs.json",
+      "deployment/AgenticRAG/eval/development-ids.json",
+      "deployment/AgenticRAG/eval/acceptance-ids.json",
+      "deployment/AgenticRAG/eval/evaluation-protocol.json",
+      "deployment/AgenticRAG/tests/test_evaluation_protocol.py",
+      "deployment/AgenticRAG/docs/evaluation-protocol.md",
+      "deployment/AgenticRAG/eval/.gitattributes"
+    ],
+    "evaluation_baseline_unchanged_paths": 625,
+    "evaluation_R01_seams_match": true,
+    "index_empty": true
+  },
+  "observations_sha256": "b75dbfe365ac546fe6d947399570e0721c1b290421b7c698ef9db4531862e266",
+  "cleanup": {
+    "collections": [],
+    "collection_errors": [],
+    "services": "Intentionally retained for Leader independent rerun; Leader must verify ownership then compose down --volumes before acceptance.",
+    "pytest_temp_path_exists": false,
+    "finalizer": "Task-specific temporary finalizer deleted immediately after generating delivery files."
+  },
+  "limitations": [
+    "Synthetic four-dimensional vectors, no semantic benchmark",
+    "No GPU/Agent/model inference",
+    "No 609-document real corpus build; R10 owns complete build cost",
+    "No Windows/Linux package installation acceptance",
+    "No production index parameter freeze",
+    "Service volume KiB includes WAL/metadata/background GC and cannot be interpreted as exact collection bytes"
+  ]
+}

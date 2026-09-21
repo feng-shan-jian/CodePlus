@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "79054d92fa05f06f6b2d0b4deee2a976ac7f7c4f",
+  "generated_at_utc": "2026-09-21T17:02:07.940928+00:00",
+  "index_action": "none; Leader acceptance and commit pending",
+  "self_hash": "Manifest excludes its own hash to avoid a cycle; hashes describe delivery workspace bytes.",
+  "files": [
+    {
+      "path": "deployment/AgenticRAG/probes/milvus/compose.yaml",
+      "sha256": "d71f3cbe132ea60f1ba3947cedadeffe7afd26e88b7d722253dcbdb82e81633d",
+      "bytes": 1558,
+      "scope": "R02 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/probes/milvus/probe.py",
+      "sha256": "0ac4bb3881b67fa0be871903fc091e3cfc70787292c0ef4a606077a5c8b807f5",
+      "bytes": 19869,
+      "scope": "R02 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_milvus_capabilities.py",
+      "sha256": "7b8bc413d3d66ce45f1dd02c41bda59d5614eda463a77e79151baa18fa22c3cb",
+      "bytes": 7899,
+      "scope": "R02 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/milvus-capabilities.md",
+      "sha256": "5ee627ef63d42f80652b45239ee48225aa2dbe6ba153344c1976267abba735f1",
+      "bytes": 8222,
+      "scope": "R02 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R02.md",
+      "sha256": "14fce06738a34d71dfd1866d30e21502192ac25f4ae97f2709907701646592e2",
+      "bytes": 8198,
+      "scope": "R02 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R02-observations.json",
+      "sha256": "b75dbfe365ac546fe6d947399570e0721c1b290421b7c698ef9db4531862e266",
+      "bytes": 287258,
+      "scope": "R02 new file"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R02-evidence.json",
+      "sha256": "11a1d72cc93cfb3941515f4feadc8c2024f2ffd992133209d01386a79fe69532",
+      "bytes": 6554,
+      "scope": "R02 new file"
+    }
+  ]
+}

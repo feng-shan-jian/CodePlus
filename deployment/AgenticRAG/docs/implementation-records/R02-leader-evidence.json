@@ -1,0 +1,90 @@
+{
+  "baseline_commit": "79054d92fa05f06f6b2d0b4deee2a976ac7f7c4f",
+  "reviewer": "Leader",
+  "independent_pytest": {
+    "cwd": "D:/CodePlus",
+    "command": ".venv/Scripts/python.exe -B -m pytest deployment/AgenticRAG/tests/test_milvus_capabilities.py -q -p no:cacheprovider --basetemp C:/Users/18221/AppData/Local/Temp/codeplus-r02-leader-validation",
+    "environment": {"R02_RUN_REAL": "1", "R02_REPORT_PATH": "D:/CodePlus/deployment/AgenticRAG/docs/implementation-records/R02-leader-observations.json", "PYTHONDONTWRITEBYTECODE": "1"},
+    "exit_code": 0,
+    "stdout": "6 passed in 71.85s (0:01:11)"
+  },
+  "manifest_sha256": "83d0e988e41f0bc200e0dc8ad36549b4a39cb8fbcd522a0a1582bbab84e2c05f",
+  "delivery_files_verified": 7,
+  "observations_sha256": "84568a32ce2e806204de6f95dbe1421ea573a076a9df0a0f220f5c77ca4d4601",
+  "protected_inputs_verified": 6553,
+  "only_previously_authorized_input_changes": [
+    "eval/RAG-eval/check.py",
+    "eval/RAG-eval/run.ps1",
+    "deployment/AgenticRAG/docs/implementation-checklist.md",
+    "deployment/AgenticRAG/docs/implementation-task-plan.md"
+  ],
+  "cleanup": {
+    "argv": [
+      "docker",
+      "compose",
+      "-f",
+      "D:\\CodePlus\\deployment\\AgenticRAG\\probes\\milvus\\compose.yaml",
+      "-p",
+      "codeplus-r02-probe",
+      "down",
+      "--volumes"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": " Container codeplus-r02-probe-standalone-1 Stopping \n Container codeplus-r02-probe-standalone-1 Stopped \n Container codeplus-r02-probe-standalone-1 Removing \n Container codeplus-r02-probe-standalone-1 Removed \n Container codeplus-r02-probe-minio-1 Stopping \n Container codeplus-r02-probe-etcd-1 Stopping \n Container codeplus-r02-probe-etcd-1 Stopped \n Container codeplus-r02-probe-etcd-1 Removing \n Container codeplus-r02-probe-etcd-1 Removed \n Container codeplus-r02-probe-minio-1 Stopped \n Container codeplus-r02-probe-minio-1 Removing \n Container codeplus-r02-probe-minio-1 Removed \n Volume codeplus-r02-probe_minio Removing \n Network codeplus-r02-probe_default Removing \n Volume codeplus-r02-probe_etcd Removing \n Volume codeplus-r02-probe_minio Removed \n Volume codeplus-r02-probe_milvus Removing \n Volume codeplus-r02-probe_etcd Removed \n Volume codeplus-r02-probe_milvus Removed \n Network codeplus-r02-probe_default Removed \n",
+    "owned_before": {
+      "minio": {
+        "id": "d891cde53fef2ba466ef0dc0a57bf55c68fb9d2c41da5a5cf04a4b6e65982bdc",
+        "name": "codeplus-r02-probe-minio-1",
+        "image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+        "image_id": "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+        "started_at": "2026-09-21T16:47:36.199304352Z",
+        "status": "running",
+        "project": "codeplus-r02-probe",
+        "service": "minio",
+        "volumes": [
+          {
+            "name": "codeplus-r02-probe_minio",
+            "destination": "/data"
+          }
+        ]
+      },
+      "standalone": {
+        "id": "23e84d79f14b05f18fedb3131d2fc1137b76473379d06a0c1ea8807233d5e435",
+        "name": "codeplus-r02-probe-standalone-1",
+        "image": "milvusdb/milvus:v3.0.1",
+        "image_id": "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+        "started_at": "2026-09-21T17:03:40.573596737Z",
+        "status": "running",
+        "project": "codeplus-r02-probe",
+        "service": "standalone",
+        "volumes": [
+          {
+            "name": "codeplus-r02-probe_milvus",
+            "destination": "/var/lib/milvus"
+          }
+        ]
+      },
+      "etcd": {
+        "id": "787cd517f6f48c419c8767b50d387ec0d27969e3c57ab42be15b7468c9ef28f9",
+        "name": "codeplus-r02-probe-etcd-1",
+        "image": "quay.io/coreos/etcd:v3.5.25",
+        "image_id": "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+        "started_at": "2026-09-21T16:46:49.16218312Z",
+        "status": "running",
+        "project": "codeplus-r02-probe",
+        "service": "etcd",
+        "volumes": [
+          {
+            "name": "codeplus-r02-probe_etcd",
+            "destination": "/etcd"
+          }
+        ]
+      }
+    },
+    "remaining_owned_volumes": "",
+    "remaining_owned_networks": "",
+    "unrelated_containers_unchanged": true,
+    "image_cache_retained": true
+  }
+}
