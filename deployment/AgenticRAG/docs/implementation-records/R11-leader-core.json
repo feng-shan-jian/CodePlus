@@ -1,0 +1,148 @@
+{
+  "base": "81bf1461c73d9d640144eb1ed8b9a193d0f4f953",
+  "freeze_sha256": "8ad1cdee241434be73e548ac0f7e712b25505078cd2a0c1c3d8cdd1d1ce257df",
+  "freeze_files": 63,
+  "protected_differences": [
+    {
+      "path": "eval/RAG-eval/check.py",
+      "expected": "1ba9d5b185e5777be510474f5947b9047db57a5c715d99090055596aa2801ab6",
+      "actual": "37eae3805f5f0b3aa1d3efa2ad02fc4e27f66d9412cd7c35f015c81693e8c437"
+    },
+    {
+      "path": "eval/RAG-eval/run.ps1",
+      "expected": "07804428ca0ce9d210defa0c505dffb204e781f7dfc026fe86ea4c8e46198cf4",
+      "actual": "0b09f27535074ff39e3768cb3bd3734406c0efb694f3e967ec40317507df4fa4"
+    },
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "expected": "133955f56193f90d082395dccea7fd613b577f7f9ddd932a1a48d2f739d5f0ac",
+      "actual": "f21334fb2b4c9005ab95fefcea46302434a255df8d43ee3303b961e2e523d6df"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/architecture-and-contracts.md",
+      "expected": "9dbde418a4ab4ca9d69123ecb30430eca170ae32bdb7f93093dd037086dff72a",
+      "actual": "efc79e7d6a9084fa678d3ac2c52ebd921495b260517d4712d655eefe6ea8539a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/deployment-and-packaging.md",
+      "expected": "67548367bb9123edb2853e39efab2176ba8e0f4b3b81f47dec768434534364bd",
+      "actual": "285c1ba73e00e24cd785bb8f60c72b97f0850046112a6ceca76eaecb65c5684b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-checklist.md",
+      "expected": "9396d827c00420329895538f2064ab7a813b2a44a6f1e7e11674e8e7af99d6d2",
+      "actual": "fa4af8670b1c3fb12f6bde5e144786edc02cf2525048d16527f78ee2a6e2fd14"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-task-plan.md",
+      "expected": "a0a456b91c37c72583132fda68c78654fdc61f2490770830c8f129ef17579bab",
+      "actual": "edc82c475c84c9c2abe6baa71b11359037985b098fb8236710c9a6890f35d5f6"
+    }
+  ],
+  "sql1_to_4_byte_identical": true,
+  "argv": [
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+    "-I",
+    "-B",
+    "-m",
+    "pytest",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_archives.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_chunking.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_configuration.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_dense_runner.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_domain.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_evaluation_protocol.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_evidence_citations.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_frozen_tokenizers.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_ingestion_inputs.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_input_migration.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_input_snapshots.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_model_worker.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_package_install.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_parsing.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_processing_checkpoints.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_processing_processes.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_publication.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_publication_resources.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_source_identity.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_source_maps.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_sources.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_storage.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_storage_processes.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_worker_history.py",
+    "-q",
+    "-x",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-leader-20260922\\core-tests"
+  ],
+  "cwd": "D:\\CodePlus",
+  "exit_code": 0,
+  "elapsed_seconds": 193.33715010000014,
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "excluded_test_files": [
+    "host_contract",
+    "local_model_capabilities",
+    "milvus_capabilities",
+    "model_worker_gpu",
+    "parsing_corpus",
+    "publication_milvus",
+    "publication_processes",
+    "publication_small"
+  ],
+  "dependencies": {
+    "pydantic": "2.13.5",
+    "apsw": "3.53.4.0",
+    "pytest": "9.1.1",
+    "markdown-it-py": "4.0.0",
+    "tokenizers": "0.23.2",
+    "hatchling": "1.29.0"
+  },
+  "output_sha256": "c183d967f72666b21d59d9f35f46f851595e756a23a3776067645b4e0a061583",
+  "final_verification": {
+    "base": "81bf1461c73d9d640144eb1ed8b9a193d0f4f953",
+    "freeze_sha256": "8ad1cdee241434be73e548ac0f7e712b25505078cd2a0c1c3d8cdd1d1ce257df",
+    "freeze_files": 63,
+    "protected_differences": [
+      {
+        "path": "eval/RAG-eval/check.py",
+        "expected": "1ba9d5b185e5777be510474f5947b9047db57a5c715d99090055596aa2801ab6",
+        "actual": "37eae3805f5f0b3aa1d3efa2ad02fc4e27f66d9412cd7c35f015c81693e8c437"
+      },
+      {
+        "path": "eval/RAG-eval/run.ps1",
+        "expected": "07804428ca0ce9d210defa0c505dffb204e781f7dfc026fe86ea4c8e46198cf4",
+        "actual": "0b09f27535074ff39e3768cb3bd3734406c0efb694f3e967ec40317507df4fa4"
+      },
+      {
+        "path": "deployment/AgenticRAG/README.md",
+        "expected": "133955f56193f90d082395dccea7fd613b577f7f9ddd932a1a48d2f739d5f0ac",
+        "actual": "f21334fb2b4c9005ab95fefcea46302434a255df8d43ee3303b961e2e523d6df"
+      },
+      {
+        "path": "deployment/AgenticRAG/docs/architecture-and-contracts.md",
+        "expected": "9dbde418a4ab4ca9d69123ecb30430eca170ae32bdb7f93093dd037086dff72a",
+        "actual": "efc79e7d6a9084fa678d3ac2c52ebd921495b260517d4712d655eefe6ea8539a"
+      },
+      {
+        "path": "deployment/AgenticRAG/docs/deployment-and-packaging.md",
+        "expected": "67548367bb9123edb2853e39efab2176ba8e0f4b3b81f47dec768434534364bd",
+        "actual": "285c1ba73e00e24cd785bb8f60c72b97f0850046112a6ceca76eaecb65c5684b"
+      },
+      {
+        "path": "deployment/AgenticRAG/docs/implementation-checklist.md",
+        "expected": "9396d827c00420329895538f2064ab7a813b2a44a6f1e7e11674e8e7af99d6d2",
+        "actual": "fa4af8670b1c3fb12f6bde5e144786edc02cf2525048d16527f78ee2a6e2fd14"
+      },
+      {
+        "path": "deployment/AgenticRAG/docs/implementation-task-plan.md",
+        "expected": "a0a456b91c37c72583132fda68c78654fdc61f2490770830c8f129ef17579bab",
+        "actual": "edc82c475c84c9c2abe6baa71b11359037985b098fb8236710c9a6890f35d5f6"
+      }
+    ],
+    "sql1_to_4_byte_identical": true
+  }
+}

@@ -14,7 +14,7 @@ from agentic_rag.ingestion import read_processed
 from agentic_rag.storage import Catalog
 
 
-@pytest.mark.parametrize('revision', ['97224b0414c9b67bc99ed59799fa2f2286ab5460', '9afe7e37982cf63c3e2199403499b289d8a520b1'])
+@pytest.mark.parametrize('revision', ['97224b0414c9b67bc99ed59799fa2f2286ab5460', '9afe7e37982cf63c3e2199403499b289d8a520b1', '81bf1461c73d9d640144eb1ed8b9a193d0f4f953'])
 def test_real_preceding_installed_checkpoint_and_run_reopen(tmp_path, revision):
     package=Path(__file__).resolve().parents[1];repo=package.parents[1]
     source=tmp_path/'r08-source';source.mkdir()
@@ -50,14 +50,16 @@ def test_real_preceding_installed_checkpoint_and_run_reopen(tmp_path, revision):
         assert read_processed(catalog,UUID(old['batch_id']),UUID(old['item_id']))[0].model_dump(mode='json')==old['processing']
         assert RunConfiguration.model_validate_json(json.dumps(old['run_json'])).identity==old['run_identity']
         with catalog._db.transaction() as connection:
-            assert connection.pragma('user_version') == 4
+            assert connection.pragma('user_version') == 5
             assert connection.execute('SELECT count(*) FROM publications').fetchone() == (0,)
             assert connection.execute('SELECT count(*) FROM index_artifacts').fetchone() == (0,)
             assert connection.execute('PRAGMA integrity_check').fetchone() == ('ok',)
-        report['migration4_preserved_history_without_fabricated_publication'] = True
+            for table in ('source_candidates','delivered_evidence','saved_citations','delivery_receipts'):
+                assert connection.execute('SELECT count(*) FROM '+table).fetchone() == (0,)
+        report['migration5_preserved_history_without_fabricated_publication_or_evidence'] = True
         report['old_state']=old;report['result']='PASS';report['source_deleted_before_reopen']=True
     finally:
-        path=os.environ.get('R10_HISTORY_REPORT') or os.environ.get('R09_HISTORY_REPORT')
-        if path and os.environ.get('R10_HISTORY_REPORT'):
+        path=os.environ.get('R11_HISTORY_REPORT') or os.environ.get('R10_HISTORY_REPORT') or os.environ.get('R09_HISTORY_REPORT')
+        if path and (os.environ.get('R11_HISTORY_REPORT') or os.environ.get('R10_HISTORY_REPORT')):
             p=Path(path);path=p.with_name(p.stem+'-'+revision[:7]+p.suffix)
         if path:Path(path).write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

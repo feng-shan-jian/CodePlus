@@ -1,0 +1,28 @@
+{
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922",
+  "resolved_root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922",
+  "files": 18368,
+  "directories": 4948,
+  "reparse_points": 234,
+  "disposition_unlinks": 0,
+  "errors": [],
+  "removed_scope": "only this executor owned temp root; no cache or shared environment changes",
+  "excluded_cleanup_process_ids": [
+    48252,
+    39460
+  ],
+  "other_owned_processes": [],
+  "preflight_retry": "First preflight aborted before deletion because the Windows venv redirector parent was counted as an active test. Retry excludes only this cleanup process and its parent.",
+  "migration_implementation_still_matches_history_batch": {
+    "storage/evidence.sql": {
+      "sha256": "bec83d5381d6c771c77739cfb4e0fdc95df5b2b011341be180de10a8cc860630",
+      "same_as_core_final1_wheel": true
+    },
+    "storage/database.py": {
+      "sha256": "6f7e1d2ca16f31f160c6bc45196259090fc05b9513acdac16f3c527f159cc5d9",
+      "same_as_core_final1_wheel": true
+    }
+  },
+  "root_absent": true,
+  "result": "PASS"
+}

@@ -1,0 +1,286 @@
+{
+  "base": "81bf1461c73d9d640144eb1ed8b9a193d0f4f953",
+  "branch": "codex/rag",
+  "result": "PASS",
+  "file_count": 55,
+  "scope": "Executor 41 + Leader R11 evidence/task docs + R10 real-SHA backfill + checklist + one exact raw-log whitespace attribute",
+  "accepted_code_freeze_sha256": "8ad1cdee241434be73e548ac0f7e712b25505078cd2a0c1c3d8cdd1d1ce257df",
+  "entries_excluding_self": [
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "raw_sha256": "f21334fb2b4c9005ab95fefcea46302434a255df8d43ee3303b961e2e523d6df",
+      "blob": "dd7c8f16f80b899e621db76923a7fd2fdce0bf56"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-checklist.md",
+      "raw_sha256": "8ec6d7f7419f81f2f6a00b81724b05cd7b56a27e33345573d27e8d8ce22137a3",
+      "blob": "d1d000cbf11392247aef3710761aa60099326724"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/.gitattributes",
+      "raw_sha256": "2fda91d44189096a98885a0cad4f661dd5dcfddf157f54ffed9de9175706fbd8",
+      "blob": "0954e4b73b8a9126d1b4108a7544ddb28f31247c"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10.md",
+      "raw_sha256": "6a5766289e33cdcc0d78e799ae05a980cd802c99dc4bc1a0ce456bde06d0e66b",
+      "blob": "1612d224a4181666b39eedf018d4b6ad6d56ff6b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-cleanup.json",
+      "raw_sha256": "b745b92891db9fd4eb8537948a5652b2bd31655379c50f5cd407832afeefd90d",
+      "blob": "5372442ed54c50e9393b8beb089c65b620229268"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-code-before-anchor.json",
+      "raw_sha256": "dea99bbad42fcfd38659793ac48df44d56d85993bdd8026aab85be40ce620830",
+      "blob": "f1beff8ae12ce9ca24cae21037b3d0b92cd17c0c"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-code-before-cursor-classification.json",
+      "raw_sha256": "ddd5d3f3f6560776b267bcd6d4fd3c0a701fafd717f9bb8795d1a35a364bd1b1",
+      "blob": "1ce0c68994019dc29fe7170b40f7b82575742a52"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-code-final.json",
+      "raw_sha256": "8ad1cdee241434be73e548ac0f7e712b25505078cd2a0c1c3d8cdd1d1ce257df",
+      "blob": "c8edabb9331de31c8f4e4c7ae07b4044cfece5de"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-core-first.txt",
+      "raw_sha256": "707c8b94b1e57832157ec2894406f8f23a0e8aed07f138f295b41a7d2e2487e5",
+      "blob": "d521c87857b16bc5443630fd972fd1e58e5edacf"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-dispatch.md",
+      "raw_sha256": "61fb32734ef815b94b2bf0e050b48d10686b7f9f4f70b4fd6acdf0971c0e0d57",
+      "blob": "708a356ede9f7273eaff8f3b037ef5f9d608e532"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-file-manifest.json",
+      "raw_sha256": "11fe7464c1c8c5ba14ad7e0dbeb1731b854c9248b95598afa5aaa60f7da47321",
+      "blob": "13a1200e500d989ea1b0b11a9f0672c2a43f282d"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-final-checks.json",
+      "raw_sha256": "ac6f86ab86611a048063292212c0b446e687caf569bb768ffb82d91d1e77bbe6",
+      "blob": "1e1e7ffff4de58ace90c31e5e5e75b1501db1f8c"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-history-81bf146.json",
+      "raw_sha256": "f784d398cee7aef0403279ce6af61a9ede69836d79ab7b9ef93be95b27e40448",
+      "blob": "e5169cd260aa15cffb396fcdf4aeb1bf1275695a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-history-97224b0.json",
+      "raw_sha256": "f4ca101fddba116077326623802c4c7487102937e3cd3a6493b929cd127b0aa9",
+      "blob": "29ac2e0d1f57d3604aa60d76a42fedafa754c508"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-history-9afe7e3.json",
+      "raw_sha256": "21a836a9269b55e446e33db0c16fc3baac0460726f438d4290990572aa715351",
+      "blob": "2d72beba49f13a1a88d3f27e0b55dda72989fcc8"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-installations-before-anchor.json",
+      "raw_sha256": "735ee7877d3b31ab4bbf7579bfb6db9b161d3a6d1554b6c7116f4055a6a12f4e",
+      "blob": "2ac59481fd1ed1d4c415fa8b8aeed6e309a51d61"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-installations-before-cursor-classification.json",
+      "raw_sha256": "fa99e3aeb5e293c9391c8e1e8e5cdba6d9a065814b2ee9d42f9e0170a831a88f",
+      "blob": "4919c68c65533db67f5f8e20af64e59e397020f7"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-installations-final.json",
+      "raw_sha256": "4877afd786a72066a2aec037eadf9359e6f4f8db6a6b626a67510ea99970fd17",
+      "blob": "2d7fe4f5be8170d919202b3a759c674773c4e959"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-installations.json",
+      "raw_sha256": "13117d5a568476cfa48456edc3f1bceb0b86f0eba4cfd8ed48f833ca720f13f9",
+      "blob": "65a6d5e33e0bc7111407aa302056049de1ea5346"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-leader-cleanup.json",
+      "raw_sha256": "efbda2dac9055762fbcb0ac7c6bdb0825cac234428aa88d07a0af62640729e8f",
+      "blob": "789757208fd797b417c660debd717a0107d5ff24"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-leader-core.json",
+      "raw_sha256": "4983bed7c72670a63f0c2ecac7cd2e5b78e91eafc07036b9cfb0ee42cb3ed80e",
+      "blob": "4ee7f83fb2cf0cc2ae0484da9862327c9031bb17"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-leader-core.txt",
+      "raw_sha256": "c183d967f72666b21d59d9f35f46f851595e756a23a3776067645b4e0a061583",
+      "blob": "d53e95468c2ad385127254fc8f9eb300bc8c819b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-leader-history-81bf146.json",
+      "raw_sha256": "b5685703b1a0ceead866c777f44ac0dcc0b773163a2b146eb22c4f51ae937f40",
+      "blob": "a5e5dd4555a3d65a719c7c95675ffa6ce76ac564"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-leader-history-97224b0.json",
+      "raw_sha256": "7b3d8c7f8631b146fcabadb86b7b9dc2d1b54f35beabd206edf4a00109519a0b",
+      "blob": "1ce96a1ed10a93038e8b968ff16fd217e4551d88"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-leader-history-9afe7e3.json",
+      "raw_sha256": "6667410f02afef7cb8175056efcf34cf76b5d454b1e9b8e62e6a05ea85d55b7b",
+      "blob": "cd74c6c4aa8383dfbf493dc5694421bfdcb63273"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-leader-installations.json",
+      "raw_sha256": "620f59c8b52b144e355641769d08b90ef89c5a0f8c9a8ea649262df3d907ff73",
+      "blob": "482c22398bf8543674ae5489af3a59b02e8f4965"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-leader-review.json",
+      "raw_sha256": "839dec5d708c09bc1717c61ec2e04921d57905b0836a3370e3bd8183373123ee",
+      "blob": "e38ca94a8fddfd7b85325b90a71580e6cd6abfb0"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-pre-dispatch-review.json",
+      "raw_sha256": "2ac585cf7245d5937419983a18202b6738e88c7e7f3dce5fe19a900b2e0a3ad1",
+      "blob": "069d14eb23d702c7c4b2faf34d82514b711713a4"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-repaired-regression.txt",
+      "raw_sha256": "9eb00472577593d9d7ffa1bb5dc3538a67529f0e0ab696bba1eb02da937b7b3b",
+      "blob": "ee9877ad9415a18a73804e6e10ae8dec97829e03"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-scope-audit.json",
+      "raw_sha256": "0c66e2863c34616a338b27d3e78e2d98fc8db17517447fd0f7188c63837081b2",
+      "blob": "660ef3c71b747af7b9f9239da32c019ca17c3687"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-sources-before-anchor.txt",
+      "raw_sha256": "23506eb41044676be192ac54c7fe481843ac7d3d1041360ae513058c6285a23b",
+      "blob": "f7af117e86d3b4a8eba86d77e0bebe322fcfd38d"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-sources-before-cursor-classification.txt",
+      "raw_sha256": "004efc1bede1ca0d6326c664e92c01cd6d6dfadb16b029c604e31f9fdb92f373",
+      "blob": "b68dd1ee7cf23652defff72f505464fc0bb1e712"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-sources-final.txt",
+      "raw_sha256": "abbfb8ac4199b4400c23fa14757490bef5bafe63e6450e2ef7370bad2025d51c",
+      "blob": "67069b958c2f979be8e4e556c6e18501d3833f55"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-tests-first.txt",
+      "raw_sha256": "6b3357cd1e239fba9df55366b9c62ad326bad5de6698866059c8365a67a35d85",
+      "blob": "638f56f3709d763873aae156b16647f2c88bacd4"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11-tests-second.txt",
+      "raw_sha256": "1d5afa66e44cbaeaec6fd0337260f31870c65b8bd327ace1143445a35f97fa09",
+      "blob": "103e30c8a4e0c6fca922aeed65079f132ec61a7a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R11.md",
+      "raw_sha256": "6c9d80eac2c87f0258c17882aff0f63415ee2001a6443a223293800dca4837d5",
+      "blob": "d5fea9f5fbe54fe6591222253ef50fa1b40e5e11"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/sources-and-evidence.md",
+      "raw_sha256": "a7688bb68b56022568442227b3b6ff21ec204c6278716e8c99260187dc134de3",
+      "blob": "a524d10817532a8e98fc0befee016fcccdd1fab1"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/citations.py",
+      "raw_sha256": "36496e74340d4a3a847a8df9bef98be27ee0c14715c7dd62f1d0020e6d8aae89",
+      "blob": "5029e5bf664f950170a4afb0019a6b3e365b2742"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/domain.py",
+      "raw_sha256": "407eabb43b408f1d8f9aaf85b292ab8e4c1bcbb51130d3db6d0e4ad41785cdf1",
+      "blob": "7cc646d3eb8cef37906547b58633f84ad276d173"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/evidence.py",
+      "raw_sha256": "99ba78349c0c0985978570243d3fa4c2e86a1f88e74557d2d12903c4c8d4b429",
+      "blob": "ce28650972b3f8005c320681362e537d21cd7da5"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/source_archive.py",
+      "raw_sha256": "d1e473bad9ce5cc5b82b9d4db76dfdccf2c73fce07e026065ef806cdba76f4e7",
+      "blob": "b6bda4febbfb7f48e1f27cfb8d1ba1fde661163d"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/sources.py",
+      "raw_sha256": "b7f4cde01a7493f4d89c37ccb79cd5b5929c3b1030d2e8391106b74add82af94",
+      "blob": "82c72ecf34fd51f408de6010eadb4ba1340b5f9c"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+      "raw_sha256": "6f7e1d2ca16f31f160c6bc45196259090fc05b9513acdac16f3c527f159cc5d9",
+      "blob": "2b135bcb33a8fea3d77a3ef494da998f83b3b1f3"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/evidence.sql",
+      "raw_sha256": "bec83d5381d6c771c77739cfb4e0fdc95df5b2b011341be180de10a8cc860630",
+      "blob": "7db6c8a5265d92e653e51d7da9c82d06c489dfc0"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/runs.py",
+      "raw_sha256": "83a9edf31f2341cfe599ee87e5735006fde0999b06c2569b97804173455a39d0",
+      "blob": "c0f2aae512683d2fcc57ceea9463b6eb81605e7b"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/citation_history_helper.py",
+      "raw_sha256": "96bb8959953a27ec4dfda0425da90d2181d0d62bb11333ca953fb1d831155fa1",
+      "blob": "5a596d5f99570b8b6033de82a55d9613ba865958"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/source_support.py",
+      "raw_sha256": "b7a34057dbbf1fcbe558b8488d801e6ea58d618eb6e3e3a9c1ed76801f5491f1",
+      "blob": "4cea43c6e9e7c3ee091d764fba3230cf14159266"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_evidence_citations.py",
+      "raw_sha256": "509c1964818bb6746f84ddab975e602c005f6e6b2685e19b920485a9d125dbfc",
+      "blob": "c4e88817204e7101a0ae3de3ec9e93c2e94e2804"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_input_migration.py",
+      "raw_sha256": "acb3758dd47ece63b31d768c2c95f0d389c64236194626160d607595d66008b2",
+      "blob": "a7ef763c49ca6dde94ee34972cc22cad37c6cba2"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_package_install.py",
+      "raw_sha256": "8097c322a52d26df6002c06f637e2049fe4b2a2b01a917a215fc03cdd6f9e4d3",
+      "blob": "6565125f2312706750805dc3b8cb2e754cf98b61"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_processing_checkpoints.py",
+      "raw_sha256": "711a2ac9726616577075ae23ad4124b77f4a346dfa0b6c2692f030fe3e6d4b20",
+      "blob": "771e7aea339184c551106da33cc78fc7f5d54fa2"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_sources.py",
+      "raw_sha256": "2f9eb411d79242433c1ae8e78ff28dfe62a9350f0a2e95b106f5614a1f00251e",
+      "blob": "9ec963a15dae91b498e9eef9d5ef4dee76c3e552"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_storage.py",
+      "raw_sha256": "c0adf3a9b25f2acdd311ecf828d505c105e675efa094abcd79b7e3163ffc71d4",
+      "blob": "cc669d4fa8b90c677bbf7b191c0db6b219cc1503"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_worker_history.py",
+      "raw_sha256": "3ab9a239b75199f1261990e1f34b471d15940b8ab86b73ff4b0dac00dab427ca",
+      "blob": "be6156fa1b1933ea57207a744ea33fe35884d18f"
+    }
+  ],
+  "self_policy": "This report included in exact staged path/blob verification; self hash not embedded recursively",
+  "cleanup": "Acceptance owned root removed; this single-use staging script and NUL path list removed by finally",
+  "inherited_compose_excluded": true,
+  "deletions": 0,
+  "diff_cached_check_exit_code": 0,
+  "git_filtered_blobs_verified": 55
+}

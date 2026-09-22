@@ -1,0 +1,582 @@
+{
+  "source_head": "81bf1461c73d9d640144eb1ed8b9a193d0f4f953",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "ls-tree",
+        "-r",
+        "--name-only",
+        "81bf1461c73d9d640144eb1ed8b9a193d0f4f953",
+        "deployment/AgenticRAG"
+      ],
+      "cwd": "D:\\CodePlus",
+      "exit_code": 0,
+      "stdout": "deployment/AgenticRAG/.gitignore\ndeployment/AgenticRAG/LICENSE\ndeployment/AgenticRAG/README.md\ndeployment/AgenticRAG/docs/acceptance-and-implementation.md\ndeployment/AgenticRAG/docs/architecture-and-contracts.md\ndeployment/AgenticRAG/docs/deployment-and-packaging.md\ndeployment/AgenticRAG/docs/domain-and-configuration.md\ndeployment/AgenticRAG/docs/environment-command-matrix.md\ndeployment/AgenticRAG/docs/evaluation-protocol.md\ndeployment/AgenticRAG/docs/first-publication.md\ndeployment/AgenticRAG/docs/host-integration-contract.md\ndeployment/AgenticRAG/docs/implementation-checklist.md\ndeployment/AgenticRAG/docs/implementation-records/.gitattributes\ndeployment/AgenticRAG/docs/implementation-records/R00-input-fingerprints.json\ndeployment/AgenticRAG/docs/implementation-records/R00-original-checks.json\ndeployment/AgenticRAG/docs/implementation-records/R00-protected-inputs.json\ndeployment/AgenticRAG/docs/implementation-records/R00.md\ndeployment/AgenticRAG/docs/implementation-records/R01-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R01-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R01-files.json\ndeployment/AgenticRAG/docs/implementation-records/R01-leader-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R01-task-hunks.json\ndeployment/AgenticRAG/docs/implementation-records/R01.md\ndeployment/AgenticRAG/docs/implementation-records/R02-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R02-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R02-files.json\ndeployment/AgenticRAG/docs/implementation-records/R02-leader-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R02-leader-observations.json\ndeployment/AgenticRAG/docs/implementation-records/R02-observations.json\ndeployment/AgenticRAG/docs/implementation-records/R02.md\ndeployment/AgenticRAG/docs/implementation-records/R03-attempt1-observations.json\ndeployment/AgenticRAG/docs/implementation-records/R03-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R03-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R03-files.json\ndeployment/AgenticRAG/docs/implementation-records/R03-leader-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R03-leader-observations.json\ndeployment/AgenticRAG/docs/implementation-records/R03-observations.json\ndeployment/AgenticRAG/docs/implementation-records/R03.md\ndeployment/AgenticRAG/docs/implementation-records/R04-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R04-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R04-files.json\ndeployment/AgenticRAG/docs/implementation-records/R04-host-preflight.json\ndeployment/AgenticRAG/docs/implementation-records/R04-leader-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R04-leader-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R04-leader-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R04-protection-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R04-recovery.md\ndeployment/AgenticRAG/docs/implementation-records/R04-static-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R04-tests-baseline.txt\ndeployment/AgenticRAG/docs/implementation-records/R04-tests-failure.txt\ndeployment/AgenticRAG/docs/implementation-records/R04-tests-final-presend.txt\ndeployment/AgenticRAG/docs/implementation-records/R04-tests-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R04-tests-repair-attempt.txt\ndeployment/AgenticRAG/docs/implementation-records/R04.md\ndeployment/AgenticRAG/docs/implementation-records/R05-baseline.json\ndeployment/AgenticRAG/docs/implementation-records/R05-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R05-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R05-environment-win-core.freeze.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-environment.json\ndeployment/AgenticRAG/docs/implementation-records/R05-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R05-files.json\ndeployment/AgenticRAG/docs/implementation-records/R05-installations-first-failure.json\ndeployment/AgenticRAG/docs/implementation-records/R05-installations-second-failure.json\ndeployment/AgenticRAG/docs/implementation-records/R05-installations-third-failure.json\ndeployment/AgenticRAG/docs/implementation-records/R05-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R05-leader-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R05-leader-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R05-leader-final-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R05-leader-final-install-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-leader-final-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R05-leader-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R05-leader-log-normalization.json\ndeployment/AgenticRAG/docs/implementation-records/R05-leader-stage.json\ndeployment/AgenticRAG/docs/implementation-records/R05-leader-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-protection-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R05-tests-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-tests-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-tests-install-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-tests-install-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-tests-install-second.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-tests-install-third.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-tests-second.txt\ndeployment/AgenticRAG/docs/implementation-records/R05-tests-unit-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R05.md\ndeployment/AgenticRAG/docs/implementation-records/R06-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R06-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R06-environment.json\ndeployment/AgenticRAG/docs/implementation-records/R06-files.json\ndeployment/AgenticRAG/docs/implementation-records/R06-install-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R06-install-second.txt\ndeployment/AgenticRAG/docs/implementation-records/R06-installations-first.json\ndeployment/AgenticRAG/docs/implementation-records/R06-installations-second.json\ndeployment/AgenticRAG/docs/implementation-records/R06-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R06-leader-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R06-leader-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R06-leader-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R06-leader-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R06-leader-stage.json\ndeployment/AgenticRAG/docs/implementation-records/R06-leader-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R06-processes-first.json\ndeployment/AgenticRAG/docs/implementation-records/R06-processes-second.json\ndeployment/AgenticRAG/docs/implementation-records/R06-processes-third.json\ndeployment/AgenticRAG/docs/implementation-records/R06-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R06-protection-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R06-tests-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R06-tests-second.txt\ndeployment/AgenticRAG/docs/implementation-records/R06-tests-third.txt\ndeployment/AgenticRAG/docs/implementation-records/R06-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R06.md\ndeployment/AgenticRAG/docs/implementation-records/R07-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R07-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R07-environment.json\ndeployment/AgenticRAG/docs/implementation-records/R07-files.json\ndeployment/AgenticRAG/docs/implementation-records/R07-installations-first.json\ndeployment/AgenticRAG/docs/implementation-records/R07-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R07-leader-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R07-leader-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R07-leader-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R07-leader-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R07-leader-stage.json\ndeployment/AgenticRAG/docs/implementation-records/R07-leader-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R07-leader-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R07-processes-first.json\ndeployment/AgenticRAG/docs/implementation-records/R07-processes-second.json\ndeployment/AgenticRAG/docs/implementation-records/R07-processes-third.json\ndeployment/AgenticRAG/docs/implementation-records/R07-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R07-protection-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R07-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R07-tests-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R07-tests-fourth.txt\ndeployment/AgenticRAG/docs/implementation-records/R07-tests-second.txt\ndeployment/AgenticRAG/docs/implementation-records/R07-tests-third.txt\ndeployment/AgenticRAG/docs/implementation-records/R07-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R07.md\ndeployment/AgenticRAG/docs/implementation-records/R08-baseline.json\ndeployment/AgenticRAG/docs/implementation-records/R08-boundaries-round1.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-boundaries-round2.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R08-code-freeze.json\ndeployment/AgenticRAG/docs/implementation-records/R08-corpus-final.json\ndeployment/AgenticRAG/docs/implementation-records/R08-corpus-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-corpus-round1.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-corpus-verified.json\ndeployment/AgenticRAG/docs/implementation-records/R08-corpus-verified.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-corpus.json\ndeployment/AgenticRAG/docs/implementation-records/R08-delivery-corpus.json\ndeployment/AgenticRAG/docs/implementation-records/R08-delivery-corpus.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-delivery-input-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-delivery-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R08-delivery-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-delivery-regression.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-delivery-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-delivery-tokenizer-oracle.json\ndeployment/AgenticRAG/docs/implementation-records/R08-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R08-files.json\ndeployment/AgenticRAG/docs/implementation-records/R08-final-input-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-final-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R08-final-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-final-regression.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-final-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-final-tokenizer-oracle.json\ndeployment/AgenticRAG/docs/implementation-records/R08-gap-migration-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-indentation-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-corpus.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-input-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-precheck.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-review.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-stage.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-test-run.json\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-leader-tokenizer-oracle.json\ndeployment/AgenticRAG/docs/implementation-records/R08-log-normalization.json\ndeployment/AgenticRAG/docs/implementation-records/R08-log-redaction.json\ndeployment/AgenticRAG/docs/implementation-records/R08-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R08-processing-round1.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-protection-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R08-regression-round1.txt\ndeployment/AgenticRAG/docs/implementation-records/R08-tokenizer-oracle.json\ndeployment/AgenticRAG/docs/implementation-records/R08-whitespace-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R08.md\ndeployment/AgenticRAG/docs/implementation-records/R09-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R09-auth-protocol-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-baseline.json\ndeployment/AgenticRAG/docs/implementation-records/R09-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R09-code-freeze-final.json\ndeployment/AgenticRAG/docs/implementation-records/R09-code-freeze.json\ndeployment/AgenticRAG/docs/implementation-records/R09-delivery-gpu.json\ndeployment/AgenticRAG/docs/implementation-records/R09-delivery-gpu.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-delivery-history.json\ndeployment/AgenticRAG/docs/implementation-records/R09-delivery-input-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R09-delivery-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R09-delivery-processing-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R09-delivery-regression.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-delivery-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R09-delivery-tokenizer-oracle.json\ndeployment/AgenticRAG/docs/implementation-records/R09-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R09-efs-observations.json\ndeployment/AgenticRAG/docs/implementation-records/R09-environment.json\ndeployment/AgenticRAG/docs/implementation-records/R09-evidence.json\ndeployment/AgenticRAG/docs/implementation-records/R09-files.json\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-faults.json\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-faults.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-final.json\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-first.json\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-second.json\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-second.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-third.json\ndeployment/AgenticRAG/docs/implementation-records/R09-gpu-third.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-history-final.json\ndeployment/AgenticRAG/docs/implementation-records/R09-history-unit.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-history.json\ndeployment/AgenticRAG/docs/implementation-records/R09-input-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R09-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-core-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-gpu-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-gpu.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-history.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-input-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-installed-cuda-check.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-precheck.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-processing-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-review.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-stage.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-test-run.json\ndeployment/AgenticRAG/docs/implementation-records/R09-leader-tokenizer-oracle.json\ndeployment/AgenticRAG/docs/implementation-records/R09-log-normalization.json\ndeployment/AgenticRAG/docs/implementation-records/R09-prechange-snapshot.json\ndeployment/AgenticRAG/docs/implementation-records/R09-processing-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R09-regression-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-review-candidate.json\ndeployment/AgenticRAG/docs/implementation-records/R09-review.json\ndeployment/AgenticRAG/docs/implementation-records/R09-startup-race-after.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-startup-race-before.txt\ndeployment/AgenticRAG/docs/implementation-records/R09-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R09-tokenizer-oracle.json\ndeployment/AgenticRAG/docs/implementation-records/R09.md\ndeployment/AgenticRAG/docs/implementation-records/R10-baseline.json\ndeployment/AgenticRAG/docs/implementation-records/R10-before-cleanup-resources.json\ndeployment/AgenticRAG/docs/implementation-records/R10-build-candidate1.json\ndeployment/AgenticRAG/docs/implementation-records/R10-build-candidate1.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-candidate3-suite.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R10-code-candidate1.json\ndeployment/AgenticRAG/docs/implementation-records/R10-code-candidate2.json\ndeployment/AgenticRAG/docs/implementation-records/R10-code-candidate3.json\ndeployment/AgenticRAG/docs/implementation-records/R10-code-candidate4.json\ndeployment/AgenticRAG/docs/implementation-records/R10-compose-cleanup.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-contracts-second.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-cuda-install-candidate3.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-cuda-install-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-dense-final.json\ndeployment/AgenticRAG/docs/implementation-records/R10-dense-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-dense-tuple-failure.json.gz\ndeployment/AgenticRAG/docs/implementation-records/R10-dense-tuple-failure.txt.gz\ndeployment/AgenticRAG/docs/implementation-records/R10-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/R10-files-before-inventory-fix.json\ndeployment/AgenticRAG/docs/implementation-records/R10-files.json\ndeployment/AgenticRAG/docs/implementation-records/R10-history-97224b0.json\ndeployment/AgenticRAG/docs/implementation-records/R10-history-9afe7e3.json\ndeployment/AgenticRAG/docs/implementation-records/R10-history-candidate3-97224b0.json\ndeployment/AgenticRAG/docs/implementation-records/R10-history-candidate3-9afe7e3.json\ndeployment/AgenticRAG/docs/implementation-records/R10-history-final-97224b0.json\ndeployment/AgenticRAG/docs/implementation-records/R10-history-final-9afe7e3.json\ndeployment/AgenticRAG/docs/implementation-records/R10-input-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R10-installations-candidate3.json\ndeployment/AgenticRAG/docs/implementation-records/R10-installations-final.json\ndeployment/AgenticRAG/docs/implementation-records/R10-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R10-installed-core-candidate3.json\ndeployment/AgenticRAG/docs/implementation-records/R10-installed-core-final.json\ndeployment/AgenticRAG/docs/implementation-records/R10-installed-cuda-candidate3.json\ndeployment/AgenticRAG/docs/implementation-records/R10-installed-cuda-final.json\ndeployment/AgenticRAG/docs/implementation-records/R10-inventory-correction.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-build-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-build.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-build.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-code-final.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-core-tests-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-core-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-cuda-install-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-cuda-install.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-dense-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-dense.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-dense.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-history-97224b0.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-history-9afe7e3.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-input-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-installations.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-installed-cuda-check-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-installed-cuda-check.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-inventory-corrected-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-inventory-corrected.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-inventory-corrected.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-inventory-review.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-inventory-tests-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-inventory-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-native-score-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-native-score.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-native-score.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-official-score-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-official-score.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-official-score.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-postrepair-precheck.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-precheck.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-processing-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real-tests-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real-tests.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-milvus-index_timeout.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-milvus-none.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-milvus-row_hash.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-milvus-schema.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-milvus-unavailable.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-process-after-commit.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-process-before-commit.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-process-redirector-diagnostic.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-small-punctuation.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-small-unicode.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-real/R10-small-words.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-repeatability.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-resource-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-restart-after-1.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-restart-before.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-restart-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-restart-resources.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-restart.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-restart.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-service-cleanup.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-service-up-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-service-up.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-space-before-command.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-space-before.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-space-before.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-stage.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-staging-correction.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-static-review.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R10-leader-tokenizer-oracle.json\ndeployment/AgenticRAG/docs/implementation-records/R10-milvus-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-milvus-index_timeout.json\ndeployment/AgenticRAG/docs/implementation-records/R10-milvus-none.json\ndeployment/AgenticRAG/docs/implementation-records/R10-milvus-row_hash.json\ndeployment/AgenticRAG/docs/implementation-records/R10-milvus-schema.json\ndeployment/AgenticRAG/docs/implementation-records/R10-milvus-second.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-milvus-unavailable.json\ndeployment/AgenticRAG/docs/implementation-records/R10-native-final.json\ndeployment/AgenticRAG/docs/implementation-records/R10-native-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-pre-cleanup-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R10-pre-dispatch-review.json\ndeployment/AgenticRAG/docs/implementation-records/R10-process-after-commit.json\ndeployment/AgenticRAG/docs/implementation-records/R10-process-before-commit-first.json\ndeployment/AgenticRAG/docs/implementation-records/R10-process-before-commit.json\ndeployment/AgenticRAG/docs/implementation-records/R10-process-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-process-redirector-diagnostic.json\ndeployment/AgenticRAG/docs/implementation-records/R10-process-second.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-processing-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R10-real-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-regression-collection-failure.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-regression-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-regression-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-resources-closed.json\ndeployment/AgenticRAG/docs/implementation-records/R10-restart-final-after-1.json\ndeployment/AgenticRAG/docs/implementation-records/R10-restart-final-before.json\ndeployment/AgenticRAG/docs/implementation-records/R10-restart-final-resources.json\ndeployment/AgenticRAG/docs/implementation-records/R10-restart-final.json\ndeployment/AgenticRAG/docs/implementation-records/R10-revalidate-candidate2.json\ndeployment/AgenticRAG/docs/implementation-records/R10-revalidate-final.json\ndeployment/AgenticRAG/docs/implementation-records/R10-scope-audit.json\ndeployment/AgenticRAG/docs/implementation-records/R10-score-final.json\ndeployment/AgenticRAG/docs/implementation-records/R10-score-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-score-tuple-failure.json\ndeployment/AgenticRAG/docs/implementation-records/R10-score-tuple-failure.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-small-default-threshold-words.json\ndeployment/AgenticRAG/docs/implementation-records/R10-small-default.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-small-final.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-small-observed.txt\ndeployment/AgenticRAG/docs/implementation-records/R10-small-punctuation.json\ndeployment/AgenticRAG/docs/implementation-records/R10-small-unicode.json\ndeployment/AgenticRAG/docs/implementation-records/R10-small-words.json\ndeployment/AgenticRAG/docs/implementation-records/R10-space-before-corpus-index.json\ndeployment/AgenticRAG/docs/implementation-records/R10-storage-processes.json\ndeployment/AgenticRAG/docs/implementation-records/R10-tuple-failure-archive.json\ndeployment/AgenticRAG/docs/implementation-records/R10-unit-first.txt\ndeployment/AgenticRAG/docs/implementation-records/R10.md\ndeployment/AgenticRAG/docs/implementation-task-plan.md\ndeployment/AgenticRAG/docs/input-snapshots.md\ndeployment/AgenticRAG/docs/leader-prompt.md\ndeployment/AgenticRAG/docs/local-model-capabilities.md\ndeployment/AgenticRAG/docs/local-model-worker.md\ndeployment/AgenticRAG/docs/milvus-capabilities.md\ndeployment/AgenticRAG/docs/model-providers.md\ndeployment/AgenticRAG/docs/parsing-and-source-maps.md\ndeployment/AgenticRAG/docs/plan.md\ndeployment/AgenticRAG/docs/storage-and-concurrency.md\ndeployment/AgenticRAG/eval/.gitattributes\ndeployment/AgenticRAG/eval/acceptance-ids.json\ndeployment/AgenticRAG/eval/dense_runner.py\ndeployment/AgenticRAG/eval/development-ids.json\ndeployment/AgenticRAG/eval/evaluation-protocol.json\ndeployment/AgenticRAG/eval/runtime-inputs.json\ndeployment/AgenticRAG/eval/runtime_inputs.py\ndeployment/AgenticRAG/eval/score_dense.py\ndeployment/AgenticRAG/probes/host_contract/contract.py\ndeployment/AgenticRAG/probes/milvus/compose.yaml\ndeployment/AgenticRAG/probes/milvus/probe.py\ndeployment/AgenticRAG/probes/models/README.md\ndeployment/AgenticRAG/probes/models/assets.py\ndeployment/AgenticRAG/probes/models/environment-win-cuda.freeze.txt\ndeployment/AgenticRAG/probes/models/models.lock.json\ndeployment/AgenticRAG/probes/models/probe.py\ndeployment/AgenticRAG/pyproject.toml\ndeployment/AgenticRAG/requirements-local-models-win-py314.lock\ndeployment/AgenticRAG/src/agentic_rag/__init__.py\ndeployment/AgenticRAG/src/agentic_rag/_schema.py\ndeployment/AgenticRAG/src/agentic_rag/capabilities.py\ndeployment/AgenticRAG/src/agentic_rag/config.py\ndeployment/AgenticRAG/src/agentic_rag/domain.py\ndeployment/AgenticRAG/src/agentic_rag/indexes/__init__.py\ndeployment/AgenticRAG/src/agentic_rag/indexes/manifest.py\ndeployment/AgenticRAG/src/agentic_rag/indexes/milvus.py\ndeployment/AgenticRAG/src/agentic_rag/ingestion/__init__.py\ndeployment/AgenticRAG/src/agentic_rag/ingestion/build.py\ndeployment/AgenticRAG/src/agentic_rag/ingestion/capture.py\ndeployment/AgenticRAG/src/agentic_rag/ingestion/chunking.py\ndeployment/AgenticRAG/src/agentic_rag/ingestion/parsing.py\ndeployment/AgenticRAG/src/agentic_rag/ingestion/processing.py\ndeployment/AgenticRAG/src/agentic_rag/ingestion/records.py\ndeployment/AgenticRAG/src/agentic_rag/ingestion/selection.py\ndeployment/AgenticRAG/src/agentic_rag/ingestion/source.py\ndeployment/AgenticRAG/src/agentic_rag/models/__init__.py\ndeployment/AgenticRAG/src/agentic_rag/models/_windows.py\ndeployment/AgenticRAG/src/agentic_rag/models/client.py\ndeployment/AgenticRAG/src/agentic_rag/models/engine.py\ndeployment/AgenticRAG/src/agentic_rag/models/identity.py\ndeployment/AgenticRAG/src/agentic_rag/models/lifecycle.py\ndeployment/AgenticRAG/src/agentic_rag/models/models.lock.json\ndeployment/AgenticRAG/src/agentic_rag/models/protocol.py\ndeployment/AgenticRAG/src/agentic_rag/models/tokenization.py\ndeployment/AgenticRAG/src/agentic_rag/models/worker.py\ndeployment/AgenticRAG/src/agentic_rag/profiles.py\ndeployment/AgenticRAG/src/agentic_rag/retrieval/__init__.py\ndeployment/AgenticRAG/src/agentic_rag/retrieval/dense.py\ndeployment/AgenticRAG/src/agentic_rag/storage/__init__.py\ndeployment/AgenticRAG/src/agentic_rag/storage/archives.py\ndeployment/AgenticRAG/src/agentic_rag/storage/catalog.py\ndeployment/AgenticRAG/src/agentic_rag/storage/database.py\ndeployment/AgenticRAG/src/agentic_rag/storage/inputs.py\ndeployment/AgenticRAG/src/agentic_rag/storage/inputs.sql\ndeployment/AgenticRAG/src/agentic_rag/storage/locks.py\ndeployment/AgenticRAG/src/agentic_rag/storage/ownership.py\ndeployment/AgenticRAG/src/agentic_rag/storage/paths.py\ndeployment/AgenticRAG/src/agentic_rag/storage/processing.py\ndeployment/AgenticRAG/src/agentic_rag/storage/processing.sql\ndeployment/AgenticRAG/src/agentic_rag/storage/publication.py\ndeployment/AgenticRAG/src/agentic_rag/storage/publication.sql\ndeployment/AgenticRAG/src/agentic_rag/storage/runs.py\ndeployment/AgenticRAG/src/agentic_rag/storage/schema.sql\ndeployment/AgenticRAG/tests/ingestion_process_helper.py\ndeployment/AgenticRAG/tests/parsing_support.py\ndeployment/AgenticRAG/tests/processing_process_helper.py\ndeployment/AgenticRAG/tests/publication_full_acceptance.py\ndeployment/AgenticRAG/tests/publication_process_helper.py\ndeployment/AgenticRAG/tests/publication_resources.py\ndeployment/AgenticRAG/tests/publication_support.py\ndeployment/AgenticRAG/tests/resources/r10-compose.yaml\ndeployment/AgenticRAG/tests/runner_fault_helper.py\ndeployment/AgenticRAG/tests/storage_process_helper.py\ndeployment/AgenticRAG/tests/test_archives.py\ndeployment/AgenticRAG/tests/test_chunking.py\ndeployment/AgenticRAG/tests/test_configuration.py\ndeployment/AgenticRAG/tests/test_dense_runner.py\ndeployment/AgenticRAG/tests/test_domain.py\ndeployment/AgenticRAG/tests/test_evaluation_protocol.py\ndeployment/AgenticRAG/tests/test_frozen_tokenizers.py\ndeployment/AgenticRAG/tests/test_host_contract.py\ndeployment/AgenticRAG/tests/test_ingestion_inputs.py\ndeployment/AgenticRAG/tests/test_input_migration.py\ndeployment/AgenticRAG/tests/test_input_snapshots.py\ndeployment/AgenticRAG/tests/test_local_model_capabilities.py\ndeployment/AgenticRAG/tests/test_milvus_capabilities.py\ndeployment/AgenticRAG/tests/test_model_worker.py\ndeployment/AgenticRAG/tests/test_model_worker_gpu.py\ndeployment/AgenticRAG/tests/test_package_install.py\ndeployment/AgenticRAG/tests/test_parsing.py\ndeployment/AgenticRAG/tests/test_parsing_corpus.py\ndeployment/AgenticRAG/tests/test_processing_checkpoints.py\ndeployment/AgenticRAG/tests/test_processing_processes.py\ndeployment/AgenticRAG/tests/test_publication.py\ndeployment/AgenticRAG/tests/test_publication_milvus.py\ndeployment/AgenticRAG/tests/test_publication_processes.py\ndeployment/AgenticRAG/tests/test_publication_resources.py\ndeployment/AgenticRAG/tests/test_publication_small.py\ndeployment/AgenticRAG/tests/test_source_identity.py\ndeployment/AgenticRAG/tests/test_source_maps.py\ndeployment/AgenticRAG/tests/test_storage.py\ndeployment/AgenticRAG/tests/test_storage_processes.py\ndeployment/AgenticRAG/tests/test_worker_history.py\ndeployment/AgenticRAG/tests/tokenizer_oracle.py\ndeployment/AgenticRAG/tests/worker_fault_helper.py\ndeployment/AgenticRAG/tests/worker_gpu_fault_helper.py\ndeployment/AgenticRAG/tests/worker_history_helper.py\ndeployment/AgenticRAG/tests/worker_process_helper.py\ndeployment/AgenticRAG/tests/worker_startup_race_helper.py\ndeployment/AgenticRAG/uv.lock\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Users\\18221\\AppData\\Roaming\\Python\\Scripts\\uv.EXE",
+        "build",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2\\r08-source",
+        "--wheel",
+        "--out-dir",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2\\old-wheel",
+        "--python",
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "--no-build-isolation",
+        "--no-create-gitignore"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Building wheel...\nSuccessfully built old-wheel\\codeplus_agentic_rag-0.1.0-py3-none-any.whl\n"
+    },
+    {
+      "argv": [
+        "C:\\Users\\18221\\AppData\\Roaming\\Python\\Scripts\\uv.EXE",
+        "venv",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2\\old-env",
+        "--python",
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using CPython 3.14.3 interpreter at: C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe\nCreating virtual environment at: old-env\nActivate with: old-env\\Scripts\\activate\n"
+    },
+    {
+      "argv": [
+        "C:\\Users\\18221\\AppData\\Roaming\\Python\\Scripts\\uv.EXE",
+        "pip",
+        "install",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2\\old-env\\Scripts\\python.exe",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2\\old-wheel\\codeplus_agentic_rag-0.1.0-py3-none-any.whl"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using Python 3.14.3 environment at: old-env\nResolved 25 packages in 28ms\nPrepared 1 package in 15ms\nInstalled 25 packages in 257ms\n + annotated-types==0.8.0\n + anyio==4.15.1\n + apsw==3.53.4.0\n + certifi==2026.7.22\n + click==8.5.0\n + codeplus-agentic-rag==0.1.0 (from file:///C:/Users/18221/AppData/Local/Temp/codeplus-r11-executor-20260922/core-final1/test_real_preceding_installed_2/old-wheel/codeplus_agentic_rag-0.1.0-py3-none-any.whl)\n + colorama==0.4.6\n + filelock==4.0.1\n + fsspec==2026.9.0\n + h11==0.16.0\n + hf-xet==1.6.0\n + httpcore==1.0.9\n + httpx==0.28.1\n + huggingface-hub==1.32.0\n + idna==3.20\n + markdown-it-py==4.0.0\n + mdurl==0.1.2\n + packaging==26.3\n + pydantic==2.13.5\n + pydantic-core==2.46.5\n + pyyaml==6.0.3\n + tokenizers==0.23.2\n + tqdm==4.70.1\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n"
+    },
+    {
+      "argv": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2\\old-env\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\worker_history_helper.py",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R09-prechange-snapshot.json",
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r11-executor-20260922\\core-final1\\test_real_preceding_installed_2",
+      "exit_code": 0,
+      "stdout": "{\"created\": true, \"config_fingerprint\": \"45aac19aeac18f943a7d034a4222590b155547b5db78c40ee116dba89911cc8b\", \"run_identity\": \"405b26f966ff371c29ceab0dc0ccc97d235fd198ce3614c27b8eb9eb9fd317fd\"}\n",
+      "stderr": ""
+    }
+  ],
+  "source_files": {
+    ".gitignore": "7ecbe1d0981884b86d38f3f56f3f7a7c5294d15962566624fd3d372e8ab99e54",
+    "LICENSE": "58ffcfecaeee2aa7c40a0d204564997d9aa55acf113d61f04cef9da9469744e2",
+    "pyproject.toml": "1289dd4f3a230bf4fb322b29fe92e669ec8facacaad15033797452932a8e270b",
+    "README.md": "e8a01ccef8879a2274a468b37ed09dee9a4e29b9e21c84249912eda4736ed66c",
+    "uv.lock": "9b25bd296ac2c4d27df3765368a22900595107f3adf0d842cb61f881deaee438",
+    "src/agentic_rag/capabilities.py": "d836abdf35d094866c1ac665131eb1f6eaa60763cb59acf53b1bed77d7743d7e",
+    "src/agentic_rag/config.py": "f2bc82af99912efb166ac835a68b9947ce7de509c36b3b52cedc8ee45a26cbe1",
+    "src/agentic_rag/domain.py": "417431b14b0816e04288f8605e9758036ea9bb49115bb2806bad503804c1c2cf",
+    "src/agentic_rag/profiles.py": "a32c16deb5b9da64bf062e8bd1e0f6ffa8d2c8a1743752d1a02d99e49e93b57a",
+    "src/agentic_rag/_schema.py": "eece6292cb2925d581881920eb46a34e57cf5b56f7e652ee56535ea2d22e07e8",
+    "src/agentic_rag/__init__.py": "9cf325be264c02568ef08d12eb594eccda599d67b66ba6d8d77b3b4186b302c7",
+    "src/agentic_rag/indexes/manifest.py": "5936554e62b7d49369b60fbaaee1355edce33566f17071365635b87cfc121b74",
+    "src/agentic_rag/indexes/milvus.py": "fb41f4d3d0aa6f0d3252174c193001f50fcbb2ab540cc86f7ed3a0ee663edf38",
+    "src/agentic_rag/indexes/__init__.py": "7a83cacd7e345ffd7d88ae0edea07715822c39d4d7014dd0e5bffbd7789508f7",
+    "src/agentic_rag/ingestion/build.py": "9757f43e72602551fa0d26dce8ad22085a23caabb9b1765708cc60ac164114df",
+    "src/agentic_rag/ingestion/capture.py": "c97fe9105a1cda7a2d3dc144cb1993244d37d7341f1ad0f1aca628164b0f9680",
+    "src/agentic_rag/ingestion/chunking.py": "26259bf5e86a41a93c22028f1e96f51c533c7856a345c0109ed855d55e0bf38a",
+    "src/agentic_rag/ingestion/parsing.py": "82d659f67f1c987bce18a790b626fc8bb920eac91deae4290db7b116f2588ade",
+    "src/agentic_rag/ingestion/processing.py": "78f0258e8c55d62957885ea62948b055abab13fce8343433f227d84c116042bc",
+    "src/agentic_rag/ingestion/records.py": "5df9509a69b15c652132f3b76e5dba60bd35c046d5b70cbd2da2746439769d07",
+    "src/agentic_rag/ingestion/selection.py": "421843d96c462cda78e04f8bab7463ae33562b4288525f29f7f5d381d4674c5b",
+    "src/agentic_rag/ingestion/source.py": "c386d2e438537b4349e3e90c40deb0dbe2bb733d61a102a8bf7504f7fa0c71a9",
+    "src/agentic_rag/ingestion/__init__.py": "86e1cafc00c3763c8c3e6d14271bd24cba16728a054d47f35f8462d96af84eb2",
+    "src/agentic_rag/models/client.py": "6b01f8a278b74b34b319f5eb7f0178ddbcb67e8c5203348832f8d86df1a2be1e",
+    "src/agentic_rag/models/engine.py": "2c1ee54d5fb7b9d67e7f87b9252cfdb7c0af26c9a3d4ed197e76647f7ea5a822",
+    "src/agentic_rag/models/identity.py": "b8006f49ad92f6fbe8346487f7ae161d19fbb3de61d3d430835de28b0622eeff",
+    "src/agentic_rag/models/lifecycle.py": "3801985cc3b4c0955a5c8ddc80b54bbe7f7d2272da6a5ff8fa8d28bbdc8d0b67",
+    "src/agentic_rag/models/models.lock.json": "7d47eb1960e6432c2c3a202530f9d22fa941364e1c607cf9ad3215f9b41570f5",
+    "src/agentic_rag/models/protocol.py": "8bd345f58fd50a582c0fa6b3c4dcfba6b12702d4ef99e78e939f582777f9b073",
+    "src/agentic_rag/models/tokenization.py": "f00b6f3d976f9d5aecad30074b2988b9efa20f14c0926a2116ef8beb07042e7c",
+    "src/agentic_rag/models/worker.py": "fc5e295d11025407e6ac3f37bafc3ce0e8372d70a0406c8404192f7ffd407eed",
+    "src/agentic_rag/models/_windows.py": "c22c4e0180352a620dea8deba7d28d720d4dee4a11ca2a374f38a6063ca8b0d0",
+    "src/agentic_rag/models/__init__.py": "19a1eda35abbe1a88ea565acb6213f58d24bad4ff68ee506b96afb3a24aad90f",
+    "src/agentic_rag/retrieval/dense.py": "34a1802ad4077cd83b34381d69a09660197ebbcc57e00fc9ec4662dbf59202d6",
+    "src/agentic_rag/retrieval/__init__.py": "88cfb2ff3059944f4ff3688ce6ee051a3db45dc44edbcaf3d4f942e1950bc3ef",
+    "src/agentic_rag/storage/archives.py": "425976539293cb0f695066886997a5c38c02f71fe9f8251a663da4383a1034b5",
+    "src/agentic_rag/storage/catalog.py": "68d177165c405369bd2b776ce8e6eb9d3998e0ec2de69dfeb2c14fcfc67dc941",
+    "src/agentic_rag/storage/database.py": "db47455251f188cec3141031f20501520d150969f51381279dcf2c7b3a40332d",
+    "src/agentic_rag/storage/inputs.py": "9d54d0595ac4b7c0ab3154ad9a0be9d5341c68249e8622f5e664f114d545e910",
+    "src/agentic_rag/storage/inputs.sql": "ef2ba6f72854f6a2558c278124a51142d08773080d23d62a260fe46e895c05d8",
+    "src/agentic_rag/storage/locks.py": "a183b2270626cebe866d630244527b583a0ab3b5b8c798c2e7a5e4610a769ea5",
+    "src/agentic_rag/storage/ownership.py": "5ba98e29bb27713f4cc49d00cc91e242ba4f2f1011d3edd53ea54398f91752d8",
+    "src/agentic_rag/storage/paths.py": "9d476a8d4db81df53727408f6bc4f81e9c3f0606eb8cc14968aa29bc21650804",
+    "src/agentic_rag/storage/processing.py": "ce483ff07a04cf8d5e313e8b239453a7e82cfb887a6dc9731e4be33761e48ba1",
+    "src/agentic_rag/storage/processing.sql": "c08375fb3414b1597c44ac8958f29fe1ec3738633c9a4aa3847eef89d2b83926",
+    "src/agentic_rag/storage/publication.py": "700f50c0b108e6ef88a4a14e2a585ca2da84b8223729eabe55d1d92bdd837561",
+    "src/agentic_rag/storage/publication.sql": "1f024dd1ceb832e297ca5e20a7b4b1028624eacb62c3e1f18dd781d74b75ff1b",
+    "src/agentic_rag/storage/runs.py": "bd14521bb9183591291fbaa572341d2d09506e2869321e529d91282217687fae",
+    "src/agentic_rag/storage/schema.sql": "d2032ebe2981d22d765f6ab16d2610a7032cc37d3c7cdaf00d19b5d9cdab161e",
+    "src/agentic_rag/storage/__init__.py": "80d52fffd41289d15b5024028abda239d354c5d99086f24be447c8911e808b95"
+  },
+  "old_wheel_sha256": "9e57e6f8c3ae058477ea59bbdf4410549056f0980e974e815e4afbb066b77440",
+  "migration5_preserved_history_without_fabricated_publication_or_evidence": true,
+  "old_state": {
+    "batch_id": "985eb68b-aee0-4897-9529-342831bb8670",
+    "item_id": "2d1078c6-0bbf-420f-b1c8-6dd953caae93",
+    "snapshot_id": "99999999-9999-4999-8999-999999999999",
+    "processing": {
+      "schema_version": 1,
+      "batch_id": "985eb68b-aee0-4897-9529-342831bb8670",
+      "document_id": "77fd380a-2904-42bb-98fe-37b76ac7dfc4",
+      "captured_hash": "45afed3b2960b25d863e5258f3500300f9b84fc5e5237cd2c741136f740dc59d",
+      "stage": "chunked",
+      "output_hashes": [
+        {
+          "schema_version": 1,
+          "kind": "raw",
+          "sha256": "45afed3b2960b25d863e5258f3500300f9b84fc5e5237cd2c741136f740dc59d"
+        },
+        {
+          "schema_version": 1,
+          "kind": "parsed",
+          "sha256": "ef72eb6ba65c77ef24ba9fc22c424ff5fbdce0aecc4d697022dd752012af41a2"
+        },
+        {
+          "schema_version": 1,
+          "kind": "source_map",
+          "sha256": "fa34f3ea4e28e8615aa54592d4bc531422deba3b4f96a0c991f60a2ceadbb410"
+        },
+        {
+          "schema_version": 1,
+          "kind": "chunks",
+          "sha256": "5d8459997ed909906716084602e4056f446de7cc916ec5492ea420dd6e92e095"
+        }
+      ],
+      "error": null
+    },
+    "snapshot": {
+      "schema_version": 1,
+      "snapshot_id": "99999999-9999-4999-8999-999999999999",
+      "fingerprint_version": 1,
+      "resolved_config": {
+        "schema_version": 1,
+        "parameter_status": "experiment",
+        "storage": {
+          "schema_version": 1,
+          "data_dir": "C:/r05-example/data",
+          "milvus_uri": "http://127.0.0.1:19530",
+          "namespace": "r05_test",
+          "credential_ref": null
+        },
+        "processing": {
+          "schema_version": 1,
+          "parser": {
+            "schema_version": 1,
+            "implementation": "markdown_it_txt",
+            "version": "markdown-it-py-4.0.0+source-v1",
+            "normalization_version": "utf8-bom-newlines-v1",
+            "encoding": "utf-8"
+          },
+          "chunker": {
+            "schema_version": 1,
+            "implementation": "structure_sentence_token",
+            "version": "canonical-offsets-v1",
+            "max_tokens": 512,
+            "overlap_tokens": 64
+          },
+          "index": {
+            "schema_version": 1,
+            "schema_version_name": "test-1",
+            "dense_index": "IVF_FLAT",
+            "dense_metric": "COSINE",
+            "nlist": 1,
+            "sparse_index": "SPARSE_INVERTED_INDEX",
+            "sparse_algorithm": "DAAT_MAXSCORE",
+            "tokenizer": "standard",
+            "filters": [
+              "lowercase"
+            ],
+            "bm25_k1": 1.2,
+            "bm25_b": 0.75
+          }
+        },
+        "models": {
+          "schema_version": 1,
+          "embedding": "embed",
+          "reranker": "rank"
+        },
+        "model_profiles": [
+          {
+            "schema_version": 1,
+            "name": "embed",
+            "backend": "qwen3_local",
+            "runtime": {
+              "schema_version": 1,
+              "dtype": "bfloat16",
+              "attention": "sdpa",
+              "device": "cuda:0",
+              "implementation": "transformers",
+              "torch_version": "2.14.0+cu130",
+              "transformers_version": "5.17.0",
+              "tokenizers_version": "0.23.2",
+              "use_cache": false,
+              "trust_remote_code": false,
+              "local_files_only": true,
+              "allocator_cap_mib": 2048
+            },
+            "limits": {
+              "schema_version": 1,
+              "max_input_tokens": 2048,
+              "max_batch_size": 4,
+              "max_padded_tokens": 4096
+            },
+            "document_template": "title_text_v1",
+            "document_with_title": "Title: {title}\n{text}",
+            "document_without_title": "{text}",
+            "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+            "capability": "embedding",
+            "model": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+            "tokenizer": {
+              "schema_version": 1,
+              "model": "Qwen/Qwen3-Embedding-0.6B",
+              "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+              "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+              "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+              "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+              "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+              "padding_side": "left",
+              "truncation": false
+            },
+            "query_template": "Instruct: {instruction}\nQuery:{query}",
+            "add_special_tokens": true,
+            "dimension": 1024,
+            "pooling": "last_nonpadding_token",
+            "normalization": "float32_L2"
+          },
+          {
+            "schema_version": 1,
+            "name": "rank",
+            "backend": "qwen3_local",
+            "runtime": {
+              "schema_version": 1,
+              "dtype": "bfloat16",
+              "attention": "sdpa",
+              "device": "cuda:0",
+              "implementation": "transformers",
+              "torch_version": "2.14.0+cu130",
+              "transformers_version": "5.17.0",
+              "tokenizers_version": "0.23.2",
+              "use_cache": false,
+              "trust_remote_code": false,
+              "local_files_only": true,
+              "allocator_cap_mib": 2048
+            },
+            "limits": {
+              "schema_version": 1,
+              "max_input_tokens": 2048,
+              "max_batch_size": 4,
+              "max_padded_tokens": 4096
+            },
+            "document_template": "title_text_v1",
+            "document_with_title": "Title: {title}\n{text}",
+            "document_without_title": "{text}",
+            "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+            "capability": "rerank",
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+            "tokenizer": {
+              "schema_version": 1,
+              "model": "Qwen/Qwen3-Reranker-0.6B",
+              "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+              "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+              "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+              "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+              "padding_side": "left",
+              "truncation": false
+            },
+            "add_special_tokens": false,
+            "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+            "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+            "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+            "score_type": "softmax_float32([no,yes])[yes]",
+            "logits_to_keep": 1
+          }
+        ],
+        "retrieval": {
+          "schema_version": 1,
+          "mode": "auto",
+          "route": "dense",
+          "rerank": false,
+          "dense_candidates": 20,
+          "bm25_candidates": 20,
+          "rerank_candidates": 20,
+          "rrf_k": 40,
+          "nprobe": 1,
+          "context_chunks": 5,
+          "context_tokens": 3000
+        },
+        "budgets": {
+          "schema_version": 1,
+          "qa": {
+            "schema_version": 1,
+            "searches": 3,
+            "opens": 3,
+            "total_tokens": 12000,
+            "duration_ms": 120000,
+            "finish_reserve_tokens": 3000,
+            "finish_reserve_ms": 20000
+          },
+          "report": {
+            "schema_version": 1,
+            "searches": 7,
+            "opens": 9,
+            "total_tokens": 36000,
+            "duration_ms": 360000,
+            "finish_reserve_tokens": 6000,
+            "finish_reserve_ms": 40000
+          }
+        }
+      },
+      "config_fingerprint": "45aac19aeac18f943a7d034a4222590b155547b5db78c40ee116dba89911cc8b",
+      "document_encoding_fingerprint": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+      "index_fingerprint": "26e0478d3effecba34a798d17ed6cb98db2a3de64e22ffa2cc6dc830402e7f3b"
+    },
+    "run_identity": "405b26f966ff371c29ceab0dc0ccc97d235fd198ce3614c27b8eb9eb9fd317fd",
+    "run_json": {
+      "schema_version": 1,
+      "feature": "knowledge",
+      "task_kind": "qa",
+      "knowledge": {
+        "schema_version": 1,
+        "parameter_status": "experiment",
+        "storage": {
+          "schema_version": 1,
+          "data_dir": "C:/r05-example/data",
+          "milvus_uri": "http://127.0.0.1:19530",
+          "namespace": "r05_test",
+          "credential_ref": null
+        },
+        "processing": {
+          "schema_version": 1,
+          "parser": {
+            "schema_version": 1,
+            "implementation": "markdown_it_txt",
+            "version": "markdown-it-py-4.0.0+source-v1",
+            "normalization_version": "utf8-bom-newlines-v1",
+            "encoding": "utf-8"
+          },
+          "chunker": {
+            "schema_version": 1,
+            "implementation": "structure_sentence_token",
+            "version": "canonical-offsets-v1",
+            "max_tokens": 512,
+            "overlap_tokens": 64
+          },
+          "index": {
+            "schema_version": 1,
+            "schema_version_name": "test-1",
+            "dense_index": "IVF_FLAT",
+            "dense_metric": "COSINE",
+            "nlist": 1,
+            "sparse_index": "SPARSE_INVERTED_INDEX",
+            "sparse_algorithm": "DAAT_MAXSCORE",
+            "tokenizer": "standard",
+            "filters": [
+              "lowercase"
+            ],
+            "bm25_k1": 1.2,
+            "bm25_b": 0.75
+          }
+        },
+        "models": {
+          "schema_version": 1,
+          "embedding": "embed",
+          "reranker": "rank"
+        },
+        "model_profiles": [
+          {
+            "schema_version": 1,
+            "name": "embed",
+            "backend": "qwen3_local",
+            "runtime": {
+              "schema_version": 1,
+              "dtype": "bfloat16",
+              "attention": "sdpa",
+              "device": "cuda:0",
+              "implementation": "transformers",
+              "torch_version": "2.14.0+cu130",
+              "transformers_version": "5.17.0",
+              "tokenizers_version": "0.23.2",
+              "use_cache": false,
+              "trust_remote_code": false,
+              "local_files_only": true,
+              "allocator_cap_mib": 2048
+            },
+            "limits": {
+              "schema_version": 1,
+              "max_input_tokens": 2048,
+              "max_batch_size": 4,
+              "max_padded_tokens": 4096
+            },
+            "document_template": "title_text_v1",
+            "document_with_title": "Title: {title}\n{text}",
+            "document_without_title": "{text}",
+            "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+            "capability": "embedding",
+            "model": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+            "tokenizer": {
+              "schema_version": 1,
+              "model": "Qwen/Qwen3-Embedding-0.6B",
+              "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+              "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+              "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+              "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+              "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+              "padding_side": "left",
+              "truncation": false
+            },
+            "query_template": "Instruct: {instruction}\nQuery:{query}",
+            "add_special_tokens": true,
+            "dimension": 1024,
+            "pooling": "last_nonpadding_token",
+            "normalization": "float32_L2"
+          },
+          {
+            "schema_version": 1,
+            "name": "rank",
+            "backend": "qwen3_local",
+            "runtime": {
+              "schema_version": 1,
+              "dtype": "bfloat16",
+              "attention": "sdpa",
+              "device": "cuda:0",
+              "implementation": "transformers",
+              "torch_version": "2.14.0+cu130",
+              "transformers_version": "5.17.0",
+              "tokenizers_version": "0.23.2",
+              "use_cache": false,
+              "trust_remote_code": false,
+              "local_files_only": true,
+              "allocator_cap_mib": 2048
+            },
+            "limits": {
+              "schema_version": 1,
+              "max_input_tokens": 2048,
+              "max_batch_size": 4,
+              "max_padded_tokens": 4096
+            },
+            "document_template": "title_text_v1",
+            "document_with_title": "Title: {title}\n{text}",
+            "document_without_title": "{text}",
+            "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+            "capability": "rerank",
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+            "tokenizer": {
+              "schema_version": 1,
+              "model": "Qwen/Qwen3-Reranker-0.6B",
+              "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+              "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+              "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+              "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+              "padding_side": "left",
+              "truncation": false
+            },
+            "add_special_tokens": false,
+            "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+            "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+            "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+            "score_type": "softmax_float32([no,yes])[yes]",
+            "logits_to_keep": 1
+          }
+        ],
+        "retrieval": {
+          "schema_version": 1,
+          "mode": "auto",
+          "route": "dense",
+          "rerank": false,
+          "dense_candidates": 20,
+          "bm25_candidates": 20,
+          "rerank_candidates": 20,
+          "rrf_k": 40,
+          "nprobe": 1,
+          "context_chunks": 5,
+          "context_tokens": 3000
+        },
+        "budgets": {
+          "schema_version": 1,
+          "qa": {
+            "schema_version": 1,
+            "searches": 3,
+            "opens": 3,
+            "total_tokens": 12000,
+            "duration_ms": 120000,
+            "finish_reserve_tokens": 3000,
+            "finish_reserve_ms": 20000
+          },
+          "report": {
+            "schema_version": 1,
+            "searches": 7,
+            "opens": 9,
+            "total_tokens": 36000,
+            "duration_ms": 360000,
+            "finish_reserve_tokens": 6000,
+            "finish_reserve_ms": 40000
+          }
+        }
+      },
+      "retrieval": {
+        "schema_version": 1,
+        "mode": "auto",
+        "route": "dense",
+        "rerank": false,
+        "dense_candidates": 20,
+        "bm25_candidates": 20,
+        "rerank_candidates": 20,
+        "rrf_k": 40,
+        "nprobe": 1,
+        "context_chunks": 5,
+        "context_tokens": 3000
+      },
+      "budget": {
+        "schema_version": 1,
+        "searches": 3,
+        "opens": 3,
+        "total_tokens": 12000,
+        "duration_ms": 120000,
+        "finish_reserve_tokens": 3000,
+        "finish_reserve_ms": 20000
+      }
+    },
+    "data_hashes": {
+      ".agentic-rag.json": "da5d77176ca629e67abc40e7ba9b85cee209d8b065ff10c50d9655178e8b5142",
+      "catalog.sqlite": "1fc9b030af31ddec4e5ba7e48e3c0e8b7417de2cae3fc9b3b1212bdc3a177230",
+      "locks/archive-45afed3b2960b25d863e5258f3500300f9b84fc5e5237cd2c741136f740dc59d.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locks/archive-5d8459997ed909906716084602e4056f446de7cc916ec5492ea420dd6e92e095.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locks/archive-ef72eb6ba65c77ef24ba9fc22c424ff5fbdce0aecc4d697022dd752012af41a2.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locks/archive-fa34f3ea4e28e8615aa54592d4bc531422deba3b4f96a0c991f60a2ceadbb410.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locks/library-2e59697c-20b8-4c95-a884-6abb0ebf493b.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "locks/schema.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archives/45/45afed3b2960b25d863e5258f3500300f9b84fc5e5237cd2c741136f740dc59d": "45afed3b2960b25d863e5258f3500300f9b84fc5e5237cd2c741136f740dc59d",
+      "archives/5d/5d8459997ed909906716084602e4056f446de7cc916ec5492ea420dd6e92e095": "5d8459997ed909906716084602e4056f446de7cc916ec5492ea420dd6e92e095",
+      "archives/ef/ef72eb6ba65c77ef24ba9fc22c424ff5fbdce0aecc4d697022dd752012af41a2": "ef72eb6ba65c77ef24ba9fc22c424ff5fbdce0aecc4d697022dd752012af41a2",
+      "archives/fa/fa34f3ea4e28e8615aa54592d4bc531422deba3b4f96a0c991f60a2ceadbb410": "fa34f3ea4e28e8615aa54592d4bc531422deba3b4f96a0c991f60a2ceadbb410"
+    }
+  },
+  "result": "PASS",
+  "source_deleted_before_reopen": true
+}

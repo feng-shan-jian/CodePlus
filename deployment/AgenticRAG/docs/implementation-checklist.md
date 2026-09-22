@@ -30,8 +30,8 @@
 | R07 | COMMITTED | /root/r07_inputs | [验收记录](implementation-records/R07.md) | `5d2e71a7d5400c77b0675cb803cca4d433110678` |
 | R08 | COMMITTED | /root/r08_parsing | [Leader 验收](implementation-records/R08.md) | `97224b0414c9b67bc99ed59799fa2f2286ab5460` |
 | R09 | COMMITTED | /root/r09_model_worker | [Leader 验收](implementation-records/R09.md) | `9afe7e37982cf63c3e2199403499b289d8a520b1` |
-| R10 | ACCEPTED | /root/r10_publication | [Leader独立验收](implementation-records/R10.md)；326核心+11真实+4增量，609/200/重启通过 | 待本地提交 |
-| R11 | TODO | — | — | — |
+| R10 | COMMITTED | /root/r10_publication | [Leader独立验收](implementation-records/R10.md)；326核心+11真实+4增量，609/200/重启通过 | 81bf1461c73d9d640144eb1ed8b9a193d0f4f953 |
+| R11 | ACCEPTED | /root/r11_sources | [Leader独立验收](implementation-records/R11.md)；393核心无skip、两路安装及三版真实升级通过 | 待精确本地提交 |
 | R12 | TODO | — | — | — |
 | R13 | TODO | — | — | — |
 | R14 | TODO | — | — | — |
@@ -180,11 +180,11 @@
 <a id="r11"></a>
 ### R11：原文与证据
 
-- [ ] 默认读取命中章节，长章节分页、无标题根章节、其他章节导航和逐步全文读取有准确位置/未读标记。
-- [ ] source_ref/cursor 绑定运行、库和文档版本；跨库、跨运行、伪造/过期/越界 cursor 及任意路径读取被拒绝。
-- [ ] 待交付候选与实际送达正文分开；目录、内部评分候选、未送达全文不能获得 evidence_id 的有效引用资格。
-- [ ] 引用程序核验来源、版本、范围和直接摘录；串版本/篡改/不可追溯摘录失败，不做在线额外语义 LLM 复核。
-- [ ] 引用回看依赖归档和元数据，不依赖当前源文件；读取与搜索都受数量/token/运行范围约束。
+- [x] 默认读取命中章节，长章节分页、无标题根章节、其他章节导航和逐步全文读取有准确位置/未读标记。
+- [x] source_ref/cursor 绑定运行、库和文档版本；跨库、跨运行、伪造/过期/越界 cursor 及任意路径读取被拒绝。
+- [x] 待交付候选与实际送达正文分开；目录、内部评分候选、未送达全文不能获得 evidence_id 的有效引用资格。
+- [x] 引用程序核验来源、版本、范围和直接摘录；串版本/篡改/不可追溯摘录失败，不做在线额外语义 LLM 复核。
+- [x] 引用回看依赖归档和元数据，不依赖当前源文件；读取与搜索都受数量/token/运行范围约束。
 
 <a id="r12"></a>
 ### R12：真实 Agent 链路

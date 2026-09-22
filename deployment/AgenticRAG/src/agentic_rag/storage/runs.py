@@ -50,12 +50,14 @@ class RunLease:
             raise failure("run identity does not match its lifecycle lock")
         if not isinstance(status, RunStatus) or status == RunStatus.RUNNING:
             raise failure("finish requires a terminal run status")
-        finished = self.run.model_copy(update={"status": status, "stop_reason": stop_reason, "usage": usage or self.run.usage})
         with self._database.transaction(write=True) as connection:
             pin = read_pin(connection, self.run.run_id)
             current = read_run(connection, self.run.run_id)
             if pin != self.pin or pin.state != "active" or current.status != RunStatus.RUNNING:
                 raise failure("run owner is stale or already released")
+            # Source calls update usage durably while the lease binding remains
+            # immutable. Finishing must not restore its older in-memory usage.
+            finished = current.model_copy(update={"status": status, "stop_reason": stop_reason, "usage": usage or current.usage})
             connection.execute("UPDATE runs SET status=?,stop_reason=?,usage=? WHERE run_id=?", (status.value, stop_reason, finished.usage.model_dump_json(), str(self.run.run_id)))
             connection.execute("UPDATE run_pins SET state='released' WHERE run_id=? AND owner_nonce=?", (str(self.run.run_id), str(self.pin.owner_nonce)))
         self._run = finished

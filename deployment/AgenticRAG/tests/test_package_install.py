@@ -21,7 +21,7 @@ import io, json, pathlib, sys
 from uuid import uuid4
 import agentic_rag
 from agentic_rag.config import KnowledgeConfig, ProcessingSnapshot, RunOverride, resolve_run
-from agentic_rag.domain import KnowledgeBase, Span, ErrorCode, RagError
+from agentic_rag.domain import KnowledgeBase, Span, ErrorCode, RagError, KnowledgeRevision, RevisionMember, IndexState, SourceRef
 from agentic_rag.capabilities import require_optional_dependencies, require_provider
 from agentic_rag.storage import Catalog
 from agentic_rag.storage.database import runtime_fingerprint
@@ -56,11 +56,41 @@ with catalog.begin_import(library.kb_id, snapshot, manifest) as owner:
     source.unlink()
     processed, = process_inputs(catalog, owner, FrozenTokenizer(config.embedding, pathlib.Path(sys.argv[2])))
     assert processed.stage == 'chunked'
+    item,version,chunks=read_processed(catalog,item.batch_id,item.entry.item_id)
+    revision=KnowledgeRevision(revision_id=uuid4(),kb_id=library.kb_id,processing_snapshot_id=snapshot.snapshot_id,
+        manifest_hash='a'*64,index_state=IndexState.PREPARING)
+    member=RevisionMember(revision_id=revision.revision_id,document_id=version.document_id,
+        document_version_id=version.document_version_id,chunk_set_hash=next(v.sha256 for v in item.output_hashes if v.kind=='chunks'))
+    catalog.add_candidate(owner,revision,(member,))
+    # Source-only installation fixture; no claim of service publication.
+    with catalog._owned(owner) as connection:
+        connection.execute("UPDATE revisions SET index_state='READY' WHERE revision_id=?",(str(revision.revision_id),))
+        connection.execute('UPDATE libraries SET current_revision_id=? WHERE kb_id=?',(str(revision.revision_id),str(library.kb_id)))
     owner.abandon()
 reopened = Catalog(catalog._directory.root)
-assert read_input(reopened, item.batch_id, item.entry.item_id) == b'installed immutable original'
-assert verify_inputs(reopened, item.batch_id) == (snapshot, (item,))
-assert read_processed(reopened, item.batch_id, item.entry.item_id)[0] == processed
+raw_item,=reopened.get_input_items(item.batch_id)
+assert read_input(reopened, item.batch_id, raw_item.entry.item_id) == b'installed immutable original'
+assert verify_inputs(reopened, item.batch_id) == (snapshot, (raw_item,))
+assert read_processed(reopened, item.batch_id, raw_item.entry.item_id)[0] == processed
+from agentic_rag.sources import SourceSession
+from agentic_rag.evidence import DeliveryGateway,MappedSpan
+from agentic_rag.citations import CitationRegistry,open_citation
+class ControlledMeter:
+    identity='installed-controlled-utf8-byte-fixture'
+    def count(self,text):return len(text.encode())
+with reopened.start_run(library.kb_id,resolve_run(config,'qa')) as lease:
+    session=SourceSession(reopened,lease,ControlledMeter())
+    ref=SourceRef(kb_id=library.kb_id,revision_id=revision.revision_id,document_id=version.document_id,
+        document_version_id=version.document_version_id,section_id=chunks.parsed.sections[0].section_id)
+    result=session.open(session.issue_source(ref))
+    gateway=DeliveryGateway(session);gateway.bind_tool_result(result,'installed-call')
+    body=json.dumps({'messages':[{'role':'tool','tool_call_id':'installed-call','content':result.text}]}).encode()
+    mappings=tuple(MappedSpan(m.candidate_id,m.source_span,('messages',0,'content'),m.body_span,('messages',0,'tool_call_id')) for m in result.body_mappings)
+    permit=gateway.prepare(body,mappings,purpose='explore',protocol='compat')
+    evidence_id,=gateway.settle(permit,'confirmed')
+    saved=CitationRegistry(session).save(evidence_id,(Span(start=0,end=9),),('installed',))
+from uuid import UUID
+assert open_citation(reopened,UUID(saved['citation']['citation_id']))==saved
 sqlite = runtime_fingerprint()
 assert sqlite['apsw'] == '3.53.4.0' and sqlite['sqlite'] == '3.53.4'
 for action, code in ((lambda: require_optional_dependencies('embedding'), ErrorCode.DEPENDENCY_UNAVAILABLE),
@@ -86,7 +116,8 @@ print(json.dumps({'executable':sys.executable, 'python':sys.version, 'prefix':st
                   'cwd':str(pathlib.Path.cwd()), 'import_path':str(location), 'isolated':bool(sys.flags.isolated),
                   'version':agentic_rag.__version__, 'requirements':requirements, 'installed':installed,
                   'sqlite':sqlite, 'storage_roundtrip':True, 'input_snapshot_roundtrip':True,
-                  'manifest_hash':manifest.identity, 'raw_hash':item.raw.sha256, 'parsed_checkpoint_roundtrip':True,
+                  'manifest_hash':manifest.identity, 'raw_hash':raw_item.raw.sha256, 'parsed_checkpoint_roundtrip':True,
+                  'source_delivery_citation_roundtrip':True,'delivery_is_controlled_core_fixture_not_http':True,
                   'document_encoding_fingerprint':snapshot.document_encoding_fingerprint,
                   'forbidden_modules_loaded':[], 'missing_dependencies_diagnostic':True}))
 '''
@@ -128,10 +159,10 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
         expected_sources = {file.relative_to(package / "src").as_posix() for file in
                             (package / "src/agentic_rag").rglob("*") if file.suffix in {".py", ".sql", ".json"}}
         root_sources = {"agentic_rag/" + name for name in
-                        ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py")}
+                        ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py", "source_archive.py", "sources.py", "evidence.py", "citations.py")}
         storage_sources = {"agentic_rag/storage/" + name for name in
                            ("__init__.py", "archives.py", "catalog.py", "database.py", "locks.py",
-                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql", "publication.py", "publication.sql")}
+                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql", "publication.py", "publication.sql", "evidence.sql")}
         ingestion_sources = {"agentic_rag/ingestion/" + name for name in
                              ("__init__.py", "records.py", "source.py", "selection.py", "capture.py", "parsing.py", "chunking.py", "processing.py", "build.py")}
         model_sources = {'agentic_rag/models/' + name for name in ('__init__.py', 'tokenization.py',
@@ -193,6 +224,6 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
                 'exception':missing['error'],'report_sha256':hashlib.sha256(missing_report.read_bytes()).hexdigest()}
         report["result"] = "PASS"
     finally:
-        evidence_path = os.environ.get("R10_INSTALL_REPORT") or os.environ.get("R09_INSTALL_REPORT") or os.environ.get("R08_INSTALL_REPORT") or os.environ.get("R07_INSTALL_REPORT") or os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
+        evidence_path = os.environ.get("R11_INSTALL_REPORT") or os.environ.get("R10_INSTALL_REPORT") or os.environ.get("R09_INSTALL_REPORT") or os.environ.get("R08_INSTALL_REPORT") or os.environ.get("R07_INSTALL_REPORT") or os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
         if evidence_path:
             Path(evidence_path).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
