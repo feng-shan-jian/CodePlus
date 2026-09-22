@@ -1,6 +1,6 @@
 # AgenticRAG 独立开发区
 
-状态：当前提供独立领域／配置核心、R06 存储与并发基础、R07 不可变原件检查点，以及 R08 Markdown/TXT 解析、精确来源映射、实际 tokenizer 分块和完整处理归档；实际验收和提交状态见任务台账。更新日期：2026-09-22。检索、worker 与宿主 Agent 接入仍按 R09–R26 实施。
+状态：当前提供独立领域／配置核心、存储与并发、不可变原件及处理检查点、Markdown/TXT 解析与实际 tokenizer 分块，以及 R09 本地 Embedding/Rerank 共享 worker；实际验收和提交状态见任务台账。更新日期：2026-09-22。检索与宿主 Agent 接入继续按 R10–R26 实施。
 
 在本目录完成 RAG 重建的规划、独立实现和验收，达到迁移条件后再接入 CodePlus 主模块。
 
@@ -8,7 +8,7 @@
 
 ## 当前开发包
 
-发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2、APSW 3.53.4.0、markdown-it-py 4.0.0 与 tokenizers 0.23.2；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。没有产品 CLI、真实模型适配器或自动重建动作；导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
+发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2、APSW 3.53.4.0、markdown-it-py 4.0.0 与 tokenizers 0.23.2；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。本地模型通过独立 CUDA worker 执行；没有产品 CLI 或自动重建动作。导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
 
 独立安装与开发（Windows/pwsh，显式设置独立环境，避免改根 `.venv`）：
 
@@ -26,6 +26,8 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 
 `agentic_rag.ingestion` 处理明确选择的本机 Markdown/TXT 文件或目录。`select_inputs` 固定清单，`Catalog.begin_import` 登记基准版和完整配置，`capture_inputs` 保存完整原件，`process_inputs` 从归档解析并原子接纳完整处理检查点，`read_processed` 核验重开结果。相同路径延续文档身份，显式更新支持改名，缺失文件不自动删除；没有 watcher 或生产发布，完整恢复交互留 R14。见 [输入快照](docs/input-snapshots.md)、[解析与来源映射](docs/parsing-and-source-maps.md)。
 
+`agentic_rag.models.create_local_provider(assembled)` 从统一装配结果的 `worker` 操作配置取得解释器、缓存和私有运行目录。同步 Embedding/Rerank 与 `submit_*` 跟踪句柄共用实际 worker。名称不同但 profile 身份相同复用 GPU 实例；不同身份在单槽卸载后重载，不下载模型、不自动切 CPU/API。安装、显式配置、取消与真实完成区别见 [本地模型 worker](docs/local-model-worker.md)，Windows 实测见 [R09](docs/implementation-records/R09.md)。`local-models` extra 与核心依赖分离，实际 Windows/Python3.14 CUDA 依赖和 hashes 另存 `requirements-local-models-win-py314.lock`；Linux 实测仍属 R25。
+
 ## 完整产品目标
 
 使用方式沿用 CodePlus 现有基础命令形式：通过 `/knowledge` 一类命令管理与选择知识库，再正常提问或要求生成报告，并沿用现有非交互调用形式。新模块的命令接入仍待实现；不另建本地 Web 界面或独立产品命令体系。
@@ -42,7 +44,7 @@ Milvus 首版提供 Docker Compose 部署配置供用户启动，也支持配置
 
 同机多个 CodePlus 进程可以同时查询同一知识库；同一库的导入、更新、删除及重建等修改任务同时只执行一个，冲突时提示忙、稍后重试。已有问答保持原版本，修改成功后供新任务使用。R06 已在独立核心中实际验证库锁互斥、其他库和 pin 登记可进展、进程死亡后的占用核验；CodePlus 宿主接入、完整发布与索引回收仍待后续任务。
 
-本地 Embedding/Rerank 由 CodePlus 按需启动并复用的模型工作进程承担，相同配置共享已加载实例，统一安排推理请求。RAG 核心和 Agent 仍在各自 CodePlus 进程内运行。GPU 优先处理问答及报告的查询编码和重排，导入/重建按小批次穿插执行并保证持续推进；模型工作进程的生命周期、具体调度参数与 GPU 容量随后细化和验收。
+本地 Embedding/Rerank 由按需启动并复用的模型工作进程承担，相同配置共享已加载实例，统一安排推理请求。RAG 核心和 Agent 仍在各自宿主进程内运行。R09 已提供单 GPU 有界批次、4 个前台批次后让一个后台批次的试验调度、IPC 取消和闲置退出；复杂负载公平性仍由 R22 验收，CodePlus 生命周期接入仍在 R12。
 
 首版解析范围为 Markdown／纯文本，PDF、DOCX、OCR 留待后续扩展。
 

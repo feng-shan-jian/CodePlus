@@ -192,9 +192,32 @@ class ConfigOrigin(Record):
     source: Literal["defaults", "configured", "explicit"]
 
 
+class WorkerExecutionConfig(Record):
+    """Explicit local operations; excluded from frozen knowledge/model identity."""
+
+    executable: Text
+    model_cache: Text
+    runtime_dir: Text
+    startup_timeout_ms: Annotated[int, Field(ge=1000, le=120000)] = 60000
+    handshake_timeout_ms: Annotated[int, Field(ge=100, le=10000)] = 3000
+    io_timeout_ms: Annotated[int, Field(ge=100, le=30000)] = 5000
+    idle_timeout_ms: Annotated[int, Field(ge=100, le=3600000)] = 60000
+    max_frame_bytes: Annotated[int, Field(ge=131072, le=1048576)] = 1048576
+    max_connections: Annotated[int, Field(ge=1, le=32)] = 16
+    max_queue_items: Annotated[int, Field(ge=1, le=64)] = 16
+    max_queue_bytes: Annotated[int, Field(ge=131072, le=16777216)] = 4194304
+    max_session_requests: Annotated[int, Field(ge=1, le=16384)] = 4096
+
+    @field_validator("executable", "model_cache", "runtime_dir")
+    @classmethod
+    def explicit_paths(cls, value: str) -> str:
+        return StorageConfig.absolute_local_path(value)
+
+
 class AssembledConfig(Record):
     knowledge: KnowledgeConfig
     origins: tuple[ConfigOrigin, ...]
+    worker: WorkerExecutionConfig | None = None
 
 
 def assemble_configuration(
@@ -233,8 +256,11 @@ def assemble_configuration(
     for source, mapping in (("defaults", defaults), ("configured", configured), ("explicit", explicit)):
         if mapping is not None:
             merge(data, mapping, source)
+    worker_data = data.pop("worker", None)
+    worker = (WorkerExecutionConfig.model_validate_json(json.dumps(worker_data, allow_nan=False))
+              if worker_data is not None else None)
     knowledge = KnowledgeConfig.model_validate_json(json.dumps(data, allow_nan=False))
-    return AssembledConfig(knowledge=knowledge, origins=tuple(
+    return AssembledConfig(knowledge=knowledge, worker=worker, origins=tuple(
         ConfigOrigin(path=path, source=source) for path, source in sorted(origins.items())
     ))
 

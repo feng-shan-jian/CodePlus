@@ -1,0 +1,74 @@
+[
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-auth-protocol-final.txt",
+    "original_sha256": "895383676f18a7781fadd218647bebc739e87951920c543f932b2eb4a144ef7d",
+    "sha256": "d40520429df7f10c432abfba8af6c9f1d06678fc43bc5867b9a57b7cc1fd1411",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-delivery-gpu.txt",
+    "original_sha256": "41477f1042da65dab9c11328d3bd7013191f8294547ccf4c338ea6767a672ec2",
+    "sha256": "57d49e15f07d9944777d9681ffdb027cdaeb2e543af18c105b724f304f641b56",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-delivery-regression.txt",
+    "original_sha256": "8606f60f472ab59c5999ae0d5dea759e3b2ffca09fe0a7cc95d25ac279e5e43a",
+    "sha256": "a8e0f1c3d74267c02dffa7b55a0b49c01a522945345e7bd5e6fc6e08c8fc574c",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-gpu-faults.txt",
+    "original_sha256": "5675da4b65d4fcc0e9bee3a569b62f43c701f5e251a5fb253944ea6c54da0db1",
+    "sha256": "07d28f225df3201102cad5e0218706ec44e634eb1bd24727f2a0f73aad973c69",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-gpu-final.txt",
+    "original_sha256": "f6b6b1dbf0ea504445b60cfe48bb9541e0e806b7113915c192bdf22810efaf20",
+    "sha256": "f106504d4a8c56c69b7c3040c631a0cd93dcaf85528f4fc0cbe4892c443a80b6",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-gpu-first.txt",
+    "original_sha256": "9179432fb944d741bb84e35fd39a90bf51a81bc0f785e0b9fa20a504bda77788",
+    "sha256": "dd92d176dc1dc2ab443e3fdec94df6a836515485abd71349be661ce04f4d9c49",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-gpu-second.txt",
+    "original_sha256": "df0f20e32d0e7a8238fff0c216697df080ecbf74227ce359228affcd5f529cd4",
+    "sha256": "dfbe65cae96b2a99e7b81bc84865a38cc60871fe64d97b910f3d05eb56ae05b2",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-gpu-third.txt",
+    "original_sha256": "9dd395a6bf84aeb89368cbb99884e8e7d8a0f03f081f5b2117c6de9e0ec02b33",
+    "sha256": "1f3d9b51fbddebdd61e1b56d204b69f5e2baef5d0beb6625ce6af29931738279",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-history-unit.txt",
+    "original_sha256": "cb9888840fab12ea91b42143f51babb1266f81e430dac38e03e503055a3492fc",
+    "sha256": "83084ad5a3a435568d7d2073edd791927447ab171de1705a4ee811450aec6767",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-regression-final.txt",
+    "original_sha256": "5f3d949e2d22707ad30fe21dc0d2b72e78efd3837cff966a7ee6f380390acb77",
+    "sha256": "f0335bcae3f47c82f22230d0bbf44893b5bc709344f33e2fc83d3e66730d0e96",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-startup-race-after.txt",
+    "original_sha256": "e931d83108f00702a9e129a98adc756a2c1699ca018e5024e7dbe2ce0bf562b6",
+    "sha256": "6d5c866d84653134b1fe09afebe97922f8594205b4cab949640e39467546c673",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  },
+  {
+    "path": "deployment/AgenticRAG/docs/implementation-records/R09-startup-race-before.txt",
+    "original_sha256": "f2e2c459c441df4885b6ec906538e936aff9d925593a8cd8bcf644cacd341606",
+    "sha256": "9fb2aac86300982ae7016bc776e5973da0417ad866488b5d2fc5011fdba43c36",
+    "operation": "only normalize line endings and trailing whitespace; no omitted lines"
+  }
+]

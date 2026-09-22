@@ -1,4 +1,4 @@
-"""Small synchronous model protocols. R09 supplies the real worker adapters."""
+"""Small synchronous model protocols shared by the local worker adapters."""
 
 from datetime import datetime
 import importlib.util
@@ -132,8 +132,8 @@ def require_optional_dependencies(capability: Literal["embedding", "rerank"]) ->
 
 
 def require_provider(provider: EmbeddingProvider | RerankProvider | None, capability: Literal["embedding", "rerank"]):
-    """No provider factory or hidden local fallback exists in R05."""
+    """Check the explicitly assembled provider; never create a hidden fallback."""
     required = {"embedding": ("embed_documents", "embed_query"), "rerank": ("rerank",)}
     if capability not in required or provider is None or any(not callable(getattr(provider, method, None)) for method in required[capability]):
-        raise RagError(ErrorCode.CAPABILITY_UNAVAILABLE, f"{capability} adapter is unavailable; R05 defines contracts only", stage="provider_selection")
+        raise RagError(ErrorCode.CAPABILITY_UNAVAILABLE, f"{capability} adapter is unavailable; explicitly assemble a supported provider", stage="provider_selection")
     return provider

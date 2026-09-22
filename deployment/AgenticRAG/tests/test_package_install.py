@@ -75,7 +75,9 @@ for name in ('codeplus', 'torch', 'transformers', 'pymilvus', 'textual'):
     assert importlib.util.find_spec(name) is None, name
     assert not any(key == name or key.startswith(name + '.') for key in sys.modules), name
 requirements = metadata.requires('codeplus-agentic-rag')
-assert len(requirements) == 4 and 'apsw==3.53.4.0' in requirements and any(item.startswith('pydantic') for item in requirements)
+core_requirements = [item for item in requirements if 'extra ==' not in item]
+assert len(core_requirements) == 4 and 'apsw==3.53.4.0' in requirements and any(item.startswith('pydantic') for item in requirements)
+assert any('torch==2.14.0+cu130' in item and 'local-models' in item for item in requirements)
 assert 'markdown-it-py==4.0.0' in requirements and 'tokenizers==0.23.2' in requirements
 distribution = metadata.distribution('codeplus-agentic-rag')
 assert not distribution.entry_points
@@ -124,7 +126,7 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
         direct_wheel, = direct.glob("*.whl")
         rebuilt_wheel, = rebuilt.glob("*.whl")
         expected_sources = {file.relative_to(package / "src").as_posix() for file in
-                            (package / "src/agentic_rag").rglob("*") if file.suffix in {".py", ".sql"}}
+                            (package / "src/agentic_rag").rglob("*") if file.suffix in {".py", ".sql", ".json"}}
         root_sources = {"agentic_rag/" + name for name in
                         ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py")}
         storage_sources = {"agentic_rag/storage/" + name for name in
@@ -132,7 +134,8 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
                             "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql")}
         ingestion_sources = {"agentic_rag/ingestion/" + name for name in
                              ("__init__.py", "records.py", "source.py", "selection.py", "capture.py", "parsing.py", "chunking.py", "processing.py")}
-        model_sources = {'agentic_rag/models/__init__.py', 'agentic_rag/models/tokenization.py'}
+        model_sources = {'agentic_rag/models/' + name for name in ('__init__.py', 'tokenization.py',
+            'protocol.py', 'identity.py', '_windows.py', 'engine.py', 'worker.py', 'lifecycle.py', 'client.py', 'models.lock.json')}
         assert expected_sources == root_sources | storage_sources | ingestion_sources | model_sources
         for artifact in (direct_wheel, sdist, rebuilt_wheel):
             if artifact.suffix == ".whl":
@@ -148,7 +151,7 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
                     relative = {name.split("/", 1)[1] for name in names}
                     # Hatch preserves the package's own VCS exclusion manifest in
                     # sdist for reproducible rebuilding (force-include metadata).
-                    expected = {"src/" + name for name in expected_sources} | {"pyproject.toml", "README.md", "LICENSE", "uv.lock", "PKG-INFO", ".gitignore"}
+                    expected = {"src/" + name for name in expected_sources} | {"pyproject.toml", "README.md", "LICENSE", "uv.lock", "PKG-INFO", ".gitignore", "requirements-local-models-win-py314.lock"}
                     assert relative == expected
             report["artifacts"].append({"path": str(artifact), "sha256": hashlib.sha256(artifact.read_bytes()).hexdigest(),
                                         "size_bytes": artifact.stat().st_size, "members": names})
@@ -176,6 +179,6 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
             report["installations"].append(evidence)
         report["result"] = "PASS"
     finally:
-        evidence_path = os.environ.get("R08_INSTALL_REPORT") or os.environ.get("R07_INSTALL_REPORT") or os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
+        evidence_path = os.environ.get("R09_INSTALL_REPORT") or os.environ.get("R08_INSTALL_REPORT") or os.environ.get("R07_INSTALL_REPORT") or os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
         if evidence_path:
             Path(evidence_path).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

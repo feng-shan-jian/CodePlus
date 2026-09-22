@@ -1,0 +1,84 @@
+{
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "versions": {
+    "pytest": "9.1.1",
+    "pydantic": "2.13.5",
+    "apsw": "3.53.4.0",
+    "markdown-it-py": "4.0.0",
+    "tokenizers": "0.23.2",
+    "hatchling": "1.29.0"
+  },
+  "runs": [
+    {
+      "label": "core-tests",
+      "started_at": "2026-09-22T04:45:56.731239+00:00",
+      "elapsed_seconds": 60.05874580000091,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-m",
+        "pytest",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_domain.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_configuration.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_archives.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_storage.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_storage_processes.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_ingestion_inputs.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_source_identity.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_input_snapshots.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_input_migration.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_parsing.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_source_maps.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_chunking.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_frozen_tokenizers.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_processing_checkpoints.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_processing_processes.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_package_install.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_model_worker.py",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_worker_history.py",
+        "-q",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922",
+      "exit_code": 0
+    },
+    {
+      "label": "installed-cuda-check",
+      "started_at": "2026-09-22T04:46:56.811099+00:00",
+      "elapsed_seconds": 0.0831534000026295,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\verify-installed.py",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_wheel_and_sdist_install_i0\\direct\\codeplus_agentic_rag-0.1.0-py3-none-any.whl"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922",
+      "exit_code": 0
+    },
+    {
+      "label": "gpu-tests",
+      "started_at": "2026-09-22T04:46:56.898465+00:00",
+      "elapsed_seconds": 139.69424309999886,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-m",
+        "pytest",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_model_worker_gpu.py",
+        "-q",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\gpu-tests"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922",
+      "exit_code": 0
+    }
+  ]
+}

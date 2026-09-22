@@ -28,8 +28,8 @@
 | R05 | COMMITTED | /root/r05_domain_config | [独立验收](implementation-records/R05.md) | `5325d517ac383bfad1fb28caebd0f3674b90b03d` |
 | R06 | COMMITTED | /root/r06_storage | [独立验收](implementation-records/R06.md) | `ebf402ba1d58a3f6651c7894238b29e144bbafed` |
 | R07 | COMMITTED | /root/r07_inputs | [验收记录](implementation-records/R07.md) | `5d2e71a7d5400c77b0675cb803cca4d433110678` |
-| R08 | ACCEPTED | /root/r08_parsing | [Leader 验收](implementation-records/R08.md) | 待本地提交 |
-| R09 | TODO | — | — | — |
+| R08 | COMMITTED | /root/r08_parsing | [Leader 验收](implementation-records/R08.md) | `97224b0414c9b67bc99ed59799fa2f2286ab5460` |
+| R09 | ACCEPTED | /root/r09_model_worker | [Leader 验收](implementation-records/R09.md) | 待本地提交 |
 | R10 | TODO | — | — | — |
 | R11 | TODO | — | — | — |
 | R12 | TODO | — | — | — |
@@ -162,11 +162,11 @@
 <a id="r09"></a>
 ### R09：模型提供方与 worker
 
-- [ ] 文档/query Embedding 和 Rerank 真正调用已冻结模型；响应与请求/候选 ID、实际模型身份一致。
-- [ ] 两个真实宿主进程竞争启动并复用同一个兼容 worker 和已加载实例，有运行证据而非只看磁盘缓存。
-- [ ] IPC 仅供本机预期客户端、消息有界、协议/运行时握手与错误清楚；worker 不执行任意代码、不发布库版本。
-- [ ] 相同配置复用、不同实际配置隔离；设备/输入/通信/OOM 错误无隐藏回退或无限重放。
-- [ ] 单客户端退出、排队取消、运行中取消后的迟到结果、worker 死亡和有界队列有验证；完整前后台公平性仍由 R22 验收。
+- [x] 文档/query Embedding 和 Rerank 真正调用已冻结模型；响应与请求/候选 ID、实际模型身份一致。
+- [x] 两个真实宿主进程竞争启动并复用同一个兼容 worker 和已加载实例，有运行证据而非只看磁盘缓存。
+- [x] IPC 仅供本机预期客户端、消息有界、协议/运行时握手与错误清楚；worker 不执行任意代码、不发布库版本。
+- [x] 相同配置复用、不同实际配置隔离；设备/输入/通信/OOM 错误无隐藏回退或无限重放。
+- [x] 单客户端退出、排队取消、运行中取消后的迟到结果、worker 死亡和有界队列有验证；完整前后台公平性仍由 R22 验收。
 
 <a id="r10"></a>
 ### R10：首次发布与 Dense

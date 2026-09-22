@@ -1,0 +1,62 @@
+F
+================================== FAILURES ===================================
+_______ test_two_real_hosts_race_start_share_model_and_independent_exit _______
+
+real = (WorkerExecutionConfig(schema_version=1, executable='C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scr...hon': 'C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe', 'cwd': 'D:\\CodePlus', ...})
+
+    def test_two_real_hosts_race_start_share_model_and_independent_exit(real):
+        config, root, report = real
+        cfg = root / 'host-config.json'; cfg.write_text(config.model_dump_json(), encoding='utf-8')
+        helper = Path(__file__).with_name('worker_process_helper.py')
+        host_python = os.environ.get('R09_HOST_PYTHON', sys.executable)
+        processes = [subprocess.Popen([host_python, '-I', '-B', str(helper), str(cfg)], cwd=root,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8') for _ in range(2)]
+        def read(proc):
+            with ThreadPoolExecutor(1) as pool:
+                line = pool.submit(proc.stdout.readline).result(90)
+            if not line:
+                proc.wait(10)
+                raise AssertionError(proc.stderr.read())
+            return json.loads(line)
+        def send(proc, value):
+            proc.stdin.write(json.dumps(value)+'\n'); proc.stdin.flush()
+        try:
+            ready = [read(proc) for proc in processes]
+            assert ready[0]['host_pid'] != ready[1]['host_pid']
+            for index, proc in enumerate(processes):
+                send(proc, {'op':'query','name':f'different-display-{index}'})
+>           output = [read(proc) for proc in processes]
+                      ^^^^^^^^^^
+
+deployment\AgenticRAG\tests\test_model_worker_gpu.py:93:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+proc = <Popen: returncode: 1 args: ['C:\\Users\\18221\\.cache\\codeplus-agenticrag\...>
+
+    def read(proc):
+        with ThreadPoolExecutor(1) as pool:
+            line = pool.submit(proc.stdout.readline).result(90)
+        if not line:
+            proc.wait(10)
+>           raise AssertionError(proc.stderr.read())
+E           AssertionError: Traceback (most recent call last):
+E             File "D:\CodePlus\deployment\AgenticRAG\tests\worker_process_helper.py", line 34, in <module>
+E               handle = client.submit_query(item, EmbeddingProfile(name=command.get('name', 'host')), context)
+E             File "D:\CodePlus\deployment\AgenticRAG\src\agentic_rag\models\client.py", line 272, in submit_query
+E               return self._submit('query', (query,), profile, context)
+E                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E             File "D:\CodePlus\deployment\AgenticRAG\src\agentic_rag\models\client.py", line 259, in _submit
+E               self._connect(context.deadline_monotonic_ns)
+E               ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E             File "D:\CodePlus\deployment\AgenticRAG\src\agentic_rag\models\client.py", line 107, in _connect
+E               metadata, token = discover(self.config, deadline)
+E                                 ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+E             File "D:\CodePlus\deployment\AgenticRAG\src\agentic_rag\models\lifecycle.py", line 115, in discover
+E               raise RagError(ErrorCode.WORKER_UNAVAILABLE, 'local worker exited before startup completed', stage='startup')
+E           agentic_rag.domain.RagError: WORKER_UNAVAILABLE: local worker exited before startup completed
+
+deployment\AgenticRAG\tests\test_model_worker_gpu.py:84: AssertionError
+=========================== short test summary info ===========================
+FAILED deployment\AgenticRAG\tests\test_model_worker_gpu.py::test_two_real_hosts_race_start_share_model_and_independent_exit
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 28.68s

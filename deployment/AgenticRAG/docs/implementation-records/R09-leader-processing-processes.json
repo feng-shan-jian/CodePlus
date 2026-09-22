@@ -1,0 +1,62 @@
+[
+  {
+    "argv": [
+      "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+      "-I",
+      "-B",
+      "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\processing_process_helper.py",
+      "orphan",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac0\\data",
+      "27ca4869-6e14-4d02-b8c3-79b48f08c775",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac0\\source.md",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac0\\event.json"
+    ],
+    "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac0",
+    "exit_code": 91,
+    "pid": 15484,
+    "mode": "orphan",
+    "batch_id": "9d12d794-c544-4745-929e-836444581098",
+    "item_id": "c82c29b7-affe-41ea-b0c6-dac0edfa744a",
+    "raw_hash": "91609efefc255bccef359b29500c9f8eeaf67dc7b48dd05f0275ded42c958775"
+  },
+  {
+    "argv": [
+      "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+      "-I",
+      "-B",
+      "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\processing_process_helper.py",
+      "precommit",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac1\\data",
+      "b9e21c27-a25f-4255-abad-4140fdf925a1",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac1\\source.md",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac1\\event.json"
+    ],
+    "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac1",
+    "exit_code": 91,
+    "pid": 15520,
+    "mode": "precommit",
+    "batch_id": "3336e49d-0dd5-4f42-bc8d-f22644b08a1e",
+    "item_id": "08e09e78-00ce-41f8-a8e2-d4d34cf5539d",
+    "raw_hash": "91609efefc255bccef359b29500c9f8eeaf67dc7b48dd05f0275ded42c958775"
+  },
+  {
+    "argv": [
+      "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+      "-I",
+      "-B",
+      "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\processing_process_helper.py",
+      "committed",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac2\\data",
+      "1ca863f6-63f1-46fe-8111-bedfdb621fb6",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac2\\source.md",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac2\\event.json"
+    ],
+    "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-leader-20260922\\core-tests\\test_actual_exit_checkpoint_ac2",
+    "exit_code": 91,
+    "pid": 43956,
+    "mode": "committed",
+    "batch_id": "6a80cd7d-a20b-4a3f-8681-6a59d6d40940",
+    "item_id": "a533de2c-a498-4574-9108-a841097eafa7",
+    "raw_hash": "91609efefc255bccef359b29500c9f8eeaf67dc7b48dd05f0275ded42c958775"
+  }
+]

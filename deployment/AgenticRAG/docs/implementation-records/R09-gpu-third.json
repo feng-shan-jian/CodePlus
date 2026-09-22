@@ -1,0 +1,618 @@
+{
+  "scope": "actual Windows installed CUDA worker; GPU cases run serially",
+  "host_python": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+  "cuda_python": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+  "cwd": "D:\\CodePlus",
+  "environment": {
+    "pydantic": "2.13.5",
+    "tokenizers": "0.23.2"
+  },
+  "nvidia_smi": "NVIDIA GeForce RTX 4070 Laptop GPU, 616.92, 8188 MiB, 1321 MiB, 6628 MiB",
+  "cases": {
+    "two_real_hosts": {
+      "ready": [
+        {
+          "ready": true,
+          "host_pid": 45472,
+          "executable": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe"
+        },
+        {
+          "ready": true,
+          "host_pid": 44360,
+          "executable": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe"
+        }
+      ],
+      "initial": [
+        {
+          "host_pid": 45472,
+          "worker_pid": 15460,
+          "worker_birth": "134345238019939795",
+          "instance_id": "8550ab95-b7aa-435f-aae7-ee319cf0f29d",
+          "model_status": {
+            "loaded": true,
+            "load_count": 1,
+            "device": {
+              "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+              "index": 0,
+              "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+              "total_memory_bytes": 8585216000
+            },
+            "total_memory_mib": 8187,
+            "unloaded_refs": 0,
+            "live_unloaded_refs": 0,
+            "allocated_mib": 1144.5546875,
+            "reserved_mib": 1160.0,
+            "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+            "model_instance_id": "1197bf57-a46a-46ab-9118-73e69a20e599",
+            "dtype": "bfloat16",
+            "attention": "sdpa",
+            "last_input_tokens": [
+              29
+            ],
+            "last_padded_tokens": 29,
+            "peak_allocated_mib": 1145.24951171875
+          },
+          "phases": [
+            "queued",
+            "validation",
+            "loading",
+            "inference_started"
+          ],
+          "profile_identity": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+          "request_id": "dc5c4e1a-0472-4d9c-b6df-84aeacf087d3",
+          "item_id": "a62b36d3-ad93-4ae3-87c3-8f816af0dd85",
+          "dimension": 1024,
+          "norm": 1.0000000555782547,
+          "input_tokens": 29,
+          "timings": {
+            "schema_version": 1,
+            "queue_ms": 246,
+            "load_ms": 2659,
+            "inference_ms": 502
+          }
+        },
+        {
+          "host_pid": 44360,
+          "worker_pid": 15460,
+          "worker_birth": "134345238019939795",
+          "instance_id": "8550ab95-b7aa-435f-aae7-ee319cf0f29d",
+          "model_status": {
+            "loaded": true,
+            "load_count": 1,
+            "device": {
+              "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+              "index": 0,
+              "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+              "total_memory_bytes": 8585216000
+            },
+            "total_memory_mib": 8187,
+            "unloaded_refs": 0,
+            "live_unloaded_refs": 0,
+            "allocated_mib": 1144.5546875,
+            "reserved_mib": 1160.0,
+            "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+            "model_instance_id": "1197bf57-a46a-46ab-9118-73e69a20e599",
+            "dtype": "bfloat16",
+            "attention": "sdpa",
+            "last_input_tokens": [
+              29
+            ],
+            "last_padded_tokens": 29,
+            "peak_allocated_mib": 1145.24951171875
+          },
+          "phases": [
+            "queued",
+            "validation",
+            "inference_started"
+          ],
+          "profile_identity": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+          "request_id": "d90bcd27-de64-4fea-be7d-e362d7ce8588",
+          "item_id": "56925bc9-14e2-4d2c-be20-9b1f3c91a010",
+          "dimension": 1024,
+          "norm": 1.0000000555782547,
+          "input_tokens": 29,
+          "timings": {
+            "schema_version": 1,
+            "queue_ms": 3403,
+            "load_ms": 0,
+            "inference_ms": 32
+          }
+        }
+      ],
+      "after_one_exit": {
+        "host_pid": 44360,
+        "worker_pid": 15460,
+        "worker_birth": "134345238019939795",
+        "instance_id": "8550ab95-b7aa-435f-aae7-ee319cf0f29d",
+        "model_status": {
+          "loaded": true,
+          "load_count": 1,
+          "device": {
+            "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+            "index": 0,
+            "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+            "total_memory_bytes": 8585216000
+          },
+          "total_memory_mib": 8187,
+          "unloaded_refs": 0,
+          "live_unloaded_refs": 0,
+          "allocated_mib": 1144.5546875,
+          "reserved_mib": 1160.0,
+          "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+          "model_instance_id": "1197bf57-a46a-46ab-9118-73e69a20e599",
+          "dtype": "bfloat16",
+          "attention": "sdpa",
+          "last_input_tokens": [
+            29
+          ],
+          "last_padded_tokens": 29,
+          "peak_allocated_mib": 1145.24951171875
+        },
+        "phases": [
+          "queued",
+          "validation",
+          "inference_started"
+        ],
+        "profile_identity": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+        "request_id": "ae2aadf5-221f-4216-898b-eb75cb3a041c",
+        "item_id": "1db3f91c-81f9-475a-8948-fa07c2bfe500",
+        "dimension": 1024,
+        "norm": 1.0000000555782547,
+        "input_tokens": 29,
+        "timings": {
+          "schema_version": 1,
+          "queue_ms": 0,
+          "load_ms": 0,
+          "inference_ms": 29
+        }
+      },
+      "last_client_idle_exit": true,
+      "exit_codes": [
+        0,
+        0
+      ]
+    },
+    "inference_and_switch": {
+      "embedding": {
+        "schema_version": 1,
+        "request_id": "8771d0b8-6a8b-49f7-b3ac-5bf46d2abefd",
+        "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+        "timings": {
+          "schema_version": 1,
+          "queue_ms": 229,
+          "load_ms": 2358,
+          "inference_ms": 346
+        }
+      },
+      "item_ids": [
+        "0a9b4b1e-8d85-4d69-b612-e9925daadb94",
+        "b9aa6be8-986a-49a4-bb0e-084be62d88d2"
+      ],
+      "first": {
+        "loaded": true,
+        "load_count": 1,
+        "device": {
+          "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "index": 0,
+          "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+          "total_memory_bytes": 8585216000
+        },
+        "total_memory_mib": 8187,
+        "unloaded_refs": 0,
+        "live_unloaded_refs": 0,
+        "allocated_mib": 1144.548828125,
+        "reserved_mib": 1160.0,
+        "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+        "model_instance_id": "01c2f62d-baf2-4844-9d25-f721ea581d05",
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "last_input_tokens": [
+          12,
+          9
+        ],
+        "last_padded_tokens": 24,
+        "peak_allocated_mib": 1145.11328125
+      },
+      "renamed": {
+        "loaded": true,
+        "load_count": 1,
+        "device": {
+          "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "index": 0,
+          "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+          "total_memory_bytes": 8585216000
+        },
+        "total_memory_mib": 8187,
+        "unloaded_refs": 0,
+        "live_unloaded_refs": 0,
+        "allocated_mib": 1144.55078125,
+        "reserved_mib": 1160.0,
+        "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+        "model_instance_id": "01c2f62d-baf2-4844-9d25-f721ea581d05",
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "last_input_tokens": [
+          27
+        ],
+        "last_padded_tokens": 27,
+        "peak_allocated_mib": 1145.19775390625
+      },
+      "rerank": {
+        "schema_version": 1,
+        "request_id": "93df3d22-5f5a-493f-9583-dd88a11305dd",
+        "profile_fingerprint": "9f30025bdb263042c220ed65659c3db478a95dc7ad63ca81501cff8f8f4b952c",
+        "results": [
+          {
+            "schema_version": 1,
+            "item_id": "0a9b4b1e-8d85-4d69-b612-e9925daadb94",
+            "score": 0.9999645948410034,
+            "input_tokens": 89
+          },
+          {
+            "schema_version": 1,
+            "item_id": "b9aa6be8-986a-49a4-bb0e-084be62d88d2",
+            "score": 0.0002780309587251395,
+            "input_tokens": 86
+          }
+        ],
+        "timings": {
+          "schema_version": 1,
+          "queue_ms": 227,
+          "load_ms": 2146,
+          "inference_ms": 61
+        }
+      },
+      "rerank_model": {
+        "loaded": true,
+        "load_count": 2,
+        "device": {
+          "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "index": 0,
+          "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+          "total_memory_bytes": 8585216000
+        },
+        "total_memory_mib": 8187,
+        "unloaded_refs": 313,
+        "live_unloaded_refs": 0,
+        "allocated_mib": 1145.0751953125,
+        "reserved_mib": 1166.0,
+        "profile_fingerprint": "9f30025bdb263042c220ed65659c3db478a95dc7ad63ca81501cff8f8f4b952c",
+        "model_instance_id": "a89f1f6d-0afc-45f1-ae57-ccd5a3df8b78",
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "last_input_tokens": [
+          89,
+          86
+        ],
+        "last_padded_tokens": 178,
+        "peak_allocated_mib": 1151.59326171875
+      },
+      "different_identity": {
+        "loaded": true,
+        "load_count": 3,
+        "device": {
+          "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "index": 0,
+          "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+          "total_memory_bytes": 8585216000
+        },
+        "total_memory_mib": 8187,
+        "unloaded_refs": 313,
+        "live_unloaded_refs": 0,
+        "allocated_mib": 1144.533203125,
+        "reserved_mib": 1160.0,
+        "profile_fingerprint": "ac973b8a26c4d76c08f9a341347ff83549cc628d5697239e09ee35f2d6ea570c",
+        "model_instance_id": "5a847483-99e3-40a6-bf54-c0b588b2ea32",
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "last_input_tokens": [
+          18
+        ],
+        "last_padded_tokens": 18,
+        "peak_allocated_mib": 1144.96337890625
+      },
+      "restored": {
+        "loaded": true,
+        "load_count": 4,
+        "device": {
+          "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "index": 0,
+          "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+          "total_memory_bytes": 8585216000
+        },
+        "total_memory_mib": 8187,
+        "unloaded_refs": 313,
+        "live_unloaded_refs": 0,
+        "allocated_mib": 1144.548828125,
+        "reserved_mib": 1160.0,
+        "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+        "model_instance_id": "a22c7b71-779b-4c64-8fb3-9babc91dd1cb",
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "last_input_tokens": [
+          12,
+          9
+        ],
+        "last_padded_tokens": 24,
+        "peak_allocated_mib": 1145.11328125
+      },
+      "input_error": {
+        "error": {
+          "schema_version": 1,
+          "code": "INPUT_TOO_LONG",
+          "stage": "model_input",
+          "message": "embedding complete input 2502 exceeds 2048",
+          "retryable": false,
+          "request_id": null,
+          "call_id": null
+        },
+        "phases": [
+          "queued",
+          "validation"
+        ],
+        "execution_finished": true,
+        "completion_source": "worker_finished",
+        "cancel_ack": false
+      },
+      "complete_boundary": {
+        "loaded": true,
+        "load_count": 4,
+        "device": {
+          "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "index": 0,
+          "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+          "total_memory_bytes": 8585216000
+        },
+        "total_memory_mib": 8187,
+        "unloaded_refs": 313,
+        "live_unloaded_refs": 0,
+        "allocated_mib": 1152.5634765625,
+        "reserved_mib": 1284.0,
+        "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+        "model_instance_id": "a22c7b71-779b-4c64-8fb3-9babc91dd1cb",
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "last_input_tokens": [
+          2048,
+          2048
+        ],
+        "last_padded_tokens": 4096,
+        "peak_allocated_mib": 1250.0712890625
+      },
+      "actual_device": {
+        "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+        "index": 0,
+        "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+        "total_memory_bytes": 8585216000
+      },
+      "installed_identity": {
+        "executable": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+        "python": "3.14.3",
+        "packages": {
+          "torch": "2.14.0+cu130",
+          "transformers": "5.17.0",
+          "tokenizers": "0.23.2"
+        },
+        "device": "cuda:0",
+        "clock_domain": "1e1523c9d9951e4d9427bd3a80f64b378b4b874582701f9e7423f58e14a20952",
+        "device_environment": {
+          "CUDA_VISIBLE_DEVICES": null,
+          "NVIDIA_VISIBLE_DEVICES": null,
+          "CUDA_DEVICE_ORDER": null
+        },
+        "implementation_digest": "ac4c5508f12271d9462db8242b19832a1f5a7f81d98b40f56a09307ed325c123",
+        "runtime_fingerprint": "40a974ecbe211c7ab45c4b348a266e207f2ac23dc278b47de2d41259a88e8c14"
+      },
+      "private_permissions": {
+        "owner_current_user": true,
+        "allowed_principals": [
+          "current_user",
+          "SYSTEM"
+        ]
+      }
+    },
+    "cancel_deadline_queue_oom": {
+      "running_cancel": {
+        "error": {
+          "schema_version": 1,
+          "code": "CANCELLED",
+          "stage": "completed_batch",
+          "message": "model request cancelled",
+          "retryable": false,
+          "request_id": "52982d25-985e-4cc8-8b97-8fd11f686354",
+          "call_id": null
+        },
+        "phases": [
+          "queued",
+          "validation",
+          "inference_started"
+        ],
+        "execution_finished": true,
+        "completion_source": "worker_finished",
+        "cancel_ack": true
+      },
+      "running_deadline": {
+        "error": {
+          "schema_version": 1,
+          "code": "DEADLINE_EXCEEDED",
+          "stage": "client_wait",
+          "message": "request deadline expired",
+          "retryable": false,
+          "request_id": null,
+          "call_id": null
+        },
+        "phases": [
+          "queued",
+          "validation",
+          "inference_started"
+        ],
+        "execution_finished": true,
+        "completion_source": "worker_finished",
+        "cancel_ack": false
+      },
+      "queue_full": {
+        "error": {
+          "schema_version": 1,
+          "code": "WORKER_BUSY",
+          "stage": "queue",
+          "message": "bounded worker queue is full",
+          "retryable": false,
+          "request_id": null,
+          "call_id": null
+        },
+        "phases": [],
+        "execution_finished": true,
+        "completion_source": "worker_finished",
+        "cancel_ack": false
+      },
+      "queue_cancel": {
+        "error": {
+          "schema_version": 1,
+          "code": "CANCELLED",
+          "stage": "queue",
+          "message": "queued request cancelled",
+          "retryable": false,
+          "request_id": null,
+          "call_id": null
+        },
+        "phases": [
+          "queued"
+        ],
+        "execution_finished": true,
+        "completion_source": "worker_finished",
+        "cancel_ack": true
+      },
+      "oom": {
+        "error": {
+          "schema_version": 1,
+          "code": "CUDA_OUT_OF_MEMORY",
+          "stage": "load",
+          "message": "model load exceeded CUDA allocator budget",
+          "retryable": false,
+          "request_id": null,
+          "call_id": null
+        },
+        "phases": [
+          "queued",
+          "validation",
+          "loading"
+        ],
+        "execution_finished": true,
+        "completion_source": "worker_finished",
+        "cancel_ack": false
+      },
+      "oom_model_status": {
+        "loaded": false,
+        "load_count": 2,
+        "device": {
+          "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "index": 0,
+          "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+          "total_memory_bytes": 8585216000
+        },
+        "total_memory_mib": 8187,
+        "unloaded_refs": 0,
+        "live_unloaded_refs": 0,
+        "allocated_mib": 8.125,
+        "reserved_mib": 20.0,
+        "profile_fingerprint": "2e8f612ea46f47b935a3b3f364836b55f6977adcdfd63fdd18a3c70a38f434ca",
+        "model_instance_id": "e2d5d3bb-5e4e-4700-a43b-7dd9aeb9c220",
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "last_input_tokens": [
+          2048,
+          2048
+        ],
+        "last_padded_tokens": 4096,
+        "peak_allocated_mib": 1250.0712890625
+      },
+      "recovered": {
+        "loaded": true,
+        "load_count": 3,
+        "device": {
+          "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "index": 0,
+          "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+          "total_memory_bytes": 8585216000
+        },
+        "total_memory_mib": 8187,
+        "unloaded_refs": 0,
+        "live_unloaded_refs": 0,
+        "allocated_mib": 1144.548828125,
+        "reserved_mib": 1160.0,
+        "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+        "model_instance_id": "b66d5bf3-02de-4e35-a58c-4251055e2722",
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "last_input_tokens": [
+          26
+        ],
+        "last_padded_tokens": 26,
+        "peak_allocated_mib": 1145.17138671875
+      }
+    },
+    "death_and_disconnect": {
+      "worker_pid": 48064,
+      "process_birth": "134345238611886064",
+      "instance_id": "29e3d018-7735-4b09-8a84-94df908b7bfc",
+      "running_death": {
+        "error": {
+          "schema_version": 1,
+          "code": "WORKER_UNAVAILABLE",
+          "stage": "ipc",
+          "message": "worker communication ended; execution completion unknown",
+          "retryable": false,
+          "request_id": null,
+          "call_id": null
+        },
+        "phases": [
+          "queued",
+          "validation",
+          "inference_started"
+        ],
+        "execution_finished": true,
+        "completion_source": "worker_process_death",
+        "cancel_ack": false
+      },
+      "disconnect_failed_while_completion_unknown": true,
+      "disconnected_request_completed_only_after_death": true,
+      "replacement_instance": "dc2ba0ab-617d-46ef-ac85-e54d79ca59f5"
+    },
+    "missing_dependency": {
+      "schema_version": 1,
+      "code": "DEPENDENCY_UNAVAILABLE",
+      "stage": "dependencies",
+      "message": "local-models dependency missing: torch",
+      "retryable": false,
+      "request_id": null,
+      "call_id": null
+    },
+    "different_runtime_refused": {
+      "schema_version": 1,
+      "code": "IDENTITY_MISMATCH",
+      "stage": "startup",
+      "message": "device already has an incompatible worker configuration",
+      "retryable": false,
+      "request_id": null,
+      "call_id": null
+    },
+    "different_device_mapping_refused": {
+      "schema_version": 1,
+      "code": "IDENTITY_MISMATCH",
+      "stage": "startup",
+      "message": "device already has an incompatible worker configuration",
+      "retryable": false,
+      "request_id": null,
+      "call_id": null
+    },
+    "actual_no_visible_device": {
+      "schema_version": 1,
+      "code": "DEVICE_UNAVAILABLE",
+      "stage": "device",
+      "message": "requires one visible NVIDIA CUDA device",
+      "retryable": false,
+      "request_id": null,
+      "call_id": null
+    }
+  }
+}

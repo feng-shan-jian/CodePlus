@@ -1,0 +1,59 @@
+{
+  "result": "PASS",
+  "task_root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-executor-20260922",
+  "task_root_absent": true,
+  "verified_absolute_boundary_before_delete": true,
+  "ownership": "created exclusively for this R09 task; all temporary test environments/builds/data/logs under this root",
+  "no_reparse_traversal": true,
+  "hardlink_target_attributes_not_modified": true,
+  "method": "lstat/scandir without following links; unlink entries; native FileDispositionInfoEx ignores readonly without chmod",
+  "counts": {
+    "files": 9167,
+    "directories": 2469,
+    "reparse_entries": 204,
+    "native_readonly_unlinks": 0
+  },
+  "elapsed_seconds": 8.822206000004371,
+  "retired_coordination": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\.codeplus-agenticrag-workers\\cuda-0",
+    "private_acl": {
+      "owner_current_user": true,
+      "allowed_principals": [
+        "current_user",
+        "SYSTEM"
+      ]
+    },
+    "lifetime_exclusive_acquired": true,
+    "only_empty_known_task_lock_files": true,
+    "removed_after_lock_handles_closed": true,
+    "absent": true
+  },
+  "retained_coordination": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\.codeplus-agenticrag-workers\\cuda-0",
+    "files": [
+      "lifetime.lock",
+      "startup.lock"
+    ],
+    "private_acl": {
+      "owner_current_user": true,
+      "allowed_principals": [
+        "current_user",
+        "SYSTEM"
+      ]
+    },
+    "lifetime_exclusive_acquired": true,
+    "files_after": [
+      "lifetime.lock",
+      "startup.lock"
+    ],
+    "no_active_metadata": true,
+    "permanent_lock_files_retained": true
+  },
+  "remaining_task_python_processes": [],
+  "nvidia_smi_after": "NVIDIA GeForce RTX 4070 Laptop GPU, 616.92, 8188 MiB, 1319 MiB, 6630 MiB",
+  "preserved_persistent_environments": [
+    "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-core",
+    "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda"
+  ],
+  "preserved_model_cache": "C:/Users/18221/.cache/codeplus-agenticrag/models"
+}

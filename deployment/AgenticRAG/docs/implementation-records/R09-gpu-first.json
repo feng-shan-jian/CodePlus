@@ -1,0 +1,12 @@
+{
+  "scope": "actual Windows installed CUDA worker; GPU cases run serially",
+  "host_python": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+  "cuda_python": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+  "cwd": "D:\\CodePlus",
+  "environment": {
+    "pydantic": "2.13.5",
+    "tokenizers": "0.23.2"
+  },
+  "nvidia_smi": "NVIDIA GeForce RTX 4070 Laptop GPU, 616.92, 8188 MiB, 1318 MiB, 6631 MiB",
+  "cases": {}
+}

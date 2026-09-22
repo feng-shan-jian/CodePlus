@@ -1,0 +1,46 @@
+{
+  "reviewer": "/root/r09_readonly_design_review",
+  "leader": "/root",
+  "final_static_result": "ACCEPTED",
+  "independent_leader_acceptance": "PENDING",
+  "freeze_sha256": "73c6060f3bc61ea694785e7c7a86b99f26ee340d29dc8380bb5380e6b8280334",
+  "reviewer_executed_tests_or_gpu": false,
+  "issues": [
+    {
+      "issue": "expiry snapshot crossed await and could remove an already canceled request",
+      "fix": "detach the complete expired set and update queue bytes before await",
+      "verification": "deterministic expiry/disconnect intersection test"
+    },
+    {
+      "issue": "deadline result blocked on cancel/client/write lock",
+      "fix": "immediate deadline error without control I/O; bounded submission/write lock waits",
+      "verification": "controlled two-thread lock deadline tests"
+    },
+    {
+      "issue": "Torch traceback objects could survive idle scheduler and retain tensor references",
+      "fix": "copy clean ErrorInfo/RagError, clear traceback/cause/context and unload on GPU thread",
+      "verification": "static object-lifetime path closed; actual OOM unload refs zero, allocated 8.125 MiB / reserved 20 MiB; prior leak was not measured"
+    },
+    {
+      "issue": "ordinary GPU exception or unload failure could report finished before asynchronous CUDA work ended",
+      "fix": "load/infer/unload finally synchronize on the one GPU thread; untrusted synchronization raises UnsafeCudaCompletion and exits process",
+      "verification": "controlled core and real CUDA helpers distinguish event completion, no false finished and actual process exit"
+    },
+    {
+      "issue": "device remapping and same package version were insufficient runtime identity",
+      "fix": "bind mapping environment and actual GPU UUID; installed module/resource digest frozen once at worker boot",
+      "verification": "runtime and device-mapping mismatches rejected; source/installed hashes and identity tests"
+    },
+    {
+      "issue": "strict JSON / unauthenticated input / malformed private metadata edge cases",
+      "fix": "hex authentication token, finite JSON numbers and closed schemas; validate metadata; no spawn while lifetime held",
+      "verification": "21 protocol/core tests including unauthenticated handshake gating and bad-metadata lock case"
+    },
+    {
+      "issue": "stale active file was removed after lifetime lock release",
+      "fix": "stale exists/path/ACL/unlink remain inside lifetime ownership; finally release then spawn",
+      "verification": "actual competing child failed before fix (acquired_before_cleanup), passes after fix (blocked_by_lifetime then publish survives); rebuilt final wheel and repeated core/install/history/GPU"
+    }
+  ],
+  "final_reviewer_conclusion": "All 16 freeze entries match; only lifecycle changed from the earlier freeze; no remaining static blockers. Final independent execution belongs to Leader."
+}

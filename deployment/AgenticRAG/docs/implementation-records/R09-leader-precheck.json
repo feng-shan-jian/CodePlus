@@ -1,0 +1,60 @@
+{
+  "captured_at": "2026-09-22T04:45:56.730242+00:00",
+  "head": "97224b0414c9b67bc99ed59799fa2f2286ab5460",
+  "branch": "codex/rag",
+  "manifest_sha256": "ec3d8aa391715442f32c06969cafeead39ed2d8421241018cfa8a1f08ebe512e",
+  "delivery_files_verified": 70,
+  "protected_paths_checked": 6553,
+  "authorized_differences": [
+    {
+      "path": "eval/RAG-eval/check.py",
+      "before": "1ba9d5b185e5777be510474f5947b9047db57a5c715d99090055596aa2801ab6",
+      "actual": "37eae3805f5f0b3aa1d3efa2ad02fc4e27f66d9412cd7c35f015c81693e8c437"
+    },
+    {
+      "path": "eval/RAG-eval/run.ps1",
+      "before": "07804428ca0ce9d210defa0c505dffb204e781f7dfc026fe86ea4c8e46198cf4",
+      "actual": "0b09f27535074ff39e3768cb3bd3734406c0efb694f3e967ec40317507df4fa4"
+    },
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "before": "133955f56193f90d082395dccea7fd613b577f7f9ddd932a1a48d2f739d5f0ac",
+      "actual": "eb5c7152c54ab607e886a47958f49610e8904fab962b1a727d603a8f5d1956a3"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/architecture-and-contracts.md",
+      "before": "9dbde418a4ab4ca9d69123ecb30430eca170ae32bdb7f93093dd037086dff72a",
+      "actual": "efc79e7d6a9084fa678d3ac2c52ebd921495b260517d4712d655eefe6ea8539a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/deployment-and-packaging.md",
+      "before": "67548367bb9123edb2853e39efab2176ba8e0f4b3b81f47dec768434534364bd",
+      "actual": "285c1ba73e00e24cd785bb8f60c72b97f0850046112a6ceca76eaecb65c5684b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-checklist.md",
+      "before": "9396d827c00420329895538f2064ab7a813b2a44a6f1e7e11674e8e7af99d6d2",
+      "actual": "399b0bdeb73d0424d67e7d1a61afa6bfc9f51a1731ce7aabb833b1779ce2c90e"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-task-plan.md",
+      "before": "a0a456b91c37c72583132fda68c78654fdc61f2490770830c8f129ef17579bab",
+      "actual": "edc82c475c84c9c2abe6baa71b11359037985b098fb8236710c9a6890f35d5f6"
+    }
+  ],
+  "unexpected": [],
+  "index_paths": [],
+  "unchanged_r08_files": {
+    "storage/schema.sql": "d2032ebe2981d22d765f6ab16d2610a7032cc37d3c7cdaf00d19b5d9cdab161e",
+    "storage/inputs.sql": "ef2ba6f72854f6a2558c278124a51142d08773080d23d62a260fe46e895c05d8",
+    "storage/processing.sql": "c08375fb3414b1597c44ac8958f29fe1ec3738633c9a4aa3847eef89d2b83926",
+    "storage/database.py": "5043197ccda10cabfd918210eb1aa19d07492e74b82ce863bc9c4ba0d641e623",
+    "storage/processing.py": "ce483ff07a04cf8d5e313e8b239453a7e82cfb887a6dc9731e4be33761e48ba1",
+    "ingestion/parsing.py": "82d659f67f1c987bce18a790b626fc8bb920eac91deae4290db7b116f2588ade",
+    "ingestion/chunking.py": "26259bf5e86a41a93c22028f1e96f51c533c7856a345c0109ed855d55e0bf38a",
+    "ingestion/processing.py": "78f0258e8c55d62957885ea62948b055abab13fce8343433f227d84c116042bc",
+    "models/tokenization.py": "f00b6f3d976f9d5aecad30074b2988b9efa20f14c0926a2116ef8beb07042e7c"
+  },
+  "executor_owned_temp_absent": true,
+  "freeze_sha256": "73c6060f3bc61ea694785e7c7a86b99f26ee340d29dc8380bb5380e6b8280334"
+}

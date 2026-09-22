@@ -1,0 +1,129 @@
+{
+  "result": "PASS",
+  "head": "97224b0414c9b67bc99ed59799fa2f2286ab5460",
+  "branch": "codex/rag",
+  "index_empty": true,
+  "baseline_sha256": "7a059f976493b818713a9fe4e456bc8c6a792cd6088452f86829094260a0c6aa",
+  "spec_sha256": {
+    "plan.md": "a794366d347b6165ec9a60d6a6d379cddad8dde227d3e9fa4f0b0ed15e7e76fc",
+    "architecture-and-contracts.md": "efc79e7d6a9084fa678d3ac2c52ebd921495b260517d4712d655eefe6ea8539a",
+    "acceptance-and-implementation.md": "5e726283ce77e12a1c21f00c8ef35f87329ff7a62f278dbabc1e56c79c5ca254",
+    "model-providers.md": "29a11df67c73be1e7a4c142ba47476b3348737ef83e7b80cd5157da7b40b5b69",
+    "deployment-and-packaging.md": "285c1ba73e00e24cd785bb8f60c72b97f0850046112a6ceca76eaecb65c5684b",
+    "implementation-task-plan.md": "edc82c475c84c9c2abe6baa71b11359037985b098fb8236710c9a6890f35d5f6"
+  },
+  "protected_paths_checked": 6553,
+  "r08_inherited_authorized_difference_count": 7,
+  "protected_changes_during_r09": [
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "before_r09": "a021a53eca0067cf307fcf19ee611cdd2ae6c50de93bc8bed119e386495f28dd",
+      "after_r09": "eb5c7152c54ab607e886a47958f49610e8904fab962b1a727d603a8f5d1956a3"
+    }
+  ],
+  "cumulative_authorized_differences": [
+    {
+      "path": "eval/RAG-eval/check.py",
+      "original": "1ba9d5b185e5777be510474f5947b9047db57a5c715d99090055596aa2801ab6",
+      "actual": "37eae3805f5f0b3aa1d3efa2ad02fc4e27f66d9412cd7c35f015c81693e8c437"
+    },
+    {
+      "path": "eval/RAG-eval/run.ps1",
+      "original": "07804428ca0ce9d210defa0c505dffb204e781f7dfc026fe86ea4c8e46198cf4",
+      "actual": "0b09f27535074ff39e3768cb3bd3734406c0efb694f3e967ec40317507df4fa4"
+    },
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "original": "133955f56193f90d082395dccea7fd613b577f7f9ddd932a1a48d2f739d5f0ac",
+      "actual": "eb5c7152c54ab607e886a47958f49610e8904fab962b1a727d603a8f5d1956a3"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/architecture-and-contracts.md",
+      "original": "9dbde418a4ab4ca9d69123ecb30430eca170ae32bdb7f93093dd037086dff72a",
+      "actual": "efc79e7d6a9084fa678d3ac2c52ebd921495b260517d4712d655eefe6ea8539a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/deployment-and-packaging.md",
+      "original": "67548367bb9123edb2853e39efab2176ba8e0f4b3b81f47dec768434534364bd",
+      "actual": "285c1ba73e00e24cd785bb8f60c72b97f0850046112a6ceca76eaecb65c5684b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-checklist.md",
+      "original": "9396d827c00420329895538f2064ab7a813b2a44a6f1e7e11674e8e7af99d6d2",
+      "actual": "399b0bdeb73d0424d67e7d1a61afa6bfc9f51a1731ce7aabb833b1779ce2c90e"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-task-plan.md",
+      "original": "a0a456b91c37c72583132fda68c78654fdc61f2490770830c8f129ef17579bab",
+      "actual": "edc82c475c84c9c2abe6baa71b11359037985b098fb8236710c9a6890f35d5f6"
+    }
+  ],
+  "tracked_changes_during_r09": [
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "before": "a021a53eca0067cf307fcf19ee611cdd2ae6c50de93bc8bed119e386495f28dd",
+      "sha256": "eb5c7152c54ab607e886a47958f49610e8904fab962b1a727d603a8f5d1956a3"
+    },
+    {
+      "path": "deployment/AgenticRAG/pyproject.toml",
+      "before": "209bd916d8661a3e2bdab1330e4049ac9fd0cdab46d61c9562e8426dd2376767",
+      "sha256": "ade7fde3dd5dbc967bd267dd023b041ce9e3d530f38c01f8e10e9d4346db93bf"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/capabilities.py",
+      "before": "70ee1e82daa3551c3f5439283fbe80e43f8997f62b0383da91f1806314f75350",
+      "sha256": "d836abdf35d094866c1ac665131eb1f6eaa60763cb59acf53b1bed77d7743d7e"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/config.py",
+      "before": "e71ec604497ca26f87ec9f788f1c63eafb238aebe23ec94bdb6011c3a8b8af47",
+      "sha256": "f2bc82af99912efb166ac835a68b9947ce7de509c36b3b52cedc8ee45a26cbe1"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/domain.py",
+      "before": "ac0f073ed2bc79eb4eb540a89893ad749b2373c55432fc3bccc252121a427d67",
+      "sha256": "417431b14b0816e04288f8605e9758036ea9bb49115bb2806bad503804c1c2cf"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/models/__init__.py",
+      "before": "0852366624d1377425da62876ea65163954310f9700939b5f3f5185f15966aa5",
+      "sha256": "19a1eda35abbe1a88ea565acb6213f58d24bad4ff68ee506b96afb3a24aad90f"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_package_install.py",
+      "before": "7a00f2a01baf9bb0921783490b2418ea67d439775cf32a71dc371ed0982e896e",
+      "sha256": "9a5b5df7fa96513df50cdc9a9aea2bf2431d77a780533f20c5411f3d99837b23"
+    },
+    {
+      "path": "deployment/AgenticRAG/uv.lock",
+      "before": "5334b984649f23fd01cb9ca5f78424ab1ff05bceaa97824e0b3a9c04bfeda0eb",
+      "sha256": "4c01922b431a2ffad3eb9ac052673e9b6546d70e4a0ead078954aaec4aa4975a"
+    }
+  ],
+  "production_freeze_sha256": "73c6060f3bc61ea694785e7c7a86b99f26ee340d29dc8380bb5380e6b8280334",
+  "production_freeze_entries_verified": 16,
+  "schema_sql_unchanged": {
+    "schema.sql": "d2032ebe2981d22d765f6ab16d2610a7032cc37d3c7cdaf00d19b5d9cdab161e",
+    "inputs.sql": "ef2ba6f72854f6a2558c278124a51142d08773080d23d62a260fe46e895c05d8",
+    "processing.sql": "c08375fb3414b1597c44ac8958f29fe1ec3738633c9a4aa3847eef89d2b83926"
+  },
+  "readme_unchanged_since_final_build": true,
+  "readme_sha256": "eb5c7152c54ab607e886a47958f49610e8904fab962b1a727d603a8f5d1956a3",
+  "leader_checklist_and_r08_postcommit_notes_unchanged_since_baseline": true,
+  "root_readme_pyproject_uvlock_and_inherited_deletions_unchanged_since_baseline": true,
+  "cleanup_report_sha256": "aea55c27a99348206bfd08f3e57908212f89b27bae15271b547ad2016a6dabe4",
+  "diff_check": {
+    "argv": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      "deployment/AgenticRAG"
+    ],
+    "exit_code": 0,
+    "output": "",
+    "warnings": "warning: in the working copy of 'deployment/AgenticRAG/README.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/docs/implementation-checklist.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/docs/implementation-records/R08.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/pyproject.toml', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/capabilities.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/config.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/domain.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/models/__init__.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/tests/test_package_install.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/uv.lock', LF will be replaced by CRLF the next time Git touches it\n"
+  },
+  "no_stage_commit_push": true,
+  "leader_independent_acceptance": "PENDING"
+}

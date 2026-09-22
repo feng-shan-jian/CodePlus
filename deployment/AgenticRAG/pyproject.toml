@@ -8,6 +8,9 @@ license = "MIT"
 license-files = ["LICENSE"]
 dependencies = ["pydantic>=2.12,<3", "apsw==3.53.4.0", "markdown-it-py==4.0.0", "tokenizers==0.23.2"]
 
+[project.optional-dependencies]
+local-models = ["torch==2.14.0+cu130; sys_platform == 'win32' or sys_platform == 'linux'", "transformers==5.17.0"]
+
 [dependency-groups]
 dev = ["pytest>=9,<10", "hatchling==1.29.0"]
 
@@ -19,7 +22,7 @@ build-backend = "hatchling.build"
 packages = ["src/agentic_rag"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/src/agentic_rag/**/*.py", "/src/agentic_rag/storage/*.sql", "/pyproject.toml", "/README.md", "/LICENSE", "/uv.lock"]
+include = ["/src/agentic_rag/**/*.py", "/src/agentic_rag/models/*.json", "/src/agentic_rag/storage/*.sql", "/pyproject.toml", "/README.md", "/LICENSE", "/uv.lock", "/requirements-local-models-win-py314.lock"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -27,3 +30,11 @@ addopts = "--import-mode=importlib"
 
 [tool.uv]
 package = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu130" }
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true

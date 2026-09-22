@@ -1,0 +1,105 @@
+F
+================================== FAILURES ===================================
+_______ test_two_real_hosts_race_start_share_model_and_independent_exit _______
+
+real = (WorkerExecutionConfig(schema_version=1, executable='C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scr...hon': 'C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe', 'cwd': 'D:\\CodePlus', ...})
+
+    def test_two_real_hosts_race_start_share_model_and_independent_exit(real):
+        config, root, report = real
+        cfg = root / 'host-config.json'; cfg.write_text(config.model_dump_json(), encoding='utf-8')
+        helper = Path(__file__).with_name('worker_process_helper.py')
+        host_python = os.environ.get('R09_HOST_PYTHON', sys.executable)
+        processes = [subprocess.Popen([host_python, '-I', '-B', str(helper), str(cfg)], cwd=root,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8') for _ in range(2)]
+        def read(proc):
+            with ThreadPoolExecutor(1) as pool:
+                line = pool.submit(proc.stdout.readline).result(90)
+            assert line, proc.stderr.read() if proc.poll() is not None else 'host unexpectedly silent'
+            return json.loads(line)
+        def send(proc, value):
+            proc.stdin.write(json.dumps(value)+'\n'); proc.stdin.flush()
+        try:
+            ready = [read(proc) for proc in processes]
+            assert ready[0]['host_pid'] != ready[1]['host_pid']
+            for index, proc in enumerate(processes):
+                send(proc, {'op':'query','name':f'different-display-{index}'})
+>           output = [read(proc) for proc in processes]
+                      ^^^^^^^^^^
+
+deployment\AgenticRAG\tests\test_model_worker_gpu.py:91:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+proc = <Popen: returncode: None args: ['C:\\Users\\18221\\.cache\\codeplus-agenticr...>
+
+    def read(proc):
+        with ThreadPoolExecutor(1) as pool:
+            line = pool.submit(proc.stdout.readline).result(90)
+>       assert line, proc.stderr.read() if proc.poll() is not None else 'host unexpectedly silent'
+E       AssertionError: host unexpectedly silent
+E       assert ''
+
+deployment\AgenticRAG\tests\test_model_worker_gpu.py:82: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+real = (WorkerExecutionConfig(schema_version=1, executable='C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scr...hon': 'C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe', 'cwd': 'D:\\CodePlus', ...})
+
+    def test_two_real_hosts_race_start_share_model_and_independent_exit(real):
+        config, root, report = real
+        cfg = root / 'host-config.json'; cfg.write_text(config.model_dump_json(), encoding='utf-8')
+        helper = Path(__file__).with_name('worker_process_helper.py')
+        host_python = os.environ.get('R09_HOST_PYTHON', sys.executable)
+        processes = [subprocess.Popen([host_python, '-I', '-B', str(helper), str(cfg)], cwd=root,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8') for _ in range(2)]
+        def read(proc):
+            with ThreadPoolExecutor(1) as pool:
+                line = pool.submit(proc.stdout.readline).result(90)
+            assert line, proc.stderr.read() if proc.poll() is not None else 'host unexpectedly silent'
+            return json.loads(line)
+        def send(proc, value):
+            proc.stdin.write(json.dumps(value)+'\n'); proc.stdin.flush()
+        try:
+            ready = [read(proc) for proc in processes]
+            assert ready[0]['host_pid'] != ready[1]['host_pid']
+            for index, proc in enumerate(processes):
+                send(proc, {'op':'query','name':f'different-display-{index}'})
+            output = [read(proc) for proc in processes]
+            assert output[0]['worker_pid'] == output[1]['worker_pid']
+            assert output[0]['instance_id'] == output[1]['instance_id']
+            assert output[0]['model_status']['model_instance_id'] == output[1]['model_status']['model_instance_id']
+            assert output[0]['model_status']['load_count'] == output[1]['model_status']['load_count'] == 1
+            for row in output:
+                assert row['dimension'] == 1024 and abs(row['norm']-1) < 1e-4
+            send(processes[0], {'op':'close'}); assert read(processes[0])['closed']; assert processes[0].wait(10) == 0
+            send(processes[1], {'op':'query'}); surviving = read(processes[1])
+            assert surviving['model_status']['model_instance_id'] == output[1]['model_status']['model_instance_id']
+            send(processes[1], {'op':'close'}); assert read(processes[1])['closed']; assert processes[1].wait(10) == 0
+            metadata = {'pid':output[0]['worker_pid'], 'process_birth':output[0]['worker_birth']}
+            wait_dead(metadata)
+            assert not (coordination_directory()/'active.json').exists()
+            report['cases']['two_real_hosts'] = {'ready':ready,'initial':output,'after_one_exit':surviving,
+                                                'last_client_idle_exit':True,'exit_codes':[p.returncode for p in processes]}
+        finally:
+            for proc in processes:
+                if proc.poll() is None:
+>                   send(proc, {'op':'close'}); proc.wait(30)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+deployment\AgenticRAG\tests\test_model_worker_gpu.py:110:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+proc = <Popen: returncode: None args: ['C:\\Users\\18221\\.cache\\codeplus-agenticr...>
+value = {'op': 'close'}
+
+    def send(proc, value):
+>       proc.stdin.write(json.dumps(value)+'\n'); proc.stdin.flush()
+                                                  ^^^^^^^^^^^^^^^^^^
+E       OSError: [Errno 22] Invalid argument
+
+deployment\AgenticRAG\tests\test_model_worker_gpu.py:85: OSError
+=========================== short test summary info ===========================
+FAILED deployment\AgenticRAG\tests\test_model_worker_gpu.py::test_two_real_hosts_race_start_share_model_and_independent_exit
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 28.42s
+Exception ignored while finalizing file <_io.TextIOWrapper name=11 encoding='utf-8'>:
+OSError: [Errno 22] Invalid argument

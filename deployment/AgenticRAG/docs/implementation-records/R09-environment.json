@@ -1,0 +1,88 @@
+{
+  "environments": [
+    {
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-c",
+        "import importlib.metadata as m,importlib.util,json,platform,sys\nimport agentic_rag.models\nnames=['pydantic','apsw','markdown-it-py','tokenizers','torch','transformers','pytest','hatchling']\nversions={}\nfor name in names:\n try:versions[name]=m.version(name)\n except m.PackageNotFoundError:versions[name]=None\ndist=m.distribution('codeplus-agentic-rag')\nprint(json.dumps({'python':sys.version,'executable':sys.executable,'platform':platform.platform(),\n 'versions':versions,'module_path':agentic_rag.models.__file__,'distribution_origin':json.loads(dist.read_text('direct_url.json') or '{}'),\n 'gpu_modules_loaded_by_core_import':[key for key in sys.modules if key in ('torch','transformers','pymilvus','codeplus')]}))"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-executor-20260922",
+      "exit_code": 0,
+      "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+      "executable": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "versions": {
+        "pydantic": "2.13.5",
+        "apsw": "3.53.4.0",
+        "markdown-it-py": "4.0.0",
+        "tokenizers": "0.23.2",
+        "torch": null,
+        "transformers": null,
+        "pytest": "9.1.1",
+        "hatchling": "1.29.0"
+      },
+      "module_path": "D:\\CodePlus\\deployment\\AgenticRAG\\src\\agentic_rag\\models\\__init__.py",
+      "distribution_origin": {
+        "url": "file:///D:/CodePlus/deployment/AgenticRAG",
+        "dir_info": {
+          "editable": true
+        }
+      },
+      "gpu_modules_loaded_by_core_import": []
+    },
+    {
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-c",
+        "import importlib.metadata as m,importlib.util,json,platform,sys\nimport agentic_rag.models\nnames=['pydantic','apsw','markdown-it-py','tokenizers','torch','transformers','pytest','hatchling']\nversions={}\nfor name in names:\n try:versions[name]=m.version(name)\n except m.PackageNotFoundError:versions[name]=None\ndist=m.distribution('codeplus-agentic-rag')\nprint(json.dumps({'python':sys.version,'executable':sys.executable,'platform':platform.platform(),\n 'versions':versions,'module_path':agentic_rag.models.__file__,'distribution_origin':json.loads(dist.read_text('direct_url.json') or '{}'),\n 'gpu_modules_loaded_by_core_import':[key for key in sys.modules if key in ('torch','transformers','pymilvus','codeplus')]}))"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r09-executor-20260922",
+      "exit_code": 0,
+      "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+      "executable": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "versions": {
+        "pydantic": "2.13.5",
+        "apsw": "3.53.4.0",
+        "markdown-it-py": "4.0.0",
+        "tokenizers": "0.23.2",
+        "torch": "2.14.0+cu130",
+        "transformers": "5.17.0",
+        "pytest": "9.0.3",
+        "hatchling": null
+      },
+      "module_path": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Lib\\site-packages\\agentic_rag\\models\\__init__.py",
+      "distribution_origin": {
+        "url": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-r09-executor-20260922/delivery-wheel/codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+        "archive_info": {}
+      },
+      "gpu_modules_loaded_by_core_import": []
+    }
+  ],
+  "model_lock_sha256": "d5b53aeea3305fd939e8c52c79fb3b61788d38eac6b33659bb3c595e75be40fe",
+  "original_r03_lock_same_bytes": true,
+  "platform_lock_sha256": "a8fb6c4a62e0c6615e7c178f851e355341edf2ab85c3c60fcd3f9c001c6393ac",
+  "schema_sql": {
+    "schema.sql": "d2032ebe2981d22d765f6ab16d2610a7032cc37d3c7cdaf00d19b5d9cdab161e",
+    "inputs.sql": "ef2ba6f72854f6a2558c278124a51142d08773080d23d62a260fe46e895c05d8",
+    "processing.sql": "c08375fb3414b1597c44ac8958f29fe1ec3738633c9a4aa3847eef89d2b83926"
+  },
+  "platform_lock_check": {
+    "command": [
+      "uv",
+      "pip",
+      "install",
+      "--python",
+      "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+      "--require-hashes",
+      "-r",
+      "D:\\CodePlus\\deployment\\AgenticRAG\\requirements-local-models-win-py314.lock"
+    ],
+    "exit_code": 0,
+    "result": "Checked 40 packages in 14ms"
+  }
+}
