@@ -1,0 +1,73 @@
+.F
+================================== FAILURES ===================================
+_______ test_real_single_chunk_publish_and_analyzer_empty[punctuation] ________
+
+tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r10-executor-20260922/small-observed/test_real_single_chunk_publish1')
+text = '!!! ??? ...'
+
+    @pytest.mark.parametrize('text',['Telescope ocean immutable source.','!!! ??? ...','\U0001fae8 \U0001fae8 \U0001fae8'],ids=['words','punctuation','unicode'])
+    def test_real_single_chunk_publish_and_analyzer_empty(tmp_path,text):
+        report={'scope':'one real production index row; synthetic normalized 1024D protocol vector','text':text}
+        catalog=Catalog(tmp_path/'data');owner,config=H['processed'](catalog,tmp_path/'short.txt',text=text)
+        prepared,artifact,expected=H['synthetic_encoded'](catalog,owner)
+        backend=MilvusRevisionIndex(config.storage,catalog)
+        try:
+            assert len(expected)==1
+            backend.create(artifact,owner)
+            backend.insert(artifact,[{**expected[0],'dense':H['VECTOR']}],owner)
+            if os.environ.get('R10_SMALL_EXPECT_TIMEOUT')=='1':
+                with pytest.raises(TimeoutError) as failure:backend.finalize(artifact,1,owner,index_timeout=3)
+                report.update(result='EXPECTED_DEFAULT_THRESHOLD_FAILURE',error=str(failure.value))
+                assert catalog.get_library(owner.token.kb_id).current_revision_id is None
+                owner.abandon()
+            else:
+                report['finalize']=backend.finalize(artifact,1,owner)
+>               report['validation']=publication.validate(catalog,owner,prepared.revision_id,backend)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+deployment\AgenticRAG\tests\test_publication_small.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+deployment\AgenticRAG\src\agentic_rag\storage\publication.py:118: in validate
+    proof = MilvusRevisionIndex.validate(backend, stored, expected)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <agentic_rag.indexes.milvus.MilvusRevisionIndex object at 0x00000216B433FB10>
+artifact = {'artifact_id': '9e9fa7b9-fd7b-4c40-8c08-0928181186e2', 'kb_id': '4320a24f-9fa0-45f3-825e-8e6f9338a010', 'revision_id': '8e24f022-e988-4843-b9df-5aee8fb11a49', 'batch_id': 'e8e7afd6-1213-4468-82ec-ae4b3af86fc7', ...}
+expected = [{'body_hash': 'd86b0d0474d58a386a3316bfeeb5f6c8ac9a4fee98524128ff28645de0559651', 'chunk_id': 'c5450587-c13c-5995-a11...ument_id': '0c6a1dbd-c002-4ce3-a484-915d55e732e6', 'document_version_id': '819d2827-0670-5929-a739-56042347cc98', ...}]
+
+    def validate(self, artifact, expected):
+        name = self._name(artifact)
+        proof = self.inspect(artifact, len(expected))
+        by_id = {r['chunk_id']: r for r in expected}
+        seen, first, max_norm_error = set(), None, 0.0
+        iterator = self.client.query_iterator(name, filter='', output_fields=[*SCALAR_FIELDS, 'dense'],
+                    batch_size=256, consistency_level='Strong', timeout=self.timeout)
+        try:
+            while batch := iterator.next():
+                for row in batch:
+                    identity = row['chunk_id']
+                    if identity in seen or identity not in by_id:
+                        raise index_error('Milvus full iterator found duplicate/foreign chunk')
+                    expected_row = by_id[identity]
+                    if {k: row[k] for k in SCALAR_FIELDS} != expected_row or vector_hash(row['dense']) != expected_row['vector_hash']:
+                        raise index_error('Milvus full row/source/config/text/vector hash differs: ' + identity)
+                    seen.add(identity)
+                    max_norm_error = max(max_norm_error, abs(math.sqrt(sum(v*v for v in row['dense']))-1))
+                    first = first or row
+        finally:
+            iterator.close()
+        if seen != set(by_id):
+            raise index_error('Milvus full iterator ID set incomplete')
+        dense = self.search(artifact, first['dense'], limit=min(10, len(expected)), nprobe=artifact['spec']['index']['nlist'])
+        # Query text is an existing complete index input, never a fabricated constant.
+        sparse = self.search(artifact, first['text'], field='sparse', limit=min(10, len(expected)))
+        if not dense or not sparse or any(str(h['id']) not in seen or not math.isfinite(float(h['distance'])) for h in dense+sparse):
+>           raise index_error('Dense/BM25 actual query validation failed')
+E           agentic_rag.domain.RagError: INVALID_RESPONSE: Dense/BM25 actual query validation failed
+
+deployment\AgenticRAG\src\agentic_rag\indexes\milvus.py:217: RagError
+=========================== short test summary info ===========================
+FAILED deployment\AgenticRAG\tests\test_publication_small.py::test_real_single_chunk_publish_and_analyzer_empty[punctuation]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 1 passed in 23.70s

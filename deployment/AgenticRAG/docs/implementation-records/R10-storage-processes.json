@@ -1,0 +1,261 @@
+{
+  "platform": "win32",
+  "python": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+  "events": [
+    {
+      "event": "spawn",
+      "launcher_pid": 17868,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\storage_process_helper.py",
+        "mutation",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_same_library_exclusion_ot0\\data",
+        "cf5a25c6-c974-4fc3-9789-c01adf07c734",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_same_library_exclusion_ot0\\event-5921e2ff-8c34-48ef-a54a-d65183855051.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_same_library_exclusion_ot0\\control-5921e2ff-8c34-48ef-a54a-d65183855051"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_same_library_exclusion_ot0"
+    },
+    {
+      "pid": 44980,
+      "mode": "mutation",
+      "started_monotonic": 41424.4911762,
+      "result": "acquired",
+      "token": {
+        "store_id": "5e77ed7d-4638-4632-8e07-7f0b17c38b26",
+        "kb_id": "cf5a25c6-c974-4fc3-9789-c01adf07c734",
+        "batch_id": "b014d8a9-5d69-44d4-ad92-f1340ee79150",
+        "owner_nonce": "6faa60b2-3f76-4f22-b049-0ee3336b5e9b",
+        "owner_epoch": 2
+      },
+      "elapsed_ms": 304.99350000172853
+    },
+    {
+      "event": "spawn",
+      "launcher_pid": 17792,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\storage_process_helper.py",
+        "probe",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_same_library_exclusion_ot0\\data",
+        "cf5a25c6-c974-4fc3-9789-c01adf07c734",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_same_library_exclusion_ot0\\event-dab78d7f-f608-4dbc-9615-eae990ea1463.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_same_library_exclusion_ot0\\control-dab78d7f-f608-4dbc-9615-eae990ea1463"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_same_library_exclusion_ot0"
+    },
+    {
+      "pid": 47100,
+      "mode": "probe",
+      "started_monotonic": 41425.1451303,
+      "same_library": "LIBRARY_BUSY",
+      "other_library": "completed",
+      "read_library": "cf5a25c6-c974-4fc3-9789-c01adf07c734",
+      "pin": "7f0899b8-5f00-4645-88ec-610210a7fb46",
+      "result": "probe_completed",
+      "elapsed_ms": 373.6895000038203
+    },
+    {
+      "event": "joined",
+      "pid": 47100,
+      "launcher_pid": 17792,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "actual_interpreter_terminated",
+      "pid": 44980,
+      "launcher_pid": 17868,
+      "wait_result": "signaled",
+      "requested_exit_code": 91
+    },
+    {
+      "event": "terminated",
+      "pid": 44980,
+      "launcher_pid": 17868,
+      "exit_code": 91,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "spawn",
+      "launcher_pid": 12888,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\storage_process_helper.py",
+        "mutation",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_real_owner_death_preserve0\\data",
+        "31f55bc6-0622-4f41-b8b9-31422acb67b8",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_real_owner_death_preserve0\\event-ab0cb6c5-bb95-4da3-9036-00e5d45de046.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_real_owner_death_preserve0\\control-ab0cb6c5-bb95-4da3-9036-00e5d45de046"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_real_owner_death_preserve0"
+    },
+    {
+      "pid": 40536,
+      "mode": "mutation",
+      "started_monotonic": 41425.9353018,
+      "result": "acquired",
+      "token": {
+        "store_id": "ff1c956e-9704-4eb2-9c74-b89ae8cac3af",
+        "kb_id": "31f55bc6-0622-4f41-b8b9-31422acb67b8",
+        "batch_id": "325ed05a-32f6-46e5-ac10-99b721802732",
+        "owner_nonce": "95629d0b-f909-4bbe-95de-914153d82af7",
+        "owner_epoch": 1
+      },
+      "elapsed_ms": 312.7280000044266
+    },
+    {
+      "event": "actual_interpreter_terminated",
+      "pid": 40536,
+      "launcher_pid": 12888,
+      "wait_result": "signaled",
+      "requested_exit_code": 91
+    },
+    {
+      "event": "terminated",
+      "pid": 40536,
+      "launcher_pid": 12888,
+      "exit_code": 91,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "takeover",
+      "pid": 45372,
+      "old_epoch": 1,
+      "new_epoch": 2,
+      "old_nonce": "95629d0b-f909-4bbe-95de-914153d82af7",
+      "new_nonce": "e7038a39-bd5e-4891-b7a4-a8671cbb0e69",
+      "late_result": "rejected"
+    },
+    {
+      "event": "spawn",
+      "launcher_pid": 27212,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\storage_process_helper.py",
+        "run",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_real_run_death_and_nonce_0\\data",
+        "8a8fbda9-a172-4a31-a4e7-daa14bbc2771",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_real_run_death_and_nonce_0\\event-1eec173a-f034-40c5-a14c-0346ddcbc1bd.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_real_run_death_and_nonce_0\\control-1eec173a-f034-40c5-a14c-0346ddcbc1bd"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_real_run_death_and_nonce_0"
+    },
+    {
+      "pid": 48020,
+      "mode": "run",
+      "started_monotonic": 41426.8261642,
+      "result": "pinned",
+      "run_id": "85594c59-7198-4821-9930-64102e865d8c",
+      "nonce": "bded7c9b-91cc-41c1-9157-0408359d9dfb",
+      "revision_id": "ffd2329d-33ca-4fe9-8ef5-890e1dd30391",
+      "elapsed_ms": 310.3763999970397
+    },
+    {
+      "event": "actual_interpreter_terminated",
+      "pid": 48020,
+      "launcher_pid": 27212,
+      "wait_result": "signaled",
+      "requested_exit_code": 91
+    },
+    {
+      "event": "terminated",
+      "pid": 48020,
+      "launcher_pid": 27212,
+      "exit_code": 91,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "crashed_pin_released",
+      "pid": 45372,
+      "run_id": "85594c59-7198-4821-9930-64102e865d8c",
+      "nonce": "bded7c9b-91cc-41c1-9157-0408359d9dfb",
+      "status": "failed"
+    },
+    {
+      "event": "spawn",
+      "launcher_pid": 25932,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\storage_process_helper.py",
+        "archive",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_two_processes_publish_ide0\\data",
+        "4304e564-9e29-4585-996b-f3dd1ac0b484",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_two_processes_publish_ide0\\event-e60a8ee4-23de-4219-945e-f892cfd4cf8e.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_two_processes_publish_ide0\\control-e60a8ee4-23de-4219-945e-f892cfd4cf8e"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_two_processes_publish_ide0"
+    },
+    {
+      "event": "spawn",
+      "launcher_pid": 29360,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\storage_process_helper.py",
+        "archive",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_two_processes_publish_ide0\\data",
+        "4304e564-9e29-4585-996b-f3dd1ac0b484",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_two_processes_publish_ide0\\event-966195fc-6ca4-4b77-b1ca-044c222e4305.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_two_processes_publish_ide0\\control-966195fc-6ca4-4b77-b1ca-044c222e4305"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-executor-20260922\\regression-first\\test_two_processes_publish_ide0"
+    },
+    {
+      "event": "archive_barrier_ready",
+      "pids": [
+        25932,
+        29360
+      ]
+    },
+    {
+      "pid": 4392,
+      "mode": "archive",
+      "started_monotonic": 41427.5980214,
+      "result": "archived",
+      "sha256": "ca55984a613400f2a3d75f3ef5f7d656e6456274999c35196d7f02a997c6aa2f",
+      "size_bytes": 1800000,
+      "elapsed_ms": 50.313499996264
+    },
+    {
+      "pid": 32660,
+      "mode": "archive",
+      "started_monotonic": 41427.6002952,
+      "result": "archived",
+      "sha256": "ca55984a613400f2a3d75f3ef5f7d656e6456274999c35196d7f02a997c6aa2f",
+      "size_bytes": 1800000,
+      "elapsed_ms": 61.073600001691375
+    },
+    {
+      "event": "joined",
+      "pid": 4392,
+      "launcher_pid": 25932,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "joined",
+      "pid": 32660,
+      "launcher_pid": 29360,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

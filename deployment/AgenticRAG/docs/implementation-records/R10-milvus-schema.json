@@ -1,0 +1,7 @@
+{
+  "scope": "actual Milvus production schema; synthetic normalized 1024D vectors",
+  "fault": "schema",
+  "chunks": 1100,
+  "expected_error": "INVALID_RESPONSE: actual Milvus schema scope/dynamic/consistency/fields differs",
+  "result": "PASS"
+}

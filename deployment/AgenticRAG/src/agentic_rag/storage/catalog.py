@@ -122,13 +122,18 @@ class Catalog:
         if any(member.revision_id != revision.revision_id for member in members):
             raise failure("candidate member refers to a different revision")
         with self._owned(owner, produced_by) as connection:
-            batch = ownership.read_batch(connection, owner.token.batch_id)
-            if revision.base_revision_id != batch.base_revision_id or revision.processing_snapshot_id != batch.processing_snapshot_id:
-                raise failure("candidate must use its batch base and frozen processing snapshot")
-            connection.execute("INSERT INTO revisions VALUES(?,?,?,?,?,?)", (str(revision.revision_id), str(revision.kb_id), str(revision.base_revision_id) if revision.base_revision_id else None, revision.manifest_hash, str(revision.processing_snapshot_id), revision.index_state.value))
-            for member in members:
-                connection.execute("INSERT INTO revision_members VALUES(?,?,?,?,?)", (str(revision.kb_id), str(member.revision_id), str(member.document_id), str(member.document_version_id), member.chunk_set_hash))
-            connection.execute("INSERT INTO revision_dependencies VALUES(?,?,?,'candidate')", (str(revision.kb_id), str(batch.batch_id), str(revision.revision_id)))
+            self._insert_candidate(connection, owner, revision, members)
+
+    def _insert_candidate(self, connection, owner, revision, members):
+        batch = ownership.read_batch(connection, owner.token.batch_id)
+        if (revision.kb_id != batch.kb_id or revision.index_state != IndexState.PREPARING or
+                any(member.revision_id != revision.revision_id for member in members) or
+                revision.base_revision_id != batch.base_revision_id or revision.processing_snapshot_id != batch.processing_snapshot_id):
+            raise failure("candidate must use its batch library, base and frozen processing snapshot")
+        connection.execute("INSERT INTO revisions VALUES(?,?,?,?,?,?)", (str(revision.revision_id), str(revision.kb_id), str(revision.base_revision_id) if revision.base_revision_id else None, revision.manifest_hash, str(revision.processing_snapshot_id), revision.index_state.value))
+        for member in members:
+            connection.execute("INSERT INTO revision_members VALUES(?,?,?,?,?)", (str(revision.kb_id), str(member.revision_id), str(member.document_id), str(member.document_version_id), member.chunk_set_hash))
+        connection.execute("INSERT INTO revision_dependencies VALUES(?,?,?,'candidate')", (str(revision.kb_id), str(batch.batch_id), str(revision.revision_id)))
 
     def retain_revision(self, owner: Mutation, revision_id: UUID, purpose: str, *, produced_by: OwnerToken | None = None) -> None:
         if purpose not in {"recovery", "vector_reuse"}:

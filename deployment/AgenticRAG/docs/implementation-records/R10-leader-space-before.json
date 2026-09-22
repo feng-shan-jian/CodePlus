@@ -1,0 +1,133 @@
+{
+  "at_utc": "2026-09-22T06:05:24.054543+00:00",
+  "project": "codeplus-r10-acceptance",
+  "containers": {
+    "standalone": {
+      "id": "3dc87f685eb188b2f55892523e87e17f1c1c2e43a5765785e808e879c28fd328",
+      "name": "/codeplus-r10-acceptance-standalone-1",
+      "image": "milvusdb/milvus:v3.0.1",
+      "image_id": "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+      "started_at": "2026-09-22T06:05:12.912970088Z",
+      "health": "healthy",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "codeplus-r10-acceptance_milvus",
+          "Source": "/var/lib/docker/volumes/codeplus-r10-acceptance_milvus/_data",
+          "Destination": "/var/lib/milvus",
+          "Driver": "local",
+          "Mode": "rw",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "ports": {
+        "19530/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "19532"
+          }
+        ],
+        "9091/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "9093"
+          }
+        ]
+      }
+    },
+    "minio": {
+      "id": "1a1504df756658daec53e9b8e7c1219a22c504692706618efc2f697c9cfaafad",
+      "name": "/codeplus-r10-acceptance-minio-1",
+      "image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+      "image_id": "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+      "started_at": "2026-09-22T06:05:07.09985138Z",
+      "health": "healthy",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "codeplus-r10-acceptance_minio",
+          "Source": "/var/lib/docker/volumes/codeplus-r10-acceptance_minio/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "rw",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "ports": {}
+    },
+    "etcd": {
+      "id": "10e896a069736b6de3d3c0f68139108162d1fce980bb7a9cf75f15b9801a573b",
+      "name": "/codeplus-r10-acceptance-etcd-1",
+      "image": "quay.io/coreos/etcd:v3.5.25",
+      "image_id": "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+      "started_at": "2026-09-22T06:05:07.102223563Z",
+      "health": "healthy",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "codeplus-r10-acceptance_etcd",
+          "Source": "/var/lib/docker/volumes/codeplus-r10-acceptance_etcd/_data",
+          "Destination": "/etcd",
+          "Driver": "local",
+          "Mode": "rw",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "ports": {}
+    }
+  },
+  "volumes": [
+    {
+      "CreatedAt": "2026-09-22T06:05:06Z",
+      "Driver": "local",
+      "Labels": {
+        "com.docker.compose.config-hash": "565b797095cd37d6c932b3819eb95ff9f43a97b316bf42e86f93fe722a7f5c96",
+        "com.docker.compose.project": "codeplus-r10-acceptance",
+        "com.docker.compose.version": "5.4.0",
+        "com.docker.compose.volume": "etcd"
+      },
+      "Mountpoint": "/var/lib/docker/volumes/codeplus-r10-acceptance_etcd/_data",
+      "Name": "codeplus-r10-acceptance_etcd",
+      "Options": null,
+      "Scope": "local"
+    },
+    {
+      "CreatedAt": "2026-09-22T06:05:06Z",
+      "Driver": "local",
+      "Labels": {
+        "com.docker.compose.config-hash": "eeb7fb9266fb5f2c4812cd0635937da1df585e69fc0049d8c80d0b8caeb0b4db",
+        "com.docker.compose.project": "codeplus-r10-acceptance",
+        "com.docker.compose.version": "5.4.0",
+        "com.docker.compose.volume": "milvus"
+      },
+      "Mountpoint": "/var/lib/docker/volumes/codeplus-r10-acceptance_milvus/_data",
+      "Name": "codeplus-r10-acceptance_milvus",
+      "Options": null,
+      "Scope": "local"
+    },
+    {
+      "CreatedAt": "2026-09-22T06:05:06Z",
+      "Driver": "local",
+      "Labels": {
+        "com.docker.compose.config-hash": "dbf233fc827892cb35ad32dc92942eaa20a154571d537f5713db53202a899571",
+        "com.docker.compose.project": "codeplus-r10-acceptance",
+        "com.docker.compose.version": "5.4.0",
+        "com.docker.compose.volume": "minio"
+      },
+      "Mountpoint": "/var/lib/docker/volumes/codeplus-r10-acceptance_minio/_data",
+      "Name": "codeplus-r10-acceptance_minio",
+      "Options": null,
+      "Scope": "local"
+    }
+  ],
+  "non_owned_containers": [],
+  "volume_allocated_kib": {
+    "codeplus-r10-acceptance_etcd": 125080,
+    "codeplus-r10-acceptance_milvus": 20,
+    "codeplus-r10-acceptance_minio": 612
+  },
+  "space_scope": "whole owned service volumes including WAL/metadata/tombstones/background work; not per-collection net size"
+}

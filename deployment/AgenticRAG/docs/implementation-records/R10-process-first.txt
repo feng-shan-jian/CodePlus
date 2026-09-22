@@ -1,0 +1,54 @@
+F
+================================== FAILURES ===================================
+_ test_real_publication_process_termination_and_concurrent_metadata[before-commit] _
+
+tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r10-executor-20260922/process-first/test_real_publication_process_0')
+mode = 'before-commit'
+
+    @pytest.mark.parametrize('mode',['before-commit','after-commit'])
+    def test_real_publication_process_termination_and_concurrent_metadata(tmp_path,mode):
+        helper=Path(__file__).with_name('publication_process_helper.py')
+        proc=subprocess.Popen([sys.executable,'-I','-B',str(helper),mode,str(tmp_path)],stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,encoding='utf-8')
+        report={'mode':mode,'scope':'real Milvus/SQLite/process kill; synthetic 1024D protocol vectors','pid':proc.pid}
+        def read():
+            with ThreadPoolExecutor(1) as pool:
+                line=pool.submit(proc.stdout.readline).result(180)
+            if not line:
+                raise AssertionError(proc.stderr.read())
+            return json.loads(line)
+        try:
+            first=read();assert first['gate']=='service_io';report['io_gate']=first
+            started=time.perf_counter()
+            other=subprocess.run([sys.executable,'-I','-B',str(helper),'other-library',str(tmp_path)],
+                capture_output=True,text=True,encoding='utf-8',timeout=10)
+            assert other.returncode==0,other.stderr
+            report['independent_writer']=json.loads(other.stdout)
+            report['independent_process_seconds']=time.perf_counter()-started
+            proc.stdin.write('continue\n');proc.stdin.flush()
+            gate=read();assert gate['gate']==mode.replace('-','_');report['publish_gate']=gate
+            proc.kill();report['returncode']=proc.wait(15)
+            assert proc.poll() is not None
+>           catalog=Catalog(tmp_path/'data');kb=UUID(gate['kb_id']);batch=UUID(gate['batch_id'])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+
+deployment\AgenticRAG\tests\test_publication_processes.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+deployment\AgenticRAG\src\agentic_rag\storage\catalog.py:21: in __init__
+    self._db = Database(self._directory, busy_timeout_ms=busy_timeout_ms)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+deployment\AgenticRAG\src\agentic_rag\storage\database.py:38: in __init__
+    connection = self._connect(create=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+deployment\AgenticRAG\src\agentic_rag\storage\database.py:132: in _connect
+    connection.pragma("synchronous", "FULL")
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+>   ???
+E   apsw.IOError: disk I/O error
+
+D:\a\apsw\apsw\src\cursor.c:1320: IOError
+=========================== short test summary info ===========================
+FAILED deployment\AgenticRAG\tests\test_publication_processes.py::test_real_publication_process_termination_and_concurrent_metadata[before-commit]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 26.49s

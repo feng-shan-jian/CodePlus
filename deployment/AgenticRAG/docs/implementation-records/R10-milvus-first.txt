@@ -1,0 +1,77 @@
+F
+================================== FAILURES ===================================
+_______ test_real_candidate_validation_and_failure_never_publish[none] ________
+
+self = {'chunk_id': '007a2d7f-8b39-5e44-add5-b758342cd860', 'distance': 1.0, 'entity': {'text_hash': 'dacd2fbe674f470b3e9aff9...89, 'document_version_id': '6e6dd726-568f-5a33-9228-17dfcdb081ff', 'chunk_id': '007a2d7f-8b39-5e44-add5-b758342cd860'}}
+key = 'id'
+
+    def __getitem__(self, key: str):
+        try:
+>           return super().__getitem__(key)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'id'
+
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pymilvus\client\search_result.py:554: KeyError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r10-executor-20260922/milvus-first/test_real_candidate_validation0')
+fault = 'none'
+
+    @pytest.mark.parametrize('fault',['none','row_hash','index_timeout'])
+    def test_real_candidate_validation_and_failure_never_publish(tmp_path,fault):
+        report={'scope':'actual Milvus production schema; synthetic normalized 1024D vectors', 'fault':fault}
+        catalog=Catalog(tmp_path/'data')
+        text=''.join(f'# Section {i}\nTelescope ocean immutable document number {i}.\n' for i in range(1100))
+        owner,config=H['processed'](catalog,tmp_path/'source.md',text=text)
+        prepared,artifact,expected=H['synthetic_encoded'](catalog,owner)
+        backend=MilvusRevisionIndex(config.storage,catalog)
+        report['chunks']=len(expected)
+        assert len(expected)>=1024
+        try:
+            backend.create(artifact,owner)
+            rows=[{**row,'dense':H['VECTOR']} for row in expected]
+            if fault=='row_hash':rows[-1]['body_hash']='f'*64
+            for start in range(0,len(rows),128):backend.insert(artifact,rows[start:start+128],owner)
+            if fault=='index_timeout':
+                with pytest.raises(TimeoutError) as failure:
+                    backend.finalize(artifact,len(rows)+1,owner,index_timeout=0)
+                report['expected_error']=str(failure.value)
+            else:
+                report['finalize']=backend.finalize(artifact,len(rows),owner)
+                if fault=='row_hash':
+                    with pytest.raises(RagError) as failure:publication.validate(catalog,owner,prepared.revision_id,backend)
+                    report['expected_error']=str(failure.value)
+                else:
+>                   report['validation']=publication.validate(catalog,owner,prepared.revision_id,backend)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+deployment\AgenticRAG\tests\test_publication_milvus.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+deployment\AgenticRAG\src\agentic_rag\storage\publication.py:118: in validate
+    proof = MilvusRevisionIndex.validate(backend, stored, expected)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+deployment\AgenticRAG\src\agentic_rag\indexes\milvus.py:209: in validate
+    if not dense or not sparse or any(str(h['id']) not in seen or not math.isfinite(float(h['distance'])) for h in dense+sparse):
+                                  ^^^
+deployment\AgenticRAG\src\agentic_rag\indexes\milvus.py:209: in <genexpr>
+    if not dense or not sparse or any(str(h['id']) not in seen or not math.isfinite(float(h['distance'])) for h in dense+sparse):
+                                          ^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = {'chunk_id': '007a2d7f-8b39-5e44-add5-b758342cd860', 'distance': 1.0, 'entity': {'text_hash': 'dacd2fbe674f470b3e9aff9...89, 'document_version_id': '6e6dd726-568f-5a33-9228-17dfcdb081ff', 'chunk_id': '007a2d7f-8b39-5e44-add5-b758342cd860'}}
+key = 'id'
+
+    def __getitem__(self, key: str):
+        try:
+            return super().__getitem__(key)
+        except KeyError:
+>           return super().__getitem__("entity")[key]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'id'
+
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pymilvus\client\search_result.py:556: KeyError
+=========================== short test summary info ===========================
+FAILED deployment\AgenticRAG\tests\test_publication_milvus.py::test_real_candidate_validation_and_failure_never_publish[none]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 27.00s

@@ -1,0 +1,7 @@
+{
+  "scope": "real Milvus client connecting to an owned unserved loopback port",
+  "endpoint": "http://127.0.0.1:64165",
+  "error_type": "MilvusException",
+  "error": "<MilvusException: (code=2, message=Fail connecting to server on 127.0.0.1:64165, illegal connection params or server unavailable)>",
+  "result": "PASS"
+}

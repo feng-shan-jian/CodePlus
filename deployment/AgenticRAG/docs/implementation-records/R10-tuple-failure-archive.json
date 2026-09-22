@@ -1,0 +1,25 @@
+{
+  "result": "COMPLETE_WITH_REQUEST_ERRORS",
+  "records": 200,
+  "errors": 200,
+  "all_error_hits_empty": true,
+  "error_type": "ParamError",
+  "archives": [
+    {
+      "path": "R10-dense-tuple-failure.json.gz",
+      "original_size": 10008811,
+      "size": 1647536,
+      "original_sha256": "444d7a4cf150ccaaf09cf4b43300d6ee0f0f23d0a7b5a2175d11f5fb1c4529ca",
+      "sha256": "86febb1d45b900c21ccc2293db38965706abc6dd42aec8f8a0f675de775a617a",
+      "lossless_roundtrip": true
+    },
+    {
+      "path": "R10-dense-tuple-failure.txt.gz",
+      "original_size": 9529050,
+      "size": 1474374,
+      "original_sha256": "b1c8f9654aa56e1e57e286a47b5c50097352a3f2094787339fe3fbc58fa5fb65",
+      "sha256": "070f51663f375467b77d9613b6ee20f3f260c3b5e8f4342036f668952612b2f8",
+      "lossless_roundtrip": true
+    }
+  ]
+}

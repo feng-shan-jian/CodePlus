@@ -1,0 +1,1 @@
+{"installed_root": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Lib\\site-packages\\agentic_rag", "files_checked": 45}

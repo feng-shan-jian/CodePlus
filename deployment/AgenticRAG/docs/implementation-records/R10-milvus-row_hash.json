@@ -1,0 +1,12 @@
+{
+  "scope": "actual Milvus production schema; synthetic normalized 1024D vectors",
+  "fault": "row_hash",
+  "chunks": 1100,
+  "finalize": {
+    "flush_seconds": 1.695126500002516,
+    "index_seconds": 1.2075794999982463,
+    "load_sealed_reload_seconds": 5.746402200005832
+  },
+  "expected_error": "INVALID_RESPONSE: Milvus full row/source/config/text/vector hash differs: fff767fb-caed-5c98-a824-d3fa1bb1a16a",
+  "result": "PASS"
+}

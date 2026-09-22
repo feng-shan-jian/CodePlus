@@ -1,0 +1,43 @@
+{
+  "mode": "redirector-diagnostic",
+  "scope": "real Milvus/SQLite/process kill; synthetic 1024D protocol vectors",
+  "pid": 28884,
+  "io_gate": {
+    "gate": "service_io",
+    "kb_id": "1679d1e4-3885-4f68-9de8-7fed783b4827",
+    "batch_id": "251b1baa-2b0a-49b3-b540-da2e6e5052b9",
+    "revision_id": "2ad12652-3efd-451f-b49c-f9614b13c859",
+    "collection_name": "ar_r10_acceptance_14347f1828a94de98102137b129947b9_1679d1e438854f689de87fed783b4827_2ad126523efd451fb49cf9614b13c859_e1",
+    "pid": 23396,
+    "owner_nonce": "15d7391a-6480-41cd-ab77-e2f131860c9d",
+    "owner_epoch": 1,
+    "process_birth": "134345309249076681"
+  },
+  "independent_writer": {
+    "written": "a8b0bdd3-e9a1-46f9-b561-551fde9bd7cf",
+    "elapsed_seconds": 0.31284299999970244
+  },
+  "independent_process_seconds": 0.8204732000012882,
+  "publish_gate": {
+    "gate": "before_commit",
+    "kb_id": "1679d1e4-3885-4f68-9de8-7fed783b4827",
+    "batch_id": "251b1baa-2b0a-49b3-b540-da2e6e5052b9",
+    "revision_id": "2ad12652-3efd-451f-b49c-f9614b13c859",
+    "collection_name": "ar_r10_acceptance_14347f1828a94de98102137b129947b9_1679d1e438854f689de87fed783b4827_2ad126523efd451fb49cf9614b13c859_e1",
+    "pid": 23396,
+    "owner_nonce": "15d7391a-6480-41cd-ab77-e2f131860c9d",
+    "owner_epoch": 1,
+    "process_birth": "134345309249076681"
+  },
+  "redirector_only_diagnostic": {
+    "launcher_exit": 1,
+    "actual_birth_after_launcher_exit": "134345309249076681",
+    "directory_attributes": 16,
+    "premature_open": "succeeded"
+  },
+  "returncode": 1,
+  "result": "PASS",
+  "receipt": null,
+  "current_revision_id": null,
+  "stderr": ""
+}

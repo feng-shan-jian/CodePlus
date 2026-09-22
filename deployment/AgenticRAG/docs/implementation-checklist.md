@@ -29,8 +29,8 @@
 | R06 | COMMITTED | /root/r06_storage | [独立验收](implementation-records/R06.md) | `ebf402ba1d58a3f6651c7894238b29e144bbafed` |
 | R07 | COMMITTED | /root/r07_inputs | [验收记录](implementation-records/R07.md) | `5d2e71a7d5400c77b0675cb803cca4d433110678` |
 | R08 | COMMITTED | /root/r08_parsing | [Leader 验收](implementation-records/R08.md) | `97224b0414c9b67bc99ed59799fa2f2286ab5460` |
-| R09 | ACCEPTED | /root/r09_model_worker | [Leader 验收](implementation-records/R09.md) | 待本地提交 |
-| R10 | TODO | — | — | — |
+| R09 | COMMITTED | /root/r09_model_worker | [Leader 验收](implementation-records/R09.md) | `9afe7e37982cf63c3e2199403499b289d8a520b1` |
+| R10 | ACCEPTED | /root/r10_publication | [Leader独立验收](implementation-records/R10.md)；326核心+11真实+4增量，609/200/重启通过 | 待本地提交 |
 | R11 | TODO | — | — | — |
 | R12 | TODO | — | — | — |
 | R13 | TODO | — | — | — |
@@ -171,11 +171,11 @@
 <a id="r10"></a>
 ### R10：首次发布与 Dense
 
-- [ ] 用正式导入/模型路径处理完整 609 篇；发布清单的文档/Chunk/哈希/维度/配置与实际索引相符。
-- [ ] 候选独立 Collection 在构建、加载、Dense/BM25 底层可用性验证后才切换 SQLite 指针；失败新库保持明确未就绪。
-- [ ] 发布记录与指针原子提交；提交响应丢失可核对且不重复生效；解析/模型/索引操作不占长 SQLite 写事务。
-- [ ] Dense query 使用该版编码配置，身份/来源/版本正确；记录真实建库时间、临时空间及重启查询证据。
-- [ ] 新 runner 调用同一核心，产出开发集基线与失败分母；产品 Context 数量与官方 Top-K=10 不混淆。
+- [x] 用正式导入/模型路径处理完整 609 篇；发布清单的文档/Chunk/哈希/维度/配置与实际索引相符。
+- [x] 候选独立 Collection 在构建、加载、Dense/BM25 底层可用性验证后才切换 SQLite 指针；失败新库保持明确未就绪。
+- [x] 发布记录与指针原子提交；提交响应丢失可核对且不重复生效；解析/模型/索引操作不占长 SQLite 写事务。
+- [x] Dense query 使用该版编码配置，身份/来源/版本正确；记录真实建库时间、临时空间及重启查询证据。
+- [x] 新 runner 调用同一核心，产出开发集基线与失败分母；产品 Context 数量与官方 Top-K=10 不混淆。
 
 <a id="r11"></a>
 ### R11：原文与证据

@@ -1,0 +1,25 @@
+{
+  "started_at": "2026-09-22T06:27:59.171550+00:00",
+  "elapsed_seconds": 51.30619080000179,
+  "argv": [
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+    "-I",
+    "-B",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\publication_full_acceptance.py",
+    "restart",
+    "--root",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-leader-20260922\\full",
+    "--cuda-python",
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+    "--model-cache",
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models",
+    "--report",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R10-leader-restart.json"
+  ],
+  "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-leader-20260922",
+  "exit_code": 0,
+  "evidence_environment": {},
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "code_freeze": "f0d01f81b299540994f3940b6946da330990339d207edd3f4fb154718e15ce64",
+  "base_head": "9afe7e37982cf63c3e2199403499b289d8a520b1"
+}

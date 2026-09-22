@@ -1,6 +1,6 @@
 # AgenticRAG 独立开发区
 
-状态：当前提供独立领域／配置核心、存储与并发、不可变原件及处理检查点、Markdown/TXT 解析与实际 tokenizer 分块，以及 R09 本地 Embedding/Rerank 共享 worker；实际验收和提交状态见任务台账。更新日期：2026-09-22。检索与宿主 Agent 接入继续按 R10–R26 实施。
+状态：当前提供独立领域／配置核心、存储与并发、不可变原件及处理检查点、Markdown/TXT 解析与实际 tokenizer 分块、本地 Embedding/Rerank 共享 worker，以及 R10 首次完整索引发布和固定版本 Dense 候选；实际验收和提交状态见任务台账。更新日期：2026-09-22。原文工具、宿主 Agent 和完整生命周期继续按 R11–R26 实施。
 
 在本目录完成 RAG 重建的规划、独立实现和验收，达到迁移条件后再接入 CodePlus 主模块。
 
@@ -22,9 +22,11 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 
 配置只接收调用方显式传入的 `knowledge` 对象，优先级为 `explicit > configured > defaults > Schema 默认`。默认检索模式为 `auto`；候选数量、分块参数、QA/报告预算必须显式提供试验值，尚未冻结质量参数。字段、可运行示例、身份与协议边界见 [领域与配置](docs/domain-and-configuration.md)，R05 的两条真实发行安装证据见 [R05](docs/implementation-records/R05.md)。分发包不包含该文档目录，源码开发区可查阅。
 
-`agentic_rag.storage.Catalog` 接收宿主已解析的本机绝对目录，创建或打开明确属于本应用的数据目录。当前提供关系约束、短事务、归档、批次手动接管与完整版本 pin；生产索引验证/发布、导入恢复交互及自动 GC 仍在后续任务。接口、路径限制、持久化边界和 R06 证据见 [存储与并发](docs/storage-and-concurrency.md)。
+`agentic_rag.storage.Catalog` 接收宿主已解析的本机绝对目录，创建或打开明确属于本应用的数据目录。当前提供关系约束、短事务、归档、批次手动接管、完整版本 pin 和首次索引验证/发布；导入恢复交互及自动 GC 仍在后续任务。接口、路径限制、持久化边界和 R06 证据见 [存储与并发](docs/storage-and-concurrency.md)。
 
-`agentic_rag.ingestion` 处理明确选择的本机 Markdown/TXT 文件或目录。`select_inputs` 固定清单，`Catalog.begin_import` 登记基准版和完整配置，`capture_inputs` 保存完整原件，`process_inputs` 从归档解析并原子接纳完整处理检查点，`read_processed` 核验重开结果。相同路径延续文档身份，显式更新支持改名，缺失文件不自动删除；没有 watcher 或生产发布，完整恢复交互留 R14。见 [输入快照](docs/input-snapshots.md)、[解析与来源映射](docs/parsing-and-source-maps.md)。
+`agentic_rag.ingestion` 处理明确选择的本机 Markdown/TXT 文件或目录。`select_inputs` 固定清单，`Catalog.begin_import` 登记基准版和完整配置，`capture_inputs` 保存完整原件，`process_inputs` 从归档解析并原子接纳完整处理检查点，`read_processed` 核验重开结果。相同路径延续文档身份，显式更新支持改名，缺失文件不自动删除；没有 watcher，完整恢复交互留 R14。见 [输入快照](docs/input-snapshots.md)、[解析与来源映射](docs/parsing-and-source-maps.md)。
+
+`ingestion.build.build_first_revision` 在全部捕获/处理成功后，通过 R09 provider 编码并构建每版独立 Milvus Collection。`storage.publication` 以全量真实校验凭据原子登记回执和当前指针；`retrieval.DenseSearch` 使用运行绑定版的编码、来源和 canonical body。数据库SDK通过 `milvus` extra安装（PyMilvus3.0.2 / Milvus3.0.1），与核心和CUDA环境分开。运行时token显式传入adapter，不入业务快照。正式路径、UTF-8限额、schema和复跑入口见 [首次发布与Dense](docs/first-publication.md)。
 
 `agentic_rag.models.create_local_provider(assembled)` 从统一装配结果的 `worker` 操作配置取得解释器、缓存和私有运行目录。同步 Embedding/Rerank 与 `submit_*` 跟踪句柄共用实际 worker。名称不同但 profile 身份相同复用 GPU 实例；不同身份在单槽卸载后重载，不下载模型、不自动切 CPU/API。安装、显式配置、取消与真实完成区别见 [本地模型 worker](docs/local-model-worker.md)，Windows 实测见 [R09](docs/implementation-records/R09.md)。`local-models` extra 与核心依赖分离，实际 Windows/Python3.14 CUDA 依赖和 hashes 另存 `requirements-local-models-win-py314.lock`；Linux 实测仍属 R25。
 
@@ -32,7 +34,7 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 
 使用方式沿用 CodePlus 现有基础命令形式：通过 `/knowledge` 一类命令管理与选择知识库，再正常提问或要求生成报告，并沿用现有非交互调用形式。新模块的命令接入仍待实现；不另建本地 Web 界面或独立产品命令体系。
 
-评测只是开发验收中的批量运行与评分，复用现有 `eval/RAG-eval/` 数据和评分口径，不要求用户使用单独的“评测入口”。R01 已解耦检查/离线评分入口，新核心在线执行路径仍待接入；目标是日常调用与内部评测共用新核心和真实 CodePlus Agent。
+评测只是开发验收中的批量运行与评分，复用现有 `eval/RAG-eval/` 数据和评分口径，不要求用户使用单独的“评测入口”。R01 已解耦检查/离线评分入口，R10内部runner已调用同一生产Dense核心；真实CodePlus Agent评测仍随宿主接入实现。
 
 开源首版面向用户各自在自己的电脑或服务器安装使用，不建设带账号和权限管理的多人共享服务。架构草案据此按“同进程独立 RAG 包＋CodePlus 适配层”细化，Milvus 保持独立依赖，模型提供方可配置。首版正式支持 Windows 与 Linux：先在当前 Windows 环境开发，发布前分别完成安装及真实运行验收。具体系统版本、硬件要求与部署组合仍待细化，未来服务化需额外接口与验收工作。
 
@@ -40,7 +42,7 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 
 Milvus 首版提供 Docker Compose 部署配置供用户启动，也支持配置连接已有实例。两种部署路径复用同一检索实现，连接范围、兼容版本和数据隔离需明确；当前 Compose 文件仍待按新模块要求整理及实际验收。
 
-原文及必要解析归档保存在可配置的本地数据目录，SQLite 保存文档身份、版本、引用与任务状态，Milvus 负责检索索引。架构草案提出先准备不可变归档与候选索引，再原子切换 SQLite 发布指针；每个发布版本使用独立 Collection，保护在途查询与 BM25 统计范围。该协议尚待实现和实测，未来更换存储后端仍需配套数据迁移及引用完整性验证。
+原文及必要解析归档保存在可配置的本地数据目录，SQLite 保存文档身份、版本、引用与任务状态，Milvus 负责检索索引。R10首次发布先准备不可变归档与候选索引，再原子切换 SQLite 发布指针；每个发布版本使用独立 Collection。完整增删改、恢复和回收继续R13–R15，未来更换存储后端仍需配套数据迁移及引用完整性验证。
 
 同机多个 CodePlus 进程可以同时查询同一知识库；同一库的导入、更新、删除及重建等修改任务同时只执行一个，冲突时提示忙、稍后重试。已有问答保持原版本，修改成功后供新任务使用。R06 已在独立核心中实际验证库锁互斥、其他库和 pin 登记可进展、进程死亡后的占用核验；CodePlus 宿主接入、完整发布与索引回收仍待后续任务。
 

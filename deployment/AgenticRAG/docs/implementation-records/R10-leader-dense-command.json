@@ -1,0 +1,31 @@
+{
+  "started_at": "2026-09-22T06:26:51.359852+00:00",
+  "elapsed_seconds": 51.47046609999961,
+  "argv": [
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+    "-I",
+    "-B",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\eval\\dense_runner.py",
+    "dense",
+    "--root",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-leader-20260922\\full",
+    "--endpoint",
+    "http://127.0.0.1:19532",
+    "--cuda-python",
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda\\Scripts\\python.exe",
+    "--model-cache",
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models",
+    "--report",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R10-leader-dense.json",
+    "--ids",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\eval\\development-ids.json",
+    "--dataset-hash",
+    "f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898"
+  ],
+  "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-leader-20260922",
+  "exit_code": 0,
+  "evidence_environment": {},
+  "log_sha256": "ad3807fa7b79596ec215ef6ad8ea87fc328112facd7c0e881aff3b8de276fe96",
+  "code_freeze": "f0d01f81b299540994f3940b6946da330990339d207edd3f4fb154718e15ce64",
+  "base_head": "9afe7e37982cf63c3e2199403499b289d8a520b1"
+}

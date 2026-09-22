@@ -1,0 +1,18 @@
+{
+  "started_at": "2026-09-22T06:05:23.337812+00:00",
+  "elapsed_seconds": 1.9471811999974307,
+  "argv": [
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+    "-I",
+    "-B",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\publication_resources.py",
+    "measure",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R10-leader-space-before.json"
+  ],
+  "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r10-leader-20260922",
+  "exit_code": 0,
+  "evidence_environment": {},
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "code_freeze": "172184c9151be239729f048dfebce84f3b3feb7aaac0b6a009700d62bacf522b",
+  "base_head": "9afe7e37982cf63c3e2199403499b289d8a520b1"
+}

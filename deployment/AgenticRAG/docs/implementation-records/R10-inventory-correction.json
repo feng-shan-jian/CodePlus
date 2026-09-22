@@ -1,0 +1,302 @@
+{
+  "result": "PASS_CURRENT_INVENTORY_AND_REGRESSION",
+  "reason": "The previously used docker ps label=com.docker.compose.project!=codeplus-r10-acceptance filter omitted the expected foreign containers. Empty results were incorrectly treated as a complete non-owned inventory.",
+  "historical_fields_status": "INVALID_AS_COMPLETE_NON_OWNED_INVENTORY",
+  "historical_reports": [
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-before-cleanup-resources.json",
+      "sha256": "372889f4eb9fc8a9b5dcde3d06b61e188efe0e273fee33b1d038825292caa9fc",
+      "invalid_fields": [
+        "/non_owned_containers"
+      ]
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-resources-closed.json",
+      "sha256": "655eec2ad0ab3317a11e5e2d263c6fbce5635f30d27f8fe8dedbf62c427372eb",
+      "invalid_fields": [
+        "/non_owned_containers_unchanged"
+      ]
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-restart-final-resources.json",
+      "sha256": "81d5639388c1efb9d356b0dcfcabe6ac075250a6e03c7d0dcb85f2deb7414c04",
+      "invalid_fields": [
+        "/non_owned_containers",
+        "/after_health/non_owned_containers"
+      ]
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-restart-final.json",
+      "sha256": "25fd90384fad12b5a45b577696f791992fd7feed8366504f3228ad01a217e281",
+      "invalid_fields": [
+        "/restart_resources/non_owned_containers",
+        "/restart_resources/after_health/non_owned_containers",
+        "/space_after/non_owned_containers"
+      ]
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-space-before-corpus-index.json",
+      "sha256": "c2357a9931ad9b50436b114f451b2f055efdc366702d740e8d798d1f5abf22df",
+      "invalid_fields": [
+        "/non_owned_containers"
+      ]
+    }
+  ],
+  "preservation": "Original report bytes and candidate3 are retained; current observations do not replace observations at historical times.",
+  "withdrawn_claims": [
+    "Empty non_owned_containers arrays prove no other containers existed.",
+    "The old resources-closed.non_owned_containers_unchanged=[] comparison proves all other containers remained unchanged."
+  ],
+  "remaining_evidence": "Owned-resource labels, mounts, ports and concrete operation logs remain valid within their own scope; build and retrieval observations are unaffected. Initial unfiltered baseline short IDs match current full IDs, but this does not prove continuous historical state.",
+  "leader_reports": "Leader-owned R10-leader-space-before.json and other Leader artifacts are not edited or added to the executor manifest; Leader handles their correction.",
+  "runtime_action_scope": "Only read-only docker ps, inspect and volume inspect were executed. Current owned project resources belong to Leader and are left running. No stop/restart/down/drop/GPU operations.",
+  "regression": {
+    "cwd": "D:/CodePlus",
+    "argv": [
+      "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-core/Scripts/python.exe",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "deployment/AgenticRAG/tests/test_publication_resources.py",
+      "-q",
+      "-x",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "exit_code": 0,
+    "stdout": "....                                                                     [100%]\r\n4 passed in 0.03s\r\n",
+    "scope": "Explicit Docker transport fixtures; no Docker IO in tests."
+  },
+  "actual_observation": {
+    "cwd": "D:/CodePlus",
+    "entry": "runpy.run_path('D:/CodePlus/deployment/AgenticRAG/tests/publication_resources.py')['inventory']()",
+    "exit_code": 0,
+    "inventory": {
+      "at_utc": "2026-09-22T06:11:50.219009+00:00",
+      "project": "codeplus-r10-acceptance",
+      "containers": {
+        "etcd": {
+          "id": "10e896a069736b6de3d3c0f68139108162d1fce980bb7a9cf75f15b9801a573b",
+          "name": "/codeplus-r10-acceptance-etcd-1",
+          "image": "quay.io/coreos/etcd:v3.5.25",
+          "image_id": "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+          "started_at": "2026-09-22T06:05:07.102223563Z",
+          "health": "healthy",
+          "mounts": [
+            {
+              "Type": "volume",
+              "Name": "codeplus-r10-acceptance_etcd",
+              "Source": "/var/lib/docker/volumes/codeplus-r10-acceptance_etcd/_data",
+              "Destination": "/etcd",
+              "Driver": "local",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": ""
+            }
+          ],
+          "ports": {}
+        },
+        "minio": {
+          "id": "1a1504df756658daec53e9b8e7c1219a22c504692706618efc2f697c9cfaafad",
+          "name": "/codeplus-r10-acceptance-minio-1",
+          "image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+          "image_id": "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+          "started_at": "2026-09-22T06:05:07.09985138Z",
+          "health": "healthy",
+          "mounts": [
+            {
+              "Type": "volume",
+              "Name": "codeplus-r10-acceptance_minio",
+              "Source": "/var/lib/docker/volumes/codeplus-r10-acceptance_minio/_data",
+              "Destination": "/data",
+              "Driver": "local",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": ""
+            }
+          ],
+          "ports": {}
+        },
+        "standalone": {
+          "id": "3dc87f685eb188b2f55892523e87e17f1c1c2e43a5765785e808e879c28fd328",
+          "name": "/codeplus-r10-acceptance-standalone-1",
+          "image": "milvusdb/milvus:v3.0.1",
+          "image_id": "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+          "started_at": "2026-09-22T06:05:12.912970088Z",
+          "health": "healthy",
+          "mounts": [
+            {
+              "Type": "volume",
+              "Name": "codeplus-r10-acceptance_milvus",
+              "Source": "/var/lib/docker/volumes/codeplus-r10-acceptance_milvus/_data",
+              "Destination": "/var/lib/milvus",
+              "Driver": "local",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": ""
+            }
+          ],
+          "ports": {
+            "19530/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "19532"
+              }
+            ],
+            "9091/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "9093"
+              }
+            ]
+          }
+        }
+      },
+      "volumes": [
+        {
+          "CreatedAt": "2026-09-22T06:05:06Z",
+          "Driver": "local",
+          "Labels": {
+            "com.docker.compose.config-hash": "565b797095cd37d6c932b3819eb95ff9f43a97b316bf42e86f93fe722a7f5c96",
+            "com.docker.compose.project": "codeplus-r10-acceptance",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "etcd"
+          },
+          "Mountpoint": "/var/lib/docker/volumes/codeplus-r10-acceptance_etcd/_data",
+          "Name": "codeplus-r10-acceptance_etcd",
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "CreatedAt": "2026-09-22T06:05:06Z",
+          "Driver": "local",
+          "Labels": {
+            "com.docker.compose.config-hash": "eeb7fb9266fb5f2c4812cd0635937da1df585e69fc0049d8c80d0b8caeb0b4db",
+            "com.docker.compose.project": "codeplus-r10-acceptance",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "milvus"
+          },
+          "Mountpoint": "/var/lib/docker/volumes/codeplus-r10-acceptance_milvus/_data",
+          "Name": "codeplus-r10-acceptance_milvus",
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "CreatedAt": "2026-09-22T06:05:06Z",
+          "Driver": "local",
+          "Labels": {
+            "com.docker.compose.config-hash": "dbf233fc827892cb35ad32dc92942eaa20a154571d537f5713db53202a899571",
+            "com.docker.compose.project": "codeplus-r10-acceptance",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "minio"
+          },
+          "Mountpoint": "/var/lib/docker/volumes/codeplus-r10-acceptance_minio/_data",
+          "Name": "codeplus-r10-acceptance_minio",
+          "Options": null,
+          "Scope": "local"
+        }
+      ],
+      "inventory_method": "unfiltered docker ps -aq --no-trunc; inspect all IDs; exact project label partition in Python",
+      "container_inventory": [
+        {
+          "id": "10e896a069736b6de3d3c0f68139108162d1fce980bb7a9cf75f15b9801a573b",
+          "name": "codeplus-r10-acceptance-etcd-1",
+          "image": "quay.io/coreos/etcd:v3.5.25",
+          "image_id": "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+          "project": "codeplus-r10-acceptance",
+          "service": "etcd",
+          "status": "running",
+          "running": true,
+          "started_at": "2026-09-22T06:05:07.102223563Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "restart_count": 0
+        },
+        {
+          "id": "1a1504df756658daec53e9b8e7c1219a22c504692706618efc2f697c9cfaafad",
+          "name": "codeplus-r10-acceptance-minio-1",
+          "image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+          "image_id": "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+          "project": "codeplus-r10-acceptance",
+          "service": "minio",
+          "status": "running",
+          "running": true,
+          "started_at": "2026-09-22T06:05:07.09985138Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "restart_count": 0
+        },
+        {
+          "id": "3dc87f685eb188b2f55892523e87e17f1c1c2e43a5765785e808e879c28fd328",
+          "name": "codeplus-r10-acceptance-standalone-1",
+          "image": "milvusdb/milvus:v3.0.1",
+          "image_id": "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+          "project": "codeplus-r10-acceptance",
+          "service": "standalone",
+          "status": "running",
+          "running": true,
+          "started_at": "2026-09-22T06:05:12.912970088Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "restart_count": 0
+        },
+        {
+          "id": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+          "name": "sonarqube-postgres",
+          "image": "postgres:17.6-alpine",
+          "image_id": "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+          "project": "sonarqube-production",
+          "service": "db",
+          "status": "running",
+          "running": true,
+          "started_at": "2026-09-21T23:55:35.595978036Z",
+          "finished_at": "2026-09-21T23:55:34.977960445Z",
+          "restart_count": 0
+        },
+        {
+          "id": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+          "name": "sonarqube-production",
+          "image": "sonarqube:26.8.0.126808-community",
+          "image_id": "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+          "project": "sonarqube-production",
+          "service": "sonarqube",
+          "status": "running",
+          "running": true,
+          "started_at": "2026-09-21T23:55:35.605472636Z",
+          "finished_at": "2026-09-21T23:55:34.976754899Z",
+          "restart_count": 0
+        }
+      ],
+      "non_owned_containers": [
+        "44840f5a0ec0 sonarqube-postgres postgres:17.6-alpine",
+        "4bb3885b1aa2 sonarqube-production sonarqube:26.8.0.126808-community"
+      ],
+      "non_owned_container_details": [
+        {
+          "id": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+          "name": "sonarqube-postgres",
+          "image": "postgres:17.6-alpine",
+          "image_id": "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+          "project": "sonarqube-production",
+          "service": "db",
+          "status": "running",
+          "running": true,
+          "started_at": "2026-09-21T23:55:35.595978036Z",
+          "finished_at": "2026-09-21T23:55:34.977960445Z",
+          "restart_count": 0
+        },
+        {
+          "id": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+          "name": "sonarqube-production",
+          "image": "sonarqube:26.8.0.126808-community",
+          "image_id": "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+          "project": "sonarqube-production",
+          "service": "sonarqube",
+          "status": "running",
+          "running": true,
+          "started_at": "2026-09-21T23:55:35.605472636Z",
+          "finished_at": "2026-09-21T23:55:34.976754899Z",
+          "restart_count": 0
+        }
+      ]
+    }
+  }
+}

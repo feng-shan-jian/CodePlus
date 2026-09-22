@@ -107,13 +107,13 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
                                      ("hatchling", "packaging", "pathspec", "pluggy", "trove-classifiers")},
               "commands": [], "artifacts": [], "installations": []}
 
-    def command(args, cwd=outside):
+    def command(args, cwd=outside, expected=0):
         completed = subprocess.run([str(arg) for arg in args], cwd=cwd, env=env, text=True,
                                    encoding="utf-8", errors="replace", capture_output=True, timeout=180)
         report["commands"].append({"argv": [str(arg) for arg in args], "cwd": str(cwd),
                                    "exit_code": completed.returncode, "stdout": completed.stdout,
                                    "stderr": completed.stderr})
-        assert completed.returncode == 0, completed.stdout + completed.stderr
+        assert completed.returncode == expected, completed.stdout + completed.stderr
         return completed.stdout
 
     try:
@@ -131,12 +131,14 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
                         ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py")}
         storage_sources = {"agentic_rag/storage/" + name for name in
                            ("__init__.py", "archives.py", "catalog.py", "database.py", "locks.py",
-                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql")}
+                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql", "publication.py", "publication.sql")}
         ingestion_sources = {"agentic_rag/ingestion/" + name for name in
-                             ("__init__.py", "records.py", "source.py", "selection.py", "capture.py", "parsing.py", "chunking.py", "processing.py")}
+                             ("__init__.py", "records.py", "source.py", "selection.py", "capture.py", "parsing.py", "chunking.py", "processing.py", "build.py")}
         model_sources = {'agentic_rag/models/' + name for name in ('__init__.py', 'tokenization.py',
             'protocol.py', 'identity.py', '_windows.py', 'engine.py', 'worker.py', 'lifecycle.py', 'client.py', 'models.lock.json')}
-        assert expected_sources == root_sources | storage_sources | ingestion_sources | model_sources
+        index_sources = {'agentic_rag/indexes/'+name for name in ('__init__.py','manifest.py','milvus.py')}
+        retrieval_sources = {'agentic_rag/retrieval/'+name for name in ('__init__.py','dense.py')}
+        assert expected_sources == root_sources | storage_sources | ingestion_sources | model_sources | index_sources | retrieval_sources
         for artifact in (direct_wheel, sdist, rebuilt_wheel):
             if artifact.suffix == ".whl":
                 with zipfile.ZipFile(artifact) as archive:
@@ -177,8 +179,20 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
             assert not Path(evidence["cwd"]).is_relative_to(package)
             assert Path(evidence["import_path"]).is_relative_to(install)
             report["installations"].append(evidence)
+            missing_report=outside/(label+'-missing-milvus.json')
+            command([python,'-I','-B',package/'eval/dense_runner.py','dense','--root',outside/(label+'-missing-data'),
+                     '--endpoint','http://127.0.0.1:19532','--cuda-python',python,'--model-cache',helper['cache'](),
+                     '--report',missing_report,'--ids',package/'eval/development-ids.json',
+                     '--dataset-hash','f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898'],expected=1)
+            missing=json.loads(missing_report.read_text(encoding='utf-8'))
+            assert missing['dependencies']['pymilvus'] is None
+            assert len(missing['records'])==missing['errors']==200
+            assert all(r['status']=='error' and r['hits']==[] and r['error'] for r in missing['records'])
+            assert missing['error']['type']=='ModuleNotFoundError'
+            evidence['missing_milvus_extra']={'result':missing['result'],'records':200,'errors':200,
+                'exception':missing['error'],'report_sha256':hashlib.sha256(missing_report.read_bytes()).hexdigest()}
         report["result"] = "PASS"
     finally:
-        evidence_path = os.environ.get("R09_INSTALL_REPORT") or os.environ.get("R08_INSTALL_REPORT") or os.environ.get("R07_INSTALL_REPORT") or os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
+        evidence_path = os.environ.get("R10_INSTALL_REPORT") or os.environ.get("R09_INSTALL_REPORT") or os.environ.get("R08_INSTALL_REPORT") or os.environ.get("R07_INSTALL_REPORT") or os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
         if evidence_path:
             Path(evidence_path).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

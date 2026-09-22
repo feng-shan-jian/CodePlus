@@ -1,0 +1,357 @@
+{
+  "action": "revalidate",
+  "pid": 44360,
+  "python": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+  "argv": [
+    "D:/CodePlus/deployment/AgenticRAG/tests/publication_full_acceptance.py",
+    "revalidate",
+    "--root",
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r10-executor-20260922/full-candidate1",
+    "--report",
+    "D:/CodePlus/deployment/AgenticRAG/docs/implementation-records/R10-revalidate-final.json"
+  ],
+  "revision_id": "4aaed7d5-1203-4d83-9b19-ab556f44556a",
+  "collection_name": "ar_r10_acceptance_0a888c8b66c942799634bc4d1d434943_a8ba8f96f2004a488513b2877369fe4a_4aaed7d512034d839b19ab556f44556a_e1",
+  "publication_receipt": {
+    "batch_id": "beaa52b3-7c5c-41b7-9358-dda0f0e9e34c",
+    "kb_id": "a8ba8f96-f200-4a48-8513-b2877369fe4a",
+    "revision_id": "4aaed7d5-1203-4d83-9b19-ab556f44556a",
+    "artifact_id": "3f9f704c-50b2-4fa9-b8d3-084038552423",
+    "owner_nonce": "c681035e-b204-4a34-a8fe-852c523715bf",
+    "owner_epoch": 1,
+    "manifest_hash": "0064147d445c138ee09be3bbece7ba99c9de209882686e6988efce7810eb28b0",
+    "published_at": "2026-09-22T05:26:51.169261+00:00"
+  },
+  "forbidden_runtime_reads": [],
+  "result": "PASS",
+  "proof": {
+    "schema": {
+      "collection_name": "ar_r10_acceptance_0a888c8b66c942799634bc4d1d434943_a8ba8f96f2004a488513b2877369fe4a_4aaed7d512034d839b19ab556f44556a_e1",
+      "auto_id": false,
+      "num_shards": 1,
+      "description": "",
+      "fields": [
+        {
+          "field_id": 100,
+          "name": "chunk_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          },
+          "is_primary": true
+        },
+        {
+          "field_id": 101,
+          "name": "kb_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 102,
+          "name": "revision_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 103,
+          "name": "document_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 104,
+          "name": "document_version_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 105,
+          "name": "section_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 106,
+          "name": "text_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 107,
+          "name": "body_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 108,
+          "name": "raw_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 109,
+          "name": "parsed_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 110,
+          "name": "encoding_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 111,
+          "name": "vector_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 112,
+          "name": "text",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 65535,
+            "enable_analyzer": "true",
+            "analyzer_params": "{\"tokenizer\":\"standard\",\"filter\":[\"lowercase\"]}"
+          }
+        },
+        {
+          "field_id": 113,
+          "name": "span_start",
+          "description": "",
+          "type": 5,
+          "params": {}
+        },
+        {
+          "field_id": 114,
+          "name": "span_end",
+          "description": "",
+          "type": 5,
+          "params": {}
+        },
+        {
+          "field_id": 115,
+          "name": "dense",
+          "description": "",
+          "type": 101,
+          "params": {
+            "dim": 1024
+          }
+        },
+        {
+          "field_id": 116,
+          "name": "sparse",
+          "description": "",
+          "type": 104,
+          "params": {},
+          "is_function_output": true
+        }
+      ],
+      "functions": [
+        {
+          "name": "text_bm25",
+          "id": 100,
+          "description": "",
+          "type": 1,
+          "params": {},
+          "input_field_names": [
+            "text"
+          ],
+          "input_field_ids": [
+            112
+          ],
+          "output_field_names": [
+            "sparse"
+          ],
+          "output_field_ids": [
+            116
+          ]
+        }
+      ],
+      "aliases": [],
+      "collection_id": 469251867259478494,
+      "consistency_level": 0,
+      "consistency_level_name": "Strong",
+      "properties": {
+        "timezone": "UTC",
+        "namespace.sharding.enabled": "false",
+        "max_field_id": "116"
+      },
+      "num_partitions": 1,
+      "enable_dynamic_field": false,
+      "enable_namespace": false,
+      "schema_version": 0,
+      "created_timestamp": 469252043220451347,
+      "update_timestamp": 469252043220451347
+    },
+    "indexes": {
+      "dense_cosine": {
+        "nlist": "64",
+        "metric_type": "COSINE",
+        "index_type": "IVF_FLAT",
+        "field_name": "dense",
+        "index_name": "dense_cosine",
+        "total_rows": 4041,
+        "indexed_rows": 4041,
+        "pending_index_rows": 0,
+        "state": "Finished"
+      },
+      "sparse_bm25": {
+        "inverted_index_algo": "DAAT_MAXSCORE",
+        "bm25_k1": "1.2",
+        "bm25_b": "0.75",
+        "metric_type": "BM25",
+        "index_type": "SPARSE_INVERTED_INDEX",
+        "field_name": "sparse",
+        "index_name": "sparse_bm25",
+        "total_rows": 4041,
+        "indexed_rows": 4041,
+        "pending_index_rows": 0,
+        "state": "Finished"
+      }
+    },
+    "load_state": "Loaded",
+    "segments": [
+      {
+        "segment_id": 469251867259479906,
+        "num_rows": 4041,
+        "state": "Sealed",
+        "index_name": "SPARSE_INVERTED_INDEX",
+        "index_id": 469251867259719927,
+        "mem_size": 0
+      }
+    ],
+    "rows_checked": 4041,
+    "id_set_hash": "019e92112cdca94c8ff447be17e9466310a611c143770aeed3f441fade901b2e",
+    "row_manifest_hash": "78f947c581ad63123c975279cc0123ad898b0451480ebb31be92ffafe367e892",
+    "vector_validation": "exact little-endian float32 SHA256; L2 abs_tol=1e-4",
+    "max_norm_error": 8.870956336171076e-08,
+    "dense_smoke": [
+      {
+        "id": "0000de1a-fa62-5280-815a-dbf77d20cc79",
+        "score": 0.9999999403953552
+      },
+      {
+        "id": "48964a94-776e-5ba2-a395-2f42ec78dccd",
+        "score": 0.8715932369232178
+      },
+      {
+        "id": "784b6c3b-c294-5e3f-a176-89ea7e3e127b",
+        "score": 0.8573587536811829
+      },
+      {
+        "id": "efc71261-8dc0-5da6-8fd2-841b1270270b",
+        "score": 0.8510981798171997
+      },
+      {
+        "id": "e40dbcd6-efbc-50bb-94d9-cb9473be9ea4",
+        "score": 0.8465845584869385
+      },
+      {
+        "id": "f4e79391-948e-5413-b4de-e2adbee6b470",
+        "score": 0.8369284272193909
+      },
+      {
+        "id": "a2f95dba-4380-5e47-8556-8c85622eef5a",
+        "score": 0.7184986472129822
+      },
+      {
+        "id": "5f8d71e8-5318-502d-8902-51487a1997d1",
+        "score": 0.6423083543777466
+      },
+      {
+        "id": "11159628-36f0-584b-8cae-6c13d2d78cc7",
+        "score": 0.6413713693618774
+      },
+      {
+        "id": "2514ef10-2ca5-541f-9675-6fdb6de92eb9",
+        "score": 0.5626165270805359
+      }
+    ],
+    "bm25_analyzer_token_count": 349,
+    "bm25_empty_is_valid": false,
+    "bm25_smoke": [
+      {
+        "id": "0000de1a-fa62-5280-815a-dbf77d20cc79",
+        "score": 1146.411865234375
+      },
+      {
+        "id": "f4e79391-948e-5413-b4de-e2adbee6b470",
+        "score": 629.3997802734375
+      },
+      {
+        "id": "efc71261-8dc0-5da6-8fd2-841b1270270b",
+        "score": 533.6294555664062
+      },
+      {
+        "id": "e40dbcd6-efbc-50bb-94d9-cb9473be9ea4",
+        "score": 492.8187561035156
+      },
+      {
+        "id": "784b6c3b-c294-5e3f-a176-89ea7e3e127b",
+        "score": 490.1169128417969
+      },
+      {
+        "id": "48964a94-776e-5ba2-a395-2f42ec78dccd",
+        "score": 465.87811279296875
+      },
+      {
+        "id": "5f8d71e8-5318-502d-8902-51487a1997d1",
+        "score": 375.44317626953125
+      },
+      {
+        "id": "a2f95dba-4380-5e47-8556-8c85622eef5a",
+        "score": 284.5755310058594
+      },
+      {
+        "id": "11159628-36f0-584b-8cae-6c13d2d78cc7",
+        "score": 254.0126495361328
+      },
+      {
+        "id": "2514ef10-2ca5-541f-9675-6fdb6de92eb9",
+        "score": 251.234130859375
+      }
+    ],
+    "server_version": "3.0.1",
+    "client_version": "3.0.2"
+  },
+  "processing_manifest_hash": "0064147d445c138ee09be3bbece7ba99c9de209882686e6988efce7810eb28b0",
+  "expected_archive_hash": "3686f3c8a404d8daa8ac6430233cb4a03d116f8c5d2266c23918a3156497f207",
+  "elapsed_seconds": 50.719315199996345
+}

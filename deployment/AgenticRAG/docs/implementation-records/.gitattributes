@@ -1,0 +1,8 @@
+# Preserve verbatim command evidence, including intentional trailing spaces.
+# Only these exact raw logs waive blank-at-eol; all authored files keep checks.
+R10-compose-cleanup.txt whitespace=-blank-at-eol
+R10-leader-service-cleanup.txt whitespace=-blank-at-eol
+R10-leader-service-up.txt whitespace=-blank-at-eol
+R10-milvus-first.txt whitespace=-blank-at-eol
+R10-process-first.txt whitespace=-blank-at-eol
+R10-small-observed.txt whitespace=-blank-at-eol

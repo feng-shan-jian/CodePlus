@@ -1,0 +1,12 @@
+{
+  "reviewer": "/root/r10_readonly_publication_review",
+  "scope": "Read-only current APIs; no tests/services/writes",
+  "findings": [
+    "catalog.py119 candidate accepts manifest/chunk_set hashes without fullcheck. Consume storage.processing.read_processed verified outputs; derive canonical membership complete609.",
+    "IndexArtifact domain.py196 lacks durable SQL table/validationreceipt. Add immutableartifact+validation boundstore/kb/batch/revision/epoch/build/collection/schema/config/memberhash; no public passed=True. R02probe snapshot limited3000 unsuitable4041; usefulliterator+vectors/fullidset+Strong Dense/BM25.",
+    "Publish idempotentread of originalreceipt first, beforeACTIVE check. Newpublish owner/READY/receipt/NULLsafebaseCAS allshortTX. Oldretryafterlaterrevision returnsoldreceipt, neverrollsbackpointer.",
+    "Mutation.close currentlyrequire ACTIVE evenPUBLISHED, raisesfailure. Sameownerterminal releaseslock safely; ACTIVE->WAITING;staleownerstillreject. Donotabandonpublishedafterresponse loss.",
+    "Runpin resolvesimmutableverifiedartifact/collection andsnapshot/queryidentity. May preserveexistingRunBinding contract viainternal companionbinding ifpossible; publicAPI changes requirecallertestdocs. Neverreadlatestpointerpersearch. OldSQL READYfixturesnotrealpublication.",
+    "Appendmigration4; schema1/2/3bytesstable. Preserveolderdata; missingvalidatedartifact mustnotbe fabricated; realqueryreturnsNOT_READY. Testactualschema3dataupgrade/missingreceipts/migrationrollback."
+  ]
+}

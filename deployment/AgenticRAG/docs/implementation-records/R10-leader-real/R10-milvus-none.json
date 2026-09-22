@@ -1,0 +1,397 @@
+{
+  "scope": "actual Milvus production schema; synthetic normalized 1024D vectors",
+  "fault": "none",
+  "chunks": 1100,
+  "finalize": {
+    "flush_seconds": 2.6899900999997044,
+    "index_seconds": 1.218536000000313,
+    "load_sealed_reload_seconds": 5.531722499996249
+  },
+  "validation": {
+    "schema": {
+      "collection_name": "ar_r10_acceptance_2a80ebc374314277a86e8052fc51655f_0e52f6302005468e8c61137c3dafb028_f85f5801c70b4b61b22ca0bcbc9a03bf_e1",
+      "auto_id": false,
+      "num_shards": 1,
+      "description": "",
+      "fields": [
+        {
+          "field_id": 100,
+          "name": "chunk_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          },
+          "is_primary": true
+        },
+        {
+          "field_id": 101,
+          "name": "kb_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 102,
+          "name": "revision_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 103,
+          "name": "document_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 104,
+          "name": "document_version_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 105,
+          "name": "section_id",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 36
+          }
+        },
+        {
+          "field_id": 106,
+          "name": "text_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 107,
+          "name": "body_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 108,
+          "name": "raw_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 109,
+          "name": "parsed_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 110,
+          "name": "encoding_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 111,
+          "name": "vector_hash",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 64
+          }
+        },
+        {
+          "field_id": 112,
+          "name": "text",
+          "description": "",
+          "type": 21,
+          "params": {
+            "max_length": 65535,
+            "enable_analyzer": "true",
+            "analyzer_params": "{\"tokenizer\":\"standard\",\"filter\":[\"lowercase\"]}"
+          }
+        },
+        {
+          "field_id": 113,
+          "name": "span_start",
+          "description": "",
+          "type": 5,
+          "params": {}
+        },
+        {
+          "field_id": 114,
+          "name": "span_end",
+          "description": "",
+          "type": 5,
+          "params": {}
+        },
+        {
+          "field_id": 115,
+          "name": "dense",
+          "description": "",
+          "type": 101,
+          "params": {
+            "dim": 1024
+          }
+        },
+        {
+          "field_id": 116,
+          "name": "sparse",
+          "description": "",
+          "type": 104,
+          "params": {},
+          "is_function_output": true
+        }
+      ],
+      "functions": [
+        {
+          "name": "text_bm25",
+          "id": 100,
+          "description": "",
+          "type": 1,
+          "params": {},
+          "input_field_names": [
+            "text"
+          ],
+          "input_field_ids": [
+            112
+          ],
+          "output_field_names": [
+            "sparse"
+          ],
+          "output_field_ids": [
+            116
+          ]
+        }
+      ],
+      "aliases": [],
+      "collection_id": 469252731930936538,
+      "consistency_level": 0,
+      "consistency_level_name": "Strong",
+      "properties": {
+        "timezone": "UTC",
+        "namespace.sharding.enabled": "false",
+        "max_field_id": "116"
+      },
+      "num_partitions": 1,
+      "enable_dynamic_field": false,
+      "enable_namespace": false,
+      "schema_version": 0,
+      "created_timestamp": 469252744059289618,
+      "update_timestamp": 469252744059289618
+    },
+    "indexes": {
+      "dense_cosine": {
+        "nlist": "1",
+        "metric_type": "COSINE",
+        "index_type": "IVF_FLAT",
+        "field_name": "dense",
+        "index_name": "dense_cosine",
+        "total_rows": 1100,
+        "indexed_rows": 1100,
+        "pending_index_rows": 0,
+        "state": "Finished"
+      },
+      "sparse_bm25": {
+        "inverted_index_algo": "DAAT_MAXSCORE",
+        "bm25_k1": "1.2",
+        "bm25_b": "0.75",
+        "metric_type": "BM25",
+        "index_type": "SPARSE_INVERTED_INDEX",
+        "field_name": "sparse",
+        "index_name": "sparse_bm25",
+        "total_rows": 1100,
+        "indexed_rows": 1100,
+        "pending_index_rows": 0,
+        "state": "Finished"
+      }
+    },
+    "load_state": "Loaded",
+    "segments": [
+      {
+        "segment_id": 469252731931137571,
+        "num_rows": 1100,
+        "state": "Sealed",
+        "index_name": "IVF_FLAT",
+        "index_id": 469252731931147578,
+        "mem_size": 0
+      }
+    ],
+    "rows_checked": 1100,
+    "id_set_hash": "0109ba7aa334d724612e751ae3746039ced9d9a4f828bd3c1408b7c048d894a1",
+    "row_manifest_hash": "b29e668feafe45950a83a26ddfe4621b1bfb78846de9251bfa1205ec6d37f894",
+    "vector_validation": "exact little-endian float32 SHA256; L2 abs_tol=1e-4",
+    "max_norm_error": 0.0,
+    "dense_smoke": [
+      {
+        "id": "00106a99-fd55-5ac0-be3b-db6754915e71",
+        "score": 1.0
+      },
+      {
+        "id": "00258e2b-d599-55aa-8325-6eb3dbef1ad9",
+        "score": 1.0
+      },
+      {
+        "id": "006fb8e2-4b38-5997-a873-b5d7d292ebf4",
+        "score": 1.0
+      },
+      {
+        "id": "00ab5eb9-3f85-5dce-8085-4ea984c7b3f5",
+        "score": 1.0
+      },
+      {
+        "id": "010d4d6b-56e4-564d-a977-068896790b74",
+        "score": 1.0
+      },
+      {
+        "id": "01732aef-643c-52a3-9a06-02c1a1219978",
+        "score": 1.0
+      },
+      {
+        "id": "0185c0b5-aaeb-5730-9494-68ed090d5eb1",
+        "score": 1.0
+      },
+      {
+        "id": "01a3e9f9-ce89-5328-9189-0a7c1493b15b",
+        "score": 1.0
+      },
+      {
+        "id": "01b53949-13c3-5463-92d2-73d5994b1305",
+        "score": 1.0
+      },
+      {
+        "id": "01ef3892-80f5-5104-9ee5-04ee6f623320",
+        "score": 1.0
+      }
+    ],
+    "bm25_analyzer_token_count": 10,
+    "bm25_empty_is_valid": false,
+    "bm25_smoke": [
+      {
+        "id": "00106a99-fd55-5ac0-be3b-db6754915e71",
+        "score": 31.11077880859375
+      },
+      {
+        "id": "00258e2b-d599-55aa-8325-6eb3dbef1ad9",
+        "score": 0.003520327154546976
+      },
+      {
+        "id": "006fb8e2-4b38-5997-a873-b5d7d292ebf4",
+        "score": 0.003520327154546976
+      },
+      {
+        "id": "00ab5eb9-3f85-5dce-8085-4ea984c7b3f5",
+        "score": 0.003520327154546976
+      },
+      {
+        "id": "010d4d6b-56e4-564d-a977-068896790b74",
+        "score": 0.003520327154546976
+      },
+      {
+        "id": "01732aef-643c-52a3-9a06-02c1a1219978",
+        "score": 0.003520327154546976
+      },
+      {
+        "id": "0185c0b5-aaeb-5730-9494-68ed090d5eb1",
+        "score": 0.003520327154546976
+      },
+      {
+        "id": "01a3e9f9-ce89-5328-9189-0a7c1493b15b",
+        "score": 0.003520327154546976
+      },
+      {
+        "id": "01b53949-13c3-5463-92d2-73d5994b1305",
+        "score": 0.003520327154546976
+      },
+      {
+        "id": "01ef3892-80f5-5104-9ee5-04ee6f623320",
+        "score": 0.003520327154546976
+      }
+    ],
+    "server_version": "3.0.1",
+    "client_version": "3.0.2",
+    "manifest_hash": "0c400e066725a89169f0e1b7d4f743d359dd69b20f44d590d92ed64fa554d022",
+    "expected_hash": "f286d6c50377222a82fd19eda4d476bf678142e4f936f23d6ca9147e2b50dc5c",
+    "schema_hash": "1d7f3fc48f26911c7df475b2018dd896a92edc67ed7b2b78bf82d24658cc8e2b",
+    "validation_version": 1
+  },
+  "receipt": {
+    "batch_id": "c819974a-5e04-45f2-b07a-80433bd61c5e",
+    "kb_id": "0e52f630-2005-468e-8c61-137c3dafb028",
+    "revision_id": "f85f5801-c70b-4b61-b22c-a0bcbc9a03bf",
+    "artifact_id": "f09cde2b-bb77-472b-a2ad-1aee78ff52dd",
+    "owner_nonce": "7b79a8d3-5531-4c87-8043-51f94b8c887c",
+    "owner_epoch": 1,
+    "manifest_hash": "0c400e066725a89169f0e1b7d4f743d359dd69b20f44d590d92ed64fa554d022",
+    "published_at": "2026-09-22T06:06:12.937273+00:00"
+  },
+  "immutable_model_vector_search": [
+    {
+      "id": "00106a99-fd55-5ac0-be3b-db6754915e71",
+      "distance": 1.0,
+      "entity": {
+        "parsed_hash": "39bf564ef802330dfce3e6ec67b6b273c0632de37392a3cf210a5503d3524891",
+        "raw_hash": "54b4271c0f0575bd21a33d72dd0d9b2710fa8a251bde2b800f5c7ff3ec764e29",
+        "vector_hash": "f7e4b7df98e2b9533216f4a9c1261224bda07083b93fe9357ea76c0f83477cee",
+        "section_id": "c1c3c94f-17dd-5dd9-aece-4abedc078a88",
+        "document_version_id": "c7d1d70f-7e71-5be1-a0d0-d483b0d79249",
+        "document_id": "ca93b04f-ad9e-44c1-ac77-b036555ff4fc",
+        "span_start": 62355,
+        "span_end": 62418,
+        "text_hash": "5bdb22b14ba00686a6794eae8cdfb01090ad0e856b3477208e08a9b9af3317c2",
+        "text": "Section 1025\n# Section 1025\nTelescope ocean immutable document number 1025.\n",
+        "revision_id": "f85f5801-c70b-4b61-b22c-a0bcbc9a03bf",
+        "kb_id": "0e52f630-2005-468e-8c61-137c3dafb028",
+        "body_hash": "6488b238eb2143d45aa94f95b576856c01da16aa4fcc2698318d99e2805bc6b2",
+        "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+        "chunk_id": "00106a99-fd55-5ac0-be3b-db6754915e71"
+      }
+    }
+  ],
+  "normal_empty": [],
+  "unloaded_error": "<MilvusException: (code=101, message=failed to search: collection not loaded[collection=469252731930936538])>",
+  "next_receipt": {
+    "batch_id": "7ef0c07f-eabb-441c-9a72-9fd7627e16f0",
+    "kb_id": "0e52f630-2005-468e-8c61-137c3dafb028",
+    "revision_id": "354b7106-7172-47ae-a2fd-0dfe7ef6106b",
+    "artifact_id": "66d50fe4-ebff-410b-8bc2-248dc018f20d",
+    "owner_nonce": "a9c0c1d2-3273-4017-9c71-bb447b9d4c7b",
+    "owner_epoch": 2,
+    "manifest_hash": "d69c586fa03371d7538acaeb412907485bdae7140e04154b11cb932f295e722e",
+    "published_at": "2026-09-22T06:06:35.702305+00:00"
+  },
+  "old_retry_after_newer": {
+    "batch_id": "c819974a-5e04-45f2-b07a-80433bd61c5e",
+    "kb_id": "0e52f630-2005-468e-8c61-137c3dafb028",
+    "revision_id": "f85f5801-c70b-4b61-b22c-a0bcbc9a03bf",
+    "artifact_id": "f09cde2b-bb77-472b-a2ad-1aee78ff52dd",
+    "owner_nonce": "7b79a8d3-5531-4c87-8043-51f94b8c887c",
+    "owner_epoch": 1,
+    "manifest_hash": "0c400e066725a89169f0e1b7d4f743d359dd69b20f44d590d92ed64fa554d022",
+    "published_at": "2026-09-22T06:06:12.937273+00:00"
+  },
+  "result": "PASS"
+}

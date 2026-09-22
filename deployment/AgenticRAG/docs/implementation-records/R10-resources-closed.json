@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "owned_containers": [],
+  "owned_volumes": [],
+  "owned_networks": [],
+  "non_owned_containers_unchanged": [],
+  "temp_root_absent": true,
+  "candidate3_files_unchanged": 101,
+  "index_empty": true,
+  "head": "9afe7e37982cf63c3e2199403499b289d8a520b1"
+}

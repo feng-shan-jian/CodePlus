@@ -1,0 +1,7 @@
+Using Python 3.14.3 environment at: C:\Users\18221\.cache\codeplus-agenticrag\venv-win-cuda
+Resolved 1 package in 2ms
+Prepared 1 package in 0.93ms
+Uninstalled 1 package in 11ms
+Installed 1 package in 22ms
+ - codeplus-agentic-rag==0.1.0 (from file:///C:/Users/18221/AppData/Local/Temp/codeplus-r10-executor-20260922/core-final-run/test_wheel_and_sdist_install_i0/direct/codeplus_agentic_rag-0.1.0-py3-none-any.whl)
+ + codeplus-agentic-rag==0.1.0 (from file:///C:/Users/18221/AppData/Local/Temp/codeplus-r10-executor-20260922/candidate3-suite/test_wheel_and_sdist_install_i0/direct/codeplus_agentic_rag-0.1.0-py3-none-any.whl)

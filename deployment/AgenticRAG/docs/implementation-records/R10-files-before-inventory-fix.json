@@ -1,0 +1,554 @@
+{
+  "base_head": "9afe7e37982cf63c3e2199403499b289d8a520b1",
+  "candidate3_sha256": "172184c9151be239729f048dfebce84f3b3feb7aaac0b6a009700d62bacf522b",
+  "scope": "executor R10 only; excludes Leader-owned checklist/R09/dispatched review and inherited compose",
+  "manifest_self_excluded": true,
+  "files": [
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "sha256": "e8a01ccef8879a2274a468b37ed09dee9a4e29b9e21c84249912eda4736ed66c",
+      "size_bytes": 18880
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/first-publication.md",
+      "sha256": "92465e0d4a8a4410cee30cfc259d85b818aecbdf5b64407052f19a8c47762ff0",
+      "size_bytes": 5859
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-baseline.json",
+      "sha256": "229866c8c2ac931a4c0edd7dea2e68b50792045346a42ec4dfb674186c0f7682",
+      "size_bytes": 936631
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-before-cleanup-resources.json",
+      "sha256": "372889f4eb9fc8a9b5dcde3d06b61e188efe0e273fee33b1d038825292caa9fc",
+      "size_bytes": 4735
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-build-candidate1.json",
+      "sha256": "20a9651d873809401daf950f878856ce4d012d84c78ca74850c75bff39ccf592",
+      "size_bytes": 412792
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-build-candidate1.txt",
+      "sha256": "4e09f1954bc879ede24e7f8ce5093429ceac3a13bf895fdd4f982c5f7dd32ed7",
+      "size_bytes": 4481
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-candidate3-suite.txt",
+      "sha256": "e0af20f9104a9d42e22de1b602a9a7181134af06229c29dbf4fb8ca34a6f741f",
+      "size_bytes": 450
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-cleanup.json",
+      "sha256": "003378fe3567a02ad95ed77cb26401f436e6939453330af9f786a297e0b9c5ef",
+      "size_bytes": 855
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-code-candidate1.json",
+      "sha256": "f591c5ad6532aa76bd90dda464bf2f462850b8121c5591b466ec0451ec3b8345",
+      "size_bytes": 8324
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-code-candidate2.json",
+      "sha256": "165fa4fc8a07cb090a581b15f7a1c04e84b88e0815e52e96026a65eceecfc12f",
+      "size_bytes": 18217
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-code-candidate3.json",
+      "sha256": "172184c9151be239729f048dfebce84f3b3feb7aaac0b6a009700d62bacf522b",
+      "size_bytes": 18217
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-compose-cleanup.txt",
+      "sha256": "35b00d346971efa6b0642974ab98f576b659137904d52c2b23e0af9794bac469",
+      "size_bytes": 1052
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-contracts-second.txt",
+      "sha256": "7c1c38a5ccf5776c999fe7726f830d973dce2e36ea1c55410557cdd5f70f69bc",
+      "size_bytes": 102
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-cuda-install-candidate3.txt",
+      "sha256": "edf03a712449df34e1d35ddc7dddbe7e0f7e0b9a3aa6b5ad5d57c2dbd93d4e99",
+      "size_bytes": 632
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-cuda-install-final.txt",
+      "sha256": "9420863e06357b69dcbb1e8efe858a5f94c73868b4ea0405589a61c8f5cffd83",
+      "size_bytes": 593
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-dense-final.json",
+      "sha256": "cc5091476f4be425522098f585f99f183234c968ef69ab515a1bd277634701bc",
+      "size_bytes": 6234495
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-dense-final.txt",
+      "sha256": "5ec9b25ca5324f0f1129d8063c21b06a87a319b984b0e02fd1079376bee51c9f",
+      "size_bytes": 363
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-dense-tuple-failure.json.gz",
+      "sha256": "86febb1d45b900c21ccc2293db38965706abc6dd42aec8f8a0f675de775a617a",
+      "size_bytes": 1647536
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-dense-tuple-failure.txt.gz",
+      "sha256": "070f51663f375467b77d9613b6ee20f3f260c3b5e8f4342036f668952612b2f8",
+      "size_bytes": 1474374
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-history-97224b0.json",
+      "sha256": "e455860a22c10a0372936ed9a5064d07922a39c4c216635bd2a1edf0a53858dc",
+      "size_bytes": 45006
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-history-9afe7e3.json",
+      "sha256": "3c03571e1cfee1ac340d7092a15c1a07c5922f759d139e21804db46200b29be2",
+      "size_bytes": 51563
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-history-candidate3-97224b0.json",
+      "sha256": "f91ccce41a90380cbbeb9a422cb514ac4b98b2aaf5aacbf19068f01c71fa8973",
+      "size_bytes": 45007
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-history-candidate3-9afe7e3.json",
+      "sha256": "68a443d06f0ffb77758be2c55fdd728acc845f9e6517198eaba4de201cf7d465",
+      "size_bytes": 51563
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-history-final-97224b0.json",
+      "sha256": "0936a2ec315dbf7d34e21ab8f464524e5a4d1db616bebe0168c51ae3b6a4f216",
+      "size_bytes": 44982
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-history-final-9afe7e3.json",
+      "sha256": "a0d2d17a3b8f33bb237fd550f4594c7c3568ad9aada59c60753e9d622a368b3e",
+      "size_bytes": 51539
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-input-processes.json",
+      "sha256": "e216d584ae2569a64ac363f9401a57d005751569ed25f59cb1f8595b13ce906e",
+      "size_bytes": 10786
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-installations-candidate3.json",
+      "sha256": "6b24be76962051a26f28a6d920c675bc23c75dd7befc189dea0034aba9e53697",
+      "size_bytes": 74083
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-installations-final.json",
+      "sha256": "ff19c5e456dfac6797a0d736b99befedb749016990d42cd47d7b989bd0ec48f5",
+      "size_bytes": 73914
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-installations.json",
+      "sha256": "b084a55cc4b1baf2c9945dfcb3ce798908f43ff759aa595f5991255e4f3c5060",
+      "size_bytes": 67850
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-installed-core-candidate3.json",
+      "sha256": "8c48a33908db581c2a26b4a9906cbf0f0a5151463ee34f91344c33d9a16d77f2",
+      "size_bytes": 4627
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-installed-core-final.json",
+      "sha256": "14e189289efc64f2daeb97dedfd285406815a19a6ad902ab5e08ec39be447d36",
+      "size_bytes": 4627
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-installed-cuda-candidate3.json",
+      "sha256": "f3b7fa3d9395a6fc7dacb154c623fdc332df1437224d0722e1d7330add9013bb",
+      "size_bytes": 4666
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-installed-cuda-final.json",
+      "sha256": "982774998768aa5341c7376d35f00a719e716c3239035b710a87486535e613f7",
+      "size_bytes": 4666
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-milvus-first.txt",
+      "sha256": "7e91aad43f7104869cd8108cb8674bfb065ecf80b8ddc69ca17fb647855ec9f9",
+      "size_bytes": 4665
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-milvus-index_timeout.json",
+      "sha256": "a1aa38e18a773c5fd7f618438c0d75db3e37d2bf8e391e499ed9798e17544477",
+      "size_bytes": 739
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-milvus-none.json",
+      "sha256": "93b76c675cbffa85dd8182c8fb18c79c97b4b932d0cbbe61f5bc96c8bb0dbec2",
+      "size_bytes": 11878
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-milvus-row_hash.json",
+      "sha256": "7a640ca3f722c89b95a52b185e63686e73407269fb9d9330754ac5e50eb244d5",
+      "size_bytes": 446
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-milvus-schema.json",
+      "sha256": "0e9cf9882ecae1f382128b5f72a146a2a0a82983c788a8736dd0e509d3b7e2ce",
+      "size_bytes": 254
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-milvus-second.txt",
+      "sha256": "93a3cfbf89dcb1c9909a556d599500878f1872f71fbdbf2e2236777f74595b27",
+      "size_bytes": 112
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-milvus-unavailable.json",
+      "sha256": "eb0f7232208caaca7e3ae90dd8dce5896461f943166844b5bb9108998a8aa627",
+      "size_bytes": 329
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-native-final.json",
+      "sha256": "718002f7ea40c529881e34e6108f0582ab28e188ec8bd4506ab98cceab4fe120",
+      "size_bytes": 50367
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-native-final.txt",
+      "sha256": "fc16039607833af9f0107d9dcf92b09a99b0f768df9f69acabe22b5a23bbabe3",
+      "size_bytes": 730
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-pre-cleanup-processes.json",
+      "sha256": "813fa0a63d0a51dbf3c667982dce5c6bbe059a30dad62fce3c404f335ca78b78",
+      "size_bytes": 197
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-process-after-commit.json",
+      "sha256": "974498a007ad839b4f2f3243a3f9ce619a26b8a3e1d1e9c0ec8896cc97ea7a0d",
+      "size_bytes": 2134
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-process-before-commit-first.json",
+      "sha256": "70b727ae09f5ef3d334f89073784dde2fb06d7b851352b5e8cd59e1910f6aa2c",
+      "size_bytes": 1298
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-process-before-commit.json",
+      "sha256": "cbd144baac683f81419f6b790dd2593e6a407abed81fcd70151cac638d81ba11",
+      "size_bytes": 1641
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-process-first.txt",
+      "sha256": "9e51628e3e1503dcaebba6b36098a3dbb4eb2a81d0ada7642b6b1df78d44510f",
+      "size_bytes": 3236
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-process-redirector-diagnostic.json",
+      "sha256": "0111db16bd7cb8348d4f66ad9210f24cdd338c31654cfe7875441aff21d9fecd",
+      "size_bytes": 1665
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-process-second.txt",
+      "sha256": "86d5c4dac25cd7a7c75471d7d0558a4ef07c187a376ebe743a8b4faade58358e",
+      "size_bytes": 101
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-processing-processes.json",
+      "sha256": "a09f7f0e9a9b2bf498a67f4a5d1fedb501116ade62304df1efa85e7f22b06db6",
+      "size_bytes": 3383
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-real-final.txt",
+      "sha256": "8eee93e89f2679326ed9e1de3ad74c2cb51da0038f480bdf11f88fed66c03410",
+      "size_bytes": 112
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-regression-collection-failure.txt",
+      "sha256": "5bc28bcd9a49b41564e137c81889a98bfbf247fa9f7758279495697feefec8a9",
+      "size_bytes": 751
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-regression-final.txt",
+      "sha256": "772e093b5f6a187938d333e25f7b340a3ec7cfb352270c4f4d8e57c44171d490",
+      "size_bytes": 449
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-regression-first.txt",
+      "sha256": "3cabd8d6ac0b206ecfcb1e89ae64cd18f0decb80fd67d45e92e2face4e1ba193",
+      "size_bytes": 356
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-resources-closed.json",
+      "sha256": "655eec2ad0ab3317a11e5e2d263c6fbce5635f30d27f8fe8dedbf62c427372eb",
+      "size_bytes": 289
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-restart-final-after-1.json",
+      "sha256": "eb5b4194b97db0f7d0864469149c6ac419e38e8351db32dd0cb6afccc68a5d90",
+      "size_bytes": 31235
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-restart-final-before.json",
+      "sha256": "1d9792fc2d698558a7383fb6ff31660b8c39b04baedbfd27683a8b697f9b4a9e",
+      "size_bytes": 31234
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-restart-final-resources.json",
+      "sha256": "81d5639388c1efb9d356b0dcfcabe6ac075250a6e03c7d0dcb85f2deb7414c04",
+      "size_bytes": 9485
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-restart-final.json",
+      "sha256": "25fd90384fad12b5a45b577696f791992fd7feed8366504f3228ad01a217e281",
+      "size_bytes": 18945
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-revalidate-candidate2.json",
+      "sha256": "ac334e5d8fe40fec7e6a791f48e13031cbfd3a1f5246819aefc74a762a9efcfb",
+      "size_bytes": 10012
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-revalidate-final.json",
+      "sha256": "a616f68c5f838fae7cee67f6156a82590f197af9c5d88d4a9e913d36f354bfde",
+      "size_bytes": 10013
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-scope-audit.json",
+      "sha256": "aa55397f3ccc287a911f946919ea4db22bdbd023eb86181594723fb14b7adda9",
+      "size_bytes": 1754
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-score-final.json",
+      "sha256": "d191571ce4b13dea7f00c746860cd024f522c31499a1d109bfa8e58a6e50484b",
+      "size_bytes": 1423
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-score-final.txt",
+      "sha256": "950fd749156641ef2ad6b9a1745e6b65fd7dc3dcd57aa0d5ddc0e1fe22a92ace",
+      "size_bytes": 1475
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-score-tuple-failure.json",
+      "sha256": "5d0df908eca6f7d5b30905accc166a6e7d447f3ad2c7f6a48e1a10ad13a6b006",
+      "size_bytes": 1207
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-score-tuple-failure.txt",
+      "sha256": "1c6559020080453c31f910cc1f2c12b289146d74676f86c329aeda5276216fea",
+      "size_bytes": 1259
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-small-default-threshold-words.json",
+      "sha256": "cf4112b717d4410a5f0b1d99f8aabeffe65fe9ba00ec553ecbd159dc393521b5",
+      "size_bytes": 142
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-small-default.txt",
+      "sha256": "add395073ed387cf6cb49c46ef3cebc884490c8f91232d2805c43ed94afd5aad",
+      "size_bytes": 1774
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-small-final.txt",
+      "sha256": "0a1327a64f8072a9d0b3020c5785b15e49eed005cfeedee8cbd30eda7f3c86d2",
+      "size_bytes": 101
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-small-observed.txt",
+      "sha256": "3853d9846c82b15273b13f6e3ab7a554b3ccd5c4d7e1cb7e311656fa9717cfbd",
+      "size_bytes": 5227
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-small-punctuation.json",
+      "sha256": "037c63aea5b41e6b2bc2385363fc0730e5ba36a08e9ee17128cd926b89d08307",
+      "size_bytes": 7470
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-small-unicode.json",
+      "sha256": "234633ac84210fdcd32c43efce075cd52ee082eb40a4b51d2f0c1ea00d418e7c",
+      "size_bytes": 7460
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-small-words.json",
+      "sha256": "9b98863ec4807efac54308ff056fe3a36b691e264cf7dced8cd9d508b3b9365b",
+      "size_bytes": 7596
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-space-before-corpus-index.json",
+      "sha256": "c2357a9931ad9b50436b114f451b2f055efdc366702d740e8d798d1f5abf22df",
+      "size_bytes": 4733
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-storage-processes.json",
+      "sha256": "be2f52c3d317af13c7ea4f468ce3d66f41bac562432a7117b562c3bc9cba1997",
+      "size_bytes": 10540
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-tuple-failure-archive.json",
+      "sha256": "3f20c807c9b64bca6d1c60b89a4e34d7e790bd4993d1826e1944f6d740e6e5a5",
+      "size_bytes": 843
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10-unit-first.txt",
+      "sha256": "3c3b684f7ee81dd10861178edad0d7fdf737acaece54610c31d7c5307fb9949b",
+      "size_bytes": 101
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R10.md",
+      "sha256": "0096a92a7f53244aaf4ce13765528fba420013e11804722cf7a8be9645e9bbd3",
+      "size_bytes": 18302
+    },
+    {
+      "path": "deployment/AgenticRAG/eval/dense_runner.py",
+      "sha256": "b85d009861a51e9112336e14da6c38cd80bbe180953973202f166f5bdbffa8f4",
+      "size_bytes": 10728
+    },
+    {
+      "path": "deployment/AgenticRAG/eval/score_dense.py",
+      "sha256": "0c7845e97b7c7b2b22943095bdc8ea227a7612ed2a4e15ed270721644598677a",
+      "size_bytes": 2978
+    },
+    {
+      "path": "deployment/AgenticRAG/pyproject.toml",
+      "sha256": "1289dd4f3a230bf4fb322b29fe92e669ec8facacaad15033797452932a8e270b",
+      "size_bytes": 1234
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/indexes/__init__.py",
+      "sha256": "7a83cacd7e345ffd7d88ae0edea07715822c39d4d7014dd0e5bffbd7789508f7",
+      "size_bytes": 88
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py",
+      "sha256": "5936554e62b7d49369b60fbaaee1355edce33566f17071365635b87cfc121b74",
+      "size_bytes": 5280
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py",
+      "sha256": "fb41f4d3d0aa6f0d3252174c193001f50fcbb2ab540cc86f7ed3a0ee663edf38",
+      "size_bytes": 14872
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py",
+      "sha256": "9757f43e72602551fa0d26dce8ad22085a23caabb9b1765708cc60ac164114df",
+      "size_bytes": 4385
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/retrieval/__init__.py",
+      "sha256": "88cfb2ff3059944f4ff3688ce6ee051a3db45dc44edbcaf3d4f942e1950bc3ef",
+      "size_bytes": 144
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/retrieval/dense.py",
+      "sha256": "34a1802ad4077cd83b34381d69a09660197ebbcc57e00fc9ec4662dbf59202d6",
+      "size_bytes": 4755
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/catalog.py",
+      "sha256": "68d177165c405369bd2b776ce8e6eb9d3998e0ec2de69dfeb2c14fcfc67dc941",
+      "size_bytes": 10990
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+      "sha256": "db47455251f188cec3141031f20501520d150969f51381279dcf2c7b3a40332d",
+      "size_bytes": 9222
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/ownership.py",
+      "sha256": "5ba98e29bb27713f4cc49d00cc91e242ba4f2f1011d3edd53ea54398f91752d8",
+      "size_bytes": 9875
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/publication.py",
+      "sha256": "700f50c0b108e6ef88a4a14e2a585ca2da84b8223729eabe55d1d92bdd837561",
+      "size_bytes": 12499
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/publication.sql",
+      "sha256": "1f024dd1ceb832e297ca5e20a7b4b1028624eacb62c3e1f18dd781d74b75ff1b",
+      "size_bytes": 2007
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/publication_full_acceptance.py",
+      "sha256": "18e39690f25d32bc6fab340efcf84d793c917480e280154c9e92c97074c4098b",
+      "size_bytes": 7693
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/publication_process_helper.py",
+      "sha256": "e3855a86ceb85e83dd0ddfd78e4dd693d310a8c42db82bbcf795f7591d33ea56",
+      "size_bytes": 2959
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/publication_resources.py",
+      "sha256": "6a68069fcf88ef4529b9614869539363e338979b7906922b750d2898f6c38981",
+      "size_bytes": 3628
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/publication_support.py",
+      "sha256": "2c56a18b573c4f099b17bdf15c59b04f4e805a9c52b5c10c94635ce0020cca79",
+      "size_bytes": 3454
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/resources/r10-compose.yaml",
+      "sha256": "755ffaaff8a0869fe0ac420d32262b2d5cb99149c23e5617aca30872dd24c731",
+      "size_bytes": 1582
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/runner_fault_helper.py",
+      "sha256": "ba52deb74da53740d52cb27a48db19823c897f0ab3c88286440196ea33bc9d7e",
+      "size_bytes": 2776
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_dense_runner.py",
+      "sha256": "55f325782cdd2276864fd326b6e17d264533cdc2efe419b9fd5493822ac76e9f",
+      "size_bytes": 1539
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_input_migration.py",
+      "sha256": "5d142352260a81f411527c17249d874bc61ff3d03508fc5f9165a9cafe98c799",
+      "size_bytes": 5795
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_package_install.py",
+      "sha256": "a3e8dbfbf08804b3d79d8b17414a9c109ca4c74b07b268c5cd268a267492f931",
+      "size_bytes": 13263
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_processing_checkpoints.py",
+      "sha256": "9ff61ffe89e01dd0d5307c5f1c87ff403332ed2bfa2d2ba173064b3b5e5aaf22",
+      "size_bytes": 11095
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_publication.py",
+      "sha256": "c5c1ff98b868c266f3975694bd7339e607e1b065ac9c2335685a3d2f7337161e",
+      "size_bytes": 9435
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_publication_milvus.py",
+      "sha256": "aa4609695aaac64295c8e89267723704c23e4e6ae2ef0c4a5c595858baf53b46",
+      "size_bytes": 6876
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_publication_processes.py",
+      "sha256": "807068b723fe319526b4f70bf63a25e1c21deb474d38bb3db8a744916ef54885",
+      "size_bytes": 6709
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_publication_small.py",
+      "sha256": "1f16a7ee47229fdc602eb3dff0849df09732b1418cd5b156ae2fba3bf6359d3c",
+      "size_bytes": 2029
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_storage.py",
+      "sha256": "d9891922edecd5db00ea0ed6e9f0fb3d5347d56f1bd7ad2fa01aa8671a91d549",
+      "size_bytes": 19017
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_worker_history.py",
+      "sha256": "1c943601de34f541504e1ae03ae6d60c55439d19dd71d758852b76f2742e461a",
+      "size_bytes": 4261
+    },
+    {
+      "path": "deployment/AgenticRAG/uv.lock",
+      "sha256": "9b25bd296ac2c4d27df3765368a22900595107f3adf0d842cb61f881deaee438",
+      "size_bytes": 354105
+    }
+  ],
+  "count": 109
+}

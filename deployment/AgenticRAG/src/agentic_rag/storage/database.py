@@ -13,7 +13,7 @@ from .locks import ProcessLock
 from .paths import DataDirectory, failure
 
 APPLICATION_ID = 0x41524147
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 
 def runtime_fingerprint() -> dict:
@@ -97,6 +97,22 @@ class Database:
                             connection.execute('ROLLBACK')
                         raise
                 if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=3').fetchone() != (processing_hash,):
+                    raise failure('schema migration fingerprint mismatch')
+                publication = files(__package__).joinpath('publication.sql').read_text(encoding='utf-8')
+                publication_hash = hashlib.sha256(publication.encode()).hexdigest()
+                if connection.pragma('user_version') == 3:
+                    connection.execute('BEGIN IMMEDIATE')
+                    try:
+                        connection.execute(publication)
+                        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
+                                           (4, publication_hash, datetime.now(timezone.utc).isoformat()))
+                        connection.pragma('user_version', 4)
+                        connection.execute('COMMIT')
+                    except BaseException:
+                        if not connection.get_autocommit():
+                            connection.execute('ROLLBACK')
+                        raise
+                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=4').fetchone() != (publication_hash,):
                     raise failure('schema migration fingerprint mismatch')
                 self._verify(connection)
             finally:
