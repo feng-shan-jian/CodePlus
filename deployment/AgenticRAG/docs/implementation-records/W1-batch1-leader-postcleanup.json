@@ -1,0 +1,602 @@
+{
+  "status": "PASS",
+  "base": "175f8f54ed9e24736a232f6b989d145f7f217dca",
+  "started": 1790100193.5459945,
+  "script_sha256": "74e66b2db437ca5eca24dba18375693fbd5a468594f8c4baa119da8001e37962",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0,
+      "stdout": "codex/rag\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "175f8f54ed9e24736a232f6b989d145f7f217dca\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--raw",
+        "--full-index",
+        "--no-abbrev",
+        "-z"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-Command",
+        "@(Get-CimInstance Win32_Process | Where-Object { ($_.ExecutablePath -like '*codeplus-w1-batch1-leader-20260923*') -or ($_.CommandLine -like '*codeplus-w1-batch1-leader-20260923*') } | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CommandLine,@{Name='Birth';Expression={$_.CreationDate.ToUniversalTime().ToString('o')}}) | ConvertTo-Json -Compress"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"ProcessId\":23968,\"ParentProcessId\":17012,\"Name\":\"pwsh.exe\",\"ExecutablePath\":\"C:\\\\Users\\\\18221\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\native\\\\powershell\\\\pwsh.exe\",\"CommandLine\":\"pwsh -NoProfile -Command \\\"@(Get-CimInstance Win32_Process | Where-Object { ($_.ExecutablePath -like '*codeplus-w1-batch1-leader-20260923*') -or ($_.CommandLine -like '*codeplus-w1-batch1-leader-20260923*') } | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CommandLine,@{Name='Birth';Expression={$_.CreationDate.ToUniversalTime().ToString('o')}}) | ConvertTo-Json -Compress\\\"\",\"Birth\":\"2026-09-22T18:03:13.8450440Z\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "ps",
+        "-aq"
+      ],
+      "exit_code": 0,
+      "stdout": "4bb3885b1aa2\n44840f5a0ec0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "4bb3885b1aa2"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"Id\": \"4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc\",\n        \"Created\": \"2026-08-24T14:18:32.005523362Z\",\n        \"Path\": \"/bin/bash\",\n        \"Args\": [\n            \"-c\",\n            \"export SONAR_JDBC_PASSWORD=\\\"$(cat /run/secrets/postgres_password)\\\"; export SONAR_AUTH_JWTBASE64HS256SECRET=\\\"$(cat /run/secrets/sonar_jwt_secret)\\\"; exec /opt/sonarqube/docker/entrypoint.sh\"\n        ],\n        \"State\": {\n            \"Status\": \"running\",\n            \"Running\": true,\n            \"Paused\": false,\n            \"Restarting\": false,\n            \"OOMKilled\": false,\n            \"Dead\": false,\n            \"Pid\": 447,\n            \"ExitCode\": 0,\n            \"Error\": \"\",\n            \"StartedAt\": \"2026-09-21T23:55:35.605472636Z\",\n            \"FinishedAt\": \"2026-09-21T23:55:34.976754899Z\"\n        },\n        \"Image\": \"sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079\",\n        \"ResolvConfPath\": \"/var/lib/docker/containers/4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc/resolv.conf\",\n        \"HostnamePath\": \"/var/lib/docker/containers/4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc/hostname\",\n        \"HostsPath\": \"/var/lib/docker/containers/4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc/hosts\",\n        \"LogPath\": \"/var/lib/docker/containers/4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc/4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc-json.log\",\n        \"Name\": \"/sonarqube-production\",\n        \"RestartCount\": 0,\n        \"Driver\": \"overlayfs\",\n        \"Platform\": \"linux\",\n        \"MountLabel\": \"\",\n        \"ProcessLabel\": \"\",\n        \"AppArmorProfile\": \"\",\n        \"ExecIDs\": null,\n        \"HostConfig\": {\n            \"Binds\": [\n                \"D:\\\\SonarQube\\\\production\\\\data\\\\sonarqube:/opt/sonarqube/data:rw\",\n                \"D:\\\\SonarQube\\\\production\\\\data\\\\sonarqube-extensions:/opt/sonarqube/extensions:rw\",\n                \"D:\\\\SonarQube\\\\production\\\\logs\\\\sonarqube:/opt/sonarqube/logs:rw\",\n                \"D:\\\\SonarQube\\\\production\\\\temp\\\\sonarqube:/opt/sonarqube/temp:rw\"\n            ],\n            \"ContainerIDFile\": \"\",\n            \"LogConfig\": {\n                \"Type\": \"json-file\",\n                \"Config\": {}\n            },\n            \"NetworkMode\": \"sonarqube-production\",\n            \"PortBindings\": {\n                \"9000/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"9000\"\n                    }\n                ]\n            },\n            \"RestartPolicy\": {\n                \"Name\": \"unless-stopped\",\n                \"MaximumRetryCount\": 0\n            },\n            \"AutoRemove\": false,\n            \"VolumeDriver\": \"\",\n            \"VolumesFrom\": null,\n            \"ConsoleSize\": [\n                0,\n                0\n            ],\n            \"CapAdd\": null,\n            \"CapDrop\": null,\n            \"CgroupnsMode\": \"private\",\n            \"Dns\": [],\n            \"DnsOptions\": [],\n            \"DnsSearch\": [],\n            \"ExtraHosts\": [],\n            \"GroupAdd\": null,\n            \"IpcMode\": \"private\",\n            \"Cgroup\": \"\",\n            \"Links\": null,\n            \"OomScoreAdj\": 0,\n            \"PidMode\": \"\",\n            \"Privileged\": false,\n            \"PublishAllPorts\": false,\n            \"ReadonlyRootfs\": false,\n            \"SecurityOpt\": null,\n            \"UTSMode\": \"\",\n            \"UsernsMode\": \"\",\n            \"ShmSize\": 67108864,\n            \"Runtime\": \"runc\",\n            \"Isolation\": \"\",\n            \"CpuShares\": 0,\n            \"Memory\": 0,\n            \"NanoCpus\": 0,\n            \"CgroupParent\": \"\",\n            \"BlkioWeight\": 0,\n            \"BlkioWeightDevice\": null,\n            \"BlkioDeviceReadBps\": null,\n            \"BlkioDeviceWriteBps\": null,\n            \"BlkioDeviceReadIOps\": null,\n            \"BlkioDeviceWriteIOps\": null,\n            \"CpuPeriod\": 0,\n            \"CpuQuota\": 0,\n            \"CpuRealtimePeriod\": 0,\n            \"CpuRealtimeRuntime\": 0,\n            \"CpusetCpus\": \"\",\n            \"CpusetMems\": \"\",\n            \"Devices\": null,\n            \"DeviceCgroupRules\": null,\n            \"DeviceRequests\": null,\n            \"MemoryReservation\": 0,\n            \"MemorySwap\": 0,\n            \"MemorySwappiness\": null,\n            \"OomKillDisable\": null,\n            \"PidsLimit\": null,\n            \"Ulimits\": null,\n            \"CpuCount\": 0,\n            \"CpuPercent\": 0,\n            \"IOMaximumIOps\": 0,\n            \"IOMaximumBandwidth\": 0,\n            \"Mounts\": [\n                {\n                    \"Type\": \"bind\",\n                    \"Source\": \"D:\\\\SonarQube\\\\production\\\\secrets\\\\postgres_password.txt\",\n                    \"Target\": \"/run/secrets/postgres_password\",\n                    \"ReadOnly\": true,\n                    \"BindOptions\": {}\n                },\n                {\n                    \"Type\": \"bind\",\n                    \"Source\": \"D:\\\\SonarQube\\\\production\\\\secrets\\\\sonar_jwt_secret.txt\",\n                    \"Target\": \"/run/secrets/sonar_jwt_secret\",\n                    \"ReadOnly\": true,\n                    \"BindOptions\": {}\n                }\n            ],\n            \"MaskedPaths\": [\n                \"/proc/acpi\",\n                \"/proc/asound\",\n                \"/proc/interrupts\",\n                \"/proc/kcore\",\n                \"/proc/keys\",\n                \"/proc/latency_stats\",\n                \"/proc/sched_debug\",\n                \"/proc/scsi\",\n                \"/proc/timer_list\",\n                \"/proc/timer_stats\",\n                \"/sys/devices/virtual/powercap\",\n                \"/sys/firmware\"\n            ],\n            \"ReadonlyPaths\": [\n                \"/proc/bus\",\n                \"/proc/fs\",\n                \"/proc/irq\",\n                \"/proc/sys\",\n                \"/proc/sysrq-trigger\"\n            ]\n        },\n        \"Storage\": {\n            \"RootFS\": {\n                \"Snapshot\": {\n                    \"Name\": \"overlayfs\"\n                }\n            }\n        },\n        \"Mounts\": [\n            {\n                \"Type\": \"bind\",\n                \"Source\": \"D:\\\\SonarQube\\\\production\\\\data\\\\sonarqube\",\n                \"Destination\": \"/opt/sonarqube/data\",\n                \"Mode\": \"rw\",\n                \"RW\": true,\n                \"Propagation\": \"rprivate\"\n            },\n            {\n                \"Type\": \"bind\",\n                \"Source\": \"D:\\\\SonarQube\\\\production\\\\data\\\\sonarqube-extensions\",\n                \"Destination\": \"/opt/sonarqube/extensions\",\n                \"Mode\": \"rw\",\n                \"RW\": true,\n                \"Propagation\": \"rprivate\"\n            },\n            {\n                \"Type\": \"bind\",\n                \"Source\": \"D:\\\\SonarQube\\\\production\\\\logs\\\\sonarqube\",\n                \"Destination\": \"/opt/sonarqube/logs\",\n                \"Mode\": \"rw\",\n                \"RW\": true,\n                \"Propagation\": \"rprivate\"\n            },\n            {\n                \"Type\": \"bind\",\n                \"Source\": \"D:\\\\SonarQube\\\\production\\\\temp\\\\sonarqube\",\n                \"Destination\": \"/opt/sonarqube/temp\",\n                \"Mode\": \"rw\",\n                \"RW\": true,\n                \"Propagation\": \"rprivate\"\n            },\n            {\n                \"Type\": \"bind\",\n                \"Source\": \"D:\\\\SonarQube\\\\production\\\\secrets\\\\postgres_password.txt\",\n                \"Destination\": \"/run/secrets/postgres_password\",\n                \"Mode\": \"\",\n                \"RW\": false,\n                \"Propagation\": \"rprivate\"\n            },\n            {\n                \"Type\": \"bind\",\n                \"Source\": \"D:\\\\SonarQube\\\\production\\\\secrets\\\\sonar_jwt_secret.txt\",\n                \"Destination\": \"/run/secrets/sonar_jwt_secret\",\n                \"Mode\": \"\",\n                \"RW\": false,\n                \"Propagation\": \"rprivate\"\n            }\n        ],\n        \"Config\": {\n            \"Hostname\": \"4bb3885b1aa2\",\n            \"Domainname\": \"\",\n            \"User\": \"sonarqube\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": true,\n            \"AttachStderr\": true,\n            \"ExposedPorts\": {\n                \"9000/tcp\": {}\n            },\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"SONAR_JDBC_URL=jdbc:postgresql://db:5432/sonarqube\",\n                \"SONAR_JDBC_USERNAME=sonarqube\",\n                \"SONAR_WEB_HOST=0.0.0.0\",\n                \"PATH=/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",\n                \"JAVA_HOME=/opt/java/openjdk\",\n                \"LANG=en_US.UTF-8\",\n                \"LANGUAGE=en_US:en\",\n                \"LC_ALL=en_US.UTF-8\",\n                \"JAVA_VERSION=jdk-25.0.4+7\",\n                \"DOCKER_RUNNING=true\",\n                \"SONARQUBE_HOME=/opt/sonarqube\",\n                \"SONAR_VERSION=26.8.0.126808\",\n                \"SQ_DATA_DIR=/opt/sonarqube/data\",\n                \"SQ_EXTENSIONS_DIR=/opt/sonarqube/extensions\",\n                \"SQ_LOGS_DIR=/opt/sonarqube/logs\",\n                \"SQ_TEMP_DIR=/opt/sonarqube/temp\",\n                \"ES_TMPDIR=/opt/sonarqube/temp\"\n            ],\n            \"Cmd\": [\n                \"export SONAR_JDBC_PASSWORD=\\\"$(cat /run/secrets/postgres_password)\\\"; export SONAR_AUTH_JWTBASE64HS256SECRET=\\\"$(cat /run/secrets/sonar_jwt_secret)\\\"; exec /opt/sonarqube/docker/entrypoint.sh\"\n            ],\n            \"Image\": \"sonarqube:26.8.0.126808-community\",\n            \"Volumes\": {\n                \"/opt/sonarqube/data\": {},\n                \"/opt/sonarqube/extensions\": {},\n                \"/opt/sonarqube/logs\": {},\n                \"/opt/sonarqube/temp\": {}\n            },\n            \"WorkingDir\": \"/opt/sonarqube\",\n            \"Entrypoint\": [\n                \"/bin/bash\",\n                \"-c\"\n            ],\n            \"Labels\": {\n                \"com.docker.compose.config-hash\": \"490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6\",\n                \"com.docker.compose.container-number\": \"1\",\n                \"com.docker.compose.depends_on\": \"db:service_healthy:false\",\n                \"com.docker.compose.image\": \"sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760\",\n                \"com.docker.compose.oneoff\": \"False\",\n                \"com.docker.compose.project\": \"sonarqube-production\",\n                \"com.docker.compose.project.config_files\": \"D:\\\\SonarQube\\\\production\\\\compose.yml\",\n                \"com.docker.compose.project.working_dir\": \"D:\\\\SonarQube\\\\production\",\n                \"com.docker.compose.replace\": \"sonarqube-production\",\n                \"com.docker.compose.service\": \"sonarqube\",\n                \"com.docker.compose.version\": \"5.4.0\",\n                \"io.k8s.description\": \"SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.\",\n                \"io.openshift.min-cpu\": \"400m\",\n                \"io.openshift.min-memory\": \"2048M\",\n                \"io.openshift.non-scalable\": \"true\",\n                \"io.openshift.tags\": \"sonarqube,static-code-analysis,code-quality,clean-code\",\n                \"org.opencontainers.image.url\": \"https://github.com/SonarSource/docker-sonarqube\",\n                \"org.opencontainers.image.version\": \"24.04\"\n            },\n            \"StopSignal\": \"SIGINT\"\n        },\n        \"NetworkSettings\": {\n            \"SandboxID\": \"ec1c5d4b7b7ecd25ce094d61684808fd18293d07e7ad75c2075835b29282cce0\",\n            \"SandboxKey\": \"/var/run/docker/netns/ec1c5d4b7b7e\",\n            \"Ports\": {\n                \"9000/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"9000\"\n                    }\n                ]\n            },\n            \"Networks\": {\n                \"sonarqube-production\": {\n                    \"IPAMConfig\": null,\n                    \"Links\": null,\n                    \"Aliases\": [\n                        \"sonarqube-production\",\n                        \"sonarqube\"\n                    ],\n                    \"DriverOpts\": null,\n                    \"GwPriority\": 0,\n                    \"NetworkID\": \"e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f\",\n                    \"EndpointID\": \"b4d23bd7c29bc59527fd2ca15eb88df9632ff2dc19b55056b6788f6a4063f71f\",\n                    \"Gateway\": \"172.18.0.1\",\n                    \"IPAddress\": \"172.18.0.2\",\n                    \"MacAddress\": \"da:ff:16:77:90:f2\",\n                    \"IPPrefixLen\": 16,\n                    \"IPv6Gateway\": \"\",\n                    \"GlobalIPv6Address\": \"\",\n                    \"GlobalIPv6PrefixLen\": 0,\n                    \"DNSNames\": [\n                        \"sonarqube-production\",\n                        \"sonarqube\",\n                        \"4bb3885b1aa2\"\n                    ]\n                }\n            }\n        },\n        \"ImageManifestDescriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760\",\n            \"size\": 2528,\n            \"annotations\": {\n                \"com.docker.official-images.bashbrew.arch\": \"amd64\",\n                \"org.opencontainers.image.base.digest\": \"sha256:955c8b94714bc2b5dba5f741bb3b65017287c66fe8d5bf0537e65031a16266ff\",\n                \"org.opencontainers.image.base.name\": \"eclipse-temurin:25-jdk-noble\",\n                \"org.opencontainers.image.created\": \"2026-08-21T18:59:00Z\",\n                \"org.opencontainers.image.revision\": \"886f9480f4a9caf83de23784e11aa054cc3ad7f5\",\n                \"org.opencontainers.image.source\": \"https://github.com/SonarSource/docker-sonarqube.git#886f9480f4a9caf83de23784e11aa054cc3ad7f5:community-build\",\n                \"org.opencontainers.image.url\": \"https://hub.docker.com/_/sonarqube\",\n                \"org.opencontainers.image.version\": \"26.8.0.126808-community\"\n            },\n            \"platform\": {\n                \"architecture\": \"amd64\",\n                \"os\": \"linux\"\n            }\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "44840f5a0ec0"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"Id\": \"44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5\",\n        \"Created\": \"2026-08-24T14:18:31.75459564Z\",\n        \"Path\": \"docker-entrypoint.sh\",\n        \"Args\": [\n            \"postgres\"\n        ],\n        \"State\": {\n            \"Status\": \"running\",\n            \"Running\": true,\n            \"Paused\": false,\n            \"Restarting\": false,\n            \"OOMKilled\": false,\n            \"Dead\": false,\n            \"Pid\": 448,\n            \"ExitCode\": 0,\n            \"Error\": \"\",\n            \"StartedAt\": \"2026-09-21T23:55:35.595978036Z\",\n            \"FinishedAt\": \"2026-09-21T23:55:34.977960445Z\",\n            \"Health\": {\n                \"Status\": \"healthy\",\n                \"FailingStreak\": 0,\n                \"Log\": [\n                    {\n                        \"Start\": \"2026-09-22T18:02:24.909315473Z\",\n                        \"End\": \"2026-09-22T18:02:25.008571468Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-09-22T18:02:35.009406908Z\",\n                        \"End\": \"2026-09-22T18:02:35.123819819Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-09-22T18:02:45.123314957Z\",\n                        \"End\": \"2026-09-22T18:02:45.21311266Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-09-22T18:02:55.214431743Z\",\n                        \"End\": \"2026-09-22T18:02:55.318088454Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-09-22T18:03:05.31879765Z\",\n                        \"End\": \"2026-09-22T18:03:05.406101518Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    }\n                ]\n            }\n        },\n        \"Image\": \"sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94\",\n        \"ResolvConfPath\": \"/var/lib/docker/containers/44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5/resolv.conf\",\n        \"HostnamePath\": \"/var/lib/docker/containers/44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5/hostname\",\n        \"HostsPath\": \"/var/lib/docker/containers/44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5/hosts\",\n        \"LogPath\": \"/var/lib/docker/containers/44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5/44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5-json.log\",\n        \"Name\": \"/sonarqube-postgres\",\n        \"RestartCount\": 0,\n        \"Driver\": \"overlayfs\",\n        \"Platform\": \"linux\",\n        \"MountLabel\": \"\",\n        \"ProcessLabel\": \"\",\n        \"AppArmorProfile\": \"\",\n        \"ExecIDs\": null,\n        \"HostConfig\": {\n            \"Binds\": [\n                \"D:\\\\SonarQube\\\\production\\\\data\\\\postgresql:/var/lib/postgresql/data:rw\"\n            ],\n            \"ContainerIDFile\": \"\",\n            \"LogConfig\": {\n                \"Type\": \"json-file\",\n                \"Config\": {}\n            },\n            \"NetworkMode\": \"sonarqube-production\",\n            \"PortBindings\": {},\n            \"RestartPolicy\": {\n                \"Name\": \"unless-stopped\",\n                \"MaximumRetryCount\": 0\n            },\n            \"AutoRemove\": false,\n            \"VolumeDriver\": \"\",\n            \"VolumesFrom\": null,\n            \"ConsoleSize\": [\n                0,\n                0\n            ],\n            \"CapAdd\": null,\n            \"CapDrop\": null,\n            \"CgroupnsMode\": \"private\",\n            \"Dns\": [],\n            \"DnsOptions\": [],\n            \"DnsSearch\": [],\n            \"ExtraHosts\": [],\n            \"GroupAdd\": null,\n            \"IpcMode\": \"private\",\n            \"Cgroup\": \"\",\n            \"Links\": null,\n            \"OomScoreAdj\": 0,\n            \"PidMode\": \"\",\n            \"Privileged\": false,\n            \"PublishAllPorts\": false,\n            \"ReadonlyRootfs\": false,\n            \"SecurityOpt\": null,\n            \"UTSMode\": \"\",\n            \"UsernsMode\": \"\",\n            \"ShmSize\": 67108864,\n            \"Runtime\": \"runc\",\n            \"Isolation\": \"\",\n            \"CpuShares\": 0,\n            \"Memory\": 0,\n            \"NanoCpus\": 0,\n            \"CgroupParent\": \"\",\n            \"BlkioWeight\": 0,\n            \"BlkioWeightDevice\": null,\n            \"BlkioDeviceReadBps\": null,\n            \"BlkioDeviceWriteBps\": null,\n            \"BlkioDeviceReadIOps\": null,\n            \"BlkioDeviceWriteIOps\": null,\n            \"CpuPeriod\": 0,\n            \"CpuQuota\": 0,\n            \"CpuRealtimePeriod\": 0,\n            \"CpuRealtimeRuntime\": 0,\n            \"CpusetCpus\": \"\",\n            \"CpusetMems\": \"\",\n            \"Devices\": null,\n            \"DeviceCgroupRules\": null,\n            \"DeviceRequests\": null,\n            \"MemoryReservation\": 0,\n            \"MemorySwap\": 0,\n            \"MemorySwappiness\": null,\n            \"OomKillDisable\": null,\n            \"PidsLimit\": null,\n            \"Ulimits\": null,\n            \"CpuCount\": 0,\n            \"CpuPercent\": 0,\n            \"IOMaximumIOps\": 0,\n            \"IOMaximumBandwidth\": 0,\n            \"Mounts\": [\n                {\n                    \"Type\": \"bind\",\n                    \"Source\": \"D:\\\\SonarQube\\\\production\\\\secrets\\\\postgres_password.txt\",\n                    \"Target\": \"/run/secrets/postgres_password\",\n                    \"ReadOnly\": true,\n                    \"BindOptions\": {}\n                }\n            ],\n            \"MaskedPaths\": [\n                \"/proc/acpi\",\n                \"/proc/asound\",\n                \"/proc/interrupts\",\n                \"/proc/kcore\",\n                \"/proc/keys\",\n                \"/proc/latency_stats\",\n                \"/proc/sched_debug\",\n                \"/proc/scsi\",\n                \"/proc/timer_list\",\n                \"/proc/timer_stats\",\n                \"/sys/devices/virtual/powercap\",\n                \"/sys/firmware\"\n            ],\n            \"ReadonlyPaths\": [\n                \"/proc/bus\",\n                \"/proc/fs\",\n                \"/proc/irq\",\n                \"/proc/sys\",\n                \"/proc/sysrq-trigger\"\n            ]\n        },\n        \"Storage\": {\n            \"RootFS\": {\n                \"Snapshot\": {\n                    \"Name\": \"overlayfs\"\n                }\n            }\n        },\n        \"Mounts\": [\n            {\n                \"Type\": \"bind\",\n                \"Source\": \"D:\\\\SonarQube\\\\production\\\\secrets\\\\postgres_password.txt\",\n                \"Destination\": \"/run/secrets/postgres_password\",\n                \"Mode\": \"\",\n                \"RW\": false,\n                \"Propagation\": \"rprivate\"\n            },\n            {\n                \"Type\": \"bind\",\n                \"Source\": \"D:\\\\SonarQube\\\\production\\\\data\\\\postgresql\",\n                \"Destination\": \"/var/lib/postgresql/data\",\n                \"Mode\": \"rw\",\n                \"RW\": true,\n                \"Propagation\": \"rprivate\"\n            }\n        ],\n        \"Config\": {\n            \"Hostname\": \"44840f5a0ec0\",\n            \"Domainname\": \"\",\n            \"User\": \"\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": true,\n            \"AttachStderr\": true,\n            \"ExposedPorts\": {\n                \"5432/tcp\": {}\n            },\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"POSTGRES_USER=sonarqube\",\n                \"POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password\",\n                \"POSTGRES_INITDB_ARGS=--encoding=UTF8\",\n                \"POSTGRES_DB=sonarqube\",\n                \"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",\n                \"GOSU_VERSION=1.19\",\n                \"LANG=en_US.utf8\",\n                \"PG_MAJOR=17\",\n                \"PG_VERSION=17.6\",\n                \"PG_SHA256=e0630a3600aea27511715563259ec2111cd5f4353a4b040e0be827f94cd7a8b0\",\n                \"DOCKER_PG_LLVM_DEPS=llvm19-dev \\t\\tclang19\",\n                \"PGDATA=/var/lib/postgresql/data\"\n            ],\n            \"Cmd\": [\n                \"postgres\"\n            ],\n            \"Healthcheck\": {\n                \"Test\": [\n                    \"CMD-SHELL\",\n                    \"pg_isready -U sonarqube -d sonarqube\"\n                ],\n                \"Interval\": 10000000000,\n                \"Timeout\": 5000000000,\n                \"StartPeriod\": 20000000000,\n                \"Retries\": 12\n            },\n            \"Image\": \"postgres:17.6-alpine\",\n            \"Volumes\": {\n                \"/var/lib/postgresql/data\": {}\n            },\n            \"WorkingDir\": \"/\",\n            \"Entrypoint\": [\n                \"docker-entrypoint.sh\"\n            ],\n            \"Labels\": {\n                \"com.docker.compose.config-hash\": \"e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513\",\n                \"com.docker.compose.container-number\": \"1\",\n                \"com.docker.compose.depends_on\": \"\",\n                \"com.docker.compose.image\": \"sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be\",\n                \"com.docker.compose.oneoff\": \"False\",\n                \"com.docker.compose.project\": \"sonarqube-production\",\n                \"com.docker.compose.project.config_files\": \"D:\\\\SonarQube\\\\production\\\\compose.yml\",\n                \"com.docker.compose.project.working_dir\": \"D:\\\\SonarQube\\\\production\",\n                \"com.docker.compose.replace\": \"sonarqube-postgres\",\n                \"com.docker.compose.service\": \"db\",\n                \"com.docker.compose.version\": \"5.4.0\"\n            },\n            \"StopSignal\": \"SIGINT\"\n        },\n        \"NetworkSettings\": {\n            \"SandboxID\": \"17e8ca75a7c24bddb8e0980797837ef6094e6960fe114e767d3e23b405648bd7\",\n            \"SandboxKey\": \"/var/run/docker/netns/17e8ca75a7c2\",\n            \"Ports\": {\n                \"5432/tcp\": null\n            },\n            \"Networks\": {\n                \"sonarqube-production\": {\n                    \"IPAMConfig\": null,\n                    \"Links\": null,\n                    \"Aliases\": [\n                        \"sonarqube-postgres\",\n                        \"db\"\n                    ],\n                    \"DriverOpts\": null,\n                    \"GwPriority\": 0,\n                    \"NetworkID\": \"e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f\",\n                    \"EndpointID\": \"3a163648fbf879d741f703b814947a45a2ec3e2e319369e6eadabd0b4d643c4e\",\n                    \"Gateway\": \"172.18.0.1\",\n                    \"IPAddress\": \"172.18.0.3\",\n                    \"MacAddress\": \"6e:ed:d8:e2:e6:26\",\n                    \"IPPrefixLen\": 16,\n                    \"IPv6Gateway\": \"\",\n                    \"GlobalIPv6Address\": \"\",\n                    \"GlobalIPv6PrefixLen\": 0,\n                    \"DNSNames\": [\n                        \"sonarqube-postgres\",\n                        \"db\",\n                        \"44840f5a0ec0\"\n                    ]\n                }\n            }\n        },\n        \"ImageManifestDescriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be\",\n            \"size\": 2865,\n            \"annotations\": {\n                \"com.docker.official-images.bashbrew.arch\": \"amd64\",\n                \"org.opencontainers.image.base.digest\": \"sha256:85f2b723e106c34644cd5851d7e81ee87da98ac54672b29947c052a45d31dc2f\",\n                \"org.opencontainers.image.base.name\": \"alpine:3.22\",\n                \"org.opencontainers.image.created\": \"2025-10-22T17:40:39Z\",\n                \"org.opencontainers.image.revision\": \"5ec89312491bdaa2c42377a65ec0af2ecb774480\",\n                \"org.opencontainers.image.source\": \"https://github.com/docker-library/postgres.git#5ec89312491bdaa2c42377a65ec0af2ecb774480:17/alpine3.22\",\n                \"org.opencontainers.image.url\": \"https://hub.docker.com/_/postgres\",\n                \"org.opencontainers.image.version\": \"17.6-alpine3.22\"\n            },\n            \"platform\": {\n                \"architecture\": \"amd64\",\n                \"os\": \"linux\"\n            }\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "ls",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout": "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e\n80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff\n249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057\n5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef\napprovaplat-mysql-data\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"CreatedAt\": \"2026-08-27T12:38:40Z\",\n        \"Driver\": \"local\",\n        \"Labels\": {\n            \"com.docker.volume.anonymous\": \"\"\n        },\n        \"Mountpoint\": \"/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data\",\n        \"Name\": \"3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e\",\n        \"Options\": null,\n        \"Scope\": \"local\"\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"CreatedAt\": \"2026-08-27T12:34:57Z\",\n        \"Driver\": \"local\",\n        \"Labels\": {\n            \"com.docker.volume.anonymous\": \"\"\n        },\n        \"Mountpoint\": \"/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data\",\n        \"Name\": \"80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff\",\n        \"Options\": null,\n        \"Scope\": \"local\"\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"CreatedAt\": \"2026-08-27T12:32:48Z\",\n        \"Driver\": \"local\",\n        \"Labels\": {\n            \"com.docker.volume.anonymous\": \"\"\n        },\n        \"Mountpoint\": \"/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data\",\n        \"Name\": \"249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057\",\n        \"Options\": null,\n        \"Scope\": \"local\"\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"CreatedAt\": \"2026-08-27T12:37:34Z\",\n        \"Driver\": \"local\",\n        \"Labels\": {\n            \"com.docker.volume.anonymous\": \"\"\n        },\n        \"Mountpoint\": \"/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data\",\n        \"Name\": \"5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef\",\n        \"Options\": null,\n        \"Scope\": \"local\"\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "approvaplat-mysql-data"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"CreatedAt\": \"2026-08-27T12:37:34Z\",\n        \"Driver\": \"local\",\n        \"Labels\": {\n            \"com.docker.compose.config-hash\": \"27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e\",\n            \"com.docker.compose.project\": \"approvaplat\",\n            \"com.docker.compose.version\": \"5.4.0\",\n            \"com.docker.compose.volume\": \"approvaplat-mysql-data\"\n        },\n        \"Mountpoint\": \"/var/lib/docker/volumes/approvaplat-mysql-data/_data\",\n        \"Name\": \"approvaplat-mysql-data\",\n        \"Options\": null,\n        \"Scope\": \"local\"\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "ls",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout": "c35ac9a18def\n3bd9ff598d1b\n831c0f31d5e3\ne3597993ac4b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "c35ac9a18def"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"Name\": \"bridge\",\n        \"Id\": \"c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587\",\n        \"Created\": \"2026-09-21T23:55:35.545820176Z\",\n        \"Scope\": \"local\",\n        \"Driver\": \"bridge\",\n        \"EnableIPv4\": true,\n        \"EnableIPv6\": false,\n        \"IPAM\": {\n            \"Driver\": \"default\",\n            \"Options\": null,\n            \"Config\": [\n                {\n                    \"Subnet\": \"172.17.0.0/16\",\n                    \"Gateway\": \"172.17.0.1\"\n                }\n            ]\n        },\n        \"Internal\": false,\n        \"Attachable\": false,\n        \"Ingress\": false,\n        \"ConfigFrom\": {\n            \"Network\": \"\"\n        },\n        \"ConfigOnly\": false,\n        \"Options\": {\n            \"com.docker.network.bridge.default_bridge\": \"true\",\n            \"com.docker.network.bridge.enable_icc\": \"true\",\n            \"com.docker.network.bridge.enable_ip_masquerade\": \"true\",\n            \"com.docker.network.bridge.host_binding_ipv4\": \"0.0.0.0\",\n            \"com.docker.network.bridge.name\": \"docker0\",\n            \"com.docker.network.driver.mtu\": \"1500\"\n        },\n        \"Labels\": {},\n        \"Containers\": {},\n        \"Status\": {\n            \"IPAM\": {\n                \"Subnets\": {\n                    \"172.17.0.0/16\": {\n                        \"IPsInUse\": 3,\n                        \"DynamicIPsAvailable\": 65533\n                    }\n                }\n            }\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "3bd9ff598d1b"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"Name\": \"host\",\n        \"Id\": \"3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6\",\n        \"Created\": \"2026-08-24T03:10:40.792555369Z\",\n        \"Scope\": \"local\",\n        \"Driver\": \"host\",\n        \"EnableIPv4\": true,\n        \"EnableIPv6\": false,\n        \"IPAM\": {\n            \"Driver\": \"default\",\n            \"Options\": null,\n            \"Config\": null\n        },\n        \"Internal\": false,\n        \"Attachable\": false,\n        \"Ingress\": false,\n        \"ConfigFrom\": {\n            \"Network\": \"\"\n        },\n        \"ConfigOnly\": false,\n        \"Options\": {},\n        \"Labels\": {},\n        \"Containers\": {},\n        \"Status\": {\n            \"IPAM\": {}\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "831c0f31d5e3"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"Name\": \"none\",\n        \"Id\": \"831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6\",\n        \"Created\": \"2026-08-24T03:10:40.783778961Z\",\n        \"Scope\": \"local\",\n        \"Driver\": \"null\",\n        \"EnableIPv4\": true,\n        \"EnableIPv6\": false,\n        \"IPAM\": {\n            \"Driver\": \"default\",\n            \"Options\": null,\n            \"Config\": null\n        },\n        \"Internal\": false,\n        \"Attachable\": false,\n        \"Ingress\": false,\n        \"ConfigFrom\": {\n            \"Network\": \"\"\n        },\n        \"ConfigOnly\": false,\n        \"Options\": {},\n        \"Labels\": {},\n        \"Containers\": {},\n        \"Status\": {\n            \"IPAM\": {}\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "e3597993ac4b"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"Name\": \"sonarqube-production\",\n        \"Id\": \"e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f\",\n        \"Created\": \"2026-08-24T14:03:17.667304522Z\",\n        \"Scope\": \"local\",\n        \"Driver\": \"bridge\",\n        \"EnableIPv4\": true,\n        \"EnableIPv6\": false,\n        \"IPAM\": {\n            \"Driver\": \"default\",\n            \"Options\": null,\n            \"Config\": [\n                {\n                    \"Subnet\": \"172.18.0.0/16\",\n                    \"Gateway\": \"172.18.0.1\"\n                }\n            ]\n        },\n        \"Internal\": false,\n        \"Attachable\": false,\n        \"Ingress\": false,\n        \"ConfigFrom\": {\n            \"Network\": \"\"\n        },\n        \"ConfigOnly\": false,\n        \"Options\": {\n            \"com.docker.network.enable_ipv4\": \"true\",\n            \"com.docker.network.enable_ipv6\": \"false\"\n        },\n        \"Labels\": {\n            \"com.docker.compose.config-hash\": \"43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda\",\n            \"com.docker.compose.network\": \"sonarqube\",\n            \"com.docker.compose.project\": \"sonarqube-production\",\n            \"com.docker.compose.version\": \"5.4.0\"\n        },\n        \"Containers\": {\n            \"44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5\": {\n                \"Name\": \"sonarqube-postgres\",\n                \"EndpointID\": \"3a163648fbf879d741f703b814947a45a2ec3e2e319369e6eadabd0b4d643c4e\",\n                \"MacAddress\": \"6e:ed:d8:e2:e6:26\",\n                \"IPv4Address\": \"172.18.0.3/16\",\n                \"IPv6Address\": \"\"\n            },\n            \"4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc\": {\n                \"Name\": \"sonarqube-production\",\n                \"EndpointID\": \"b4d23bd7c29bc59527fd2ca15eb88df9632ff2dc19b55056b6788f6a4063f71f\",\n                \"MacAddress\": \"da:ff:16:77:90:f2\",\n                \"IPv4Address\": \"172.18.0.2/16\",\n                \"IPv6Address\": \"\"\n            }\n        },\n        \"Status\": {\n            \"IPAM\": {\n                \"Subnets\": {\n                    \"172.18.0.0/16\": {\n                        \"IPsInUse\": 5,\n                        \"DynamicIPsAvailable\": 65531\n                    }\n                }\n            }\n        }\n    }\n]\n",
+      "stderr": ""
+    }
+  ],
+  "frozen": {
+    "reviewed_files": {
+      "count": 43,
+      "authorized_changes": {}
+    },
+    "tested_files": {
+      "count": 315,
+      "authorized_changes": {}
+    },
+    "production_sources": {
+      "count": 206,
+      "authorized_changes": {}
+    },
+    "protected_inputs": {
+      "count": 6553,
+      "authorized_changes": {}
+    },
+    "previous_reviewed_files": {
+      "count": 143,
+      "authorized_changes": {}
+    },
+    "r14_postnotes": {
+      "count": 6,
+      "authorized_changes": {}
+    },
+    "historical_sql": {
+      "count": 7,
+      "authorized_changes": {}
+    },
+    "spec_files": {
+      "count": 7,
+      "authorized_changes": {}
+    }
+  },
+  "ignored": {
+    "count": 411,
+    "authorized_changes": {},
+    "directories": {
+      ".codeplus/worktrees/runtime-53de558373ef/": true,
+      ".codeplus/worktrees/team-demo-team+reader-a/": true,
+      ".codeplus/worktrees/team-demo-team+reader-b/": true
+    }
+  },
+  "removed_roots": {
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923": false,
+    "C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch1-cleanup-20260923": false
+  },
+  "processes_referencing_removed_root": [
+    {
+      "ProcessId": 23968,
+      "ParentProcessId": 17012,
+      "Name": "pwsh.exe",
+      "ExecutablePath": "C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "CommandLine": "pwsh -NoProfile -Command \"@(Get-CimInstance Win32_Process | Where-Object { ($_.ExecutablePath -like '*codeplus-w1-batch1-leader-20260923*') -or ($_.CommandLine -like '*codeplus-w1-batch1-leader-20260923*') } | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CommandLine,@{Name='Birth';Expression={$_.CreationDate.ToUniversalTime().ToString('o')}}) | ConvertTo-Json -Compress\"",
+      "Birth": "2026-09-22T18:03:13.8450440Z"
+    }
+  ],
+  "blocked_r14_retained": {
+    "postcleanup.py": "56c0b73257456affe49a54fcce3323163d981deae00cd60b6ca6b7691f2c0b7e",
+    "r14-compose-before.yaml": "68ca4e0b7685e991d5904b9a92fb78a44736fa2544b93854b5562554fa3e0cf9",
+    "stage.py": "7aabdb2f6341bb12998e56038dbe245673f2e853e4631e2510c0ce513a709bbf",
+    "whitespace.py": "e87edda850ecb9d86a29d21bf64b5e2c7d00e5f0950e89f357eaa545096778b5"
+  },
+  "docker": {
+    "containers": [
+      {
+        "id": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+        "name": "/sonarqube-production",
+        "image": "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+        "labels": {
+          "com.docker.compose.config-hash": "490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "db:service_healthy:false",
+          "com.docker.compose.image": "sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+          "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+          "com.docker.compose.replace": "sonarqube-production",
+          "com.docker.compose.service": "sonarqube",
+          "com.docker.compose.version": "5.4.0",
+          "io.k8s.description": "SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.",
+          "io.openshift.min-cpu": "400m",
+          "io.openshift.min-memory": "2048M",
+          "io.openshift.non-scalable": "true",
+          "io.openshift.tags": "sonarqube,static-code-analysis,code-quality,clean-code",
+          "org.opencontainers.image.url": "https://github.com/SonarSource/docker-sonarqube",
+          "org.opencontainers.image.version": "24.04"
+        },
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\sonarqube",
+            "Destination": "/opt/sonarqube/data",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\sonarqube-extensions",
+            "Destination": "/opt/sonarqube/extensions",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\logs\\sonarqube",
+            "Destination": "/opt/sonarqube/logs",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\temp\\sonarqube",
+            "Destination": "/opt/sonarqube/temp",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+            "Destination": "/run/secrets/postgres_password",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\sonar_jwt_secret.txt",
+            "Destination": "/run/secrets/sonar_jwt_secret",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          }
+        ],
+        "ports": {
+          "9000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "9000"
+            }
+          ]
+        },
+        "networks": [
+          "sonarqube-production"
+        ]
+      },
+      {
+        "id": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+        "name": "/sonarqube-postgres",
+        "image": "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+        "labels": {
+          "com.docker.compose.config-hash": "e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+          "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+          "com.docker.compose.replace": "sonarqube-postgres",
+          "com.docker.compose.service": "db",
+          "com.docker.compose.version": "5.4.0"
+        },
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+            "Destination": "/run/secrets/postgres_password",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\postgresql",
+            "Destination": "/var/lib/postgresql/data",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          }
+        ],
+        "ports": {
+          "5432/tcp": null
+        },
+        "networks": [
+          "sonarqube-production"
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "Name": "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data",
+        "CreatedAt": "2026-08-27T12:38:40Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data",
+        "CreatedAt": "2026-08-27T12:34:57Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data",
+        "CreatedAt": "2026-08-27T12:32:48Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data",
+        "CreatedAt": "2026-08-27T12:37:34Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "approvaplat-mysql-data",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/approvaplat-mysql-data/_data",
+        "CreatedAt": "2026-08-27T12:37:34Z",
+        "Labels": {
+          "com.docker.compose.config-hash": "27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e",
+          "com.docker.compose.project": "approvaplat",
+          "com.docker.compose.version": "5.4.0",
+          "com.docker.compose.volume": "approvaplat-mysql-data"
+        },
+        "Options": null,
+        "Scope": "local"
+      }
+    ],
+    "networks": [
+      {
+        "Id": "c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587",
+        "Name": "bridge",
+        "Created": "2026-09-21T23:55:35.545820176Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": [
+            {
+              "Subnet": "172.17.0.0/16",
+              "Gateway": "172.17.0.1"
+            }
+          ]
+        },
+        "Options": {
+          "com.docker.network.bridge.default_bridge": "true",
+          "com.docker.network.bridge.enable_icc": "true",
+          "com.docker.network.bridge.enable_ip_masquerade": "true",
+          "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+          "com.docker.network.bridge.name": "docker0",
+          "com.docker.network.driver.mtu": "1500"
+        }
+      },
+      {
+        "Id": "3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6",
+        "Name": "host",
+        "Created": "2026-08-24T03:10:40.792555369Z",
+        "Scope": "local",
+        "Driver": "host",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": null
+        },
+        "Options": {}
+      },
+      {
+        "Id": "831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6",
+        "Name": "none",
+        "Created": "2026-08-24T03:10:40.783778961Z",
+        "Scope": "local",
+        "Driver": "null",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": null
+        },
+        "Options": {}
+      },
+      {
+        "Id": "e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f",
+        "Name": "sonarqube-production",
+        "Created": "2026-08-24T14:03:17.667304522Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Labels": {
+          "com.docker.compose.config-hash": "43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda",
+          "com.docker.compose.network": "sonarqube",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.version": "5.4.0"
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": [
+            {
+              "Subnet": "172.18.0.0/16",
+              "Gateway": "172.18.0.1"
+            }
+          ]
+        },
+        "Options": {
+          "com.docker.network.enable_ipv4": "true",
+          "com.docker.network.enable_ipv6": "false"
+        }
+      }
+    ]
+  },
+  "foreign_comparison": {
+    "containers": 2,
+    "volumes": 5,
+    "networks": 4,
+    "unchanged": true
+  },
+  "shared_metadata": {
+    "rows_before": 172661,
+    "rows_after": 172661,
+    "before_sha256": "0f414c289f3d27183cce3724140dbeb5df871d78244e76d5488a9595b2f9ac62",
+    "after_sha256": "0f414c289f3d27183cce3724140dbeb5df871d78244e76d5488a9595b2f9ac62",
+    "added": 0,
+    "removed": 0,
+    "changed_uv_directory_size_only": 0,
+    "differences": [],
+    "other_fields_and_regular_files_unchanged": true,
+    "method": "Independent complete JSONL gzip reread; no atime, no live third full snapshot and no model content SHA claim."
+  },
+  "shared_root_existence": {
+    "C:/Users/18221/.cache/codeplus-agenticrag/models": true,
+    "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-core": true,
+    "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda": true,
+    "C:/Users/18221/AppData/Local/uv/cache": true,
+    "C:/Users/18221/AppData/Local/Temp/.codeplus-agenticrag-workers": true,
+    "C:/Users/18221/AppData/Local/Temp/pytest-of-18221/pytest-2": false
+  },
+  "cleanup_status": "PASS",
+  "cleanup_reports": {
+    "W1-batch1-cleanup-after.json": "4c4b4b69857b0824a9278b26afc4dbbde80e78a093188d122eb109d820638ac8",
+    "W1-batch1-cleanup-before.json": "7c76bbfcb03fed53d1b6e6d02945bebb41796e9a2728a8a367b8ee4a8505871e",
+    "W1-batch1-cleanup-delete.json": "923f18b0fa4735322ef4192608e0ac7e69f13f4672c9eb2f760b5ae69b3edf87",
+    "W1-batch1-cleanup-dispatch.md": "33e28da70e630e730fec202a5d048291ec7859ab340a70bbdf2780f6afb7f058",
+    "W1-batch1-cleanup-finalizer.json": "e4db5ef1f011618c3c716f42fffbf73c29eb24754801ed7c8e02a716714ac27d",
+    "W1-batch1-cleanup-helper-inventory.json": "2354b43c09028f16efdabe4ec16c678ae9a4f232894605f42f90ef3964e21b60",
+    "W1-batch1-cleanup-owned-before.jsonl.gz": "99de0eb0e4f402394d505a4c2905366dc5961f7cd7bacfe76fab562d645968b7",
+    "W1-batch1-cleanup-owned-links.jsonl.gz": "1a38622484c44a7ea63fd2ec2eed5f6787dc05a7a86f59b2515d23dbb771e8e7",
+    "W1-batch1-cleanup-shared-after.jsonl.gz": "0f414c289f3d27183cce3724140dbeb5df871d78244e76d5488a9595b2f9ac62",
+    "W1-batch1-cleanup-shared-before.jsonl.gz": "0f414c289f3d27183cce3724140dbeb5df871d78244e76d5488a9595b2f9ac62",
+    "W1-batch1-cleanup-shared-delta.jsonl.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "W1-batch1-cleanup-shared-review.json": "bf80f47853a73a343172473f470410e59f54122cde46adfd2b17ffa306804e72",
+    "W1-batch1-cleanup-tool-error.json": "c22a4daeb3b07357e2cf1e58906602f880d842afff30494f2a38bcdfbe91cb14",
+    "W1-batch1-cleanup.json": "e53e6328e4a95ea78fdd3f844ebf7939d91e374419e0ab0e14f6ac31744ca25a",
+    "W1-batch1-cleanup.md": "0d41299b3530f4beaaf12bbd2e0f19274e9c15e9b83dd512daaae489752890f2"
+  },
+  "finished": 1790100198.7622359
+}

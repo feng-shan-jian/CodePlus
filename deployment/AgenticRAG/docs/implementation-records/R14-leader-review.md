@@ -1,6 +1,6 @@
 # R14 Leader 独立验收
 
-状态：ACCEPTED_READY_FOR_LOCAL_COMMIT。独立代码、运行验收、独立清理和 Leader 清理复核已通过；精确本地提交待执行。唯一集成目录 D:/CodePlus，分支 codex/rag，基线 a4fede1c3f0a09202710e53debdbac3307c0911d。执行者 /root/r14_recovery 和独立清理 /root/r14_cleanup 均已 STOP_WRITE；Leader 收回唯一写权限，未 push。
+状态：COMMITTED。独立代码、运行验收、独立清理和 Leader 清理复核已通过；本地提交175f8f54ed9e24736a232f6b989d145f7f217dca已完成，161个精确路径/blob、parent与空index复核通过。唯一集成目录 D:/CodePlus，分支 codex/rag，基线 a4fede1c3f0a09202710e53debdbac3307c0911d。执行者 /root/r14_recovery 和独立清理 /root/r14_cleanup 均已 STOP_WRITE；Leader 持有唯一写权限，未 push。
 
 ## 冻结对象与代码复核
 
@@ -55,3 +55,7 @@ Leader随后独立重新计算冻结文件SHA、检查3个ignored目录实际存
 清理报告R14-cleanup.json SHA256为468998acf2e2f319c9a295ac6d93a873b593fc001b93fa269df83ee3c335ad51；Leader独立复核R14-leader-postcleanup.json SHA256为a5e34408c4bfccfc5748ffd22efc814e48c2f5fcb4005b869cd8ce5c33f5f5f6，状态PASS_WITH_METADATA_OBSERVATION。清理的只读PowerShell解析错误和严格元数据FAIL分别留存。Leader冻结审计首轮遗漏已授权checklist变化、第二轮误计已退出CIM采样子进程，均保留原FAIL；第三轮完整冻结通过，未修改产品实现。
 
 全部R14必要验收已完成，批准精确本地提交。R13六个提交后记按既定约定随本次正常提交保存，不amend；继承eval/compose/用户README和外部收敛任务目录不纳入提交。后续仍按W1→R15→W2→R16–R26推进。
+
+## 本地提交后记
+
+实际提交175f8f54ed9e24736a232f6b989d145f7f217dca，parent a4fede1c3f0a09202710e53debdbac3307c0911d；161个精确路径与Git blob一致，index空，206生产文件与继承保护输入保持。详见R14-leader-postcommit.json。提交前仅移除r14-compose.yaml末尾2个空行字节，前缀字节完整保留且两份docker compose config解析结果相同；原infra/unit失败日志保留原字节，.gitattributes只加两条精确文件例外。首次和第二次cached空白检查失败及混合LF/CRLF的辅助脚本断言失败均保留于R14-leader-stage-first-fail.json、second-fail.json和R14-leader-whitespace.json；最终cached check通过，产品代码没有变化。本后记与实际SHA/最终辅助清理记录随下一次正常W1提交保存，不amend，不push。R15尚未获写权。

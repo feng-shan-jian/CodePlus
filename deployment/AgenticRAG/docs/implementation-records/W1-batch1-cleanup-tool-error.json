@@ -1,0 +1,9 @@
+{
+  "status": "PRESERVED_TOOL_COMPOSITION_ERROR",
+  "stage": "Create cleanup review helper",
+  "error": "functions.exec rejected JavaScript before any nested tool call: SyntaxError: missing ) after argument list",
+  "cause": "Unescaped Markdown backticks inside a JavaScript template literal containing helper source",
+  "execution": "No filesystem action ran in the rejected call; no deletion or review ran.",
+  "correction": "Use plain Markdown prose in the helper source, without nested backtick delimiters.",
+  "product_impact": "None; before and after cleanup audits had already passed."
+}

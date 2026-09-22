@@ -20,7 +20,7 @@ from codeplus.run_policy import HostRunContext
 from codeplus.tools import ToolRegistry
 
 from agentic_rag.config import KnowledgeConfig, WorkerExecutionConfig, resolve_run
-from agentic_rag.domain import RunStatus
+from agentic_rag.domain import ErrorCode, RagError, RunStatus
 from agentic_rag.adapters.codeplus.policy import DevelopmentConfig, KnowledgeScope
 
 H = runpy.run_path(str(Path(__file__).with_name('source_support.py')))
@@ -93,6 +93,147 @@ def setup_scope(tmp_path, parent, raw=None):
     H['dense_fixture'](scope.sources,chunks,version,ref)
     scope._fixture_ref=ref
     return scope, chunks.parsed.text
+
+
+@pytest.mark.parametrize('completion', [False, True])
+@pytest.mark.parametrize('evidence', [False, True])
+@pytest.mark.parametrize('limit', ['fragments', 'metadata', 'tokens', 'meter', 'unknown_budget'])
+def test_source_limit_finalizes_only_valid_evidence_and_persists_terminal(tmp_path, completion, evidence, limit):
+    """Actual tools/Agent/archives/SQLite; only the model and index are synthetic."""
+    async def run():
+        parent = create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
+        scope, canonical = setup_scope(tmp_path, parent)
+        handle = scope.sources.issue_source(scope._fixture_ref)
+        seen = []
+
+        def transport(request):
+            body = json.loads(request.content)
+            seen.append(body)
+            if evidence and len(seen) == 1:
+                content = sse_text(calls=('search','knowledge_search',{'query':'source'}), terminal='tool_calls')
+            elif len(seen) == (2 if evidence else 1):
+                # Exhaust the actual source allowance at the next admitted call.
+                with scope.catalog._db.transaction(write=True) as db:
+                    if limit == 'fragments':
+                        db.execute('UPDATE source_usage SET window_fragments=? WHERE run_id=?',
+                                   (scope.sources.retrieval.context_chunks, scope.run_id))
+                    elif limit == 'metadata':
+                        db.execute('UPDATE source_usage SET window_tokens=? WHERE run_id=?',
+                                   (scope.sources.retrieval.context_tokens-1, scope.run_id))
+                    elif limit == 'tokens':
+                        db.execute('UPDATE source_usage SET returned_tokens=? WHERE run_id=?',
+                                   (scope.sources.budget.total_tokens-scope.sources.budget.finish_reserve_tokens-1, scope.run_id))
+                    elif limit == 'meter':
+                        scope.sources.meter.count = lambda text: -1
+                    else:
+                        def unknown_budget(text):
+                            # The text exactly matches a quota diagnostic, but
+                            # an untyped error must never grant a soft stop.
+                            raise RagError(ErrorCode.BUDGET_EXHAUSTED, 'source fragment count exhausted', stage='source_budget')
+                        scope.sources.meter.count = unknown_budget
+                content = sse_text(calls=('limited','knowledge_open',{'source_ref':handle}), terminal='tool_calls')
+            else:
+                assert not body.get('tools')
+                if evidence:
+                    source = next(m['content'] for m in body['messages'] if m['role']=='tool' and '<source ' in m['content'])
+                    item = json.loads(source.split('\n\n<source ',1)[0])['items'][0]
+                    draft = {'markdown':'Verified partial answer [^'+item['evidence_id']+']',
+                             'citations':[{'evidence_id':item['evidence_id'],'spans':item['returned_spans'],'quotes':[canonical]}]}
+                else:
+                    draft = {'markdown':'No evidence is available.', 'citations':[]}
+                content = sse_text(json.dumps(draft))
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
+
+        await scope.client.aclose()
+        scope.client = scoped_client(parent, transport=httpx.MockTransport(transport))
+        class Policy:
+            async def start(self, context): return scope
+        agent = Agent(parent, ToolRegistry(), 'openai-compat', work_dir=str(tmp_path), execution_policy=Policy())
+        callbacks = []
+        try:
+            if completion:
+                displayed = await agent.run_to_completion('source question', event_callback=callbacks.append)
+            else:
+                from contextlib import aclosing
+                conversation = ConversationManager(); conversation.add_user_message('source question')
+                async with aclosing(agent.run(conversation)) as stream:
+                    events = [event async for event in stream]
+                displayed = ' '.join(getattr(event, 'message', '') for event in events)
+            actual = scope.catalog.get_run(scope.lease.run.run_id)
+            hard_failure = limit in {'meter', 'unknown_budget'}
+            expected = (('failed','explicit_error') if hard_failure else
+                        ('partial', 'token_budget' if limit == 'tokens' else 'context_limit') if evidence else
+                        ('incomplete','no_evidence'))
+            assert (actual.status.value, actual.stop_reason) == expected
+            assert (agent.last_run_outcome.status, agent.last_run_outcome.reason) == expected
+            if completion:
+                assert [e for e in callbacks if e['type']=='run_status'] == [
+                    {'type':'run_status','status':expected[0],'reason':expected[1]}]
+            assert bool(agent.last_run_outcome.artifact) == (evidence and not hard_failure)
+            if hard_failure:
+                assert 'Knowledge run failed: explicit_error' in displayed
+            assert len(seen) == int(evidence) + (1 if hard_failure else 2)
+            assert actual.usage.searches == int(evidence) and actual.usage.opens == 1
+            assert actual.usage.total_tokens == 20 * len(seen)
+            assert scope._finished and scope._closed and not scope._pending_cleanup
+            assert scope.catalog.get_pin(actual.run_id).state == 'released'
+            with scope.catalog._db.transaction() as db:
+                assert db.execute('SELECT cleanup_state FROM host_runs WHERE run_id=?', (scope.run_id,)).fetchone() == ('released',)
+                statuses = dict(db.execute('SELECT status,count(*) FROM source_calls WHERE run_id=? GROUP BY status', (scope.run_id,)))
+                assert statuses == ({'ok':1,'error':1} if evidence else {'error':1})
+                saved, = db.execute('SELECT count(*) FROM saved_citations WHERE run_id=?', (scope.run_id,)).fetchone()
+                assert bool(saved) == (evidence and not hard_failure)
+        finally:
+            await scope.aclose(); await parent._client.close()
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize('completion', [False, True])
+@pytest.mark.parametrize('evidence', [False, True])
+def test_hard_request_window_stops_both_agent_entries_without_finalization(tmp_path, completion, evidence):
+    async def run():
+        parent = create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
+        scope, _ = setup_scope(tmp_path, parent)
+        if not evidence: scope.meter.context_window = 1
+        seen = []
+        def transport(request):
+            seen.append(json.loads(request.content))
+            if len(seen) == 2: scope.meter.context_window = 1
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=sse_text(
+                calls=('search'+str(len(seen)), 'knowledge_search', {'query':'source'}), terminal='tool_calls'))
+        await scope.client.aclose()
+        scope.client = scoped_client(parent, transport=httpx.MockTransport(transport))
+        class Policy:
+            async def start(self, context): return scope
+        agent = Agent(parent, ToolRegistry(), 'openai-compat', work_dir=str(tmp_path), execution_policy=Policy())
+        callbacks = []
+        try:
+            if completion:
+                displayed = await agent.run_to_completion('question', event_callback=callbacks.append)
+            else:
+                from contextlib import aclosing
+                conversation = ConversationManager(); conversation.add_user_message('question')
+                async with aclosing(agent.run(conversation)) as stream:
+                    events = [event async for event in stream]
+                displayed = ' '.join(getattr(event, 'message', '') for event in events)
+            actual = scope.catalog.get_run(scope.lease.run.run_id)
+            assert (actual.status.value, actual.stop_reason) == ('incomplete', 'context_limit')
+            assert 'Knowledge run incomplete: context_limit' in displayed
+            if completion:
+                assert [e for e in callbacks if e['type']=='run_status'] == [
+                    {'type':'run_status','status':'incomplete','reason':'context_limit'}]
+            assert scope.finish_reason is None and scope.purpose == 'agent'
+            assert agent.last_run_outcome.artifact is None
+            assert len(seen) == (2 if evidence else 0)
+            with scope.catalog._db.transaction() as db:
+                assert db.execute('SELECT count(*) FROM model_requests WHERE run_id=?', (scope.run_id,)).fetchone() == (len(seen),)
+                assert db.execute("SELECT count(*) FROM model_requests WHERE run_id=? AND purpose IN ('finalize','citation_repair')", (scope.run_id,)).fetchone() == (0,)
+                delivered, = db.execute('SELECT count(*) FROM delivered_evidence WHERE run_id=?', (scope.run_id,)).fetchone()
+                assert bool(delivered) == evidence
+            assert scope.catalog.get_pin(actual.run_id).state == 'released'
+        finally:
+            await scope.aclose(); await parent._client.close()
+    asyncio.run(run())
 
 
 @pytest.mark.parametrize('completion', [False, True])

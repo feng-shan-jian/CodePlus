@@ -14,13 +14,15 @@ import agentic_rag.storage.archives as archives_module
 HELPER = runpy.run_path(str(Path(__file__).with_name("test_storage.py")))
 
 
-def test_reuse_same_bytes_for_distinct_purposes_and_history(tmp_path):
+@pytest.mark.parametrize("content", [b"", b"immutable\x00original", b"x" * (1024 * 1024 + 17)],
+                         ids=["empty", "binary", "multi-block"])
+def test_reuse_same_bytes_for_distinct_purposes_and_history(tmp_path, content):
     catalog = Catalog(tmp_path / "data")
-    content = b"immutable\x00original"
     expected = hashlib.sha256(content).hexdigest()
     first = catalog.archives.put(io.BytesIO(content), expected_hash=expected)
     second = catalog.archives.put(io.BytesIO(content))
     assert first == second
+    assert catalog.archives.verify(first.sha256) == first
     assert catalog.archives.read(first.sha256) == content
     newer = catalog.archives.put(io.BytesIO(b"updated"))
     assert newer.sha256 != first.sha256
@@ -38,6 +40,49 @@ def test_corruption_is_rejected_and_never_replaced(tmp_path):
     assert path.read_bytes() == b"corrupt"
     with pytest.raises(RagError, match="checksum"):
         catalog.archives.read(obj.sha256)
+
+
+def test_read_returns_the_verified_bytes_with_one_open_and_rechecks_next_call(tmp_path, monkeypatch):
+    catalog = Catalog(tmp_path / "data")
+    content = b"original\x00" * 150000
+    obj = catalog.archives.put(io.BytesIO(content))
+    path = catalog.archives._path(obj.sha256)
+    original_open = Path.open
+    reads = []
+
+    def observe(target, *args, **kwargs):
+        if target == path and args == ("rb",):
+            reads.append(target)
+        return original_open(target, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", observe)
+    assert catalog.archives.read(obj.sha256) == content
+    assert reads == [path]
+    path.write_bytes(b"corrupt after a successful read")
+    with pytest.raises(RagError, match="checksum"):
+        catalog.archives.read(obj.sha256)
+    assert reads == [path, path]
+
+
+@pytest.mark.parametrize("unavailable", ["missing", "permission"])
+def test_read_normalizes_open_failure_without_returning_bytes(tmp_path, monkeypatch, unavailable):
+    catalog = Catalog(tmp_path / "data")
+    obj = catalog.archives.put(io.BytesIO(b"private bytes"))
+    path = catalog.archives._path(obj.sha256)
+    if unavailable == "missing":
+        path.unlink()
+    else:
+        original_open = Path.open
+
+        def denied(target, *args, **kwargs):
+            if target == path:
+                raise PermissionError("injected archive read denial")
+            return original_open(target, *args, **kwargs)
+
+        monkeypatch.setattr(Path, "open", denied)
+    with pytest.raises(RagError, match="unavailable") as caught:
+        catalog.archives.read(obj.sha256)
+    assert isinstance(caught.value.__cause__, OSError)
 
 
 @pytest.mark.parametrize("stage", ["read", "fsync", "complete"])

@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "at": 1790100093.377765,
+  "review_script_sha256": "7c9b1d49c45c567ee7012d38f43d6a03b3cc5f54632ae02d57197c536cdb0eca",
+  "before_report_sha256": "7c76bbfcb03fed53d1b6e6d02945bebb41796e9a2728a8a367b8ee4a8505871e",
+  "after_report_sha256": "4c4b4b69857b0824a9278b26afc4dbbde80e78a093188d122eb109d820638ac8",
+  "method": "Independent reread of every JSON row in both complete gzip files; unique paths and all recorded fields compared.",
+  "before": {
+    "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-batch1-cleanup-shared-before.jsonl.gz",
+    "sha256": "0f414c289f3d27183cce3724140dbeb5df871d78244e76d5488a9595b2f9ac62",
+    "bytes": 4593398,
+    "rows": 172661
+  },
+  "after": {
+    "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-batch1-cleanup-shared-after.jsonl.gz",
+    "sha256": "0f414c289f3d27183cce3724140dbeb5df871d78244e76d5488a9595b2f9ac62",
+    "bytes": 4593398,
+    "rows": 172661
+  },
+  "before_rows": 172661,
+  "after_rows": 172661,
+  "added": 0,
+  "removed": 0,
+  "changed": 0,
+  "root_states": [
+    {
+      "path": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models",
+      "exists": true,
+      "rows": 20
+    },
+    {
+      "path": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core",
+      "exists": true,
+      "rows": 5833
+    },
+    {
+      "path": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda",
+      "exists": true,
+      "rows": 22381
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\uv\\cache",
+      "exists": true,
+      "rows": 144423
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\.codeplus-agenticrag-workers",
+      "exists": true,
+      "rows": 4
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\pytest-of-18221\\pytest-2",
+      "exists": false,
+      "rows": 0
+    }
+  ],
+  "strict_after_preserved": "PASS; no metadata exception required.",
+  "scope": "lstat metadata excludes atime; does not claim full SHA of model/env/cache file contents."
+}

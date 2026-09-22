@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "started": "2026-09-22T17:55:57.1938756Z",
+  "exactRoot": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923",
+  "command": "Remove-Item -LiteralPath $expectedRoot -Recurse -Force",
+  "scriptSHA": "22F7779142BE431099F3D49BA7E06FA8E6F9966BC4E63833A96AD7E1A26E7883",
+  "processKills": [],
+  "processesReferencingRoot": [],
+  "auditChain": [
+    70992,
+    17360,
+    3240,
+    20172,
+    2756
+  ],
+  "resolvedRoot": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923",
+  "rootAbsent": true,
+  "finished": "2026-09-22T17:56:09.0241797Z"
+}

@@ -128,10 +128,14 @@ terminal 与 usage 各自独立：Anthropic 要真实 message_stop 及 stop_reas
 | 退出条件 | Run.status / stop_reason |
 | --- | --- |
 | 正常终止、取证/引用检查通过、非预算截断 | completed / finished（不表示语义质量已通过） |
-| 预算或迭代结束，已验证部分答案可交付 | partial / token_budget、time_budget、search_limit、open_limit 或 iteration_limit |
+| 预算或迭代结束，已验证部分答案可交付 | partial / token_budget、time_budget、search_limit、open_limit、iteration_limit 或 context_limit |
 | 无证据、无命中、修正失败/不足、length/无 terminal，且无可交付部分 | incomplete / no_evidence、no_hits、citation_invalid、budget 或 provider_truncated |
 | provider/工具依赖或持久化错误使运行不能继续 | failed / explicit_error；已核验片段可附带但不改 completed |
 | 用户取消、消费者关闭/取消 | cancelled / user_cancelled 或 consumer_closed；不得发额外模型请求 |
+
+来源额度耗尽由核心异常 `SourceBudgetExceeded.reason` 传递，适配层不解析英文诊断文案。`context_limit` 表示返回材料窗口的片段数或 Token 容量限制；`token_budget` 表示累计探索额度，不能把片段数耗尽计为 Token 耗尽。最小原文片段及元数据也无法装入窗口时，保留实际限制维度。计量器身份变化、非法计数及未分类的 `source_budget` 错误不属于正常额度耗尽：停止后续模型请求，记录 failed / explicit_error 及硬失败诊断。
+
+有合格证据且剩余硬预算足够的来源软停止允许有界收尾；收尾没有合格证据仍为 incomplete / no_evidence。`context_limit` 也可来自请求门的硬上下文拒绝，`BudgetStop.hard` 仍阻止任何额外收尾请求；此时为 incomplete / context_limit。`budget` 保留为无可交付内容/清理未完成的通用原因，不能生成 partial / budget。所有预算原因共用 domain 的定义，终态仍在持久化前验证。
 
 不要仅因无 tool_calls 或 LoopComplete 事件判 completed。无命中与查询失败分别记录；Tool 错误可在探索预算内由 Agent 决定重试，但单次错误不是成功候选。报告正文通过而保存失败时 artifact_status=failed，完成说明必须明确保存失败。
 

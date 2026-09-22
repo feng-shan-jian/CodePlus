@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from enum import StrEnum
-from typing import Annotated, Literal
+from typing import Annotated, Literal, get_args
 from uuid import UUID
 
 from pydantic import Field, field_validator, model_validator
@@ -86,8 +86,12 @@ class RunStatus(StrEnum):
     CANCELLED = "cancelled"
 
 
+BudgetStopReason = Literal[
+    "token_budget", "time_budget", "search_limit", "open_limit", "iteration_limit", "context_limit",
+]
+
 StopReason = Literal[
-    "finished", "token_budget", "time_budget", "search_limit", "open_limit", "iteration_limit",
+    "finished", BudgetStopReason,
     "no_evidence", "no_hits", "citation_invalid", "budget", "provider_truncated", "explicit_error",
     "user_cancelled", "consumer_closed",
 ]
@@ -280,9 +284,9 @@ class Run(Record):
             raise ValueError("resolved run config fingerprint mismatch")
         allowed = {
             RunStatus.RUNNING: {None}, RunStatus.COMPLETED: {"finished"},
-            RunStatus.PARTIAL: {"token_budget", "time_budget", "search_limit", "open_limit", "iteration_limit"},
-            RunStatus.INCOMPLETE: {"no_evidence", "no_hits", "citation_invalid", "budget", "provider_truncated",
-                                   "token_budget", "time_budget", "search_limit", "open_limit", "iteration_limit"},
+            RunStatus.PARTIAL: set(get_args(BudgetStopReason)),
+            RunStatus.INCOMPLETE: {"no_evidence", "no_hits", "citation_invalid", "budget", "provider_truncated"}
+                                 | set(get_args(BudgetStopReason)),
             RunStatus.FAILED: {"explicit_error"}, RunStatus.CANCELLED: {"user_cancelled", "consumer_closed"},
         }
         if self.stop_reason not in allowed[self.status]:

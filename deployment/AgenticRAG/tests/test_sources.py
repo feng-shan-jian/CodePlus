@@ -7,9 +7,9 @@ from uuid import uuid4, UUID
 import pytest
 
 from agentic_rag.config import resolve_run
-from agentic_rag.domain import RagError, RunStatus, Span
+from agentic_rag.domain import ErrorCode, RagError, RunStatus, Span
 from agentic_rag.source_archive import read_ref
-from agentic_rag.sources import SourceSession
+from agentic_rag.sources import SourceBudgetExceeded, SourceSession
 
 H=runpy.run_path(str(Path(__file__).with_name('source_support.py')))
 
@@ -127,15 +127,51 @@ def test_shared_search_open_usage_failure_retry_and_session_recreation(tmp_path)
         opened=session.open(token);assert opened.payload['items']
         with pytest.raises(RagError):session.open('forged')
         recreated=SourceSession(catalog,lease,H['ControlledMeter'](),dense=session.dense)
-        with pytest.raises(RagError):recreated.open(token)
+        with pytest.raises(SourceBudgetExceeded) as quota:recreated.open(token)
+        assert quota.value.reason=='open_limit'
         with pytest.raises(RagError) as invalid_query:recreated.search('')
         assert invalid_query.value.error.code.value=='INVALID_INPUT' and invalid_query.value.error.call_id
-        with pytest.raises(RagError):recreated.search('source')
+        with pytest.raises(SourceBudgetExceeded) as quota:recreated.search('source')
+        assert quota.value.reason=='search_limit'
         usage=recreated.usage()
         assert usage['opens']==2 and usage['searches']==2 and usage['rejected']==2
         assert usage['returned_tokens']==len(search.text.encode())+len(opened.text.encode())
+        with catalog._db.transaction() as connection:
+            statuses=dict(connection.execute('SELECT status,count(*) FROM source_calls GROUP BY status'))
+        assert statuses=={'ok':2,'error':2,'rejected':2}
         finished=lease.finish(RunStatus.COMPLETED,'finished')
         assert finished.usage.opens==2 and finished.usage.searches==2
+    finally:lease.close()
+
+
+@pytest.mark.parametrize('operation',['search','open'])
+def test_source_failures_preserve_classification_cause_and_audit(tmp_path,monkeypatch,operation):
+    catalog,lease,session,_,version,chunks,ref=H['fixture'](tmp_path)
+    try:
+        H['dense_fixture'](session,chunks,version,ref)
+        argument='source' if operation=='search' else session.issue_source(ref)
+        failures=[(ValueError('invalid input'),ErrorCode.INVALID_INPUT,'source_input'),
+                  (TimeoutError('dependency timed out'),ErrorCode.DEPENDENCY_UNAVAILABLE,'source_search'),
+                  (RagError(ErrorCode.CHECKPOINT_INVALID,'corrupt archive',stage='source_archive'),ErrorCode.CHECKPOINT_INVALID,'source_archive'),
+                  (RuntimeError('unexpected failure'),None,None)]
+        for original,code,stage in failures:
+            def fail(_):
+                raise original  # Explicit injection at the shared token-meter boundary.
+            monkeypatch.setattr(session.meter,'count',fail)
+            with pytest.raises(Exception) as caught:
+                getattr(session,operation)(argument)
+            error=caught.value
+            if code is not None:
+                assert (error.error.code,error.error.stage)==(code,stage)
+                assert error.error.call_id
+            if isinstance(original,(RagError,RuntimeError)):
+                assert error is original
+            else:
+                assert error.__cause__ is original
+            with catalog._db.transaction() as connection:
+                row=connection.execute('SELECT status,error FROM source_calls ORDER BY rowid DESC LIMIT 1').fetchone()
+            assert row==('error',str(error))
+        assert session.usage()[operation+'es' if operation=='search' else 'opens']==len(failures)
     finally:lease.close()
 
 

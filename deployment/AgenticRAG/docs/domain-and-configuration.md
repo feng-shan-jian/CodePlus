@@ -12,6 +12,8 @@ Span 使用解析文本的 Unicode codepoint 半开区间 `[start,end)`；多个
 
 Run 保存完整解析后的 RunConfiguration 与其 hash，任务只绑定一个 kb_id/revision_id；completed、partial、incomplete、failed、cancelled 与 stop_reason 校验一致。无可交付内容的 incomplete 同样保留 token_budget 等具体预算原因；未知 token 用量为 null，不伪装成 0。Evidence 表示可信交付回执登记的正文，必须含 delivery_id；单纯构造该对象不授予引用权限，R11/R12 的存储与回执路径仍是权威。Citation 的跨对象/原文摘录核验尚未实现。
 
+预算停止原因由 `BudgetStopReason` 统一定义，`StopReason` 与 partial/incomplete 的合法集合共用它；新增 `context_limit` 区分材料窗口（片段数/Token）与累计 `token_budget`。`budget` 仍仅用于 incomplete，completed 仍仅接受 finished。`Record.model_copy` 已执行完整验证，`RunLease.finish` 在 SQL 更新前拒绝非法组合。此次不改变记录字段、ErrorInfo 线格式或 SQLite schema，旧合法记录继续可读；新增原因会被旧开发版本的严格 Run schema 拒绝，不承诺将新运行记录降级给旧包读取。
+
 统一 ErrorInfo 包含 code、stage、message、retryable、可选模型 request_id 与宿主 call_id；RagError 携带此记录。空结果不作为错误替代品。错误不得携带密钥；适配器应在生成 message 前脱敏。
 
 ## 显式装配和作用域

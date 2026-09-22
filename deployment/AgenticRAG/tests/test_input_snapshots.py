@@ -141,8 +141,11 @@ def test_reopen_verification_returns_file_errors_without_source_repair(tmp_path,
     if damage=='missing': archive.unlink()
     elif damage=='corrupt': archive.write_bytes(b'bad')
     else:
-        def denied(*a): raise PermissionError('injected archive read denial')
-        monkeypatch.setattr(catalog.archives,'verify',denied)
+        original_open=Path.open
+        def denied(target,*args,**kwargs):
+            if target==archive: raise PermissionError('injected archive read denial')
+            return original_open(target,*args,**kwargs)
+        monkeypatch.setattr(Path,'open',denied)
     path.write_bytes(b'latest source cannot repair old checkpoint')
     frozen, checked=verify_inputs(catalog,item.batch_id)
     assert frozen==snap and checked[0].error.code==ErrorCode.CHECKPOINT_INVALID

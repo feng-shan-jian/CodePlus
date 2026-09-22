@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 import threading
 import time
+from typing import get_args
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -26,12 +27,12 @@ from codeplus.tools.base import Tool, ToolResult
 
 from ...citations import CitationRegistry
 from ...config import KnowledgeConfig, WorkerExecutionConfig, resolve_run
-from ...domain import RagError, RunStatus, Span
+from ...domain import RagError, RunStatus, Span, StopReason
 from ...evidence import DeliveryGateway
 from ...indexes.milvus import MilvusRevisionIndex
 from ...models.client import LocalModelClient
 from ...retrieval.dense import DenseSearch
-from ...sources import SourceSession
+from ...sources import SourceBudgetExceeded, SourceSession
 from ...storage import Catalog
 from .ledger import ModelControl, aggregate_usage, encode
 from .meter import DeepSeekTextMeter
@@ -114,13 +115,12 @@ class SourceTool(Tool):
                     section_id=params.section_id, cursor=params.cursor)
             self.scope.check()
         except RagError as error:
+            if isinstance(error, SourceBudgetExceeded):
+                raise BudgetStop(error.reason) from error
             if error.error.stage == 'source_budget':
-                reason = {'search call limit exhausted':'search_limit',
-                    'open call limit exhausted':'open_limit',
-                    'source exploration deadline exhausted':'time_budget',
-                    'source exploration token budget exhausted':'token_budget',
-                    'shared source token budget exhausted':'token_budget'}.get(error.error.message, 'budget')
-                raise BudgetStop(reason) from error
+                # A meter/identity failure cannot authorize bounded finalization.
+                self.scope.hard_failure = 'source_budget_failure'
+                raise BudgetStop(self.scope.hard_failure, hard=True) from error
             return ToolResult(output=encode({'status':'error', 'code':error.error.code,
                 'stage':error.error.stage}), is_error=True)
         output = ToolResult(result.text, source_spans=tuple(SourceSpan(str(m.candidate_id),
@@ -443,11 +443,8 @@ class KnowledgeScope:
             pending += ('worker_completion_not_yet_proven',)
         self._pending_cleanup = bool(pending)
         outcome = self.outcome or outcome
-        reason = outcome.reason
-        allowed = {'finished','token_budget','time_budget','search_limit','open_limit','iteration_limit',
-                   'no_evidence','no_hits','citation_invalid','budget','provider_truncated','explicit_error','user_cancelled','consumer_closed'}
-        if reason not in allowed:
-            reason, outcome = 'explicit_error', RunOutcome('failed', 'explicit_error', outcome.artifact)
+        if outcome.reason not in get_args(StopReason):
+            outcome = RunOutcome('failed', 'explicit_error', outcome.artifact)
         if pending and outcome.status in {'completed','partial'}:
             outcome = RunOutcome('incomplete', 'budget', outcome.artifact)
         self.outcome = outcome

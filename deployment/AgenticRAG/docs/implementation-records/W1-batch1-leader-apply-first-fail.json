@@ -1,0 +1,10 @@
+{
+  "status": "FAIL",
+  "stage": "raw hash assertion after git apply completed",
+  "command": "C:/Python314/python.exe -I -B C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch1-leader-20260923/apply.py",
+  "exit_code": 1,
+  "error": "AssertionError: codeplus/agent.py",
+  "patch_sha256": "f8fd0f17a0a5db02c800bcf847ac659ac607eae205020f25d5a864057d80fd40",
+  "baseline": "W1-batch1-leader-baseline.json",
+  "boundary": "Baseline and exact executor manifest saved; all 14 patch paths applied. Strict raw hash assertion stopped before validation freeze or tests. Investigating newline normalization without reapplying or changing content."
+}

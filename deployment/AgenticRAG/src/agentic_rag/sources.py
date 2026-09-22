@@ -4,16 +4,27 @@ The host supplies a verified answer-model token meter. This is a source-return
 budget, not the complete HTTP/LLM budget gate implemented by the host adapter.
 """
 
+from contextlib import contextmanager
 from dataclasses import dataclass
 import json
 import secrets
 import time
-from typing import Protocol
+from typing import Protocol, get_args
 from uuid import UUID, uuid4
 
-from .domain import ErrorCode, RagError, RunStatus, SourceRef, Span
+from .domain import BudgetStopReason, ErrorCode, RagError, RunStatus, SourceRef, Span
 from .source_archive import contains, digest, encode, invalid, read_ref, read_version, union
 from .storage.runs import RunLease, read_pin, read_run
+
+
+class SourceBudgetExceeded(RagError):
+    """A known source allowance ended; diagnostics are not a reason protocol."""
+
+    def __init__(self, reason: BudgetStopReason, message: str):
+        if reason not in get_args(BudgetStopReason):
+            raise ValueError('unknown source budget reason')
+        self.reason = reason
+        super().__init__(ErrorCode.BUDGET_EXHAUSTED, message, stage='source_budget')
 
 
 class AnswerTokenMeter(Protocol):
@@ -101,7 +112,8 @@ class SourceSession:
                                      (str(self.run.run_id),)).fetchone()
         return dict(zip(('searches','opens','rejected','returned_tokens','returned_fragments','window_tokens','window_fragments'), row))
 
-    def _admit(self, kind):
+    @contextmanager
+    def _call(self, kind):
         call_id = uuid4()
         denied = None
         with self.catalog._db.transaction(write=True) as connection:
@@ -111,11 +123,11 @@ class SourceSession:
             count = searches if kind == 'search' else opens
             maximum = self.budget.searches if kind == 'search' else self.budget.opens
             if count >= maximum:
-                denied = kind + ' call limit exhausted'
+                denied = SourceBudgetExceeded(kind + '_limit', kind + ' call limit exhausted')
             elif (time.monotonic_ns() - started) // 1_000_000 >= self.budget.duration_ms - self.budget.finish_reserve_ms:
-                denied = 'source exploration deadline exhausted'
+                denied = SourceBudgetExceeded('time_budget', 'source exploration deadline exhausted')
             elif tokens >= self.budget.total_tokens - self.budget.finish_reserve_tokens:
-                denied = 'source exploration token budget exhausted'
+                denied = SourceBudgetExceeded('token_budget', 'source exploration token budget exhausted')
             if denied:
                 connection.execute('UPDATE source_usage SET rejected=rejected+1 WHERE run_id=?', (str(self.run.run_id),))
             else:
@@ -124,28 +136,32 @@ class SourceSession:
                 usage = current.usage.model_copy(update={column:getattr(current.usage, column)+1})
                 connection.execute('UPDATE runs SET usage=? WHERE run_id=?', (usage.model_dump_json(), str(self.run.run_id)))
             connection.execute('INSERT INTO source_calls(call_id,run_id,kind,status,error) VALUES(?,?,?,?,?)',
-                (str(call_id), str(self.run.run_id), kind, 'rejected' if denied else 'admitted', denied))
+                (str(call_id), str(self.run.run_id), kind, 'rejected' if denied else 'admitted',
+                 denied.error.message if denied else None))
         if denied:
-            error=invalid(denied, 'source_budget')
-            error.error=error.error.model_copy(update={'call_id':str(call_id)})
-            raise error
-        return call_id
+            denied.error=denied.error.model_copy(update={'call_id':str(call_id)})
+            raise denied
+        try:
+            yield call_id
+        except Exception as exc:
+            error=exc
+            if isinstance(error,RagError):
+                error.error=error.error.model_copy(update={'call_id':str(call_id)})
+            elif isinstance(error,(ValueError,TypeError)):
+                error=RagError(ErrorCode.INVALID_INPUT,str(error),stage='source_input',call_id=str(call_id))
+            elif isinstance(error,(ConnectionError,TimeoutError)):
+                error=RagError(ErrorCode.DEPENDENCY_UNAVAILABLE,str(error),stage='source_search',call_id=str(call_id))
+            with self.catalog._db.transaction(write=True) as connection:
+                connection.execute("UPDATE source_calls SET status='error',error=? WHERE call_id=? AND status='admitted'", (str(error),str(call_id)))
+            if error is exc:
+                raise
+            raise error from exc
 
-    def _failed(self, call_id, error):
-        if isinstance(error,RagError):
-            error.error=error.error.model_copy(update={'call_id':str(call_id)})
-        elif isinstance(error,(ValueError,TypeError)):
-            error=RagError(ErrorCode.INVALID_INPUT,str(error),stage='source_input',call_id=str(call_id))
-        elif isinstance(error,(ConnectionError,TimeoutError)):
-            error=RagError(ErrorCode.DEPENDENCY_UNAVAILABLE,str(error),stage='source_search',call_id=str(call_id))
-        with self.catalog._db.transaction(write=True) as connection:
-            connection.execute("UPDATE source_calls SET status='error',error=? WHERE call_id=? AND status='admitted'", (str(error),str(call_id)))
-        return error
-
-    def _remaining_tokens(self):
+    def _token_allowance(self):
         usage=self.usage()
-        return min(self.retrieval.context_tokens-usage['window_tokens'],
-                   self.budget.total_tokens - self.budget.finish_reserve_tokens - usage['returned_tokens'])
+        return min((self.retrieval.context_tokens-usage['window_tokens'], 'context_limit'),
+                   (self.budget.total_tokens - self.budget.finish_reserve_tokens - usage['returned_tokens'], 'token_budget'),
+                   key=lambda allowance: allowance[0])
 
     def _handle(self, connection, kind, payload):
         token = ('src_' if kind == 'source' else 'cur_') + secrets.token_urlsafe(32)
@@ -218,11 +234,13 @@ class SourceSession:
             self._active(connection)
             spent,window,fragments,started = connection.execute('SELECT returned_tokens,window_tokens,window_fragments,started_ns FROM source_usage WHERE run_id=?', (str(self.run.run_id),)).fetchone()
             if (time.monotonic_ns()-started)//1_000_000 >= self.budget.duration_ms-self.budget.finish_reserve_ms:
-                raise invalid('source exploration deadline exhausted','source_budget')
-            if tokens+window > self.retrieval.context_tokens or spent + tokens > self.budget.total_tokens - self.budget.finish_reserve_tokens:
-                raise invalid('shared source token budget exhausted', 'source_budget')
+                raise SourceBudgetExceeded('time_budget', 'source exploration deadline exhausted')
+            if tokens+window > self.retrieval.context_tokens:
+                raise SourceBudgetExceeded('context_limit', 'shared source token budget exhausted')
+            if spent + tokens > self.budget.total_tokens - self.budget.finish_reserve_tokens:
+                raise SourceBudgetExceeded('token_budget', 'shared source token budget exhausted')
             if len(candidates)+fragments > self.retrieval.context_chunks:
-                raise invalid('source fragment count exhausted', 'source_budget')
+                raise SourceBudgetExceeded('context_limit', 'source fragment count exhausted')
             for candidate in candidates:
                 connection.execute('INSERT INTO source_candidates VALUES(?,?,?,?,?)',
                     (candidate['candidate_id'],str(self.run.run_id),str(call_id),candidate['evidence_id'],encode(candidate)))
@@ -253,8 +271,7 @@ class SourceSession:
         return [{'start':span.start,'end':span.end} for span in unseen]
 
     def open(self, source_ref, *, section_id=None, cursor=None):
-        call_id = self._admit('open')
-        try:
+        with self._call('open') as call_id:
             if section_id is not None and cursor is not None:
                 raise invalid('section_id and cursor are mutually exclusive', 'source_cursor')
             handle=self._resolve(source_ref,'source')
@@ -305,7 +322,7 @@ class SourceSession:
             candidate_id, evidence_id = uuid4(), uuid4()
             next_token = 'cur_' + secrets.token_urlsafe(32)
             previous_token = 'cur_' + secrets.token_urlsafe(32)
-            cap = self._remaining_tokens()
+            cap, limit_reason = self._token_allowance()
             while end > start:
                 span = Span(start=start,end=end)
                 candidate = self._candidate(call_id,ref,span,source,candidate_id,evidence_id)
@@ -319,7 +336,7 @@ class SourceSession:
                     break
                 end = start + (end-start)//2
             if end <= start:
-                raise invalid('source metadata and one codepoint do not fit token budget', 'source_budget')
+                raise SourceBudgetExceeded(limit_reason, 'source metadata and one codepoint do not fit token budget')
             if base['next_cursor'] or base['previous_cursor']:
                 with self.catalog._db.transaction(write=True) as connection:
                     self._active(connection)
@@ -329,15 +346,9 @@ class SourceSession:
                         connection.execute('INSERT INTO source_handles VALUES(?,?,?,?)',
                             (token,str(self.run.run_id),'cursor',encode({'source_token':source_ref,'ref':ref.model_dump(mode='json'),'next_cp':position,'range_end':stop})))
             return self._commit_result(call_id,base,(candidate,))
-        except Exception as exc:
-            error=self._failed(call_id,exc)
-            if error is exc:
-                raise
-            raise error from exc
 
     def search(self, query):
-        call_id = self._admit('search')
-        try:
+        with self._call('search') as call_id:
             if self.dense is None:
                 raise invalid('Dense capability unavailable', 'source_search')
             if self.retrieval.route != 'dense' or self.retrieval.rerank:
@@ -350,7 +361,7 @@ class SourceSession:
                        'revision_id':str(self.run.revision_id),'route':{'strategy':'dense','rerank':False},
                        'items':[],'limited':{'by_count':False,'by_tokens':False}}
             candidates, seen = [], set()
-            cap = self._remaining_tokens()
+            cap, _ = self._token_allowance()
             for hit in result['hits']:
                 if hit['chunk_id'] in seen:
                     continue
@@ -379,8 +390,3 @@ class SourceSession:
             if not candidates:
                 payload['status']='empty'
             return self._commit_result(call_id,payload,candidates)
-        except Exception as exc:
-            error=self._failed(call_id,exc)
-            if error is exc:
-                raise
-            raise error from exc

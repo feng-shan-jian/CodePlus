@@ -1,0 +1,385 @@
+{
+  "python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Scripts\\python.exe",
+  "pid": 70940,
+  "birth": "134345712440743354",
+  "cwd": "D:\\CodePlus",
+  "argv": [
+    "deployment/AgenticRAG/tests/test_archives.py",
+    "deployment/AgenticRAG/tests/test_sources.py",
+    "deployment/AgenticRAG/tests/test_source_identity.py",
+    "deployment/AgenticRAG/tests/test_evidence_citations.py",
+    "deployment/AgenticRAG/tests/test_input_snapshots.py",
+    "deployment/AgenticRAG/tests/test_processing_checkpoints.py",
+    "deployment/AgenticRAG/tests/test_configuration.py",
+    "deployment/AgenticRAG/tests/test_codeplus_integration.py",
+    "deployment/AgenticRAG/tests/test_run_budget.py",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--import-mode=importlib",
+    "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\pytest-focused",
+    "--junitxml=D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-batch1-leader-focused.xml",
+    "-k",
+    "source_limit_finalizes or hard_request_window or request_context_limit_remains or invalid_terminal_is_rejected or start_budget_stop or handshake_lock or source_failures_preserve or shared_search_open_usage or reuse_same_bytes or corruption_is_rejected or read_returns_the_verified or read_normalizes_open or run_record_validates or reopen_verification_returns"
+  ],
+  "started": 1790097644.9250758,
+  "pytest_exit_code": 0,
+  "loaded_modules": {
+    "agentic_rag": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\__init__.py",
+      "sha256": "9cf325be264c02568ef08d12eb594eccda599d67b66ba6d8d77b3b4186b302c7"
+    },
+    "agentic_rag._schema": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\_schema.py",
+      "sha256": "eece6292cb2925d581881920eb46a34e57cf5b56f7e652ee56535ea2d22e07e8"
+    },
+    "agentic_rag.adapters.codeplus": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\adapters\\codeplus\\__init__.py",
+      "sha256": "bb021059cb70215a33189ed4e9ee6230bea4b0ba6f515ebfbf3312181a3fddd5"
+    },
+    "agentic_rag.adapters.codeplus._vendor": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\adapters\\codeplus\\_vendor\\__init__.py",
+      "sha256": "4dd511a6780876b1da1027dda559b8a3c556f57018a52d51be83065a03c77b1c"
+    },
+    "agentic_rag.adapters.codeplus._vendor.deepseek_v41": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\adapters\\codeplus\\_vendor\\deepseek_v41.py",
+      "sha256": "502bdaec8a3fd88ebc24c4721a7038fbe42f2063c664638127056107920035c1"
+    },
+    "agentic_rag.adapters.codeplus.ledger": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\adapters\\codeplus\\ledger.py",
+      "sha256": "6fcada448643a8798ed7a02913c6fa125ae12458849c192b79c8ad9bfddd0504"
+    },
+    "agentic_rag.adapters.codeplus.meter": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\adapters\\codeplus\\meter.py",
+      "sha256": "ffa833355f01fc4e7d6d7a411bb3827019b2c08e174c861aaa8a35170b7bc63f"
+    },
+    "agentic_rag.adapters.codeplus.policy": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\adapters\\codeplus\\policy.py",
+      "sha256": "b9ef36f4299fb88b48c78583c50eb5cd4d260ff677f53b4900575a41552340df"
+    },
+    "agentic_rag.capabilities": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\capabilities.py",
+      "sha256": "d836abdf35d094866c1ac665131eb1f6eaa60763cb59acf53b1bed77d7743d7e"
+    },
+    "agentic_rag.citations": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\citations.py",
+      "sha256": "41f9b5df2c11b6dd9b52877cbb2acb9d63001624cdf184c72ab79a84812d534c"
+    },
+    "agentic_rag.config": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\config.py",
+      "sha256": "f2bc82af99912efb166ac835a68b9947ce7de509c36b3b52cedc8ee45a26cbe1"
+    },
+    "agentic_rag.domain": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\domain.py",
+      "sha256": "d5b812552b80bd5c3a77a4a42d3bd917fa26d31b245ccbe932a3e3c23ef0df34"
+    },
+    "agentic_rag.evidence": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\evidence.py",
+      "sha256": "99ba78349c0c0985978570243d3fa4c2e86a1f88e74557d2d12903c4c8d4b429"
+    },
+    "agentic_rag.indexes": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\indexes\\__init__.py",
+      "sha256": "7a83cacd7e345ffd7d88ae0edea07715822c39d4d7014dd0e5bffbd7789508f7"
+    },
+    "agentic_rag.indexes.manifest": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\indexes\\manifest.py",
+      "sha256": "5286fabe20c25d30dee632cf340bb54c4f8c73221f5ada27d478432b6026500c"
+    },
+    "agentic_rag.indexes.milvus": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\indexes\\milvus.py",
+      "sha256": "c50390a61c999283890b72a37560efb9438bf6c87b059ed13822ec7f7a913043"
+    },
+    "agentic_rag.ingestion": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\__init__.py",
+      "sha256": "59d22df46343ef39a09963e6a3a17cea9372a2769b96ecf5af23ce5063308084"
+    },
+    "agentic_rag.ingestion.capture": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\capture.py",
+      "sha256": "9dc7900bbb093c981526d3b643cad23ef3a05b43bf031b85b2d4b2090eea0a63"
+    },
+    "agentic_rag.ingestion.chunking": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\chunking.py",
+      "sha256": "26259bf5e86a41a93c22028f1e96f51c533c7856a345c0109ed855d55e0bf38a"
+    },
+    "agentic_rag.ingestion.encoding": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\encoding.py",
+      "sha256": "06bc194f118c17cbb177177c2cd8ea204d4e5dc1c586c9770c413917e2fb0a6f"
+    },
+    "agentic_rag.ingestion.mutations": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\mutations.py",
+      "sha256": "71914135619040e668e375f8137282021a34f03b7d0143ffbf363e4e9b78dc68"
+    },
+    "agentic_rag.ingestion.parsing": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\parsing.py",
+      "sha256": "82d659f67f1c987bce18a790b626fc8bb920eac91deae4290db7b116f2588ade"
+    },
+    "agentic_rag.ingestion.processing": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\processing.py",
+      "sha256": "806bdd3ca422b422bac1529e4b4a6ff48c898a392f1600476e38a904b2567810"
+    },
+    "agentic_rag.ingestion.records": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\records.py",
+      "sha256": "303cdc4eed0803c3a6ee1b74f367e506f37f0fc0edd88ac57669f9b541bd3be8"
+    },
+    "agentic_rag.ingestion.recovery": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\recovery.py",
+      "sha256": "46eadc8055188bfbd2da1110e6c363125d40b8015da9090ea8536f0b1c8eeaf3"
+    },
+    "agentic_rag.ingestion.selection": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\selection.py",
+      "sha256": "421843d96c462cda78e04f8bab7463ae33562b4288525f29f7f5d381d4674c5b"
+    },
+    "agentic_rag.ingestion.source": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\ingestion\\source.py",
+      "sha256": "c386d2e438537b4349e3e90c40deb0dbe2bb733d61a102a8bf7504f7fa0c71a9"
+    },
+    "agentic_rag.models": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\models\\__init__.py",
+      "sha256": "19a1eda35abbe1a88ea565acb6213f58d24bad4ff68ee506b96afb3a24aad90f"
+    },
+    "agentic_rag.models._windows": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\models\\_windows.py",
+      "sha256": "c22c4e0180352a620dea8deba7d28d720d4dee4a11ca2a374f38a6063ca8b0d0"
+    },
+    "agentic_rag.models.client": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\models\\client.py",
+      "sha256": "6b01f8a278b74b34b319f5eb7f0178ddbcb67e8c5203348832f8d86df1a2be1e"
+    },
+    "agentic_rag.models.identity": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\models\\identity.py",
+      "sha256": "b8006f49ad92f6fbe8346487f7ae161d19fbb3de61d3d430835de28b0622eeff"
+    },
+    "agentic_rag.models.lifecycle": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\models\\lifecycle.py",
+      "sha256": "3801985cc3b4c0955a5c8ddc80b54bbe7f7d2272da6a5ff8fa8d28bbdc8d0b67"
+    },
+    "agentic_rag.models.protocol": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\models\\protocol.py",
+      "sha256": "8bd345f58fd50a582c0fa6b3c4dcfba6b12702d4ef99e78e939f582777f9b073"
+    },
+    "agentic_rag.models.tokenization": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\models\\tokenization.py",
+      "sha256": "f00b6f3d976f9d5aecad30074b2988b9efa20f14c0926a2116ef8beb07042e7c"
+    },
+    "agentic_rag.profiles": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\profiles.py",
+      "sha256": "a32c16deb5b9da64bf062e8bd1e0f6ffa8d2c8a1743752d1a02d99e49e93b57a"
+    },
+    "agentic_rag.retrieval": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\retrieval\\__init__.py",
+      "sha256": "88cfb2ff3059944f4ff3688ce6ee051a3db45dc44edbcaf3d4f942e1950bc3ef"
+    },
+    "agentic_rag.retrieval.dense": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\retrieval\\dense.py",
+      "sha256": "34a1802ad4077cd83b34381d69a09660197ebbcc57e00fc9ec4662dbf59202d6"
+    },
+    "agentic_rag.source_archive": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\source_archive.py",
+      "sha256": "d1e473bad9ce5cc5b82b9d4db76dfdccf2c73fce07e026065ef806cdba76f4e7"
+    },
+    "agentic_rag.sources": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\sources.py",
+      "sha256": "e1078114bd8974156d929c15ccb33be254f1ecc31025db867df4ffa18dc3f5ba"
+    },
+    "agentic_rag.storage": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\__init__.py",
+      "sha256": "80d52fffd41289d15b5024028abda239d354c5d99086f24be447c8911e808b95"
+    },
+    "agentic_rag.storage.archives": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\archives.py",
+      "sha256": "d529c410817bf20f3aaee36afa98f6755efdd4634f5de3b2498763bbc7ceb822"
+    },
+    "agentic_rag.storage.catalog": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\catalog.py",
+      "sha256": "68d177165c405369bd2b776ce8e6eb9d3998e0ec2de69dfeb2c14fcfc67dc941"
+    },
+    "agentic_rag.storage.database": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\database.py",
+      "sha256": "7d9704bb8f4d9ef44fcf9192a65188b0c3786223838ccd2d2c3ecfab668b04f9"
+    },
+    "agentic_rag.storage.inputs": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\inputs.py",
+      "sha256": "20c85e91cfd46069eefefa6158a07c6b970e9d249a144e42eb83177547d0d034"
+    },
+    "agentic_rag.storage.locks": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\locks.py",
+      "sha256": "a183b2270626cebe866d630244527b583a0ab3b5b8c798c2e7a5e4610a769ea5"
+    },
+    "agentic_rag.storage.ownership": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\ownership.py",
+      "sha256": "d9c150793844a46195c3750a7ae1f409b443e33e4a675f613f54898460747a15"
+    },
+    "agentic_rag.storage.paths": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\paths.py",
+      "sha256": "9d476a8d4db81df53727408f6bc4f81e9c3f0606eb8cc14968aa29bc21650804"
+    },
+    "agentic_rag.storage.processing": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\processing.py",
+      "sha256": "ce483ff07a04cf8d5e313e8b239453a7e82cfb887a6dc9731e4be33761e48ba1"
+    },
+    "agentic_rag.storage.publication": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\publication.py",
+      "sha256": "f156ecb60872e05d20336514fe49fd87791ddb35b0056610ebbebbd7c98bb9a5"
+    },
+    "agentic_rag.storage.recovery": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\recovery.py",
+      "sha256": "2cda583d290e6f0fd3bd4c47586ea3c757c13a2c790415fb2b93a0459ae51cda"
+    },
+    "agentic_rag.storage.runs": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\storage\\runs.py",
+      "sha256": "089049005a05f10dcc7bb384593d7fd1d7cbd5a51fb81d62c9b173c03ec04e0f"
+    },
+    "codeplus": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "codeplus.agent": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\agent.py",
+      "sha256": "1b5188119ae64d8cdb24ab844dc4fda8f7aefba43fe6d1ae5d79fa71a2608882"
+    },
+    "codeplus.client": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\client.py",
+      "sha256": "3d6b064fe67078932868901259fb14b2e7c4e819c2e0b679208c692294dc999a"
+    },
+    "codeplus.config": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\config.py",
+      "sha256": "877fb1f399eafdc435e2f673b29ecf3d7d2aa6d4063456a99b44b4f019826760"
+    },
+    "codeplus.context": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\context\\__init__.py",
+      "sha256": "a7a5cd9ea3ecf9362d4b3c5a1f458668c211647e6b35572ca90a36683df4c370"
+    },
+    "codeplus.context.manager": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\context\\manager.py",
+      "sha256": "50f371e741de987e86b8ee43c4ed91d5de4e30190effe78ad228248294251999"
+    },
+    "codeplus.conversation": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\conversation.py",
+      "sha256": "0894aac14b1f8ffd0120da948cc46ab72464e8338610c1b8e5cead5b19d3e08a"
+    },
+    "codeplus.conversation_pairing": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\conversation_pairing.py",
+      "sha256": "f41e85350f68599e284052db70bfe9a977c84dc430a6c89bc59e317ab02f7b2a"
+    },
+    "codeplus.hooks": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\__init__.py",
+      "sha256": "ff564b8a31b7933c3bedcbce4125b80fa8753e1719d610fe01bb2a27bb65d4e6"
+    },
+    "codeplus.hooks.conditions": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\conditions.py",
+      "sha256": "bc6be9db20cd4a6c3db0508b6169603f8c304346da155fc63e019115aa89801a"
+    },
+    "codeplus.hooks.engine": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\engine.py",
+      "sha256": "a9cde32a416a7081824bcb880ca9e3c6fe36d9e6fa7be327ba5cf9e764584859"
+    },
+    "codeplus.hooks.events": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\events.py",
+      "sha256": "dd64ca8c45343d91ac7a0b34721b70473f7e5210f3aecd29846c77926c73ffba"
+    },
+    "codeplus.hooks.executors": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\executors.py",
+      "sha256": "a55281b42b3eb8ff32a9d6aa637e65d1de394d397413d087510adb4a78948933"
+    },
+    "codeplus.hooks.loader": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\loader.py",
+      "sha256": "76222f1a66fcd03d20af4d4405b0be5dc3a0ca778b76a22b3e3c09734a573279"
+    },
+    "codeplus.hooks.models": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\models.py",
+      "sha256": "ad953da646e2ea5b2440594513ce62dfa12cf48f22242d1a9825af64a6252320"
+    },
+    "codeplus.mcp": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\__init__.py",
+      "sha256": "77b30f2b0f80acc5ef660f95621126d312c06981d0c7eaddb9997f595e383c7f"
+    },
+    "codeplus.mcp.client": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\client.py",
+      "sha256": "552661019d082a5d3b9ee0948ed93172bd638e7b0f7835866e8997d576010f4e"
+    },
+    "codeplus.mcp.loading_strategy": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\loading_strategy.py",
+      "sha256": "090513fd03a6254b04aa8d568fa2e04d0013cc0d444e6a0a525b287be186689d"
+    },
+    "codeplus.mcp.manager": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\manager.py",
+      "sha256": "58998e8740176df7022357d041bbf543c3c00a55fad78f4b9055c88f4f29d677"
+    },
+    "codeplus.mcp.tool_wrapper": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\tool_wrapper.py",
+      "sha256": "c00e85668f59b5a6dde17a131387b05244a1b7b1b9bab7f76cd6715c47eef9fb"
+    },
+    "codeplus.memory": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\__init__.py",
+      "sha256": "38d2f2ba68be9c2688f75c755f0affee31bc7873e515588f2bc8d3a98adef0c8"
+    },
+    "codeplus.memory.auto_memory": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\auto_memory.py",
+      "sha256": "1ab1cd882cd3d57d06d47114eef2e0d233dbfc2fa87ff5fe6377c1fa5d3eff87"
+    },
+    "codeplus.memory.instructions": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\instructions.py",
+      "sha256": "288ca8176aa8af625a691f58e2fe39d7563088448eb679017f8301e9966955aa"
+    },
+    "codeplus.memory.recall": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\recall.py",
+      "sha256": "e846ff86bfc85931e1ca0878a7f165526eb2587185bb80faa7285c4409cdf177"
+    },
+    "codeplus.memory.session": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\session.py",
+      "sha256": "cecbd856899349d4097c71a5ba5640dc01cb990dfae22f4fa153a1419df2404b"
+    },
+    "codeplus.permissions": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\__init__.py",
+      "sha256": "1d55b53c7f17157d7625180c73a6d6f1f11455100032511b5230b21903429638"
+    },
+    "codeplus.permissions.checker": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\checker.py",
+      "sha256": "43efbd82c203c9ab503ed7a7013db78be52cf388e05be8764e3153a022aabe1c"
+    },
+    "codeplus.permissions.dangerous": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\dangerous.py",
+      "sha256": "005caed24b1e72cfbac9197c060714a27de91d46526dc541aa77aead3ca7882a"
+    },
+    "codeplus.permissions.modes": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\modes.py",
+      "sha256": "c786f1b4cf0b6b972e8af21fb461c2754197ac799f48547c0d024fe83d4b59f7"
+    },
+    "codeplus.permissions.rules": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\rules.py",
+      "sha256": "338b76c1db9c6a423a7bb01274a4c1670998c40b1cc3cd48353e88acd538c086"
+    },
+    "codeplus.permissions.sandbox": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\sandbox.py",
+      "sha256": "adbca02a7b233c9038c2fd254a5dc18c469fc6468353d831257fa52c4559035e"
+    },
+    "codeplus.prompts": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\prompts.py",
+      "sha256": "822ebb78b0a9eb936988c6f15d01a9e094e0ea61ee8b12fd65f339ab628195b6"
+    },
+    "codeplus.run_policy": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\run_policy.py",
+      "sha256": "745fe9d5f5e315c1e5dc7136be3eaca8b83f1790971d38cdfc67935df90be57e"
+    },
+    "codeplus.serialization": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\serialization.py",
+      "sha256": "b72bf2792125bb3504623577196fb456d0870b2b02a7d06919cc69c2437528bc"
+    },
+    "codeplus.tools": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\tools\\__init__.py",
+      "sha256": "d4e1916a195dab084edf238b5ab8b8db8d7640522f36c5e00a2e66376cee037c"
+    },
+    "codeplus.tools.base": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\tools\\base.py",
+      "sha256": "7969d2845d147bfc0f7c108590f70584925ff403dd41674ecf3758c4b709f37e"
+    },
+    "codeplus.validator": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\core\\Lib\\site-packages\\codeplus\\validator.py",
+      "sha256": "cd134c81adc37147797d57aa568a85478c4906ba7e30cb2393742dfc48af73d9"
+    }
+  },
+  "installed_modules_only": true,
+  "frozen_files_unchanged": true,
+  "finished": 1790097724.9818792,
+  "exit_code": 0
+}

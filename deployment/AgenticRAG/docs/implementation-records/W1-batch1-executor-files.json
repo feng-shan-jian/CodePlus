@@ -1,0 +1,111 @@
+{
+  "task": "01a0c9c1-0a2a-7eb3-9e79-a007a6a9d1e4",
+  "batch": "W1 batch 1: BS01 and BS04 archive/audit slice",
+  "base": "a4fede1c3f0a09202710e53debdbac3307c0911d",
+  "patch": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch1-v2.patch",
+  "patch_bytes": 60413,
+  "patch_sha256": "f8fd0f17a0a5db02c800bcf847ac659ac607eae205020f25d5a864057d80fd40",
+  "checks": [
+    "git diff --check",
+    "git apply --cached --check against separate baseline index",
+    "git apply --reverse --check against candidate worktree"
+  ],
+  "validation": {
+    "initial_open_dependencies": "352 passed, 12 failed, 1 skipped; SDK incompatibilities, recorded",
+    "locked_dependencies": "375 passed, 1 skipped; 366.21s",
+    "pinned_tokenizer_supplement": "1 passed, 28 deselected; 2.01s",
+    "host_regression": "127 passed; 4.73s",
+    "final_focused": "29 passed, 109 deselected; 72.43s",
+    "independent_static_review": "no blocking findings; no tests claimed",
+    "real_gpu_milvus_model": "not executed",
+    "same_agent_two_runs": "2 passed, 27 deselected; 6.46s; no stale stream text/artifact/status after a real successful prior run"
+  },
+  "integration": "not integrated; not committed; not pushed",
+  "files": [
+    {
+      "path": "codeplus/agent.py",
+      "raw_bytes": 66510,
+      "sha256": "319784fa47d090eb28a8a2f353006b10bd4d299bb7c2dd7bae7088e937e7c170",
+      "base_blob": "598c297a69130e2b2c1ff5f87600a4ae94924366"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/domain-and-configuration.md",
+      "raw_bytes": 12053,
+      "sha256": "cf5fca510709683502a75505ebc489b2b97bcf6b856393e591d5545aa92c3e7d",
+      "base_blob": "f65f818f0e863413ee73fb0d66075a11c9274799"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/host-integration-contract.md",
+      "raw_bytes": 35882,
+      "sha256": "aa084a167ea8ef167d47863553fe5ff796975ffbf78d925892597b60424d9f93",
+      "base_blob": "8e0739d43d345665a8bf50cce424edde84c8dd24"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py",
+      "raw_bytes": 27077,
+      "sha256": "5ba71ff15d086f173db1eabb75c2e73be5f645c397caaa1b34e0c4dc96efce9c",
+      "base_blob": "a860a8da0a097fe920acdb705ce2790ba5b6b68d"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/domain.py",
+      "raw_bytes": 10393,
+      "sha256": "44cbdde0a71b012c50500b122d940e498b2fc1cdbe185b06060c0c383cdc7292",
+      "base_blob": "7cc646d3eb8cef37906547b58633f84ad276d173"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/sources.py",
+      "raw_bytes": 25060,
+      "sha256": "370f12af1a3096ca7aa133498a0bb7954bd09868d1dbba617d2d37f35b96a673",
+      "base_blob": "82c72ecf34fd51f408de6010eadb4ba1340b5f9c"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/archives.py",
+      "raw_bytes": 4555,
+      "sha256": "d529c410817bf20f3aaee36afa98f6755efdd4634f5de3b2498763bbc7ceb822",
+      "base_blob": "239c6c895e79068340358cc113ceca0d1831a37e"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_archives.py",
+      "raw_bytes": 6596,
+      "sha256": "edfcb670ae67a895698dfdf5f1a450fc4e232058f32248d61ab50ddc7ebc2d96",
+      "base_blob": "f2cf6182d165b24b11e211315e4e18dd85cd098e"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_codeplus_integration.py",
+      "raw_bytes": 59629,
+      "sha256": "00dec72e69d680f5508ac339b93246c12436ba59bcd14ab3eae48e0066aa6f43",
+      "base_blob": "568964bb2973e94be6e9ec11867da31b28577630"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_configuration.py",
+      "raw_bytes": 16314,
+      "sha256": "cb6d99821716dd7f332039a912e7e4123cb2c5d0a6d912bc23841da36525b94a",
+      "base_blob": "c92869d23f28125b55b6f6a322b9b276fbac9789"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_input_snapshots.py",
+      "raw_bytes": 13300,
+      "sha256": "16f1c28b4dd5b27ebc937fa0a16d19f5b8395f33e3a69e61758a680691d5a3a9",
+      "base_blob": "fd3f63a1df9883d50b34e38f63406c0ddb327812"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_run_budget.py",
+      "raw_bytes": 22758,
+      "sha256": "40e4a9c949a074023485ab58daa65f71ce809df48f36665962646246aaccda50",
+      "base_blob": "5a476147eece33af0c4cda20f8c08424c028bacc"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_sources.py",
+      "raw_bytes": 19072,
+      "sha256": "90864899240efced89b204b2cf1aa33c28c85d3da0ab6dad72e42613aa3e7e2d",
+      "base_blob": "9ec963a15dae91b498e9eef9d5ef4dee76c3e552"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/convergence.md",
+      "raw_bytes": 7145,
+      "sha256": "382be13a69d4295d6f633675306de730adcfee449da7fb836399975540ec6c32",
+      "base_blob": null
+    }
+  ],
+  "supersedes_patch_sha256": "472b9cb43c43b471db16428349b95890c8da75dbd03d47a2ad9ccab5c0e665aa"
+}

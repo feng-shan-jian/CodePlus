@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 import ctypes
 import hashlib
+import io
 import os
 from pathlib import Path
 import re
@@ -28,21 +29,22 @@ class ArchiveStore:
             raise failure("invalid archive SHA256")
         return self.directory.path("archives", digest[:2], digest)
 
-    def verify(self, digest: str) -> Archive:
+    def _verified_blocks(self, digest: str):
         self.directory.verify_identity()
         path = self._path(digest)
         actual = hashlib.sha256()
-        size = 0
         try:
             with path.open("rb") as stream:
                 while block := stream.read(1024 * 1024):
-                    size += len(block)
                     actual.update(block)
+                    yield block
         except OSError as exc:
             raise failure(f"archive unavailable: {digest}") from exc
         if actual.hexdigest() != digest:
             raise failure(f"archive checksum mismatch: {digest}")
-        return Archive(digest, size)
+
+    def verify(self, digest: str) -> Archive:
+        return Archive(digest, sum(len(block) for block in self._verified_blocks(digest)))
 
     def put(self, source: BinaryIO, *, expected_hash: str | None = None) -> Archive:
         self.directory.verify_identity()
@@ -84,8 +86,10 @@ class ArchiveStore:
                 temp.unlink()
 
     def read(self, digest: str) -> bytes:
-        self.verify(digest)
-        return self._path(digest).read_bytes()
+        with io.BytesIO() as result:
+            for block in self._verified_blocks(digest):
+                result.write(block)
+            return result.getvalue()
 
 
 def _complete(source: Path, destination: Path) -> None:

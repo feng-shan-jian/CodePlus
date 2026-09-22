@@ -1,0 +1,30 @@
+{
+  "status": "BLOCKED_AUTO_APPROVAL",
+  "root": "C:/Users/18221/AppData/Local/Temp/codeplus-r14-finalizer-20260923",
+  "exists_after": true,
+  "reason": "Exec command was rejected before execution: blocked by policy. No further specific reason was provided; the tool echo was truncated.",
+  "action": "pwsh native Remove-Item -LiteralPath <resolved exact root> -Recurse -Force after inline path/type/hardlink verification",
+  "execution": "No deletion or inline prechecks ran in the rejected command. Fresh separate read-only checks followed.",
+  "files": {
+    "postcleanup.py": {
+      "bytes": 7722,
+      "sha256": "56c0b73257456affe49a54fcce3323163d981deae00cd60b6ca6b7691f2c0b7e"
+    },
+    "r14-compose-before.yaml": {
+      "bytes": 1637,
+      "sha256": "68ca4e0b7685e991d5904b9a92fb78a44736fa2544b93854b5562554fa3e0cf9"
+    },
+    "stage.py": {
+      "bytes": 6641,
+      "sha256": "7aabdb2f6341bb12998e56038dbe245673f2e853e4631e2510c0ce513a709bbf"
+    },
+    "whitespace.py": {
+      "bytes": 2611,
+      "sha256": "e87edda850ecb9d86a29d21bf64b5e2c7d00e5f0950e89f357eaa545096778b5"
+    }
+  },
+  "total_bytes": 18611,
+  "independent_R14_cleanup": "Completed before this bookkeeping helper was created; unchanged.",
+  "no_product_changes": true,
+  "remaining_action": "Await explicit approval to retry this exact four-file directory, or user-directed retention/manual removal. Do not bypass rejection via another tool."
+}

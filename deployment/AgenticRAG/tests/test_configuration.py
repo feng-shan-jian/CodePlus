@@ -216,8 +216,15 @@ def test_run_record_validates_frozen_config_and_terminal_state():
     with pytest.raises(ValidationError):
         run.model_copy(update={"resolved_config_hash": "0" * 64})
     assert run.model_copy(update={"status": RunStatus.COMPLETED, "stop_reason": "finished"}).status == RunStatus.COMPLETED
-    for reason in ("token_budget", "time_budget", "search_limit", "open_limit", "iteration_limit"):
+    for reason in ("token_budget", "time_budget", "search_limit", "open_limit", "iteration_limit", "context_limit"):
         assert run.model_copy(update={"status": RunStatus.INCOMPLETE, "stop_reason": reason}).stop_reason == reason
+        partial = run.model_copy(update={"status": RunStatus.PARTIAL, "stop_reason": reason})
+        assert Run.model_validate_json(partial.model_dump_json()) == partial
+    for reason in ("budget", "no_evidence", "explicit_error", "finished"):
+        with pytest.raises(ValidationError):
+            run.model_copy(update={"status": RunStatus.PARTIAL, "stop_reason": reason})
+    reasons = Run.model_json_schema()["properties"]["stop_reason"]["anyOf"][0]["enum"]
+    assert "context_limit" in reasons and "budget" in reasons
 
 
 def test_monotonic_request_deadline_and_diagnostic_stage():

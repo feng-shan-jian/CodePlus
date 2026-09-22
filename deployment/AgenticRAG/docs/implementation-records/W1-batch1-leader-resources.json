@@ -1,0 +1,455 @@
+{
+  "status": "READY_FOR_INDEPENDENT_CLEANUP",
+  "captured_at": 1790099348.6646178,
+  "roots": [
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923"
+  ],
+  "root_children": {
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923": [
+      {
+        "name": "answer-tokenizer-v41",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "apply.py",
+        "directory": false,
+        "bytes": 4536
+      },
+      {
+        "name": "checks.py",
+        "directory": false,
+        "bytes": 3734
+      },
+      {
+        "name": "core",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "dist",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "precleanup.py",
+        "directory": false,
+        "bytes": 8484
+      },
+      {
+        "name": "pytest-core",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "pytest-focused",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "pytest-host",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "pytest-installed.py",
+        "directory": false,
+        "bytes": 1450
+      },
+      {
+        "name": "setup.py",
+        "directory": false,
+        "bytes": 4385
+      },
+      {
+        "name": "uv-cache",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "verify-apply.py",
+        "directory": false,
+        "bytes": 4086
+      }
+    ]
+  },
+  "temporary_scripts": {
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\apply.py": "1bb75a6cfe1924339e169b87ed8be31544ce7050bd6f41fc0ca4ebeee6e09f49",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\checks.py": "bfcee5d9a24cd4ecdbf24b1935e4ff4a7a17c8ad289aaef940ba1bbdaeba541d",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\precleanup.py": "ef656181f8a8635735338171361bc3a8b7f847c0e65200b1d53566988d5084b7",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\pytest-installed.py": "9956f434b78933bbf7d1c09bc9adb417a011cf68a2ad86052b127abc6983a0c0",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\setup.py": "b4876ccd5066572a84e81168130c073d6c5c90134e0553360e0857f1cb468b38",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-leader-20260923\\verify-apply.py": "e30ec6386ec84bcd3370bd3b44b5627ce87204db909624c225641c953ff7b279"
+  },
+  "processes_referencing_targets": [
+    {
+      "ProcessId": 71892,
+      "ParentProcessId": 17360,
+      "Name": "pwsh.exe",
+      "ExecutablePath": "C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "CommandLine": "\"C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe\" -Command \"try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}\n& 'C:/Python314/python.exe' 'C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch1-leader-20260923/precleanup.py'\"",
+      "Birth": "2026-09-22T17:49:04.1877310Z"
+    },
+    {
+      "ProcessId": 26528,
+      "ParentProcessId": 71892,
+      "Name": "python.exe",
+      "ExecutablePath": "C:\\Python314\\python.exe",
+      "CommandLine": "\"C:\\Python314\\python.exe\" C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch1-leader-20260923/precleanup.py",
+      "Birth": "2026-09-22T17:49:04.3712120Z"
+    }
+  ],
+  "owned_live_processes": [],
+  "audit_pid": 26528,
+  "audit_ancestor_pids": [
+    26528,
+    71892,
+    17360,
+    3240,
+    20172,
+    2756
+  ],
+  "audit_sampler_pids": [
+    63048
+  ],
+  "projects": {},
+  "docker": {
+    "containers": [
+      {
+        "id": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+        "name": "/sonarqube-production",
+        "image": "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+        "labels": {
+          "com.docker.compose.config-hash": "490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "db:service_healthy:false",
+          "com.docker.compose.image": "sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+          "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+          "com.docker.compose.replace": "sonarqube-production",
+          "com.docker.compose.service": "sonarqube",
+          "com.docker.compose.version": "5.4.0",
+          "io.k8s.description": "SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.",
+          "io.openshift.min-cpu": "400m",
+          "io.openshift.min-memory": "2048M",
+          "io.openshift.non-scalable": "true",
+          "io.openshift.tags": "sonarqube,static-code-analysis,code-quality,clean-code",
+          "org.opencontainers.image.url": "https://github.com/SonarSource/docker-sonarqube",
+          "org.opencontainers.image.version": "24.04"
+        },
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\sonarqube",
+            "Destination": "/opt/sonarqube/data",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\sonarqube-extensions",
+            "Destination": "/opt/sonarqube/extensions",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\logs\\sonarqube",
+            "Destination": "/opt/sonarqube/logs",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\temp\\sonarqube",
+            "Destination": "/opt/sonarqube/temp",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+            "Destination": "/run/secrets/postgres_password",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\sonar_jwt_secret.txt",
+            "Destination": "/run/secrets/sonar_jwt_secret",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          }
+        ],
+        "ports": {
+          "9000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "9000"
+            }
+          ]
+        },
+        "networks": [
+          "sonarqube-production"
+        ]
+      },
+      {
+        "id": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+        "name": "/sonarqube-postgres",
+        "image": "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+        "labels": {
+          "com.docker.compose.config-hash": "e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+          "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+          "com.docker.compose.replace": "sonarqube-postgres",
+          "com.docker.compose.service": "db",
+          "com.docker.compose.version": "5.4.0"
+        },
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+            "Destination": "/run/secrets/postgres_password",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\postgresql",
+            "Destination": "/var/lib/postgresql/data",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          }
+        ],
+        "ports": {
+          "5432/tcp": null
+        },
+        "networks": [
+          "sonarqube-production"
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "Name": "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data",
+        "CreatedAt": "2026-08-27T12:38:40Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data",
+        "CreatedAt": "2026-08-27T12:34:57Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data",
+        "CreatedAt": "2026-08-27T12:32:48Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data",
+        "CreatedAt": "2026-08-27T12:37:34Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "approvaplat-mysql-data",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/approvaplat-mysql-data/_data",
+        "CreatedAt": "2026-08-27T12:37:34Z",
+        "Labels": {
+          "com.docker.compose.config-hash": "27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e",
+          "com.docker.compose.project": "approvaplat",
+          "com.docker.compose.version": "5.4.0",
+          "com.docker.compose.volume": "approvaplat-mysql-data"
+        },
+        "Options": null,
+        "Scope": "local"
+      }
+    ],
+    "networks": [
+      {
+        "Id": "c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587",
+        "Name": "bridge",
+        "Created": "2026-09-21T23:55:35.545820176Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": [
+            {
+              "Subnet": "172.17.0.0/16",
+              "Gateway": "172.17.0.1"
+            }
+          ]
+        },
+        "Options": {
+          "com.docker.network.bridge.default_bridge": "true",
+          "com.docker.network.bridge.enable_icc": "true",
+          "com.docker.network.bridge.enable_ip_masquerade": "true",
+          "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+          "com.docker.network.bridge.name": "docker0",
+          "com.docker.network.driver.mtu": "1500"
+        }
+      },
+      {
+        "Id": "3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6",
+        "Name": "host",
+        "Created": "2026-08-24T03:10:40.792555369Z",
+        "Scope": "local",
+        "Driver": "host",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": null
+        },
+        "Options": {}
+      },
+      {
+        "Id": "831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6",
+        "Name": "none",
+        "Created": "2026-08-24T03:10:40.783778961Z",
+        "Scope": "local",
+        "Driver": "null",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": null
+        },
+        "Options": {}
+      },
+      {
+        "Id": "e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f",
+        "Name": "sonarqube-production",
+        "Created": "2026-08-24T14:03:17.667304522Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Labels": {
+          "com.docker.compose.config-hash": "43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda",
+          "com.docker.compose.network": "sonarqube",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.version": "5.4.0"
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": [
+            {
+              "Subnet": "172.18.0.0/16",
+              "Gateway": "172.18.0.1"
+            }
+          ]
+        },
+        "Options": {
+          "com.docker.network.enable_ipv4": "true",
+          "com.docker.network.enable_ipv6": "false"
+        }
+      }
+    ]
+  },
+  "ports": [],
+  "temporary_repository_files": [],
+  "protected_shared_roots": [
+    "C:/Users/18221/.cache/codeplus-agenticrag/models",
+    "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-core",
+    "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda",
+    "C:/Users/18221/AppData/Local/uv/cache",
+    "C:/Users/18221/AppData/Local/Temp/.codeplus-agenticrag-workers",
+    "C:/Users/18221/AppData/Local/Temp/pytest-of-18221/pytest-2"
+  ],
+  "protected_external_worktree": "C:/Users/18221/.codex/worktrees/bf43/CodePlus",
+  "blocked_r14_finalizer": {
+    "status": "BLOCKED_AUTO_APPROVAL",
+    "root": "C:/Users/18221/AppData/Local/Temp/codeplus-r14-finalizer-20260923",
+    "exists_after": true,
+    "reason": "Exec command was rejected before execution: blocked by policy. No further specific reason was provided; the tool echo was truncated.",
+    "action": "pwsh native Remove-Item -LiteralPath <resolved exact root> -Recurse -Force after inline path/type/hardlink verification",
+    "execution": "No deletion or inline prechecks ran in the rejected command. Fresh separate read-only checks followed.",
+    "files": {
+      "postcleanup.py": {
+        "bytes": 7722,
+        "sha256": "56c0b73257456affe49a54fcce3323163d981deae00cd60b6ca6b7691f2c0b7e"
+      },
+      "r14-compose-before.yaml": {
+        "bytes": 1637,
+        "sha256": "68ca4e0b7685e991d5904b9a92fb78a44736fa2544b93854b5562554fa3e0cf9"
+      },
+      "stage.py": {
+        "bytes": 6641,
+        "sha256": "7aabdb2f6341bb12998e56038dbe245673f2e853e4631e2510c0ce513a709bbf"
+      },
+      "whitespace.py": {
+        "bytes": 2611,
+        "sha256": "e87edda850ecb9d86a29d21bf64b5e2c7d00e5f0950e89f357eaa545096778b5"
+      }
+    },
+    "total_bytes": 18611,
+    "independent_R14_cleanup": "Completed before this bookkeeping helper was created; unchanged.",
+    "no_product_changes": true,
+    "remaining_action": "Await explicit approval to retry this exact four-file directory, or user-directed retention/manual removal. Do not bypass rejection via another tool."
+  },
+  "blocked_convergence_report": {
+    "path": "C:/Users/18221/.codex/worktrees/bf43/agentic-rag-convergence-resource-status.json",
+    "sha256": "5969b0c12f8c7a53882999466650fd8ad3ff4c4c635798b88471c8662f99fc6f",
+    "scope": "No convergence worktree or associated temporary resource is a W1 batch1 cleanup target."
+  },
+  "scope": "CPU-only root. ALL Docker, models/core/CUDA/shared uv and all other worktrees are protected. No GPU service or owned Docker exists.",
+  "read_only_setup_error": {
+    "tool_chunk": "94bc27",
+    "exit_code": 1,
+    "error": "PowerShell ParserError: An empty pipe element is not allowed. Attempted foreach statement pipeline before reading JSON shape; no command or mutation ran. Corrected by assigning rows before pipe."
+  }
+}

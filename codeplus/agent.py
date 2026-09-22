@@ -363,6 +363,7 @@ class Agent:
         if self._executing:
             raise RuntimeError('Agent already has an active controlled run')
         self._executing = True
+        self.last_run_outcome = None
         scope = None
         primary = None
         saved = {name: getattr(self, name) for name in (
@@ -442,7 +443,8 @@ class Agent:
         except BudgetStop as stop:
             if self.execution_policy is None:
                 raise
-            yield ErrorEvent(message=f'Knowledge run incomplete: {stop.reason}')
+            outcome = self.last_run_outcome or RunOutcome('incomplete', stop.reason)
+            yield ErrorEvent(message=f'Knowledge run {outcome.status}: {outcome.reason}')
 
     async def run_to_completion(
         self, task: str, conversation: ConversationManager | None = None,
@@ -454,7 +456,8 @@ class Agent:
         except BudgetStop as stop:
             if self.execution_policy is None:
                 raise
-            text = f'Knowledge run incomplete: {stop.reason}'
+            outcome = self.last_run_outcome or RunOutcome('incomplete', stop.reason)
+            text = f'Knowledge run {outcome.status}: {outcome.reason}'
         if self.execution_policy is not None and event_callback and self.last_run_outcome:
             event_callback({'type': 'run_status', 'status': self.last_run_outcome.status,
                             'reason': self.last_run_outcome.reason})

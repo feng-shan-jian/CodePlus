@@ -34,7 +34,7 @@
 | R11 | COMMITTED | /root/r11_sources | [Leader独立验收](implementation-records/R11.md)；393核心无skip、两路安装及三版真实升级通过 | `cd6ed3470c1ce5619c6e8bc6791346ac577e64c1` |
 | R12 | COMMITTED | /root/r12_agent_integration | [Leader独立验收](implementation-records/R12-leader-review.md)；1271通过/32条件skip、真实安装/Agent及独立清理完成，元数据观察保留 | `44b861a235233f7072fda267e7a75321431c4e88` |
 | R13 | COMMITTED | /root/r13_mutations | [Leader独立验收](implementation-records/R13-leader-review.md)；1302通过/32条件skip、独立清理及复核完成，元数据观察保留 | `a4fede1c3f0a09202710e53debdbac3307c0911d` |
-| R14 | ACCEPTED | /root/r14_recovery | [Leader 独立验收](implementation-records/R14-leader-review.md)、[独立清理](implementation-records/R14-cleanup.md)及[清理复核](implementation-records/R14-leader-postcleanup.json)通过，待精确本地提交 | — |
+| R14 | COMMITTED | /root/r14_recovery | [Leader 独立验收](implementation-records/R14-leader-review.md)、[独立清理](implementation-records/R14-cleanup.md)、[清理复核](implementation-records/R14-leader-postcleanup.json)及[精确提交](implementation-records/R14-leader-postcommit.json)通过 | 175f8f54ed9e24736a232f6b989d145f7f217dca |
 | R15 | TODO | — | — | — |
 | R16 | TODO | — | — | — |
 | R17 | TODO | — | — | — |

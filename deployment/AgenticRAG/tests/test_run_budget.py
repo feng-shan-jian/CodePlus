@@ -71,6 +71,96 @@ def test_exploration_reservation_is_soft_while_finish_reserve_remains(tmp_path):
     asyncio.run(run())
 
 
+def test_request_context_limit_remains_hard_and_does_not_reserve_or_send(tmp_path):
+    async def run():
+        parent=parent_client();scope,_=H['setup_scope'](tmp_path,parent)
+        scope.meter.context_window=1
+        try:
+            with pytest.raises(BudgetStop) as caught:
+                await ModelControl(scope,'agent').before_send(request())
+            assert caught.value.reason=='context_limit' and caught.value.hard
+            with scope.catalog._db.transaction() as db:
+                assert db.execute('SELECT count(*) FROM model_requests').fetchone()==(0,)
+            assert scope.purpose=='agent' and scope.finish_reason is None
+        finally:
+            await scope.aclose();await parent._client.close()
+    asyncio.run(run())
+
+
+def test_invalid_terminal_is_rejected_before_persistence_then_valid_finish_succeeds(tmp_path):
+    from pydantic import ValidationError
+    from agentic_rag.domain import RunStatus
+    async def run():
+        parent=parent_client();scope,_=H['setup_scope'](tmp_path,parent)
+        try:
+            before=scope.catalog.get_run(scope.lease.run.run_id)
+            for status, reason in ((RunStatus.PARTIAL,'budget'), (RunStatus.COMPLETED,'free-form diagnosis')):
+                with pytest.raises(ValidationError): scope.lease.finish(status,reason)
+                assert scope.catalog.get_run(before.run_id)==before
+                assert scope.catalog.get_pin(before.run_id).state=='active'
+            await scope.finish(RunOutcome('completed','finished'))
+            assert scope.catalog.get_run(before.run_id).stop_reason=='finished'
+            assert scope.catalog.get_pin(before.run_id).state=='released'
+        finally:
+            await scope.aclose();await parent._client.close()
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize('completion', [False, True])
+def test_start_budget_stop_does_not_display_previous_run_outcome(tmp_path, completion):
+    import httpx
+    from codeplus.agent import StreamText
+    from codeplus.client import scoped_client
+    from codeplus.conversation import ConversationManager
+    async def run():
+        parent=parent_client()
+        scope,canonical=H['setup_scope'](tmp_path,parent)
+        requests=[]
+        def transport(request):
+            body=json.loads(request.content);requests.append(body)
+            if len(requests)==1:
+                content=H['sse_text'](calls=('search','knowledge_search',{'query':'source'}),terminal='tool_calls')
+            else:
+                source=next(m['content'] for m in body['messages'] if m['role']=='tool' and '<source ' in m['content'])
+                item=json.loads(source.split('\n\n<source ',1)[0])['items'][0]
+                content=H['sse_text'](json.dumps({'markdown':'Verified answer [^'+item['evidence_id']+']',
+                    'citations':[{'evidence_id':item['evidence_id'],'spans':item['returned_spans'],'quotes':[canonical]}]}))
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
+        await scope.client.aclose()
+        scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        class Policy:
+            starts=0
+            async def start(self, context):
+                self.starts+=1
+                if self.starts==1:return scope
+                raise BudgetStop('time_budget', hard=True)
+        agent=Agent(parent,ToolRegistry(),'openai-compat',execution_policy=Policy())
+        callbacks=[];streamed=[]
+        async def invoke():
+            if completion:return await agent.run_to_completion('question',event_callback=callbacks.append)
+            conversation=ConversationManager();conversation.add_user_message('question')
+            events=[event async for event in agent.run(conversation)]
+            streamed.extend(events)
+            return ' '.join(getattr(event,'message','') for event in events)
+        try:
+            await invoke()
+            previous=agent.last_run_outcome
+            assert (previous.status,previous.reason)==('completed','finished') and previous.artifact is not None
+            assert scope.catalog.get_run(scope.lease.run.run_id).status.value=='completed'
+            assert scope.catalog.get_pin(scope.lease.run.run_id).state=='released'
+            assert len(requests)==2
+            callbacks.clear()
+            streamed.clear()
+            displayed=await invoke()
+            assert displayed=='Knowledge run incomplete: time_budget'
+            assert agent.last_run_outcome is None and agent.client is parent
+            assert previous.artifact.markdown not in displayed and len(requests)==2
+            assert not any(isinstance(event,StreamText) for event in streamed)
+            assert not [event for event in callbacks if event['type']=='run_status' and event['status']=='completed']
+        finally: await scope.aclose();await parent._client.close()
+    asyncio.run(run())
+
+
 def test_pinned_production_meter_rejects_nested_control_literals_and_unknown_wire_fields():
     import os
     from agentic_rag.adapters.codeplus.meter import DeepSeekTextMeter,MeterUnavailable
@@ -155,7 +245,8 @@ def test_real_executor_failure_after_awaiter_cancel_is_consumed():
     asyncio.run(run())
 
 
-def test_scope_handshake_lock_does_not_block_loop_and_pin_outlives_reader(tmp_path):
+@pytest.mark.parametrize('outcome', [RunOutcome('completed','finished'), RunOutcome('partial','context_limit')])
+def test_scope_handshake_lock_does_not_block_loop_and_pin_outlives_reader(tmp_path, outcome):
     async def run():
         parent=parent_client();scope,_=H['setup_scope'](tmp_path,parent)
         entered=threading.Event();release=threading.Event()
@@ -167,9 +258,11 @@ def test_scope_handshake_lock_does_not_block_loop_and_pin_outlives_reader(tmp_pa
         reader.cancel()
         with pytest.raises(asyncio.CancelledError):await reader
         started=time.monotonic()
-        await scope.finish(RunOutcome('completed','finished'))
+        await scope.finish(outcome)
         assert time.monotonic()-started<.5
-        assert scope.outcome.status=='incomplete'
+        assert (scope.outcome.status, scope.outcome.reason)==('incomplete','budget')
+        actual=scope.catalog.get_run(scope.lease.run.run_id)
+        assert (actual.status.value, actual.stop_reason)==('incomplete','budget')
         assert scope.catalog.get_pin(scope.lease.run.run_id).state=='active'
         await scope.aclose()
         release.set()
