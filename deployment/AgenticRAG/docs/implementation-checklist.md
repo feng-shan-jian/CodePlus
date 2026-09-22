@@ -27,8 +27,8 @@
 | R04 | COMMITTED | /root/r04_host_contract_resume1 | [独立验收](implementation-records/R04.md) | `63e97a37b2b7389a104b3c96240fd6d95b5a11d5` |
 | R05 | COMMITTED | /root/r05_domain_config | [独立验收](implementation-records/R05.md) | `5325d517ac383bfad1fb28caebd0f3674b90b03d` |
 | R06 | COMMITTED | /root/r06_storage | [独立验收](implementation-records/R06.md) | `ebf402ba1d58a3f6651c7894238b29e144bbafed` |
-| R07 | ACCEPTED | /root/r07_inputs | [验收记录](implementation-records/R07.md) | 待 Leader 精确本地提交 |
-| R08 | TODO | — | — | — |
+| R07 | COMMITTED | /root/r07_inputs | [验收记录](implementation-records/R07.md) | `5d2e71a7d5400c77b0675cb803cca4d433110678` |
+| R08 | ACCEPTED | /root/r08_parsing | [Leader 验收](implementation-records/R08.md) | 待本地提交 |
 | R09 | TODO | — | — | — |
 | R10 | TODO | — | — | — |
 | R11 | TODO | — | — | — |
@@ -153,11 +153,11 @@
 <a id="r08"></a>
 ### R08：解析与分块
 
-- [ ] Markdown/TXT 在支持编码内保留原始字节、规范文本及准确映射；不支持输入明确失败。
-- [ ] 重复段落、CRLF、Unicode、嵌套列表、标题、代码/表格及超长句的区间正确；没有使用 `str.find()` 反推重复位置。
-- [ ] 按结构/句子/token 边界分块，overlap 和覆盖可核查；索引标题模板与可引用原文分开。
-- [ ] Embedding 完整模板/特殊 token 计入上限；Rerank 的独立输入边界契约保留，不把一种 tokenizer 的通过当另一种通过。
-- [ ] 609 篇冻结语料全部完成解析与位置/覆盖核验，失败项不能被数量统计掩盖；没有把题目/gold 导入。
+- [x] Markdown/TXT 在支持编码内保留原始字节、规范文本及准确映射；不支持输入明确失败。
+- [x] 重复段落、CRLF、Unicode、嵌套列表、标题、代码/表格及超长句的区间正确；没有使用 `str.find()` 反推重复位置。
+- [x] 按结构/句子/token 边界分块，overlap 和覆盖可核查；索引标题模板与可引用原文分开。
+- [x] Embedding 完整模板/特殊 token 计入上限；Rerank 的独立输入边界契约保留，不把一种 tokenizer 的通过当另一种通过。
+- [x] 609 篇冻结语料全部完成解析与位置/覆盖核验，失败项不能被数量统计掩盖；没有把题目/gold 导入。
 
 <a id="r09"></a>
 ### R09：模型提供方与 worker

@@ -1,6 +1,6 @@
 # AgenticRAG 独立开发区
 
-状态：当前提供独立领域／配置核心、R06 存储与并发基础，以及 R07 手动输入选择、文档身份和不可变原件检查点；实际验收和提交状态见任务台账。更新日期：2026-09-22。解析分块、检索、worker 与宿主 Agent 接入仍按 R08–R26 实施。
+状态：当前提供独立领域／配置核心、R06 存储与并发基础、R07 不可变原件检查点，以及 R08 Markdown/TXT 解析、精确来源映射、实际 tokenizer 分块和完整处理归档；实际验收和提交状态见任务台账。更新日期：2026-09-22。检索、worker 与宿主 Agent 接入仍按 R09–R26 实施。
 
 在本目录完成 RAG 重建的规划、独立实现和验收，达到迁移条件后再接入 CodePlus 主模块。
 
@@ -8,7 +8,7 @@
 
 ## 当前开发包
 
-发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2 与 APSW 3.53.4.0；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。没有产品 CLI、真实模型适配器或自动重建动作；导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
+发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2、APSW 3.53.4.0、markdown-it-py 4.0.0 与 tokenizers 0.23.2；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。没有产品 CLI、真实模型适配器或自动重建动作；导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
 
 独立安装与开发（Windows/pwsh，显式设置独立环境，避免改根 `.venv`）：
 
@@ -18,13 +18,13 @@ uv sync --project deployment/AgenticRAG --locked
 uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 ```
 
-安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具；运行依赖只有 Pydantic 与 APSW。必须使用带 WAL 修复的 SQLite，存储层拒绝低于 3.51.3 的实际运行版本，不使用当前标准库的 SQLite 3.50.4。Windows/Linux 使用各自环境；Linux、完整产品安装及最终主发行仍在 R25/R26 验收。
+安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具；运行的四项轻量依赖及传递依赖由锁固定，tokenizer 资产使用显式外部缓存。必须使用带 WAL 修复的 SQLite，存储层拒绝低于 3.51.3 的实际运行版本，不使用当前标准库的 SQLite 3.50.4。Windows/Linux 使用各自环境；Linux、完整产品安装及最终主发行仍在 R25/R26 验收。
 
 配置只接收调用方显式传入的 `knowledge` 对象，优先级为 `explicit > configured > defaults > Schema 默认`。默认检索模式为 `auto`；候选数量、分块参数、QA/报告预算必须显式提供试验值，尚未冻结质量参数。字段、可运行示例、身份与协议边界见 [领域与配置](docs/domain-and-configuration.md)，R05 的两条真实发行安装证据见 [R05](docs/implementation-records/R05.md)。分发包不包含该文档目录，源码开发区可查阅。
 
 `agentic_rag.storage.Catalog` 接收宿主已解析的本机绝对目录，创建或打开明确属于本应用的数据目录。当前提供关系约束、短事务、归档、批次手动接管与完整版本 pin；生产索引验证/发布、导入恢复交互及自动 GC 仍在后续任务。接口、路径限制、持久化边界和 R06 证据见 [存储与并发](docs/storage-and-concurrency.md)。
 
-`agentic_rag.ingestion` 只处理明确选择的本机文件或目录，首批支持 `.md`/`.txt` 原件。`select_inputs` 固定顺序与错误清单；`Catalog.begin_import` 在库锁下原子登记清单、基准版和完整处理配置；`capture_inputs` 逐文件保存完整原件，`read_input` 只读核验后的归档。相同路径延续文档身份，显式更新支持改名，缺失文件不自动删除。没有 watcher、解析器或生产发布；完整恢复交互留 R14。接口、Windows 路径/共享行为、失败与恢复边界见 [输入快照](docs/input-snapshots.md)。
+`agentic_rag.ingestion` 处理明确选择的本机 Markdown/TXT 文件或目录。`select_inputs` 固定清单，`Catalog.begin_import` 登记基准版和完整配置，`capture_inputs` 保存完整原件，`process_inputs` 从归档解析并原子接纳完整处理检查点，`read_processed` 核验重开结果。相同路径延续文档身份，显式更新支持改名，缺失文件不自动删除；没有 watcher 或生产发布，完整恢复交互留 R14。见 [输入快照](docs/input-snapshots.md)、[解析与来源映射](docs/parsing-and-source-maps.md)。
 
 ## 完整产品目标
 
@@ -46,7 +46,7 @@ Milvus 首版提供 Docker Compose 部署配置供用户启动，也支持配置
 
 首版解析范围为 Markdown／纯文本，PDF、DOCX、OCR 留待后续扩展。
 
-Chunk 按文档结构、句子边界与 Token 上限切分，块大小和重叠量可配置；保留替换切分策略的接口，语义切分留待后续评测。具体参数与依赖尚未确定。
+Chunk 已按文档结构、句子边界与实际 tokenizer 分块，正文位置与标题模板分开，完整输入包含特殊 token。R08 使用 512/64 试验参数并保持冻结模型 2048 完整输入上限，最终质量参数由 R23 验证；语义切分留待后续评测。
 
 主要使用场景为知识库问答和研究报告：跨文档查证、比较、推断，输出带引用的答案。首版报告由 Agent 自主检索和补查后组织为结构化 Markdown，可保存为文件；不纳入分阶段研究计划、逐章节撰写与复核工作流。
 

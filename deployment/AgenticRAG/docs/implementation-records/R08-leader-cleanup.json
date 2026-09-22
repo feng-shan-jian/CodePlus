@@ -1,0 +1,12 @@
+{
+  "captured_at": "2026-09-22T03:38:08.4408399Z",
+  "owned_root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r08-leader-20260922",
+  "resolved_root_checked": true,
+  "file_entries": 6559,
+  "reparse_entries": 69,
+  "directories": 1211,
+  "root_absent": true,
+  "helpers_remaining": 0,
+  "method": "No reparse traversal; delete owned file/link entries and then empty directories; no shared hardlink target attributes changed",
+  "temporary_scripts": "Leader audit script removed with owned root; this cleanup helper removed separately before staging"
+}

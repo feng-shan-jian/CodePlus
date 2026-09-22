@@ -48,10 +48,10 @@ def test_runtime_and_connection_requirements(setup, monkeypatch):
         assert connection.pragma("journal_mode") == "wal"
         assert connection.pragma("synchronous") == 2
         assert connection.pragma("foreign_keys") == 1
-        assert connection.pragma("user_version") == 2
+        assert connection.pragma("user_version") == 3
         assert connection.execute("PRAGMA integrity_check").fetchone() == ("ok",)
         assert connection.execute("PRAGMA foreign_key_check").fetchall() == []
-        assert connection.execute("SELECT count(*) FROM schema_migrations").fetchone() == (2,)
+        assert connection.execute("SELECT count(*) FROM schema_migrations").fetchone() == (3,)
     monkeypatch.setattr(apsw, "sqlitelibversion", lambda: "3.50.4")
     with pytest.raises(RagError, match="WAL-reset"):
         require_runtime()
@@ -171,7 +171,7 @@ def test_bounded_busy_and_reader_can_progress(setup):
     assert contender.create_library("unblocked")
 
 
-@pytest.mark.parametrize("pragma,value", [("user_version", 3), ("application_id", 123)])
+@pytest.mark.parametrize("pragma,value", [("user_version", 4), ("application_id", 123)])
 def test_reject_unknown_schema_before_mutation(tmp_path, pragma, value):
     data = tmp_path / "data"
     catalog = Catalog(data)

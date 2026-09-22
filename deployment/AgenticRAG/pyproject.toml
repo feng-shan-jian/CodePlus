@@ -6,7 +6,7 @@ requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-dependencies = ["pydantic>=2.12,<3", "apsw==3.53.4.0"]
+dependencies = ["pydantic>=2.12,<3", "apsw==3.53.4.0", "markdown-it-py==4.0.0", "tokenizers==0.23.2"]
 
 [dependency-groups]
 dev = ["pytest>=9,<10", "hatchling==1.29.0"]

@@ -1,0 +1,38 @@
+................F.............                                           [100%]
+================================== FAILURES ===================================
+_____________ test_actual_tokenizers_match_r03_auto_tokenizer_ids _____________
+
+tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r08-executor-20260922/tests3/test_actual_tokenizers_match_r0')
+
+    def test_actual_tokenizers_match_r03_auto_tokenizer_ids(tmp_path):
+        embed, rank = HELPER['tokenizer'](), HELPER['tokenizer']('rerank')
+        samples = ['e\u0301 中文😀🧑🏽‍💻', 'é e\u0301\n重复 重复', '<|endoftext|> <|im_start|>', 'a'*8000]
+        cases, expected = [], []
+        for sample in samples:
+            for tokenizer, sequence in [(embed,embed.document(sample,'标题',check=False)),
+                                        (embed,embed.query('semantic retrieval')),
+                                        (rank,rank.rerank('search question', sample[:3000],'标题'))]:
+                cases.append({'model':tokenizer.profile.model.split('/')[-1], 'revision':tokenizer.profile.revision,
+                              'sample':sample, 'pieces':sequence.pieces, 'special':tokenizer.profile.add_special_tokens})
+                expected.append({'ids':list(sequence.ids),'offsets':[list(o) for o in tokenizer.offsets(sample)]})
+        path = tmp_path/'oracle-input.json'
+        path.write_text(json.dumps(cases),encoding='utf-8')
+        python = Path(os.environ.get('R08_ORACLE_PYTHON',str(Path.home()/'.cache/codeplus-agenticrag/venv-win-cuda/Scripts/python.exe')))
+        args = [str(python),'-I','-B',str(Path(__file__).with_name('tokenizer_oracle.py')),str(HELPER['cache']()),str(path)]
+        command = subprocess.run(args,cwd=tmp_path,capture_output=True,text=True,encoding='utf-8',timeout=180)
+        assert command.returncode==0,command.stderr
+        actual = json.loads(command.stdout)
+        assert actual['results']==expected
+        offsets = embed.offsets('e\u0301 中文🧑')
+        assert not any(a <= 1 < b for a,b in offsets)  # actual NFC omitted position
+>       assert len(set(offsets)) < len(offsets)  # actual ByteLevel overlapping emoji
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert 4 < 4
+E        +  where 4 = len({(0, 1), (2, 4), (4, 5), (5, 6)})
+E        +    where {(0, 1), (2, 4), (4, 5), (5, 6)} = set(((0, 1), (2, 4), (4, 5), (5, 6)))
+E        +  and   4 = len(((0, 1), (2, 4), (4, 5), (5, 6)))
+
+deployment\AgenticRAG\tests\test_frozen_tokenizers.py:37: AssertionError
+=========================== short test summary info ===========================
+FAILED deployment\AgenticRAG\tests\test_frozen_tokenizers.py::test_actual_tokenizers_match_r03_auto_tokenizer_ids
+1 failed, 29 passed in 21.86s

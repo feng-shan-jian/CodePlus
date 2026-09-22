@@ -25,7 +25,8 @@ from agentic_rag.domain import KnowledgeBase, Span, ErrorCode, RagError
 from agentic_rag.capabilities import require_optional_dependencies, require_provider
 from agentic_rag.storage import Catalog
 from agentic_rag.storage.database import runtime_fingerprint
-from agentic_rag.ingestion import InputSelection, select_inputs, capture_inputs, read_input, verify_inputs
+from agentic_rag.ingestion import InputSelection, select_inputs, capture_inputs, read_input, verify_inputs, process_inputs, read_processed
+from agentic_rag.models import FrozenTokenizer
 root = pathlib.Path(sys.prefix).resolve()
 location = pathlib.Path(agentic_rag.__file__).resolve()
 assert location.is_relative_to(root) and 'site-packages' in location.parts, location
@@ -52,11 +53,14 @@ manifest = select_inputs((InputSelection(path=str(source)),))
 with catalog.begin_import(library.kb_id, snapshot, manifest) as owner:
     item, = capture_inputs(catalog, owner)
     assert item.stage == 'captured' and item.change == 'new'
+    source.unlink()
+    processed, = process_inputs(catalog, owner, FrozenTokenizer(config.embedding, pathlib.Path(sys.argv[2])))
+    assert processed.stage == 'chunked'
     owner.abandon()
-source.unlink()
 reopened = Catalog(catalog._directory.root)
 assert read_input(reopened, item.batch_id, item.entry.item_id) == b'installed immutable original'
 assert verify_inputs(reopened, item.batch_id) == (snapshot, (item,))
+assert read_processed(reopened, item.batch_id, item.entry.item_id)[0] == processed
 sqlite = runtime_fingerprint()
 assert sqlite['apsw'] == '3.53.4.0' and sqlite['sqlite'] == '3.53.4'
 for action, code in ((lambda: require_optional_dependencies('embedding'), ErrorCode.DEPENDENCY_UNAVAILABLE),
@@ -67,11 +71,12 @@ for action, code in ((lambda: require_optional_dependencies('embedding'), ErrorC
         assert exc.error.code == code and exc.error.stage
     else:
         raise AssertionError('missing capability must fail explicitly')
-for name in ('codeplus', 'torch', 'transformers', 'tokenizers', 'pymilvus', 'textual'):
+for name in ('codeplus', 'torch', 'transformers', 'pymilvus', 'textual'):
     assert importlib.util.find_spec(name) is None, name
     assert not any(key == name or key.startswith(name + '.') for key in sys.modules), name
 requirements = metadata.requires('codeplus-agentic-rag')
-assert len(requirements) == 2 and 'apsw==3.53.4.0' in requirements and any(item.startswith('pydantic') for item in requirements)
+assert len(requirements) == 4 and 'apsw==3.53.4.0' in requirements and any(item.startswith('pydantic') for item in requirements)
+assert 'markdown-it-py==4.0.0' in requirements and 'tokenizers==0.23.2' in requirements
 distribution = metadata.distribution('codeplus-agentic-rag')
 assert not distribution.entry_points
 installed = {dist.metadata['Name']: dist.version for dist in metadata.distributions()}
@@ -79,7 +84,7 @@ print(json.dumps({'executable':sys.executable, 'python':sys.version, 'prefix':st
                   'cwd':str(pathlib.Path.cwd()), 'import_path':str(location), 'isolated':bool(sys.flags.isolated),
                   'version':agentic_rag.__version__, 'requirements':requirements, 'installed':installed,
                   'sqlite':sqlite, 'storage_roundtrip':True, 'input_snapshot_roundtrip':True,
-                  'manifest_hash':manifest.identity, 'raw_hash':item.raw.sha256,
+                  'manifest_hash':manifest.identity, 'raw_hash':item.raw.sha256, 'parsed_checkpoint_roundtrip':True,
                   'document_encoding_fingerprint':snapshot.document_encoding_fingerprint,
                   'forbidden_modules_loaded':[], 'missing_dependencies_diagnostic':True}))
 '''
@@ -124,10 +129,11 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
                         ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py")}
         storage_sources = {"agentic_rag/storage/" + name for name in
                            ("__init__.py", "archives.py", "catalog.py", "database.py", "locks.py",
-                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql")}
+                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql")}
         ingestion_sources = {"agentic_rag/ingestion/" + name for name in
-                             ("__init__.py", "records.py", "source.py", "selection.py", "capture.py")}
-        assert expected_sources == root_sources | storage_sources | ingestion_sources
+                             ("__init__.py", "records.py", "source.py", "selection.py", "capture.py", "parsing.py", "chunking.py", "processing.py")}
+        model_sources = {'agentic_rag/models/__init__.py', 'agentic_rag/models/tokenization.py'}
+        assert expected_sources == root_sources | storage_sources | ingestion_sources | model_sources
         for artifact in (direct_wheel, sdist, rebuilt_wheel):
             if artifact.suffix == ".whl":
                 with zipfile.ZipFile(artifact) as archive:
@@ -149,7 +155,8 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
         requirements = tmp_path / "runtime-requirements.txt"
         command([uv, "export", "--project", package, "--locked", "--no-dev", "--no-emit-project",
                  "--no-header", "--output-file", requirements])
-        config = runpy.run_path(str(package / "tests/test_configuration.py"))["example_config"]()
+        helper = runpy.run_path(str(package / "tests/parsing_support.py"))
+        config = helper['configuration']().model_dump(mode='json')
         config_path = outside / "config.json"
         config_path.write_text(json.dumps(config), encoding="utf-8")
         smoke = outside / "installed_smoke.py"
@@ -162,13 +169,13 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
             command([uv, "pip", "install", "--python", python, "--require-hashes", "-r", requirements])
             command([uv, "pip", "install", "--python", python, "--no-deps", wheel])
             command([uv, "pip", "check", "--python", python])
-            evidence = json.loads(command([python, "-I", "-B", smoke, config_path]))
+            evidence = json.loads(command([python, "-I", "-B", smoke, config_path, helper['cache']()]))
             evidence["route"] = label
             assert not Path(evidence["cwd"]).is_relative_to(package)
             assert Path(evidence["import_path"]).is_relative_to(install)
             report["installations"].append(evidence)
         report["result"] = "PASS"
     finally:
-        evidence_path = os.environ.get("R07_INSTALL_REPORT") or os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
+        evidence_path = os.environ.get("R08_INSTALL_REPORT") or os.environ.get("R07_INSTALL_REPORT") or os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
         if evidence_path:
             Path(evidence_path).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

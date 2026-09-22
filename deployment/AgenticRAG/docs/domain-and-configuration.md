@@ -1,6 +1,6 @@
 # R05 领域对象与配置契约
 
-2026-09-22；记录 schema_version=1，开发发行 codeplus-agentic-rag 0.1.0。本文记录 R05 数据类型、装配、指纹和模型能力协议；R06 已增加独立的 [存储与并发基础](storage-and-concurrency.md)，R07 增加 [输入快照](input-snapshots.md) 与 SQLite schema 2，原领域／配置类型接口保持不变。解析器、worker、检索和宿主接入仍待后续任务；R05 类型本身不做索引重建或文件系统写入。
+2026-09-22；记录 schema_version=1，开发发行 codeplus-agentic-rag 0.1.0。本文记录 R05 数据类型、装配、指纹和模型能力协议；R06 增加 [存储与并发基础](storage-and-concurrency.md)，R07 增加 [输入快照](input-snapshots.md)，R08 增加 [解析与来源映射](parsing-and-source-maps.md) 与 SQLite schema 3。原领域／配置类型接口保持不变。worker、检索和宿主接入仍待后续任务；R05 类型本身不做索引重建或文件系统写入。
 
 ## 记录和身份
 
@@ -8,7 +8,7 @@
 
 所有记录使用 Pydantic 的 frozen/strict/extra=forbid，嵌套对象也冻结，集合用 tuple；JSON 数组读回 tuple，不保留外部 dict/list 引用。`model_validate_json` 是 JSON 入口，Python 构造需实际 UUID/枚举/datetime。`model_copy(update=...)` 重新验证，拒绝绕过不变量的修改。禁止把 Pydantic 的 `model_construct` 或 `object.__setattr__` 当成外部数据入口。未知版本/字段、布尔冒充整数、非法 SHA256、NaN/Infinity、非正区间均拒绝。
 
-Span 使用解析文本的 Unicode codepoint 半开区间 `[start,end)`；多个区间须有序且不重叠，不是原始字节 offset。原件字节映射与文档内范围核验留 R08；空文档没有非空证据区间。DocumentVersion 要求带时区的采集时间与结构化来源元数据。批次发布状态必须有 published_revision_id，待恢复必须有原阶段；这些是记录一致性检查，实际状态迁移/CAS/事务仍属后续实现。
+Span 使用解析文本的 Unicode codepoint 半开区间 `[start,end)`；多个区间须有序且不重叠，不是原始字节 offset。R08 已提供原件字节映射与文档内范围核验；空文档没有非空证据区间。DocumentVersion 要求带时区的采集时间与结构化来源元数据。批次发布状态必须有 published_revision_id，待恢复必须有原阶段；类型检查本身不替代存储事务和后续发布流程。
 
 Run 保存完整解析后的 RunConfiguration 与其 hash，任务只绑定一个 kb_id/revision_id；completed、partial、incomplete、failed、cancelled 与 stop_reason 校验一致。无可交付内容的 incomplete 同样保留 token_budget 等具体预算原因；未知 token 用量为 null，不伪装成 0。Evidence 表示可信交付回执登记的正文，必须含 delivery_id；单纯构造该对象不授予引用权限，R11/R12 的存储与回执路径仍是权威。Citation 的跨对象/原文摘录核验尚未实现。
 
@@ -72,7 +72,7 @@ R03 保守输入上限为完整 2048 token，batch<=4，`batch_size * max(comple
 
 同名 profile 更改实际配置会改变身份；只改名称不改变编码身份。拒绝未支持的 tokenizer/template/revision 比误认兼容更早失败。保守地把 query instruction、设备/运行限制纳入 embedding 身份，未声明它们跨配置可兼容；未来若放宽需版本化兼容证据。单改 QA/报告预算或 Rerank 不改变文档编码/索引身份。R16 再用这些边界提示重建并执行确认流程，R05 不自行重建。
 
-R07 InputManifest 仅标识本批固定请求；InputCheckpoint/RawSnapshot 另存逐文件完整原件与错误，不替代要求 parsed/source_map 的 DocumentVersion。批次仍直接关联此处完整 ProcessingSnapshot，重开/接管不读取新默认配置。变化对照使用基准发布成员与该版配置，编码不兼容给 requires_rebuild_confirmation；不存在“原件 hash 一样就一定不用重建”的简化。配置字段接受实验 parser/version 也不代表 R08 对应执行器已完成。
+R07 InputManifest 仅标识本批固定请求；InputCheckpoint/RawSnapshot 另存逐文件完整原件与错误，不替代要求 parsed/source_map 的 DocumentVersion。批次仍直接关联此处完整 ProcessingSnapshot，重开/接管不读取新默认配置。变化对照使用基准发布成员与该版配置，编码不兼容给 requires_rebuild_confirmation；不存在“原件 hash 一样就一定不用重建”的简化。R08 真实执行仅接受 PARSER 常量与 canonical-offsets-v1 chunker 身份，其他实验名被 Schema 接受也不能据此运行。真实处理复用既有 ImportItem/CheckpointArtifact 语义，stage 不在其他表重复维护。
 
 ## 能力协议与安装边界
 
@@ -80,4 +80,4 @@ EmbeddingProvider 的 embed_documents/embed_query、RerankProvider 的 rerank �
 
 RequestContext 使用 `time.monotonic_ns()` 域的绝对 deadline_monotonic_ns 作为同机临时硬时限，可选 deadline_at 仅作带时区审计。不能跨重启复用单调值，R09 握手必须确认同机/同启动时钟域，排队/加载/推理共用同一截止点；R05 不实现调度或取消。
 
-发行包含六个领域／配置 Python 源码、九个 storage Python 源码、五个 ingestion Python 源码、schema.sql/inputs.sql 两个迁移资源、MIT 许可证和 metadata；sdist 另含 pyproject/README/uv.lock，以及 Hatch 为重建保留的包级 .gitignore 排除清单。tests、probes、eval、docs、Compose、缓存、权重及用户资料不发布。真实 package-install 测试构建直接 wheel 与 sdist→wheel，用两个新环境和非仓库 Unicode/空格 cwd，清空 PYTHONPATH，以 `python -I -B` 核验 site-packages 导入、metadata、完整配置／存储／原件快照调用、缺依赖诊断及未加载 GPU/宿主。构建工具采用独立核心环境的锁定 Hatchling，不依赖根打包配置；运行环境仅安装锁中 Pydantic 与 APSW 核心依赖。GPU、Milvus、Linux/宿主联装及最终同一实现迁移尚未验收。
+发行包含领域／配置、storage、ingestion 和轻量 models 源码，schema.sql/inputs.sql/processing.sql 三份迁移、MIT 许可证和 metadata；sdist 另含 pyproject/README/uv.lock，以及 Hatch 的包级 .gitignore。tests、probes、eval、docs、Compose、缓存、权重及用户资料不发布。正式安装测试逐文件核验源码/SQL集合，构建直接 wheel 与 sdist→wheel，在两套仓库外 Unicode/空格 cwd 的干净环境清空 PYTHONPATH，以 `python -I -B` 运行 site-packages 导入、配置/存储/实际原件捕获、删源解析和处理检查点重开。安装锁中 Pydantic/APSW/markdown-it-py/tokenizers 及传递依赖，不强制 Torch、CUDA、Milvus 或宿主；tokenizer 从显式外部冻结缓存加载。GPU、Milvus、Linux/宿主联装及最终同一实现迁移尚未验收。

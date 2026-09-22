@@ -1,0 +1,12 @@
+{
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r08-executor-20260922",
+  "root_absent": true,
+  "files_removed": 24056,
+  "reparse_entries_removed": 238,
+  "directories_removed": 4449,
+  "task_python_processes_remaining": 0,
+  "followed_reparse": false,
+  "modified_shared_hardlink_attributes": false,
+  "method": "PowerShell/.NET deletes only verified owned entries and empty directories; no recursive shell delete",
+  "reusable_core_cuda_environments_and_model_cache_retained": true
+}

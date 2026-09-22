@@ -1,0 +1,271 @@
+F.................EE..EE......                                           [100%]
+=================================== ERRORS ====================================
+_ ERROR at setup of test_complete_tokenizer_budget_and_independent_coverage[e\u0301 \u4e2d\u6587\U0001f600\U0001f9d1\U0001f3fd\u200d\U0001f4bb e\u0301 \u4e2d\u6587\U0001f600\U0001f [repetitive pytest parameter ID elided; 40279 chars; sha256=0a95b941e8bcac90aa58cb46ba5efe9caabf0473376ee787f4f255b177ef0ca5] 9d1\U0001f3fd\u200d\U0001f4bb e\u0301 \u4e2d\u6587\U0001f600\U0001f9d1\U0001f3fd\u200d\U0001f4bb ] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x000001302F029170>
+when = 'setup'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:361:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:250: in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_setup
+    yield
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\capture.py:895: in pytest_runtest_setup
+    return (yield)
+            ^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:169: in pytest_runtest_setup
+    _update_current_test_var(item, "setup")
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:215: in _update_current_test_var
+    os.environ[var_name] = value
+    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+[REDACTED complete environment repr; exception context retained below]
+key = 'PYTEST_CURRENT_TEST'
+value = 'tests/test_chunking.py::test_complete_tokenizer_budget_and_independent_coverage[e\\u0301 \\u4e2d\\u6587\\U0001f600\\U...f9d1\\U0001f3fd\\u200d\\U0001f4bb e\\u0301 \\u4e2d\\u6587\\U0001f600\\U0001f9d1\\U0001f3fd\\u200d\\U0001f4bb ] (setup)'
+
+>   ???
+E   ValueError: the environment variable is longer than 32767 characters
+
+<frozen os>:715: ValueError
+_ ERROR at teardown of test_complete_tokenizer_budget_and_independent_coverage[e\u0301 \u4e2d\u6587\U0001f600\U0001f9d1\U0001f3fd\u200d\U0001f4bb e\u0301 \u4e2d\u6587\U0001f600\U00 [repetitive pytest parameter ID elided; 40282 chars; sha256=6bc8f2b878e0c470beeebc2ef63e78f37281f203a9866c01a3612086ebe63c58] 9d1\U0001f3fd\u200d\U0001f4bb e\u0301 \u4e2d\u6587\U0001f600\U0001f9d1\U0001f3fd\u200d\U0001f4bb ] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x000001302EFF78A0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:361:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:250: in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\logging.py:873: in pytest_runtest_teardown
+    yield
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:198: in pytest_runtest_teardown
+    _update_current_test_var(item, "teardown")
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:215: in _update_current_test_var
+    os.environ[var_name] = value
+    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+[REDACTED complete environment repr; exception context retained below]
+key = 'PYTEST_CURRENT_TEST'
+value = 'tests/test_chunking.py::test_complete_tokenizer_budget_and_independent_coverage[e\\u0301 \\u4e2d\\u6587\\U0001f600\\U...1\\U0001f3fd\\u200d\\U0001f4bb e\\u0301 \\u4e2d\\u6587\\U0001f600\\U0001f9d1\\U0001f3fd\\u200d\\U0001f4bb ] (teardown)'
+
+>   ???
+E   ValueError: the environment variable is longer than 32767 characters
+
+<frozen os>:715: ValueError
+_ ERROR at setup of test_complete_tokenizer_budget_and_independent_coverage[\u53e5\u5b50\u3002\u7b2c\u4e8c\u53e5\uff01\u7b2c\u4e09\u53e5\uff1f\u7b2c\u56db\u53e5\u3002\u53e5\u5b50\u [repetitive pytest parameter ID elided; 54079 chars; sha256=fcaed7bb68c89b46ff1f9389d108075e38f625acdb4ea1128eddeb52a418b587] 5\u3002\u53e5\u5b50\u3002\u7b2c\u4e8c\u53e5\uff01\u7b2c\u4e09\u53e5\uff1f\u7b2c\u56db\u53e5\u3002] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x000001302EFF78A0>
+when = 'setup'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:361:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:250: in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_setup
+    yield
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\capture.py:895: in pytest_runtest_setup
+    return (yield)
+            ^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:169: in pytest_runtest_setup
+    _update_current_test_var(item, "setup")
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:215: in _update_current_test_var
+    os.environ[var_name] = value
+    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+[REDACTED complete environment repr; exception context retained below]
+key = 'PYTEST_CURRENT_TEST'
+value = 'tests/test_chunking.py::test_complete_tokenizer_budget_and_independent_coverage[\\u53e5\\u5b50\\u3002\\u7b2c\\u4e8c\\...3002\\u53e5\\u5b50\\u3002\\u7b2c\\u4e8c\\u53e5\\uff01\\u7b2c\\u4e09\\u53e5\\uff1f\\u7b2c\\u56db\\u53e5\\u3002] (setup)'
+
+>   ???
+E   ValueError: the environment variable is longer than 32767 characters
+
+<frozen os>:715: ValueError
+_ ERROR at teardown of test_complete_tokenizer_budget_and_independent_coverage[\u53e5\u5b50\u3002\u7b2c\u4e8c\u53e5\uff01\u7b2c\u4e09\u53e5\uff1f\u7b2c\u56db\u53e5\u3002\u53e5\u5b5 [repetitive pytest parameter ID elided; 54082 chars; sha256=faff0471210798f72d50014943057e5f140b52171e715ea0d6507b32ba58c286] 5\u3002\u53e5\u5b50\u3002\u7b2c\u4e8c\u53e5\uff01\u7b2c\u4e09\u53e5\uff1f\u7b2c\u56db\u53e5\u3002] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x000001302EF2D170>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:361:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:250: in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\logging.py:873: in pytest_runtest_teardown
+    yield
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:198: in pytest_runtest_teardown
+    _update_current_test_var(item, "teardown")
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\_pytest\runner.py:215: in _update_current_test_var
+    os.environ[var_name] = value
+    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+[REDACTED complete environment repr; exception context retained below]
+key = 'PYTEST_CURRENT_TEST'
+value = 'tests/test_chunking.py::test_complete_tokenizer_budget_and_independent_coverage[\\u53e5\\u5b50\\u3002\\u7b2c\\u4e8c\\...2\\u53e5\\u5b50\\u3002\\u7b2c\\u4e8c\\u53e5\\uff01\\u7b2c\\u4e09\\u53e5\\uff1f\\u7b2c\\u56db\\u53e5\\u3002] (teardown)'
+
+>   ???
+E   ValueError: the environment variable is longer than 32767 characters
+
+<frozen os>:715: ValueError
+================================== FAILURES ===================================
+_____________ test_repeated_paragraphs_and_nested_heading_ranges ______________
+
+    def test_repeated_paragraphs_and_nested_heading_ranges():
+        text = '# Root\n\nSame paragraph.\n\n## Child\n\nSame paragraph.\n\n### Deep\nbody\n\n# Other\nend'
+        parsed = parse_document(text.encode(), 'text/markdown', uuid4())
+        assert [s.heading_path for s in parsed.sections] == [('Root',), ('Root','Child'), ('Root','Child','Deep'), ('Other',)]
+        paragraphs = [b.span for b in parsed.blocks if b.kind == 'paragraph']
+>       assert paragraphs[0].start == 8 and paragraphs[1].start == 33
+E       assert (8 == 8 and 35 == 33)
+E        +  where 8 = Span(schema_version=1, start=8, end=24).start
+E        +  and   35 = Span(schema_version=1, start=35, end=51).start
+
+deployment\AgenticRAG\tests\test_parsing.py:14: AssertionError
+=========================== short test summary info ===========================
+FAILED deployment\AgenticRAG\tests\test_parsing.py::test_repeated_paragraphs_and_nested_heading_ranges
+ERROR deployment\AgenticRAG\tests\test_chunking.py::test_complete_tokenizer_budget_and_independent_coverage[e\u0301 \u4e2d\u6587\U0001f600\U0001f9d1\U0001f3fd\u200d\U0001f4bb e\u03 [repetitive pytest parameter ID elided; 40309 chars; sha256=aeff18f751507c50d2ea7bbf61229e8fcee44c310030184fafd25440f13cc3a8] 1f9d1\U0001f3fd\u200d\U0001f4bb e\u0301 \u4e2d\u6587\U0001f600\U0001f9d1\U0001f3fd\u200d\U0001f4bb ]
+ERROR deployment\AgenticRAG\tests\test_chunking.py::test_complete_tokenizer_budget_and_independent_coverage[e\u0301 \u4e2d\u6587\U0001f600\U0001f9d1\U0001f3fd\u200d\U0001f4bb e\u03 [repetitive pytest parameter ID elided; 40309 chars; sha256=aeff18f751507c50d2ea7bbf61229e8fcee44c310030184fafd25440f13cc3a8] 1f9d1\U0001f3fd\u200d\U0001f4bb e\u0301 \u4e2d\u6587\U0001f600\U0001f9d1\U0001f3fd\u200d\U0001f4bb ]
+ERROR deployment\AgenticRAG\tests\test_chunking.py::test_complete_tokenizer_budget_and_independent_coverage[\u53e5\u5b50\u3002\u7b2c\u4e8c\u53e5\uff01\u7b2c\u4e09\u53e5\uff1f\u7b2c [repetitive pytest parameter ID elided; 54109 chars; sha256=7d088f6fbefcaac92451ac3ebbe56fe54aed0e57009f769969647396e81d201c] 3e5\u3002\u53e5\u5b50\u3002\u7b2c\u4e8c\u53e5\uff01\u7b2c\u4e09\u53e5\uff1f\u7b2c\u56db\u53e5\u3002]
+ERROR deployment\AgenticRAG\tests\test_chunking.py::test_complete_tokenizer_budget_and_independent_coverage[\u53e5\u5b50\u3002\u7b2c\u4e8c\u53e5\uff01\u7b2c\u4e09\u53e5\uff1f\u7b2c [repetitive pytest parameter ID elided; 54109 chars; sha256=7d088f6fbefcaac92451ac3ebbe56fe54aed0e57009f769969647396e81d201c] 3e5\u3002\u53e5\u5b50\u3002\u7b2c\u4e8c\u53e5\uff01\u7b2c\u4e09\u53e5\uff1f\u7b2c\u56db\u53e5\u3002]
+1 failed, 25 passed, 4 errors in 2.54s
