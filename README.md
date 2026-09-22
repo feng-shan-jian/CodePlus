@@ -241,7 +241,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 
 > **面对当前问题，依据究竟在哪里。**
 
-这也是下一步正在实现的 **[Agentic RAG（Work）模式](codeplus/tools/knowledge.py)** 想专门处理的事情。
+这也是下一步正在实现的 **[Agentic RAG（Work）模式](#接下来想做的事)** 想专门处理的事情。
 
 它不会取代 Memory，也不负责代码检索。
 
@@ -251,7 +251,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 | --- | --- |
 | **当前代码仓库** | [Glob](codeplus/tools/glob.py) / [Grep](codeplus/tools/grep.py) / [ReadFile](codeplus/tools/read_file.py) 直接读取真实工作区 |
 | **跨会话经验** | [Memory](codeplus/memory/recall.py) |
-| **外部非结构化资料** | [Agentic RAG（Work）模式](codeplus/knowledge/service.py) |
+| **外部非结构化资料** | [Agentic RAG（Work）模式](#接下来想做的事) |
 
 面对几百份文档时，有时连答案藏在哪一份资料、应该搜索什么关键词都不知道。语义检索可以先找到一个阅读起点，Agent 再带着当前问题回到原文，继续查找、补充证据，最后整理成回答或报告。
 
@@ -261,7 +261,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 
 > **报告写到哪里，依据就能跟到哪里。**
 
-[来源、位置和版本](codeplus/knowledge/citations.py) 需要一起保留下来，让结论能够重新回到原文核对；没有找到足够依据的地方，也应该明确留下，而不是由模型凭过去的印象补齐。
+来源、位置和版本需要一起保留下来，让结论能够重新回到原文核对；没有找到足够依据的地方，也应该明确留下，而不是由模型凭过去的印象补齐。
 
 这样，Memory、代码检索和 Agentic RAG 各自处理自己的信息边界，而不是为了“统一检索”被塞进同一套机制。
 
@@ -321,7 +321,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 
 ## 接下来想做的事
 
-接下来，继续扩展 **Agentic RAG（Work）模式**：补充扫描件 OCR 与复杂版面解析，并增加 Rerank 精排，让更多类型的资料能够参与查证与引用报告生成。
+接下来，在 `deployment/AgenticRAG` 独立重建 **Agentic RAG（Work）模式**，首版按已确认规划推进，包括 Rerank 精排。扫描件 OCR 与复杂版面解析保留为后续扩展方向，让更多类型的资料能够参与查证与引用报告生成。
 
 ---
 
@@ -335,11 +335,10 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 | **执行** | Agent Loop · 文件读写 · 代码搜索 · 命令执行 |
 | **协作** | Sub-agent · Team Mailbox · 共享任务板 · 后台任务 |
 | **上下文** | Session 恢复 · Memory · Compaction · 文件回退 |
-| **知识库（扩展中）** | Agentic RAG（Work）模式 · 文档导入 · 引用问答 · 报告生成 |
 | **扩展** | 多模型协议 · Skill · MCP · Hooks |
 | **执行控制** | 权限规则 · 路径边界 · 可选沙箱 · Git worktree |
 
-Agentic RAG（Work）模式已接入 TUI、CLI 和 Remote，支持本地 Qwen Embedding + Milvus 向量、BM25 及 RRF 混合检索，回答由配置的模型生成。默认 auto 在新库用 hybrid、旧向量库用 dense；当前评测使用统一分场景题库，运行与边界见 [检索评测说明](eval/RAG-eval/benchmark.md)。
+旧 RAG 实现及其 TUI、CLI、Remote 入口已移除。新核心已在 [deployment/AgenticRAG](deployment/AgenticRAG/README.md) 完成 R00–R11 验收，宿主问答入口仍待 R12 接入；完整重建尚未完成。官方 MultiHop-RAG 的 609 篇语料、50 / 200 / 2,556 题三个档位及离线评分保留，见 [评测说明](eval/RAG-eval/README.md)。
 
 ---
 
@@ -347,7 +346,7 @@ Agentic RAG（Work）模式已接入 TUI、CLI 和 Remote，支持本地 Qwen Em
 
 ![CodePlus 架构：引擎、工具、交互、安全和记忆](docs/assets/codeplus-architecture-five-regions-zh.png)
 
-回头看，前面的问题逐渐落在了不同的职责上：Agent Loop 组织行动，权限约束执行，Session、Memory 与 Context 保留不同生命周期的信息，知识库补充外部证据。图中展示这些逻辑区域；知识库的接入与边界见 [架构说明](docs/knowledge-architecture.md)。
+回头看，前面的问题逐渐落在了不同的职责上：Agent Loop 组织行动，权限约束执行，Session、Memory 与 Context 保留不同生命周期的信息。图中展示这些逻辑区域；外部证据能力后续由 [AgenticRAG](#接下来想做的事) 独立重建。
 
 ---
 
@@ -382,48 +381,16 @@ uv run codeplus --remote
 
 Remote 默认监听 `0.0.0.0:18888`，本机访问 `http://localhost:18888`。TUI 按权限规则处理需要确认的修改与命令；普通 `-p` 会自动同意权限询问。
 
-### 可选：Agentic RAG（Work）模式
-
-本地知识库能力仍在扩展中，通过 `/knowledge` 命令启用和管理。
-
-按 [部署说明](docs/knowledge-setup.md#最短使用流程) 在已有配置中保留 `providers`，启用 `knowledge.enabled`。项目受管本地部署另设 `knowledge.managed_local: true`，首次进入知识库会自动准备服务与模型；外部 Milvus 保持 `false`，只连接配置的地址。
-
-```powershell
-uv sync --locked --extra knowledge
-uv run --extra knowledge codeplus
-```
-
-后续运行也保留 `--extra knowledge`。首次准备可能下载本地嵌入模型；失败后用 `/knowledge prepare` 重试。回答仍使用已配置的模型服务。
-
-#### 导入与使用
-
-```text
-/knowledge create "个人资料"
-/knowledge import "C:\资料目录"
-根据资料比较各方案，附原文引用，并将报告保存为 comparison.md。
-/knowledge open K:<kb_id>:<chunk_id>
-```
-
-`create` 自动选中知识库，下次用 `/knowledge use <kb_id>`。同一路径再次导入即更新；`/knowledge sources` 查看文档，`/knowledge status` 查看状态，`/knowledge off` 退出资料问答。写报告沿用原文件权限。
-
-#### 引用与非交互调用
-
-TUI 与 Remote 回答中的 `[1]`、`[2]` 可点击查看文件名、位置、引用原文及版本状态；TUI 也可 Tab 聚焦回答后按 Enter 打开、Esc 关闭。恢复会话仍可查看切库或退出知识模式前的引用，CLI 与报告保留完整追溯 ID。
-
-非交互问答使用 `uv run --extra knowledge codeplus -p "根据资料回答并引用来源" --knowledge <kb_id>`。知识库非交互模式拒绝需要询问的操作，写报告可显式加 `--mode acceptEdits`。Remote 使用同一套命令，导入路径属于服务端。删除、恢复、格式限制和检索实验见 [完整说明](docs/knowledge-setup.md)。
-
----
-
 ## 开发
 
-可以沿一次工具调用阅读 [Agent Loop](codeplus/agent.py) 与 [tools](codeplus/tools)，再追踪 [agents](codeplus/agents) / [teams](codeplus/teams) 的上下文与消息流。[memory](codeplus/memory)、[context](codeplus/context) 和 [knowledge](codeplus/knowledge) 则分别处理长期记忆、当前推理窗口与外部证据。
+可以沿一次工具调用阅读 [Agent Loop](codeplus/agent.py) 与 [tools](codeplus/tools)，再追踪 [agents](codeplus/agents) / [teams](codeplus/teams) 的上下文与消息流。[memory](codeplus/memory) 和 [context](codeplus/context) 分别处理长期记忆与当前推理窗口。
 
 ```powershell
 uv sync --locked --dev
 uv run pytest
 ```
 
-知识库的真实集成验证还需要可选依赖、Milvus 和本地模型，环境与验收记录见 [知识库说明](docs/knowledge-setup.md)。
+RAG 数据校验与离线评分见 [评测说明](eval/RAG-eval/README.md)；独立核心的真实 Dense 检索验证见 [R10 记录](deployment/AgenticRAG/docs/implementation-records/R10.md)，宿主 Agent 回答评测仍待后续接入。
 
 ---
 

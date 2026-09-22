@@ -1,0 +1,630 @@
+{
+  "base": "cd6ed3470c1ce5619c6e8bc6791346ac577e64c1",
+  "captured_at": "2026-09-22T08:15:18.020826+00:00",
+  "files": {
+    ".codeplus/config.yaml.example": "ad882dcbbab8262d637b240e4f17fde6033a04b47747d398dd2cc4cd4d0862a8",
+    "README.md": "e538593e822e61d8cb5492396678aae9772c12f8f13fae332101b139d5de5a40",
+    "README_EN.md": "7decf290dd1206889448dcd58e56aaa69d28ccde6e30a781f21012e3ec257857",
+    "codeplus/__main__.py": "9bde43daf2441eff9869cc67a3d3b24640517dd85dd60ee41e33cc31a60bac9b",
+    "codeplus/agent.py": "146e36562f93d9b81230add52abde7d20276f657b3d4d72dbe99d1ad3121324c",
+    "codeplus/app.py": "8dcd60602a3a59826dfc88fdbc03a4daf78dd3100f0ba8caaaed66c4c41d1429",
+    "codeplus/commands/completion.py": "142b0fd75462606bd59480afb1686b351c416b9acf47c71f1dee46fde79fbb9f",
+    "codeplus/commands/handlers/__init__.py": "05a41f586abab68eeff6c6e31b812ff5e7a1b40710c17e33d4c6a5da4c43a09b",
+    "codeplus/commands/handlers/knowledge.py": null,
+    "codeplus/commands/handlers/session.py": "a80f36b663c1beb092bd8acb9b6c7fa53fe78f14eda923fe9975b45ce9a35f28",
+    "codeplus/commands/knowledge_menu.py": null,
+    "codeplus/config.py": "6ae4f069f95740febe2a0a886699c064410c53e9471cdbb1745f94192ddc0e7c",
+    "codeplus/knowledge/__init__.py": null,
+    "codeplus/knowledge/__main__.py": null,
+    "codeplus/knowledge/benchmark.py": null,
+    "codeplus/knowledge/citations.py": null,
+    "codeplus/knowledge/documents.py": null,
+    "codeplus/knowledge/embedding.py": null,
+    "codeplus/knowledge/evaluate.py": null,
+    "codeplus/knowledge/metadata.py": null,
+    "codeplus/knowledge/milvus_store.py": null,
+    "codeplus/knowledge/models.py": null,
+    "codeplus/knowledge/retrieval.py": null,
+    "codeplus/knowledge/runtime.py": null,
+    "codeplus/knowledge/service.py": null,
+    "codeplus/memory/session.py": "cecbd856899349d4097c71a5ba5640dc01cb990dfae22f4fa153a1419df2404b",
+    "codeplus/prompts.py": "822ebb78b0a9eb936988c6f15d01a9e094e0ea61ee8b12fd65f339ab628195b6",
+    "codeplus/remote.py": "88a99cb6fbd019a9837fc91b269ca9ad37aa27e88a789e05f5e2ad9aba415789",
+    "codeplus/source_preview.py": null,
+    "codeplus/styles.tcss": "afaa75c26edbd0d613b9b397a36fe1a8e133935e4e91100d8e252f9a9cf42279",
+    "codeplus/tools/knowledge.py": null,
+    "codeplus/validator.py": "0d649e6dce048991094f169f9abd508ebc23b57354d245de7527a926ebf4863d",
+    "codeplus/web_content.py": "830b535c1b7b4b640030eb060d37a80e8c02eb20bcb17e510542ed291185ab19",
+    "deployment/AgenticRAG/tests/pre_r12_cleanup_install.py": "bd6ef31b9bafcf20386e41698414d509322882640668b3b8ab30fdbfd954b956",
+    "deployment/AgenticRAG/tests/test_evaluation_protocol.py": "3136562fe142e9e02c78bf1632f19874571439ad2d71ac4ff5ac929cd4552301",
+    "deployment/AgenticRAG/tests/test_pre_r12_cleanup.py": "84ccb12b9f2553fea69065d301405dbd1ec79752dc50b3747c06d3dc0b6ffd29",
+    "docs/knowledge-architecture.md": null,
+    "docs/knowledge-data-preparation-plan.md": null,
+    "docs/knowledge-hybrid-retrieval-plan.md": null,
+    "docs/knowledge-setup.md": null,
+    "docs/knowledge-tasks.md": null,
+    "eval/RAG-eval/README.md": "f311fc1bea8caeea3e620d2009b394ad2b0ddec8772fc0736a0b4612f4ecc855",
+    "eval/RAG-eval/benchmark.md": "999f44f34db4715299a59e27ebce4b5a04668faae02356a4e0d8378f3d674c59",
+    "eval/RAG-eval/run.ps1": "4032bc93cc245787c5410337df58ece060883ec7978597b7ec895498dd49d369",
+    "pyproject.toml": "b3352ac691610f88ec2155d1a12fcc13da7a534fbc53b812ae1d1c8f95ff8838",
+    "tests/test_commands.py": "370eec91f28c8397c2b5df71fd4cd02ef78f634b33221c5f3f952ea93a984ff0",
+    "tests/test_entrypoints.py": "c8e18eeeaca112f52114c97119fc77daf6a3518240ccb0771e68879b3791d854",
+    "tests/test_knowledge.py": null,
+    "tests/test_knowledge_benchmark.py": null,
+    "tests/test_knowledge_commands.py": null,
+    "tests/test_knowledge_evaluate.py": null,
+    "tests/test_knowledge_interaction.py": null,
+    "tests/test_knowledge_prepare.py": null,
+    "tests/test_knowledge_service.py": null,
+    "tests/test_mcp.py": "9e67f3b7557a526d5d5b03bb91e80efa4edfa7e89ffdc083202ede0cc9b53453",
+    "tests/test_memory.py": "a97983ee72312c270ad67e4934476cab66de4ef81c88ba5790843697a2309fde",
+    "uv.lock": "73e62dbfb0293e629b6f9aa7ff74ecd3903158afc68135c6e59d5dab8c45c088"
+  },
+  "deletions": [
+    "codeplus/commands/handlers/knowledge.py",
+    "codeplus/commands/knowledge_menu.py",
+    "codeplus/knowledge/__init__.py",
+    "codeplus/knowledge/__main__.py",
+    "codeplus/knowledge/benchmark.py",
+    "codeplus/knowledge/citations.py",
+    "codeplus/knowledge/documents.py",
+    "codeplus/knowledge/embedding.py",
+    "codeplus/knowledge/evaluate.py",
+    "codeplus/knowledge/metadata.py",
+    "codeplus/knowledge/milvus_store.py",
+    "codeplus/knowledge/models.py",
+    "codeplus/knowledge/retrieval.py",
+    "codeplus/knowledge/runtime.py",
+    "codeplus/knowledge/service.py",
+    "codeplus/source_preview.py",
+    "codeplus/tools/knowledge.py",
+    "docs/knowledge-architecture.md",
+    "docs/knowledge-data-preparation-plan.md",
+    "docs/knowledge-hybrid-retrieval-plan.md",
+    "docs/knowledge-setup.md",
+    "docs/knowledge-tasks.md",
+    "tests/test_knowledge.py",
+    "tests/test_knowledge_benchmark.py",
+    "tests/test_knowledge_commands.py",
+    "tests/test_knowledge_evaluate.py",
+    "tests/test_knowledge_interaction.py",
+    "tests/test_knowledge_prepare.py",
+    "tests/test_knowledge_service.py"
+  ],
+  "scope_manifest": [
+    {
+      "path": ".codeplus/config.yaml.example",
+      "status": "M",
+      "before_sha256": "9b2393b78a1bafe0194d83f27a659aa8f257465d197b31414aafa631d81da5a8",
+      "after_sha256": "ad882dcbbab8262d637b240e4f17fde6033a04b47747d398dd2cc4cd4d0862a8"
+    },
+    {
+      "path": "README.md",
+      "status": "M",
+      "before_sha256": "668663e2a12a234c2fc2ecf0701c5d1911838cb2cc32b4dad137d6431bf5c3f7",
+      "after_sha256": "e538593e822e61d8cb5492396678aae9772c12f8f13fae332101b139d5de5a40"
+    },
+    {
+      "path": "README_EN.md",
+      "status": "M",
+      "before_sha256": "94ce7c6191f680ddeb3ed3bd9baa30e71149cb1895c7a0c5b19e1e0be3bdef5f",
+      "after_sha256": "7decf290dd1206889448dcd58e56aaa69d28ccde6e30a781f21012e3ec257857"
+    },
+    {
+      "path": "codeplus/__main__.py",
+      "status": "M",
+      "before_sha256": "7297ca6be9920a1328448b72b058df707e8a74496f93dbf59764981d49830ae0",
+      "after_sha256": "9bde43daf2441eff9869cc67a3d3b24640517dd85dd60ee41e33cc31a60bac9b"
+    },
+    {
+      "path": "codeplus/agent.py",
+      "status": "M",
+      "before_sha256": "1c415e0e51d61faa652c8492c69f5306e417c9d81a3a4dd9f4bfa3f697f74ee9",
+      "after_sha256": "146e36562f93d9b81230add52abde7d20276f657b3d4d72dbe99d1ad3121324c"
+    },
+    {
+      "path": "codeplus/app.py",
+      "status": "M",
+      "before_sha256": "05538395169e0b649e979645c6003df5ff9a1df688259fc39e6a36a449a2b122",
+      "after_sha256": "8dcd60602a3a59826dfc88fdbc03a4daf78dd3100f0ba8caaaed66c4c41d1429"
+    },
+    {
+      "path": "codeplus/commands/completion.py",
+      "status": "M",
+      "before_sha256": "956d36097fe397ec55f12651af4a097514ad188b26361f76e0cfabde3acd0ae5",
+      "after_sha256": "142b0fd75462606bd59480afb1686b351c416b9acf47c71f1dee46fde79fbb9f"
+    },
+    {
+      "path": "codeplus/commands/handlers/__init__.py",
+      "status": "M",
+      "before_sha256": "8bfa84b60f436a6dd7e499b8a33971b850eba650102bbc10829c99e63fbadd0d",
+      "after_sha256": "05a41f586abab68eeff6c6e31b812ff5e7a1b40710c17e33d4c6a5da4c43a09b"
+    },
+    {
+      "path": "codeplus/commands/handlers/knowledge.py",
+      "status": "D",
+      "before_sha256": "f7ea1a23d4194afee0f561407b416745073dfca151d16795d1261fdafa0d26de",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/commands/handlers/session.py",
+      "status": "M",
+      "before_sha256": "d5de537115d4ec83e2ca9e4881216b856241d590cb5fb85b4c5e300d713f3ba5",
+      "after_sha256": "a80f36b663c1beb092bd8acb9b6c7fa53fe78f14eda923fe9975b45ce9a35f28"
+    },
+    {
+      "path": "codeplus/commands/knowledge_menu.py",
+      "status": "D",
+      "before_sha256": "72cb2b379ccf89d5b88d7c6287d821963d6ffe3654b58b7fe67019b4b96d1b63",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/config.py",
+      "status": "M",
+      "before_sha256": "19c1dd0f28e499f92013738d4b1a48155ef8d4bbd319d62466684b72bfe1e417",
+      "after_sha256": "6ae4f069f95740febe2a0a886699c064410c53e9471cdbb1745f94192ddc0e7c"
+    },
+    {
+      "path": "codeplus/knowledge/__init__.py",
+      "status": "D",
+      "before_sha256": "6d28c36dd32107cfac27baa176dfbad7654589e410c2f710b8a9403c5c77bbc8",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/__main__.py",
+      "status": "D",
+      "before_sha256": "c1febb0de1f9476170d7e07a9936747f6f127c882df9bea043122f95870a7c70",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/benchmark.py",
+      "status": "D",
+      "before_sha256": "450c76de1892cec32779175dc229bc33fd351f0e87585cc79fbb5212e4e01323",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/citations.py",
+      "status": "D",
+      "before_sha256": "58110c3a10784f6f3683ab98cd94e81d92d2b58b04e78fd8d57944c55a2e4f37",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/documents.py",
+      "status": "D",
+      "before_sha256": "80ca184fc2bea52da940866b8e2494d852912c9a9195f6edb0c8143a946a04b2",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/embedding.py",
+      "status": "D",
+      "before_sha256": "942c42bdf065cdc74616aedc560d691bd67fcce7f00afebe795b61a34ed41719",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/evaluate.py",
+      "status": "D",
+      "before_sha256": "8db7293ccba7f6469bdd1ada1398e22bd0c5dec8506a06003db376285aa221e9",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/metadata.py",
+      "status": "D",
+      "before_sha256": "58b60b6d13846d9814b0e3d32aa9466e1b878c0e172fcfdcb221ca5d3a337754",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/milvus_store.py",
+      "status": "D",
+      "before_sha256": "52f65cf74db65a30b55cbb8842a55aa399692a57fefec82f556e67dc2dfc623e",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/models.py",
+      "status": "D",
+      "before_sha256": "27415179f59e71cd1f19a0463acced25b54c82ccd6b25979eb0224f450584053",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/retrieval.py",
+      "status": "D",
+      "before_sha256": "3bd32a7736c387837bc4cdaea2b96ab7b9c6e352458d3c135b61685bf71f6568",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/runtime.py",
+      "status": "D",
+      "before_sha256": "a5071281b95333dbb530a028028472073848a50da32db9e53f8294d699016632",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/knowledge/service.py",
+      "status": "D",
+      "before_sha256": "2a49bb093f3a7c98a74306f66ea083cfe09cda8956de699c9c0d76ac085c0778",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/memory/session.py",
+      "status": "M",
+      "before_sha256": "7cee75481671a5046195ea89acae938bc9e4e8cbce1c218249d57a3fab10895f",
+      "after_sha256": "cecbd856899349d4097c71a5ba5640dc01cb990dfae22f4fa153a1419df2404b"
+    },
+    {
+      "path": "codeplus/prompts.py",
+      "status": "M",
+      "before_sha256": "8924affe396062ec80b3bc5dd3d4e73b4b8e18ecc5fca806ce22101283a2cadd",
+      "after_sha256": "822ebb78b0a9eb936988c6f15d01a9e094e0ea61ee8b12fd65f339ab628195b6"
+    },
+    {
+      "path": "codeplus/remote.py",
+      "status": "M",
+      "before_sha256": "545d58f3a4498187aa50f6cf8232cdf3d572433c9ef2c6f9713c9edc24c8b9f0",
+      "after_sha256": "88a99cb6fbd019a9837fc91b269ca9ad37aa27e88a789e05f5e2ad9aba415789"
+    },
+    {
+      "path": "codeplus/source_preview.py",
+      "status": "D",
+      "before_sha256": "20f6e69d2c4deff88370885b3be0742d1e2e4a4a320d2a95346ad2c5475efdec",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/styles.tcss",
+      "status": "M",
+      "before_sha256": "a96bda7b75d1bf5fe4dbeef432a93894774f2f3c486d81327ae31cbf02a8bfd0",
+      "after_sha256": "afaa75c26edbd0d613b9b397a36fe1a8e133935e4e91100d8e252f9a9cf42279"
+    },
+    {
+      "path": "codeplus/tools/knowledge.py",
+      "status": "D",
+      "before_sha256": "aabf9c0b82bd5f937d1cf87f3289463a73d969a750a501f59ccb519391caae21",
+      "after_sha256": null
+    },
+    {
+      "path": "codeplus/validator.py",
+      "status": "M",
+      "before_sha256": "763a3bf608110a5c1d82091365a95534f92026ba62955a050c1853d66c1750c3",
+      "after_sha256": "0d649e6dce048991094f169f9abd508ebc23b57354d245de7527a926ebf4863d"
+    },
+    {
+      "path": "codeplus/web_content.py",
+      "status": "M",
+      "before_sha256": "023c01756230f5de9e63fa70228567ff97d6d743e1f7bf4c7e1b4937085777f8",
+      "after_sha256": "830b535c1b7b4b640030eb060d37a80e8c02eb20bcb17e510542ed291185ab19"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/pre_r12_cleanup_install.py",
+      "status": "A",
+      "before_sha256": null,
+      "after_sha256": "bd6ef31b9bafcf20386e41698414d509322882640668b3b8ab30fdbfd954b956"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_evaluation_protocol.py",
+      "status": "M",
+      "before_sha256": "ae5d3dd62bc7c78029f2744143375fb6592e8105d748579e15da600257e7cd4f",
+      "after_sha256": "3136562fe142e9e02c78bf1632f19874571439ad2d71ac4ff5ac929cd4552301"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_pre_r12_cleanup.py",
+      "status": "A",
+      "before_sha256": null,
+      "after_sha256": "84ccb12b9f2553fea69065d301405dbd1ec79752dc50b3747c06d3dc0b6ffd29"
+    },
+    {
+      "path": "docs/knowledge-architecture.md",
+      "status": "D",
+      "before_sha256": "ed43807fe041ed63a337df53b165276c4c568dc6fbd2f35d664a2a861207940e",
+      "after_sha256": null
+    },
+    {
+      "path": "docs/knowledge-data-preparation-plan.md",
+      "status": "D",
+      "before_sha256": "43a518f416a0ad768fc2b31a93d65c18a2727892392a303878f6e59e0af0ec90",
+      "after_sha256": null
+    },
+    {
+      "path": "docs/knowledge-hybrid-retrieval-plan.md",
+      "status": "D",
+      "before_sha256": "61188f43a1693ff1c16eede00f4ecdc8af18d5ca8bd7788ba9b4d026beecceef",
+      "after_sha256": null
+    },
+    {
+      "path": "docs/knowledge-setup.md",
+      "status": "D",
+      "before_sha256": "6804bc48e43399d6f351f21a05ff59813ef6ba0753015a79ec31be1e43cbbf3e",
+      "after_sha256": null
+    },
+    {
+      "path": "docs/knowledge-tasks.md",
+      "status": "D",
+      "before_sha256": "894ff1fc5c33dbf31bd6956019ed0349eef2a91386ace1448568c2e476b0ddbc",
+      "after_sha256": null
+    },
+    {
+      "path": "eval/RAG-eval/README.md",
+      "status": "M",
+      "before_sha256": "2c52965e56f1afc80d5698571f7313cf9a472339cb59a9b8a11b31ae10e3101e",
+      "after_sha256": "f311fc1bea8caeea3e620d2009b394ad2b0ddec8772fc0736a0b4612f4ecc855"
+    },
+    {
+      "path": "eval/RAG-eval/benchmark.md",
+      "status": "M",
+      "before_sha256": "62bb9d803b6fcabc5ce99fb559e581e49e28a8f055d0de924e7cfc98677bcc3f",
+      "after_sha256": "999f44f34db4715299a59e27ebce4b5a04668faae02356a4e0d8378f3d674c59"
+    },
+    {
+      "path": "eval/RAG-eval/run.ps1",
+      "status": "M",
+      "before_sha256": "0b09f27535074ff39e3768cb3bd3734406c0efb694f3e967ec40317507df4fa4",
+      "after_sha256": "4032bc93cc245787c5410337df58ece060883ec7978597b7ec895498dd49d369"
+    },
+    {
+      "path": "pyproject.toml",
+      "status": "M",
+      "before_sha256": "ef62ee722cf5245daccc1d2cee9f665fe8ea47d3aa165c1ad0fbd345f40c2884",
+      "after_sha256": "b3352ac691610f88ec2155d1a12fcc13da7a534fbc53b812ae1d1c8f95ff8838"
+    },
+    {
+      "path": "tests/test_commands.py",
+      "status": "M",
+      "before_sha256": "696cb8d2ba00cc991fd3f6e1dac378981be31b19d0292e24215be59a884f879f",
+      "after_sha256": "370eec91f28c8397c2b5df71fd4cd02ef78f634b33221c5f3f952ea93a984ff0"
+    },
+    {
+      "path": "tests/test_entrypoints.py",
+      "status": "A",
+      "before_sha256": null,
+      "after_sha256": "c8e18eeeaca112f52114c97119fc77daf6a3518240ccb0771e68879b3791d854"
+    },
+    {
+      "path": "tests/test_knowledge.py",
+      "status": "D",
+      "before_sha256": "ec233d55e28d332b244bc20d82174e81bf561bbe9dfc82b2a71b4b2d7cd5a91b",
+      "after_sha256": null
+    },
+    {
+      "path": "tests/test_knowledge_benchmark.py",
+      "status": "D",
+      "before_sha256": "247794cf6f1a09f30b3195c6a638ced55b5d67f423797909f4329671496d854b",
+      "after_sha256": null
+    },
+    {
+      "path": "tests/test_knowledge_commands.py",
+      "status": "D",
+      "before_sha256": "3e5ce553acd2f29c0a32a05fa9df34747de586a3c14bb1ab66f4ad8083129704",
+      "after_sha256": null
+    },
+    {
+      "path": "tests/test_knowledge_evaluate.py",
+      "status": "D",
+      "before_sha256": "24d0019d5a9191a1a00bd1a10d0ab26ef602ce0fb2745b21d54a309b7e356fd0",
+      "after_sha256": null
+    },
+    {
+      "path": "tests/test_knowledge_interaction.py",
+      "status": "D",
+      "before_sha256": "ad38f2ae47881d55f0e6ba4ecb39bab627cda38af89d51f491056c4ce28e6deb",
+      "after_sha256": null
+    },
+    {
+      "path": "tests/test_knowledge_prepare.py",
+      "status": "D",
+      "before_sha256": "dd3e00e738088700276c72b04929838c62d4214504e95a01e7710d451509fa50",
+      "after_sha256": null
+    },
+    {
+      "path": "tests/test_knowledge_service.py",
+      "status": "D",
+      "before_sha256": "84481883f8db301b92be092a67afb0e9cafceff28bafd9d3b13bdde6ce36fcec",
+      "after_sha256": null
+    },
+    {
+      "path": "tests/test_mcp.py",
+      "status": "M",
+      "before_sha256": "a349bf8455390a148ec0485917b8a3a6ef5ba37ca0185ee989fff549eb500a71",
+      "after_sha256": "9e67f3b7557a526d5d5b03bb91e80efa4edfa7e89ffdc083202ede0cc9b53453"
+    },
+    {
+      "path": "tests/test_memory.py",
+      "status": "M",
+      "before_sha256": "490f2f64b05896b9a3e47f1fb64bf8173ee00eb540ff7a2880f04419f4d58590",
+      "after_sha256": "a97983ee72312c270ad67e4934476cab66de4ef81c88ba5790843697a2309fde"
+    },
+    {
+      "path": "uv.lock",
+      "status": "M",
+      "before_sha256": "00264831eb2c4482d4977946ca9b199fa42515a53408dfb32cf5a249e35b41a2",
+      "after_sha256": "73e62dbfb0293e629b6f9aa7ff74ecd3903158afc68135c6e59d5dab8c45c088"
+    }
+  ],
+  "not_a_commit": true,
+  "tested_input_files": {
+    ".codeplus/config.yaml.example": "ad882dcbbab8262d637b240e4f17fde6033a04b47747d398dd2cc4cd4d0862a8",
+    "codeplus/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "codeplus/__main__.py": "9bde43daf2441eff9869cc67a3d3b24640517dd85dd60ee41e33cc31a60bac9b",
+    "codeplus/agent.py": "146e36562f93d9b81230add52abde7d20276f657b3d4d72dbe99d1ad3121324c",
+    "codeplus/agents/__init__.py": "f8bb66e7101bd335f9af073193622500e0c43304282bc043d4204022669923f6",
+    "codeplus/agents/builtins/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "codeplus/agents/builtins/explore.md": "4c064ba4a3fb0ffef45516ce25886776cd55076a3c4e39ecc04c97c85e53d61a",
+    "codeplus/agents/builtins/general-purpose.md": "eb33644a3d60aad57a46d1f75f015138e60dba91190ccfe7a558700d1a6c1096",
+    "codeplus/agents/builtins/plan.md": "f6f7f8e5f5353479bff9325d7b48d1b88236d8941a9db2d037fb1565c692ef02",
+    "codeplus/agents/builtins/verification.md": "b55b15d09ad8f0dd569fa80fdec1de093013f4e09ab0133d7af0fa3fcb0f53bf",
+    "codeplus/agents/fork.py": "f8d93c829cb7b5149466e2de4c7fbd1186883741d1d4b66830aa265a4eec9e6d",
+    "codeplus/agents/loader.py": "7de26228741b2b07bcffbdf01e9ddbaf06a482c008aefa022eccba06e2f6fa15",
+    "codeplus/agents/notification.py": "8116146e86fe94df164cbba94b3eff4a3d492141a69433542225980ccefb7545",
+    "codeplus/agents/parser.py": "9f76f35731748a3fecafb7f1d4e30416544947e52e496a26284ad3f8f8c6e57a",
+    "codeplus/agents/task_manager.py": "562879524f503e7be10f9e8edc4cea791f2ee6bd44101e136434e728354c197a",
+    "codeplus/agents/tool_filter.py": "ea415adefc1d5669a792fba0e47321876018608cd59bb05663ccb1bffaa4d3bb",
+    "codeplus/agents/trace.py": "37910ea12bc36935a61a95199d46b0192d94b8eb90b377790e7cd5208f160db8",
+    "codeplus/app.py": "8dcd60602a3a59826dfc88fdbc03a4daf78dd3100f0ba8caaaed66c4c41d1429",
+    "codeplus/askuser_dialog.py": "bdaf2ac3409bc255ace25ef9ee8077bedaa2d8178ec62569be195c1e0f84b4d0",
+    "codeplus/client.py": "de3416d283c53c7a22d72a8b067c7a3a666a0284d43727c4f8b255f395708941",
+    "codeplus/commands/__init__.py": "5d69e8e7056a44b599e0b678ee9968cc9adf493ba19beae345d0107f5a7edb51",
+    "codeplus/commands/completion.py": "142b0fd75462606bd59480afb1686b351c416b9acf47c71f1dee46fde79fbb9f",
+    "codeplus/commands/handlers/__init__.py": "05a41f586abab68eeff6c6e31b812ff5e7a1b40710c17e33d4c6a5da4c43a09b",
+    "codeplus/commands/handlers/clear.py": "6bc9b7f17a3eadea6276f29a4093094b9666860d35fe2ed76650e19739d61ee4",
+    "codeplus/commands/handlers/compact.py": "2388e7eb7f41e481fd94b8be205d49da83555b8f0268a0ef0a39e8bc8e72b11d",
+    "codeplus/commands/handlers/help.py": "7b58705fab8c51ba15c82c284d975bc6122a34520deb191fedabe04b2e48d3ba",
+    "codeplus/commands/handlers/mcp.py": "f0c1632f769dbffee098b33de60baf5fcf7c0ed24d872826670eb922b467d354",
+    "codeplus/commands/handlers/memory.py": "4b09e225b293b0892c1b431da1cf12b9ba961d825997175aa9745991eca7992c",
+    "codeplus/commands/handlers/plan.py": "7ff4e25afedd02e5db03eca84f4150c17404a04f429e17ce65050d54a2b4315d",
+    "codeplus/commands/handlers/review.py": "88479ac3559f2eca74b8e7591fcc2803d2a466150ad03ab25c49304562dc0f43",
+    "codeplus/commands/handlers/rewind.py": "e92ac30613a0ef1533ae4e9237cbda315f9806eef9d08d4365f1f117b2d39f6f",
+    "codeplus/commands/handlers/sandbox.py": "7f47335fe71ad26188a58e7457e5a73c082ea07d89df9c6f9271cfb230086c7d",
+    "codeplus/commands/handlers/session.py": "a80f36b663c1beb092bd8acb9b6c7fa53fe78f14eda923fe9975b45ce9a35f28",
+    "codeplus/commands/handlers/skill.py": "6e902e287bb02dae4d948e2be44e67299fa930fe2f1a0edd69c6a61af4f471cb",
+    "codeplus/commands/handlers/skill_register.py": "d32e279ddcc5fe5acc18df8a93948e4a02a332677ea6ae819f04805168fd0401",
+    "codeplus/commands/handlers/status.py": "f5f5bc5b1bcb857cff37c9f5c739e883a80e554f204ee5e19381307b98d81768",
+    "codeplus/commands/handlers/tasks.py": "b06b9d6146c2da1cb5604754f4d0462b0ca84f626c3431587e3c7d476363de89",
+    "codeplus/commands/handlers/trace.py": "3764dd332a25b061a01a1e2dfa85800da47efa5e6d7cbedaa7b0fb7bbd42b5a3",
+    "codeplus/commands/handlers/worktree.py": "ec80063f4f6dd34ec02680bc085ed5ebfed4ff8021674fe9191a32089ba0a69f",
+    "codeplus/commands/loader.py": "9ea21e5386f25f08ffc42a8c6371f883915b2c46a7ec289b1a8e16793c54aea9",
+    "codeplus/commands/parser.py": "4bead129e627ba199485b09ce487f04d6e4f8210d95202a0803ac03e5d179120",
+    "codeplus/commands/registry.py": "1d2e072372ff5d6d76b903ef56410e1be39f9fdd1668983377f9743edd668b7b",
+    "codeplus/config.py": "6ae4f069f95740febe2a0a886699c064410c53e9471cdbb1745f94192ddc0e7c",
+    "codeplus/context/__init__.py": "a7a5cd9ea3ecf9362d4b3c5a1f458668c211647e6b35572ca90a36683df4c370",
+    "codeplus/context/manager.py": "5b9e80fa4bded36c9b602e43a986d0386f2a1fcd58f730bed5c22ff1c75aba22",
+    "codeplus/conversation.py": "7b21ec5272b2bee8eabb225fda812d8a5089eb1e4912afeddfc6d7f4f1c34114",
+    "codeplus/conversation_pairing.py": "f41e85350f68599e284052db70bfe9a977c84dc430a6c89bc59e317ab02f7b2a",
+    "codeplus/crashlog.py": "b22b6bcb0d2de8699420f9d906b3536661a00b58883ca9184e0f0cac15052c28",
+    "codeplus/driver.py": "9c6fbac2a54d2fdcfd41b5c164a49aed9092733032eb7197f59add2f2d3fd183",
+    "codeplus/filehistory/__init__.py": "d817da79a45307452b634be77908be08d61281c884bb1c74de20ccef7b0db62a",
+    "codeplus/filehistory/history.py": "1497557d9adab3a294cc075e8772b918462c99ec5dbf7d29c9c8ffad049b5246",
+    "codeplus/hooks/__init__.py": "ff564b8a31b7933c3bedcbce4125b80fa8753e1719d610fe01bb2a27bb65d4e6",
+    "codeplus/hooks/conditions.py": "bc6be9db20cd4a6c3db0508b6169603f8c304346da155fc63e019115aa89801a",
+    "codeplus/hooks/engine.py": "a9cde32a416a7081824bcb880ca9e3c6fe36d9e6fa7be327ba5cf9e764584859",
+    "codeplus/hooks/events.py": "dd64ca8c45343d91ac7a0b34721b70473f7e5210f3aecd29846c77926c73ffba",
+    "codeplus/hooks/executors.py": "a55281b42b3eb8ff32a9d6aa637e65d1de394d397413d087510adb4a78948933",
+    "codeplus/hooks/loader.py": "76222f1a66fcd03d20af4d4405b0be5dc3a0ca778b76a22b3e3c09734a573279",
+    "codeplus/hooks/models.py": "ad953da646e2ea5b2440594513ce62dfa12cf48f22242d1a9825af64a6252320",
+    "codeplus/mcp/__init__.py": "77b30f2b0f80acc5ef660f95621126d312c06981d0c7eaddb9997f595e383c7f",
+    "codeplus/mcp/client.py": "552661019d082a5d3b9ee0948ed93172bd638e7b0f7835866e8997d576010f4e",
+    "codeplus/mcp/loading_strategy.py": "090513fd03a6254b04aa8d568fa2e04d0013cc0d444e6a0a525b287be186689d",
+    "codeplus/mcp/manager.py": "58998e8740176df7022357d041bbf543c3c00a55fad78f4b9055c88f4f29d677",
+    "codeplus/mcp/tool_wrapper.py": "c00e85668f59b5a6dde17a131387b05244a1b7b1b9bab7f76cd6715c47eef9fb",
+    "codeplus/memory/__init__.py": "38d2f2ba68be9c2688f75c755f0affee31bc7873e515588f2bc8d3a98adef0c8",
+    "codeplus/memory/auto_memory.py": "1ab1cd882cd3d57d06d47114eef2e0d233dbfc2fa87ff5fe6377c1fa5d3eff87",
+    "codeplus/memory/consolidation.py": "56928ecb9dd7e1d7e61383c3dfc4afb69abf73fd57fdda1fcf90486d1364cf7d",
+    "codeplus/memory/instructions.py": "288ca8176aa8af625a691f58e2fe39d7563088448eb679017f8301e9966955aa",
+    "codeplus/memory/recall.py": "e846ff86bfc85931e1ca0878a7f165526eb2587185bb80faa7285c4409cdf177",
+    "codeplus/memory/session.py": "cecbd856899349d4097c71a5ba5640dc01cb990dfae22f4fa153a1419df2404b",
+    "codeplus/permission_dialog.py": "76edaa0d055d9c1a9dae4a3b3f4db8bd675785294b929088724fa0abc165bb90",
+    "codeplus/permissions/__init__.py": "1d55b53c7f17157d7625180c73a6d6f1f11455100032511b5230b21903429638",
+    "codeplus/permissions/checker.py": "43efbd82c203c9ab503ed7a7013db78be52cf388e05be8764e3153a022aabe1c",
+    "codeplus/permissions/dangerous.py": "005caed24b1e72cfbac9197c060714a27de91d46526dc541aa77aead3ca7882a",
+    "codeplus/permissions/modes.py": "c786f1b4cf0b6b972e8af21fb461c2754197ac799f48547c0d024fe83d4b59f7",
+    "codeplus/permissions/rules.py": "338b76c1db9c6a423a7bb01274a4c1670998c40b1cc3cd48353e88acd538c086",
+    "codeplus/permissions/sandbox.py": "adbca02a7b233c9038c2fd254a5dc18c469fc6468353d831257fa52c4559035e",
+    "codeplus/plan_dialog.py": "a584bcd6a1b914135c16c327f971882f785eae3a438d642c50b8460654a1e9a2",
+    "codeplus/prompts.py": "822ebb78b0a9eb936988c6f15d01a9e094e0ea61ee8b12fd65f339ab628195b6",
+    "codeplus/remote.py": "88a99cb6fbd019a9837fc91b269ca9ad37aa27e88a789e05f5e2ad9aba415789",
+    "codeplus/sandbox/__init__.py": "a2b5987cb7c513bc0532557105e2e4f6160b5c13aa12158cb9288585f8092253",
+    "codeplus/sandbox/bwrap.py": "8af3733fafad58cbeba3f34af5ecd5eefdf95173c949ac099a5112d91114dc21",
+    "codeplus/sandbox/seatbelt.py": "dc0b4f9df97d617bb12e4585e1417b7ecf5e542a4a00daefc93c804d2e903a0c",
+    "codeplus/serialization.py": "ec3448e355e8be404e9d7bdfecbaf0ce9358c9e454794920375878676b5e38bc",
+    "codeplus/session_dialog.py": "e4fdbba8fa764bc8bd992f63fbfac32cb1c48083f9365602134ffe1343400611",
+    "codeplus/skills/__init__.py": "23e9d480105aa6ed44635433e8ebc71d002780e66bfa4b83312d659e16915fd5",
+    "codeplus/skills/builtins/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "codeplus/skills/executor.py": "537243fe6fc9dfebff2e360d7c8d6368ec5949e234ba7f4eb3a8dbd842403a5f",
+    "codeplus/skills/install.py": "29c5e231fb0eab3865c440ecd9df5203e45a4c309f105547a999eb13b42aa5c9",
+    "codeplus/skills/loader.py": "61b1e4a8d389f194f03273dc1daa5a207930ac35bfedd699c4e71bec8bbe0425",
+    "codeplus/skills/parser.py": "1741a3d9f43282047f9437256f0c61f59c6357bfcb7ba5ae300bfee24ac669e8",
+    "codeplus/styles.tcss": "afaa75c26edbd0d613b9b397a36fe1a8e133935e4e91100d8e252f9a9cf42279",
+    "codeplus/teammate_tree.py": "20abdedab25f5c70262a69fb2622be1887ad468b29ceb00800bacb8ef81b366b",
+    "codeplus/teams/__init__.py": "b3d93cb5e38c7b0779e9b7a541d6b4d99fb7e0eea15847e0759615cc36e0e64f",
+    "codeplus/teams/backend_detect.py": "2877903c0e0da6ffefc5184b13878b637f98f955606e4fb3dd184cc15b67770c",
+    "codeplus/teams/coordinator.py": "39b262106e93eccd895f70d41d7fc2908f21b4fa0c175354fb9481ff33bdb5e6",
+    "codeplus/teams/mailbox.py": "129284eda2905d3716d2fcffbfc3e46cb5f3a23f1b0c84df8030deaa8073016a",
+    "codeplus/teams/manager.py": "bd9bfcf009b4707ec38fad7e7337fc0b0fa188de5dda7d96036da32b082630bd",
+    "codeplus/teams/models.py": "e0cdf4ce1f04972a499d6049f80ecc01bc36255c079f4f9545c1861e8368a394",
+    "codeplus/teams/progress.py": "1eb0fd2ac482cdc0b191b4773354ccbbcd014ddf51c5d335688efed4b3e39f7f",
+    "codeplus/teams/protocol.py": "8dcd96547b7ea5607888d25933f419051d0923326aa8c0fdbde6005a46404e8d",
+    "codeplus/teams/registry.py": "5f6a3190b88fb735555e6042f35580ba6ef9771d75a8b551c2ac0f6f251b4d19",
+    "codeplus/teams/shared_task.py": "1a2a0ee9cc0b4b6a5b8d329f550941b09ded3b62a74068d35c2d3c24e95e68c0",
+    "codeplus/teams/spawn.py": "16b200dd53b78b08f3ddedbdd8799ab3a4849492919af13ae4819fb749e7fd98",
+    "codeplus/teams/spawn_inprocess.py": "8660c3874f58667427c806fc27ae77291edbd32b514d03e80ae5e4cead1f8242",
+    "codeplus/teams/spawn_iterm2.py": "e4d4117d9e3b6fd9265104f1ebe77a0dea2d7e91f8608b3c494c47a7b70a31ff",
+    "codeplus/teams/spawn_tmux.py": "3db17403a31964a1d1695c7c38ce7a6acec757dcb9a0380c2cc8a3fbadc12114",
+    "codeplus/teams/transcript.py": "e7495b0f88459c01f360166fee85822611baac03e5f4f487b9b4b5d392a68553",
+    "codeplus/tools/__init__.py": "d4e1916a195dab084edf238b5ab8b8db8d7640522f36c5e00a2e66376cee037c",
+    "codeplus/tools/agent_tool.py": "6a549cf9bdf05422ab86955fd0f71604beb194e44465491e3be13a4df6e30fc6",
+    "codeplus/tools/ask_user.py": "b8a9a81c2b01a60b66d268605da2caa7a0a2646f8a0dafd72cca177a46626633",
+    "codeplus/tools/base.py": "fc03753416c1d2fd9040037e82003db26cfe52421d4f7fa2a7cf06ffc3d60802",
+    "codeplus/tools/bash.py": "4d32ece3239365f38005b4f55268f2c25ff3062e7cb3f5e471b1e93459b70403",
+    "codeplus/tools/diff.py": "19b81d77a666f08feff8cb46e03b236d50c7247a8ce41be8b95d4d0aab452a5d",
+    "codeplus/tools/edit_file.py": "8c8861f5da8f558713a4d165a89c69cf2d7e3091d93dd0e0120adc105e0f6949",
+    "codeplus/tools/enter_worktree.py": "c350e700a48a863c3144b6a72dccfeacd0dc1e2f478d10ce2e2e75988bfe685c",
+    "codeplus/tools/exit_plan_mode.py": "cefa2dc090f5e839fe2bfa2cf526a5220c9f1853d7e833ba74b48e82bf74b90a",
+    "codeplus/tools/exit_worktree.py": "156b751e5e9c9b07b4721d2b83fa656069b54cd0d3ff349b95287466f6e234c3",
+    "codeplus/tools/file_state_cache.py": "796d469912df437603dcd0973c0560ea066e55bb460f87a6d079e43fd360d3ca",
+    "codeplus/tools/glob.py": "2c5afd2d50cdf9455fba88b83c794301ce623a930ef4edb041324d7c3ce42e91",
+    "codeplus/tools/grep.py": "e9621f9b267b436309e737d56cdd4017484443e76fb277b332fe52f2976afd46",
+    "codeplus/tools/impl/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "codeplus/tools/impl/tool_search.py": "8ba16081f7cefa8f19856052d7c4424fba50419fc21ce994a9822ff4c5a267e7",
+    "codeplus/tools/install_skill.py": "c2345ac19081f45db12c2394c24fe98c44d56a2da99d8f78cc1d341395d728f0",
+    "codeplus/tools/load_skill.py": "450b106bf224345a666091ae21cd892bd88e54f19f6f6a4d1cd4b7ef6111e598",
+    "codeplus/tools/mcp_call.py": "b4666c5133ff91f921f37d0e1a3bb8988a12b9da53fd24cbe31683a9b5f49d17",
+    "codeplus/tools/read_file.py": "7d8e85cb371df8f9b12b803028e441b28bb08ffab5fd58b899a31ccccf83a055",
+    "codeplus/tools/send_message.py": "2a791ab21d3ef6788b72ec4a22f60da614d62ce497e0ded6f37f305b21d67e8e",
+    "codeplus/tools/synthetic_output.py": "6c4451e366c1375fac8e1b94ae72b2848e71894694fc6436ee368a5ef7a3a6e9",
+    "codeplus/tools/task_create.py": "bac884eb5d4580923e128d1c5f98ebfecbeb7b8adbf8c5350488063c4196c466",
+    "codeplus/tools/task_get.py": "d895a1bf7f0aa7db7dd764e6a6eaa81a8b762f0e26f683c18c56e6879a6d4b96",
+    "codeplus/tools/task_list.py": "bf54ddc1a903a626e65bf58c6bb66ec22f669d69555b2a8889cc8199215af746",
+    "codeplus/tools/task_stop.py": "bd05d76f3c3f5f23feaea4ac900c231532b1241472c85bdbb1aa6804289fc320",
+    "codeplus/tools/task_update.py": "bfb54ef1f10399408c2a9985983893f080d33970e7a4114a126f76a506a08059",
+    "codeplus/tools/team_create.py": "b0333b9429f81181fcbb71335665a857091df2a5bc1c3e256582b839f2080907",
+    "codeplus/tools/team_delete.py": "6814eca81a33b4a0313387a730b6b35d92bd86d3406bdab19ab6d607a12df689",
+    "codeplus/tools/write_file.py": "fb397f8d3ff0f659c573f284bc150ef21b2af374792e5071e0259a3b56f79600",
+    "codeplus/validator.py": "0d649e6dce048991094f169f9abd508ebc23b57354d245de7527a926ebf4863d",
+    "codeplus/web_content.py": "830b535c1b7b4b640030eb060d37a80e8c02eb20bcb17e510542ed291185ab19",
+    "codeplus/worktree/__init__.py": "6738b56eb42f04aa322619ebcb725f9eb3c95dcfc66723dd7b2cf9f2f5db2a98",
+    "codeplus/worktree/changes.py": "c20d81f5cd6f9c29f61b782d0a6081bf8bb75c755b417afa0e17e650d879f0d2",
+    "codeplus/worktree/cleanup.py": "e8c2ead63bfb2bb474e469d8276c1805c51be4ecff73eb523a2cfd0e1ea79de9",
+    "codeplus/worktree/integration.py": "6e39e15044e6bcfd91b0d8203184c64ee49302bbce7002f5f2a4eeb1b7480e51",
+    "codeplus/worktree/manager.py": "c772c67bdeb87015a7347c06d85d03ab4a2f1192ffa4c644cedc01c9b5ef9367",
+    "codeplus/worktree/models.py": "94110a8ece6a2ec21ab1a1c2ad85d7ec0a10bbd8a41cf4bd92f759b60b724b06",
+    "codeplus/worktree/session.py": "c1915dd4daa2acb00d9be8bcf50e5acd5c50de8daa5a50ae50ef43a730f5d3cb",
+    "codeplus/worktree/setup.py": "2d3b0d279ba3f84fdf7ad0533943e99ce206968ed308dee958bd0d6694bbe87c",
+    "codeplus/worktree/slug.py": "7dc985f3aec7c15b0904aad24c10dd77a7880e9b45ce569703dc0c1025b5a2e4",
+    "deployment/AgenticRAG/probes/host_contract/contract.py": "d0f53c00b83e679f92152be90caa5d796e33663d4781905f2a5e741a1654b91a",
+    "deployment/AgenticRAG/tests/pre_r12_cleanup_install.py": "bd6ef31b9bafcf20386e41698414d509322882640668b3b8ab30fdbfd954b956",
+    "deployment/AgenticRAG/tests/test_evaluation_protocol.py": "3136562fe142e9e02c78bf1632f19874571439ad2d71ac4ff5ac929cd4552301",
+    "deployment/AgenticRAG/tests/test_host_contract.py": "ddc878a2081d64907184513e2379adf94938f806967fef529b1eae73cdcdb76d",
+    "deployment/AgenticRAG/tests/test_pre_r12_cleanup.py": "84ccb12b9f2553fea69065d301405dbd1ec79752dc50b3747c06d3dc0b6ffd29",
+    "LICENSE": "8ad8a4c1341585ab6e2db44dc254b5c17603933647a55e21ebe899fbabc9323e",
+    "pyproject.toml": "b3352ac691610f88ec2155d1a12fcc13da7a534fbc53b812ae1d1c8f95ff8838",
+    "README.md": "e538593e822e61d8cb5492396678aae9772c12f8f13fae332101b139d5de5a40",
+    "README_EN.md": "7decf290dd1206889448dcd58e56aaa69d28ccde6e30a781f21012e3ec257857",
+    "tests/conftest.py": "cb9d1f5125ccb669d52e827bfad510360b9072590c87bf71668e2165f8b56f1b",
+    "tests/test_agent.py": "235538b8a1976fbd4167ba4be00695031e95710160f441b6186d09cfa0b12c26",
+    "tests/test_clear.py": "f816ca26f75a309329b1ca7769ef32613a806052fc867621a978557029621b38",
+    "tests/test_commands.py": "370eec91f28c8397c2b5df71fd4cd02ef78f634b33221c5f3f952ea93a984ff0",
+    "tests/test_consolidation.py": "25367421f19190e474df04bde807ac943d3a85182ece110625b64a6afd9aa339",
+    "tests/test_context.py": "b0e794c34df51ca928c57666b180d020da5a7167e547bcc98fa7a4a99e731d45",
+    "tests/test_context_window.py": "dbea0e5b0fe3aa5c4dfc4f35f4570bcda813c1d4be71a01967a9260f9e12fb01",
+    "tests/test_conversation_pairing.py": "b1513c14f016cf0ba9a3ec84e63dd8a91ab75b0fa846c53f06451ba6e989d338",
+    "tests/test_coordinator_multi_team.py": "a7d2364a7bfff52fffb6f0ad44ab3a698711f5e8cf31112cda29759479b9588b",
+    "tests/test_crashlog.py": "4583253f08c9a0dbcaf625e2425adae9d11cc8599fff811ad9a23a19449541fe",
+    "tests/test_deferred_reminder.py": "705d95262c4f6634308e3cb1cba029396211072708c1afb7da4e0e37baad1198",
+    "tests/test_diff.py": "3dee21eb4c8e1b58d90c2fe2abc70bdba5ca4cc7ccf1e51eeeb755e295172202",
+    "tests/test_edit_file.py": "bb7709239eff5ed7b86d0798fd54c669c448bf11ef5e7df8ad01993b3859afbc",
+    "tests/test_entrypoints.py": "c8e18eeeaca112f52114c97119fc77daf6a3518240ccb0771e68879b3791d854",
+    "tests/test_hooks.py": "c36811772fa765fb83b25f12366643263ac889523a697eab6d64d191139bbd1e",
+    "tests/test_mcp.py": "9e67f3b7557a526d5d5b03bb91e80efa4edfa7e89ffdc083202ede0cc9b53453",
+    "tests/test_mcp_call.py": "add08a659664ef435ceb351ee82faa28e1d065b011bb1e0775f3ce268e3d3a64",
+    "tests/test_memory.py": "a97983ee72312c270ad67e4934476cab66de4ef81c88ba5790843697a2309fde",
+    "tests/test_multihop_evaluation.py": "a53b035a4cc8abc3331b5b9b71384305a469733ea5a0415379d410d65228d8c4",
+    "tests/test_permissions.py": "294c3ce663e7fa97330e1b2214d299f4787cdb61dcab573d85ecebe51f9d2519",
+    "tests/test_recovery.py": "2bb92de66e57bbe1e7b00ae6bb494c95178b4643cd64c4f4f1670be046d119f1",
+    "tests/test_serialization.py": "66120b9e86bffc752f3ab67faf46b9825a37202e3e0e59cb3a6e6ed31723e88e",
+    "tests/test_skills.py": "e4b32a4976aabf118f14c88c6896b77be121e19bcf42613c9e02cdd1aa304a17",
+    "tests/test_subagent.py": "89c23c0483ddfc65e1c2852235d08906fc275f73795d6d1aaaed73cd04939292",
+    "tests/test_team_protocol.py": "b53700e8091f177ee84bad950f89d675d01b395f2d9435765eed728ebfaf921e",
+    "tests/test_teammate_registry.py": "fabaf040b5fccae515419d9df4ccbdd090724c38490458db832345947cb6abd3",
+    "tests/test_teams.py": "269873582986e56040a713f77bf78383c1923b0722276286217a104600e45fc6",
+    "tests/test_tool_cache_marker.py": "27b961f1063459a70f9e2ec62aaa95ca6594d076785af75d10b90986dd906806",
+    "tests/test_tool_call_block.py": "90db59737a56b2e9c157daaa8246a87f0fb8787f29dbf34e5faba15db5003c0f",
+    "tests/test_tool_search.py": "68af90edb0dc0fa4862cba402475dcb23ed5f8a9f152a504f19428fba3d4f81c",
+    "tests/test_toolresult_wiring.py": "2474072cb02e702dc93fe42e8365739e444915c1af29a49ef24ec4d82c4ba338",
+    "tests/test_worktree.py": "32d8d243cb10d5c6cdc1f108d49dfbbdbd2b91708d58aeaf3897529e5ee1c802",
+    "uv.lock": "73e62dbfb0293e629b6f9aa7ff74ecd3903158afc68135c6e59d5dab8c45c088"
+  }
+}

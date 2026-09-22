@@ -7,7 +7,6 @@ import logging
 import os
 import sys
 import time
-from contextlib import nullcontext, redirect_stdout
 from pathlib import Path
 
 from codeplus import crashlog
@@ -55,19 +54,12 @@ def main() -> None:
         help="Output format for -p mode: 'text' (default) prints final text, 'stream-json' emits NDJSON events",
     )
     parser.add_argument(
-        "--knowledge",
-        metavar="KB_ID",
-        help="Use this knowledge base for -p (requires knowledge.enabled in config)",
-    )
-    parser.add_argument(
         "--remote",
         action="store_true",
         default=False,
         help="Start in remote mode: WebSocket server on 0.0.0.0:18888 with browser UI",
     )
     args = parser.parse_args()
-    if args.knowledge is not None and args.p is None:
-        parser.error("--knowledge requires -p")
 
     try:
         config = load_config()
@@ -88,7 +80,7 @@ def main() -> None:
 
     if args.p is not None:
         output_format = getattr(args, "output_format", "text")
-        asyncio.run(_run_prompt(config, permission_mode, hook_engine, args.p, output_format, args.knowledge))
+        asyncio.run(_run_prompt(config, permission_mode, hook_engine, args.p, output_format))
         return
 
     # Remote 模式：启动 WebSocket 服务器，浏览器访问 http://localhost:18888
@@ -119,7 +111,6 @@ def main() -> None:
         enable_coordinator_mode=config.enable_coordinator_mode,
         driver_class=NoAltScreenDriver,
         sandbox_config=config.sandbox,
-        knowledge_config=config.knowledge,
     )
     # TUI 内部的异常由 App._handle_exception 落盘，这里兜住的是框架之外的部分：
     # 启动、事件循环收尾，以及 Textual 自身抛出的异常
@@ -130,8 +121,7 @@ def main() -> None:
         raise
 
 
-async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_format: str = "text",
-                      knowledge_id: str | None = None) -> None:
+async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_format: str = "text") -> None:
     from codeplus.agent import (
         Agent,
         CompactNotification,
@@ -294,17 +284,6 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
 
     agent.notification_fn = drain_mailbox_only
 
-    knowledge = None
-    if knowledge_id is not None:
-        from codeplus.knowledge.citations import KnowledgeContext
-        from codeplus.tools.knowledge import SearchKnowledge, ReadDocument
-
-        knowledge = KnowledgeContext(config.knowledge)
-        knowledge.bind({"kb_id": knowledge_id, "top_k": min(10, config.knowledge.top_k)})
-        agent.knowledge = knowledge
-        agent.registry.register(SearchKnowledge(knowledge))
-        agent.registry.register(ReadDocument(knowledge))
-
     # 使用事件驱动的 agent.run()，支持 text 和 stream-json 两种输出格式
     conv = ConversationManager()
     conv.add_user_message(prompt)
@@ -316,97 +295,90 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
     tool_calls: list[dict] = []
 
     try:
-        # Keep model/SDK diagnostics off the machine-readable output channel.
-        with redirect_stdout(sys.stderr) if knowledge else nullcontext():
-            if knowledge is not None:
-                await knowledge.prepare(lambda message: print(message, file=sys.stderr, flush=True))
-            async for event in agent.run(conv):
-                if isinstance(event, StreamText):
-                    text_buf += event.text
-                    if is_json:
-                        emit_json({"type": "assistant", "text": event.text})
+        async for event in agent.run(conv):
+            if isinstance(event, StreamText):
+                text_buf += event.text
+                if is_json:
+                    emit_json({"type": "assistant", "text": event.text})
 
-                elif isinstance(event, ThinkingText):
-                    if is_json:
-                        emit_json({"type": "thinking", "text": event.text})
+            elif isinstance(event, ThinkingText):
+                if is_json:
+                    emit_json({"type": "thinking", "text": event.text})
 
-                elif isinstance(event, ToolUseEvent):
-                    tool_calls.append({"name": event.tool_name, "is_error": False})
-                    if is_json:
-                        emit_json({
-                            "type": "tool_use",
-                            "tool_name": event.tool_name,
-                            "tool_id": event.tool_id,
-                            "args": event.arguments,
-                        })
+            elif isinstance(event, ToolUseEvent):
+                tool_calls.append({"name": event.tool_name, "is_error": False})
+                if is_json:
+                    emit_json({
+                        "type": "tool_use",
+                        "tool_name": event.tool_name,
+                        "tool_id": event.tool_id,
+                        "args": event.arguments,
+                    })
 
-                elif isinstance(event, ToolResultEvent):
-                    # 回填最后一个同名 tool_call 的 is_error
-                    if tool_calls:
-                        tool_calls[-1]["is_error"] = event.is_error
-                    if is_json:
-                        emit_json({
-                            "type": "tool_result",
-                            "tool_name": event.tool_name,
-                            "tool_id": event.tool_id,
-                            "output": event.output,
-                            "is_error": event.is_error,
-                            "elapsed": round(event.elapsed, 3),
-                        })
+            elif isinstance(event, ToolResultEvent):
+                # 回填最后一个同名 tool_call 的 is_error
+                if tool_calls:
+                    tool_calls[-1]["is_error"] = event.is_error
+                if is_json:
+                    emit_json({
+                        "type": "tool_result",
+                        "tool_name": event.tool_name,
+                        "tool_id": event.tool_id,
+                        "output": event.output,
+                        "is_error": event.is_error,
+                        "elapsed": round(event.elapsed, 3),
+                    })
 
-                elif isinstance(event, UsageEvent):
-                    total_input = event.input_tokens
-                    total_output = event.output_tokens
-                    if is_json:
-                        emit_json({
-                            "type": "usage",
-                            "input_tokens": event.input_tokens,
-                            "output_tokens": event.output_tokens,
-                        })
+            elif isinstance(event, UsageEvent):
+                total_input = event.input_tokens
+                total_output = event.output_tokens
+                if is_json:
+                    emit_json({
+                        "type": "usage",
+                        "input_tokens": event.input_tokens,
+                        "output_tokens": event.output_tokens,
+                    })
 
-                elif isinstance(event, TurnComplete):
-                    if is_json:
-                        emit_json({"type": "turn_complete", "turn": event.turn})
+            elif isinstance(event, TurnComplete):
+                if is_json:
+                    emit_json({"type": "turn_complete", "turn": event.turn})
 
-                elif isinstance(event, LoopComplete):
-                    # 最终结果：stream-json 输出 result 行，text 模式直接打印文本
-                    elapsed_ms = int((time.monotonic() - start) * 1000)
-                    if is_json:
-                        emit_json({
-                            "type": "result",
-                            "result": text_buf,
-                            "duration_ms": elapsed_ms,
-                            "num_turns": event.total_turns,
-                            "tool_calls": tool_calls,
-                            "usage": {
-                                "input_tokens": total_input,
-                                "output_tokens": total_output,
-                            },
-                            "stop_reason": "end_turn",
-                        })
-                    else:
-                        print(text_buf, end="", file=output, flush=True)
-                    break
+            elif isinstance(event, LoopComplete):
+                # 最终结果：stream-json 输出 result 行，text 模式直接打印文本
+                elapsed_ms = int((time.monotonic() - start) * 1000)
+                if is_json:
+                    emit_json({
+                        "type": "result",
+                        "result": text_buf,
+                        "duration_ms": elapsed_ms,
+                        "num_turns": event.total_turns,
+                        "tool_calls": tool_calls,
+                        "usage": {
+                            "input_tokens": total_input,
+                            "output_tokens": total_output,
+                        },
+                        "stop_reason": "end_turn",
+                    })
+                else:
+                    print(text_buf, end="", file=output, flush=True)
+                break
 
-                elif isinstance(event, ErrorEvent):
-                    if knowledge is not None:
-                        raise RuntimeError(event.message)
-                    if is_json:
-                        emit_json({"type": "error", "message": event.message})
-                    else:
-                        print(f"Error: {event.message}", file=sys.stderr, flush=True)
+            elif isinstance(event, ErrorEvent):
+                if is_json:
+                    emit_json({"type": "error", "message": event.message})
+                else:
+                    print(f"Error: {event.message}", file=sys.stderr, flush=True)
 
-                elif isinstance(event, CompactNotification):
-                    if is_json:
-                        emit_json({"type": "compact", "message": event.message})
+            elif isinstance(event, CompactNotification):
+                if is_json:
+                    emit_json({"type": "compact", "message": event.message})
 
-                elif isinstance(event, RetryEvent):
-                    if is_json:
-                        emit_json({"type": "retry", "reason": event.reason})
+            elif isinstance(event, RetryEvent):
+                if is_json:
+                    emit_json({"type": "retry", "reason": event.reason})
 
-                elif isinstance(event, PermissionRequest):
-                    # 知识模式不能代替用户批准；未指定知识库时保留既有策略。
-                    event.future.set_result(PermissionResponse.DENY if knowledge else PermissionResponse.ALLOW)
+            elif isinstance(event, PermissionRequest):
+                event.future.set_result(PermissionResponse.ALLOW)
 
         # 如果有 team 在运行，轮询等待 teammate 完成
         if not team_manager._teams:
@@ -434,17 +406,7 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
                 emit_json({"type": "assistant", "text": last_result})
             else:
                 print(last_result, flush=True)
-    except Exception as exc:
-        if knowledge is None:
-            raise
-        if is_json:
-            emit_json({"type": "error", "message": str(exc)})
-        else:
-            print(f"Error: {exc}", file=sys.stderr, flush=True)
-        raise SystemExit(1) from None
     finally:
-        if knowledge is not None:
-            await knowledge.aclose()
         if mcp_manager is not None:
             # 多个 stdio 服务器同时收尾时，底层的 anyio cancel scope 会互相打断并抛
             # CancelledError。结果已经输出完了，这里不该因为收尾失败而带崩整个命令。

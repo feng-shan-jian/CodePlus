@@ -1,0 +1,50 @@
+{
+  "status": "ok",
+  "dataset": "multihop-rag-official",
+  "tier": "lite",
+  "questions": 50,
+  "documents": 609,
+  "question_types": {
+    "comparison_query": 17,
+    "inference_query": 16,
+    "null_query": 6,
+    "temporal_query": 11
+  },
+  "retrieval_scored_questions": 44,
+  "source_dataset_sha256": "c9cf1a90f31d7944cfa24e3ff14db2ae3fa8b875a1a1c9397f6f6f2221bc73d9",
+  "dataset_sha256": "cdcbd3c33fef2df6c5406535413df20fd31157a1052d9b05c46f3059044ba9ed",
+  "all_tiers": {
+    "lite": {
+      "questions": 50,
+      "question_types": {
+        "comparison_query": 17,
+        "inference_query": 16,
+        "null_query": 6,
+        "temporal_query": 11
+      }
+    },
+    "medium": {
+      "questions": 200,
+      "question_types": {
+        "comparison_query": 67,
+        "inference_query": 64,
+        "null_query": 23,
+        "temporal_query": 46
+      }
+    },
+    "full": {
+      "questions": 2556,
+      "question_types": {
+        "comparison_query": 856,
+        "inference_query": 816,
+        "null_query": 301,
+        "temporal_query": 583
+      }
+    }
+  },
+  "upstream_files_verified": 4,
+  "exact_evidence_ranges": 6084,
+  "model_evaluation": "not_executed"
+}
+
+--- STDERR ---

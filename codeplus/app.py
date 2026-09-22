@@ -12,7 +12,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.message import Message as TMessage
-from textual.widgets import OptionList, Static, TextArea
+from textual.widgets import Markdown, OptionList, Static, TextArea
 from textual.widgets.option_list import Option
 
 from codeplus.agent import (
@@ -46,11 +46,8 @@ from codeplus.commands import (
 )
 from codeplus import crashlog
 from codeplus.commands.completion import CompletionPopup
-from codeplus.commands.knowledge_menu import PREFIX as KNOWLEDGE_PREFIX, candidates as knowledge_candidates
 from codeplus.commands.handlers import register_all_commands
 from codeplus.config import MCPServerConfig, ProviderConfig
-from codeplus.knowledge.citations import short_citations
-from codeplus.source_preview import CitationMarkdown, InlineSourcePreview
 from codeplus.hooks import HookContext, HookEngine, load_hooks
 from codeplus.conversation import ConversationManager, Message
 from codeplus.mcp import ConnectResult, MCPManager
@@ -236,11 +233,6 @@ class ChatInput(TextArea):
         if text.startswith("/"):
             self.post_message(self.TabComplete(text))
         else:
-            if not self.text:
-                answers = [answer for answer in self.app.query(CitationMarkdown) if answer.can_focus]
-                if answers:
-                    answers[0].focus()
-                    return
             self.insert("\t")
 
     def action_dismiss_popup(self) -> None:
@@ -296,8 +288,6 @@ class ChatInput(TextArea):
         prefix = text if text.startswith("/") and self._history_index < 0 else None
         self.post_message(self.SlashMenuUpdate(prefix, text))
 
-        if text.startswith(KNOWLEDGE_PREFIX):
-            return
 
         at_idx = text.rfind("@")
         if at_idx < 0:
@@ -611,7 +601,6 @@ class CodePlusApp(App):
         enable_coordinator_mode: bool = False,
         driver_class: type | None = None,
         sandbox_config: Any = None,
-        knowledge_config: Any = None,
     ) -> None:
         super().__init__(driver_class=driver_class)
         self.providers = providers
@@ -633,19 +622,6 @@ class CodePlusApp(App):
         self._mcp_init_task: asyncio.Task[None] | None = None
         self._selected_provider: ProviderConfig | None = None
         self._streaming = False
-        from codeplus.config import KnowledgeConfig
-        from codeplus.knowledge.citations import KnowledgeContext
-        self.knowledge = KnowledgeContext(knowledge_config or KnowledgeConfig())
-        self._knowledge_task: asyncio.Task | None = None
-        self._knowledge_libraries: list[dict] = []
-        self._knowledge_status: dict | None = None
-        self._knowledge_choices_loaded = False
-        self._knowledge_choices_error = ""
-        self._knowledge_choices_revision = 0
-        self._knowledge_document: str | None = None
-        self._knowledge_progress: dict | None = None
-        self._knowledge_failures: dict[str, dict[str, dict]] = {}
-        self._knowledge_completion_revision = 0
         self._thinking_start: float = 0.0
         self._thinking_verb: str = ""
         self._spinner_idx: int = 0
@@ -724,7 +700,6 @@ class CodePlusApp(App):
             with Horizontal(id="status-bar"):
                 yield Static("  default", id="mode-label")
                 yield Static("", id="teammates-label")
-                yield Static("", id="knowledge-label")
                 yield Static("", id="model-label")
             yield CompletionPopup()
 
@@ -837,11 +812,6 @@ class CodePlusApp(App):
         )
         self.agent.file_history = self.file_history
         self.agent.session_id = self.session.session_id
-        from codeplus.tools.knowledge import SearchKnowledge, ReadDocument
-        self.agent.knowledge = self.knowledge
-        self.registry.register(SearchKnowledge(self.knowledge))
-        self.registry.register(ReadDocument(self.knowledge))
-        self._restore_knowledge_binding()
 
         self._exit_plan_tool._is_plan_mode = lambda: self.agent.plan_mode
         self._exit_plan_tool._plan_exists = lambda: self.agent._get_plan_path().exists()
@@ -1113,11 +1083,6 @@ class CodePlusApp(App):
                 "render_restored": self._render_restored_messages,
                 "skill_loader": self.skill_loader,
                 "skill_executor": self.skill_executor,
-                "knowledge": self.knowledge,
-                "set_knowledge_binding": self._set_knowledge_binding,
-                "check_knowledge": self._check_knowledge_binding,
-                "show_knowledge_menu": self._show_knowledge_menu,
-                "knowledge_progress": self._on_knowledge_progress,
             },
         )
 
@@ -1125,144 +1090,14 @@ class CodePlusApp(App):
         self.session = session
         if self.agent:
             self.agent.session_id = session.session_id
-        self._restore_knowledge_binding()
 
-    def _restore_knowledge_binding(self) -> None:
-        self.knowledge.bind(self.session.meta.knowledge_binding if self.session else None)
-        for name in ("SearchKnowledge", "ReadDocument"):
-            if self.knowledge.binding:
-                self.registry.enable(name)
-            else:
-                self.registry.disable(name)
-        self._knowledge_choices_loaded = False
-        self._knowledge_choices_error = ""
-        self._knowledge_choices_revision += 1
-        self._knowledge_status = None
-        self._knowledge_progress = None
-        if self.is_mounted:
-            self._update_knowledge_label()
-            if self.knowledge.binding:
-                self._knowledge_choices_loaded = True
-                self.run_worker(self._load_knowledge_choices(), group="knowledge-choices", exclusive=True)
-
-    async def _check_knowledge_binding(self) -> None:
-        if self.knowledge.binding:
-            try:
-                await self.knowledge.prepare(self.add_system_message)
-                await self.knowledge.check()
-            except Exception as exc:
-                self.add_system_message(f"恢复的知识库不可用，回答已阻止: {exc}")
-
-    def _set_knowledge_binding(self, binding) -> None:
-        self.knowledge.bind(binding)
-        if self.session:
-            self.session.meta.knowledge_binding = self.knowledge.binding
-            # Use the existing durable context boundary so resume cannot revive old evidence.
-            self.session.append_record(make_compact_boundary("知识库作用域已切换；此前资料不作为本轮证据。", []))
-        self._restore_knowledge_binding()
-        self._set_conversation(ConversationManager())
-
-    async def _run_knowledge_command(self, cmd, ctx) -> None:
-        try:
-            await cmd.handler(ctx)
-        except Exception as exc:
-            self._show_error(f"知识库操作失败: {exc}")
-        finally:
-            await self._load_knowledge_choices()
-
-    def _on_knowledge_progress(self, payload: dict) -> None:
-        self._knowledge_progress = payload
-        failures = self._knowledge_failures.setdefault(payload["kb_id"], {})
-        for failure in payload["failures"]:
-            failures[os.path.normcase(os.path.abspath(failure["path"]))] = failure
-        if payload.get("completed_path") and payload.get("outcome") in {"succeeded", "unchanged"}:
-            failures.pop(os.path.normcase(os.path.abspath(payload["completed_path"])), None)
-        self._update_knowledge_label()
-
-    def _update_knowledge_label(self) -> None:
-        label = self.query_one("#knowledge-label", Static)
-        binding = self.knowledge.binding
-        if not binding:
-            label.update("")
-            return
-        progress = self._knowledge_progress
-        if progress and progress["kb_id"] == binding["kb_id"]:
-            label.update(f"资料 {progress['processed']}/{progress['total']} · 成功 {progress['succeeded']}"
-                         f" · 未变 {progress['unchanged']} · 失败 {progress['failed']}")
-        else:
-            name = next((k["name"] for k in self._knowledge_libraries if k["id"] == binding["kb_id"]), "已绑定")
-            label.update(RichText("知识库 · " + name))
-
-    async def _load_knowledge_choices(self) -> None:
-        self._knowledge_choices_revision += 1
-        revision = self._knowledge_choices_revision
-        binding = self.knowledge.binding
-        kb_id = binding["kb_id"] if binding else None
-        def read():
-            service = self.knowledge.service
-            return service.list_libraries(), service.status(kb_id) if kb_id else None
-        try:
-            libraries, status = await asyncio.to_thread(read)
-            error = ""
-        except Exception as exc:
-            libraries, status = [], None
-            error = f"读取知识库列表失败：{exc}"
-        current = self.knowledge.binding
-        if revision != self._knowledge_choices_revision or (current["kb_id"] if current else None) != kb_id:
-            return
-        self._knowledge_libraries, self._knowledge_status = libraries, status
-        self._knowledge_choices_error = error
-        self._knowledge_choices_loaded = True
-        self._update_knowledge_label()
-        self._refresh_knowledge_completion()
-
-    def _show_knowledge_menu(self) -> None:
-        if self.query_one("#chat-input", ChatInput).text.strip():
-            return
-        self._knowledge_document = None
-        self._set_completion_input(KNOWLEDGE_PREFIX)
 
     def _set_completion_input(self, text: str) -> None:
         widget = self.query_one("#chat-input", ChatInput)
         widget.load_text(text)
         widget.move_cursor(widget.document.end)
         widget.focus()
-        self._refresh_knowledge_completion()
 
-    def _refresh_knowledge_completion(self) -> None:
-        text = self.query_one("#chat-input", ChatInput).text
-        if not text.startswith(KNOWLEDGE_PREFIX):
-            return
-        binding = self.knowledge.binding or {}
-        failures = list(self._knowledge_failures.get(binding.get("kb_id"), {}).values())
-        pairs, kind, hint = knowledge_candidates(text, self._knowledge_libraries, self._knowledge_status,
-                                                failures, self._knowledge_document)
-        if self._knowledge_choices_error:
-            hint = self._knowledge_choices_error + " · Esc 返回/取消"
-        self.query_one(CompletionPopup).show_pairs(pairs, input_text=text, kind=kind, hint=hint)
-
-    async def _complete_knowledge_path(self, text: str, revision: int) -> None:
-        prefix = text[len(KNOWLEDGE_PREFIX + "import "):].strip()
-        if prefix[:1] in {'"', "'"}:
-            quote, prefix = prefix[0], prefix[1:]
-            if prefix.endswith(quote):
-                prefix = prefix[:-1]
-        prefix = os.path.expanduser(prefix)
-        work_dir = self.agent.work_dir if self.agent else os.getcwd()
-        def read():
-            matches = scan_files_for_at(prefix, work_dir)
-            # A complete directory command still imports that directory, even
-            # when its trailing separator also offers children to select.
-            if prefix and os.path.isdir(os.path.join(work_dir, prefix)):
-                matches = [prefix] + [path for path in matches if path != prefix]
-            return matches
-        matches = await asyncio.to_thread(read)
-        if (revision != self._knowledge_completion_revision
-                or self.query_one("#chat-input", ChatInput).text != text):
-            return
-        pairs = [(escape(path), KNOWLEDGE_PREFIX + 'import "' + path + '"') for path in matches]
-        self.query_one(CompletionPopup).show_pairs(pairs, input_text=text, kind="knowledge-path",
-                                                  hint="↑↓ 选择路径 · Tab 补全 · Enter 导入 · Esc 返回")
 
     def _persist_compact_boundary(self, notification: CompactNotification) -> None:
         """Layer-2 compact 后写入 compact_boundary 记录。
@@ -1288,20 +1123,11 @@ class CodePlusApp(App):
 
     async def _dispatch_command(self, text: str) -> None:
         name, args, is_command = parse_command(text)
-        knowledge_busy = self.knowledge.preparing or (self._knowledge_task is not None and not self._knowledge_task.done())
         answer_busy = self._streaming or (self._agent_task is not None and not self._agent_task.done())
-        if knowledge_busy and (not is_command or name in {"knowledge", "session", "clear"}):
-            self.add_system_message("知识库操作正在执行；完成后再提问、切库或切换会话。")
-            return
-        if answer_busy and name in {"knowledge", "session", "clear"}:
-            self.add_system_message("回答正在执行；结束后再操作知识库或切换会话。")
+        if answer_busy and name in {"session", "clear"}:
+            self.add_system_message("回答正在执行；结束后再切换或清空会话。")
             return
 
-        if name == "knowledge" and (args in {"create", "use", "import", "sources", "remove", "reimport"}
-                                    or args.startswith("sources ")):
-            self._knowledge_document = None
-            self._set_completion_input(KNOWLEDGE_PREFIX + args + " ")
-            return
 
         if not is_command:
             if self._streaming or self.agent is None:
@@ -1331,9 +1157,6 @@ class CodePlusApp(App):
             return
 
         ctx = self._build_command_context(args)
-        if name == "knowledge" or (name == "session" and args.split(None, 1)[:1] == ["resume"]):
-            self._knowledge_task = asyncio.create_task(self._run_knowledge_command(cmd, ctx))
-            return
         try:
             await cmd.handler(ctx)
         except Exception as e:
@@ -1345,9 +1168,6 @@ class CodePlusApp(App):
 
     async def on_chat_input_submitted(self, event: ChatInput.Submitted) -> None:
         text = event.text.strip()
-        if self.knowledge.retrieving and not text.startswith("/"):
-            self.add_system_message("本地检索正在执行；完成后可中断回答或重新提问。")
-            return
         if self._streaming and not text.startswith("/"):
             if self._agent_task and not self._agent_task.done():
                 self._agent_task.cancel()
@@ -1362,9 +1182,6 @@ class CodePlusApp(App):
     def on_chat_input_tab_complete(self, event: ChatInput.TabComplete) -> None:
         input_widget = self.query_one("#chat-input", ChatInput)
         if input_widget.text.strip() != event.text:
-            return
-        if event.text.startswith(KNOWLEDGE_PREFIX):
-            self._refresh_knowledge_completion()
             return
         matches = complete(self.command_registry, event.text)
         if not matches:
@@ -1381,16 +1198,6 @@ class CodePlusApp(App):
         if self.query_one("#chat-input", ChatInput).text != event.input_text:
             return
         popup = self.query_one(CompletionPopup)
-        if event.prefix is not None and event.prefix.startswith(KNOWLEDGE_PREFIX):
-            self._refresh_knowledge_completion()
-            if not self._knowledge_choices_loaded:
-                self._knowledge_choices_loaded = True
-                self.run_worker(self._load_knowledge_choices(), group="knowledge-choices", exclusive=True)
-            if event.prefix.startswith(KNOWLEDGE_PREFIX + "import "):
-                self._knowledge_completion_revision += 1
-                self.run_worker(self._complete_knowledge_path(event.prefix, self._knowledge_completion_revision),
-                                group="knowledge-path", exclusive=True)
-            return
         if event.prefix is None:
             popup.hide()
             return
@@ -1415,14 +1222,6 @@ class CodePlusApp(App):
             return
         selected = event.value
         text = input_widget.text
-        if event.kind == "knowledge-source":
-            self._knowledge_document = selected
-            self._set_completion_input(KNOWLEDGE_PREFIX + "sources " + selected)
-            return
-        if selected in {KNOWLEDGE_PREFIX + sub for sub in ("create", "use", "import", "sources", "remove", "reimport")}:
-            self._knowledge_document = None
-            self._set_completion_input(selected + " ")
-            return
         if event.submit and not selected.startswith("@"):
             input_widget.submit_text(selected)
             return
@@ -1436,9 +1235,6 @@ class CodePlusApp(App):
         self._set_completion_input(selected + " ")
 
     def action_cycle_mode(self) -> None:
-        if isinstance(self.focused, CitationMarkdown) or self.query(InlineSourcePreview):
-            self.screen.focus_previous()
-            return
         if self.agent is None:
             return
         current = self.agent.permission_mode
@@ -1475,30 +1271,11 @@ class CodePlusApp(App):
                 block._render_done()
 
     def action_cancel(self) -> None:
-        previews = self.query(InlineSourcePreview)
-        if previews:
-            previews.first().action_close()
-            return
         popup = self.query_one(CompletionPopup)
         input_widget = self.query_one("#chat-input", ChatInput)
         if popup.is_visible:
-            self._knowledge_completion_revision += 1
-            if popup.kind.startswith("knowledge") and popup.input_text == input_widget.text:
-                if self._knowledge_document and input_widget.text.strip() == KNOWLEDGE_PREFIX + "sources " + self._knowledge_document:
-                    self._knowledge_document = None
-                    self._set_completion_input(KNOWLEDGE_PREFIX + "sources ")
-                elif input_widget.text.strip() != "/knowledge":
-                    self._knowledge_document = None
-                    self._set_completion_input(KNOWLEDGE_PREFIX)
-                else:
-                    input_widget.clear()
-                    popup.hide()
-            else:
-                popup.hide()
+            popup.hide()
             input_widget.focus()
-            return
-        if self.knowledge.retrieving:
-            self.add_system_message("本地检索正在执行；完成后可中断回答。")
             return
         if self._agent_task and not self._agent_task.done():
             if self._subagent_task and not self._subagent_task.done():
@@ -1608,7 +1385,7 @@ class CodePlusApp(App):
         # Start memory recall prefetch before UI work.
         prefetch_task = asyncio.create_task(
             self._prefetch_relevant_memories(text)
-        ) if text and not self.agent.knowledge_active else None
+        ) if text else None
 
         if text:
             user_row = Vertical(classes="user-row")
@@ -1681,7 +1458,7 @@ class CodePlusApp(App):
                     from rich.text import Text as RichText
                     t = RichText()
                     t.append("● ", style="bold color(99)")
-                    t.append(short_citations(accumulated_text, links=False))
+                    t.append(accumulated_text)
                     streaming_label.update(t)
                     self.call_after_refresh(chat.scroll_end, animate=False)
 
@@ -1695,7 +1472,7 @@ class CodePlusApp(App):
                         from rich.text import Text as RichText
                         prefix = Static(RichText("●  ", style="bold color(99)"), classes="message")
                         await ai_row.mount(prefix)
-                        md = await self._answer_markdown(accumulated_text)
+                        md = self._answer_markdown(accumulated_text)
                         await ai_row.mount(md)
                         streaming_label = None
                         accumulated_text = ""
@@ -1785,7 +1562,7 @@ class CodePlusApp(App):
                     # 保留错误前已输出的流式文本
                     if accumulated_text and streaming_label is not None:
                         await streaming_label.remove()
-                        md = await self._answer_markdown(accumulated_text)
+                        md = self._answer_markdown(accumulated_text)
                         await ai_row.mount(md)
                         streaming_label = None
                         accumulated_text = ""
@@ -1817,7 +1594,7 @@ class CodePlusApp(App):
             # 收尾：渲染剩余的累积文本
             if accumulated_text and streaming_label is not None:
                 await streaming_label.remove()
-                md = await self._answer_markdown(accumulated_text)
+                md = self._answer_markdown(accumulated_text)
                 await ai_row.mount(md)
             elif streaming_label is not None:
                 await streaming_label.remove()
@@ -1828,7 +1605,7 @@ class CodePlusApp(App):
             if accumulated_text:
                 if streaming_label is not None:
                     await streaming_label.remove()
-                md = await self._answer_markdown(accumulated_text + "\n\n*[cancelled]*")
+                md = self._answer_markdown(accumulated_text + "\n\n*[cancelled]*")
                 await ai_row.mount(md)
             self._show_system_message("Operation cancelled")
         except LLMError as e:
@@ -2113,9 +1890,8 @@ class CodePlusApp(App):
     # 恢复 session 的消息渲染
     # -----------------------------------------------------------------
 
-    async def _answer_markdown(self, text: str) -> CitationMarkdown:
-        return CitationMarkdown(await self.knowledge.presentation(text), self.knowledge,
-                                classes="message ai-message")
+    def _answer_markdown(self, text: str) -> Markdown:
+        return Markdown(text, classes="message ai-message")
 
     async def _render_restored_messages(self, messages: list[Message]) -> None:
         chat = self.query_one("#chat-area", VerticalScroll)
@@ -2135,7 +1911,7 @@ class CodePlusApp(App):
             elif msg.role == "assistant":
                 row = Vertical(classes="ai-row")
                 await chat.mount(row)
-                md = await self._answer_markdown(msg.content)
+                md = self._answer_markdown(msg.content)
                 await row.mount(md)
 
         self.call_after_refresh(chat.scroll_end, animate=False)
@@ -2233,9 +2009,6 @@ class CodePlusApp(App):
     # -----------------------------------------------------------------
 
     async def action_handle_ctrl_c(self) -> None:
-        if self.knowledge.preparing or self.knowledge.retrieving or (self._knowledge_task and not self._knowledge_task.done()):
-            self.add_system_message("知识库操作正在执行；请等待本次操作完成后退出。")
-            return
         if self._streaming:
             if self._agent_task and not self._agent_task.done():
                 self._agent_task.cancel()
@@ -2290,7 +2063,6 @@ class CodePlusApp(App):
 
             if self.session:
                 self.session.close()
-            await self.knowledge.aclose()
 
         try:
             await _cleanup()
@@ -2298,10 +2070,6 @@ class CodePlusApp(App):
             pass
         self.exit()
 
-    async def on_unmount(self) -> None:
-        if self._knowledge_task is not None:
-            await asyncio.gather(self._knowledge_task, return_exceptions=True)
-        await self.knowledge.aclose()
 
     def _show_error(self, text: str) -> None:
         chat = self.query_one("#chat-area", VerticalScroll)

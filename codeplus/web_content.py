@@ -192,15 +192,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .msg-assistant .content th { background: var(--bg-surface); }
 .msg-assistant .content a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
 .msg-assistant .content a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
-.citation-list { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 10px; }
-.citation-list button, #source-close { background: var(--bg-surface); color: var(--blue); border: 1px solid var(--border); border-radius: 5px; padding: 6px 10px; font: inherit; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
-.citation-list button:focus-visible, #source-close:focus-visible { outline: 2px solid var(--accent); }
-#source-dialog { margin: auto; width: min(800px, 92vw); max-height: 85vh; padding: 20px; background: var(--bg); color: var(--text); border: 1px solid var(--accent); border-radius: 8px; }
-#source-dialog::backdrop { background: #0009; }
-#source-title { font-size: 17px; overflow-wrap: anywhere; }
-#source-details { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0; }
-#source-text { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.6; max-height: 45vh; overflow-y: auto; padding: 12px; background: var(--code-bg); }
-#source-close { margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -219,13 +210,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
     <button id="send-btn">Send</button>
   </div>
 </div>
-
-<dialog id="source-dialog" aria-labelledby="source-title">
-  <h2 id="source-title">引用来源</h2>
-  <div id="source-details" role="status"></div>
-  <pre id="source-text" tabindex="0" aria-label="引用原文"></pre>
-  <button id="source-close" autofocus>关闭来源 (Esc)</button>
-</dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
@@ -263,66 +247,6 @@ function renderMarkdown(text) {
 
 function escapeHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// Short numbers live only in this render. Links always carry the full source ID.
-function shortCitations(text) {
-  const numbers = new Map();
-  return text.replace(/\[K:([^\]\n]*)\]/g, (_, tail) => {
-    const id = 'K:' + tail;
-    if (!numbers.has(id)) numbers.set(id, numbers.size + 1);
-    return '[\\[' + numbers.get(id) + '\\]](codeplus-source:' + encodeURIComponent(id) + ')';
-  });
-}
-
-const sourceDialog = document.getElementById('source-dialog');
-let sourceRequestId = null;
-let sourceReturnFocus = null;
-let sourceSequence = 0;
-
-function openSource(citationId, trigger) {
-  sourceReturnFocus = trigger;
-  sourceRequestId = String(++sourceSequence);
-  document.getElementById('source-title').textContent = '引用来源';
-  document.getElementById('source-details').textContent = '正在读取来源…';
-  document.getElementById('source-text').textContent = '';
-  if (!sourceDialog.open) sourceDialog.showModal();
-  if (!ws || ws.readyState !== WebSocket.OPEN) {
-    document.getElementById('source-details').textContent = '连接已断开；重新连接后请再次打开来源。';
-    return;
-  }
-  ws.send(JSON.stringify({type: 'source_request', data: {citation_id: citationId, request_id: sourceRequestId}}));
-}
-
-document.getElementById('source-close').addEventListener('click', () => sourceDialog.close());
-sourceDialog.addEventListener('close', () => {
-  sourceRequestId = null;
-  (sourceReturnFocus && sourceReturnFocus.isConnected ? sourceReturnFocus : inputEl).focus();
-});
-messagesEl.addEventListener('click', event => {
-  const link = event.target.closest('a');
-  if (link && (link.getAttribute('href') || '').startsWith('codeplus-source:')) {
-    event.preventDefault();
-    let citationId = link.getAttribute('href').slice('codeplus-source:'.length);
-    try { citationId = decodeURIComponent(citationId); } catch (_) {}
-    openSource(citationId, link);
-  }
-});
-
-function showCitations(el, citations) {
-  const previous = el.querySelector('.citation-list');
-  if (previous) previous.remove();
-  if (!citations || !citations.length) return;
-  const list = document.createElement('div');
-  list.className = 'citation-list';
-  list.setAttribute('aria-label', '回答来源');
-  for (const ref of citations) {
-    const button = document.createElement('button');
-    button.textContent = '[' + ref.number + '] ' + ref.label;
-    button.addEventListener('click', () => openSource(ref.citation_id, button));
-    list.appendChild(button);
-  }
-  el.appendChild(list);
 }
 
 function connect() {
@@ -388,18 +312,7 @@ function handleMessage(msg) {
 
     case 'replay_assistant': {
       const el = addAssistant('');
-      updateAssistant(el, msg.data.content, false, msg.data);
-      break;
-    }
-
-    case 'source_preview': {
-      if (!sourceDialog.open || msg.data.request_id !== sourceRequestId) break;
-      const source = msg.data.source;
-      document.getElementById('source-title').textContent = source ? source.filename : '无法打开引用';
-      document.getElementById('source-details').textContent = source
-        ? source.location + '\n' + source.status_label + '\n版本: ' + source.generation_id + '\n' + source.citation_id
-        : msg.data.error;
-      document.getElementById('source-text').textContent = source ? source.text : '';
+      updateAssistant(el, msg.data.content, false);
       break;
     }
 
@@ -419,7 +332,7 @@ function handleMessage(msg) {
 
     case 'stream_end':
       if (currentAssistantEl) {
-        updateAssistant(currentAssistantEl, msg.data.text, false, msg.data);
+        updateAssistant(currentAssistantEl, msg.data.text, false);
       }
       currentAssistantEl = null;
       currentStreamText = '';
@@ -518,8 +431,7 @@ function addAssistant(text) {
   return div;
 }
 
-function updateAssistant(el, text, isStreaming, presentation = null) {
-  text = presentation && presentation.display_text !== undefined ? presentation.display_text : shortCitations(text);
+function updateAssistant(el, text, isStreaming) {
   const contentEl = el.querySelector('.content');
   // 检测 <think>...</think> 标签，分离思考内容和正文
   const thinkMatch = text.match(/^<think>([\s\S]*?)<\/think>\s*([\s\S]*)$/);
@@ -558,7 +470,6 @@ function updateAssistant(el, text, isStreaming, presentation = null) {
     if (isStreaming) html += '<span class="cursor">▎</span>';
     contentEl.innerHTML = html;
   }
-  showCitations(el, presentation ? presentation.citations : []);
   scrollToBottom();
 }
 

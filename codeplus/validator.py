@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import math
-from urllib.parse import urlsplit
 
 VALID_PROTOCOLS = {"anthropic", "openai", "openai-compat"}
 
@@ -239,52 +237,13 @@ def validate_sandbox(raw_sb: dict | None) -> dict:
     return result
 
 
-def validate_knowledge(raw: dict | None) -> dict:
-    """Validate supplied fields only, preserving omission for config layering."""
-    if raw is None:
-        return {}
-    if not isinstance(raw, dict):
-        raise ConfigError("'knowledge' must be a mapping")
-    if "enabled" in raw:
-        validate_bool_field(raw["enabled"], "knowledge.enabled")
-    if "managed_local" in raw:
-        validate_bool_field(raw["managed_local"], "knowledge.managed_local")
-    if "retrieval_mode" in raw:
-        mode = raw["retrieval_mode"]
-        if not isinstance(mode, str) or mode not in {"auto", "dense", "bm25", "hybrid"}:
-            raise ConfigError("'knowledge.retrieval_mode' must be auto, dense, bm25 or hybrid")
-    if "retrieval_candidates" in raw:
-        candidates = raw["retrieval_candidates"]
-        if isinstance(candidates, bool) or not isinstance(candidates, int) or not 1 <= candidates <= 16384:
-            raise ConfigError("'knowledge.retrieval_candidates' must be an integer from 1 to 16384")
-    if "rrf_k" in raw:
-        constant = raw["rrf_k"]
-        try:
-            valid = (not isinstance(constant, bool) and isinstance(constant, (int, float))
-                     and math.isfinite(constant) and constant > 0)
-        except OverflowError:
-            valid = False
-        if not valid:
-            raise ConfigError("'knowledge.rrf_k' must be a finite positive number")
-    if "milvus_uri" in raw:
-        try:
-            uri = urlsplit(raw["milvus_uri"])
-            if uri.scheme not in {"http", "https"} or not uri.hostname or not uri.port:
-                raise ValueError
-        except (ValueError, TypeError, AttributeError):
-            raise ConfigError("'knowledge.milvus_uri' must be http(s)://host:port")
-    if raw.get("managed_local") and raw.get("milvus_uri", "http://127.0.0.1:19530") != "http://127.0.0.1:19530":
-        raise ConfigError("knowledge.managed_local requires http://127.0.0.1:19530; external Milvus must use false")
-    return dict(raw)
-
-
 def validate_config_structure(raw: object) -> dict:
     """校验的主入口。校验解析后的原始配置，返回清洗后的字典。
 
     返回的字典包含以下键：
         providers、permission_mode、mcp_servers、hooks、
         enable_fork、enable_verification_agent、worktree、
-        teammate_mode、enable_coordinator_mode、sandbox、knowledge
+        teammate_mode、enable_coordinator_mode、sandbox
     """
     if not isinstance(raw, dict) or "providers" not in raw:
         raise ConfigError("Config must contain a 'providers' list")
@@ -304,5 +263,4 @@ def validate_config_structure(raw: object) -> dict:
             raw.get("enable_coordinator_mode", False), "enable_coordinator_mode"
         ),
         "sandbox": validate_sandbox(raw.get("sandbox")),
-        "knowledge": validate_knowledge(raw.get("knowledge")),
     }

@@ -16,14 +16,15 @@ param(
     [string]$Replay
 )
 $ErrorActionPreference = 'Stop'
+if ($PSCmdlet.ParameterSetName -eq 'Retrieval') {
+    throw '旧检索引擎已移除，新引擎宿主/评测接入尚未完成。'
+}
 $projectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
 $pythonPath = Join-Path $projectRoot '.venv/Scripts/python.exe'
 if (-not (Test-Path -LiteralPath $pythonPath -PathType Leaf)) {
-    throw 'Install the project Windows environment: uv sync --locked --extra knowledge'
+    throw 'Install the project Windows environment: uv sync --locked'
 }
-$benchmarkEntry = if ($PSCmdlet.ParameterSetName -eq 'Replay') {
-    @(Join-Path $PSScriptRoot 'replay.py')
-} else { @('-m', 'codeplus.knowledge', 'benchmark') }
+$benchmarkEntry = @(Join-Path $PSScriptRoot 'replay.py')
 if ($Dataset -eq 'all' -and $PSCmdlet.ParameterSetName -ne 'Check') {
     throw 'Choose one dataset and its dedicated base: -Dataset original|crud|multihop|openrag|smoke'
 }
@@ -33,15 +34,10 @@ if ($Dataset -eq 'rgb' -and $PSCmdlet.ParameterSetName -ne 'Check') {
 $datasetPath = if ($Dataset -eq 'smoke') { Join-Path $PSScriptRoot 'smoke' } else { Join-Path $PSScriptRoot "full/$Dataset" }
 $arguments = @($benchmarkEntry) + @('--dataset', $datasetPath)
 switch ($PSCmdlet.ParameterSetName) {
-    'Retrieval' {
-        $arguments += @('--kb-id', $KbId, '--mode', $Mode)
-        if ($Mode -eq 'hybrid') { $arguments += @('--candidates', '50', '--rrf-k', '60') }
-        if ($ManagedLocal) { $arguments += '--managed-local' }
-    }
     'Replay' { $arguments += @('--replay', (Resolve-Path -LiteralPath $Replay).Path) }
     default {
         if ($Dataset -eq 'all') { $arguments = @(Join-Path $PSScriptRoot 'check.py') }
-        else { $arguments += '--check' }
+        else { throw '旧分区检查入口已移除；使用 -Check 检查已配置的离线题库。' }
     }
 }
 Push-Location -LiteralPath $projectRoot

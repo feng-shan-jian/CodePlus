@@ -1,0 +1,14 @@
+{
+  "README.md": {
+    "base": "cd6ed3470c1ce5619c6e8bc6791346ac577e64c1",
+    "current_before_sha256": "668663e2a12a234c2fc2ecf0701c5d1911838cb2cc32b4dad137d6431bf5c3f7",
+    "head_to_current_before_diff": "--- HEAD/README.md\n+++ current-before/README.md\n@@ -339,7 +339,7 @@\n | **扩展** | 多模型协议 · Skill · MCP · Hooks |\n | **执行控制** | 权限规则 · 路径边界 · 可选沙箱 · Git worktree |\n \n-Agentic RAG（Work）模式已接入 TUI、CLI 和 Remote，支持本地 Qwen Embedding + Milvus 向量、BM25 及 RRF 混合检索，回答由配置的模型生成。默认 auto 在新库用 hybrid、旧向量库用 dense；当前评测使用统一分场景题库，运行与边界见 [检索评测说明](eval/RAG-eval/benchmark.md)。\n+Agentic RAG（Work）模式已接入 TUI、CLI 和 Remote，支持本地 Qwen Embedding + Milvus 向量、BM25 及 RRF 混合检索，回答由配置的模型生成。默认 auto 在新库用 hybrid、旧向量库用 dense；当前评测使用官方 MultiHop-RAG，分为 50 / 200 / 2,556 题三个档位，运行与边界见 [检索评测说明](eval/RAG-eval/benchmark.md)。\n \n ---\n \n",
+    "ownership": "Inherited user status paragraph is explicitly superseded by authorized retired-engine status; no authorship claim."
+  },
+  "README_EN.md": {
+    "base": "cd6ed3470c1ce5619c6e8bc6791346ac577e64c1",
+    "current_before_sha256": "94ce7c6191f680ddeb3ed3bd9baa30e71149cb1895c7a0c5b19e1e0be3bdef5f",
+    "head_to_current_before_diff": "--- HEAD/README_EN.md\n+++ current-before/README_EN.md\n@@ -339,7 +339,7 @@\n | **Extensions** | Multiple model protocols · Skills · MCP · Hooks |\n | **Execution controls** | Permission rules · Path boundaries · Optional sandbox · Git worktrees |\n \n-Agentic RAG (Work) mode is available through the TUI, CLI, and Remote. It currently uses local Qwen embeddings and Milvus vector retrieval; the configured model generates answers. BM25/RRF remain separate experiments; OCR and reranking are future extensions.\n+Agentic RAG (Work) mode is available through the TUI, CLI, and Remote, with local Qwen embeddings and Milvus vector, BM25, and RRF hybrid retrieval; the configured model generates answers. Auto mode uses hybrid retrieval for new libraries and dense retrieval for older vector-only libraries. Evaluation uses official MultiHop-RAG data in fixed tiers of 50 / 200 / 2,556 questions; see the [evaluation guide](eval/RAG-eval/benchmark.md) for commands and limitations.\n \n ---\n \n",
+    "ownership": "Inherited user status paragraph is explicitly superseded by authorized retired-engine status; no authorship claim."
+  }
+}

@@ -31,7 +31,7 @@
 | R08 | COMMITTED | /root/r08_parsing | [Leader 验收](implementation-records/R08.md) | `97224b0414c9b67bc99ed59799fa2f2286ab5460` |
 | R09 | COMMITTED | /root/r09_model_worker | [Leader 验收](implementation-records/R09.md) | `9afe7e37982cf63c3e2199403499b289d8a520b1` |
 | R10 | COMMITTED | /root/r10_publication | [Leader独立验收](implementation-records/R10.md)；326核心+11真实+4增量，609/200/重启通过 | 81bf1461c73d9d640144eb1ed8b9a193d0f4f953 |
-| R11 | ACCEPTED | /root/r11_sources | [Leader独立验收](implementation-records/R11.md)；393核心无skip、两路安装及三版真实升级通过 | 待精确本地提交 |
+| R11 | COMMITTED | /root/r11_sources | [Leader独立验收](implementation-records/R11.md)；393核心无skip、两路安装及三版真实升级通过 | `cd6ed3470c1ce5619c6e8bc6791346ac577e64c1` |
 | R12 | TODO | — | — | — |
 | R13 | TODO | — | — | — |
 | R14 | TODO | — | — | — |
@@ -47,6 +47,8 @@
 | R24 | TODO | — | — | — |
 | R25 | TODO | — | — | — |
 | R26 | TODO | — | — | — |
+
+R11已提交，R12前置独立整合：旧RAG清理 ACCEPTED，执行者 `/root/pre_r12_cleanup` 已STOP_WRITE；Leader独立809项回归、两路安装及数据检查通过，见 [验收记录](implementation-records/PRE-R12-cleanup.md)。该项待精确本地提交，提交后继续R12，不改变27项任务及总体验收范围。
 
 ## 2. 每项任务适用的通用检查
 

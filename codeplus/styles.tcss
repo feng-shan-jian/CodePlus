@@ -148,14 +148,6 @@ Screen { }
     padding: 0 1;
 }
 
-#knowledge-label {
-    width: auto;
-    max-width: 60%;
-    height: 1;
-    color: $text-muted;
-    padding: 0 1;
-}
-
 #model-label {
     width: 1fr;
     height: 1;

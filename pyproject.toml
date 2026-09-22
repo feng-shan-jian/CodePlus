@@ -15,29 +15,14 @@ dependencies = [
     "websockets>=14.0",
 ]
 
-[project.optional-dependencies]
-knowledge = [
-    "filelock==4.0.1",
-    "llama-index-core==0.14.24",
-    "markdown-it-py==4.0.0",
-    "pymilvus==3.0.2",
-    "pypdf==6.19.0",
-    "python-docx==1.2.0",
-    "torch==2.14.0",
-    "transformers==5.17.0",
-]
-
 [project.scripts]
 codeplus = "codeplus.__main__:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["codeplus"]
 
-[tool.hatch.build.targets.wheel.force-include]
-"deployment/knowledge/compose.yaml" = "codeplus/knowledge/compose.yaml"
-
 [tool.hatch.build.targets.sdist]
-exclude = ["/eval/"]
+exclude = ["/eval/", "/deployment/AgenticRAG/"]
 
 [build-system]
 requires = ["hatchling"]

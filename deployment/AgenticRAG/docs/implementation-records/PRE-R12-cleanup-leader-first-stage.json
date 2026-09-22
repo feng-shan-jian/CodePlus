@@ -1,0 +1,9 @@
+{
+  "stage": "preflight_before_index_mutation",
+  "result": "FAIL",
+  "reason": "One authorized deleted input docs/knowledge-data-preparation-plan.md was untracked in HEAD, so ls-files --error-unmatch correctly failed before staging.",
+  "head": "cd6ed3470c1ce5619c6e8bc6791346ac577e64c1",
+  "index_empty_verified": true,
+  "fix": "Exclude this non-committable deletion from expected Git paths, retain its authorized removal and baseline SHA in records. No production change and no reset.",
+  "runtime_acceptance_unchanged": true
+}

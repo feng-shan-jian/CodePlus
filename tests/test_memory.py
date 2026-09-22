@@ -562,7 +562,7 @@ class TestCompactBoundaryRoundTrip:
         for message in originals:
             session.append(message)
         session.append_record(make_compact_boundary("summary", originals[-1:]))
-        session.append_record(make_compact_boundary("", []))  # Knowledge switch/off.
+        session.append_record(make_compact_boundary("", []))  # Explicit context reset.
         session.append(Message("user", "ordinary chat after off"))
         session.close()
         result = mgr.resume(session.session_id)

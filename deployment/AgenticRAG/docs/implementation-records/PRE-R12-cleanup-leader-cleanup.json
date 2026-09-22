@@ -1,0 +1,358 @@
+{
+  "captured_at": "2026-09-22T08:29:48.9894006Z",
+  "owned_root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922",
+  "resolved_root_checked": true,
+  "file_entries": 15597,
+  "reparse_entries": 689,
+  "directories": 3573,
+  "root_absent": true,
+  "helpers_remaining": 0,
+  "owned_readonly_files": 57,
+  "readonly_links_checked_before_deletion": true,
+  "readonly_hardlinks": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_valid_worktree0\\repo\\.git\\objects\\ee\\12f61529a178ff7627b6f51331bdbbecfd953d",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_valid_worktree0\\repo\\.git\\objects\\ee\\12f61529a178ff7627b6f51331bdbbecfd953d"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_valid_worktree0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_valid_worktree0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_valid_worktree0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_valid_worktree0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_uncommitted_changes0\\repo\\.git\\objects\\b6\\286927563e5de070a5c3a5f684d1c343df1cd9",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_uncommitted_changes0\\repo\\.git\\objects\\b6\\286927563e5de070a5c3a5f684d1c343df1cd9"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_uncommitted_changes0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_uncommitted_changes0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_uncommitted_changes0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_uncommitted_changes0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\d8\\71a3911ca65555dc51c4932dc26ec666543764",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\d8\\71a3911ca65555dc51c4932dc26ec666543764"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\af\\a81113820b47f35a90088789a1d3ebedcaf2e4",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\af\\a81113820b47f35a90088789a1d3ebedcaf2e4"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\68\\407420faafe00e061457ca8baa0d81ce7fd8ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\68\\407420faafe00e061457ca8baa0d81ce7fd8ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\3e\\5126c4e761fd09582fc517918a1601b218dff0",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\3e\\5126c4e761fd09582fc517918a1601b218dff0"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_new_commits0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_list_worktrees0\\repo\\.git\\objects\\c8\\af37408e100ec82fbef651a01ed00ec60d20a6",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_list_worktrees0\\repo\\.git\\objects\\c8\\af37408e100ec82fbef651a01ed00ec60d20a6"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_list_worktrees0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_list_worktrees0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_list_worktrees0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_list_worktrees0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_fast_recovery0\\repo\\.git\\objects\\a5\\4005f5fa45de99f602f5a70c7b4fda95eb5b57",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_fast_recovery0\\repo\\.git\\objects\\a5\\4005f5fa45de99f602f5a70c7b4fda95eb5b57"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_fast_recovery0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_fast_recovery0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_fast_recovery0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_fast_recovery0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_with_changes_0\\repo\\.git\\objects\\f3\\b8d8a2cfb77848da7419dc51e98faa6db1c201",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_with_changes_0\\repo\\.git\\objects\\f3\\b8d8a2cfb77848da7419dc51e98faa6db1c201"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_with_changes_0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_with_changes_0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_with_changes_0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_with_changes_0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_clean0\\repo\\.git\\objects\\f3\\b8d8a2cfb77848da7419dc51e98faa6db1c201",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_clean0\\repo\\.git\\objects\\f3\\b8d8a2cfb77848da7419dc51e98faa6db1c201"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_clean0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_clean0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_clean0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_remove_clean0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_keep0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_keep0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_keep0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_keep0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_keep0\\repo\\.git\\objects\\02\\4e8f781aba344fbe53c4166048468ce61e951c",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_exit_keep0\\repo\\.git\\objects\\02\\4e8f781aba344fbe53c4166048468ce61e951c"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_sets_session0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_sets_session0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_sets_session0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_sets_session0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_sets_session0\\repo\\.git\\objects\\02\\4e8f781aba344fbe53c4166048468ce61e951c",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_sets_session0\\repo\\.git\\objects\\02\\4e8f781aba344fbe53c4166048468ce61e951c"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_nonexistent0\\repo\\.git\\objects\\c8\\af37408e100ec82fbef651a01ed00ec60d20a6",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_nonexistent0\\repo\\.git\\objects\\c8\\af37408e100ec82fbef651a01ed00ec60d20a6"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_nonexistent0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_nonexistent0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_nonexistent0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_nonexistent0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_and_session0\\repo\\.git\\objects\\a5\\4005f5fa45de99f602f5a70c7b4fda95eb5b57",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_and_session0\\repo\\.git\\objects\\a5\\4005f5fa45de99f602f5a70c7b4fda95eb5b57"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_and_session0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_and_session0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_and_session0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_enter_and_session0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create0\\repo\\.git\\objects\\c6\\78a3f788be7fd3cd5fa8ddd0457c0b88369915",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create0\\repo\\.git\\objects\\c6\\78a3f788be7fd3cd5fa8ddd0457c0b88369915"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_nested_slug0\\repo\\.git\\objects\\e5\\e4fe097bbb94eec45f39b9c9f3eeab38e5d367",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_nested_slug0\\repo\\.git\\objects\\e5\\e4fe097bbb94eec45f39b9c9f3eeab38e5d367"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_nested_slug0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_nested_slug0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_nested_slug0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_nested_slug0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_invalid_slug0\\repo\\.git\\objects\\c6\\78a3f788be7fd3cd5fa8ddd0457c0b88369915",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_invalid_slug0\\repo\\.git\\objects\\c6\\78a3f788be7fd3cd5fa8ddd0457c0b88369915"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_invalid_slug0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_invalid_slug0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_invalid_slug0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_invalid_slug0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_duplicate0\\repo\\.git\\objects\\e5\\e4fe097bbb94eec45f39b9c9f3eeab38e5d367",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_duplicate0\\repo\\.git\\objects\\e5\\e4fe097bbb94eec45f39b9c9f3eeab38e5d367"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_duplicate0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_duplicate0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_duplicate0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_create_duplicate0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_clean_worktree0\\repo\\.git\\objects\\b6\\286927563e5de070a5c3a5f684d1c343df1cd9",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_clean_worktree0\\repo\\.git\\objects\\b6\\286927563e5de070a5c3a5f684d1c343df1cd9"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_clean_worktree0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_clean_worktree0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_clean_worktree0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_clean_worktree0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_removes_clea0\\repo\\.git\\objects\\68\\407420faafe00e061457ca8baa0d81ce7fd8ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_removes_clea0\\repo\\.git\\objects\\68\\407420faafe00e061457ca8baa0d81ce7fd8ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_removes_clea0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_removes_clea0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_removes_clea0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_removes_clea0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_keeps_dirty0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_keeps_dirty0\\repo\\.git\\objects\\39\\13513f07655b21def8196b646a537a08bc3e65"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_keeps_dirty0\\repo\\.git\\objects\\33\\fa6820e7eb59e2870d3f0915257ffcf2a8bb69",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_keeps_dirty0\\repo\\.git\\objects\\33\\fa6820e7eb59e2870d3f0915257ffcf2a8bb69"
+      ]
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_keeps_dirty0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee",
+      "links": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\tests\\test_auto_cleanup_keeps_dirty0\\repo\\.git\\objects\\21\\e60f8358c6175f2efbbe34808a4d99d12d18ee"
+      ]
+    }
+  ],
+  "method": "No reparse traversal; delete owned file/link entries and then empty directories; no shared hardlink target attributes changed",
+  "temporary_scripts": "All Leader temporary scripts, including this cleanup helper, removed with the owned root before staging"
+}

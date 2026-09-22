@@ -87,7 +87,10 @@ def test_check_matches_r00_with_host_imports_forbidden(tier, blocked_env):
 
 def test_frozen_files_and_order_match_r00():
     rows = read(RECORDS / "R00-input-fingerprints.json")["evaluation_inputs"]
-    seams = {"eval/RAG-eval/check.py", "eval/RAG-eval/run.ps1"}
+    # PRE-R12 cleanup updates usage docs only; frozen data and scorers are unchanged.
+    # See docs/implementation-records/PRE-R12-cleanup-executor.md.
+    seams = {"eval/RAG-eval/check.py", "eval/RAG-eval/run.ps1",
+             "eval/RAG-eval/README.md", "eval/RAG-eval/benchmark.md"}
     for row in rows:
         if row["path"] not in seams:
             assert sha256((ROOT / row["path"]).read_bytes()).hexdigest() == row["sha256"], row["path"]

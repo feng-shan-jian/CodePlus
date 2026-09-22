@@ -1,0 +1,19 @@
+{
+  "command": [
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-executor-20260922\\hostenv\\Scripts\\python.exe",
+    "-B",
+    "-S",
+    "D:\\CodePlus\\eval\\coding-agent-eval\\check.py"
+  ],
+  "cwd": "D:\\CodePlus",
+  "started_at": "2026-09-22T08:10:56.661727+00:00",
+  "seconds": 0.19899160000204574,
+  "exit_code": 0,
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1",
+    "PYTHONPATH": null,
+    "UV_PROJECT_ENVIRONMENT": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-executor-20260922\\hostenv",
+    "UV_LINK_MODE": "copy"
+  }
+}

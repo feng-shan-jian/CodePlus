@@ -1,0 +1,35 @@
+{
+  "command": [
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-executor-20260922\\hostenv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "D:\\CodePlus\\tests",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_evaluation_protocol.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_host_contract.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_pre_r12_cleanup.py",
+    "-q",
+    "-rs",
+    "-p",
+    "no:cacheprovider",
+    "-o",
+    "faulthandler_timeout=40",
+    "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-executor-20260922\\final-tests"
+  ],
+  "cwd": "D:\\CodePlus",
+  "started_at": "2026-09-22T08:16:15.163177+00:00",
+  "seconds": 55.03365379999741,
+  "exit_code": 0,
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1",
+    "PYTHONPATH": null,
+    "UV_PROJECT_ENVIRONMENT": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-executor-20260922\\hostenv",
+    "UV_LINK_MODE": "copy"
+  },
+  "freeze_sha256": "73fc1c80c761a16f4a57d81fbcb1aec83af76cbbe405df980f1f59a3c9a72074",
+  "tested_input_count": 189,
+  "before_after_hashes_equal": true,
+  "host_env_python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-executor-20260922\\hostenv\\Scripts\\python.exe",
+  "powershell_r01_interpreter": "D:/CodePlus/.venv/Scripts/python.exe (existing script contract; no install or environment mutation)"
+}

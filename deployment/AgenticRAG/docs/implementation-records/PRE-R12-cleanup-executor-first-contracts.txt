@@ -1,0 +1,63 @@
+........................................................................ [ 62%]
+...........................................F                             [100%]
+================================== FAILURES ===================================
+_____________ test_powershell_caller_relative_answers_and_replay ______________
+
+tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-pre-r12-cleanup-executor-20260922/contracts/test_powershell_caller_relativ0')
+
+    def test_powershell_caller_relative_answers_and_replay(tmp_path):
+        selected = set(json.loads((SUITE / "tiers.json").read_text(encoding="utf-8"))["tiers"]["lite"]["question_ids"])
+        questions = [q for q in json.loads((SUITE / "questions.json").read_text(encoding="utf-8"))["questions"] if q["id"] in selected]
+        base = [SUITE / "run.ps1", "-Tier", "lite"]
+        checked = invoke([*base, "-Check"], tmp_path)
+        assert checked.returncode == 0, checked.stderr
+        dataset_sha = json.loads(checked.stdout)["dataset_sha256"]
+        (tmp_path / "answers.json").write_text(json.dumps([
+            {"id": q["id"], "query": q["query"], "model_answer": "", "status": "error"}
+            for q in questions]), encoding="utf-8")
+        answers = invoke([*base, "-Answers", "answers.json"], tmp_path)
+        assert answers.returncode == 0, answers.stderr
+        answer_report = json.loads(answers.stdout)
+        assert answer_report["selected_questions"] == answer_report["request_errors"] == 50
+        fixture = {"dataset_sha256": dataset_sha, "protocol": {"top_k": 10},
+                   "retrieval_request": {"mode": "dense", "top_k": 10},
+                   "records": [{"id": q["id"], "query": q["query"], "status": "error", "hits": []} for q in questions]}
+        source = tmp_path / "retrieval.json"
+        source.write_text(json.dumps(fixture), encoding="utf-8")
+        original = source.read_bytes()
+        replayed = invoke([*base, "-Replay", "retrieval.json"], tmp_path)
+        assert replayed.returncode == 1, replayed.stdout + replayed.stderr
+>       result = json.loads(replayed.stdout)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+deployment\AgenticRAG\tests\test_pre_r12_cleanup.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\18221\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <json.decoder.JSONDecoder object at 0x000001CCA371E3F0>, s = '', idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+            obj, end = self.scan_once(s, idx)
+        except StopIteration as err:
+>           raise JSONDecodeError("Expecting value", s, err.value) from None
+E           json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+C:\Users\18221\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\json\decoder.py:356: JSONDecodeError
+1 failed, 115 passed in 23.92s
+
+--- STDERR ---

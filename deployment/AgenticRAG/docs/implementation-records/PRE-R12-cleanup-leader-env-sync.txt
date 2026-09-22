@@ -1,0 +1,61 @@
+
+--- STDERR ---
+Using CPython 3.14.3 interpreter at: C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Scripts\python.exe
+Creating virtual environment at: C:\Users\18221\AppData\Local\Temp\codeplus-pre-r12-cleanup-leader-20260922\hostenv
+Resolved 55 packages in 1ms
+Installed 55 packages in 4.78s
+ + annotated-types==0.7.0
+ + anthropic==0.98.1
+ + anyio==4.13.0
+ + attrs==26.1.0
+ + certifi==2026.4.22
+ + cffi==2.0.0
+ + click==8.5.0
+ + codeplus==0.2.0 (from file:///D:/CodePlus)
+ + colorama==0.4.6
+ + cryptography==48.0.0
+ + distro==1.9.0
+ + docstring-parser==0.18.0
+ + h11==0.16.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + httpx-sse==0.4.3
+ + idna==3.13
+ + iniconfig==2.3.0
+ + jiter==0.14.0
+ + jsonschema==4.26.0
+ + jsonschema-specifications==2025.9.1
+ + linkify-it-py==2.1.0
+ + markdown-it-py==4.0.0
+ + mcp==1.27.0
+ + mdit-py-plugins==0.5.0
+ + mdurl==0.1.2
+ + openai==2.34.0
+ + packaging==26.2
+ + platformdirs==4.9.6
+ + pluggy==1.6.0
+ + pycparser==3.0
+ + pydantic==2.13.3
+ + pydantic-core==2.46.3
+ + pydantic-settings==2.14.0
+ + pygments==2.20.0
+ + pyjwt==2.12.1
+ + pytest==9.0.3
+ + pytest-asyncio==1.3.0
+ + python-dotenv==1.2.2
+ + python-multipart==0.0.27
+ + pywin32==311
+ + pyyaml==6.0.3
+ + referencing==0.37.0
+ + rich==15.0.0
+ + rpds-py==0.30.0
+ + sniffio==1.3.1
+ + sse-starlette==3.4.1
+ + starlette==1.0.0
+ + textual==8.2.5
+ + tqdm==4.67.3
+ + typing-extensions==4.15.0
+ + typing-inspection==0.4.2
+ + uc-micro-py==2.0.0
+ + uvicorn==0.46.0
+ + websockets==16.0

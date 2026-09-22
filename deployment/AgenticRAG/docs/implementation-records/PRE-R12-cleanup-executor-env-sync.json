@@ -1,0 +1,20 @@
+{
+  "command": [
+    "uv",
+    "sync",
+    "--locked",
+    "--offline",
+    "--dev"
+  ],
+  "cwd": "D:\\CodePlus",
+  "started_at": "2026-09-22T08:02:26.361767+00:00",
+  "seconds": 6.996072900001309,
+  "exit_code": 0,
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1",
+    "PYTHONPATH": null,
+    "UV_PROJECT_ENVIRONMENT": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-executor-20260922\\hostenv",
+    "UV_LINK_MODE": "copy"
+  }
+}

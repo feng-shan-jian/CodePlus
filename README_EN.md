@@ -241,7 +241,7 @@ The question here is not whether the model remembers what happened before. It is
 
 > **Where is the evidence for the current question?**
 
-This is what the **[Agentic RAG (Work) mode](codeplus/tools/knowledge.py)** being implemented next is intended to address.
+This is what the **[Agentic RAG (Work) mode](#what-comes-next)** being implemented next is intended to address.
 
 It will not replace Memory and does not handle code retrieval.
 
@@ -251,7 +251,7 @@ The three kinds of information retain their own boundaries:
 | --- | --- |
 | **Current code repository** | [Glob](codeplus/tools/glob.py) / [Grep](codeplus/tools/grep.py) / [ReadFile](codeplus/tools/read_file.py) read the actual workspace directly |
 | **Experience across sessions** | [Memory](codeplus/memory/recall.py) |
-| **External unstructured material** | [Agentic RAG (Work) mode](codeplus/knowledge/service.py) |
+| **External unstructured material** | [Agentic RAG (Work) mode](#what-comes-next) |
 
 With hundreds of documents, it may be unclear which source contains the answer or which keywords to search for. Semantic retrieval can provide a reading entry point. The Agent then returns to original sources with the current question, continues searching and gathering evidence, and finally assembles an answer or report.
 
@@ -261,7 +261,7 @@ What I want Work mode to achieve is:
 
 > **Wherever the report makes a claim, its evidence can follow.**
 
-[Provenance, location, and version](codeplus/knowledge/citations.py) need to stay together so conclusions can be checked against the originals. Parts without enough evidence should remain explicit, rather than being filled in from the model's past impressions.
+Provenance, location, and version need to stay together so conclusions can be checked against the originals. Parts without enough evidence should remain explicit, rather than being filled in from the model's past impressions.
 
 Memory, code retrieval, and Agentic RAG can then each handle their own information boundaries, rather than being forced into one mechanism for the sake of “unified retrieval.”
 
@@ -321,7 +321,7 @@ What CodePlus wants to keep exploring is how to connect those judgments to a rea
 
 ## What Comes Next
 
-The next step is to expand **Agentic RAG (Work) mode**: add OCR for scanned documents and parsing for complex layouts, bring BM25 + vector hybrid retrieval into everyday Q&A, and add reranking so more types of material can support evidence checking and cited reports.
+The next step is to rebuild **Agentic RAG (Work) mode** independently in `deployment/AgenticRAG`, following the confirmed first-release plan, including BM25 + vector hybrid retrieval and reranking. OCR for scanned documents and complex layout parsing remain later extensions so more types of material can support evidence checking and cited reports.
 
 ---
 
@@ -335,11 +335,10 @@ Current capabilities at a glance:
 | **Execution** | Agent Loop · File I/O · Code search · Commands |
 | **Collaboration** | Sub-agents · Team Mailboxes · Shared task boards · Background tasks |
 | **Context** | Session recovery · Memory · Compaction · File rewind |
-| **Knowledge (expanding)** | Agentic RAG (Work) mode · Document import · Cited answers · Reports |
 | **Extensions** | Multiple model protocols · Skills · MCP · Hooks |
 | **Execution controls** | Permission rules · Path boundaries · Optional sandbox · Git worktrees |
 
-Agentic RAG (Work) mode is available through the TUI, CLI, and Remote. It currently uses local Qwen embeddings and Milvus vector retrieval; the configured model generates answers. BM25/RRF remain separate experiments; OCR and reranking are future extensions.
+The legacy RAG implementation and its TUI, CLI, and Remote entry points have been removed. The independent core in [deployment/AgenticRAG](deployment/AgenticRAG/README.md) has passed R00–R11 acceptance; host question answering awaits R12 integration, and the full rebuild is still in progress. The official MultiHop-RAG corpus of 609 documents, fixed tiers of 50 / 200 / 2,556 questions, and offline scoring remain available; see the [evaluation guide](eval/RAG-eval/README.md).
 
 ---
 
@@ -355,12 +354,9 @@ flowchart LR
     Tools --> Local[Files / Commands / Worktrees]
     Tools --> Workers[Sub-agents / Teams]
     Tools --> Extension[Skills / MCP]
-    Agent --> Knowledge["Agentic RAG (Work) Mode"]
-    Tools --> Knowledge
-    Knowledge --> Sources[Saved Documents / Qwen / Milvus]
 ```
 
-Looking back, the earlier questions have settled into distinct responsibilities. The Agent Loop organizes actions, permissions constrain execution, Session, Memory, and Context retain information with different lifetimes, and knowledge retrieval adds external evidence. The diagram shows these relationships; the [knowledge architecture](docs/knowledge-architecture.md) explains its integration and boundaries.
+Looking back, the earlier questions have settled into distinct responsibilities. The Agent Loop organizes actions, permissions constrain execution, Session, Memory, and Context retain information with different lifetimes. The diagram shows these relationships; external evidence support will be rebuilt independently in [AgenticRAG](#what-comes-next).
 
 ---
 
@@ -395,48 +391,16 @@ uv run codeplus --remote
 
 Remote listens on `0.0.0.0:18888` by default; open `http://localhost:18888` locally. The TUI applies permission rules to changes and commands requiring confirmation; ordinary `-p` runs automatically approve permission requests.
 
-### Optional: Agentic RAG (Work) Mode
-
-The local knowledge capability is still expanding. Enable and manage it through the `/knowledge` commands.
-
-Follow the [setup steps](docs/knowledge-setup.md#最短使用流程), keep existing `providers`, and enable `knowledge.enabled`. Set `knowledge.managed_local: true` to prepare the bundled local service and model automatically on entry; keep it `false` for an external Milvus connection.
-
-```powershell
-uv sync --locked --extra knowledge
-uv run --extra knowledge codeplus
-```
-
-Keep `--extra knowledge` on subsequent runs. Initial preparation may download the local embedding model; use `/knowledge prepare` to retry a failure. Answers still use your configured model service.
-
-#### Import and Use Documents
-
-```text
-/knowledge create "Personal documents"
-/knowledge import "C:\Documents\reference material"
-Compare the options using the documents, cite the sources, and save a report as comparison.md.
-/knowledge open K:<kb_id>:<chunk_id>
-```
-
-`create` selects the new base; use `/knowledge use <kb_id>` next time. Importing the same path again updates it. Use `/knowledge sources` to list documents, `/knowledge status` to inspect state, and `/knowledge off` to leave knowledge mode. Report writes follow the existing file permissions.
-
-#### Citations and Non-interactive Use
-
-Click `[1]` or `[2]` in TUI and Remote answers to preview the filename, location, quoted text, and version status. In the TUI, Tab to an answer and press Enter; Esc closes the preview. Restored sessions retain links across library switches and knowledge mode changes. CLI output and reports keep full source IDs.
-
-For non-interactive questions, use `uv run --extra knowledge codeplus -p "Answer from the documents with citations" --knowledge <kb_id>`. Non-interactive knowledge mode denies operations requiring approval; explicitly add `--mode acceptEdits` to allow report writes. Remote accepts the same commands, with import paths on the server. See the [full guide](docs/knowledge-setup.md) for removal, recovery, format limits, and retrieval experiments.
-
----
-
 ## Development
 
-Follow a tool call through the [Agent Loop](codeplus/agent.py) and [tools](codeplus/tools), then trace context and messages through [agents](codeplus/agents) and [teams](codeplus/teams). [memory](codeplus/memory), [context](codeplus/context), and [knowledge](codeplus/knowledge) handle long-term memory, the current reasoning window, and external evidence respectively.
+Follow a tool call through the [Agent Loop](codeplus/agent.py) and [tools](codeplus/tools), then trace context and messages through [agents](codeplus/agents) and [teams](codeplus/teams). [memory](codeplus/memory) and [context](codeplus/context) handle long-term memory and the current reasoning window respectively.
 
 ```powershell
 uv sync --locked --dev
 uv run pytest
 ```
 
-Real knowledge integration checks also require the optional dependencies, Milvus, and the local model. Setup and acceptance records are in the [knowledge guide](docs/knowledge-setup.md).
+RAG data validation and offline scoring are described in the [evaluation guide](eval/RAG-eval/README.md). Real Dense retrieval checks for the independent core are recorded in [R10](deployment/AgenticRAG/docs/implementation-records/R10.md); host Agent answer evaluation awaits integration.
 
 ---
 

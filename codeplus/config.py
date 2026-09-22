@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import os
 import re
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
 
-from .knowledge import EMBEDDING_DIMENSION, EMBEDDING_MODEL, EMBEDDING_REVISION
 
 from .validator import (
     ConfigError,
@@ -135,25 +134,6 @@ class SandboxAppConfig:
 
 
 @dataclass
-class KnowledgeConfig:
-    enabled: bool = False
-    milvus_uri: str = "http://127.0.0.1:19530"
-    data_dir: str = ".codeplus/knowledge"
-    embedding_model: str = EMBEDDING_MODEL
-    embedding_revision: str = EMBEDDING_REVISION
-    embedding_dimension: int = EMBEDDING_DIMENSION
-    max_input_tokens: int = 8192
-    batch_size: int = 8
-    top_k: int = 5
-    chunk_tokens: int = 512
-    chunk_overlap: int = 64
-    managed_local: bool = False
-    retrieval_mode: str = "auto"
-    retrieval_candidates: int = 50
-    rrf_k: float = 60
-
-
-@dataclass
 class AppConfig:
     providers: list[ProviderConfig]
     permission_mode: str = "default"
@@ -165,8 +145,6 @@ class AppConfig:
     teammate_mode: str = ""
     enable_coordinator_mode: bool = False
     sandbox: SandboxAppConfig = field(default_factory=SandboxAppConfig)
-    knowledge: KnowledgeConfig = field(default_factory=KnowledgeConfig)
-    _knowledge_fields: set[str] = field(default_factory=set, repr=False, compare=False)
 
 
 def _load_single_file(path: Path) -> AppConfig:
@@ -228,8 +206,6 @@ def _load_single_file(path: Path) -> AppConfig:
         teammate_mode=validated["teammate_mode"],
         enable_coordinator_mode=validated["enable_coordinator_mode"],
         sandbox=sandbox_cfg,
-        knowledge=KnowledgeConfig(**validated["knowledge"]),
-        _knowledge_fields=set(validated["knowledge"]),
     )
 
 
@@ -265,11 +241,6 @@ def _merge_config(base: AppConfig, override: AppConfig) -> AppConfig:
         base.sandbox.auto_allow = True
     if override.sandbox.network_enabled:
         base.sandbox.network_enabled = True
-    # Only explicitly supplied knowledge fields override earlier layers, including false.
-    base.knowledge = replace(base.knowledge, **{
-        key: getattr(override.knowledge, key) for key in override._knowledge_fields
-    })
-    base._knowledge_fields.update(override._knowledge_fields)
     return base
 
 
@@ -278,7 +249,6 @@ def load_config(path: Path | None = None) -> AppConfig:
         if not path.exists():
             raise ConfigError(f"Config file not found: {path}")
         config = _load_single_file(path)
-        config.knowledge.data_dir = str(Path(config.knowledge.data_dir).expanduser().resolve())
         return config
 
     cwd = Path.cwd()
@@ -304,5 +274,4 @@ def load_config(path: Path | None = None) -> AppConfig:
             "No config file found. Expected .codeplus/config.yaml "
             "in project or ~/.codeplus/config.yaml"
         )
-    merged.knowledge.data_dir = str(Path(merged.knowledge.data_dir).expanduser().resolve())
     return merged

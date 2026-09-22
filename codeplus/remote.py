@@ -39,7 +39,7 @@ from codeplus.client import create_client, resolve_context_window
 from codeplus.commands import CommandContext, CommandRegistry, CommandType
 from codeplus.commands.handlers import register_all_commands
 from codeplus.commands.parser import parse_command
-from codeplus.config import KnowledgeConfig, MCPServerConfig, ProviderConfig
+from codeplus.config import MCPServerConfig, ProviderConfig
 from codeplus.conversation import ConversationManager
 from codeplus.hooks import HookEngine
 from codeplus.mcp import MCPManager
@@ -95,8 +95,6 @@ class RemoteServer:
         self._command_running = False
         self._message_tasks: set[asyncio.Task] = set()
         self._ui_tasks: list[asyncio.Task] = []
-        from codeplus.knowledge.citations import KnowledgeContext
-        self.knowledge = KnowledgeContext(getattr(config, "knowledge", None) or KnowledgeConfig())
 
         # 权限请求的 pending 队列：id -> Future
         self._pending_perms: dict[str, asyncio.Future[PermissionResponse]] = {}
@@ -147,12 +145,11 @@ class RemoteServer:
             for future in self._pending_perms.values():
                 if not future.done():
                     future.set_result(PermissionResponse.DENY)
-            # Let in-flight to_thread imports finish before closing their service.
+            # Finish active message handlers before closing the session.
             await asyncio.gather(*self._message_tasks, return_exceptions=True)
             await self._flush_ui_messages()
             if self.session:
                 self.session.close()
-            await self.knowledge.aclose()
             if self.mcp_manager:
                 await self.mcp_manager.shutdown()
 
@@ -219,11 +216,6 @@ class RemoteServer:
 
                 elif msg_type == "permission_response":
                     self._handle_permission_response(data)
-
-                elif msg_type == "source_request":
-                    # Reply only to the requesting browser; opening a source is not
-                    # an Agent turn and must not change any knowledge binding.
-                    await websocket.send(json.dumps(await self._source_response(data), ensure_ascii=False))
 
                 elif msg_type == "cancel":
                     if self._cancel_event is not None:
@@ -294,11 +286,6 @@ class RemoteServer:
             hook_engine=self.hook_engine,
         )
         self.agent.session_id = self.session_id
-        from codeplus.tools.knowledge import SearchKnowledge, ReadDocument
-        self.agent.knowledge = self.knowledge
-        self.registry.register(SearchKnowledge(self.knowledge))
-        self.registry.register(ReadDocument(self.knowledge))
-        self._restore_knowledge_binding()
 
         # 团队工具在 remote 模式下同样可用，Lead 能在浏览器会话里组建团队把活派出去
         from codeplus.agents.loader import AgentLoader
@@ -505,7 +492,7 @@ class RemoteServer:
                     if stream_buf:
                         await self._broadcast({
                             "type": "stream_end",
-                            "data": {"text": stream_buf, **await self.knowledge.presentation(stream_buf)},
+                            "data": {"text": stream_buf},
                         })
                         stream_buf = ""
                     await self._broadcast({
@@ -540,7 +527,7 @@ class RemoteServer:
                     if stream_buf:
                         await self._broadcast({
                             "type": "stream_end",
-                            "data": {"text": stream_buf, **await self.knowledge.presentation(stream_buf)},
+                            "data": {"text": stream_buf},
                         })
                         stream_buf = ""
                     await self._broadcast({
@@ -552,7 +539,7 @@ class RemoteServer:
                     if stream_buf:
                         await self._broadcast({
                             "type": "stream_end",
-                            "data": {"text": stream_buf, **await self.knowledge.presentation(stream_buf)},
+                            "data": {"text": stream_buf},
                         })
                         stream_buf = ""
                     elapsed = time.monotonic() - start_time
@@ -657,8 +644,6 @@ class RemoteServer:
             # 本地命令直接执行
             ctx = self._build_command_context(args)
             try:
-                if name == "knowledge" and args.split(None, 1)[:1] == ["import"]:
-                    self.add_system_message("导入路径位于运行 CodePlus 的服务器本地文件系统；不从浏览器上传文件。")
                 await cmd.handler(ctx)
             except Exception as exc:
                 await self._broadcast({
@@ -706,9 +691,6 @@ class RemoteServer:
             ui=self,  # type: ignore[arg-type]
             config={
                 "registry": self.command_registry,
-                "knowledge": self.knowledge,
-                "set_knowledge_binding": self._set_knowledge_binding,
-                "check_knowledge": self._check_knowledge_binding,
                 "set_session": self._set_session,
                 "set_conversation": self._set_conversation,
                 "clear_chat": self._clear_chat,
@@ -767,35 +749,11 @@ class RemoteServer:
         self._message_tasks.add(task)
         task.add_done_callback(self._message_tasks.discard)
 
-    def _restore_knowledge_binding(self) -> None:
-        self.knowledge.bind(self.session.meta.knowledge_binding if self.session else None)
-        for name in ("SearchKnowledge", "ReadDocument"):
-            if self.knowledge.binding:
-                self.registry.enable(name)
-            else:
-                self.registry.disable(name)
-
-    def _set_knowledge_binding(self, binding) -> None:
-        self.knowledge.bind(binding)
-        if self.session:
-            self.session.meta.knowledge_binding = self.knowledge.binding
-            self.session.append_record(make_compact_boundary("知识库作用域已切换；此前资料不作为本轮证据。", []))
-        self._restore_knowledge_binding()
-        self._set_conversation(ConversationManager())
-
-    async def _check_knowledge_binding(self) -> None:
-        if self.knowledge.binding:
-            try:
-                await self.knowledge.prepare(self.add_system_message)
-                await self.knowledge.check()
-            except Exception as exc:
-                self.add_system_message(f"恢复的知识库不可用，回答已阻止: {exc}")
 
     def _set_session(self, session: Session) -> None:
         self.session = session
         self.session_id = session.session_id
         self.agent.session_id = self.session_id
-        self._restore_knowledge_binding()
 
     def _set_conversation(self, conversation: ConversationManager) -> None:
         self.conversation = conversation
@@ -807,17 +765,9 @@ class RemoteServer:
         await self._broadcast({"type": "clear", "data": None})
         for message in messages:
             if message.content and not message.tool_results:
-                presentation = await self.knowledge.presentation(message.content) if message.role == "assistant" else {}
                 await self._broadcast({"type": f"replay_{message.role}",
-                                       "data": {"content": message.content, **presentation}})
+                                       "data": {"content": message.content}})
 
-    async def _source_response(self, data) -> dict:
-        result = {"request_id": data.get("request_id"), "citation_id": data.get("citation_id")}
-        try:
-            result["source"] = await self.knowledge.preview(data.get("citation_id"))
-        except Exception as exc:
-            result["error"] = f"无法打开引用：{exc}"
-        return {"type": "source_preview", "data": result}
 
     def _persist_compact_boundary(self, notification: CompactNotification) -> None:
         if self.session and notification.boundary is not None:

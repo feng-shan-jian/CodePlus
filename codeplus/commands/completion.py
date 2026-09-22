@@ -20,11 +20,10 @@ class CompletionPopup(Static):
 
     class Selected(TMessage):
         def __init__(self, value: str, input_text: str | None = None,
-                     kind: str = "", submit: bool = False) -> None:
+                     submit: bool = False) -> None:
             super().__init__()
             self.value = value
             self.input_text = input_text
-            self.kind = kind
             self.submit = submit
 
     def __init__(self, **kwargs) -> None:
@@ -33,17 +32,14 @@ class CompletionPopup(Static):
         self._values: list[str] = []
         self._cursor: int = 0
         self.input_text: str | None = None
-        self.kind = ""
-        self.hint = ""
 
-    def show_pairs(self, pairs: list[tuple[str, str]], *, input_text: str | None = None,
-                   kind: str = "", hint: str = "") -> None:
+    def show_pairs(self, pairs: list[tuple[str, str]], *, input_text: str | None = None) -> None:
         """以 (display_text, value) 对的形式显示候选项。"""
         selected = self.get_selected() if self.input_text == input_text else None
         self._displays = [d for d, _ in pairs]
         self._values = [v for _, v in pairs]
         self._cursor = self._values.index(selected) if selected in self._values else 0
-        self.input_text, self.kind, self.hint = input_text, kind, hint
+        self.input_text = input_text
         self._refresh_content()
         self.display = True
 
@@ -55,7 +51,7 @@ class CompletionPopup(Static):
         self._displays = []
         self._values = []
         self._cursor = 0
-        self.input_text, self.kind, self.hint = None, "", ""
+        self.input_text = None
 
     @property
     def is_visible(self) -> bool:
@@ -80,7 +76,7 @@ class CompletionPopup(Static):
         return self._values[self._cursor]
 
     def _refresh_content(self) -> None:
-        lines = [f"[dim]{escape(' '.join(self.hint.split()))}[/]"] if self.hint else []
+        lines = []
         start = max(0, self._cursor - 5)
         for i in range(start, min(start + 6, len(self._displays))):
             display = " ".join(self._displays[i].split())
@@ -94,12 +90,12 @@ class CompletionPopup(Static):
         selected = self.get_selected(input_text)
         if selected is None:
             return False
-        self.post_message(self.Selected(selected, input_text, self.kind, submit))
+        self.post_message(self.Selected(selected, input_text, submit))
         self.hide()
         return True
 
     def on_click(self) -> None:
         selected = self.get_selected()
         if selected:
-            self.post_message(self.Selected(selected, self.input_text, self.kind))
+            self.post_message(self.Selected(selected, self.input_text))
             self.hide()

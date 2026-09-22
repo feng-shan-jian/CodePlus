@@ -1,0 +1,50 @@
+{
+  "base": "cd6ed3470c1ce5619c6e8bc6791346ac577e64c1",
+  "candidates": {
+    "eval/RAG-eval/run.ps1": {
+      "head_sha256": "949e1037587d1745ee8c6082a53f8ce2c085e2928614ebd33c6b649fea262796",
+      "candidate_sha256": "da2457cacab98ef762f1f253af321500404078324088a55032c5c0a98a28b8d9",
+      "working_tree_sha256": "4032bc93cc245787c5410337df58ece060883ec7978597b7ec895498dd49d369"
+    },
+    "eval/RAG-eval/README.md": {
+      "head_sha256": "e5b9f5aef64b7ee98bf0b97e1c172f5f8e5abfc6f1bccde8b0a3b21312f57473",
+      "candidate_sha256": "a04a7dc21e58f3d34963eb4d80ef6141f62e6e7fd58d6cfa46e84960c69ea5fc",
+      "working_tree_sha256": "f311fc1bea8caeea3e620d2009b394ad2b0ddec8772fc0736a0b4612f4ecc855"
+    },
+    "eval/RAG-eval/benchmark.md": {
+      "head_sha256": "edb1845318c7b9755c81f2de021012722a742d3bd858aba682680fef0c2e2318",
+      "candidate_sha256": "2e383d1d64d9cb614f4080c656464bd43f1fde4b53b3d8e73d69f97c31eff851",
+      "working_tree_sha256": "999f44f34db4715299a59e27ebce4b5a04668faae02356a4e0d8378f3d674c59"
+    }
+  },
+  "applied_to_worktree": false,
+  "parse": {
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\parse-candidate.ps1"
+    ],
+    "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922",
+    "exit_code": 0,
+    "stdout": "[\n  \"Dataset\",\n  \"Check\",\n  \"KbId\",\n  \"Mode\",\n  \"ManagedLocal\",\n  \"Replay\"\n]\n",
+    "stderr": ""
+  },
+  "early-refusal": {
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\candidate-run.ps1",
+      "-KbId",
+      "nonexistent-cleanup-probe"
+    ],
+    "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Exception: C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-pre-r12-cleanup-leader-20260922\\candidate-run.ps1:20\nLine |\n  20 |      throw '旧检索引擎已移除，新引擎宿主/评测接入尚未完成。'\n     |      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | 旧检索引擎已移除，新引擎宿主/评测接入尚未完成。\n"
+  },
+  "boundary": "Only staged legacy candidate parse and early rejection are tested; current working-tree R01 Check/Answers/Replay were separately tested. No clean-HEAD data reproducibility claim.",
+  "result": "PASS",
+  "captured_at": "2026-09-22T08:28:28.003974+00:00"
+}

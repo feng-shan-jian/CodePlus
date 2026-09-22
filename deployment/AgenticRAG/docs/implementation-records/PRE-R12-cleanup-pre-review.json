@@ -1,0 +1,20 @@
+{
+  "reviewer": "/root/r07_readonly_design_review",
+  "readOnly": true,
+  "tested": false,
+  "manifestAfterMatches": 56,
+  "beforeDivergences": [
+    "eval/RAG-eval/check.py",
+    "eval/RAG-eval/run.ps1"
+  ],
+  "uniquePackagesBefore": 142,
+  "uniquePackagesAfter": 55,
+  "removed": 87,
+  "added": 0,
+  "retainedVersionChanges": 0,
+  "retainedThirdPartyStanzasByteIdentical": true,
+  "unresolvedLockRefs": 0,
+  "remainingSeam": "run.ps1 early Retrieval rejection before old module/report; remove knowledge extra install instruction; preserve Check/Answers/Replay native report wrapper",
+  "runtimeRegression": "Not executed; require current-tree host tests plus R01/R04 and clean installations",
+  "patch_sha256": "ddaeacc7e481ea29958bfcef7dcb1e7a1f15fc79a8a38242a3012ef46511aedc"
+}
