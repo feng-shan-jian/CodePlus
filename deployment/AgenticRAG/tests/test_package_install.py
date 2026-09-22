@@ -25,6 +25,7 @@ from agentic_rag.domain import KnowledgeBase, Span, ErrorCode, RagError
 from agentic_rag.capabilities import require_optional_dependencies, require_provider
 from agentic_rag.storage import Catalog
 from agentic_rag.storage.database import runtime_fingerprint
+from agentic_rag.ingestion import InputSelection, select_inputs, capture_inputs, read_input, verify_inputs
 root = pathlib.Path(sys.prefix).resolve()
 location = pathlib.Path(agentic_rag.__file__).resolve()
 assert location.is_relative_to(root) and 'site-packages' in location.parts, location
@@ -45,6 +46,17 @@ with catalog.begin_mutation(library.kb_id, snapshot, 'a' * 64) as owner:
     assert catalog.get_batch(owner.token.batch_id).owner_epoch == 1
     owner.abandon()
 assert Catalog(catalog._directory.root).get_library(library.kb_id).name == 'installed storage'
+source = pathlib.Path(sys.argv[1]).parent / 'installed source 中文.txt'
+source.write_bytes(b'installed immutable original')
+manifest = select_inputs((InputSelection(path=str(source)),))
+with catalog.begin_import(library.kb_id, snapshot, manifest) as owner:
+    item, = capture_inputs(catalog, owner)
+    assert item.stage == 'captured' and item.change == 'new'
+    owner.abandon()
+source.unlink()
+reopened = Catalog(catalog._directory.root)
+assert read_input(reopened, item.batch_id, item.entry.item_id) == b'installed immutable original'
+assert verify_inputs(reopened, item.batch_id) == (snapshot, (item,))
 sqlite = runtime_fingerprint()
 assert sqlite['apsw'] == '3.53.4.0' and sqlite['sqlite'] == '3.53.4'
 for action, code in ((lambda: require_optional_dependencies('embedding'), ErrorCode.DEPENDENCY_UNAVAILABLE),
@@ -66,7 +78,8 @@ installed = {dist.metadata['Name']: dist.version for dist in metadata.distributi
 print(json.dumps({'executable':sys.executable, 'python':sys.version, 'prefix':str(root),
                   'cwd':str(pathlib.Path.cwd()), 'import_path':str(location), 'isolated':bool(sys.flags.isolated),
                   'version':agentic_rag.__version__, 'requirements':requirements, 'installed':installed,
-                  'sqlite':sqlite, 'storage_roundtrip':True,
+                  'sqlite':sqlite, 'storage_roundtrip':True, 'input_snapshot_roundtrip':True,
+                  'manifest_hash':manifest.identity, 'raw_hash':item.raw.sha256,
                   'document_encoding_fingerprint':snapshot.document_encoding_fingerprint,
                   'forbidden_modules_loaded':[], 'missing_dependencies_diagnostic':True}))
 '''
@@ -111,8 +124,10 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
                         ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py")}
         storage_sources = {"agentic_rag/storage/" + name for name in
                            ("__init__.py", "archives.py", "catalog.py", "database.py", "locks.py",
-                            "ownership.py", "paths.py", "runs.py", "schema.sql")}
-        assert expected_sources == root_sources | storage_sources
+                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql")}
+        ingestion_sources = {"agentic_rag/ingestion/" + name for name in
+                             ("__init__.py", "records.py", "source.py", "selection.py", "capture.py")}
+        assert expected_sources == root_sources | storage_sources | ingestion_sources
         for artifact in (direct_wheel, sdist, rebuilt_wheel):
             if artifact.suffix == ".whl":
                 with zipfile.ZipFile(artifact) as archive:
@@ -154,6 +169,6 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
             report["installations"].append(evidence)
         report["result"] = "PASS"
     finally:
-        evidence_path = os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
+        evidence_path = os.environ.get("R07_INSTALL_REPORT") or os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
         if evidence_path:
             Path(evidence_path).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

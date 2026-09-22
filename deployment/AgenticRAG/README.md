@@ -1,6 +1,6 @@
 # AgenticRAG 独立开发区
 
-状态：当前提供独立领域／配置核心与 R06 本地元数据、不可变归档、OS 锁及运行 pin 基础；实际验收和提交状态见任务台账。更新日期：2026-09-22。输入处理、检索、worker 与宿主 Agent 接入仍按 R07–R26 实施。
+状态：当前提供独立领域／配置核心、R06 存储与并发基础，以及 R07 手动输入选择、文档身份和不可变原件检查点；实际验收和提交状态见任务台账。更新日期：2026-09-22。解析分块、检索、worker 与宿主 Agent 接入仍按 R08–R26 实施。
 
 在本目录完成 RAG 重建的规划、独立实现和验收，达到迁移条件后再接入 CodePlus 主模块。
 
@@ -23,6 +23,8 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 配置只接收调用方显式传入的 `knowledge` 对象，优先级为 `explicit > configured > defaults > Schema 默认`。默认检索模式为 `auto`；候选数量、分块参数、QA/报告预算必须显式提供试验值，尚未冻结质量参数。字段、可运行示例、身份与协议边界见 [领域与配置](docs/domain-and-configuration.md)，R05 的两条真实发行安装证据见 [R05](docs/implementation-records/R05.md)。分发包不包含该文档目录，源码开发区可查阅。
 
 `agentic_rag.storage.Catalog` 接收宿主已解析的本机绝对目录，创建或打开明确属于本应用的数据目录。当前提供关系约束、短事务、归档、批次手动接管与完整版本 pin；生产索引验证/发布、导入恢复交互及自动 GC 仍在后续任务。接口、路径限制、持久化边界和 R06 证据见 [存储与并发](docs/storage-and-concurrency.md)。
+
+`agentic_rag.ingestion` 只处理明确选择的本机文件或目录，首批支持 `.md`/`.txt` 原件。`select_inputs` 固定顺序与错误清单；`Catalog.begin_import` 在库锁下原子登记清单、基准版和完整处理配置；`capture_inputs` 逐文件保存完整原件，`read_input` 只读核验后的归档。相同路径延续文档身份，显式更新支持改名，缺失文件不自动删除。没有 watcher、解析器或生产发布；完整恢复交互留 R14。接口、Windows 路径/共享行为、失败与恢复边界见 [输入快照](docs/input-snapshots.md)。
 
 ## 完整产品目标
 

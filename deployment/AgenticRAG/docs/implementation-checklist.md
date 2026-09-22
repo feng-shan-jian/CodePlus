@@ -26,8 +26,8 @@
 | R03 | COMMITTED | /root/r03_models | [独立验收](implementation-records/R03.md) | `43e9af9de44212342850f3668826a0e5b4bf9a49` |
 | R04 | COMMITTED | /root/r04_host_contract_resume1 | [独立验收](implementation-records/R04.md) | `63e97a37b2b7389a104b3c96240fd6d95b5a11d5` |
 | R05 | COMMITTED | /root/r05_domain_config | [独立验收](implementation-records/R05.md) | `5325d517ac383bfad1fb28caebd0f3674b90b03d` |
-| R06 | ACCEPTED | /root/r06_storage | [独立验收](implementation-records/R06.md) | 提交后记录真实 SHA |
-| R07 | TODO | — | — | — |
+| R06 | COMMITTED | /root/r06_storage | [独立验收](implementation-records/R06.md) | `ebf402ba1d58a3f6651c7894238b29e144bbafed` |
+| R07 | ACCEPTED | /root/r07_inputs | [验收记录](implementation-records/R07.md) | 待 Leader 精确本地提交 |
 | R08 | TODO | — | — | — |
 | R09 | TODO | — | — | — |
 | R10 | TODO | — | — | — |
@@ -144,11 +144,11 @@
 <a id="r07"></a>
 ### R07：输入与身份
 
-- [ ] 同路径内容变更延续身份，改名/移动默认新文档，显式更新已有文档保留历史；不同路径同内容不合并来源。
-- [ ] 新增/变化/未变清单正确；目录缺失文件不自动删除；没有 watcher 或隐式同步。
-- [ ] 快照为完整原件及校验哈希，解析只用快照；源文件后改、删除、移动或目录新增不改变本批输入。
-- [ ] 捕获途中变化、采集中断、空间不足及不完整原件有文件级错误；不把逐文件快照宣称目录同时点快照。
-- [ ] 处理配置保存实际 parser/chunker/tokenizer/model/template 身份，非 profile 名；不保存凭据，路径冲突明确报告。
+- [x] 同路径内容变更延续身份，改名/移动默认新文档，显式更新已有文档保留历史；不同路径同内容不合并来源。
+- [x] 新增/变化/未变清单正确；目录缺失文件不自动删除；没有 watcher 或隐式同步。
+- [x] 快照为完整原件及校验哈希，解析只用快照；源文件后改、删除、移动或目录新增不改变本批输入。
+- [x] 捕获途中变化、采集中断、空间不足及不完整原件有文件级错误；不把逐文件快照宣称目录同时点快照。
+- [x] 处理配置保存实际 parser/chunker/tokenizer/model/template 身份，非 profile 名；不保存凭据，路径冲突明确报告。
 
 <a id="r08"></a>
 ### R08：解析与分块

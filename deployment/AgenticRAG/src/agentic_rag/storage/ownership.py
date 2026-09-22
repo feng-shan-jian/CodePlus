@@ -85,7 +85,7 @@ class Mutation:
         self.close()
 
 
-def begin(database: Database, kb_id: UUID, batch_id: UUID, snapshot: ProcessingSnapshot, manifest_hash: str) -> Mutation:
+def begin(database: Database, kb_id: UUID, batch_id: UUID, snapshot: ProcessingSnapshot, manifest_hash: str, *, _register=None) -> Mutation:
     # Validate record before creating any durable state.
     ImportBatch(batch_id=batch_id, kb_id=kb_id, input_manifest_hash=manifest_hash,
                 processing_snapshot_id=snapshot.snapshot_id, owner_epoch=1, state=BatchState.SNAPSHOTTING)
@@ -107,6 +107,8 @@ def begin(database: Database, kb_id: UUID, batch_id: UUID, snapshot: ProcessingS
             connection.execute("UPDATE libraries SET pending_mutation_id=?,owner_epoch=? WHERE kb_id=?", (str(batch_id), epoch, str(kb_id)))
             if row[0] is not None:
                 connection.execute("INSERT INTO revision_dependencies VALUES(?,?,?,'base')", (str(kb_id), str(batch_id), row[0]))
+            if _register is not None:
+                _register(connection, read_batch(connection, batch_id))
         return Mutation(database, lock, OwnerToken(database.directory.store_id, kb_id, batch_id, nonce, epoch))
     except BaseException:
         lock.close()

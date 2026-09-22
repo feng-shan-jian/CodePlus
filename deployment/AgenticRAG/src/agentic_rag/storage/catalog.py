@@ -42,6 +42,18 @@ class Catalog:
     def begin_mutation(self, kb_id: UUID, snapshot: ProcessingSnapshot, manifest_hash: str, *, batch_id: UUID | None = None) -> Mutation:
         return ownership.begin(self._db, kb_id, batch_id or uuid4(), snapshot, manifest_hash)
 
+    def begin_import(self, kb_id, snapshot, manifest, *, batch_id=None):
+        from .inputs import begin_import
+        return begin_import(self, kb_id, snapshot, manifest, batch_id=batch_id)
+
+    def get_input_manifest(self, batch_id):
+        from .inputs import read_manifest
+        return read_manifest(self, batch_id)
+
+    def get_input_items(self, batch_id):
+        from .inputs import read_items
+        return read_items(self, batch_id)
+
     def identify_interrupted(self, kb_id: UUID) -> OwnerToken | None:
         return ownership.identify_interrupted(self._db, kb_id)
 

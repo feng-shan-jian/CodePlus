@@ -1,0 +1,245 @@
+{
+  "python": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+  "platform": "win32",
+  "events": [
+    {
+      "event": "spawn",
+      "launcher_pid": 47572,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\ingestion_process_helper.py",
+        "partial",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0\\data",
+        "0f53548f-ccd8-46f0-9a22-1ef59eed5904",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0\\sources",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0\\input-event-0fd2f8c9-55da-43c3-9dba-09ffd02f93fe.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0\\input-control-0fd2f8c9-55da-43c3-9dba-09ffd02f93fe"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0"
+    },
+    {
+      "pid": 32044,
+      "mode": "partial",
+      "elapsed_ms": 428.98889999923995,
+      "batch_id": "eef95481-d431-4584-9a93-7bb48fb8a7b0",
+      "checkpoint": "second file partially copied",
+      "complete": [
+        "0ba0843e2a3a7b95791ce1ef6ec67b75f757b7d2334dc9818dae4fc74868ce7d"
+      ],
+      "staging_files": [
+        "archive-e99dd23b-ac2a-4109-a44f-66ee604d2038.tmp"
+      ]
+    },
+    {
+      "event": "spawn",
+      "launcher_pid": 44908,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\ingestion_process_helper.py",
+        "probe",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0\\data",
+        "0f53548f-ccd8-46f0-9a22-1ef59eed5904",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0\\sources\\b.txt",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0\\input-event-cffc07fe-e810-449e-a4cb-f14daa5033e9.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0\\input-control-cffc07fe-e810-449e-a4cb-f14daa5033e9"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres0"
+    },
+    {
+      "pid": 44120,
+      "mode": "probe",
+      "elapsed_ms": 3.046300000278279,
+      "results": {
+        "write": {
+          "type": "PermissionError",
+          "winerror": null,
+          "errno": 13
+        },
+        "rename": {
+          "type": "PermissionError",
+          "winerror": 32,
+          "errno": 13
+        },
+        "delete": {
+          "type": "PermissionError",
+          "winerror": 32,
+          "errno": 13
+        }
+      }
+    },
+    {
+      "event": "joined",
+      "pid": 44120,
+      "launcher_pid": 44908,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "actual_interpreter_terminated",
+      "pid": 32044,
+      "launcher_pid": 47572,
+      "wait_result": "signaled",
+      "requested_exit_code": 91
+    },
+    {
+      "event": "terminated",
+      "pid": 32044,
+      "launcher_pid": 47572,
+      "exit_code": 91,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "capture_restart_verified",
+      "batch_id": "eef95481-d431-4584-9a93-7bb48fb8a7b0",
+      "mode": "partial",
+      "states": [
+        "captured",
+        "failed",
+        "failed"
+      ],
+      "input_hash": "9258eadf9ee328451018c403424a150e0ee817f5cce41b6ae62060382147ac89",
+      "config_hash": "150e6427e4bdfe17bb1a71d9f6fac36e91cf193528e93250e7b547981d9989a3",
+      "first_raw_hash": "0ba0843e2a3a7b95791ce1ef6ec67b75f757b7d2334dc9818dae4fc74868ce7d"
+    },
+    {
+      "event": "spawn",
+      "launcher_pid": 45656,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\ingestion_process_helper.py",
+        "orphan",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres1\\data",
+        "c6c01e57-03f1-42c5-8040-793c0c25733e",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres1\\sources",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres1\\input-event-1b81086a-2549-4389-984a-1d47de99fc6c.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres1\\input-control-1b81086a-2549-4389-984a-1d47de99fc6c"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_actual_process_death_pres1"
+    },
+    {
+      "pid": 47540,
+      "mode": "orphan",
+      "elapsed_ms": 405.01620000213734,
+      "batch_id": "f0e9e917-419d-4e47-832b-76bf0f8ffaea",
+      "checkpoint": "second archive complete before metadata",
+      "orphan_hash": "054ad2a0c5d9b23c267853c3853ddae1220d2b49f3fef057c9dd2e63f7cf1325",
+      "complete": [
+        "0ba0843e2a3a7b95791ce1ef6ec67b75f757b7d2334dc9818dae4fc74868ce7d"
+      ]
+    },
+    {
+      "event": "actual_interpreter_terminated",
+      "pid": 47540,
+      "launcher_pid": 45656,
+      "wait_result": "signaled",
+      "requested_exit_code": 91
+    },
+    {
+      "event": "terminated",
+      "pid": 47540,
+      "launcher_pid": 45656,
+      "exit_code": 91,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "capture_restart_verified",
+      "batch_id": "f0e9e917-419d-4e47-832b-76bf0f8ffaea",
+      "mode": "orphan",
+      "states": [
+        "captured",
+        "failed",
+        "failed"
+      ],
+      "input_hash": "b1765848bb4b5aceebaefd2e98d1d56451f61df906a645e9ae96884f06a1eb7b",
+      "config_hash": "150e6427e4bdfe17bb1a71d9f6fac36e91cf193528e93250e7b547981d9989a3",
+      "first_raw_hash": "0ba0843e2a3a7b95791ce1ef6ec67b75f757b7d2334dc9818dae4fc74868ce7d"
+    },
+    {
+      "event": "spawn",
+      "launcher_pid": 28120,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\ingestion_process_helper.py",
+        "writer",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl0\\data",
+        "8cedb23d-c15a-4846-9650-7d2d9b45e873",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl0\\busy.txt",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl0\\input-event-4cf59006-b8bd-4681-ad78-c082756c91f1.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl0\\input-control-4cf59006-b8bd-4681-ad78-c082756c91f1"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl0"
+    },
+    {
+      "pid": 47976,
+      "mode": "writer",
+      "elapsed_ms": 0.09860000136541203,
+      "result": "held writable handle"
+    },
+    {
+      "event": "joined",
+      "pid": 47976,
+      "launcher_pid": 28120,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "spawn",
+      "launcher_pid": 43992,
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\ingestion_process_helper.py",
+        "mapping",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl1\\data",
+        "0ffb3c6a-71a1-4196-b9de-7c3886924ecd",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl1\\busy.txt",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl1\\input-event-35b97c5e-700d-4d81-a1e3-ce7465cda566.json",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl1\\input-control-35b97c5e-700d-4d81-a1e3-ce7465cda566"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_real_existing_write_handl1"
+    },
+    {
+      "pid": 43824,
+      "mode": "mapping",
+      "elapsed_ms": 0.17940000179805793,
+      "result": "held writable mapping with original file handle closed"
+    },
+    {
+      "event": "joined",
+      "pid": 43824,
+      "launcher_pid": 43992,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "event": "fresh_storage_first_read",
+      "argv": [
+        "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-c",
+        "from agentic_rag.storage import Catalog; from uuid import UUID; import sys; c=Catalog(sys.argv[1]); i=c.get_input_items(UUID(sys.argv[2])); assert len(i)==1 and i[0].stage=='captured'; assert c.get_input_manifest(UUID(sys.argv[2])).identity==c.get_batch(UUID(sys.argv[2])).input_manifest_hash; print('storage-first reopen PASS')",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_terminal_checkpoint_immut0\\data",
+        "e4c5bf48-ac25-4695-9c0a-d1c5a36a8cd4"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-leader-20260922\\test_terminal_checkpoint_immut0",
+      "exit_code": 0,
+      "stdout": "storage-first reopen PASS\n",
+      "stderr": ""
+    }
+  ]
+}

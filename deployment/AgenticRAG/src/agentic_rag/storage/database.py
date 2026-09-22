@@ -13,7 +13,7 @@ from .locks import ProcessLock
 from .paths import DataDirectory, failure
 
 APPLICATION_ID = 0x41524147
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 def runtime_fingerprint() -> dict:
@@ -39,7 +39,7 @@ class Database:
             try:
                 version = connection.pragma("user_version")
                 application = connection.pragma("application_id")
-                if version not in (0, SCHEMA_VERSION) or application not in (0, APPLICATION_ID):
+                if version not in range(SCHEMA_VERSION + 1) or application not in (0, APPLICATION_ID):
                     raise failure("unknown catalog application or schema version")
                 schema = files(__package__).joinpath("schema.sql").read_text(encoding="utf-8")
                 digest = hashlib.sha256(schema.encode()).hexdigest()
@@ -53,15 +53,36 @@ class Database:
                         connection.execute("INSERT INTO store_identity VALUES(1,?)", (str(directory.store_id),))
                         connection.execute("INSERT INTO schema_migrations VALUES(?,?,?)", (1, digest, datetime.now(timezone.utc).isoformat()))
                         connection.pragma("application_id", APPLICATION_ID)
-                        connection.pragma("user_version", SCHEMA_VERSION)
+                        connection.pragma("user_version", 1)
                         connection.execute("COMMIT")
                     except BaseException:
                         if not connection.get_autocommit():
                             connection.execute("ROLLBACK")
                         raise
-                self._verify(connection)
                 if connection.execute("SELECT sha256 FROM schema_migrations WHERE version=1").fetchone() != (digest,):
                     raise failure("schema migration fingerprint mismatch")
+                # Authenticate the old store before any upgrade; v1 identity
+                # and bytes are never replaced by the new schema resource.
+                if (connection.pragma('application_id') != APPLICATION_ID or
+                        connection.execute('SELECT store_id FROM store_identity WHERE singleton=1').fetchone() != (str(directory.store_id),)):
+                    raise failure('catalog identity changed before migration')
+                migration = files(__package__).joinpath('inputs.sql').read_text(encoding='utf-8')
+                migration_hash = hashlib.sha256(migration.encode()).hexdigest()
+                if connection.pragma('user_version') == 1:
+                    connection.execute('BEGIN IMMEDIATE')
+                    try:
+                        connection.execute(migration)
+                        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
+                                           (2, migration_hash, datetime.now(timezone.utc).isoformat()))
+                        connection.pragma('user_version', 2)
+                        connection.execute('COMMIT')
+                    except BaseException:
+                        if not connection.get_autocommit():
+                            connection.execute('ROLLBACK')
+                        raise
+                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=2').fetchone() != (migration_hash,):
+                    raise failure('schema migration fingerprint mismatch')
+                self._verify(connection)
             finally:
                 connection.close()
 

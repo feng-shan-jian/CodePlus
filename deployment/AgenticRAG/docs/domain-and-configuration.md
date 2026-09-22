@@ -1,6 +1,6 @@
 # R05 领域对象与配置契约
 
-2026-09-22；schema_version=1，开发发行 codeplus-agentic-rag 0.1.0。本文记录 R05 数据类型、装配、指纹和模型能力协议；R06 已增加独立的 [存储与并发基础](storage-and-concurrency.md)，领域／配置类型接口保持不变。解析器、worker、检索和宿主接入仍待后续任务；R05 类型本身不做索引重建或文件系统写入。
+2026-09-22；记录 schema_version=1，开发发行 codeplus-agentic-rag 0.1.0。本文记录 R05 数据类型、装配、指纹和模型能力协议；R06 已增加独立的 [存储与并发基础](storage-and-concurrency.md)，R07 增加 [输入快照](input-snapshots.md) 与 SQLite schema 2，原领域／配置类型接口保持不变。解析器、worker、检索和宿主接入仍待后续任务；R05 类型本身不做索引重建或文件系统写入。
 
 ## 记录和身份
 
@@ -72,10 +72,12 @@ R03 保守输入上限为完整 2048 token，batch<=4，`batch_size * max(comple
 
 同名 profile 更改实际配置会改变身份；只改名称不改变编码身份。拒绝未支持的 tokenizer/template/revision 比误认兼容更早失败。保守地把 query instruction、设备/运行限制纳入 embedding 身份，未声明它们跨配置可兼容；未来若放宽需版本化兼容证据。单改 QA/报告预算或 Rerank 不改变文档编码/索引身份。R16 再用这些边界提示重建并执行确认流程，R05 不自行重建。
 
+R07 InputManifest 仅标识本批固定请求；InputCheckpoint/RawSnapshot 另存逐文件完整原件与错误，不替代要求 parsed/source_map 的 DocumentVersion。批次仍直接关联此处完整 ProcessingSnapshot，重开/接管不读取新默认配置。变化对照使用基准发布成员与该版配置，编码不兼容给 requires_rebuild_confirmation；不存在“原件 hash 一样就一定不用重建”的简化。配置字段接受实验 parser/version 也不代表 R08 对应执行器已完成。
+
 ## 能力协议与安装边界
 
 EmbeddingProvider 的 embed_documents/embed_query、RerankProvider 的 rerank 接收显式 profile 和 RequestContext；候选和响应使用 UUID，不按排序位置猜来源。响应校验请求/模型身份、ID 集合、embedding 顺序、1024 维有限归一化向量、Rerank `[0,1]` 分数及稳定排序，记录 queue/load/inference 用量。错误明确 stage。当前没有实现者；`require_provider` 返回 CAPABILITY_UNAVAILABLE；`require_optional_dependencies` 只用 find_spec 检查依赖，不加载 GPU，缺依赖返回 DEPENDENCY_UNAVAILABLE，依赖存在也不证明设备或模型可用。
 
 RequestContext 使用 `time.monotonic_ns()` 域的绝对 deadline_monotonic_ns 作为同机临时硬时限，可选 deadline_at 仅作带时区审计。不能跨重启复用单调值，R09 握手必须确认同机/同启动时钟域，排队/加载/推理共用同一截止点；R05 不实现调度或取消。
 
-发行包含六个领域／配置 Python 源码，以及 R06 的八个 storage Python 源码和 schema.sql 迁移资源、MIT 许可证和 metadata；sdist 另含 pyproject/README/uv.lock，以及 Hatch 为重建保留的包级 .gitignore 排除清单。tests、probes、eval、docs、Compose、缓存、权重及用户资料不发布。真实 package-install 测试构建直接 wheel 与 sdist→wheel，用两个新环境和非仓库 Unicode/空格 cwd，清空 PYTHONPATH，以 `python -I -B` 核验 site-packages 导入、metadata、完整快照／存储调用、缺依赖诊断及未加载 GPU/宿主。构建工具采用独立核心环境的锁定 Hatchling，不依赖根打包配置；运行环境仅安装锁中 Pydantic 与 APSW 核心依赖。GPU、Milvus、Linux/宿主联装及最终同一实现迁移尚未验收。
+发行包含六个领域／配置 Python 源码、九个 storage Python 源码、五个 ingestion Python 源码、schema.sql/inputs.sql 两个迁移资源、MIT 许可证和 metadata；sdist 另含 pyproject/README/uv.lock，以及 Hatch 为重建保留的包级 .gitignore 排除清单。tests、probes、eval、docs、Compose、缓存、权重及用户资料不发布。真实 package-install 测试构建直接 wheel 与 sdist→wheel，用两个新环境和非仓库 Unicode/空格 cwd，清空 PYTHONPATH，以 `python -I -B` 核验 site-packages 导入、metadata、完整配置／存储／原件快照调用、缺依赖诊断及未加载 GPU/宿主。构建工具采用独立核心环境的锁定 Hatchling，不依赖根打包配置；运行环境仅安装锁中 Pydantic 与 APSW 核心依赖。GPU、Milvus、Linux/宿主联装及最终同一实现迁移尚未验收。

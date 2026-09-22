@@ -70,7 +70,8 @@ class ArchiveStore:
             target = self._path(actual)
             target.parent.mkdir(exist_ok=True)
             # A short per-object OS lock serializes the exists+rename protocol.
-            # No library lock or DB transaction is held while copying bytes.
+            # Copying is outside the object lock and opens no DB transaction;
+            # the caller may retain its library mutation lease throughout.
             with ProcessLock(self.directory.path("locks", f"archive-{actual}.lock")).acquire(timeout_ms=1500):
                 if target.exists():
                     return self.verify(actual)

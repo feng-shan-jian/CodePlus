@@ -1,0 +1,20 @@
+{
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r07-executor",
+  "resolved_absolute_root_verified": true,
+  "method": "Native PowerShell/.NET: do not follow reparse entries; unlink owned individual files and empty directories; no attribute changes to shared hardlinks",
+  "file_entries_removed": 2710,
+  "reparse_entries_removed": 141,
+  "directories_removed": 1473,
+  "root_exists_after": false,
+  "helper_processes_before": [],
+  "helper_processes_after": [],
+  "reusable_environment_preserved": "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-core",
+  "root_and_cuda_environment_untouched": true,
+  "temporary_scripts_removed": [
+    "baseline.py",
+    "run_final.py",
+    "audit.py",
+    "cleanup.ps1"
+  ],
+  "post_cleanup_manifest_helper_removed": true
+}

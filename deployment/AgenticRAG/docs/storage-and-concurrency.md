@@ -1,6 +1,6 @@
 # R06 本地存储与并发契约
 
-2026-09-22；开发包 0.1.0；SQLite schema version 1。R06 提供元数据、不可变归档、OS 占用、代次与运行 pin 基础；领域／配置对象不变。正式输入采集与解析在 R07/R08，生产索引验证和发布在 R10/R13，完整恢复交互在 R14，GC 在 R15。测试中的 READY 版本由明确的合成元数据夹具生成，没有建 Milvus Collection，也不是生产发布。
+2026-09-22；开发包 0.1.0；SQLite schema version 2。R06 提供元数据、不可变归档、OS 占用、代次与运行 pin 基础；R07 增加原件输入检查点，领域／配置原接口不变。解析在 R08，生产索引验证和发布在 R10/R13，完整恢复交互在 R14，GC 在 R15。测试中的 READY 版本由明确的合成元数据夹具生成，没有建 Milvus Collection，也不是生产发布。
 
 ## 运行时与数据库
 
@@ -9,6 +9,8 @@
 所有连接启用 foreign_keys、WAL、synchronous=FULL。读操作使用短读事务，修改使用 BEGIN IMMEDIATE；SQLite busy timeout 默认 1500ms，允许显式 1–10000ms，没有无限重试。WAL 仍只有一个写者，OS 业务锁和 SQLite 写事务不是同一把锁。归档读写、解析、推理、等待在事务外。APSW 错误保留类型和 stage，busy 转为 LIBRARY_BUSY；不删除 WAL/SHM，也不把它们当作可清理临时文件。
 
 schema.sql 是实际发行资源，通过 importlib.resources 读取。初始化由稳定 schema OS 锁协调，以一个事务写入关系表、store_id、application_id、user_version 与 migration SHA256/时间。重开校验应用身份、版本和迁移指纹；未知新版本、非本应用库或目录／库身份不符直接失败，不试图降级。schema 1 是新库初始迁移，不支持旧 CodePlus 格式。
+
+R07 保持 schema.sql 的 migration 1 身份和字节；新增 inputs.sql migration 2。初始化/升级先验证原 migration 1 指纹、application/store 身份，再在单一短事务新增 input_manifests、input_items、input_results 和 document_sources 及不可变触发器，登记 migration 2 指纹并提升 user_version。真实 schema1 数据库的历史原件/版本/成员/快照及待恢复批次升级读回已纳入正式测试。不会重建数据库，也不会给旧 batch 凭 hash 补造输入清单。
 
 库、文档、文档版本、章节、Chunk、处理快照、revision 成员、批次、依赖、run 与 pin 的身份／状态都是关系字段。复合外键约束 kb→document→version→section 和 revision/member/snapshot/batch/run 的归属。配置、来源描述、heading path、spans、usage 的嵌套值使用 JSON；它们不代替关系身份与生命周期列。文档版本、快照、章节、Chunk、成员不能更新／删除；版本一旦被候选或历史 revision 引用，禁止再追加章节／Chunk，防止历史结构集合漂移。
 
@@ -31,6 +33,8 @@ Windows 同卷完成使用 MoveFileExW(MOVEFILE_WRITE_THROUGH)，不设 COPY_ALL
 ## 库锁、拥有者和手动恢复
 
 `begin_mutation(kb_id, snapshot, manifest_hash)` 先非阻塞获取 `library-<UUID>.lock`，再检查该库无 pending batch，保存完整处理快照、基准版与批次，递增库的 owner_epoch 并生成 owner_nonce。返回 Mutation 持有 OS 文件句柄；owner token 同时含 store/kb/batch/nonce/epoch。Windows 使用 msvcrt.LK_NBLCK 锁 offset=0 的一个字节，Linux 使用 flock；文件描述符不可继承，跨进程需重新打开 Catalog，锁文件从不删除。[msvcrt.locking](https://docs.python.org/3.14/library/msvcrt.html#msvcrt.locking)。
+
+R07 `begin_import(kb_id,snapshot,manifest)` 复用同一 owner 协议，在批次事务同时写完整请求清单和文档身份/基准 member 关联；遍历/路径API/原件IO均在该事务之外。request hash 固定，捕获结果后续逐项原子接纳、终态不可覆盖。完整 raw 引用无需也不会伪造 parsed/source_map 版本；只有 R08 实际解析完成后才可调用 add_version。来源更新和历史关联也由同 owner 短事务写入。详见 [输入快照](input-snapshots.md)。
 
 每个拥有者敏感写入都在短写事务内检查仍持有的锁句柄、锁路径身份、同一 Catalog、store/kb/batch、nonce/epoch、库高水位代次、pending pointer 和执行中状态。释放后的旧 lease 即使无人接管也不能写；异步产物调用方须把生成时的 token 通过 `produced_by=` 传入，不能用新 owner token 替换旧结果身份。不同库有独立业务锁；运行登记不取得库修改锁。
 
