@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_real_acceptance.py", line 320, in <module>
+    main(parser.parse_args())
+    ~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_real_acceptance.py", line 311, in main
+    suite.crash_case(name,stage,**kw)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_real_acceptance.py", line 154, in crash_case
+    changed=config.model_dump(mode='json');changed['embedding']['name']='later-default-name';changed['processing']['chunker']['max_tokens']=256
+                                           ~~~~~~~^^^^^^^^^^^^^
+KeyError: 'embedding'

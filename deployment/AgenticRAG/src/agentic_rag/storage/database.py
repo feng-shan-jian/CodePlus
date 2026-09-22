@@ -13,7 +13,7 @@ from .locks import ProcessLock
 from .paths import DataDirectory, failure
 
 APPLICATION_ID = 0x41524147
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 
 
 def runtime_fingerprint() -> dict:
@@ -161,6 +161,31 @@ class Database:
                             connection.execute('ROLLBACK')
                         raise
                 if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=7').fetchone() != (mutations_hash,):
+                    raise failure('schema migration fingerprint mismatch')
+                recovery = files(__package__).joinpath('recovery.sql').read_text(encoding='utf-8')
+                recovery_hash = hashlib.sha256(recovery.encode()).hexdigest()
+                if connection.pragma('user_version') == 7:
+                    # SQLite's table-rebuild protocol: disable only this
+                    # connection's FK enforcement before BEGIN. Inbound FKs
+                    # keep the unchanged index_artifacts table name. Validate
+                    # the complete graph before committing the atomic upgrade.
+                    connection.pragma('foreign_keys', False)
+                    try:
+                        connection.execute('BEGIN IMMEDIATE')
+                        connection.execute(recovery)
+                        if connection.execute('PRAGMA foreign_key_check').fetchone():
+                            raise failure('recovery migration foreign key check failed')
+                        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
+                                           (8, recovery_hash, datetime.now(timezone.utc).isoformat()))
+                        connection.pragma('user_version', 8)
+                        connection.execute('COMMIT')
+                    except BaseException:
+                        if not connection.get_autocommit():
+                            connection.execute('ROLLBACK')
+                        raise
+                    finally:
+                        connection.pragma('foreign_keys', True)
+                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=8').fetchone() != (recovery_hash,):
                     raise failure('schema migration fingerprint mismatch')
                 self._verify(connection)
             finally:

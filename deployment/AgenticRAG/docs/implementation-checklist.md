@@ -33,8 +33,8 @@
 | R10 | COMMITTED | /root/r10_publication | [Leader独立验收](implementation-records/R10.md)；326核心+11真实+4增量，609/200/重启通过 | 81bf1461c73d9d640144eb1ed8b9a193d0f4f953 |
 | R11 | COMMITTED | /root/r11_sources | [Leader独立验收](implementation-records/R11.md)；393核心无skip、两路安装及三版真实升级通过 | `cd6ed3470c1ce5619c6e8bc6791346ac577e64c1` |
 | R12 | COMMITTED | /root/r12_agent_integration | [Leader独立验收](implementation-records/R12-leader-review.md)；1271通过/32条件skip、真实安装/Agent及独立清理完成，元数据观察保留 | `44b861a235233f7072fda267e7a75321431c4e88` |
-| R13 | ACCEPTED | /root/r13_mutations | [Leader独立验收](implementation-records/R13-leader-review.md)；1302通过/32条件skip，独立清理及复核完成，元数据观察保留 | 待本地提交 |
-| R14 | TODO | — | — | — |
+| R13 | COMMITTED | /root/r13_mutations | [Leader独立验收](implementation-records/R13-leader-review.md)；1302通过/32条件skip、独立清理及复核完成，元数据观察保留 | `a4fede1c3f0a09202710e53debdbac3307c0911d` |
+| R14 | ACCEPTED | /root/r14_recovery | [Leader 独立验收](implementation-records/R14-leader-review.md)、[独立清理](implementation-records/R14-cleanup.md)及[清理复核](implementation-records/R14-leader-postcleanup.json)通过，待精确本地提交 | — |
 | R15 | TODO | — | — | — |
 | R16 | TODO | — | — | — |
 | R17 | TODO | — | — | — |
@@ -210,12 +210,12 @@ R12前置独立整合：旧RAG清理 COMMITTED，`5dbe979a330a6b157adfba7ad3ea82
 <a id="r14"></a>
 ### R14：恢复与放弃
 
-- [ ] 在快照、解析/编码、索引、发布事务前后终止真实进程并重启，用户手动继续；重启不自动执行或提前发布。
-- [ ] 恢复用原输入和实际配置；源文件/默认 profile 变化不混入。有效检查点复用，损坏/缺失检查点重做或明确失败。
-- [ ] 待恢复状态跨进程保存，同库新的导入/删除/重建被拦截；已发布内容查询及其他库修改可继续。
-- [ ] 继续与放弃互斥；放弃前核对实际发布状态并隔离旧拥有者/迟到结果；仅清理无依赖候选和临时物，不伤历史资料。
-- [ ] 原模型/组件不可恢复明确失败并保留进度；恢复环境后可继续，当前用户默认配置不被回写。
-- [ ] 发布响应丢失先查权威记录，禁止重复发布、覆盖后来的当前指针或把已发布版本当可放弃候选删除。
+- [x] 在快照、解析/编码、索引、发布事务前后终止真实进程并重启，用户手动继续；重启不自动执行或提前发布。
+- [x] 恢复用原输入和实际配置；源文件/默认 profile 变化不混入。有效检查点复用，损坏/缺失检查点重做或明确失败。
+- [x] 待恢复状态跨进程保存，同库新的导入/删除/重建被拦截；已发布内容查询及其他库修改可继续。
+- [x] 继续与放弃互斥；放弃前核对实际发布状态并隔离旧拥有者/迟到结果；仅清理无依赖候选和临时物，不伤历史资料。
+- [x] 原模型/组件不可恢复明确失败并保留进度；恢复环境后可继续，当前用户默认配置不被回写。
+- [x] 发布响应丢失先查权威记录，禁止重复发布、覆盖后来的当前指针或把已发布版本当可放弃候选删除。
 
 <a id="r15"></a>
 ### R15：pin、GC 与历史

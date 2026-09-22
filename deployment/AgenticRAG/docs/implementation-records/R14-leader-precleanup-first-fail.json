@@ -1,0 +1,43 @@
+{
+  "status": "FAIL",
+  "started": 1790095583.684563,
+  "script_sha256": "b46fbb69a34e676ab70f1f7bad32fcadddc5688c98818b3fa98a92e425cd647d",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "427b15f36a4da75287be31772ec72bacb48000addf2f2b5917a580534e3ba55c",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7487b286d9f7e79c53097699923cf299cbe5cb94d76f4cd2b56953cb10f8d785",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    }
+  ],
+  "error": "AssertionError(('protected_inputs', ['deployment/AgenticRAG/docs/implementation-checklist.md']))",
+  "finished": 1790095584.011332
+}

@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/core/Scripts/python.exe",
+    "-I",
+    "-B",
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/pytest_installed.py",
+    "host",
+    "D:/CodePlus/deployment/AgenticRAG/docs/implementation-records/R14-host-modules.json",
+    "tests",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--import-mode=prepend",
+    "--basetemp=C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/pytest-host",
+    "--junitxml=D:/CodePlus/deployment/AgenticRAG/docs/implementation-records/R14-host.xml"
+  ],
+  "cwd": "D:\\CodePlus",
+  "started_at": 1790092377.4000034,
+  "environment": {
+    "UV_CACHE_DIR": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\uv-cache",
+    "UV_LINK_MODE": "copy",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+  },
+  "launcher_pid": 46708,
+  "exit_code": 0,
+  "finished_at": 1790092415.8723888
+}

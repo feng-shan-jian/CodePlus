@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_package_upgrade.py", line 55, in <module>
+    main(p.parse_args())
+    ~~~~^^^^^^^^^^^^^^^^
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_package_upgrade.py", line 31, in main
+    before=child('seed');report['before']=before
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_package_upgrade.py", line 30, in child
+    def child(mode):return json.loads(command([py,'-I','-B',helper,'--root',root,'--mode',mode,'--model-cache',args.model_cache]))
+                                      ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_package_upgrade.py", line 17, in command
+    completed.check_returncode();return completed.stdout
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\subprocess.py", line 508, in check_returncode
+    raise CalledProcessError(self.returncode, self.args, self.stdout,
+                             self.stderr)
+subprocess.CalledProcessError: Command '['C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Scripts\\python.exe', '-I', '-B', 'D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r14_upgrade_process.py', '--root', 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first', '--mode', 'seed', '--model-cache', 'C:/Users/18221/.cache/codeplus-agenticrag/models']' returned non-zero exit status 1.

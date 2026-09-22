@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/core/Scripts/python.exe",
+    "-I",
+    "-B",
+    "deployment/AgenticRAG/tests/r14_real_acceptance.py",
+    "--root",
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/real-second",
+    "--cuda-python",
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/cuda/Scripts/python.exe",
+    "--model-cache",
+    "C:/Users/18221/.cache/codeplus-agenticrag/models",
+    "--endpoint",
+    "http://127.0.0.1:19538",
+    "--report",
+    "deployment/AgenticRAG/docs/implementation-records/R14-real-second.json"
+  ],
+  "cwd": "D:\\CodePlus",
+  "started_at": 1790091486.4432755,
+  "environment": {
+    "UV_CACHE_DIR": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\uv-cache",
+    "UV_LINK_MODE": "copy",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+  },
+  "launcher_pid": 62284,
+  "exit_code": 1,
+  "finished_at": 1790091516.8107667
+}

@@ -4,11 +4,14 @@ import importlib.metadata
 import json
 import math
 import time
+from contextlib import contextmanager
 from uuid import UUID
 
 from .manifest import (UUID_FIELDS, HASH_FIELDS, SCALAR_FIELDS, TEXT_MAX_BYTES, LAYOUT,
                        collection_name, vector_hash, index_error)
 from .._schema import fingerprint
+from ..storage.locks import ProcessLock
+from ..storage import recovery as recovery_store
 
 
 class MilvusRevisionIndex:
@@ -23,7 +26,8 @@ class MilvusRevisionIndex:
             raise ValueError('Milvus timeout must be 0..300 seconds')
         self.storage, self.store_id, self.timeout = storage, catalog.store_id, timeout
         self.catalog = catalog
-        self.client = MilvusClient(uri=storage.milvus_uri, token=token or '', timeout=timeout)
+        self.database_name = 'default'  # Existing StorageConfig always used this database.
+        self.client = MilvusClient(uri=storage.milvus_uri, token=token or '', db_name=self.database_name, timeout=timeout)
         self.server_version = self.client.get_server_version(timeout=timeout)
         if self.server_version.lstrip('v') != '3.0.1':
             self.client.close()
@@ -48,13 +52,87 @@ class MilvusRevisionIndex:
             raise index_error('artifact no longer belongs to this preparing owner')
         return self._name(stored)
 
+    def _lifecycle(self, artifact):
+        return ProcessLock(self.catalog._directory.path('locks','artifact-' + str(UUID(artifact['artifact_id'])) + '.lock'))
+
+    def _ownership(self, artifact):
+        with self.catalog._db.transaction() as db:
+            row = db.execute('SELECT i.endpoint,i.database_name,i.marker,p.collection_id,p.created_timestamp,p.description '
+                'FROM artifact_creation_intents i LEFT JOIN artifact_ownership_proofs p ON p.artifact_id=i.artifact_id WHERE i.artifact_id=?',
+                (artifact['artifact_id'],)).fetchone()
+        if row is not None and row[:2] != (self.storage.milvus_uri,getattr(self,'database_name','default')):
+            raise index_error('physical ownership endpoint/database differs')
+        return row
+
+    def has_ownership(self, artifact):
+        row = self._ownership(artifact)
+        return row is not None and row[3] is not None
+
+    def _verify_physical(self, artifact, *, required=True):
+        row = self._ownership(artifact)
+        if row is None or row[3] is None:
+            if required:
+                raise index_error('no persisted create/describe physical ownership; preserve uncertain collection')
+            return None  # Genuine old published indexes remain readable.
+        observed = self.client.describe_collection(self._name(artifact),timeout=self.timeout)
+        actual = tuple(str(observed.get(k,'')) for k in ('collection_id','created_timestamp','description'))
+        if actual != row[3:] or row[5] != row[2]:
+            raise index_error('physical collection ID/timestamp/description changed; preserve replacement')
+        return observed
+
+    @contextmanager
+    def _io(self, artifact, owner, kind, *, creating=False):
+        # Stable per-artifact lifetime lock serializes our own SDK calls/drop.
+        # New recovery generations use different artifact locks and names.
+        with self._lifecycle(artifact):
+            name = self._writable(artifact,owner)
+            if not creating:
+                self._verify_physical(artifact)
+            identity = recovery_store.start_io(self.catalog,owner,'milvus_' + kind,artifact_id=artifact['artifact_id'])
+            yield name
+            recovery_store.observe_io(self.catalog,identity,finished=True)
+
+    def drop_owned(self, artifact):
+        """Only abandoned candidate cleanup calls this while holding library lock.
+
+        PyMilvus drop has no expected collection-ID condition. We never reuse a
+        name and serialize our own lifecycle. An external administrator replacing
+        it between describe/drop (or SDK retry) remains an explicit limitation.
+        """
+        with self._lifecycle(artifact):
+            from ..storage.publication import artifact as stored_artifact
+            stored = stored_artifact(self.catalog,UUID(artifact['revision_id']))
+            if any(stored[k]!=artifact[k] for k in ('artifact_id','kb_id','revision_id','batch_id','collection_name','schema_hash','owner_epoch','spec')):
+                raise index_error('drop target differs from the registered immutable identity')
+            with self.catalog._db.transaction() as db:
+                claim = db.execute('SELECT a.state,r.index_state,b.state FROM index_artifacts a '
+                    'JOIN revisions r ON r.revision_id=a.revision_id JOIN mutation_batches b ON b.batch_id=a.batch_id '
+                    'WHERE a.artifact_id=?',(artifact['artifact_id'],)).fetchone()
+                dependency = db.execute('SELECT 1 FROM publications WHERE revision_id=? UNION ALL '
+                    'SELECT 1 FROM libraries WHERE current_revision_id=? UNION ALL '
+                    'SELECT 1 FROM revision_dependencies WHERE revision_id=? UNION ALL '
+                    "SELECT 1 FROM run_pins WHERE revision_id=? AND state='active'",(artifact['revision_id'],)*4).fetchone()
+            pending = [io for io in recovery_store.unresolved_io(self.catalog,UUID(artifact['batch_id']))
+                       if io['artifact_id'] in (None,artifact['artifact_id'])]
+            if claim != ('RECLAIMING','RECLAIMING','ABANDONED') or dependency or pending:
+                raise index_error('physical drop requires an abandoned, claimed candidate without dependencies')
+            if not self.has_ownership(artifact):
+                raise index_error('cannot delete collection without physical ownership proof')
+            if not self.client.has_collection(self._name(artifact),timeout=self.timeout):
+                return
+            self._verify_physical(artifact)
+            self.client.drop_collection(self._name(artifact),timeout=self.timeout)
+
     def create(self, artifact, owner):
         from pymilvus import DataType, Function, FunctionType
         name = self._writable(artifact, owner)
         if artifact['state'] != 'PREPARING':
             raise index_error('published or failed artifacts are immutable')
         c = self.client
-        schema = c.create_schema(auto_id=False, enable_dynamic_field=False)
+        intent = self._ownership(artifact)
+        if intent is None or intent[3] is not None:
+            raise index_error('creation requires a fresh physical intent without a prior receipt')
+        schema = c.create_schema(auto_id=False, enable_dynamic_field=False, description=intent[2])
         for field in UUID_FIELDS:
             schema.add_field(field, DataType.VARCHAR, max_length=36, is_primary=field == 'chunk_id')
         for field in HASH_FIELDS:
@@ -68,9 +146,18 @@ class MilvusRevisionIndex:
         schema.add_field('sparse', DataType.SPARSE_FLOAT_VECTOR)
         schema.add_function(Function(name='text_bm25', input_field_names=['text'],
                                      output_field_names=['sparse'], function_type=FunctionType.BM25))
-        if c.has_collection(name, timeout=self.timeout):
-            raise index_error('candidate collection already exists; do not overwrite uncertain resources')
-        c.create_collection(name, schema=schema, consistency_level='Strong', timeout=self.timeout)
+        with self._io(artifact,owner,'create',creating=True):
+            if c.has_collection(name, timeout=self.timeout):
+                raise index_error('candidate collection already exists; do not overwrite uncertain resources')
+            c.create_collection(name, schema=schema, consistency_level='Strong', timeout=self.timeout)
+            observed = c.describe_collection(name,timeout=self.timeout)
+            if (observed.get('description') != intent[2] or not observed.get('collection_id') or
+                    not observed.get('created_timestamp')):
+                raise index_error('create/describe did not establish physical identity; preserve resource')
+            with self.catalog._owned(owner) as db:
+                db.execute('INSERT INTO artifact_ownership_proofs VALUES(?,?,?,?,?)',
+                           (artifact['artifact_id'],str(observed['collection_id']),str(observed['created_timestamp']),
+                            observed['description'],recovery_store.now()))
 
     def insert(self, artifact, rows, owner):
         name = self._writable(artifact, owner)
@@ -79,12 +166,17 @@ class MilvusRevisionIndex:
         for row in rows:
             if len(row['text'].encode('utf-8')) > TEXT_MAX_BYTES or vector_hash(row['dense']) != row['vector_hash']:
                 raise index_error('index row size/vector hash differs')
-        result = self.client.insert(name, rows, timeout=self.timeout)
+        with self._io(artifact,owner,'insert'):
+            result = self.client.insert(name, rows, timeout=self.timeout)
         if result['insert_count'] != len(rows):
             raise index_error('Milvus did not acknowledge the full insert batch')
         return result
 
     def finalize(self, artifact, count, owner, *, index_timeout=180):
+        with self._io(artifact,owner,'finalize'):
+            return self._finalize(artifact,count,owner,index_timeout=index_timeout)
+
+    def _finalize(self, artifact, count, owner, *, index_timeout=180):
         name = self._writable(artifact, owner)
         if artifact['state'] != 'PREPARING':
             raise index_error('only preparing artifacts may be finalized')
@@ -125,6 +217,7 @@ class MilvusRevisionIndex:
 
     def inspect(self, artifact, count):
         name = self._name(artifact)
+        self._verify_physical(artifact,required=False)
         c = self.client
         schema = c.describe_collection(name, timeout=self.timeout)
         fields = {f['name']: f for f in schema['fields']}

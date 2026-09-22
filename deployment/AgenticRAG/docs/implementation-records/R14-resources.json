@@ -1,0 +1,991 @@
+{
+  "captured_at": 1790093415.3734539,
+  "ownership": "All below belong to R14 executor; retained for separate independent cleanup.",
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922",
+  "root_children": [
+    {
+      "name": "answer-tokenizer-v41",
+      "directory": true
+    },
+    {
+      "name": "compare_upgrade_identity.py",
+      "directory": false
+    },
+    {
+      "name": "core",
+      "directory": true
+    },
+    {
+      "name": "cuda",
+      "directory": true
+    },
+    {
+      "name": "cuda-reference-before.json",
+      "directory": false
+    },
+    {
+      "name": "dist-first",
+      "directory": true
+    },
+    {
+      "name": "dist-second",
+      "directory": true
+    },
+    {
+      "name": "dist-third",
+      "directory": true
+    },
+    {
+      "name": "final_audit.py",
+      "directory": false
+    },
+    {
+      "name": "host-wheel",
+      "directory": true
+    },
+    {
+      "name": "lifecycle-first",
+      "directory": true
+    },
+    {
+      "name": "prepare_checks.py",
+      "directory": false
+    },
+    {
+      "name": "pytest-core",
+      "directory": true
+    },
+    {
+      "name": "pytest-first",
+      "directory": true
+    },
+    {
+      "name": "pytest-host",
+      "directory": true
+    },
+    {
+      "name": "pytest-second",
+      "directory": true
+    },
+    {
+      "name": "pytest_installed.py",
+      "directory": false
+    },
+    {
+      "name": "real-first",
+      "directory": true
+    },
+    {
+      "name": "real-fourth",
+      "directory": true
+    },
+    {
+      "name": "real-second",
+      "directory": true
+    },
+    {
+      "name": "real-third",
+      "directory": true
+    },
+    {
+      "name": "run.py",
+      "directory": false
+    },
+    {
+      "name": "setup.py",
+      "directory": false
+    },
+    {
+      "name": "smoke-real",
+      "directory": true
+    },
+    {
+      "name": "summarize_evidence.py",
+      "directory": false
+    },
+    {
+      "name": "upgrade-first",
+      "directory": true
+    },
+    {
+      "name": "upgrade-second",
+      "directory": true
+    },
+    {
+      "name": "uv-cache",
+      "directory": true
+    }
+  ],
+  "temporary_helpers": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\compare_upgrade_identity.py",
+      "sha256": "e9fa0c3efd61b92eec161d5a5060a79deed1f8afbe6e334e1360ce72ddaf2a46"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\final_audit.py",
+      "sha256": "129e94b177cc898ac583e56fd190a90b5d42b44b6b2a4851c8c257bd62abba0c"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\prepare_checks.py",
+      "sha256": "9f0eec80f678d4b470a180285cdff5d1cb9796406736b4b74c75bbd7d2831d72"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\pytest_installed.py",
+      "sha256": "6b9096e63f01a5636dcf4825d324e2cf3b8b9436c667f4af5441f3fca5f6b17f"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\run.py",
+      "sha256": "a66469182dc314befec5871102fa42ecb120cb3ae9aded525ba8fdbe4b226dde"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\setup.py",
+      "sha256": "6a31342f8abc90058836fe78533d07747b73b026fe5bc16f4ed6800034e12a52"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\summarize_evidence.py",
+      "sha256": "564e9d1fe6a50760afcffc4593422eea06ef0c49ca4d47d5c9d7cb03b893a47a"
+    }
+  ],
+  "compose": {
+    "project": "codeplus-r14-executor-20260922",
+    "file": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+    "sha256": "68ca4e0b7685e991d5904b9a92fb78a44736fa2544b93854b5562554fa3e0cf9",
+    "containers": [
+      {
+        "id": "00c178b6eaa12b6050df5a3ff0409afdecc9899f851d37ef18ce53e7f93f61b8",
+        "name": "/codeplus-r14-executor-20260922-standalone-1",
+        "image": "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+        "labels": {
+          "com.docker.compose.config-hash": "a83a999d23cf733f52a662b99d454320e693c7226a755d3c9496535c85813027",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "minio:service_healthy:false,etcd:service_healthy:false",
+          "com.docker.compose.image": "sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "codeplus-r14-executor-20260922",
+          "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+          "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+          "com.docker.compose.service": "standalone",
+          "com.docker.compose.version": "5.4.0",
+          "org.opencontainers.image.ref.name": "ubuntu",
+          "org.opencontainers.image.version": "22.04"
+        },
+        "state": {
+          "Status": "running",
+          "Running": true,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 59553,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-09-22T16:00:42.551414067Z",
+          "FinishedAt": "2026-09-22T16:00:40.686204572Z",
+          "Health": {
+            "Status": "healthy",
+            "FailingStreak": 0,
+            "Log": [
+              {
+                "Start": "2026-09-22T16:09:47.581629366Z",
+                "End": "2026-09-22T16:09:47.62137335Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100     2  100     2    0     0   5763      0 --:--:-- --:--:-- --:--:--  2000\nOK"
+              },
+              {
+                "Start": "2026-09-22T16:09:52.622083683Z",
+                "End": "2026-09-22T16:09:52.638834913Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100     2  100     2    0     0   5865      0 --:--:-- --:--:-- --:--:--  2000\nOK"
+              },
+              {
+                "Start": "2026-09-22T16:09:57.639524597Z",
+                "End": "2026-09-22T16:09:57.689758793Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100     2  100     2    0     0   5420      0 --:--:-- --:--:-- --:--:--  2000\nOK"
+              },
+              {
+                "Start": "2026-09-22T16:10:02.690027217Z",
+                "End": "2026-09-22T16:10:02.744641054Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100     2  100     2    0     0   5221      0 --:--:-- --:--:-- --:--:--  2000\nOK"
+              },
+              {
+                "Start": "2026-09-22T16:10:07.743559345Z",
+                "End": "2026-09-22T16:10:07.799828173Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100     2  100     2    0     0   5747      0 --:--:-- --:--:-- --:--:--  2000\nOK"
+              }
+            ]
+          }
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "codeplus-r14-executor-20260922_milvus",
+            "Source": "/var/lib/docker/volumes/codeplus-r14-executor-20260922_milvus/_data",
+            "Destination": "/var/lib/milvus",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "ports": {
+          "19530/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "19538"
+            }
+          ],
+          "9091/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "9099"
+            }
+          ]
+        },
+        "networks": [
+          "codeplus-r14-executor-20260922_default"
+        ]
+      },
+      {
+        "id": "b5d63c2c9df7d94d9bc387b0fcad682e290cc3941ba58d9d307b3d3af2784c52",
+        "name": "/codeplus-r14-executor-20260922-minio-1",
+        "image": "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+        "labels": {
+          "architecture": "x86_64",
+          "build-date": "2024-12-18T09:14:16Z",
+          "com.docker.compose.config-hash": "299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "codeplus-r14-executor-20260922",
+          "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+          "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+          "com.docker.compose.service": "minio",
+          "com.docker.compose.version": "5.4.0",
+          "com.redhat.component": "ubi9-micro-container",
+          "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+          "description": "MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.",
+          "distribution-scope": "public",
+          "io.buildah.version": "1.38.0-dev",
+          "io.k8s.description": "Very small image which doesn't install the package manager.",
+          "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+          "io.openshift.expose-services": "",
+          "maintainer": "MinIO Inc <dev@min.io>",
+          "name": "MinIO",
+          "release": "RELEASE.2024-12-18T13-15-44Z",
+          "summary": "MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.",
+          "url": "https://www.redhat.com",
+          "vcs-ref": "10988923ed65297b3e5a5c9cf1c59f779fd76274",
+          "vcs-type": "git",
+          "vendor": "MinIO Inc <dev@min.io>",
+          "version": "RELEASE.2024-12-18T13-15-44Z"
+        },
+        "state": {
+          "Status": "running",
+          "Running": true,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 24300,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-09-22T15:22:07.68368866Z",
+          "FinishedAt": "0001-01-01T00:00:00Z",
+          "Health": {
+            "Status": "healthy",
+            "FailingStreak": 0,
+            "Log": [
+              {
+                "Start": "2026-09-22T16:09:49.532424742Z",
+                "End": "2026-09-22T16:09:49.583465287Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+              },
+              {
+                "Start": "2026-09-22T16:09:54.584692667Z",
+                "End": "2026-09-22T16:09:54.631881983Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+              },
+              {
+                "Start": "2026-09-22T16:09:59.63320978Z",
+                "End": "2026-09-22T16:09:59.67646205Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+              },
+              {
+                "Start": "2026-09-22T16:10:04.677284699Z",
+                "End": "2026-09-22T16:10:04.719343767Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+              },
+              {
+                "Start": "2026-09-22T16:10:09.718287192Z",
+                "End": "2026-09-22T16:10:09.762524215Z",
+                "ExitCode": 0,
+                "Output": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n"
+              }
+            ]
+          }
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "codeplus-r14-executor-20260922_minio",
+            "Source": "/var/lib/docker/volumes/codeplus-r14-executor-20260922_minio/_data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "ports": {
+          "9000/tcp": null
+        },
+        "networks": [
+          "codeplus-r14-executor-20260922_default"
+        ]
+      },
+      {
+        "id": "d464158c74a9fec19cd79d3bc385bb818fa06ed18737a48c696b27e4565d153c",
+        "name": "/codeplus-r14-executor-20260922-etcd-1",
+        "image": "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+        "labels": {
+          "com.docker.compose.config-hash": "f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "codeplus-r14-executor-20260922",
+          "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+          "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+          "com.docker.compose.service": "etcd",
+          "com.docker.compose.version": "5.4.0",
+          "io.buildah.version": "1.41.5"
+        },
+        "state": {
+          "Status": "running",
+          "Running": true,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 24301,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-09-22T15:22:07.686036414Z",
+          "FinishedAt": "0001-01-01T00:00:00Z",
+          "Health": {
+            "Status": "healthy",
+            "FailingStreak": 0,
+            "Log": [
+              {
+                "Start": "2026-09-22T16:09:47.503115652Z",
+                "End": "2026-09-22T16:09:47.573920052Z",
+                "ExitCode": 0,
+                "Output": "127.0.0.1:2379 is healthy: successfully committed proposal: took = 1.29893ms\n"
+              },
+              {
+                "Start": "2026-09-22T16:09:52.574976955Z",
+                "End": "2026-09-22T16:09:52.65064356Z",
+                "ExitCode": 0,
+                "Output": "127.0.0.1:2379 is healthy: successfully committed proposal: took = 1.451805ms\n"
+              },
+              {
+                "Start": "2026-09-22T16:09:57.651165376Z",
+                "End": "2026-09-22T16:09:57.723989679Z",
+                "ExitCode": 0,
+                "Output": "127.0.0.1:2379 is healthy: successfully committed proposal: took = 964.322µs\n"
+              },
+              {
+                "Start": "2026-09-22T16:10:02.72501767Z",
+                "End": "2026-09-22T16:10:02.776773086Z",
+                "ExitCode": 0,
+                "Output": "127.0.0.1:2379 is healthy: successfully committed proposal: took = 972.412µs\n"
+              },
+              {
+                "Start": "2026-09-22T16:10:07.776201783Z",
+                "End": "2026-09-22T16:10:07.832907655Z",
+                "ExitCode": 0,
+                "Output": "127.0.0.1:2379 is healthy: successfully committed proposal: took = 919.897µs\n"
+              }
+            ]
+          }
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "codeplus-r14-executor-20260922_etcd",
+            "Source": "/var/lib/docker/volumes/codeplus-r14-executor-20260922_etcd/_data",
+            "Destination": "/etcd",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "ports": {
+          "2379/tcp": null,
+          "2380/tcp": null
+        },
+        "networks": [
+          "codeplus-r14-executor-20260922_default"
+        ]
+      }
+    ],
+    "volumes": [
+      "codeplus-r14-executor-20260922_etcd",
+      "codeplus-r14-executor-20260922_milvus",
+      "codeplus-r14-executor-20260922_minio"
+    ],
+    "networks": [
+      "6fa7f95baf76"
+    ]
+  },
+  "live_processes": [
+    {
+      "ProcessId": 69048,
+      "ParentProcessId": 17360,
+      "ExecutablePath": "C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "CreationDate": "2026-09-23T00:10:09.45944+08:00",
+      "CommandLine": "\"C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe\" -Command \"try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}\n& 'C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/core/Scripts/python.exe' -I -B 'C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/final_audit.py'\"",
+      "birth": "134345670094594406"
+    },
+    {
+      "ProcessId": 31508,
+      "ParentProcessId": 69048,
+      "ExecutablePath": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "CreationDate": "2026-09-23T00:10:09.63824+08:00",
+      "CommandLine": "\"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe\" -I -B C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/final_audit.py",
+      "birth": "134345670096382402"
+    },
+    {
+      "ProcessId": 60468,
+      "ParentProcessId": 31508,
+      "ExecutablePath": "C:\\Python314\\python.exe",
+      "CreationDate": "2026-09-23T00:10:09.662885+08:00",
+      "CommandLine": "\"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe\" -I -B C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/final_audit.py",
+      "birth": "134345670096628853"
+    },
+    {
+      "ProcessId": 2192,
+      "ParentProcessId": 60468,
+      "ExecutablePath": "C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "CreationDate": "2026-09-23T00:10:12.86826+08:00",
+      "CommandLine": "pwsh -NoProfile -Command \"Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*codeplus-r14-executor-20260922*' -or $_.ExecutablePath -like '*codeplus-r14-executor-20260922*' } | Select-Object ProcessId,ParentProcessId,ExecutablePath,CreationDate,CommandLine | ConvertTo-Json -Depth 4 -Compress\"",
+      "birth": null
+    }
+  ],
+  "observed_worker_files": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\pytest-core\\test_stale_delete_retains_life0\\coordination\\active.json"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\pytest-core\\test_busy_device_with_malforme0\\coordination\\active.json",
+      "pid": "not-a-pid"
+    }
+  ],
+  "historical_actual_identities": [
+    {
+      "pid": 61308,
+      "birth": "134345658222318624",
+      "source": "R14-core-modules.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 45128,
+      "birth": "134345659774098883",
+      "source": "R14-host-modules.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 63116,
+      "birth": "134345664083663502",
+      "source": "R14-lifecycle-first.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 12552,
+      "birth": "134345664124707369",
+      "source": "R14-lifecycle-first.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 10244,
+      "birth": "134345664551170272",
+      "source": "R14-lifecycle-first.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 56472,
+      "birth": "134345664551228438",
+      "source": "R14-lifecycle-first.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 50528,
+      "birth": "134345664718336419",
+      "source": "R14-lifecycle-first.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 32696,
+      "birth": "134345664718372279",
+      "source": "R14-lifecycle-first.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 46580,
+      "birth": "134345647727371271",
+      "source": "R14-real-first.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 66556,
+      "birth": "134345648004770203",
+      "source": "R14-real-first.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 66180,
+      "birth": "134345647768130273",
+      "source": "R14-real-first.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 48412,
+      "birth": "134345659079668295",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 71656,
+      "birth": "134345659360223808",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 61008,
+      "birth": "134345659390456608",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 46920,
+      "birth": "134345659654193185",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 71516,
+      "birth": "134345659686783382",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 55232,
+      "birth": "134345659960141358",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 53616,
+      "birth": "134345660004609302",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 67000,
+      "birth": "134345660284107766",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 57472,
+      "birth": "134345660327638221",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 53420,
+      "birth": "134345660595490382",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 72376,
+      "birth": "134345660774108832",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 49176,
+      "birth": "134345660827403334",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 62980,
+      "birth": "134345661224105345",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 20000,
+      "birth": "134345661392285410",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 24448,
+      "birth": "134345661784145043",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 63824,
+      "birth": "134345662192102168",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 5872,
+      "birth": "134345662224564217",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 50512,
+      "birth": "134345662374104716",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 56932,
+      "birth": "134345662533403061",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 56332,
+      "birth": "134345662576672722",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 52620,
+      "birth": "134345662844049694",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 72100,
+      "birth": "134345662903693909",
+      "source": "R14-real-fourth.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 65532,
+      "birth": "134345659117991518",
+      "source": "R14-real-fourth.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 47604,
+      "birth": "134345660988100587",
+      "source": "R14-real-fourth.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 66900,
+      "birth": "134345661553939839",
+      "source": "R14-real-fourth.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 54964,
+      "birth": "134345663064656283",
+      "source": "R14-real-fourth.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 19132,
+      "birth": "134345650864511064",
+      "source": "R14-real-second.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 42244,
+      "birth": "134345651136615230",
+      "source": "R14-real-second.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 65676,
+      "birth": "134345650901810326",
+      "source": "R14-real-second.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 12168,
+      "birth": "134345643804246934",
+      "source": "R14-real-smoke.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 57488,
+      "birth": "134345654032597563",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 56356,
+      "birth": "134345654304604950",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 55052,
+      "birth": "134345654334869788",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 58200,
+      "birth": "134345654604474515",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 55660,
+      "birth": "134345654638216123",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 59696,
+      "birth": "134345654920546160",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 72664,
+      "birth": "134345654964012994",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 62152,
+      "birth": "134345655234509186",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 52248,
+      "birth": "134345655278151102",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 71732,
+      "birth": "134345655550610448",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 53072,
+      "birth": "134345655726502792",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 56456,
+      "birth": "134345655784284836",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 30332,
+      "birth": "134345656190448857",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 65292,
+      "birth": "134345656355329728",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 67608,
+      "birth": "134345656744480720",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 46144,
+      "birth": "134345657145800947",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 47572,
+      "birth": "134345657178705148",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 18124,
+      "birth": "134345657334391473",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 32576,
+      "birth": "134345657487962497",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 70292,
+      "birth": "134345657531464737",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 54932,
+      "birth": "134345657794446491",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 30832,
+      "birth": "134345657854425203",
+      "source": "R14-real-third.json",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+      "observed_current_birth": null
+    },
+    {
+      "pid": 52420,
+      "birth": "134345654072461099",
+      "source": "R14-real-third.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 68728,
+      "birth": "134345655951254043",
+      "source": "R14-real-third.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 62524,
+      "birth": "134345656511228263",
+      "source": "R14-real-third.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 2348,
+      "birth": "134345658010808814",
+      "source": "R14-real-third.json",
+      "executable": null,
+      "observed_current_birth": null
+    },
+    {
+      "pid": 15604,
+      "birth": "134345666470475465",
+      "source": "R14-upgrade-second.json",
+      "executable": null,
+      "observed_current_birth": null
+    }
+  ],
+  "owned_gpu_compute_processes": [],
+  "nonowned_gpu_process_count_preserved": 24,
+  "partial_formal_temporary_files": [
+    "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R14-real-third.json.pending"
+  ],
+  "preserve": [
+    "All nonproject Docker resources",
+    "shared model cache",
+    "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda",
+    "shared uv cache",
+    "fixed worker coordination directory",
+    "inherited user/ignored files",
+    "R14 formal evidence"
+  ],
+  "notes": [
+    "No environment or service cleanup by executor; separate cleanup session owns removal after review.",
+    "Bootstrap JSON in own temporary runtime directories contains private IPC authentication; do not publish it.",
+    "Real test collision/replacement collections are synthetic resources inside the owned Compose project.",
+    "pytest-2 was absent before R14 and was not recreated."
+  ]
+}

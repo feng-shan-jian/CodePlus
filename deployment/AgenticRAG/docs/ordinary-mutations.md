@@ -1,6 +1,6 @@
 # 普通文档增删改与整批发布
 
-R13 在独立核心新增 `begin_changes`、`build_changes`、`retry_failed` 与 `mutation_summary`。沿用同一个库级 Mutation、不可变归档和 `storage.publication` 发布事务；没有新建产品入口。首次冻结评测建库仍使用严格的 `build_first_revision`，要求全部输入成功。恢复交互、GC 和模型更换确认分别由 R14、R15、R16 接续。
+R13 在独立核心新增 `begin_changes`、`build_changes`、`retry_failed` 与 `mutation_summary`。沿用同一个库级 Mutation、不可变归档和 `storage.publication` 发布事务；没有新建产品入口。首次冻结评测建库仍使用严格的 `build_first_revision`，要求全部输入成功。R14 的[手动恢复与放弃](manual-recovery.md)继续原批次并复用完整文档检查点；GC 和模型更换确认分别由 R15、R16 接续。
 
 ```python
 from agentic_rag.ingestion import InputSelection, begin_changes, build_changes

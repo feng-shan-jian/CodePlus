@@ -69,9 +69,9 @@ def test_real_schema1_upgrade_preserves_history_and_never_fabricates_manifest(tm
     assert catalog.archives.read(old['raw'])==b'real archived original in schema1'
     assert catalog.get_snapshot(old['snapshot'].snapshot_id)==old['snapshot']
     with catalog._db.transaction() as connection:
-        assert connection.pragma('user_version')==7
+        assert connection.pragma('user_version')==8
         assert connection.execute('SELECT sha256 FROM schema_migrations WHERE version=1').fetchone()==(old['migration_hash'],)
-        assert connection.execute('SELECT count(*) FROM schema_migrations').fetchone()==(7,)
+        assert connection.execute('SELECT count(*) FROM schema_migrations').fetchone()==(8,)
         assert connection.execute('PRAGMA foreign_key_check').fetchall()==[]
         assert connection.execute('PRAGMA integrity_check').fetchone()==('ok',)
     with pytest.raises(RagError,match='no persisted input manifest'):

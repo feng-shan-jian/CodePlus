@@ -1,0 +1,123 @@
+{
+  "status": "PASS_WITH_METADATA_OBSERVATION",
+  "scope": "Independent R14 cleanup only. No source/test/old evidence edits, no staging, commit, push, or product test rerun.",
+  "head": "a4fede1c3f0a09202710e53debdbac3307c0911d",
+  "branch": "codex/rag",
+  "index_empty": true,
+  "removed": {
+    "roots": [
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-leader-20260922"
+    ],
+    "containers": 6,
+    "volumes": 6,
+    "networks": 2,
+    "ports_closed": [
+      19538,
+      9099,
+      19539,
+      9100
+    ],
+    "regular_files": 143792,
+    "directories": 27105,
+    "reparse_nodes": 1863,
+    "regular_file_logical_bytes": 9515393455,
+    "repository_temporary_files": [
+      {
+        "path": "deployment/AgenticRAG/docs/implementation-records/R14-real-third.json.pending",
+        "bytes": 583729,
+        "sha256": "48e922c602f6f582f82941c493335d2a1db970815ca099d31d04e4566dfbc486"
+      }
+    ]
+  },
+  "ownership_checks": {
+    "fresh_owned_processes": 0,
+    "processes_terminated": 0,
+    "regular_files_with_complete_link_inventory": 143792,
+    "inode_groups": 143790,
+    "internal_multiple_link_groups": 2,
+    "external_hardlinks": 0,
+    "external_reparse": 0,
+    "special_attribute_files": 144,
+    "docker_full_frozen_identity_matches": 14
+  },
+  "preserved": {
+    "executor_delivery": 102,
+    "reviewed_files": 143,
+    "production_sources": 206,
+    "protected_inputs": 6553,
+    "old_sql": 7,
+    "spec_files": 7,
+    "r13_postnotes": 6,
+    "ignored": 411,
+    "ignored_regular_files": 408,
+    "ignored_directories_present": 3,
+    "foreign_containers": 2,
+    "foreign_volumes": 5,
+    "foreign_networks": 4,
+    "convergence_worktree": {
+      "path": "C:/Users/18221/.codex/worktrees/bf43/CodePlus",
+      "exists": true,
+      "excluded_from_cleanup": true
+    }
+  },
+  "shared": {
+    "strict_comparison_status": "FAIL",
+    "accepted_observation_status": "PASS_WITH_METADATA_OBSERVATION",
+    "existing_entries": 172661,
+    "added": 0,
+    "removed": 0,
+    "changed_uv_ordinary_directory_size_only": 6139,
+    "all_other_metadata_equal": true,
+    "no_full_model_content_hash_claim": true,
+    "cause": "unknown"
+  },
+  "formal_failure_records": [
+    "R14-cleanup-after.json",
+    "R14-cleanup-readonly-error.json"
+  ],
+  "reports": {
+    "R14-cleanup-before.json": {
+      "sha256": "846e1f0add3bd79ffc572ddad2871776a1e032200fd6f26e24cc9e7768e4d098",
+      "bytes": 1178743
+    },
+    "R14-cleanup-deletion.json": {
+      "sha256": "1c38463b74d0014de69a4471fcfb4c6dd72014ff02e3b89ea95681248797e991",
+      "bytes": 16892
+    },
+    "R14-cleanup-after.json": {
+      "sha256": "a967cf7fbb93c9f3b2a88abceefec5c5ef77db4f785944d094d7c20532139555",
+      "bytes": 2872942
+    },
+    "R14-cleanup-shared-review.json": {
+      "sha256": "4325204b1c7770ba7044def3dcd345c98d6652f810d828be237b8f4c33492662",
+      "bytes": 3801
+    },
+    "R14-cleanup-readonly-error.json": {
+      "sha256": "641726aea77c9123d66b4711b2eaac898a38b762c42e75f6c7a30d0ea5e029a3",
+      "bytes": 605
+    },
+    "R14-cleanup-shared-before.jsonl.gz": {
+      "sha256": "e8ff3efbc52cd06312f06f31d687e830d930dc238175aed33eb2f60d83fc3984",
+      "bytes": 4588337
+    },
+    "R14-cleanup-shared-after.jsonl.gz": {
+      "sha256": "e957f7c0193dac004b321cee8f43c78d6e39951cdd3d030c13860bc150e34d02",
+      "bytes": 4593899
+    },
+    "R14-cleanup-owned-links.jsonl.gz": {
+      "sha256": "3ca41ea6624a27879689775bb45f5546a94e61b00d6ed363d6c94f7e2dca040e",
+      "bytes": 5419442
+    }
+  },
+  "helper_cleanup": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r14-cleanup-20260923",
+    "status": "PASS",
+    "exists_after": false,
+    "files_removed": 5,
+    "report": "R14-cleanup-finalizer.json",
+    "report_sha256": "7a2ce1d09c7b8005717c63f434f9bb51be9448bf5e1eb34d8404b19f9298a51a"
+  },
+  "finished": "2026-09-22T17:04:13.6072096Z",
+  "write_ownership": "STOP_WRITE after this finalizer completes; Leader independently verifies and decides exact local commit."
+}

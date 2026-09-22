@@ -35,8 +35,11 @@ def artifact(catalog, revision_id, *, published=False):
 
 
 def owned_artifact(catalog, owner, revision_id):
-    with catalog._owned(owner):
-        pass
+    with catalog._owned(owner) as connection:
+        selected = connection.execute('SELECT a.revision_id FROM current_candidates c JOIN index_artifacts a ON a.artifact_id=c.artifact_id WHERE c.batch_id=? AND c.kb_id=?',
+                                      (str(owner.token.batch_id),str(owner.token.kb_id))).fetchone()
+        if selected != (str(revision_id),):
+            raise failure('artifact is not the current candidate of this batch')
     stored = artifact(catalog, revision_id)
     if (stored['kb_id'], stored['batch_id'], stored['revision_id'], stored['owner_epoch']) != (
             str(owner.token.kb_id), str(owner.token.batch_id), str(revision_id), owner.token.owner_epoch):
@@ -47,8 +50,8 @@ def owned_artifact(catalog, owner, revision_id):
 def register(catalog, owner, revision_id=None):
     batch = catalog.get_batch(owner.token.batch_id)
     with catalog._db.transaction() as connection:
-        existing = connection.execute('SELECT revision_id FROM index_artifacts WHERE batch_id=? AND kb_id=?',
-                                      (str(batch.batch_id),str(batch.kb_id))).fetchone()
+        existing = connection.execute('SELECT a.revision_id FROM current_candidates c JOIN index_artifacts a ON a.artifact_id=c.artifact_id WHERE c.batch_id=? AND c.kb_id=? AND a.owner_epoch=?',
+                                      (str(batch.batch_id),str(batch.kb_id),owner.token.owner_epoch)).fetchone()
     revision_id = revision_id or (UUID(existing[0]) if existing else uuid4())
     prepared = prepare(catalog, batch.batch_id, revision_id)
     snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
@@ -59,8 +62,8 @@ def register(catalog, owner, revision_id=None):
                                  manifest_hash=prepared.manifest_hash, processing_snapshot_id=batch.processing_snapshot_id,
                                  index_state=IndexState.PREPARING)
     with catalog._owned(owner) as connection:
-        prior = connection.execute('SELECT revision_id,collection_name,schema_hash,owner_epoch FROM index_artifacts WHERE batch_id=? AND kb_id=?',
-                                   (str(batch.batch_id),str(batch.kb_id))).fetchone()
+        prior = connection.execute('SELECT revision_id,collection_name,schema_hash,owner_epoch FROM index_artifacts WHERE batch_id=? AND kb_id=? AND owner_epoch=?',
+                                   (str(batch.batch_id),str(batch.kb_id),owner.token.owner_epoch)).fetchone()
         if prior is not None:
             if prior != (str(revision_id),name,prepared.schema_hash,owner.token.owner_epoch):
                 raise failure('candidate registration retry differs from its original request')
@@ -72,6 +75,11 @@ def register(catalog, owner, revision_id=None):
         connection.execute('INSERT INTO index_artifacts VALUES(?,?,?,?,?,?,?,?,NULL,NULL,?)',
             (str(record.artifact_id), str(batch.kb_id), str(revision_id), str(batch.batch_id), name,
              record.schema_hash, record.owner_epoch, canonical_json(prepared.spec), record.state.value))
+        connection.execute('INSERT INTO current_candidates VALUES(?,?,?) ON CONFLICT(batch_id) DO UPDATE SET artifact_id=excluded.artifact_id',
+                           (str(batch.batch_id),str(batch.kb_id),str(record.artifact_id)))
+        connection.execute('INSERT INTO artifact_creation_intents VALUES(?,?,?,?)',
+                           (str(record.artifact_id),snapshot.resolved_config.storage.milvus_uri,'default',
+                            'agentic-rag-physical-v1:' + str(record.artifact_id) + ':' + uuid4().hex))
         connection.execute("UPDATE mutation_batches SET state='INDEXING' WHERE batch_id=?", (str(batch.batch_id),))
     return prepared, artifact(catalog, revision_id)
 
@@ -184,6 +192,12 @@ def publish(catalog, owner, revision_id):
 
 def complete_no_change(catalog, owner):
     """Normal terminal batch, no revision/collection/publication is created."""
+    from .recovery import terminal
+    old = terminal(catalog,owner.token.batch_id)
+    if old is not None:
+        if old['state'] != 'COMPLETED_NO_CHANGE':
+            raise failure('batch already has a different terminal result')
+        return old['summary']
     from ..ingestion.mutations import prepare_changes, completion_value
     prepared = prepare_changes(catalog,owner.token.batch_id,uuid4())
     summary = completion_value(catalog,owner.token.batch_id)

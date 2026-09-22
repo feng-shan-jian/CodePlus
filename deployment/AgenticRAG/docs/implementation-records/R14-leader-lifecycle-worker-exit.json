@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "started": 1790094532.7150476,
+  "suite": "lifecycle",
+  "method": "Observe actual PID/birth normal idle exit; no kill or coordination-file modification",
+  "workers": [
+    {
+      "pid": 68452,
+      "birth": "134345680342184913",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-leader-20260922\\lifecycle\\worker"
+    }
+  ],
+  "finished": 1790094532.7181213
+}

@@ -4,13 +4,11 @@ This is a coordinator over the existing mutation/publication protocol, not a
 second state machine. Full initial evaluation builds retain their strict API.
 """
 
-import io
 import json
 import time
 from uuid import UUID, uuid4
 
 from .._schema import canonical_json, fingerprint
-from ..capabilities import RequestContext, validate_response
 from ..config import ProcessingSnapshot
 from ..domain import ErrorCode, RagError, RevisionMember
 from ..indexes.manifest import (PreparedRevision, schema_spec, index_error,
@@ -21,6 +19,7 @@ from .capture import capture_inputs
 from .processing import process_inputs, read_processed
 from .records import InputSelection
 from .selection import select_inputs
+from .encoding import outcomes, read_encoded, encode_documents, cancelled as _cancelled
 
 
 def request(catalog, batch_id):
@@ -125,29 +124,6 @@ def retry_failed(catalog, batch_id, *, snapshot=None, accept_input_changes=False
                          _retry={'batch_id':str(batch_id), 'guards':guards, 'accept_input_changes':accept_input_changes})
 
 
-def outcomes(catalog, batch_id):
-    with catalog._db.transaction() as db:
-        rows = db.execute('SELECT item_id,state,encoded_hash,error_json FROM mutation_item_results WHERE batch_id=?', (str(batch_id),)).fetchall()
-    return {r[0]: {'state':r[1], 'encoded_hash':r[2], 'error':json.loads(r[3]) if r[3] else None} for r in rows}
-
-
-def _record(catalog, owner, item, state, *, vectors=None, error=None):
-    obj = catalog.archives.put(io.BytesIO(canonical_json({'vectors':vectors}).encode())) if vectors is not None else None
-    with catalog._owned(owner) as db:
-        if obj:
-            db.execute('INSERT INTO archive_objects VALUES(?,?) ON CONFLICT DO NOTHING', (obj.sha256,obj.size_bytes))
-            if db.execute('SELECT size_bytes FROM archive_objects WHERE sha256=?',(obj.sha256,)).fetchone() != (obj.size_bytes,):
-                raise failure('encoded archive size differs')
-        db.execute('INSERT INTO mutation_item_results VALUES(?,?,?,?,?,?)',
-                   (str(item.entry.item_id), str(owner.token.kb_id), str(owner.token.batch_id), state,
-                    obj.sha256 if obj else None, error.model_dump_json() if error else None))
-
-
-def _cancelled(cancelled):
-    if cancelled is not None and cancelled():
-        raise RagError(ErrorCode.CANCELLED, 'ordinary batch cancelled; no partial publication', stage='mutation')
-
-
 def process_changes(catalog, owner, tokenizer, provider, *, cancelled=None, request_seconds=120, observer=None):
     """Persist document encoding only after every chunk has a valid response."""
     batch = catalog.get_batch(owner.token.batch_id)
@@ -163,55 +139,8 @@ def process_changes(catalog, owner, tokenizer, provider, *, cancelled=None, requ
         if guard and item.raw and not req['accept_input_changes'] and item.raw.sha256 != guard['raw_hash']:
             raise RagError(ErrorCode.SOURCE_CHANGED, 'retry input differs or had no saved original; explicitly acknowledge changed input', stage='retry')
     process_inputs(catalog, owner, tokenizer, skip_unchanged=True, cancelled=cancelled)
-    previous = outcomes(catalog, batch.batch_id)
-    profile = snapshot.resolved_config.embedding
-    for raw in catalog.get_input_items(batch.batch_id):
-        _cancelled(cancelled)
-        if str(raw.entry.item_id) in previous:
-            continue
-        if raw.stage == 'failed':
-            _record(catalog, owner, raw, 'failed', error=raw.error)
-        elif raw.change in ('unchanged','index_changed'):
-            _record(catalog, owner, raw, 'unchanged')
-        else:
-            checked = read_processed(catalog, batch.batch_id, raw.entry.item_id)
-            if checked is None:
-                raise failure('captured file has no terminal processing result')
-            item, version, result = checked
-            if item.stage == 'failed':
-                _record(catalog, owner, raw, 'failed', error=item.error)
-                continue
-            encoded, offset = [], 0
-            try:
-                rows, inputs, counts = rows_for_document(batch.kb_id, UUID(int=0), snapshot, version, result)
-                while offset < len(rows):
-                    _cancelled(cancelled)
-                    stop = min(len(rows), offset+profile.limits.max_batch_size)
-                    while stop > offset and (stop-offset)*max(counts[offset:stop]) > profile.limits.max_padded_tokens:
-                        stop -= 1
-                    if stop == offset:
-                        raise RagError(ErrorCode.INPUT_TOO_LONG, 'document chunk exceeds frozen model batch capacity', stage='encoding')
-                    values = inputs[offset:stop]
-                    context = RequestContext(request_id=uuid4(), owner_id=provider.owner_id, purpose='import',
-                                             deadline_monotonic_ns=time.monotonic_ns()+int(request_seconds*1e9))
-                    response = provider.embed_documents(values, profile, context)
-                    validate_response(response, values, profile, context)
-                    _cancelled(cancelled)
-                    with catalog._owned(owner):
-                        pass
-                    for row, vector in zip(rows[offset:stop], response.results, strict=True):
-                        encoded.append({'chunk_id':row['chunk_id'], 'vector_hash':vector_hash(vector.vector), 'dense':list(vector.vector)})
-                    offset = stop
-                _record(catalog, owner, raw, 'encoded', vectors=encoded)
-            except RagError as exc:
-                # Service/identity/cancel/storage errors abort the library batch.
-                # Only explicit input rejection is a per-document encoding error.
-                if exc.error.code not in (ErrorCode.INVALID_INPUT, ErrorCode.INPUT_TOO_LONG):
-                    raise
-                _record(catalog, owner, raw, 'failed', error=exc.error)
-        if observer:
-            observer('file_terminal', {'item_id':str(raw.entry.item_id), 'document_id':str(raw.document_id)})
-    _cancelled(cancelled)
+    encode_documents(catalog,owner,provider,ordinary=True,cancelled_check=cancelled,
+                     request_seconds=request_seconds,observer=observer)
     return summary(catalog, batch.batch_id)
 
 
@@ -272,10 +201,7 @@ def prepare_changes(catalog, batch_id, revision_id):
                 raise failure('encoded document lacks complete processing checkpoint')
             item, version, result = checked
             rows, _, _ = rows_for_document(batch.kb_id,revision_id,snapshot,version,result)
-            encoded = json.loads(catalog.archives.read(state['encoded_hash']))['vectors']
-            if ([v['chunk_id'] for v in encoded] != [r['chunk_id'] for r in rows] or
-                    any(vector_hash(v['dense']) != v['vector_hash'] for v in encoded)):
-                raise failure('encoded document chunk set/vector digest differs')
+            encoded = read_encoded(catalog,batch_id,raw,state)
             members[str(raw.document_id)] = RevisionMember(revision_id=revision_id,document_id=raw.document_id,
                 document_version_id=version.document_version_id,chunk_set_hash=next(a.sha256 for a in item.output_hashes if a.kind=='chunks'))
             rows_by_doc[str(raw.document_id)] = rows
@@ -338,10 +264,10 @@ def completion_value(catalog, batch_id, revision_id=None):
 def build_changes(catalog, owner, provider, backend, tokenizer, *, cancelled=None, observer=None, request_seconds=120, index_timeout=180):
     """Execute ordinary work; exceptions retain pending work and old pointer."""
     batch = catalog.get_batch(owner.token.batch_id)
-    old = publication.receipt(catalog,batch.batch_id)
-    if old:
-        publication.publish(catalog,owner,UUID(old['revision_id']))
-        return {'receipt':old,'summary':summary(catalog,batch.batch_id),'metrics':{'receipt_retry':True}}
+    from ..storage.recovery import terminal
+    old = terminal(catalog,batch.batch_id)
+    if old is not None:
+        return old
     snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
     if backend.catalog is not catalog or backend.storage != snapshot.resolved_config.storage:
         raise failure('mutation backend differs from frozen catalog/endpoint')
@@ -378,6 +304,8 @@ def build_changes(catalog, owner, provider, backend, tokenizer, *, cancelled=Non
     if registered != candidate:
         raise failure('candidate changed before registration')
     backend.create(artifact,owner)
+    if observer:
+        observer('created',{'revision_id':str(candidate.revision_id),'collection_name':artifact['collection_name']})
     expected = []
     for offset in range(0,len(candidate.rows),256):
         _cancelled(cancelled)
@@ -389,6 +317,8 @@ def build_changes(catalog, owner, provider, backend, tokenizer, *, cancelled=Non
             rows.append({**encoded,'dense':vector['dense']})
         backend.insert(artifact,rows,owner)
     publication.record_encoded(catalog,owner,candidate.revision_id,expected)
+    if observer:
+        observer('inserted',{'revision_id':str(candidate.revision_id),'rows':len(expected)})
     timings = backend.finalize(artifact,len(expected),owner,index_timeout=index_timeout)
     _cancelled(cancelled)
     proof = publication.validate(catalog,owner,candidate.revision_id,backend)

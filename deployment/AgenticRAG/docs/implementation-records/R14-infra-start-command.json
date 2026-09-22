@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "docker",
+    "compose",
+    "-f",
+    "deployment/AgenticRAG/tests/resources/r14-compose.yaml",
+    "-p",
+    "codeplus-r14-executor-20260922",
+    "up",
+    "-d",
+    "--wait",
+    "--wait-timeout",
+    "180"
+  ],
+  "cwd": "D:\\CodePlus",
+  "started_at": 1790090527.144089,
+  "environment": {
+    "UV_CACHE_DIR": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\uv-cache",
+    "UV_LINK_MODE": "copy",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+  },
+  "launcher_pid": 64772,
+  "exit_code": 0,
+  "finished_at": 1790090544.4619355
+}

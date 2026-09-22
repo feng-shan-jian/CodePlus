@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/core/Scripts/python.exe",
+    "-I",
+    "-B",
+    "-m",
+    "pytest",
+    "deployment/AgenticRAG/tests/test_recovery.py",
+    "deployment/AgenticRAG/tests/test_mutations.py",
+    "deployment/AgenticRAG/tests/test_publication.py",
+    "deployment/AgenticRAG/tests/test_storage.py",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/pytest-first"
+  ],
+  "cwd": "D:\\CodePlus",
+  "started_at": 1790090364.9294913,
+  "environment": {
+    "UV_CACHE_DIR": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\uv-cache",
+    "UV_LINK_MODE": "copy",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+  },
+  "launcher_pid": 17988,
+  "exit_code": 1,
+  "finished_at": 1790090534.7570534
+}

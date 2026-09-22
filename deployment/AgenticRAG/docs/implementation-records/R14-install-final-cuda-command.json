@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "uv",
+    "pip",
+    "install",
+    "--python",
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/cuda/Scripts/python.exe",
+    "--no-deps",
+    "--reinstall",
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/pytest-core/test_wheel_and_sdist_install_i0/direct/codeplus_agentic_rag-0.1.0-py3-none-any.whl"
+  ],
+  "cwd": "D:\\CodePlus",
+  "started_at": 1790093203.5881665,
+  "environment": {
+    "UV_CACHE_DIR": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\uv-cache",
+    "UV_LINK_MODE": "copy",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+  },
+  "launcher_pid": 59812,
+  "exit_code": 0,
+  "finished_at": 1790093203.883722
+}

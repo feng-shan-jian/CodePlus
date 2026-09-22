@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:/Python314/python.exe",
+    "-I",
+    "-B",
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/prepare_checks.py"
+  ],
+  "cwd": "D:\\CodePlus",
+  "started_at": 1790092078.76385,
+  "environment": {
+    "UV_CACHE_DIR": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\uv-cache",
+    "UV_LINK_MODE": "copy",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+  },
+  "launcher_pid": 35188,
+  "exit_code": 0,
+  "finished_at": 1790092146.0187914
+}

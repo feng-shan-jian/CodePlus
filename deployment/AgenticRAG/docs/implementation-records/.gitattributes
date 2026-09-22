@@ -17,3 +17,5 @@ R12-migration-b.xml whitespace=-blank-at-eol
 R13-compose-up.txt whitespace=-blank-at-eol
 R13-core-final.txt whitespace=-blank-at-eol
 R13-focused.txt whitespace=-blank-at-eol
+R14-infra-start.txt whitespace=-blank-at-eol
+R14-unit-first.txt whitespace=-blank-at-eol

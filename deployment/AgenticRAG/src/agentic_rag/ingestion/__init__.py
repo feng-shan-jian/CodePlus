@@ -5,7 +5,9 @@ from .selection import select_inputs
 from .capture import capture_inputs, read_input, verify_inputs
 from .processing import process_inputs, read_processed
 from .mutations import begin_changes, build_changes, process_changes, retry_failed, summary as mutation_summary
+from .recovery import inspect_recovery, continue_recovery, abandon_recovery, repair_missing_original
 
 __all__ = ['InputSelection', 'InputManifest', 'InputEntry', 'InputCheckpoint', 'RawSnapshot',
            'select_inputs', 'capture_inputs', 'read_input', 'verify_inputs', 'process_inputs', 'read_processed',
-           'begin_changes', 'build_changes', 'process_changes', 'retry_failed', 'mutation_summary']
+           'begin_changes', 'build_changes', 'process_changes', 'retry_failed', 'mutation_summary',
+           'inspect_recovery', 'continue_recovery', 'abandon_recovery', 'repair_missing_original']

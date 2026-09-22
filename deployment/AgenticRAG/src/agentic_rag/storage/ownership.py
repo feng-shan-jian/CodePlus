@@ -8,6 +8,7 @@ from ..domain import BatchState, ErrorCode, ImportBatch, RagError
 from .database import Database
 from .locks import ProcessLock
 from .paths import failure
+from . import recovery
 
 ACTIVE = {"SNAPSHOTTING", "PROCESSING", "INDEXING", "VALIDATING", "READY"}
 
@@ -53,19 +54,19 @@ class Mutation:
         if produced_by is not None and produced_by != self.token:
             raise failure("late result from a previous mutation owner")
         token = self.token
+        import os
+        from ..models.identity import process_birth
+        identity = connection.execute('SELECT owner_nonce,pid,process_birth FROM mutation_executions WHERE batch_id=? AND owner_epoch=?',
+                                      (str(token.batch_id),token.owner_epoch)).fetchone()
+        if identity != (str(token.owner_nonce),os.getpid(),process_birth(os.getpid())):
+            raise failure('mutation execution does not belong to this actual interpreter')
         row = connection.execute("SELECT b.owner_nonce,b.owner_epoch,b.state,l.pending_mutation_id,l.owner_epoch FROM mutation_batches b JOIN libraries l ON l.kb_id=b.kb_id WHERE b.batch_id=? AND b.kb_id=?",
                                  (str(token.batch_id), str(token.kb_id))).fetchone()
         if row is None or row[0] != str(token.owner_nonce) or row[1] != token.owner_epoch or row[2] not in ACTIVE or row[3] != str(token.batch_id) or row[4] != token.owner_epoch:
             raise failure("mutation owner is stale, inactive or no longer pending")
 
-    def abandon(self) -> None:
-        with self._database.transaction(write=True) as connection:
-            self.require(self._database, connection)
-            connection.execute("UPDATE mutation_batches SET state='ABANDONED',recovery_stage=NULL WHERE batch_id=?", (str(self.token.batch_id),))
-            connection.execute("UPDATE libraries SET pending_mutation_id=NULL WHERE kb_id=?", (str(self.token.kb_id),))
-            # Dependents cease requiring indexes; archives and records remain.
-            connection.execute("DELETE FROM revision_dependencies WHERE batch_id=?", (str(self.token.batch_id),))
-        self._lock.close()
+    def abandon(self):
+        return recovery.abandon_owned(self)
 
     def close(self) -> None:
         if self._lock._fd is None:
@@ -120,6 +121,7 @@ def begin(database: Database, kb_id: UUID, batch_id: UUID, snapshot: ProcessingS
             elif existing != (str(kb_id), snapshot.resolved_config.model_dump_json(), snapshot.config_fingerprint):
                 raise failure("processing snapshot identity conflict")
             connection.execute("INSERT INTO mutation_batches VALUES(?,?,?,?,?,?,?,'SNAPSHOTTING',NULL,NULL)", (str(batch_id), str(kb_id), row[0], manifest_hash, str(snapshot.snapshot_id), epoch, str(nonce)))
+            recovery.execution(connection,batch_id,epoch,nonce)
             connection.execute("UPDATE libraries SET pending_mutation_id=?,owner_epoch=? WHERE kb_id=?", (str(batch_id), epoch, str(kb_id)))
             if row[0] is not None:
                 connection.execute("INSERT INTO revision_dependencies VALUES(?,?,?,'base')", (str(kb_id), str(batch_id), row[0]))
@@ -146,7 +148,7 @@ def identify_interrupted(database: Database, kb_id: UUID) -> OwnerToken | None:
 
 
 def resume(database: Database, expected: OwnerToken) -> Mutation:
-    """Explicit manual recovery primitive; caller validates checkpoints in R14."""
+    """Explicit CAS takeover. Every new owner re-derives a new candidate."""
     if expected.store_id != database.directory.store_id:
         raise failure("recovery token belongs to a different catalog")
     lock = lock_for(database, expected.kb_id).acquire()
@@ -155,9 +157,15 @@ def resume(database: Database, expected: OwnerToken) -> Mutation:
             row = connection.execute("SELECT b.owner_nonce,b.owner_epoch,b.state,b.recovery_stage,l.owner_epoch FROM mutation_batches b JOIN libraries l ON l.pending_mutation_id=b.batch_id AND l.kb_id=b.kb_id WHERE b.batch_id=? AND b.kb_id=?", (str(expected.batch_id), str(expected.kb_id))).fetchone()
             if row is None or row[:3] != (str(expected.owner_nonce), expected.owner_epoch, "WAITING_RECOVERY") or row[4] != expected.owner_epoch:
                 raise failure("recovery identity or expected state changed")
+            base = connection.execute('SELECT b.base_revision_id,l.current_revision_id FROM mutation_batches b JOIN libraries l ON l.kb_id=b.kb_id WHERE b.batch_id=?',
+                                      (str(expected.batch_id),)).fetchone()
+            if base[0] != base[1]:
+                raise failure('pending batch base no longer equals the current publication')
             epoch, nonce = row[4] + 1, uuid4()
-            connection.execute("UPDATE mutation_batches SET state=recovery_stage,recovery_stage=NULL,owner_epoch=?,owner_nonce=? WHERE batch_id=?", (epoch, str(nonce), str(expected.batch_id)))
+            stage = 'SNAPSHOTTING' if row[3] == 'SNAPSHOTTING' else 'PROCESSING'
+            connection.execute("UPDATE mutation_batches SET state=?,recovery_stage=NULL,owner_epoch=?,owner_nonce=? WHERE batch_id=?", (stage, epoch, str(nonce), str(expected.batch_id)))
             connection.execute("UPDATE libraries SET owner_epoch=? WHERE kb_id=?", (epoch, str(expected.kb_id)))
+            recovery.execution(connection,expected.batch_id,epoch,nonce)
         return Mutation(database, lock, OwnerToken(expected.store_id, expected.kb_id, expected.batch_id, nonce, epoch))
     except BaseException:
         lock.close()

@@ -1,0 +1,103 @@
+{
+  "status": "FAIL",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "archive",
+        "--format=tar",
+        "--output",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\baseline.tar",
+        "a4fede1c3f0a09202710e53debdbac3307c0911d",
+        "deployment/AgenticRAG"
+      ],
+      "cwd": "D:\\CodePlus",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "uv",
+        "build",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\baseline\\deployment\\AgenticRAG",
+        "--wheel",
+        "--out-dir",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\v7-wheel",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe",
+        "--no-build-isolation",
+        "--no-create-gitignore"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Building wheel...\nSuccessfully built v7-wheel\\codeplus_agentic_rag-0.1.0-py3-none-any.whl\n"
+    },
+    {
+      "argv": [
+        "uv",
+        "venv",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using CPython 3.14.3 interpreter at: C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\core\\Scripts\\python.exe\nCreating virtual environment at: env\nActivate with: env\\Scripts\\activate\n"
+    },
+    {
+      "argv": [
+        "uv",
+        "pip",
+        "sync",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Scripts\\python.exe",
+        "--require-hashes",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R12-windows-integration-lock.txt"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using Python 3.14.3 environment at: env\nResolved 69 packages in 1.08s\nInstalled 69 packages in 5.25s\n + annotated-types==0.8.0\n + anthropic==0.98.1\n + anyio==4.15.1\n + apsw==3.53.4.0\n + attrs==26.1.0\n + cachetools==7.2.0\n + certifi==2026.7.22\n + cffi==2.0.0\n + charset-normalizer==3.5.1\n + click==8.5.0\n + colorama==0.4.6\n + cryptography==48.0.0\n + distro==1.9.0\n + docstring-parser==0.18.0\n + filelock==4.0.1\n + fsspec==2026.9.0\n + grpcio==1.84.0\n + h11==0.16.0\n + hf-xet==1.6.0\n + httpcore==1.0.9\n + httpx==0.28.1\n + httpx-sse==0.4.3\n + huggingface-hub==1.32.0\n + idna==3.20\n + jiter==0.14.0\n + jsonschema==4.26.0\n + jsonschema-specifications==2025.9.1\n + linkify-it-py==2.1.0\n + markdown-it-py==4.0.0\n + mcp==1.27.0\n + mdit-py-plugins==0.5.0\n + mdurl==0.1.2\n + numpy==2.5.3\n + openai==2.34.0\n + orjson==3.12.0\n + packaging==26.3\n + pandas==3.0.6\n + platformdirs==4.9.6\n + protobuf==7.36.2\n + pycparser==3.0\n + pydantic==2.13.5\n + pydantic-core==2.46.5\n + pydantic-settings==2.14.0\n + pygments==2.20.0\n + pyjwt==2.12.1\n + pymilvus==3.0.2\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.3\n + python-multipart==0.0.27\n + pywin32==311\n + pyyaml==6.0.3\n + referencing==0.37.0\n + requests==2.34.2\n + rich==15.0.0\n + rpds-py==0.30.0\n + six==1.17.0\n + sniffio==1.3.1\n + sse-starlette==3.4.1\n + starlette==1.0.0\n + textual==8.2.5\n + tokenizers==0.23.2\n + tqdm==4.70.1\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + tzdata==2026.4\n + uc-micro-py==2.0.0\n + urllib3==2.8.0\n + uvicorn==0.46.0\n + websockets==16.0\n"
+    },
+    {
+      "argv": [
+        "uv",
+        "pip",
+        "install",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Scripts\\python.exe",
+        "--no-deps",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\v7-wheel\\codeplus_agentic_rag-0.1.0-py3-none-any.whl"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using Python 3.14.3 environment at: env\nResolved 1 package in 2ms\nPrepared 1 package in 16ms\nInstalled 1 package in 123ms\n + codeplus-agentic-rag==0.1.0 (from file:///C:/Users/18221/AppData/Local/Temp/codeplus-r14-executor-20260922/upgrade-first/v7-wheel/codeplus_agentic_rag-0.1.0-py3-none-any.whl)\n"
+    },
+    {
+      "argv": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r14_upgrade_process.py",
+        "--root",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first",
+        "--mode",
+        "seed",
+        "--model-cache",
+        "C:/Users/18221/.cache/codeplus-agenticrag/models"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r14_upgrade_process.py\", line 134, in <module>\n    main(p.parse_args())\n    ~~~~^^^^^^^^^^^^^^^^\n  File \"D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r14_upgrade_process.py\", line 82, in main\n    with change([base]) as owner:published=build_changes(catalog,owner,provider,backend,tokenizer)\n                                           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Lib\\site-packages\\agentic_rag\\ingestion\\mutations.py\", line 349, in build_changes\n    process_changes(catalog,owner,tokenizer,provider,cancelled=cancelled,request_seconds=request_seconds,observer=observer)\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Lib\\site-packages\\agentic_rag\\ingestion\\mutations.py\", line 197, in process_changes\n    response = provider.embed_documents(values, profile, context)\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Lib\\site-packages\\agentic_rag\\models\\client.py\", line 282, in embed_documents\n    return self.submit_documents(items, profile, context).result()\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Lib\\site-packages\\agentic_rag\\models\\client.py\", line 273, in submit_documents\n    return self._submit('documents', items, profile, context)\n           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Lib\\site-packages\\agentic_rag\\models\\client.py\", line 263, in _submit\n    self._connect(context.deadline_monotonic_ns)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Lib\\site-packages\\agentic_rag\\models\\client.py\", line 107, in _connect\n    metadata, token = discover(self.config, deadline)\n                      ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Lib\\site-packages\\agentic_rag\\models\\lifecycle.py\", line 62, in discover\n    identity, env = target_identity(config, deadline)\n                    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-executor-20260922\\upgrade-first\\env\\Lib\\site-packages\\agentic_rag\\models\\lifecycle.py\", line 54, in target_identity\n    raise fail('target installed implementation or boot clock differs')\nagentic_rag.domain.RagError: IDENTITY_MISMATCH: target installed implementation or boot clock differs\n"
+    }
+  ],
+  "baseline": "a4fede1c3f0a09202710e53debdbac3307c0911d",
+  "started": 1790092901.611626,
+  "error": "CalledProcessError(1, ['C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first\\\\env\\\\Scripts\\\\python.exe', '-I', '-B', 'D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\r14_upgrade_process.py', '--root', 'C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first', '--mode', 'seed', '--model-cache', 'C:/Users/18221/.cache/codeplus-agenticrag/models'], '', 'Traceback (most recent call last):\\n  File \"D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\r14_upgrade_process.py\", line 134, in <module>\\n    main(p.parse_args())\\n    ~~~~^^^^^^^^^^^^^^^^\\n  File \"D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\r14_upgrade_process.py\", line 82, in main\\n    with change([base]) as owner:published=build_changes(catalog,owner,provider,backend,tokenizer)\\n                                           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first\\\\env\\\\Lib\\\\site-packages\\\\agentic_rag\\\\ingestion\\\\mutations.py\", line 349, in build_changes\\n    process_changes(catalog,owner,tokenizer,provider,cancelled=cancelled,request_seconds=request_seconds,observer=observer)\\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first\\\\env\\\\Lib\\\\site-packages\\\\agentic_rag\\\\ingestion\\\\mutations.py\", line 197, in process_changes\\n    response = provider.embed_documents(values, profile, context)\\n  File \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first\\\\env\\\\Lib\\\\site-packages\\\\agentic_rag\\\\models\\\\client.py\", line 282, in embed_documents\\n    return self.submit_documents(items, profile, context).result()\\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first\\\\env\\\\Lib\\\\site-packages\\\\agentic_rag\\\\models\\\\client.py\", line 273, in submit_documents\\n    return self._submit(\\'documents\\', items, profile, context)\\n           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first\\\\env\\\\Lib\\\\site-packages\\\\agentic_rag\\\\models\\\\client.py\", line 263, in _submit\\n    self._connect(context.deadline_monotonic_ns)\\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first\\\\env\\\\Lib\\\\site-packages\\\\agentic_rag\\\\models\\\\client.py\", line 107, in _connect\\n    metadata, token = discover(self.config, deadline)\\n                      ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first\\\\env\\\\Lib\\\\site-packages\\\\agentic_rag\\\\models\\\\lifecycle.py\", line 62, in discover\\n    identity, env = target_identity(config, deadline)\\n                    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\\n  File \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r14-executor-20260922\\\\upgrade-first\\\\env\\\\Lib\\\\site-packages\\\\agentic_rag\\\\models\\\\lifecycle.py\", line 54, in target_identity\\n    raise fail(\\'target installed implementation or boot clock differs\\')\\nagentic_rag.domain.RagError: IDENTITY_MISMATCH: target installed implementation or boot clock differs\\n')",
+  "finished": 1790092915.312925
+}

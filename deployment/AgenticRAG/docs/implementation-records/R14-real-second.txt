@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_real_acceptance.py", line 324, in <module>
+    main(parser.parse_args())
+    ~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_real_acceptance.py", line 315, in main
+    suite.crash_case(name,stage,**kw)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\CodePlus\deployment\AgenticRAG\tests\r14_real_acceptance.py", line 169, in crash_case
+    lease.finish(RunStatus.COMPLETED,'verified old version during recovery wait')
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r14-executor-20260922\core\Lib\site-packages\agentic_rag\storage\runs.py", line 61, in finish
+    finished = current.model_copy(update={"status": status, "stop_reason": stop_reason, "usage": usage or current.usage})
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r14-executor-20260922\core\Lib\site-packages\agentic_rag\_schema.py", line 52, in model_copy
+    return type(self).model_validate(data)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r14-executor-20260922\core\Lib\site-packages\pydantic\main.py", line 732, in model_validate
+    return cls.__pydantic_validator__.validate_python(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        obj,
+        ^^^^
+    ...<5 lines>...
+        by_name=by_name,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Run
+stop_reason
+  Input should be 'finished', 'token_budget', 'time_budget', 'search_limit', 'open_limit', 'iteration_limit', 'no_evidence', 'no_hits', 'citation_invalid', 'budget', 'provider_truncated', 'explicit_error', 'user_cancelled' or 'consumer_closed' [type=literal_error, input_value='verified old version during recovery wait', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/literal_error

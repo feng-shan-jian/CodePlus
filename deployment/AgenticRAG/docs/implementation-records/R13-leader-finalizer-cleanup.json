@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "started": "2026-09-22T23:00:00.9956738+08:00",
+  "finished": "2026-09-22T23:00:01.0154363+08:00",
+  "root": "C:/Users/18221/AppData/Local/Temp/codeplus-r13-finalize-20260922",
+  "exists_after": false,
+  "exact_file_hashes": {
+    "approved-paths.nul": "0b79899d760137ea211ef12a3909754ad045b4e5a0eedc70730c89e2029e5d1a",
+    "audit.py": "99aa925a01169d29c81b1c84f555bc7082a1bc2bd2962a98f43b6edee0893a09",
+    "finalize.py": "4efb1f9259935945e333731c01aa96ca9f5e875c01d749a1537d3eb69393682a",
+    "r14-baseline.py": "c0c9433dc85a480b244cd72268141303d4be7c90e2380fc9c04e02edc525f0f2",
+    "self-cleanup.ps1": "51a11334865f8f3706a47b4aae65933fdcb15a2672c1cba3e14377bd7b37057d",
+    "stage-result.json": "c0485c8f7a89ac1b55cf7a02e3c399029e4aa71076dda6c7b5b9bf53d50a04d4"
+  },
+  "metadata": [
+    {
+      "name": "approved-paths.nul",
+      "nlink": 1,
+      "attributes": 32
+    },
+    {
+      "name": "audit.py",
+      "nlink": 1,
+      "attributes": 32
+    },
+    {
+      "name": "finalize.py",
+      "nlink": 1,
+      "attributes": 32
+    },
+    {
+      "name": "r14-baseline.py",
+      "nlink": 1,
+      "attributes": 32
+    },
+    {
+      "name": "self-cleanup.ps1",
+      "nlink": 1,
+      "attributes": 32
+    },
+    {
+      "name": "stage-result.json",
+      "nlink": 1,
+      "attributes": 32
+    }
+  ],
+  "method": "All ancestors and exact six regular files checked; nlink=1; native PowerShell LiteralPath deletion of each file, then empty root; no recursive deletion or force.",
+  "retained_stage_trace": "R13-leader-stage-execution.json",
+  "retained_stage_trace_sha256": "c0485c8f7a89ac1b55cf7a02e3c399029e4aa71076dda6c7b5b9bf53d50a04d4",
+  "script_construction_notes": [
+    "Two functions.exec JavaScript draft-construction errors occurred before file or command execution: unescaped Markdown backticks and invalid placeholder quoting. Corrected helper creation succeeded; no production files changed by those failed calls."
+  ],
+  "no_product_changes": true
+}
