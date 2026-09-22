@@ -1,0 +1,117 @@
+{
+  "started_at": "2026-09-22T11:29:13.578600+00:00",
+  "commands": [
+    {
+      "argv": [
+        "uv",
+        "venv",
+        "--python",
+        "C:/Python314/python.exe",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\host"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using CPython 3.14.3 interpreter at: C:\\Python314\\python.exe\nCreating virtual environment at: host\nActivate with: host\\Scripts\\activate\n"
+    },
+    {
+      "argv": [
+        "uv",
+        "pip",
+        "install",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\host\\Scripts\\python.exe",
+        "--require-hashes",
+        "-r",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R12-windows-integration-lock.txt"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using Python 3.14.3 environment at: host\nResolved 69 packages in 1.53s\nInstalled 69 packages in 5.03s\n + annotated-types==0.8.0\n + anthropic==0.98.1\n + anyio==4.15.1\n + apsw==3.53.4.0\n + attrs==26.1.0\n + cachetools==7.2.0\n + certifi==2026.7.22\n + cffi==2.0.0\n + charset-normalizer==3.5.1\n + click==8.5.0\n + colorama==0.4.6\n + cryptography==48.0.0\n + distro==1.9.0\n + docstring-parser==0.18.0\n + filelock==4.0.1\n + fsspec==2026.9.0\n + grpcio==1.84.0\n + h11==0.16.0\n + hf-xet==1.6.0\n + httpcore==1.0.9\n + httpx==0.28.1\n + httpx-sse==0.4.3\n + huggingface-hub==1.32.0\n + idna==3.20\n + jiter==0.14.0\n + jsonschema==4.26.0\n + jsonschema-specifications==2025.9.1\n + linkify-it-py==2.1.0\n + markdown-it-py==4.0.0\n + mcp==1.27.0\n + mdit-py-plugins==0.5.0\n + mdurl==0.1.2\n + numpy==2.5.3\n + openai==2.34.0\n + orjson==3.12.0\n + packaging==26.3\n + pandas==3.0.6\n + platformdirs==4.9.6\n + protobuf==7.36.2\n + pycparser==3.0\n + pydantic==2.13.5\n + pydantic-core==2.46.5\n + pydantic-settings==2.14.0\n + pygments==2.20.0\n + pyjwt==2.12.1\n + pymilvus==3.0.2\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.3\n + python-multipart==0.0.27\n + pywin32==311\n + pyyaml==6.0.3\n + referencing==0.37.0\n + requests==2.34.2\n + rich==15.0.0\n + rpds-py==0.30.0\n + six==1.17.0\n + sniffio==1.3.1\n + sse-starlette==3.4.1\n + starlette==1.0.0\n + textual==8.2.5\n + tokenizers==0.23.2\n + tqdm==4.70.1\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + tzdata==2026.4\n + uc-micro-py==2.0.0\n + urllib3==2.8.0\n + uvicorn==0.46.0\n + websockets==16.0\n"
+    },
+    {
+      "argv": [
+        "uv",
+        "pip",
+        "install",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\host\\Scripts\\python.exe",
+        "--no-deps",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-executor-20260922\\packaging-final5\\direct\\host\\codeplus-0.2.0-py3-none-any.whl",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-executor-20260922\\packaging-final5\\direct\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using Python 3.14.3 environment at: host\nResolved 2 packages in 2ms\nInstalled 2 packages in 341ms\n + codeplus==0.2.0 (from file:///C:/Users/18221/AppData/Local/Temp/codeplus-r12-executor-20260922/packaging-final5/direct/host/codeplus-0.2.0-py3-none-any.whl)\n + codeplus-agentic-rag==0.1.0 (from file:///C:/Users/18221/AppData/Local/Temp/codeplus-r12-executor-20260922/packaging-final5/direct/rag/codeplus_agentic_rag-0.1.0-py3-none-any.whl)\n"
+    },
+    {
+      "argv": [
+        "uv",
+        "pip",
+        "install",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\host\\Scripts\\python.exe",
+        "pytest==9.0.3",
+        "pytest-asyncio==1.3.0",
+        "hatchling==1.29.0"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using Python 3.14.3 environment at: host\nResolved 10 packages in 1.21s\nInstalled 7 packages in 294ms\n + hatchling==1.29.0\n + iniconfig==2.3.0\n + pathspec==1.1.1\n + pluggy==1.6.0\n + pytest==9.0.3\n + pytest-asyncio==1.3.0\n + trove-classifiers==2026.9.21.13\n"
+    },
+    {
+      "argv": [
+        "uv",
+        "pip",
+        "check",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\host\\Scripts\\python.exe"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using Python 3.14.3 environment at: host\nChecked 78 packages in 4ms\nAll installed packages are compatible\n"
+    },
+    {
+      "argv": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\host\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-X",
+        "utf8",
+        "-c",
+        "import codeplus,agentic_rag,json,sys; print(json.dumps({'host':codeplus.__file__,'core':agentic_rag.__file__,'torch_loaded':'torch' in sys.modules})); assert 'site-packages' in codeplus.__file__ and 'site-packages' in agentic_rag.__file__; assert 'torch' not in sys.modules"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922",
+      "exit_code": 0,
+      "stdout": "{\"host\": \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r12-leader-20260922\\\\host\\\\Lib\\\\site-packages\\\\codeplus\\\\__init__.py\", \"core\": \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r12-leader-20260922\\\\host\\\\Lib\\\\site-packages\\\\agentic_rag\\\\__init__.py\", \"torch_loaded\": false}\r\n",
+      "stderr": ""
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-executor-20260922\\packaging-final5\\direct\\host\\codeplus-0.2.0-py3-none-any.whl",
+      "sha256": "791f378dcab5a6f56572a5f96dbeb654a3e67ab8f33337029f86881bb89b8c0f"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-executor-20260922\\packaging-final5\\direct\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "sha256": "252f5f15218d1a904f28fb7bf13e46f8be6a8bace92ea31febb25dc46f18eeb8"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-executor-20260922\\packaging-final5\\rebuilt\\host\\codeplus-0.2.0-py3-none-any.whl",
+      "sha256": "791f378dcab5a6f56572a5f96dbeb654a3e67ab8f33337029f86881bb89b8c0f"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-executor-20260922\\packaging-final5\\rebuilt\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "sha256": "252f5f15218d1a904f28fb7bf13e46f8be6a8bace92ea31febb25dc46f18eeb8"
+    }
+  ],
+  "status": "PASS",
+  "python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\host\\Scripts\\python.exe",
+  "tokenizer": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\answer-tokenizer.json",
+  "tokenizer_sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+  "finished_at": "2026-09-22T11:29:22.644051+00:00"
+}

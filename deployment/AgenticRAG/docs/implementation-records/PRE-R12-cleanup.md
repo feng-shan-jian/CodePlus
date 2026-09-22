@@ -33,3 +33,6 @@ C02–C03 由 Leader 提交门核验并记录在 PRE-R12-cleanup-leader-stage.js
 第二次提交检查发现首次失败的 pytest 原始日志有3行行尾空白；沿用现有 records/.gitattributes 做法，仅为 PRE-R12-cleanup-executor-first-contracts.txt 精确豁免 blank-at-eol，保留原始证据 SHA。未放宽源码或自写文档检查，记录见 leader-second-stage.json。
 
 C04–C05 在提交成功后填写真实 SHA 并核对 exact paths/blobs，作为下次正常记录提交的后记。之后从清理后基线派发 R12，在原 CodePlus Agent 的 TUI 与 -p 路径接入固定 Dense 开发能力；联网模型、GPU/Milvus真实证据、引用/预算/取消为 R12 必需验证。本轮不宣称这些已通过，Linux最终安装和全部迁移仍归后续任务。完成 R12 后继续 R13–R26，不将 M1 当作总目标完成。
+
+## 提交后记
+COMMITTED：`5dbe979a330a6b157adfba7ad3ea8299fecf73a9`，parent `cd6ed3470c1ce5619c6e8bc6791346ac577e64c1`。116路径、9180新增行/10813删除行、28 tracked删除；提交后 exact路径与blob、保留工作树哈希、空index均已核验，见 PRE-R12-cleanup-postcommit.json。未推送/发布。C04–C05通过，下一项R12；本后记随下一正常提交保存，不amend。

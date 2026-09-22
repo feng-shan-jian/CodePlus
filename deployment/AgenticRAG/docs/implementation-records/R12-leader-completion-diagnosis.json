@@ -1,0 +1,18 @@
+{
+  "status": "PASS_FOR_REFUSAL_CONTRACT_ONLY",
+  "original_run_status": "FAIL",
+  "run_id": "e45618ed-2a3d-41af-bf36-e57999c3cd7a",
+  "report_sha256": "4c6442132f2c104e18ef3698b2225c508b3a973579f8c14906b1df094f567005",
+  "saved_citations": 0,
+  "errors": [
+    "invalid_json offset=0 line=1 column=1",
+    "invalid_json offset=12 line=1 column=13"
+  ],
+  "single_repair": true,
+  "no_stream_body": true,
+  "artifact": null,
+  "pin": "released",
+  "diagnosis": "Both drafts failed JSON parsing; raw drafts were not persisted, so the exact malformed content is unknown. Actual repair mappings retained both successful opens and matched window diagnostics. No demonstrated implementation defect; this run is not a successful answer.",
+  "readonly_second_review": "/root/r12_agent_integration reviewed actual code and report; no writes or tests",
+  "followup": "One separately recorded independent completion run, unchanged source, input prompt and configuration; no automatic in-run retry beyond the permitted repair."
+}

@@ -1,0 +1,426 @@
+{
+  "at": "2026-09-22T11:51:48.540022+00:00",
+  "reason": "Apply the documented R12 explicit development trial 02 to independent acceptance; production defaults unchanged",
+  "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\live\\development.json",
+  "before_sha256": "5eee805e82b5c7e45f80ba8d74451c217486c48b80f3e7527c2a0a0fbed47885",
+  "after_sha256": "b98eb70d572dfc279e5612194b3039d70695211074665aeea04bbaf65d4a3ee5",
+  "only_change": {
+    "path": "knowledge.retrieval.context_chunks",
+    "before": 8,
+    "after": 16
+  },
+  "before": {
+    "knowledge": {
+      "schema_version": 1,
+      "parameter_status": "experiment",
+      "storage": {
+        "schema_version": 1,
+        "data_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\live\\data",
+        "milvus_uri": "http://127.0.0.1:19535",
+        "namespace": "r12_acceptance",
+        "credential_ref": null
+      },
+      "processing": {
+        "schema_version": 1,
+        "parser": {
+          "schema_version": 1,
+          "implementation": "markdown_it_txt",
+          "version": "markdown-it-py-4.0.0+source-v1",
+          "normalization_version": "utf8-bom-newlines-v1",
+          "encoding": "utf-8"
+        },
+        "chunker": {
+          "schema_version": 1,
+          "implementation": "structure_sentence_token",
+          "version": "canonical-offsets-v1",
+          "max_tokens": 512,
+          "overlap_tokens": 64
+        },
+        "index": {
+          "schema_version": 1,
+          "schema_version_name": "uuid1024-bm25-utf8-v1",
+          "dense_index": "IVF_FLAT",
+          "dense_metric": "COSINE",
+          "nlist": 1,
+          "sparse_index": "SPARSE_INVERTED_INDEX",
+          "sparse_algorithm": "DAAT_MAXSCORE",
+          "tokenizer": "standard",
+          "filters": [
+            "lowercase"
+          ],
+          "bm25_k1": 1.2,
+          "bm25_b": 0.75
+        }
+      },
+      "models": {
+        "schema_version": 1,
+        "embedding": "embed",
+        "reranker": "rank"
+      },
+      "model_profiles": [
+        {
+          "schema_version": 1,
+          "name": "embed",
+          "backend": "qwen3_local",
+          "runtime": {
+            "schema_version": 1,
+            "dtype": "bfloat16",
+            "attention": "sdpa",
+            "device": "cuda:0",
+            "implementation": "transformers",
+            "torch_version": "2.14.0+cu130",
+            "transformers_version": "5.17.0",
+            "tokenizers_version": "0.23.2",
+            "use_cache": false,
+            "trust_remote_code": false,
+            "local_files_only": true,
+            "allocator_cap_mib": 2048
+          },
+          "limits": {
+            "schema_version": 1,
+            "max_input_tokens": 2048,
+            "max_batch_size": 4,
+            "max_padded_tokens": 4096
+          },
+          "document_template": "title_text_v1",
+          "document_with_title": "Title: {title}\n{text}",
+          "document_without_title": "{text}",
+          "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+          "capability": "embedding",
+          "model": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "tokenizer": {
+            "schema_version": 1,
+            "model": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+            "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+            "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+            "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+            "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+            "padding_side": "left",
+            "truncation": false
+          },
+          "query_template": "Instruct: {instruction}\nQuery:{query}",
+          "add_special_tokens": true,
+          "dimension": 1024,
+          "pooling": "last_nonpadding_token",
+          "normalization": "float32_L2"
+        },
+        {
+          "schema_version": 1,
+          "name": "rank",
+          "backend": "qwen3_local",
+          "runtime": {
+            "schema_version": 1,
+            "dtype": "bfloat16",
+            "attention": "sdpa",
+            "device": "cuda:0",
+            "implementation": "transformers",
+            "torch_version": "2.14.0+cu130",
+            "transformers_version": "5.17.0",
+            "tokenizers_version": "0.23.2",
+            "use_cache": false,
+            "trust_remote_code": false,
+            "local_files_only": true,
+            "allocator_cap_mib": 2048
+          },
+          "limits": {
+            "schema_version": 1,
+            "max_input_tokens": 2048,
+            "max_batch_size": 4,
+            "max_padded_tokens": 4096
+          },
+          "document_template": "title_text_v1",
+          "document_with_title": "Title: {title}\n{text}",
+          "document_without_title": "{text}",
+          "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+          "capability": "rerank",
+          "model": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "tokenizer": {
+            "schema_version": 1,
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+            "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+            "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+            "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+            "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+            "padding_side": "left",
+            "truncation": false
+          },
+          "add_special_tokens": false,
+          "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+          "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+          "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+          "score_type": "softmax_float32([no,yes])[yes]",
+          "logits_to_keep": 1
+        }
+      ],
+      "retrieval": {
+        "schema_version": 1,
+        "mode": "fixed",
+        "route": "dense",
+        "rerank": false,
+        "dense_candidates": 50,
+        "bm25_candidates": 50,
+        "rerank_candidates": 50,
+        "rrf_k": 60,
+        "nprobe": 1,
+        "context_chunks": 8,
+        "context_tokens": 50000
+      },
+      "budgets": {
+        "schema_version": 1,
+        "qa": {
+          "schema_version": 1,
+          "searches": 6,
+          "opens": 6,
+          "total_tokens": 200000,
+          "duration_ms": 300000,
+          "finish_reserve_tokens": 32000,
+          "finish_reserve_ms": 30000
+        },
+        "report": {
+          "schema_version": 1,
+          "searches": 12,
+          "opens": 12,
+          "total_tokens": 48000,
+          "duration_ms": 600000,
+          "finish_reserve_tokens": 6000,
+          "finish_reserve_ms": 40000
+        }
+      }
+    },
+    "worker": {
+      "schema_version": 1,
+      "executable": "C:/Users/18221/AppData/Local/Temp/codeplus-r12-leader-20260922/cuda/Scripts/python.exe",
+      "model_cache": "C:/Users/18221/.cache/codeplus-agenticrag/models",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\live\\worker",
+      "startup_timeout_ms": 60000,
+      "handshake_timeout_ms": 3000,
+      "io_timeout_ms": 5000,
+      "idle_timeout_ms": 30000,
+      "max_frame_bytes": 1048576,
+      "max_connections": 16,
+      "max_queue_items": 16,
+      "max_queue_bytes": 4194304,
+      "max_session_requests": 4096
+    },
+    "answer_tokenizer": "C:/Users/18221/AppData/Local/Temp/codeplus-r12-leader-20260922/answer-tokenizer.json",
+    "explore_output_cap": 2048,
+    "finish_input_upper": 12000,
+    "finalize_output_cap": 2048,
+    "repair_output_cap": 2048,
+    "compact_output_cap": 2048,
+    "max_iterations": 20,
+    "max_tool_attempts": 40,
+    "cleanup_grace_ms": 1000
+  },
+  "after": {
+    "knowledge": {
+      "schema_version": 1,
+      "parameter_status": "experiment",
+      "storage": {
+        "schema_version": 1,
+        "data_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\live\\data",
+        "milvus_uri": "http://127.0.0.1:19535",
+        "namespace": "r12_acceptance",
+        "credential_ref": null
+      },
+      "processing": {
+        "schema_version": 1,
+        "parser": {
+          "schema_version": 1,
+          "implementation": "markdown_it_txt",
+          "version": "markdown-it-py-4.0.0+source-v1",
+          "normalization_version": "utf8-bom-newlines-v1",
+          "encoding": "utf-8"
+        },
+        "chunker": {
+          "schema_version": 1,
+          "implementation": "structure_sentence_token",
+          "version": "canonical-offsets-v1",
+          "max_tokens": 512,
+          "overlap_tokens": 64
+        },
+        "index": {
+          "schema_version": 1,
+          "schema_version_name": "uuid1024-bm25-utf8-v1",
+          "dense_index": "IVF_FLAT",
+          "dense_metric": "COSINE",
+          "nlist": 1,
+          "sparse_index": "SPARSE_INVERTED_INDEX",
+          "sparse_algorithm": "DAAT_MAXSCORE",
+          "tokenizer": "standard",
+          "filters": [
+            "lowercase"
+          ],
+          "bm25_k1": 1.2,
+          "bm25_b": 0.75
+        }
+      },
+      "models": {
+        "schema_version": 1,
+        "embedding": "embed",
+        "reranker": "rank"
+      },
+      "model_profiles": [
+        {
+          "schema_version": 1,
+          "name": "embed",
+          "backend": "qwen3_local",
+          "runtime": {
+            "schema_version": 1,
+            "dtype": "bfloat16",
+            "attention": "sdpa",
+            "device": "cuda:0",
+            "implementation": "transformers",
+            "torch_version": "2.14.0+cu130",
+            "transformers_version": "5.17.0",
+            "tokenizers_version": "0.23.2",
+            "use_cache": false,
+            "trust_remote_code": false,
+            "local_files_only": true,
+            "allocator_cap_mib": 2048
+          },
+          "limits": {
+            "schema_version": 1,
+            "max_input_tokens": 2048,
+            "max_batch_size": 4,
+            "max_padded_tokens": 4096
+          },
+          "document_template": "title_text_v1",
+          "document_with_title": "Title: {title}\n{text}",
+          "document_without_title": "{text}",
+          "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+          "capability": "embedding",
+          "model": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "tokenizer": {
+            "schema_version": 1,
+            "model": "Qwen/Qwen3-Embedding-0.6B",
+            "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+            "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+            "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+            "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+            "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+            "padding_side": "left",
+            "truncation": false
+          },
+          "query_template": "Instruct: {instruction}\nQuery:{query}",
+          "add_special_tokens": true,
+          "dimension": 1024,
+          "pooling": "last_nonpadding_token",
+          "normalization": "float32_L2"
+        },
+        {
+          "schema_version": 1,
+          "name": "rank",
+          "backend": "qwen3_local",
+          "runtime": {
+            "schema_version": 1,
+            "dtype": "bfloat16",
+            "attention": "sdpa",
+            "device": "cuda:0",
+            "implementation": "transformers",
+            "torch_version": "2.14.0+cu130",
+            "transformers_version": "5.17.0",
+            "tokenizers_version": "0.23.2",
+            "use_cache": false,
+            "trust_remote_code": false,
+            "local_files_only": true,
+            "allocator_cap_mib": 2048
+          },
+          "limits": {
+            "schema_version": 1,
+            "max_input_tokens": 2048,
+            "max_batch_size": 4,
+            "max_padded_tokens": 4096
+          },
+          "document_template": "title_text_v1",
+          "document_with_title": "Title: {title}\n{text}",
+          "document_without_title": "{text}",
+          "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+          "capability": "rerank",
+          "model": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "tokenizer": {
+            "schema_version": 1,
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+            "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+            "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+            "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+            "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+            "padding_side": "left",
+            "truncation": false
+          },
+          "add_special_tokens": false,
+          "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+          "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+          "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+          "score_type": "softmax_float32([no,yes])[yes]",
+          "logits_to_keep": 1
+        }
+      ],
+      "retrieval": {
+        "schema_version": 1,
+        "mode": "fixed",
+        "route": "dense",
+        "rerank": false,
+        "dense_candidates": 50,
+        "bm25_candidates": 50,
+        "rerank_candidates": 50,
+        "rrf_k": 60,
+        "nprobe": 1,
+        "context_chunks": 16,
+        "context_tokens": 50000
+      },
+      "budgets": {
+        "schema_version": 1,
+        "qa": {
+          "schema_version": 1,
+          "searches": 6,
+          "opens": 6,
+          "total_tokens": 200000,
+          "duration_ms": 300000,
+          "finish_reserve_tokens": 32000,
+          "finish_reserve_ms": 30000
+        },
+        "report": {
+          "schema_version": 1,
+          "searches": 12,
+          "opens": 12,
+          "total_tokens": 48000,
+          "duration_ms": 600000,
+          "finish_reserve_tokens": 6000,
+          "finish_reserve_ms": 40000
+        }
+      }
+    },
+    "worker": {
+      "schema_version": 1,
+      "executable": "C:/Users/18221/AppData/Local/Temp/codeplus-r12-leader-20260922/cuda/Scripts/python.exe",
+      "model_cache": "C:/Users/18221/.cache/codeplus-agenticrag/models",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922\\live\\worker",
+      "startup_timeout_ms": 60000,
+      "handshake_timeout_ms": 3000,
+      "io_timeout_ms": 5000,
+      "idle_timeout_ms": 30000,
+      "max_frame_bytes": 1048576,
+      "max_connections": 16,
+      "max_queue_items": 16,
+      "max_queue_bytes": 4194304,
+      "max_session_requests": 4096
+    },
+    "answer_tokenizer": "C:/Users/18221/AppData/Local/Temp/codeplus-r12-leader-20260922/answer-tokenizer.json",
+    "explore_output_cap": 2048,
+    "finish_input_upper": 12000,
+    "finalize_output_cap": 2048,
+    "repair_output_cap": 2048,
+    "compact_output_cap": 2048,
+    "max_iterations": 20,
+    "max_tool_attempts": 40,
+    "cleanup_grace_ms": 1000
+  }
+}

@@ -128,6 +128,20 @@ def make_persisted_preview(content: str, file_path: Path) -> str:
     )
 
 
+def persisted_preview_spans(content: str, file_path: Path, spans):
+    """Map only the copied prefix; wrappers and the path never gain provenance."""
+    prefix = (f"{PERSISTED_TAG}\n"
+              f"输出太大（{len(content) // 1024}KB），完整内容已保存到：\n"
+              f"{file_path}\n\n预览（前 2KB）：\n")
+    output = []
+    for span in spans:
+        # Structured blocks are separate actual wire content and remain intact.
+        mapped = span if span.block_index is not None else span.crop(0, min(len(content), PREVIEW_CHARS), len(prefix))
+        if mapped is not None:
+            output.append(mapped)
+    return tuple(output)
+
+
 
 
 def is_spill_readback(tool_name: str, arguments: Mapping[str, object], session_dir: Path) -> bool:
@@ -181,6 +195,7 @@ def apply_tool_result_budget(
             # 写盘失败就保留原文。消息随即定型进历史，不会再有重试
             continue
         preview = make_persisted_preview(tr.content, fp)
+        tr.source_spans = persisted_preview_spans(tr.content, fp, tr.source_spans)
         total -= len(tr.content) - len(preview)
         tr.content = preview
 
@@ -639,6 +654,7 @@ async def auto_compact(
     recovery: RecoveryState | None = None,
     tool_schemas: list[Mapping[str, Any]] | None = None,
     transcript_path: str = "",
+    control_factory=None,
 ) -> CompactEvent | str | None:
     # 以真实 API 用量为锚点做阈值判断：current_tokens() 返回上次计费基准
     # （input + cache_read + cache_creation + output）加上锚点之后新增消息的
@@ -711,15 +727,25 @@ async def auto_compact(
         try:
             from codeplus.tools.base import StreamEnd, StreamEvent, TextDelta
 
+            from contextlib import aclosing
+            from codeplus.run_policy import BudgetStop
             collected_text = ""
-            async for event in client.stream(summary_conv, system=SUMMARY_PROMPT, tools=tool_schemas):
-                if isinstance(event, TextDelta):
-                    collected_text += event.text
-                elif isinstance(event, StreamEnd):
-                    pass
+            terminal = None
+            options = {'control': control_factory('compact')} if control_factory else {}
+            async with aclosing(client.stream(summary_conv, system=SUMMARY_PROMPT, tools=tool_schemas, **options)) as stream:
+                async for event in stream:
+                    if isinstance(event, TextDelta):
+                        collected_text += event.text
+                    elif isinstance(event, StreamEnd):
+                        terminal = event
+            if control_factory and (terminal is None or terminal.delivery != 'confirmed'
+                                    or terminal.stop_reason != 'end_turn'):
+                raise BudgetStop('provider_truncated', hard=True)
             llm_output = collected_text
             break
 
+        except BudgetStop:
+            raise
         except Exception as e:
             err_msg = str(e).lower()
             if "prompt" in err_msg and "long" in err_msg or "too many" in err_msg:

@@ -145,6 +145,7 @@ class AppConfig:
     teammate_mode: str = ""
     enable_coordinator_mode: bool = False
     sandbox: SandboxAppConfig = field(default_factory=SandboxAppConfig)
+    knowledge_development_config: str = ''
 
 
 def _load_single_file(path: Path) -> AppConfig:
@@ -206,10 +207,13 @@ def _load_single_file(path: Path) -> AppConfig:
         teammate_mode=validated["teammate_mode"],
         enable_coordinator_mode=validated["enable_coordinator_mode"],
         sandbox=sandbox_cfg,
+        knowledge_development_config=validated['knowledge_development_config'],
     )
 
 
 def _merge_config(base: AppConfig, override: AppConfig) -> AppConfig:
+    if override.knowledge_development_config:
+        base.knowledge_development_config = override.knowledge_development_config
     if override.providers:
         base.providers = override.providers
     if override.permission_mode != "default":

@@ -44,7 +44,8 @@ class RunLease:
     def pin(self) -> RunPin:
         return self._pin
 
-    def finish(self, status: RunStatus, stop_reason: str, *, usage: RunUsage | None = None) -> Run:
+    def finish(self, status: RunStatus, stop_reason: str, *, usage: RunUsage | None = None,
+               cleanup_pending: tuple[str, ...] = ()) -> Run:
         self._lock.check()
         if self._lock.path != lock_for(self._database, self.run.run_id).path:
             raise failure("run identity does not match its lifecycle lock")
@@ -59,12 +60,36 @@ class RunLease:
             # immutable. Finishing must not restore its older in-memory usage.
             finished = current.model_copy(update={"status": status, "stop_reason": stop_reason, "usage": usage or current.usage})
             connection.execute("UPDATE runs SET status=?,stop_reason=?,usage=? WHERE run_id=?", (status.value, stop_reason, finished.usage.model_dump_json(), str(self.run.run_id)))
-            connection.execute("UPDATE run_pins SET state='released' WHERE run_id=? AND owner_nonce=?", (str(self.run.run_id), str(self.pin.owner_nonce)))
+            if cleanup_pending:
+                if not connection.execute('SELECT 1 FROM host_runs WHERE run_id=?', (str(self.run.run_id),)).fetchone():
+                    raise failure('pending cleanup requires a registered host owner')
+                connection.execute("UPDATE host_runs SET cleanup_state='pending',cleanup_handles=? WHERE run_id=?",
+                                   (json.dumps(cleanup_pending), str(self.run.run_id)))
+            else:
+                connection.execute("UPDATE run_pins SET state='released' WHERE run_id=? AND owner_nonce=?", (str(self.run.run_id), str(self.pin.owner_nonce)))
+                connection.execute("UPDATE host_runs SET cleanup_state='released',cleanup_handles='[]' WHERE run_id=?", (str(self.run.run_id),))
         self._run = finished
-        self._lock.close()
+        if not cleanup_pending:
+            self._lock.close()
         return finished
 
+    def release_cleanup(self) -> None:
+        """Owning host calls only after its actual readers have all terminated."""
+        self._lock.check()
+        with self._database.transaction(write=True) as connection:
+            pin, current = read_pin(connection, self.run.run_id), read_run(connection, self.run.run_id)
+            row = connection.execute('SELECT cleanup_state FROM host_runs WHERE run_id=?', (str(self.run.run_id),)).fetchone()
+            if pin != self.pin or current.status == RunStatus.RUNNING or row != ('pending',):
+                raise failure('cleanup ownership or lifecycle differs')
+            connection.execute("UPDATE run_pins SET state='released' WHERE run_id=? AND owner_nonce=?", (str(self.run.run_id), str(self.pin.owner_nonce)))
+            connection.execute("UPDATE host_runs SET cleanup_state='released',cleanup_handles='[]' WHERE run_id=?", (str(self.run.run_id),))
+        self._lock.close()
+
     def close(self) -> None:
+        if self._run.status != RunStatus.RUNNING:
+            # A terminal run may still own real worker readers. Closing a Python
+            # consumer is not evidence that those readers have stopped.
+            return
         if self._lock._fd is not None:
             try:
                 self.finish(RunStatus.CANCELLED, "consumer_closed")

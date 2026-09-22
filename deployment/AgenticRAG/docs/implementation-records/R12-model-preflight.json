@@ -1,0 +1,153 @@
+{
+  "kind": "real_network_provider_preflight",
+  "started_at": "2026-09-22T08:47:51.878064+00:00",
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "argv": [
+    "deployment/AgenticRAG/tests/r12_model_preflight.py",
+    "--report",
+    "D:/CodePlus/deployment/AgenticRAG/docs/implementation-records/R12-model-preflight.json"
+  ],
+  "cwd": "D:\\CodePlus",
+  "openai": "2.34.0",
+  "httpx": "0.28.1",
+  "configuration_changed": false,
+  "probes": [
+    {
+      "configured_model": "deepseek-chat",
+      "protocol": "openai-compat",
+      "base_url": "https://api.deepseek.com",
+      "credential_present": true,
+      "cap": 8,
+      "request_sha256": "2f5d28584e9c23b337e1f271e42a7dc8dfba835d5241a625cbae6eb9f2c2b4cb",
+      "status": "response",
+      "models": [
+        "deepseek-flash"
+      ],
+      "chunks": 10,
+      "finish_reasons": [
+        "length"
+      ],
+      "raw_usage": [
+        {
+          "completion_tokens": 8,
+          "prompt_tokens": 14,
+          "total_tokens": 22,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 14
+        }
+      ],
+      "elapsed_ms": 1852.575
+    },
+    {
+      "configured_model": "deepseek-chat",
+      "protocol": "openai-compat",
+      "base_url": "https://api.deepseek.com",
+      "credential_present": true,
+      "cap": 32,
+      "request_sha256": "dcb9cca7d89918b7708ee3f804f3be4954c677cb4196bb2f3f8d48cb8f0d8a70",
+      "status": "response",
+      "models": [
+        "deepseek-flash"
+      ],
+      "chunks": 34,
+      "finish_reasons": [
+        "length"
+      ],
+      "raw_usage": [
+        {
+          "completion_tokens": 32,
+          "prompt_tokens": 14,
+          "total_tokens": 46,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 14
+        }
+      ],
+      "elapsed_ms": 747.136
+    },
+    {
+      "configured_model": "deepseek-reasoner",
+      "protocol": "openai-compat",
+      "base_url": "https://api.deepseek.com",
+      "credential_present": true,
+      "cap": 8,
+      "request_sha256": "f07e7dab2421c39e45f8ee4210b9fe143870382d8d8d21fe0151c4c46e5342b8",
+      "status": "response",
+      "models": [
+        "deepseek-flash"
+      ],
+      "chunks": 10,
+      "finish_reasons": [
+        "length"
+      ],
+      "raw_usage": [
+        {
+          "completion_tokens": 8,
+          "prompt_tokens": 40,
+          "total_tokens": 48,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 8,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 40
+        }
+      ],
+      "elapsed_ms": 610.881
+    },
+    {
+      "configured_model": "deepseek-reasoner",
+      "protocol": "openai-compat",
+      "base_url": "https://api.deepseek.com",
+      "credential_present": true,
+      "cap": 32,
+      "request_sha256": "27a1b9073aeebb03f0450f15cb1d61e048d288e5079c7bc7b6ee611a5ba5a6d1",
+      "status": "response",
+      "models": [
+        "deepseek-flash"
+      ],
+      "chunks": 34,
+      "finish_reasons": [
+        "length"
+      ],
+      "raw_usage": [
+        {
+          "completion_tokens": 32,
+          "prompt_tokens": 40,
+          "total_tokens": 72,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 32,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 40
+        }
+      ],
+      "elapsed_ms": 790.431
+    }
+  ],
+  "finished_at": "2026-09-22T08:47:58.439334+00:00",
+  "note": "Connectivity/cap samples only: not a tokenizer hard-bound proof or Agent acceptance."
+}

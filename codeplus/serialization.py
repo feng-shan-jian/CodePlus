@@ -4,12 +4,13 @@ import json
 from typing import Any
 
 from codeplus.conversation import Message
+from codeplus.run_policy import WireSpan
 
 # 把 provider 无关的内部消息序列化成各家 API 的请求格式。
 # 这一层属于「适配器」职责，对话层（ConversationManager）只管消息、不懂线上格式。
 
 
-def build_anthropic_messages(messages: list[Message]) -> list[dict[str, Any]]:
+def build_anthropic_messages(messages: list[Message], *, mappings: list[WireSpan] | None = None) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     for m in messages:
         if m.tool_uses or m.thinking_blocks:
@@ -38,6 +39,16 @@ def build_anthropic_messages(messages: list[Message]) -> list[dict[str, Any]]:
                 # 带结构化 block 的走 block 数组（tool_reference 这类要求
                 # 服务端解析的内容只能这么发），其余照旧发纯文本
                 body: Any = tr.content_blocks if tr.content_blocks else tr.content
+                if mappings is not None and not tr.is_error:
+                    for span in tr.source_spans:
+                        path = ('messages', len(result), 'content', len(content), 'content')
+                        if tr.content_blocks:
+                            if span.block_index is None:
+                                continue
+                            path += (span.block_index, 'text')
+                        elif span.block_index is not None:
+                            continue
+                        mappings.append(WireSpan(tr.tool_use_id, path, span))
                 content.append({
                     "type": "tool_result",
                     "tool_use_id": tr.tool_use_id,
@@ -60,7 +71,7 @@ def build_anthropic_messages(messages: list[Message]) -> list[dict[str, Any]]:
     return result
 
 
-def build_openai_input(messages: list[Message]) -> list[dict[str, Any]]:
+def build_openai_input(messages: list[Message], *, mappings: list[WireSpan] | None = None) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     for m in messages:
         if m.tool_uses:
@@ -82,6 +93,9 @@ def build_openai_input(messages: list[Message]) -> list[dict[str, Any]]:
                 })
         elif m.tool_results:
             for tr in m.tool_results:
+                if mappings is not None and not tr.is_error:
+                    mappings.extend(WireSpan(tr.tool_use_id, ('input', len(result), 'output'), span)
+                                    for span in tr.source_spans if span.block_index is None)
                 result.append({
                     "type": "function_call_output",
                     "call_id": tr.tool_use_id,
@@ -99,7 +113,8 @@ def build_openai_input(messages: list[Message]) -> list[dict[str, Any]]:
     return result
 
 
-def build_chat_completion_messages(messages: list[Message]) -> list[dict[str, Any]]:
+def build_chat_completion_messages(messages: list[Message], *, mappings: list[WireSpan] | None = None,
+                                   message_offset: int = 0) -> list[dict[str, Any]]:
     """OpenAI Chat Completions 格式。
 
     - 用户消息：{"role": "user", "content": "..."}
@@ -132,6 +147,9 @@ def build_chat_completion_messages(messages: list[Message]) -> list[dict[str, An
             result.append(msg)
         elif m.tool_results:
             for tr in m.tool_results:
+                if mappings is not None and not tr.is_error:
+                    mappings.extend(WireSpan(tr.tool_use_id, ('messages', len(result)+message_offset, 'content'), span)
+                                    for span in tr.source_spans if span.block_index is None)
                 result.append({
                     "role": "tool",
                     "tool_call_id": tr.tool_use_id,

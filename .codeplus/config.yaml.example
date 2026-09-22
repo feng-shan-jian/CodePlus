@@ -15,6 +15,12 @@ providers:
 
 permission_mode: default
 
+# R12 开发接入：显式安装本仓库宿主 wheel 和 codeplus-agentic-rag wheel 后，
+# 指向完整开发配置 JSON 的绝对路径。普通任务不自动使用知识库。
+# knowledge_development_config: "C:/CodePlusData/knowledge-development.json"
+# TUI: /knowledge use <library-UUID>, /knowledge ask <question>, /knowledge off
+# CLI: codeplus -p "question" --knowledge-library <library-UUID>
+
 mcp_servers:
   - name: context7
     command: npx

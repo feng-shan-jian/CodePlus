@@ -104,6 +104,13 @@ for action, code in ((lambda: require_optional_dependencies('embedding'), ErrorC
 for name in ('codeplus', 'torch', 'transformers', 'pymilvus', 'textual'):
     assert importlib.util.find_spec(name) is None, name
     assert not any(key == name or key.startswith(name + '.') for key in sys.modules), name
+try:
+    import agentic_rag.adapters.codeplus
+except ImportError as error:
+    assert 'locally built CodePlus host' in str(error)
+else:
+    raise AssertionError('host adapter must diagnose the absent optional host')
+assert 'codeplus' not in sys.modules and 'torch' not in sys.modules
 requirements = metadata.requires('codeplus-agentic-rag')
 core_requirements = [item for item in requirements if 'extra ==' not in item]
 assert len(core_requirements) == 4 and 'apsw==3.53.4.0' in requirements and any(item.startswith('pydantic') for item in requirements)
@@ -162,14 +169,16 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
                         ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py", "source_archive.py", "sources.py", "evidence.py", "citations.py")}
         storage_sources = {"agentic_rag/storage/" + name for name in
                            ("__init__.py", "archives.py", "catalog.py", "database.py", "locks.py",
-                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql", "publication.py", "publication.sql", "evidence.sql")}
+                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql", "publication.py", "publication.sql", "evidence.sql", "host_runs.sql")}
         ingestion_sources = {"agentic_rag/ingestion/" + name for name in
                              ("__init__.py", "records.py", "source.py", "selection.py", "capture.py", "parsing.py", "chunking.py", "processing.py", "build.py")}
         model_sources = {'agentic_rag/models/' + name for name in ('__init__.py', 'tokenization.py',
             'protocol.py', 'identity.py', '_windows.py', 'engine.py', 'worker.py', 'lifecycle.py', 'client.py', 'models.lock.json')}
         index_sources = {'agentic_rag/indexes/'+name for name in ('__init__.py','manifest.py','milvus.py')}
         retrieval_sources = {'agentic_rag/retrieval/'+name for name in ('__init__.py','dense.py')}
-        assert expected_sources == root_sources | storage_sources | ingestion_sources | model_sources | index_sources | retrieval_sources
+        adapter_sources = {'agentic_rag/adapters/codeplus/'+name for name in
+                           ('__init__.py','meter.py','ledger.py','policy.py','_vendor/__init__.py','_vendor/deepseek_v41.py')}
+        assert expected_sources == root_sources | storage_sources | ingestion_sources | model_sources | index_sources | retrieval_sources | adapter_sources
         for artifact in (direct_wheel, sdist, rebuilt_wheel):
             if artifact.suffix == ".whl":
                 with zipfile.ZipFile(artifact) as archive:

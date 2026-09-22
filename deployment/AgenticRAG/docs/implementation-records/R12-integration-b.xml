@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="8" time="23.822" timestamp="2026-09-22T18:10:37.153246+08:00" hostname="fengshanjian"><testcase classname="tests.test_codeplus_integration" name="test_real_host_loops_gate_answer_and_same_loop_single_repair[False-False]" time="3.189" /><testcase classname="tests.test_codeplus_integration" name="test_real_host_loops_gate_answer_and_same_loop_single_repair[False-True]" time="2.325" /><testcase classname="tests.test_codeplus_integration" name="test_real_host_loops_gate_answer_and_same_loop_single_repair[True-False]" time="2.519" /><testcase classname="tests.test_codeplus_integration" name="test_real_host_loops_gate_answer_and_same_loop_single_repair[True-True]" time="2.580" /><testcase classname="tests.test_codeplus_integration" name="test_actual_source_spill_pairing_sdk_and_gateway_authorize_exact_intersection[openai-compat-single]" time="2.151"><failure message="AttributeError: property 'session_dir' of 'Agent' object has no setter">tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r12-executor-20260922/pytest-integration-b/test_actual_source_spill_pairi0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000019EE2527A80&gt;
+protocol = 'openai-compat', transform = 'single'
+
+    @pytest.mark.parametrize('protocol,transform', [('openai-compat','single'),('openai','aggregate'),('anthropic','blocks')])
+    def test_actual_source_spill_pairing_sdk_and_gateway_authorize_exact_intersection(tmp_path,monkeypatch,protocol,transform):
+        from dataclasses import replace
+        from codeplus.conversation import Message,ToolResultBlock,ToolUseBlock
+        from codeplus.context.manager import apply_tool_result_budget,persisted_preview_spans
+        from agentic_rag.evidence import read_evidence
+        from agentic_rag.domain import Span,RagError
+        from uuid import UUID
+        async def run():
+            parent=create_client(ProviderConfig('fixture',protocol,'https://fixture.invalid','fixture','synthetic'))
+            raw=('# Heading\n'+('A甲#x1F600"\\ repeat\n'*500)).encode()
+            scope,canonical=setup_scope(tmp_path,parent,raw)
+            seen=[]
+            def transport(request):
+                seen.append(bytes(request.content))
+                return httpx.Response(200,headers={'content-type':'text/event-stream'},content=protocol_response(protocol))
+            await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+            try:
+                result,params=await source_tool(scope,'actual')
+                meta=json.loads(result.output.split('\n\n&lt;source ',1)[0])['items'][0]
+                block=ToolResultBlock('actual',result.output,source_spans=result.source_spans)
+                # Scale only the spill trigger to keep this formal fixture small;
+                # the production 2000-codepoint preview and transforms stay intact.
+                if transform=='single':
+                    monkeypatch.setattr('codeplus.agent.MAX_OUTPUT_CHARS',4000)
+                    agent=Agent(parent,ToolRegistry(),protocol,work_dir=str(tmp_path))
+                    agent.session_dir=tmp_path/'spill'
+                    block.content=agent._maybe_persist_or_truncate('actual',result.output)
+                    block.source_spans=agent._result_spans('actual',result,block.content)
+                elif transform=='aggregate':
+                    monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                    apply_tool_result_budget([block],tmp_path/'spill')
+                else:
+                    block.content_blocks=[{'type':'text','text':result.output},{'type':'tool_reference','tool_name':'knowledge_open'}]
+                    block.source_spans=tuple(replace(span,block_index=0) for span in result.source_spans)
+                    monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                    apply_tool_result_budget([block],tmp_path/'spill')
+                    assert len(block.content)&lt;len(block.content_blocks[0]['text'])
+                conv=ConversationManager(history=[Message('user','first "\\甲#x1F600'),Message('user','merged user'),
+                    Message('user','',tool_results=[ToolResultBlock('orphan',result.output,source_spans=result.source_spans)]),
+                    Message('assistant','prefix',tool_uses=[ToolUseBlock('missing','knowledge_open',{}),ToolUseBlock('actual','knowledge_open',params)]),
+                    Message('user','',tool_results=[block])])
+                output=[e async for e in scope.client.stream(conv,system='metered system',control=scope.model_control('agent'))]
+                assert len(seen)==1
+                with scope.catalog._db.transaction() as db:
+                    receipt=json.loads(db.execute("SELECT payload FROM delivery_receipts WHERE run_id=? AND status='confirmed'",(scope.run_id,)).fetchone()[0])
+                assert len(receipt['mappings'])==1 and receipt['mappings'][0]['tool_call_id']=='actual'
+                mapped=receipt['mappings'][0];body=json.loads(seen[0]);node=body
+                for part in mapped['json_path']:node=node[part]
+                source_span=Span.model_validate(mapped['source_span']);wire_span=mapped['body_span']
+                quote=canonical[source_span.start:source_span.end]
+                assert node[wire_span['start']:wire_span['end']]==quote
+                scope.citations.validate(UUID(meta['evidence_id']),(source_span,),(quote,))
+                if transform!='blocks':
+                    assert source_span.end&lt;len(canonical)
+                    with pytest.raises(RagError):
+                        scope.citations.validate(UUID(meta['evidence_id']),(Span(start=len(canonical)-2,end=len(canonical)),),(canonical[-2:],))
+                else:
+                    assert mapped['json_path'][-2:]==[0,'text']
+                    assert source_span.end==len(canonical)
+            finally:
+                await scope.aclose();await parent._client.close()
+&gt;       asyncio.run(run())
+
+deployment\AgenticRAG\tests\test_codeplus_integration.py:213: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        parent=create_client(ProviderConfig('fixture',protocol,'https://fixture.invalid','fixture','synthetic'))
+        raw=('# Heading\n'+('A甲#x1F600"\\ repeat\n'*500)).encode()
+        scope,canonical=setup_scope(tmp_path,parent,raw)
+        seen=[]
+        def transport(request):
+            seen.append(bytes(request.content))
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=protocol_response(protocol))
+        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        try:
+            result,params=await source_tool(scope,'actual')
+            meta=json.loads(result.output.split('\n\n&lt;source ',1)[0])['items'][0]
+            block=ToolResultBlock('actual',result.output,source_spans=result.source_spans)
+            # Scale only the spill trigger to keep this formal fixture small;
+            # the production 2000-codepoint preview and transforms stay intact.
+            if transform=='single':
+                monkeypatch.setattr('codeplus.agent.MAX_OUTPUT_CHARS',4000)
+                agent=Agent(parent,ToolRegistry(),protocol,work_dir=str(tmp_path))
+&gt;               agent.session_dir=tmp_path/'spill'
+                ^^^^^^^^^^^^^^^^^
+E               AttributeError: property 'session_dir' of 'Agent' object has no setter
+
+deployment\AgenticRAG\tests\test_codeplus_integration.py:177: AttributeError</failure></testcase><testcase classname="tests.test_codeplus_integration" name="test_actual_source_spill_pairing_sdk_and_gateway_authorize_exact_intersection[openai-aggregate]" time="2.649"><failure message="assert 6510 &lt; 6510&#10; +  where 6510 = Span(schema_version=1, start=0, end=6510).end&#10; +  and   6510 = len('# Heading\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA...#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\n')">tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r12-executor-20260922/pytest-integration-b/test_actual_source_spill_pairi1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000019EE2526B10&gt;
+protocol = 'openai', transform = 'aggregate'
+
+    @pytest.mark.parametrize('protocol,transform', [('openai-compat','single'),('openai','aggregate'),('anthropic','blocks')])
+    def test_actual_source_spill_pairing_sdk_and_gateway_authorize_exact_intersection(tmp_path,monkeypatch,protocol,transform):
+        from dataclasses import replace
+        from codeplus.conversation import Message,ToolResultBlock,ToolUseBlock
+        from codeplus.context.manager import apply_tool_result_budget,persisted_preview_spans
+        from agentic_rag.evidence import read_evidence
+        from agentic_rag.domain import Span,RagError
+        from uuid import UUID
+        async def run():
+            parent=create_client(ProviderConfig('fixture',protocol,'https://fixture.invalid','fixture','synthetic'))
+            raw=('# Heading\n'+('A甲#x1F600"\\ repeat\n'*500)).encode()
+            scope,canonical=setup_scope(tmp_path,parent,raw)
+            seen=[]
+            def transport(request):
+                seen.append(bytes(request.content))
+                return httpx.Response(200,headers={'content-type':'text/event-stream'},content=protocol_response(protocol))
+            await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+            try:
+                result,params=await source_tool(scope,'actual')
+                meta=json.loads(result.output.split('\n\n&lt;source ',1)[0])['items'][0]
+                block=ToolResultBlock('actual',result.output,source_spans=result.source_spans)
+                # Scale only the spill trigger to keep this formal fixture small;
+                # the production 2000-codepoint preview and transforms stay intact.
+                if transform=='single':
+                    monkeypatch.setattr('codeplus.agent.MAX_OUTPUT_CHARS',4000)
+                    agent=Agent(parent,ToolRegistry(),protocol,work_dir=str(tmp_path))
+                    agent.session_dir=tmp_path/'spill'
+                    block.content=agent._maybe_persist_or_truncate('actual',result.output)
+                    block.source_spans=agent._result_spans('actual',result,block.content)
+                elif transform=='aggregate':
+                    monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                    apply_tool_result_budget([block],tmp_path/'spill')
+                else:
+                    block.content_blocks=[{'type':'text','text':result.output},{'type':'tool_reference','tool_name':'knowledge_open'}]
+                    block.source_spans=tuple(replace(span,block_index=0) for span in result.source_spans)
+                    monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                    apply_tool_result_budget([block],tmp_path/'spill')
+                    assert len(block.content)&lt;len(block.content_blocks[0]['text'])
+                conv=ConversationManager(history=[Message('user','first "\\甲#x1F600'),Message('user','merged user'),
+                    Message('user','',tool_results=[ToolResultBlock('orphan',result.output,source_spans=result.source_spans)]),
+                    Message('assistant','prefix',tool_uses=[ToolUseBlock('missing','knowledge_open',{}),ToolUseBlock('actual','knowledge_open',params)]),
+                    Message('user','',tool_results=[block])])
+                output=[e async for e in scope.client.stream(conv,system='metered system',control=scope.model_control('agent'))]
+                assert len(seen)==1
+                with scope.catalog._db.transaction() as db:
+                    receipt=json.loads(db.execute("SELECT payload FROM delivery_receipts WHERE run_id=? AND status='confirmed'",(scope.run_id,)).fetchone()[0])
+                assert len(receipt['mappings'])==1 and receipt['mappings'][0]['tool_call_id']=='actual'
+                mapped=receipt['mappings'][0];body=json.loads(seen[0]);node=body
+                for part in mapped['json_path']:node=node[part]
+                source_span=Span.model_validate(mapped['source_span']);wire_span=mapped['body_span']
+                quote=canonical[source_span.start:source_span.end]
+                assert node[wire_span['start']:wire_span['end']]==quote
+                scope.citations.validate(UUID(meta['evidence_id']),(source_span,),(quote,))
+                if transform!='blocks':
+                    assert source_span.end&lt;len(canonical)
+                    with pytest.raises(RagError):
+                        scope.citations.validate(UUID(meta['evidence_id']),(Span(start=len(canonical)-2,end=len(canonical)),),(canonical[-2:],))
+                else:
+                    assert mapped['json_path'][-2:]==[0,'text']
+                    assert source_span.end==len(canonical)
+            finally:
+                await scope.aclose();await parent._client.close()
+&gt;       asyncio.run(run())
+
+deployment\AgenticRAG\tests\test_codeplus_integration.py:213: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        parent=create_client(ProviderConfig('fixture',protocol,'https://fixture.invalid','fixture','synthetic'))
+        raw=('# Heading\n'+('A甲#x1F600"\\ repeat\n'*500)).encode()
+        scope,canonical=setup_scope(tmp_path,parent,raw)
+        seen=[]
+        def transport(request):
+            seen.append(bytes(request.content))
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=protocol_response(protocol))
+        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        try:
+            result,params=await source_tool(scope,'actual')
+            meta=json.loads(result.output.split('\n\n&lt;source ',1)[0])['items'][0]
+            block=ToolResultBlock('actual',result.output,source_spans=result.source_spans)
+            # Scale only the spill trigger to keep this formal fixture small;
+            # the production 2000-codepoint preview and transforms stay intact.
+            if transform=='single':
+                monkeypatch.setattr('codeplus.agent.MAX_OUTPUT_CHARS',4000)
+                agent=Agent(parent,ToolRegistry(),protocol,work_dir=str(tmp_path))
+                agent.session_dir=tmp_path/'spill'
+                block.content=agent._maybe_persist_or_truncate('actual',result.output)
+                block.source_spans=agent._result_spans('actual',result,block.content)
+            elif transform=='aggregate':
+                monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                apply_tool_result_budget([block],tmp_path/'spill')
+            else:
+                block.content_blocks=[{'type':'text','text':result.output},{'type':'tool_reference','tool_name':'knowledge_open'}]
+                block.source_spans=tuple(replace(span,block_index=0) for span in result.source_spans)
+                monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                apply_tool_result_budget([block],tmp_path/'spill')
+                assert len(block.content)&lt;len(block.content_blocks[0]['text'])
+            conv=ConversationManager(history=[Message('user','first "\\甲#x1F600'),Message('user','merged user'),
+                Message('user','',tool_results=[ToolResultBlock('orphan',result.output,source_spans=result.source_spans)]),
+                Message('assistant','prefix',tool_uses=[ToolUseBlock('missing','knowledge_open',{}),ToolUseBlock('actual','knowledge_open',params)]),
+                Message('user','',tool_results=[block])])
+            output=[e async for e in scope.client.stream(conv,system='metered system',control=scope.model_control('agent'))]
+            assert len(seen)==1
+            with scope.catalog._db.transaction() as db:
+                receipt=json.loads(db.execute("SELECT payload FROM delivery_receipts WHERE run_id=? AND status='confirmed'",(scope.run_id,)).fetchone()[0])
+            assert len(receipt['mappings'])==1 and receipt['mappings'][0]['tool_call_id']=='actual'
+            mapped=receipt['mappings'][0];body=json.loads(seen[0]);node=body
+            for part in mapped['json_path']:node=node[part]
+            source_span=Span.model_validate(mapped['source_span']);wire_span=mapped['body_span']
+            quote=canonical[source_span.start:source_span.end]
+            assert node[wire_span['start']:wire_span['end']]==quote
+            scope.citations.validate(UUID(meta['evidence_id']),(source_span,),(quote,))
+            if transform!='blocks':
+&gt;               assert source_span.end&lt;len(canonical)
+E               assert 6510 &lt; 6510
+E                +  where 6510 = Span(schema_version=1, start=0, end=6510).end
+E                +  and   6510 = len('# Heading\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA...#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\n')
+
+deployment\AgenticRAG\tests\test_codeplus_integration.py:205: AssertionError</failure></testcase><testcase classname="tests.test_codeplus_integration" name="test_actual_source_spill_pairing_sdk_and_gateway_authorize_exact_intersection[anthropic-blocks]" time="2.117"><failure message="assert 7984 &lt; 7984&#10; +  where 7984 = len('{&quot;schema_version&quot;:1,&quot;call_id&quot;:&quot;ef53d739-a48a-4446-91f8-453a68543aca&quot;,&quot;status&quot;:&quot;ok&quot;,&quot;run_id&quot;:&quot;8f6bf056-fbac-4172-9543-...\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\n\n&lt;/source&gt;')&#10; +    where '{&quot;schema_version&quot;:1,&quot;call_id&quot;:&quot;ef53d739-a48a-4446-91f8-453a68543aca&quot;,&quot;status&quot;:&quot;ok&quot;,&quot;run_id&quot;:&quot;8f6bf056-fbac-4172-9543-...\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\n\n&lt;/source&gt;' = ToolResultBlock(tool_use_id='actual', content='{&quot;schema_version&quot;:1,&quot;call_id&quot;:&quot;ef53d739-a48a-4446-91f8-453a68543aca&quot;,&quot;s...e8fa95-1aa0-4d16-8ae5-10c45f8f8528', source_start=0, source_end=6510, body_start=1464, body_end=7974, block_index=0),)).content&#10; +  and   7984 = len('{&quot;schema_version&quot;:1,&quot;call_id&quot;:&quot;ef53d739-a48a-4446-91f8-453a68543aca&quot;,&quot;status&quot;:&quot;ok&quot;,&quot;run_id&quot;:&quot;8f6bf056-fbac-4172-9543-...\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\nA甲#x1F600&quot;\\ repeat\n\n&lt;/source&gt;')">tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r12-executor-20260922/pytest-integration-b/test_actual_source_spill_pairi2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x0000019EE2A3CEF0&gt;
+protocol = 'anthropic', transform = 'blocks'
+
+    @pytest.mark.parametrize('protocol,transform', [('openai-compat','single'),('openai','aggregate'),('anthropic','blocks')])
+    def test_actual_source_spill_pairing_sdk_and_gateway_authorize_exact_intersection(tmp_path,monkeypatch,protocol,transform):
+        from dataclasses import replace
+        from codeplus.conversation import Message,ToolResultBlock,ToolUseBlock
+        from codeplus.context.manager import apply_tool_result_budget,persisted_preview_spans
+        from agentic_rag.evidence import read_evidence
+        from agentic_rag.domain import Span,RagError
+        from uuid import UUID
+        async def run():
+            parent=create_client(ProviderConfig('fixture',protocol,'https://fixture.invalid','fixture','synthetic'))
+            raw=('# Heading\n'+('A甲#x1F600"\\ repeat\n'*500)).encode()
+            scope,canonical=setup_scope(tmp_path,parent,raw)
+            seen=[]
+            def transport(request):
+                seen.append(bytes(request.content))
+                return httpx.Response(200,headers={'content-type':'text/event-stream'},content=protocol_response(protocol))
+            await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+            try:
+                result,params=await source_tool(scope,'actual')
+                meta=json.loads(result.output.split('\n\n&lt;source ',1)[0])['items'][0]
+                block=ToolResultBlock('actual',result.output,source_spans=result.source_spans)
+                # Scale only the spill trigger to keep this formal fixture small;
+                # the production 2000-codepoint preview and transforms stay intact.
+                if transform=='single':
+                    monkeypatch.setattr('codeplus.agent.MAX_OUTPUT_CHARS',4000)
+                    agent=Agent(parent,ToolRegistry(),protocol,work_dir=str(tmp_path))
+                    agent.session_dir=tmp_path/'spill'
+                    block.content=agent._maybe_persist_or_truncate('actual',result.output)
+                    block.source_spans=agent._result_spans('actual',result,block.content)
+                elif transform=='aggregate':
+                    monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                    apply_tool_result_budget([block],tmp_path/'spill')
+                else:
+                    block.content_blocks=[{'type':'text','text':result.output},{'type':'tool_reference','tool_name':'knowledge_open'}]
+                    block.source_spans=tuple(replace(span,block_index=0) for span in result.source_spans)
+                    monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                    apply_tool_result_budget([block],tmp_path/'spill')
+                    assert len(block.content)&lt;len(block.content_blocks[0]['text'])
+                conv=ConversationManager(history=[Message('user','first "\\甲#x1F600'),Message('user','merged user'),
+                    Message('user','',tool_results=[ToolResultBlock('orphan',result.output,source_spans=result.source_spans)]),
+                    Message('assistant','prefix',tool_uses=[ToolUseBlock('missing','knowledge_open',{}),ToolUseBlock('actual','knowledge_open',params)]),
+                    Message('user','',tool_results=[block])])
+                output=[e async for e in scope.client.stream(conv,system='metered system',control=scope.model_control('agent'))]
+                assert len(seen)==1
+                with scope.catalog._db.transaction() as db:
+                    receipt=json.loads(db.execute("SELECT payload FROM delivery_receipts WHERE run_id=? AND status='confirmed'",(scope.run_id,)).fetchone()[0])
+                assert len(receipt['mappings'])==1 and receipt['mappings'][0]['tool_call_id']=='actual'
+                mapped=receipt['mappings'][0];body=json.loads(seen[0]);node=body
+                for part in mapped['json_path']:node=node[part]
+                source_span=Span.model_validate(mapped['source_span']);wire_span=mapped['body_span']
+                quote=canonical[source_span.start:source_span.end]
+                assert node[wire_span['start']:wire_span['end']]==quote
+                scope.citations.validate(UUID(meta['evidence_id']),(source_span,),(quote,))
+                if transform!='blocks':
+                    assert source_span.end&lt;len(canonical)
+                    with pytest.raises(RagError):
+                        scope.citations.validate(UUID(meta['evidence_id']),(Span(start=len(canonical)-2,end=len(canonical)),),(canonical[-2:],))
+                else:
+                    assert mapped['json_path'][-2:]==[0,'text']
+                    assert source_span.end==len(canonical)
+            finally:
+                await scope.aclose();await parent._client.close()
+&gt;       asyncio.run(run())
+
+deployment\AgenticRAG\tests\test_codeplus_integration.py:213: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        parent=create_client(ProviderConfig('fixture',protocol,'https://fixture.invalid','fixture','synthetic'))
+        raw=('# Heading\n'+('A甲#x1F600"\\ repeat\n'*500)).encode()
+        scope,canonical=setup_scope(tmp_path,parent,raw)
+        seen=[]
+        def transport(request):
+            seen.append(bytes(request.content))
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=protocol_response(protocol))
+        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        try:
+            result,params=await source_tool(scope,'actual')
+            meta=json.loads(result.output.split('\n\n&lt;source ',1)[0])['items'][0]
+            block=ToolResultBlock('actual',result.output,source_spans=result.source_spans)
+            # Scale only the spill trigger to keep this formal fixture small;
+            # the production 2000-codepoint preview and transforms stay intact.
+            if transform=='single':
+                monkeypatch.setattr('codeplus.agent.MAX_OUTPUT_CHARS',4000)
+                agent=Agent(parent,ToolRegistry(),protocol,work_dir=str(tmp_path))
+                agent.session_dir=tmp_path/'spill'
+                block.content=agent._maybe_persist_or_truncate('actual',result.output)
+                block.source_spans=agent._result_spans('actual',result,block.content)
+            elif transform=='aggregate':
+                monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                apply_tool_result_budget([block],tmp_path/'spill')
+            else:
+                block.content_blocks=[{'type':'text','text':result.output},{'type':'tool_reference','tool_name':'knowledge_open'}]
+                block.source_spans=tuple(replace(span,block_index=0) for span in result.source_spans)
+                monkeypatch.setattr('codeplus.context.manager.AGGREGATE_CHAR_LIMIT',4000)
+                apply_tool_result_budget([block],tmp_path/'spill')
+&gt;               assert len(block.content)&lt;len(block.content_blocks[0]['text'])
+E               assert 7984 &lt; 7984
+E                +  where 7984 = len('{"schema_version":1,"call_id":"ef53d739-a48a-4446-91f8-453a68543aca","status":"ok","run_id":"8f6bf056-fbac-4172-9543-...\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\n\n&lt;/source&gt;')
+E                +    where '{"schema_version":1,"call_id":"ef53d739-a48a-4446-91f8-453a68543aca","status":"ok","run_id":"8f6bf056-fbac-4172-9543-...\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\n\n&lt;/source&gt;' = ToolResultBlock(tool_use_id='actual', content='{"schema_version":1,"call_id":"ef53d739-a48a-4446-91f8-453a68543aca","s...e8fa95-1aa0-4d16-8ae5-10c45f8f8528', source_start=0, source_end=6510, body_start=1464, body_end=7974, block_index=0),)).content
+E                +  and   7984 = len('{"schema_version":1,"call_id":"ef53d739-a48a-4446-91f8-453a68543aca","status":"ok","run_id":"8f6bf056-fbac-4172-9543-...\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\nA甲#x1F600"\\ repeat\n\n&lt;/source&gt;')
+
+deployment\AgenticRAG\tests\test_codeplus_integration.py:188: AssertionError</failure></testcase><testcase classname="tests.test_codeplus_integration" name="test_actual_compact_never_grants_pending_prefix_and_only_real_tail_later_grants" time="3.032" /></testsuite></testsuites>

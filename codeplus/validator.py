@@ -248,6 +248,14 @@ def validate_config_structure(raw: object) -> dict:
     if not isinstance(raw, dict) or "providers" not in raw:
         raise ConfigError("Config must contain a 'providers' list")
 
+    knowledge_path = raw.get('knowledge_development_config', '')
+    if not isinstance(knowledge_path, str):
+        raise ConfigError('knowledge_development_config must be an absolute file path')
+    if knowledge_path:
+        from pathlib import PureWindowsPath, PurePosixPath
+        if not (PureWindowsPath(knowledge_path).is_absolute() or PurePosixPath(knowledge_path).is_absolute()):
+            raise ConfigError('knowledge_development_config must be an absolute file path')
+
     return {
         "providers": validate_providers(raw["providers"]),
         "permission_mode": validate_permission_mode(raw.get("permission_mode", "default")),
@@ -263,4 +271,5 @@ def validate_config_structure(raw: object) -> dict:
             raw.get("enable_coordinator_mode", False), "enable_coordinator_mode"
         ),
         "sandbox": validate_sandbox(raw.get("sandbox")),
+        'knowledge_development_config': knowledge_path,
     }

@@ -106,7 +106,7 @@ async def test_tui_session_resume_and_command_menu(environment):
         assert app.session.session_id == archived.session_id
         assert app.conversation.history[-1].content == "Saved answer [K:old:chunk]"
         assert app.query(Markdown)
-        assert app.command_registry.find("knowledge") is None
+        assert app.command_registry.find("knowledge").handler.__module__ == 'codeplus.commands.handlers.knowledge'
         widget = app.query_one(ChatInput)
         widget.load_text("/hel")
         await pilot.press("tab")
@@ -126,5 +126,6 @@ async def test_remote_stream_and_replay_keep_plain_message_contract(environment,
     assert not any(msg["type"] == "error" for msg in messages)
     await server._render_restored_messages([Message(role="assistant", content="Old answer [K:old:chunk]")])
     assert broadcast.await_args.args[0] == {"type": "replay_assistant", "data": {"content": "Old answer [K:old:chunk]"}}
-    assert server.command_registry.find("knowledge") is None
+    assert server.command_registry.find("knowledge").handler.__module__ == 'codeplus.commands.handlers.knowledge'
+    assert server.knowledge_feature_available is False
     server.session.close()

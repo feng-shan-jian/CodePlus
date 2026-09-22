@@ -4,6 +4,7 @@ import asyncio
 import logging
 import time
 import uuid
+from contextlib import aclosing, asynccontextmanager
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -11,6 +12,7 @@ from typing import Any, AsyncIterator, Callable
 
 from pydantic import ValidationError
 
+from codeplus.run_policy import BudgetStop, HostRunContext, RunExecutionPolicy, RunOutcome
 from codeplus.client import LLMClient
 from codeplus.context import (
     CompactBoundary,
@@ -183,8 +185,9 @@ class LLMResponse:
 
 
 class StreamCollector:
-    def __init__(self) -> None:
+    def __init__(self, *, buffer_output: bool = False) -> None:
         self.response = LLMResponse()
+        self.buffer_output = buffer_output
 
     async def consume(
         self, stream: AsyncIterator[StreamEvent]
@@ -192,9 +195,11 @@ class StreamCollector:
         async for event in stream:
             if isinstance(event, TextDelta):
                 self.response.text += event.text
-                yield StreamText(text=event.text)
+                if not self.buffer_output:
+                    yield StreamText(text=event.text)
             elif isinstance(event, ThinkingDelta):
-                yield ThinkingText(text=event.text)
+                if not self.buffer_output:
+                    yield ThinkingText(text=event.text)
             elif isinstance(event, ThinkingComplete):
                 self.response.thinking_blocks.append(
                     ThinkingBlock(thinking=event.thinking, signature=event.signature)
@@ -285,7 +290,12 @@ class Agent:
         instructions_content: str = "",
         memory_manager: MemoryManager | None = None,
         hook_engine: HookEngine | None = None,
+        *, execution_policy: RunExecutionPolicy | None = None,
     ) -> None:
+        self.execution_policy = execution_policy
+        self._scope = None
+        self._executing = False
+        self.last_run_outcome = None
         self.client = client
         self.registry = registry
         self.protocol = protocol
@@ -344,6 +354,157 @@ class Agent:
         # 非阻塞 memory recall：prefetch task 与主 LLM 调用并行，工具执行后注入
         self.memory_recall_task: Any | None = None
         self._memory_recall_consumed: bool = False
+
+    @asynccontextmanager
+    async def _execution_scope(self, entrypoint: str):
+        if self.execution_policy is None:
+            yield None
+            return
+        if self._executing:
+            raise RuntimeError('Agent already has an active controlled run')
+        self._executing = True
+        scope = None
+        primary = None
+        saved = {name: getattr(self, name) for name in (
+            'client', 'registry', 'memory_manager', '_consolidator', 'memory_recall_task',
+            'notification_fn', 'enable_coordinator_mode', 'team_name', 'instructions_content',
+            'file_history', 'recovery_state', 'compact_breaker')}
+        try:
+            scope = await self.execution_policy.start(HostRunContext(
+                entrypoint, self.session_id, self.work_dir, self.protocol, self.client,
+                self.hook_engine, self.permission_checker))
+            self._scope = scope
+            self.client, self.registry = scope.client, scope.registry
+            self.memory_manager = self._consolidator = self.memory_recall_task = None
+            self.notification_fn = self.file_history = None
+            self.enable_coordinator_mode = False
+            self.team_name = self.instructions_content = ''
+            self.recovery_state = RecoveryState()
+            self.compact_breaker = CompactCircuitBreaker()
+            async with asyncio.timeout_at(scope.deadline):
+                yield scope
+        except BaseException as error:
+            primary = error
+            if scope:
+                if isinstance(error, (asyncio.CancelledError, GeneratorExit)):
+                    scope.outcome = RunOutcome('cancelled', 'consumer_closed' if isinstance(error, GeneratorExit) else 'user_cancelled')
+                elif isinstance(error, (BudgetStop, TimeoutError)):
+                    reason = error.reason if isinstance(error, BudgetStop) else 'time_budget'
+                    scope.outcome = RunOutcome('incomplete', reason)
+                else:
+                    scope.outcome = RunOutcome('failed', 'explicit_error')
+            raise
+        finally:
+            late_cancel = False
+            try:
+                if scope:
+                    async def cleanup():
+                        try:
+                            await scope.finish(scope.outcome or RunOutcome('incomplete', 'iteration_limit'))
+                        finally:
+                            await scope.aclose()
+                    task = asyncio.create_task(cleanup())
+                    # Scope cleanup has a bounded drain and persists real pending
+                    # readers. A second cancellation cannot skip that transaction.
+                    while not task.done():
+                        try:
+                            await asyncio.wait({task})
+                        except asyncio.CancelledError:
+                            if primary is None:
+                                primary = asyncio.CancelledError()
+                                late_cancel = True
+                                if not getattr(scope, '_finished', False):
+                                    scope.outcome = RunOutcome('cancelled', 'user_cancelled')
+                            continue
+                        except BaseException:
+                            break
+                    try:
+                        task.result()
+                    except BaseException:
+                        if primary is None:
+                            raise
+                        log.exception('Secondary controlled-run cleanup failure')
+                    self.last_run_outcome = scope.outcome
+            finally:
+                for name, value in saved.items():
+                    setattr(self, name, value)
+                self._scope = None
+                self._executing = False
+            if late_cancel:
+                raise primary
+
+    async def run(self, conversation: ConversationManager) -> AsyncIterator[AgentEvent]:
+        try:
+            async with self._execution_scope('stream'):
+                async with aclosing(self._run_loop(conversation)) as loop:
+                    async for event in loop:
+                        yield event
+        except BudgetStop as stop:
+            if self.execution_policy is None:
+                raise
+            yield ErrorEvent(message=f'Knowledge run incomplete: {stop.reason}')
+
+    async def run_to_completion(
+        self, task: str, conversation: ConversationManager | None = None,
+        event_callback: Callable[[dict[str, Any]], None] | None = None,
+    ) -> str:
+        try:
+            async with self._execution_scope('completion'):
+                text = await self._completion_loop(task, conversation, event_callback)
+        except BudgetStop as stop:
+            if self.execution_policy is None:
+                raise
+            text = f'Knowledge run incomplete: {stop.reason}'
+        if self.execution_policy is not None and event_callback and self.last_run_outcome:
+            event_callback({'type': 'run_status', 'status': self.last_run_outcome.status,
+                            'reason': self.last_run_outcome.reason})
+        return text
+
+    async def _execute_admitted(self, tc, tool, params):
+        if self._scope is None:
+            return await tool.execute(params)
+        scope = self._scope
+        permit = None
+        try:
+            permit = await scope.admit_tool(tc.tool_id, tc.tool_name, params)
+            result = await scope.owner.task(tool.execute(params))
+            scope.check()
+        except BudgetStop as stop:
+            if permit is not None:
+                await scope.tool_finished(permit, None)
+            if stop.hard:
+                raise
+            scope.defer_finalize_reason = stop.reason
+            return ToolResult(output='Knowledge exploration stopped: '+stop.reason, is_error=True)
+        except BaseException:
+            if permit is not None:
+                await scope.tool_finished(permit, None)
+            raise
+        await scope.tool_finished(permit, result)
+        return result
+
+    def _result_spans(self, tool_id, result, content):
+        if content == result.output:
+            return result.source_spans
+        from codeplus.context.manager import persisted_preview_spans
+        return persisted_preview_spans(result.output, self.session_dir / f'{tool_id}.txt', result.source_spans)
+
+    async def _compact_for_run(self, conversation):
+        if self._scope and self._scope.purpose != 'agent':
+            return None
+        try:
+            return await auto_compact(
+                conversation, self.client, self.context_window, self.session_dir,
+                protocol=self.protocol, breaker=self.compact_breaker,
+                recovery=None if self._scope else self.recovery_state,
+                tool_schemas=self.registry.get_all_schemas(self.protocol),
+                transcript_path='' if self._scope else self._transcript_path,
+                control_factory=self._scope.model_control if self._scope else None,
+            )
+        except BudgetStop as stop:
+            if self._scope and not stop.hard and self._scope.begin_finalize(conversation,stop.reason):
+                return None
+            raise
 
 
     def _announce_deferred_tools(self, conversation: ConversationManager) -> None:
@@ -476,15 +637,17 @@ class Agent:
             for n in self.hook_engine.drain_notifications()
         ]
 
-    async def run(self, conversation: ConversationManager) -> AsyncIterator[AgentEvent]:
+    async def _run_loop(self, conversation: ConversationManager) -> AsyncIterator[AgentEvent]:
         self._current_conversation = conversation
         env_context = build_environment_context(
             self.work_dir, self.active_skills, self._skill_catalog, self._agent_catalog
         )
-        conversation.inject_environment(env_context)
+        if not self._scope:
+            conversation.inject_environment(env_context)
 
         memory_content = self.memory_manager.load() if self.memory_manager else ""
-        conversation.inject_long_term_memory(self.instructions_content, memory_content)
+        if not self._scope:
+            conversation.inject_long_term_memory(self.instructions_content, memory_content)
 
         if self.hook_engine:
             ctx = self._build_hook_context("session_start")
@@ -498,7 +661,12 @@ class Agent:
 
         while True:
             iteration += 1
+            if self._scope:
+                self._scope.check()
+                self._scope.prepare_turn(conversation)
 
+            if self._scope and iteration > self._scope.max_iterations:
+                raise BudgetStop('iteration_limit', hard=True)
             if self.max_iterations > 0 and iteration > self.max_iterations:
                 yield ErrorEvent(
                     message=f"Agent reached maximum iterations ({self.max_iterations})"
@@ -511,7 +679,8 @@ class Agent:
                 for he in self._drain_hook_events():
                     yield he
 
-            self._consume_mailbox(conversation)
+            if not self._scope:
+                self._consume_mailbox(conversation)
             if self.notification_fn:
                 for note in self.notification_fn():
                     conversation.add_system_reminder(note)
@@ -525,9 +694,10 @@ class Agent:
             hook_prompts = (
                 self.hook_engine.get_prompt_messages() if self.hook_engine else None
             )
-            system = build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir)
+            system = (self._scope.system_prompt_with_hooks(hook_prompts) if self._scope else
+                      build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir))
 
-            if self.plan_mode:
+            if self.plan_mode and not self._scope:
                 plan_path = str(self._get_plan_path())
                 if self.permission_checker:
                     self.permission_checker.plan_file_path = plan_path
@@ -540,7 +710,7 @@ class Agent:
             # Coordinator 模式：工具集被收窄的同时注入调度指引。
             # 走 system-reminder 而不是替换系统提示词：长会话里开头那份约束会被淹没，
             # 每轮追加一次才拉得回来，而且 Lead 仍然需要身份、环境、项目指令和记忆这些基础段落。
-            if self.coordinator_mode:
+            if self.coordinator_mode and not self._scope:
                 from codeplus.teams.coordinator import get_coordinator_reminder
 
                 conversation.add_system_reminder(
@@ -556,44 +726,46 @@ class Agent:
                         f"Hook [{note.hook_id}] {note.event}: {note.output}"
                     )
 
-            self._announce_deferred_tools(conversation)
+            if not self._scope:
+                self._announce_deferred_tools(conversation)
 
             tools = self.registry.get_all_schemas(self.protocol)
 
             # Layer 2: 接近 context window 上限时自动 compact
             # Layer 1（工具结果预算）在结果入历史时已处理完，历史里的内容
             # 就是最终大小，直接用 conversation.history 估算
-            compact_result = await auto_compact(
-                conversation,
-                self.client,
-                self.context_window,
-                self.session_dir,
-                protocol=self.protocol,
-                breaker=self.compact_breaker,
-                recovery=self.recovery_state,
-                tool_schemas=self.registry.get_all_schemas(self.protocol),
-                transcript_path=self._transcript_path,
-            )
+            compact_result = await self._compact_for_run(conversation)
             if isinstance(compact_result, CompactEvent):
                 yield CompactNotification(
                     before_tokens=compact_result.before_tokens,
                     message=f"上下文已压缩（压缩前 {compact_result.before_tokens:,} tokens）",
                     boundary=compact_result.boundary,
                 )
-                conversation.inject_environment(env_context)
-                mem = self.memory_manager.load() if self.memory_manager else ""
-                conversation.inject_long_term_memory(
-                    self.instructions_content, mem
-                )
+                if not self._scope:
+                    conversation.inject_environment(env_context)
+                    mem = self.memory_manager.load() if self.memory_manager else ""
+                    conversation.inject_long_term_memory(self.instructions_content, mem)
             elif isinstance(compact_result, str):
                 yield ErrorEvent(message=compact_result)
 
-            collector = StreamCollector()
-            llm_stream = self.client.stream(conversation, system=system, tools=tools)
-            async for event in collector.consume(llm_stream):
-                yield event
+            collector = StreamCollector(buffer_output=self._scope is not None)
+            if self._scope:
+                tools = self.registry.get_all_schemas(self.protocol) if self._scope.purpose == 'agent' else []
+            options = {'control': self._scope.model_control(self._scope.purpose)} if self._scope else {}
+            try:
+                async with aclosing(self.client.stream(conversation, system=system, tools=tools, **options)) as llm_stream:
+                    async for event in collector.consume(llm_stream):
+                        yield event
+            except BudgetStop as stop:
+                if self._scope and not stop.hard and self._scope.begin_finalize(conversation, stop.reason):
+                    continue
+                raise
 
             response = collector.response
+            if self._scope and response.tool_calls and self._scope.purpose != 'agent':
+                raise BudgetStop('citation_invalid', hard=True)
+            if self._scope and response.stop_reason not in {'end_turn', 'tool_calls', 'tool_use'}:
+                raise BudgetStop('provider_truncated', hard=True)
 
             if self.hook_engine:
                 ctx = self._build_hook_context("post_receive", message=response.text)
@@ -613,7 +785,7 @@ class Agent:
                 for tb in response.thinking_blocks
             ]
 
-            if response.stop_reason == "max_tokens":
+            if response.stop_reason == "max_tokens" and not self._scope:
                 if not max_tokens_escalated:
                     self.client.set_max_output_tokens(MAX_TOKENS_CEILING)
                     max_tokens_escalated = True
@@ -642,6 +814,18 @@ class Agent:
                     continue
             else:
                 output_recoveries = 0
+
+            if not response.tool_calls and self._scope:
+                decision = await self._scope.assess_output(response.text, response.stop_reason)
+                if decision.action == 'repair':
+                    conversation.add_assistant_message(response.text)
+                    conversation.add_user_message(decision.message)
+                    continue
+                if decision.action == 'stop':
+                    raise BudgetStop(decision.message or 'citation_invalid', hard=True)
+                response.text = decision.artifact.markdown
+                conv_thinking = []
+                yield StreamText(response.text)
 
             if not response.tool_calls:
                 conversation.add_assistant_message(
@@ -714,6 +898,7 @@ class Agent:
                         content=content,
                         is_error=br.result.is_error,
                         content_blocks=br.result.content_blocks,
+                        source_spans=self._result_spans(br.tool_id, br.result, content),
                     )
                 )
                 yield ToolResultEvent(
@@ -757,6 +942,8 @@ class Agent:
 
 
     def _consume_mailbox(self, conversation: ConversationManager) -> None:
+        if self.execution_policy is not None:
+            return
         if not self.team_name or not self._team_manager:
             return
         try:
@@ -802,6 +989,8 @@ class Agent:
     async def _execute_single_tool_direct(
         self, tc: ToolCallComplete
     ) -> _ToolExecResult:
+        if self._scope:
+            self._scope.rejected_tool(tc.tool_id, tc.tool_name, 'not_admitted')
         tool = self.registry.get(tc.tool_name)
         start = time.monotonic()
 
@@ -834,7 +1023,9 @@ class Agent:
 
         try:
             params = tool.params_model.model_validate(tc.arguments)
-            result = await tool.execute(params)
+            result = await self._execute_admitted(tc, tool, params)
+        except BudgetStop:
+            raise
         except ValidationError as e:
             result = ToolResult(output=f"Parameter validation error: {e}", is_error=True)
         except Exception as e:
@@ -855,11 +1046,13 @@ class Agent:
         self, calls: list[ToolCallComplete]
     ) -> list[_ToolExecResult]:
         tasks = [self._execute_single_tool_direct(tc) for tc in calls]
-        return list(await asyncio.gather(*tasks))
+        return list(await self._scope.owner.gather(tasks) if self._scope else await asyncio.gather(*tasks))
 
     async def _execute_tool(
         self, tc: ToolCallComplete
     ) -> AsyncIterator[tuple[ToolResult, float] | PermissionRequest]:
+        if self._scope:
+            self._scope.rejected_tool(tc.tool_id, tc.tool_name, 'not_admitted')
         tool = self.registry.get(tc.tool_name)
         start = time.monotonic()
 
@@ -899,12 +1092,22 @@ class Agent:
                 future: asyncio.Future[PermissionResponse] = loop.create_future()
                 desc = self._build_permission_description(tc)
                 # 向调用方 yield 权限请求事件，由调用方处理
-                yield PermissionRequest(
-                    tool_name=tc.tool_name,
-                    description=desc,
-                    future=future,
-                )
-                response = await future
+                if self._scope:
+                    self._scope.owner.permissions.add(future)
+                try:
+                    if self._scope:
+                        self._scope.check()
+                    yield PermissionRequest(
+                        tool_name=tc.tool_name,
+                        description=desc,
+                        future=future,
+                    )
+                    response = (await self._scope.owner.wait_permission(future) if self._scope else await future)
+                finally:
+                    if self._scope:
+                        self._scope.owner.permissions.discard(future)
+                    if not future.done():
+                        future.cancel()
 
                 if response == PermissionResponse.DENY:
                     result = ToolResult(
@@ -925,7 +1128,9 @@ class Agent:
 
         try:
             params = tool.params_model.model_validate(tc.arguments)
-            result = await tool.execute(params)
+            result = await self._execute_admitted(tc, tool, params)
+        except BudgetStop:
+            raise
         except ValidationError as e:
             result = ToolResult(
                 output=f"Parameter validation error: {e}", is_error=True
@@ -983,7 +1188,7 @@ class Agent:
         当前提取完成后检查该标志，如果有 pending 则立即执行一次尾随提取，
         防止多个触发器同时执行导致重复提取。
         """
-        if not self.memory_manager:
+        if self.execution_policy is not None or not self.memory_manager:
             return
 
         # 合并策略：正在提取时暂存新请求，等当前提取完成后尾随执行
@@ -1011,6 +1216,8 @@ class Agent:
     async def manual_compact(
         self, conversation: ConversationManager
     ) -> CompactNotification | ErrorEvent:
+        if self.execution_policy is not None:
+            return ErrorEvent(message='Knowledge runs manage compaction within their active loop')
         # auto_compact 会用摘要替换 conversation.history，所有 tool-result 内容
         # （原始或已替换的）都将被丢弃。这里跳过 apply_tool_result_budget —
         # 它在主循环中的唯一目的是为 LLM 调用生成 api_conv，而本路径不需要
@@ -1026,6 +1233,7 @@ class Agent:
             recovery=self.recovery_state,
             tool_schemas=self.registry.get_all_schemas(self.protocol),
             transcript_path=self._transcript_path,
+            control_factory=self._scope.model_control if self._scope else None,
         )
         if isinstance(result, CompactEvent):
             env_context = build_environment_context(
@@ -1043,7 +1251,7 @@ class Agent:
             )
         return ErrorEvent(message=result or "压缩失败：对话历史为空或未达到压缩条件")
 
-    async def run_to_completion(
+    async def _completion_loop(
         self, task: str, conversation: ConversationManager | None = None,
         event_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> str:
@@ -1052,7 +1260,8 @@ class Agent:
         )
         if conversation is None:
             conversation = ConversationManager()
-            conversation.inject_environment(env_context)
+            if not self._scope:
+                conversation.inject_environment(env_context)
 
             if self.instructions_content:
                 memory_content = self.memory_manager.load() if self.memory_manager else ""
@@ -1066,7 +1275,8 @@ class Agent:
         hook_prompts = (
             self.hook_engine.get_prompt_messages() if self.hook_engine else None
         )
-        system = build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir)
+        system = (self._scope.system_prompt_with_hooks(hook_prompts) if self._scope else
+                  build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir))
 
         tools = self.registry.get_all_schemas(self.protocol)
 
@@ -1083,39 +1293,48 @@ class Agent:
         iteration = 0
         while True:
             iteration += 1
+            if self._scope:
+                self._scope.check()
+                self._scope.prepare_turn(conversation)
+            if self._scope and iteration > self._scope.max_iterations:
+                raise BudgetStop('iteration_limit', hard=True)
             if self.max_iterations > 0 and iteration > self.max_iterations:
                 break
             if self.hook_engine:
                 ctx = self._build_hook_context("turn_start")
                 await self.hook_engine.run_hooks("turn_start", ctx)
 
-            self._consume_mailbox(conversation)
+            if not self._scope:
+                self._consume_mailbox(conversation)
             if self.notification_fn:
                 for note in self.notification_fn():
                     conversation.add_system_reminder(note)
 
-            compact_result = await auto_compact(
-                conversation,
-                self.client,
-                self.context_window,
-                self.session_dir,
-                protocol=self.protocol,
-                breaker=self.compact_breaker,
-                recovery=self.recovery_state,
-                tool_schemas=self.registry.get_all_schemas(self.protocol),
-                transcript_path=self._transcript_path,
-            )
-            if isinstance(compact_result, CompactEvent):
+            compact_result = await self._compact_for_run(conversation)
+            if isinstance(compact_result, CompactEvent) and not self._scope:
                 conversation.inject_environment(env_context)
 
-            self._announce_deferred_tools(conversation)
+            if not self._scope:
+                self._announce_deferred_tools(conversation)
 
-            collector = StreamCollector()
-            llm_stream = self.client.stream(conversation, system=system, tools=tools)
-            async for _event in collector.consume(llm_stream):
-                pass
+            collector = StreamCollector(buffer_output=self._scope is not None)
+            if self._scope:
+                tools = self.registry.get_all_schemas(self.protocol) if self._scope.purpose == 'agent' else []
+            options = {'control': self._scope.model_control(self._scope.purpose)} if self._scope else {}
+            try:
+                async with aclosing(self.client.stream(conversation, system=system, tools=tools, **options)) as llm_stream:
+                    async for _event in collector.consume(llm_stream):
+                        pass
+            except BudgetStop as stop:
+                if self._scope and not stop.hard and self._scope.begin_finalize(conversation, stop.reason):
+                    continue
+                raise
 
             response = collector.response
+            if self._scope and response.tool_calls and self._scope.purpose != 'agent':
+                raise BudgetStop('citation_invalid', hard=True)
+            if self._scope and response.stop_reason not in {'end_turn', 'tool_calls', 'tool_use'}:
+                raise BudgetStop('provider_truncated', hard=True)
             self.total_input_tokens += response.input_tokens
             self.total_output_tokens += response.output_tokens
 
@@ -1128,7 +1347,7 @@ class Agent:
                     },
                 })
 
-            if response.text:
+            if response.text and not self._scope:
                 last_text = response.text
                 if event_callback:
                     event_callback({
@@ -1141,6 +1360,19 @@ class Agent:
                 self.agent_id, iteration, len(response.tool_calls),
                 len(response.text), response.stop_reason,
             )
+
+            if not response.tool_calls and self._scope:
+                decision = await self._scope.assess_output(response.text, response.stop_reason)
+                if decision.action == 'repair':
+                    conversation.add_assistant_message(response.text)
+                    conversation.add_user_message(decision.message)
+                    continue
+                if decision.action == 'stop':
+                    raise BudgetStop(decision.message or 'citation_invalid', hard=True)
+                response.text = decision.artifact.markdown
+                last_text = response.text
+                if event_callback:
+                    event_callback({'type': 'stream_text', 'text': response.text})
 
             if not response.tool_calls:
                 conversation.add_assistant_message(response.text)
@@ -1157,7 +1389,9 @@ class Agent:
                 )
                 for tc in response.tool_calls
             ]
-            conversation.add_assistant_message(response.text, tool_uses)
+            conv_thinking = ([ConvThinkingBlock(thinking=tb.thinking, signature=tb.signature)
+                              for tb in response.thinking_blocks] if self._scope else None)
+            conversation.add_assistant_message(response.text, tool_uses, thinking_blocks=conv_thinking)
             # assistant 回复已在历史中，锚定实际用量；下一轮迭代只需对
             # 下方追加的 tool results 做字符估算。
             conversation.record_usage_anchor(
@@ -1185,9 +1419,8 @@ class Agent:
                             "args": tc.arguments,
                         })
                 if batch.concurrent:
-                    results = await asyncio.gather(*(
-                        self._execute_tool_noninteractive(tc) for tc in batch.calls
-                    ))
+                    coroutines = [self._execute_tool_noninteractive(tc) for tc in batch.calls]
+                    results = (await self._scope.owner.gather(coroutines) if self._scope else await asyncio.gather(*coroutines))
                 else:
                     results = [await self._execute_tool_noninteractive(batch.calls[0])]
                 for tc, result in zip(batch.calls, results):
@@ -1200,6 +1433,7 @@ class Agent:
                             content=content,
                             is_error=result.is_error,
                             content_blocks=result.content_blocks,
+                            source_spans=self._result_spans(tc.tool_id, result, content),
                         )
                     )
 
@@ -1217,6 +1451,8 @@ class Agent:
     async def _execute_tool_noninteractive(
         self, tc: ToolCallComplete
     ) -> ToolResult:
+        if self._scope:
+            self._scope.rejected_tool(tc.tool_id, tc.tool_name, 'not_admitted')
         tool = self.registry.get(tc.tool_name)
 
         if tool is None:
@@ -1263,7 +1499,9 @@ class Agent:
 
         try:
             params = tool.params_model.model_validate(tc.arguments)
-            result = await tool.execute(params)
+            result = await self._execute_admitted(tc, tool, params)
+        except BudgetStop:
+            raise
         except ValidationError as e:
             result = ToolResult(
                 output=f"Parameter validation error: {e}", is_error=True

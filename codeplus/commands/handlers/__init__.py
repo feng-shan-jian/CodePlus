@@ -3,6 +3,7 @@ from __future__ import annotations
 from codeplus.commands.handlers.clear import CLEAR_COMMAND
 from codeplus.commands.handlers.compact import COMPACT_COMMAND
 from codeplus.commands.handlers.help import HELP_COMMAND
+from codeplus.commands.handlers.knowledge import KNOWLEDGE_COMMAND
 from codeplus.commands.handlers.mcp import MCP_COMMAND
 from codeplus.commands.handlers.memory import MEMORY_COMMAND
 from codeplus.commands.handlers.plan import PLAN_COMMAND
@@ -26,6 +27,7 @@ ALL_COMMANDS = [
     REWIND_COMMAND,
     STATUS_COMMAND,
     SKILL_COMMAND,
+    KNOWLEDGE_COMMAND,
 ]
 
 

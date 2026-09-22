@@ -21,12 +21,23 @@ class CitationRegistry:
                 any(not isinstance(s,Span) for s in spans) or
                 any(a.end>b.start for a,b in zip(spans,spans[1:]))):
             raise invalid('quotes require ordered, non-overlapping exact source spans', 'citation')
+        errors=[]
         for span,quote in zip(spans,quotes):
             location=f'evidence={evidence_id} span=[{span.start},{span.end})'
             if not contains(evidence.spans,span):
-                raise invalid('citation_range_unconfirmed '+location, 'citation')
-            if source.text[span.start:span.end]!=quote:
-                raise invalid('citation_quote_mismatch '+location, 'citation')
+                errors.append('citation_range_unconfirmed '+location)
+                continue
+            expected = source.text[span.start:span.end]
+            if expected!=quote:
+                detail = ' quote_must_be_text'
+                if isinstance(quote,str):
+                    offset = next((i for i,(left,right) in enumerate(zip(expected,quote)) if left!=right), min(len(expected),len(quote)))
+                    codepoint = lambda text: ('U+'+format(ord(text[offset]),'04X')) if offset<len(text) else 'END'
+                    detail = (f' quote_offset={offset} expected={codepoint(expected)} received={codepoint(quote)}'
+                              f' expected_length={len(expected)} received_length={len(quote)}')
+                errors.append('citation_quote_mismatch '+location+detail)
+        if errors:
+            raise invalid('; '.join(errors), 'citation')
         return evidence,source
 
     def save(self, evidence_id: UUID, spans: tuple[Span,...], quotes: tuple[str,...]):
@@ -54,6 +65,21 @@ class CitationRegistry:
                 (str(record.citation_id),str(record.run_id),str(record.evidence_id),encode(value)))
         return value
 
+    @staticmethod
+    def validate_markers(draft: str, evidence_ids: tuple[UUID,...]):
+        """Check the draft/claim relationship before any citation is saved."""
+        if not isinstance(draft,str) or not draft.strip():
+            raise invalid('nonempty citation draft required','citation')
+        if re.search(r'^\s*\[\^[^\]\r\n]+\]:',draft,re.MULTILINE):
+            raise invalid('draft cannot supply its own source footnote definitions','citation')
+        aliases=['[^'+str(identity)+']' for identity in evidence_ids]
+        if len(set(aliases))!=len(aliases):
+            raise invalid('one draft evidence marker cannot refer to different citation claims','citation')
+        markers=re.findall(r'\[\^[^\]\r\n]+\]',draft)
+        if not markers or set(markers)!=set(aliases):
+            raise invalid('unknown, missing or unused citation marker','citation')
+        return markers
+
     def render_markdown(self, draft: str, saved: tuple[dict,...]):
         """Resolve every reserved draft evidence marker to a saved citation.
 
@@ -64,22 +90,14 @@ class CitationRegistry:
         """
         with self.session.catalog._db.transaction() as connection:
             self.session._active(connection)
-        if not isinstance(draft,str) or not draft.strip():
-            raise invalid('nonempty citation draft required','citation')
-        if re.search(r'^\s*\[\^[^\]\r\n]+\]:',draft,re.MULTILINE):
-            raise invalid('draft cannot supply its own source footnote definitions','citation')
+        markers=self.validate_markers(draft,tuple(Citation.model_validate_json(encode(value['citation'])).evidence_id for value in saved))
         aliases={}
         for value in saved:
             record=Citation.model_validate_json(encode(value['citation']))
             actual=open_citation(self.session.catalog,record.citation_id)
             if actual!=value or record.run_id!=self.session.run.run_id:
                 raise invalid('saved citation belongs to another run or was modified','citation')
-            if value['evidence_marker'] in aliases:
-                raise invalid('one draft evidence marker cannot refer to different citation claims','citation')
             aliases[value['evidence_marker']]=value
-        markers=re.findall(r'\[\^[^\]\r\n]+\]',draft)
-        if not markers or any(marker not in aliases for marker in markers) or set(markers)!=set(aliases):
-            raise invalid('unknown, missing or unused citation marker','citation')
         body=re.sub(r'\[\^[^\]\r\n]+\]',lambda m:aliases[m.group()]['citation_marker'],draft)
         ordered=list(dict.fromkeys(markers))
         rendered=body+'\n\n'+'\n\n'.join(footnote(aliases[marker]) for marker in ordered)

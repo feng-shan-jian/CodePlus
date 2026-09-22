@@ -1,0 +1,43 @@
+{
+  "containers": [
+    {
+      "ID": "4bb3885b1aa2",
+      "Names": "sonarqube-production",
+      "Image": "sonarqube:26.8.0.126808-community",
+      "State": "running",
+      "Ports": "127.0.0.1:9000->9000/tcp"
+    },
+    {
+      "ID": "44840f5a0ec0",
+      "Names": "sonarqube-postgres",
+      "Image": "postgres:17.6-alpine",
+      "State": "running",
+      "Ports": "5432/tcp"
+    }
+  ],
+  "volumes": [
+    "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+    "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+    "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+    "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+    "approvaplat-mysql-data"
+  ],
+  "networks": [
+    {
+      "ID": "c35ac9a18def",
+      "Name": "bridge"
+    },
+    {
+      "ID": "3bd9ff598d1b",
+      "Name": "host"
+    },
+    {
+      "ID": "831c0f31d5e3",
+      "Name": "none"
+    },
+    {
+      "ID": "e3597993ac4b",
+      "Name": "sonarqube-production"
+    }
+  ]
+}

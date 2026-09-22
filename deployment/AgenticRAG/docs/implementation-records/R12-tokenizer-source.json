@@ -1,0 +1,31 @@
+{
+  "repo": "deepseek-ai/DeepSeek-V4-Flash",
+  "revision": "60d8d70770c6776ff598c94bb586a859a38244f1",
+  "files": [
+    {
+      "name": "encoding_encoding_dsv4.py",
+      "bytes": 27908,
+      "sha256": "bdbd57c132a1b3725042323d02b98b9d1df28e5f388f134399555d041f5055e0"
+    },
+    {
+      "name": "encoding_README.md",
+      "bytes": 8118,
+      "sha256": "605363e9e43ee91beba88ea96c7806ce6ecdb2924e481459c9d16e1526470c10"
+    },
+    {
+      "name": "LICENSE",
+      "bytes": 1084,
+      "sha256": "f2c6c602815669d292889e5be8c802f2ed950653b77999b1584e8e6aed25d040"
+    },
+    {
+      "name": "tokenizer_config.json",
+      "bytes": 801,
+      "sha256": "6ac8c8dc065ed118161d02dd532749ae3f52c243deac27872134fae2f50d8547"
+    },
+    {
+      "name": "tokenizer.json",
+      "bytes": 6367146,
+      "sha256": "8f9f37ca37fdc4f5fd36d5cf4d3b0e8392edb4e894fd10cc0d70b4957c8633cf"
+    }
+  ]
+}

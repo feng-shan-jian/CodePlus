@@ -1,6 +1,6 @@
 # AgenticRAG 独立开发区
 
-状态：当前提供独立领域／配置核心、存储与并发、不可变原件及处理检查点、Markdown/TXT 解析与实际 tokenizer 分块、本地 Embedding/Rerank 共享 worker、R10 首次完整索引发布和固定版本 Dense 候选，以及 R11 原文分页、交付证据与引用核心；实际验收和提交状态见任务台账。更新日期：2026-09-22。真实宿主 Agent 和完整生命周期继续按 R12–R26 实施。
+状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、固定 Dense 检索、原文与引用，以及 R12 宿主开发接入候选。实际验收和提交状态见任务台账。更新日期：2026-09-22。R12 是中间节点，完整生命周期与产品能力仍继续 R13–R26。
 
 在本目录完成 RAG 重建的规划、独立实现和验收，达到迁移条件后再接入 CodePlus 主模块。
 
@@ -8,7 +8,9 @@
 
 ## 当前开发包
 
-发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2、APSW 3.53.4.0、markdown-it-py 4.0.0 与 tokenizers 0.23.2；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。本地模型通过独立 CUDA worker 执行；没有产品 CLI 或自动重建动作。导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
+R12 开发接入复用现有 CodePlus 两个 Agent 循环，提供 TUI 的 `/knowledge use/ask/off` 和原 `-p` 的 `--knowledge-library`。仅显式启用的 fixed Dense QA 进入受控 run，普通任务保持原入口；未实现能力不加入工具 schema。安装、独立回答 tokenizer 缓存、完整显式配置及当前限制见 [宿主开发接入](docs/codeplus-integration.md)。
+
+发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2、APSW 3.53.4.0、markdown-it-py 4.0.0 与 tokenizers 0.23.2；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。本地模型通过独立 CUDA worker 执行；R12 仅提供显式开发接点，完整产品命令与自动重建留后续任务。导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
 
 独立安装与开发（Windows/pwsh，显式设置独立环境，避免改根 `.venv`）：
 
@@ -34,7 +36,7 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 
 ## 完整产品目标
 
-使用方式沿用 CodePlus 现有基础命令形式：通过 `/knowledge` 一类命令管理与选择知识库，再正常提问或要求生成报告，并沿用现有非交互调用形式。新模块的命令接入仍待实现；不另建本地 Web 界面或独立产品命令体系。
+完整产品沿用 CodePlus 现有基础命令形式管理、查询知识库与生成报告，并保留非交互调用。当前 R12 仅提供上面的显式 use/ask/off 与 QA 开发接点，其余命令及报告继续按任务规划实现；不另建本地 Web 界面或独立产品命令体系。
 
 评测只是开发验收中的批量运行与评分，复用现有 `eval/RAG-eval/` 数据和评分口径，不要求用户使用单独的“评测入口”。R01 已解耦检查/离线评分入口，R10内部runner已调用同一生产Dense核心；真实CodePlus Agent评测仍随宿主接入实现。
 

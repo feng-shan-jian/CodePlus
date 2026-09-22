@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="16" time="11.384" timestamp="2026-09-22T17:59:30.288725+08:00" hostname="fengshanjian"><testcase classname="tests.test_run_budget" name="test_known_partial_and_zero_usage_do_not_hide_provider_violation[raw0-provider_usage_exceeds_reservation]" time="0.001" /><testcase classname="tests.test_run_budget" name="test_known_partial_and_zero_usage_do_not_hide_provider_violation[raw1-inconsistent_provider_usage]" time="0.000" /><testcase classname="tests.test_run_budget" name="test_known_partial_and_zero_usage_do_not_hide_provider_violation[raw2-inconsistent_provider_usage]" time="0.000" /><testcase classname="tests.test_run_budget" name="test_known_partial_and_zero_usage_do_not_hide_provider_violation[raw3-invalid_provider_usage]" time="0.000" /><testcase classname="tests.test_run_budget" name="test_known_partial_and_zero_usage_do_not_hide_provider_violation[raw4-inconsistent_provider_usage]" time="0.001" /><testcase classname="tests.test_run_budget" name="test_known_partial_and_zero_usage_do_not_hide_provider_violation[raw5-invalid_provider_usage]" time="0.000" /><testcase classname="tests.test_run_budget" name="test_complete_totals_and_unknown_cache_are_separate" time="0.000" /><testcase classname="tests.test_run_budget" name="test_exploration_reservation_is_soft_while_finish_reserve_remains" time="2.038"><failure message="agentic_rag.domain.RagError: STORAGE_FAILURE: SQLite operation failed: ConstraintError: CHECK constraint failed: output_cap&gt;0">async def run():
+        parent=parent_client();scope,_=H['setup_scope'](tmp_path,parent)
+        scope.budget=scope.budget.model_copy(update={'total_tokens':100000,'finish_reserve_tokens':20000})
+        with scope.catalog._db.transaction(write=True) as db:
+&gt;           db.execute("INSERT INTO model_requests(request_id,run_id,purpose,protocol,input_upper,output_cap,charged,state,body_sha256) VALUES(?,?,'agent','openai-compat',79000,0,79000,'confirmed',?)",(str(uuid4()),scope.run_id,'a'*64))
+
+deployment\AgenticRAG\tests\test_run_budget.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+&gt;   ???
+E   apsw.ConstraintError: CHECK constraint failed: output_cap&gt;0
+
+D:\a\apsw\apsw\src\cursor.c:223: ConstraintError
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r12-executor-20260922/pytest-budget-a/test_exploration_reservation_i0')
+
+    def test_exploration_reservation_is_soft_while_finish_reserve_remains(tmp_path):
+        async def run():
+            parent=parent_client();scope,_=H['setup_scope'](tmp_path,parent)
+            scope.budget=scope.budget.model_copy(update={'total_tokens':100000,'finish_reserve_tokens':20000})
+            with scope.catalog._db.transaction(write=True) as db:
+                db.execute("INSERT INTO model_requests(request_id,run_id,purpose,protocol,input_upper,output_cap,charged,state,body_sha256) VALUES(?,?,'agent','openai-compat',79000,0,79000,'confirmed',?)",(str(uuid4()),scope.run_id,'a'*64))
+            try:
+                with pytest.raises(BudgetStop) as error:
+                    await ModelControl(scope,'agent').before_send(request(24000))
+                assert error.value.reason=='token_budget' and not error.value.hard
+                permit=await ModelControl(scope,'finalize').before_send(request())
+                await ModelControl(scope,'finalize').settled(permit,RequestOutcome('unknown',None,None,1))
+            finally:
+                await scope.aclose();await parent._client.close()
+&gt;       asyncio.run(run())
+
+deployment\AgenticRAG\tests\test_run_budget.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+deployment\AgenticRAG\tests\test_run_budget.py:53: in run
+    with scope.catalog._db.transaction(write=True) as db:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Python314\Lib\contextlib.py:162: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;agentic_rag.storage.database.Database object at 0x000001AAC2A63230&gt;
+
+    @contextmanager
+    def transaction(self, *, write: bool = False):
+        connection = None
+        try:
+            connection = self._connect()
+            connection.execute("BEGIN IMMEDIATE" if write else "BEGIN")
+            self._verify(connection)
+            yield connection
+            connection.execute("COMMIT")
+        except apsw.BusyError as exc:
+            raise RagError(ErrorCode.LIBRARY_BUSY, "SQLite busy timeout expired; retry later", stage="metadata") from exc
+        except apsw.Error as exc:
+&gt;           raise failure(f"SQLite operation failed: {type(exc).__name__}: {exc}") from exc
+E           agentic_rag.domain.RagError: STORAGE_FAILURE: SQLite operation failed: ConstraintError: CHECK constraint failed: output_cap&gt;0
+
+deployment\AgenticRAG\src\agentic_rag\storage\database.py:192: RagError</failure></testcase><testcase classname="tests.test_run_budget" name="test_unknown_usage_keeps_reservation_and_partial_overcap_keeps_raw_fact" time="2.020" /><testcase classname="tests.test_run_budget" name="test_permission_admission_failure_revokes_future[False]" time="0.001" /><testcase classname="tests.test_run_budget" name="test_permission_admission_failure_revokes_future[True]" time="0.001" /><testcase classname="tests.test_run_budget" name="test_gather_first_error_does_not_wait_for_cancel_suppressor" time="0.050" /><testcase classname="tests.test_run_budget" name="test_real_executor_failure_after_awaiter_cancel_is_consumed" time="0.080"><failure message="AssertionError: assert not [{'exception': ValueError('late worker failure'), 'future': &lt;Future finished exception=ValueError('late worker failure')&gt;, 'message': 'ValueError exception in shielded future'}]">def test_real_executor_failure_after_awaiter_cancel_is_consumed():
+        async def run():
+            owner=RunTaskOwner(time.monotonic()+10);entered=threading.Event();release=threading.Event();errors=[]
+            asyncio.get_running_loop().set_exception_handler(lambda loop,context:errors.append(context))
+            def work():
+                entered.set();release.wait(2);raise ValueError('late worker failure')
+            task=asyncio.create_task(owner.run_sync(work))
+            while not entered.is_set():await asyncio.sleep(.001)
+            task.cancel()
+            with pytest.raises(asyncio.CancelledError):await task
+            assert await owner.drain(.01)
+            release.set()
+            assert not await owner.drain(.5)
+            await asyncio.sleep(.01)
+            assert not errors
+&gt;       asyncio.run(run())
+
+deployment\AgenticRAG\tests\test_run_budget.py:132: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Python314\Lib\asyncio\runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Python314\Lib\asyncio\base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        owner=RunTaskOwner(time.monotonic()+10);entered=threading.Event();release=threading.Event();errors=[]
+        asyncio.get_running_loop().set_exception_handler(lambda loop,context:errors.append(context))
+        def work():
+            entered.set();release.wait(2);raise ValueError('late worker failure')
+        task=asyncio.create_task(owner.run_sync(work))
+        while not entered.is_set():await asyncio.sleep(.001)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):await task
+        assert await owner.drain(.01)
+        release.set()
+        assert not await owner.drain(.5)
+        await asyncio.sleep(.01)
+&gt;       assert not errors
+E       AssertionError: assert not [{'exception': ValueError('late worker failure'), 'future': &lt;Future finished exception=ValueError('late worker failure')&gt;, 'message': 'ValueError exception in shielded future'}]
+
+deployment\AgenticRAG\tests\test_run_budget.py:131: AssertionError</failure></testcase><testcase classname="tests.test_run_budget" name="test_scope_handshake_lock_does_not_block_loop_and_pin_outlives_reader" time="2.120" /><testcase classname="tests.test_run_budget" name="test_agent_always_restores_parent_after_cleanup_failure_or_cancel[False]" time="0.911" /><testcase classname="tests.test_run_budget" name="test_agent_always_restores_parent_after_cleanup_failure_or_cancel[True]" time="0.909" /></testsuite></testsuites>

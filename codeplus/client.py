@@ -1,6 +1,11 @@
 from __future__ import annotations
 
 import json
+import asyncio
+import copy
+from contextlib import asynccontextmanager
+from contextvars import ContextVar
+import time
 from abc import ABC, abstractmethod
 from typing import Any, AsyncIterator
 
@@ -8,6 +13,8 @@ from anthropic import AsyncAnthropic
 from openai import AsyncOpenAI
 
 from codeplus.config import ProviderConfig
+from codeplus.run_policy import (BudgetStop, ModelCallControl, PreSendGate,
+                                 PreparedRequest, RequestOutcome)
 from codeplus.conversation import ConversationManager
 from codeplus.mcp.loading_strategy import NATIVE_TOOL_SEARCH_BETA
 from codeplus.conversation_pairing import ensure_tool_pairing
@@ -123,11 +130,146 @@ class LLMClient(ABC):
         conversation: ConversationManager,
         system: str = "",
         tools: list[dict[str, Any]] | None = None,
+        *, control: ModelCallControl | None = None,
     ) -> AsyncIterator[StreamEvent]:
         yield TextDelta("")
 
     def set_max_output_tokens(self, tokens: int) -> None:
         pass
+
+    async def aclose(self) -> None:
+        if getattr(self, '_owned_http', None) is not None:
+            await self._owned_http.aclose()
+
+
+_active_control: ContextVar[Any] = ContextVar('codeplus_model_control', default=None)
+
+
+def scoped_client(parent: LLMClient, *, transport=None) -> LLMClient:
+    """New SDK/HTTP ownership; never replace the parent's hooks or retry state."""
+    import httpx
+
+    async def before_send(request):
+        call = _active_control.get()
+        if call is None:
+            raise RuntimeError('controlled client requires a per-request control')
+        call.gate.observed = True
+        try:
+            call.gate.permit = await call.control.before_send(PreparedRequest(
+                call.gate.request_id, bytes(request.content), call.protocol,
+                tuple(call.mappings), call.control.output_cap))
+            # Synchronous metering/SQLite work can cross the deadline before
+            # asyncio gets a chance to dispatch its timeout callback.
+            if time.monotonic() >= call.control.deadline:
+                raise BudgetStop('time_budget', hard=True)
+        except BaseException as error:
+            call.gate.refusal = error
+            raise
+
+    result = copy.copy(parent)
+    owned = httpx.AsyncClient(follow_redirects=False,
+        transport=transport if transport is not None else httpx.AsyncHTTPTransport(retries=0),
+        event_hooks={'request': [before_send]})
+    result._owned_http = owned
+    result._client = parent._client.with_options(http_client=owned, max_retries=0)
+    return result
+
+
+class _ControlledRequest:
+    def __init__(self, control, protocol, mappings):
+        self.control, self.protocol, self.mappings = control, protocol, mappings
+        self.gate = PreSendGate()
+        self.raw_usage = None
+        self.terminal = None
+        self.terminal_details = None
+        self.response_model = None
+        self.confirmed = False
+        self.saw_terminal_event = False
+        self.started = time.monotonic()
+
+    def observe_usage(self, value):
+        if value is not None:
+            raw = value.model_dump(mode='json', exclude_unset=True)
+            self.raw_usage = {**(self.raw_usage or {}), **raw}
+
+
+@asynccontextmanager
+async def _request(client, control, protocol, mappings):
+    if control is None:
+        if getattr(client, '_owned_http', None) is not None:
+            raise RuntimeError('scoped client cannot make an uncontrolled request')
+        yield client._client, None
+        return
+    if getattr(client, '_owned_http', None) is None:
+        raise RuntimeError('ModelCallControl requires an owned scoped client')
+    if type(control.output_cap) is not int or control.output_cap < 1:
+        raise BudgetStop('invalid_output_cap', hard=True)
+    remaining = control.deadline-time.monotonic()
+    if remaining <= 0:
+        raise BudgetStop('time_budget', hard=True)
+    call = _ControlledRequest(control, protocol, mappings)
+    token = _active_control.set(call)
+    primary = None
+    try:
+        async with asyncio.timeout_at(control.deadline):
+            yield client._client.with_options(timeout=remaining, max_retries=0), call
+    except BaseException as error:
+        primary = call.gate.refusal or error
+        if call.gate.refusal is not None:
+            if call.gate.refusal is error:
+                raise
+            raise call.gate.refusal from error
+        if isinstance(error, TimeoutError):
+            primary = BudgetStop('time_budget', hard=True)
+            raise primary from error
+        raise
+    finally:
+        _active_control.reset(token)
+        delivery = ('not_sent' if call.gate.refusal is not None else
+                    'confirmed' if call.confirmed else
+                    'rejected' if getattr(primary, 'status_code', None) is not None else 'unknown')
+        outcome = RequestOutcome(delivery, call.raw_usage, call.terminal,
+            int((time.monotonic()-call.started)*1000), call.response_model,
+            type(primary).__name__ if primary else None, call.terminal_details)
+        # Settlement is a local durable write, and must complete before the run
+        # can terminalize. Repeated consumer cancellation cannot abandon it.
+        settlement = asyncio.create_task(control.settled(call.gate.permit, outcome))
+        cancelled = False
+        try:
+            while not settlement.done():
+                try:
+                    await asyncio.wait({settlement})
+                except asyncio.CancelledError:
+                    cancelled = True
+            settlement.result()
+        except BaseException:
+            if primary is None:
+                raise
+        if cancelled and primary is None:
+            raise asyncio.CancelledError()
+
+
+
+@asynccontextmanager
+async def _close_stream(stream):
+    primary = None
+    try:
+        yield stream
+    except BaseException as error:
+        primary = error
+        raise
+    finally:
+        try:
+            await stream.close()
+        except BaseException:
+            if primary is None:
+                raise
+
+
+def _controlled_end(call, reason, *, input_tokens=0, output_tokens=0, cache_read=0, cache_creation=0):
+    return StreamEnd(reason, input_tokens, output_tokens, cache_read, cache_creation,
+        raw_usage=call.raw_usage, terminal=call.terminal,
+        delivery='confirmed' if call.confirmed else 'unknown', response_model=call.response_model)
 
 
 def _supports_adaptive_thinking(model: str) -> bool:
@@ -180,12 +322,14 @@ class AnthropicClient(LLMClient):
         conversation: ConversationManager,
         system: str = "",
         tools: list[dict[str, Any]] | None = None,
+        *, control: ModelCallControl | None = None,
     ) -> AsyncIterator[StreamEvent]:
         import anthropic as _anthropic
 
         # 发请求前补齐工具调用与结果的配对：中断、恢复会话、并发交错都可能留下
         # 悬空的 tool_use，缺配对会被 API 直接拒掉。
-        messages = build_anthropic_messages(ensure_tool_pairing(conversation.get_messages()))
+        mappings = []
+        messages = build_anthropic_messages(ensure_tool_pairing(conversation.get_messages()), mappings=mappings)
 
         # 在最长稳定前缀上标记 prompt cache 断点：system、tools
         # 以及最后一条 user 消息的尾部。Anthropic 会缓存到每个断点，
@@ -195,7 +339,7 @@ class AnthropicClient(LLMClient):
 
         kwargs: dict[str, Any] = {
             "model": self.model,
-            "max_tokens": self.max_output_tokens,
+            "max_tokens": control.output_cap if control else self.max_output_tokens,
             "messages": messages,
         }
         if system:
@@ -215,12 +359,14 @@ class AnthropicClient(LLMClient):
                 }
 
         if self.thinking:
+            if control and control.output_cap <= 1024:
+                raise BudgetStop('thinking_output_cap_too_small', hard=True)
             if _supports_adaptive_thinking(self.model):
                 kwargs["thinking"] = {"type": "enabled", "budget_tokens": 0}
             else:
                 kwargs["thinking"] = {
                     "type": "enabled",
-                    "budget_tokens": max(self.max_output_tokens - 1, 1024),
+                    "budget_tokens": (control.output_cap - 1) if control else max(self.max_output_tokens - 1, 1024),
                 }
 
         current_tool_name = ""
@@ -241,94 +387,115 @@ class AnthropicClient(LLMClient):
         delta_cache_creation = 0
 
         try:
-            async with self._client.messages.stream(**kwargs) as stream:
-                async for event in stream:
-                    if event.type == "content_block_start":
-                        block = event.content_block
-                        if block.type == "thinking":
-                            in_thinking = True
-                            thinking_accum = ""
-                            thinking_signature = ""
-                        elif block.type == "tool_use":
-                            current_tool_name = block.name
-                            current_tool_id = block.id
-                            json_accum = ""
-                            yield ToolCallStart(
-                                tool_name=current_tool_name,
-                                tool_id=current_tool_id,
-                            )
-                    elif event.type == "content_block_delta":
-                        delta = event.delta
-                        if delta.type == "text_delta":
-                            yield TextDelta(text=delta.text)
-                        elif delta.type == "thinking_delta":
-                            thinking_accum += delta.thinking
-                            yield ThinkingDelta(text=delta.thinking)
-                        elif delta.type == "signature_delta":
-                            thinking_signature = delta.signature
-                        elif delta.type == "input_json_delta":
-                            json_accum += delta.partial_json
-                            yield ToolCallDelta(text=delta.partial_json)
-                    elif event.type == "content_block_stop":
-                        if in_thinking:
-                            yield ThinkingComplete(
-                                thinking=thinking_accum,
-                                signature=thinking_signature,
-                            )
-                            in_thinking = False
-                        if current_tool_name:
-                            try:
-                                args = json.loads(json_accum) if json_accum else {}
-                            except json.JSONDecodeError:
-                                args = {}
-                            yield ToolCallComplete(
-                                tool_id=current_tool_id,
-                                tool_name=current_tool_name,
-                                arguments=args,
-                            )
-                            current_tool_name = ""
-                            current_tool_id = ""
-                            json_accum = ""
-                    elif event.type == "message_delta":
-                        # 捕获 message_delta 中的 usage 信息（MiniMax 兼容）。
-                        delta_usage = getattr(event, "usage", None)
-                        if delta_usage:
-                            v = getattr(delta_usage, "input_tokens", 0) or 0
-                            if v:
-                                delta_input_tokens = v
-                            v = getattr(delta_usage, "cache_read_input_tokens", 0) or 0
-                            if v:
-                                delta_cache_read = v
-                            v = getattr(delta_usage, "cache_creation_input_tokens", 0) or 0
-                            if v:
-                                delta_cache_creation = v
-                    elif event.type == "message_stop":
-                        pass
+            async with _request(self, control, 'anthropic', mappings) as (sdk, request_state):
+                async with sdk.messages.stream(**kwargs) as stream:
+                    async for event in stream:
+                        if request_state:
+                            if event.type == 'message_start':
+                                request_state.response_model = event.message.model
+                                request_state.observe_usage(event.message.usage)
+                            elif event.type == 'message_delta':
+                                request_state.observe_usage(getattr(event, 'usage', None))
+                                reason = getattr(event.delta, 'stop_reason', None)
+                                if reason:
+                                    request_state.terminal = reason
+                            elif event.type == 'message_stop':
+                                request_state.saw_terminal_event = True
+                        if event.type == "content_block_start":
+                            block = event.content_block
+                            if block.type == "thinking":
+                                in_thinking = True
+                                thinking_accum = ""
+                                thinking_signature = ""
+                            elif block.type == "tool_use":
+                                current_tool_name = block.name
+                                current_tool_id = block.id
+                                json_accum = ""
+                                yield ToolCallStart(
+                                    tool_name=current_tool_name,
+                                    tool_id=current_tool_id,
+                                )
+                        elif event.type == "content_block_delta":
+                            delta = event.delta
+                            if delta.type == "text_delta":
+                                yield TextDelta(text=delta.text)
+                            elif delta.type == "thinking_delta":
+                                thinking_accum += delta.thinking
+                                yield ThinkingDelta(text=delta.thinking)
+                            elif delta.type == "signature_delta":
+                                thinking_signature = delta.signature
+                            elif delta.type == "input_json_delta":
+                                json_accum += delta.partial_json
+                                yield ToolCallDelta(text=delta.partial_json)
+                        elif event.type == "content_block_stop":
+                            if in_thinking:
+                                yield ThinkingComplete(
+                                    thinking=thinking_accum,
+                                    signature=thinking_signature,
+                                )
+                                in_thinking = False
+                            if current_tool_name:
+                                try:
+                                    args = json.loads(json_accum) if json_accum else {}
+                                except json.JSONDecodeError:
+                                    args = {}
+                                yield ToolCallComplete(
+                                    tool_id=current_tool_id,
+                                    tool_name=current_tool_name,
+                                    arguments=args,
+                                )
+                                current_tool_name = ""
+                                current_tool_id = ""
+                                json_accum = ""
+                        elif event.type == "message_delta":
+                            # 捕获 message_delta 中的 usage 信息（MiniMax 兼容）。
+                            delta_usage = getattr(event, "usage", None)
+                            if delta_usage:
+                                v = getattr(delta_usage, "input_tokens", 0) or 0
+                                if v:
+                                    delta_input_tokens = v
+                                v = getattr(delta_usage, "cache_read_input_tokens", 0) or 0
+                                if v:
+                                    delta_cache_read = v
+                                v = getattr(delta_usage, "cache_creation_input_tokens", 0) or 0
+                                if v:
+                                    delta_cache_creation = v
+                        elif event.type == "message_stop":
+                            pass
 
-                final = await stream.get_final_message()
-                usage = final.usage
-                input_tokens = usage.input_tokens
-                cache_read = getattr(usage, "cache_read_input_tokens", 0) or 0
-                cache_creation = getattr(
-                    usage, "cache_creation_input_tokens", 0
-                ) or 0
+                    final = await stream.get_final_message()
+                    usage = final.usage
+                    input_tokens = usage.input_tokens
+                    cache_read = getattr(usage, "cache_read_input_tokens", 0) or 0
+                    cache_creation = getattr(
+                        usage, "cache_creation_input_tokens", 0
+                    ) or 0
 
-                # 当 message_start 报告 input_tokens=0 时（MiniMax 等兼容
-                # provider 的行为），降级使用 message_delta 中捕获的值。
-                if not input_tokens and delta_input_tokens:
-                    input_tokens = delta_input_tokens
-                if not cache_read and delta_cache_read:
-                    cache_read = delta_cache_read
-                if not cache_creation and delta_cache_creation:
-                    cache_creation = delta_cache_creation
+                    # 当 message_start 报告 input_tokens=0 时（MiniMax 等兼容
+                    # provider 的行为），降级使用 message_delta 中捕获的值。
+                    if not input_tokens and delta_input_tokens:
+                        input_tokens = delta_input_tokens
+                    if not cache_read and delta_cache_read:
+                        cache_read = delta_cache_read
+                    if not cache_creation and delta_cache_creation:
+                        cache_creation = delta_cache_creation
 
-                yield StreamEnd(
-                    stop_reason=final.stop_reason or "end_turn",
-                    input_tokens=input_tokens,
-                    output_tokens=usage.output_tokens,
-                    cache_read=cache_read,
-                    cache_creation=cache_creation,
-                )
+                    if request_state:
+                        request_state.observe_usage(usage)
+                        request_state.confirmed = (request_state.saw_terminal_event and
+                            request_state.terminal in {'end_turn', 'tool_use', 'max_tokens',
+                                                       'stop_sequence', 'refusal', 'pause_turn'})
+                        yield _controlled_end(request_state, request_state.terminal or 'missing_terminal',
+                            input_tokens=input_tokens, output_tokens=usage.output_tokens,
+                            cache_read=cache_read, cache_creation=cache_creation)
+                    else:
+                        yield StreamEnd(
+                        stop_reason=final.stop_reason or "end_turn",
+                        input_tokens=input_tokens,
+                        output_tokens=usage.output_tokens,
+                        cache_read=cache_read,
+                        cache_creation=cache_creation,
+                    )
 
         except _anthropic.AuthenticationError as e:
             raise AuthenticationError(f"Invalid API key: {e}") from e
@@ -364,16 +531,20 @@ class OpenAIClient(LLMClient):
         conversation: ConversationManager,
         system: str = "",
         tools: list[dict[str, Any]] | None = None,
+        *, control: ModelCallControl | None = None,
     ) -> AsyncIterator[StreamEvent]:
         import openai as _openai
 
-        input_messages = build_openai_input(ensure_tool_pairing(conversation.get_messages()))
+        mappings = []
+        input_messages = build_openai_input(ensure_tool_pairing(conversation.get_messages()), mappings=mappings)
 
         kwargs: dict[str, Any] = {
             "model": self.model,
             "input": input_messages,
             "stream": True,
         }
+        if control:
+            kwargs['max_output_tokens'] = control.output_cap
         if system:
             kwargs["instructions"] = system
         if tools:
@@ -386,72 +557,96 @@ class OpenAIClient(LLMClient):
         reasoning_text = ""
 
         try:
-            response_stream = await self._client.responses.create(**kwargs)
-            async for event in response_stream:
-                if event.type == "response.output_text.delta":
-                    yield TextDelta(text=event.delta)
-                elif event.type == "response.reasoning_summary_text.delta":
-                    reasoning_text += event.delta
-                    yield ThinkingDelta(text=event.delta)
-                elif event.type == "response.reasoning_summary_text.done":
-                    yield ThinkingComplete(thinking=reasoning_text, signature=reasoning_id)
-                elif event.type == "response.function_call_arguments.delta":
-                    if not current_tool_name:
-                        current_tool_name = getattr(event, "name", "") or ""
-                        current_call_id = getattr(event, "call_id", "") or ""
-                        if current_tool_name:
-                            yield ToolCallStart(
-                                tool_name=current_tool_name,
+            async with _request(self, control, 'openai', mappings) as (sdk, request_state):
+                response_stream = await sdk.responses.create(**kwargs)
+                async with _close_stream(response_stream):
+                    async for event in response_stream:
+                        if request_state and event.type in {'response.created', 'response.completed', 'response.incomplete', 'response.failed'}:
+                            resp = getattr(event, 'response', None)
+                            if resp is not None:
+                                request_state.response_model = getattr(resp, 'model', None)
+                                request_state.observe_usage(getattr(resp, 'usage', None))
+                                incomplete = getattr(resp, 'incomplete_details', None)
+                                failure = getattr(resp, 'error', None)
+                                request_state.terminal_details = {
+                                    'incomplete_reason': getattr(incomplete, 'reason', None),
+                                    'error_code': getattr(failure, 'code', None)}
+                            if event.type != 'response.created':
+                                request_state.terminal = event.type.removeprefix('response.')
+                                request_state.saw_terminal_event = True
+                        if event.type == "response.output_text.delta":
+                            yield TextDelta(text=event.delta)
+                        elif event.type == "response.reasoning_summary_text.delta":
+                            reasoning_text += event.delta
+                            yield ThinkingDelta(text=event.delta)
+                        elif event.type == "response.reasoning_summary_text.done":
+                            yield ThinkingComplete(thinking=reasoning_text, signature=reasoning_id)
+                        elif event.type == "response.function_call_arguments.delta":
+                            if not current_tool_name:
+                                current_tool_name = getattr(event, "name", "") or ""
+                                current_call_id = getattr(event, "call_id", "") or ""
+                                if current_tool_name:
+                                    yield ToolCallStart(
+                                        tool_name=current_tool_name,
+                                        tool_id=current_call_id,
+                                    )
+                            json_accum += event.delta
+                            yield ToolCallDelta(text=event.delta)
+                        elif event.type == "response.function_call_arguments.done":
+                            if not current_tool_name:
+                                current_tool_name = getattr(event, "name", "") or ""
+                                current_call_id = getattr(event, "call_id", "") or ""
+                            try:
+                                args = json.loads(json_accum) if json_accum else {}
+                            except json.JSONDecodeError:
+                                args = {}
+                            yield ToolCallComplete(
                                 tool_id=current_call_id,
+                                tool_name=current_tool_name,
+                                arguments=args,
                             )
-                    json_accum += event.delta
-                    yield ToolCallDelta(text=event.delta)
-                elif event.type == "response.function_call_arguments.done":
-                    if not current_tool_name:
-                        current_tool_name = getattr(event, "name", "") or ""
-                        current_call_id = getattr(event, "call_id", "") or ""
-                    try:
-                        args = json.loads(json_accum) if json_accum else {}
-                    except json.JSONDecodeError:
-                        args = {}
-                    yield ToolCallComplete(
-                        tool_id=current_call_id,
-                        tool_name=current_tool_name,
-                        arguments=args,
-                    )
-                    current_tool_name = ""
-                    current_call_id = ""
-                    json_accum = ""
-                elif event.type == "response.output_item.added":
-                    item = getattr(event, "item", None)
-                    if item and getattr(item, "type", "") == "function_call":
-                        current_tool_name = getattr(item, "name", "")
-                        current_call_id = getattr(item, "call_id", "")
-                        json_accum = ""
-                        yield ToolCallStart(
-                            tool_name=current_tool_name,
-                            tool_id=current_call_id,
-                        )
-                    elif item and getattr(item, "type", "") == "reasoning":
-                        reasoning_id = getattr(item, "id", "")
-                        reasoning_text = ""
-                elif event.type == "response.completed":
-                    resp = getattr(event, "response", None)
-                    usage = getattr(resp, "usage", None) if resp else None
-                    # Responses API 通过 input_tokens_details.cached_tokens
-                    # 暴露 cache 命中数，没有 creation 计数。注意这里的
-                    # input_tokens *包含*了缓存 token，所以需要减去它们，
-                    # 保持 input + cache_read 可加性，与 Anthropic 对齐。
-                    details = getattr(usage, "input_tokens_details", None)
-                    cache_read = getattr(details, "cached_tokens", 0) or 0
-                    input_tokens = getattr(usage, "input_tokens", 0) or 0
-                    yield StreamEnd(
-                        stop_reason="end_turn",
-                        input_tokens=max(input_tokens - cache_read, 0),
-                        output_tokens=getattr(usage, "output_tokens", 0) or 0,
-                        cache_read=cache_read,
-                        cache_creation=0,
-                    )
+                            current_tool_name = ""
+                            current_call_id = ""
+                            json_accum = ""
+                        elif event.type == "response.output_item.added":
+                            item = getattr(event, "item", None)
+                            if item and getattr(item, "type", "") == "function_call":
+                                current_tool_name = getattr(item, "name", "")
+                                current_call_id = getattr(item, "call_id", "")
+                                json_accum = ""
+                                yield ToolCallStart(
+                                    tool_name=current_tool_name,
+                                    tool_id=current_call_id,
+                                )
+                            elif item and getattr(item, "type", "") == "reasoning":
+                                reasoning_id = getattr(item, "id", "")
+                                reasoning_text = ""
+                        elif event.type == "response.completed" and not request_state:
+                            resp = getattr(event, "response", None)
+                            usage = getattr(resp, "usage", None) if resp else None
+                            # Responses API 通过 input_tokens_details.cached_tokens
+                            # 暴露 cache 命中数，没有 creation 计数。注意这里的
+                            # input_tokens *包含*了缓存 token，所以需要减去它们，
+                            # 保持 input + cache_read 可加性，与 Anthropic 对齐。
+                            details = getattr(usage, "input_tokens_details", None)
+                            cache_read = getattr(details, "cached_tokens", 0) or 0
+                            input_tokens = getattr(usage, "input_tokens", 0) or 0
+                            yield StreamEnd(
+                                stop_reason="end_turn",
+                                input_tokens=max(input_tokens - cache_read, 0),
+                                output_tokens=getattr(usage, "output_tokens", 0) or 0,
+                                cache_read=cache_read,
+                                cache_creation=0,
+                            )
+
+                    if request_state:
+                        request_state.confirmed = request_state.saw_terminal_event
+                        raw = request_state.raw_usage or {}
+                        cached = (raw.get('input_tokens_details') or {}).get('cached_tokens') or 0
+                        yield _controlled_end(request_state,
+                            'end_turn' if request_state.terminal == 'completed' else request_state.terminal or 'missing_terminal',
+                            input_tokens=max((raw.get('input_tokens') or 0)-cached, 0),
+                            output_tokens=raw.get('output_tokens') or 0, cache_read=cached)
 
         except _openai.AuthenticationError as e:
             raise AuthenticationError(f"Invalid API key: {e}") from e
@@ -524,10 +719,12 @@ class OpenAICompatClient(LLMClient):
         conversation: ConversationManager,
         system: str = "",
         tools: list[dict[str, Any]] | None = None,
+        *, control: ModelCallControl | None = None,
     ) -> AsyncIterator[StreamEvent]:
         import openai as _openai
 
-        messages = build_chat_completion_messages(ensure_tool_pairing(conversation.get_messages()))
+        mappings = []
+        messages = build_chat_completion_messages(ensure_tool_pairing(conversation.get_messages()), mappings=mappings, message_offset=1 if system else 0)
 
         # 如果有 system 消息则插入到消息列表头部。
         if system:
@@ -536,7 +733,7 @@ class OpenAICompatClient(LLMClient):
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
-            "max_tokens": self.max_output_tokens,
+            "max_tokens": control.output_cap if control else self.max_output_tokens,
             "stream": True,
             "stream_options": {"include_usage": True},
         }
@@ -549,80 +746,98 @@ class OpenAICompatClient(LLMClient):
         reasoning_accum = ""
 
         try:
-            response = await self._client.chat.completions.create(**kwargs)
-            async for chunk in response:
-                if not chunk.choices:
-                    # 最后一个 chunk，只包含 usage 数据。
-                    if chunk.usage:
-                        # 部分兼容 provider 通过 prompt_tokens_details.cached_tokens
-                        # 上报 cache 命中数，大多数不上报（cache_read 保持 0）。
-                        # prompt_tokens 包含了缓存 token，需要减去以保持
-                        # input + cache_read 可加性。没有 provider 上报 creation 计数。
-                        details = getattr(
-                            chunk.usage, "prompt_tokens_details", None
-                        )
-                        cache_read = getattr(details, "cached_tokens", 0) or 0
-                        prompt_tokens = chunk.usage.prompt_tokens or 0
-                        yield StreamEnd(
-                            stop_reason="end_turn",
-                            input_tokens=max(prompt_tokens - cache_read, 0),
-                            output_tokens=chunk.usage.completion_tokens or 0,
-                            cache_read=cache_read,
-                            cache_creation=0,
-                        )
-                    continue
+            async with _request(self, control, 'openai-compat', mappings) as (sdk, request_state):
+                response = await sdk.chat.completions.create(**kwargs)
+                async with _close_stream(response):
+                    async for chunk in response:
+                        if request_state:
+                            request_state.response_model = getattr(chunk, 'model', None) or request_state.response_model
+                            request_state.observe_usage(getattr(chunk, 'usage', None))
+                        if not chunk.choices:
+                            # 最后一个 chunk，只包含 usage 数据。
+                            if chunk.usage and not request_state:
+                                # 部分兼容 provider 通过 prompt_tokens_details.cached_tokens
+                                # 上报 cache 命中数，大多数不上报（cache_read 保持 0）。
+                                # prompt_tokens 包含了缓存 token，需要减去以保持
+                                # input + cache_read 可加性。没有 provider 上报 creation 计数。
+                                details = getattr(
+                                    chunk.usage, "prompt_tokens_details", None
+                                )
+                                cache_read = getattr(details, "cached_tokens", 0) or 0
+                                prompt_tokens = chunk.usage.prompt_tokens or 0
+                                yield StreamEnd(
+                                    stop_reason="end_turn",
+                                    input_tokens=max(prompt_tokens - cache_read, 0),
+                                    output_tokens=chunk.usage.completion_tokens or 0,
+                                    cache_read=cache_read,
+                                    cache_creation=0,
+                                )
+                            continue
 
-                choice = chunk.choices[0]
-                delta = choice.delta
+                        choice = chunk.choices[0]
+                        if request_state and choice.finish_reason:
+                            request_state.terminal = choice.finish_reason
+                            request_state.saw_terminal_event = choice.finish_reason in {
+                                'stop', 'tool_calls', 'length', 'content_filter', 'function_call'}
+                        delta = choice.delta
 
-                # --- 文本内容 ---
-                if delta and delta.content:
-                    yield TextDelta(text=delta.content)
+                        # --- 文本内容 ---
+                        if delta and delta.content:
+                            yield TextDelta(text=delta.content)
 
-                # --- reasoning_content（DeepSeek/小米等 provider 的非标准字段）---
-                if delta:
-                    rc = getattr(delta, "reasoning_content", None)
-                    if rc:
-                        reasoning_accum += rc
-                        yield ThinkingDelta(text=rc)
+                        # --- reasoning_content（DeepSeek/小米等 provider 的非标准字段）---
+                        if delta:
+                            rc = getattr(delta, "reasoning_content", None)
+                            if rc:
+                                reasoning_accum += rc
+                                yield ThinkingDelta(text=rc)
 
-                # --- tool call 增量 ---
-                if delta and delta.tool_calls:
-                    for tc in delta.tool_calls:
-                        idx = tc.index
-                        if idx not in active_calls:
-                            active_calls[idx] = {"id": "", "name": "", "args": ""}
-                        call = active_calls[idx]
+                        # --- tool call 增量 ---
+                        if delta and delta.tool_calls:
+                            for tc in delta.tool_calls:
+                                idx = tc.index
+                                if idx not in active_calls:
+                                    active_calls[idx] = {"id": "", "name": "", "args": ""}
+                                call = active_calls[idx]
 
-                        if tc.id:
-                            call["id"] = tc.id
-                        if tc.function and tc.function.name:
-                            call["name"] = tc.function.name
-                            yield ToolCallStart(
-                                tool_name=call["name"],
-                                tool_id=call["id"],
-                            )
-                        if tc.function and tc.function.arguments:
-                            call["args"] += tc.function.arguments
-                            yield ToolCallDelta(text=tc.function.arguments)
+                                if tc.id:
+                                    call["id"] = tc.id
+                                if tc.function and tc.function.name:
+                                    call["name"] = tc.function.name
+                                    yield ToolCallStart(
+                                        tool_name=call["name"],
+                                        tool_id=call["id"],
+                                    )
+                                if tc.function and tc.function.arguments:
+                                    call["args"] += tc.function.arguments
+                                    yield ToolCallDelta(text=tc.function.arguments)
 
-                # --- 结束原因 ---
-                if choice.finish_reason in ("tool_calls", "stop"):
-                    if reasoning_accum:
-                        yield ThinkingComplete(thinking=reasoning_accum, signature="")
-                        reasoning_accum = ""
-                    if choice.finish_reason == "tool_calls":
-                        for _idx, call in sorted(active_calls.items()):
-                            try:
-                                args = json.loads(call["args"]) if call["args"] else {}
-                            except json.JSONDecodeError:
-                                args = {}
-                            yield ToolCallComplete(
-                                tool_id=call["id"],
-                                tool_name=call["name"],
-                                arguments=args,
-                            )
-                        active_calls.clear()
+                        # --- 结束原因 ---
+                        if choice.finish_reason in ("tool_calls", "stop"):
+                            if reasoning_accum:
+                                yield ThinkingComplete(thinking=reasoning_accum, signature="")
+                                reasoning_accum = ""
+                            if choice.finish_reason == "tool_calls":
+                                for _idx, call in sorted(active_calls.items()):
+                                    try:
+                                        args = json.loads(call["args"]) if call["args"] else {}
+                                    except json.JSONDecodeError:
+                                        args = {}
+                                    yield ToolCallComplete(
+                                        tool_id=call["id"],
+                                        tool_name=call["name"],
+                                        arguments=args,
+                                    )
+                                active_calls.clear()
+
+                    if request_state:
+                        request_state.confirmed = request_state.saw_terminal_event
+                        raw = request_state.raw_usage or {}
+                        cached = (raw.get('prompt_tokens_details') or {}).get('cached_tokens') or raw.get('prompt_cache_hit_tokens') or 0
+                        yield _controlled_end(request_state,
+                            'end_turn' if request_state.terminal == 'stop' else request_state.terminal or 'missing_terminal',
+                            input_tokens=max((raw.get('prompt_tokens') or 0)-cached, 0),
+                            output_tokens=raw.get('completion_tokens') or 0, cache_read=cached)
 
         except _openai.AuthenticationError as e:
             raise AuthenticationError(f"Invalid API key: {e}") from e

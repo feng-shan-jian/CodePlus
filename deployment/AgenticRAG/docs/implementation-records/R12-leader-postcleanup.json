@@ -1,0 +1,87 @@
+{
+  "status": "PASS_FOR_AUTHORIZED_CLEANUP_SCOPE",
+  "at": "2026-09-22T12:26:30.970470+00:00",
+  "head": "5dbe979a330a6b157adfba7ad3ea8299fecf73a9",
+  "script_sha256": "1f05fb983664c9ee1df82c12d73d3d6a4a30878db97428f8721161aed03cb925",
+  "cwd": "D:\\CodePlus",
+  "argv": [
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r12-leader-final-audit.py",
+    "verify"
+  ],
+  "cleanup_hashes": {
+    "R12-cleanup.json": "0b75d09dd0c366d6da8095f7601808f1d783d5cf14000a5effb4a91cc5960fda",
+    "R12-cleanup.md": "cbbe9c4a5389a6cdbe3ed9867ad163c9f06252de291e382bf883e2fd6feeca69",
+    ".gitattributes": "9fc7fb02d284735e1ffe8fca6accf493a4920e32192d67af4a93fc82cdf2a7eb"
+  },
+  "reviewed_files_unchanged": 143,
+  "protected_count": 6553,
+  "production_count": 200,
+  "unexpected_drift": [],
+  "removed_paths_verified_absent": [
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-executor-20260922",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-leader-20260922",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\pytest-of-18221\\pytest-17",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\pytest-of-18221\\pytest-18",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\pytest-of-18221\\pytest-19",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r12-independent-cleanup-20260922",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\pytest-of-18221\\pytest-current"
+  ],
+  "foreign_containers_running": 2,
+  "foreign_volume_count": 5,
+  "foreign_and_default_network_count": 4,
+  "owned_ports_closed": [
+    19534,
+    9095,
+    19535,
+    9096
+  ],
+  "shared_lock_current_sha256": {
+    "lifetime.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "startup.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "metadata_observation_retained": {
+    "classification": "Unexplained aggregate metadata observation; no claim of full shared-tree metadata equality",
+    "leader_disposition": "Leader authorized boundary-based cleanup completion with this unresolved observation retained; no shared resource writes permitted",
+    "before_per_item_metadata_saved": false,
+    "limitation": "Only aggregate metadata and entry counts were saved before deletion, so changed per-item fields cannot be reconstructed or attributed",
+    "shared_write_commands_executed": [],
+    "raw": [
+      {
+        "path": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models",
+        "before_entries": 19,
+        "after_entries": 19,
+        "before_sha256": "9f0f05901e2d0a1e2eec8568c644278658f0f544c317597432d34c1ae482f982",
+        "after_sha256": "9f0f05901e2d0a1e2eec8568c644278658f0f544c317597432d34c1ae482f982",
+        "equal": true
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\.codeplus-agenticrag-workers",
+        "before_entries": 3,
+        "after_entries": 3,
+        "before_sha256": "c616ab755bffd508084c9c18eb507ca9a161cbddd945cfbc42cd7b60dbcaf807",
+        "after_sha256": "da40694c37665869999fc5b4e01d4c8a152bbcb563e37d1fc2e7c4b075082b06",
+        "equal": false
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\uv\\cache",
+        "before_entries": 144337,
+        "after_entries": 144337,
+        "before_sha256": "0b813c62d2d0621b2a8fc33e04269af7522f041486a4ac450c31c6e438267a49",
+        "after_sha256": "64afc00bab280a55c4a0822a838e65853237c0ae84f30c984665d49c2583c4ce",
+        "equal": false
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\pytest-of-18221\\pytest-2",
+        "before_entries": 4,
+        "after_entries": 4,
+        "before_sha256": "65e98d175019197d8db36e37ac092d2dbad2ad05a18bda222bfb2bfdc73c0633",
+        "after_sha256": "65e98d175019197d8db36e37ac092d2dbad2ad05a18bda222bfb2bfdc73c0633",
+        "equal": true
+      }
+    ]
+  },
+  "leader_judgment": "Cleanup is restricted to proven owned resources; mandatory user-input/source/model-cache/foreign-resource checks pass. The additional all-shared-metadata equality assertion remains false and unexplained; no claim of complete metadata equality or invented cause is made.",
+  "production_changes": false,
+  "additional_document_change": "deployment/AgenticRAG/docs/implementation-records/.gitattributes",
+  "index_empty": true
+}

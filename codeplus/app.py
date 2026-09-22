@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from contextlib import aclosing
+
 import asyncio
 import os
 import random
@@ -576,6 +578,7 @@ _CODEPLUS_THEME = Theme(
 
 
 class CodePlusApp(App):
+    knowledge_feature_available = True
     CSS_PATH = "styles.tcss"
     TITLE = "CodePlus"
     INLINE_PADDING = 0
@@ -601,9 +604,14 @@ class CodePlusApp(App):
         enable_coordinator_mode: bool = False,
         driver_class: type | None = None,
         sandbox_config: Any = None,
+        knowledge_development_config: str = '',
     ) -> None:
         super().__init__(driver_class=driver_class)
         self.providers = providers
+        self.knowledge_development_config = knowledge_development_config
+        self.knowledge_library = None
+        self._knowledge_active = False
+        self.last_knowledge_outcome = None
         self._initial_permission_mode = permission_mode
         self._mcp_server_configs = mcp_servers or []
         self.hook_engine = hook_engine
@@ -723,6 +731,9 @@ class CodePlusApp(App):
             self.query_one("#input-area").display = False
 
     def _select_provider(self, provider: ProviderConfig) -> None:
+        if self._knowledge_active:
+            self._show_system_message('Knowledge operation is still active; wait for cleanup to finish.')
+            return
         self._selected_provider = provider
         try:
             self.client = create_client(provider)
@@ -1021,9 +1032,10 @@ class CodePlusApp(App):
         尽力而为 — resolve_context_window 不会抛异常；如果拉不到，
         agent 继续使用同步解析得到的窗口值。
         """
+        target_agent = self.agent
         await resolve_context_window(provider)
-        if self.agent is not None:
-            self.agent.context_window = provider.get_context_window()
+        if target_agent is not None and self.agent is target_agent and not self._knowledge_active:
+            target_agent.context_window = provider.get_context_window()
 
     def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         if event.option_list.id == "provider-list":
@@ -1038,9 +1050,48 @@ class CodePlusApp(App):
         self._show_system_message(text)
 
     def send_user_message(self, text: str) -> None:
-        if self._streaming or self.agent is None:
+        if self._streaming or self._knowledge_active or self.agent is None:
             return
         self._agent_task = asyncio.create_task(self._send_message(text))
+
+    def send_knowledge_message(self, text: str) -> None:
+        if self._streaming or self._knowledge_active or self.agent is None:
+            self._show_system_message('An operation is still active.')
+            return
+        if not self.knowledge_development_config:
+            self._show_error('knowledge_development_config is required')
+            return
+        try:
+            from agentic_rag.adapters.codeplus.policy import load_policy
+            policy = load_policy(self.knowledge_development_config, self.knowledge_library, self._selected_provider)
+        except ImportError:
+            self._show_error('Install the independent codeplus-agentic-rag development package into this host environment.')
+            return
+        except (ValueError, OSError):
+            self._show_error('Knowledge development configuration is unavailable or invalid.')
+            return
+        self._knowledge_active = True
+        self._agent_task = asyncio.create_task(self._send_knowledge(text, policy))
+
+    async def _send_knowledge(self, text, policy):
+        original_agent, original_conversation = self.agent, self.conversation
+        from codeplus.tools import ToolRegistry
+        controlled = Agent(client=original_agent.client, registry=ToolRegistry(), protocol=original_agent.protocol,
+            work_dir=original_agent.work_dir, permission_checker=original_agent.permission_checker,
+            context_window=original_agent.context_window, hook_engine=original_agent.hook_engine,
+            execution_policy=policy)
+        controlled.session_id = original_agent.session_id
+        self.agent, self.conversation = controlled, ConversationManager()
+        try:
+            await self._send_message(text)
+        except Exception as error:
+            self._show_error('Knowledge run failed: '+type(error).__name__)
+        finally:
+            self.last_knowledge_outcome = controlled.last_run_outcome
+            self.agent, self.conversation = original_agent, original_conversation
+            self._knowledge_active = False
+            if self.last_knowledge_outcome:
+                self._show_system_message('Knowledge run '+self.last_knowledge_outcome.status+': '+self.last_knowledge_outcome.reason)
 
     def set_plan_mode(self, enabled: bool) -> None:
         if self.agent is None:
@@ -1106,7 +1157,7 @@ class CodePlusApp(App):
         就能重建压缩后的状态。之前已写入磁盘的原始前缀不会被重放。
         没有活跃 session 或 compact 未产出 boundary 时直接跳过。
         """
-        if not self.session or notification.boundary is None:
+        if self._knowledge_active or not self.session or notification.boundary is None:
             return
         record = make_compact_boundary(
             notification.boundary.summary,
@@ -1123,6 +1174,9 @@ class CodePlusApp(App):
 
     async def _dispatch_command(self, text: str) -> None:
         name, args, is_command = parse_command(text)
+        if self._knowledge_active:
+            self.add_system_message('Knowledge operation is still active; wait for cleanup to finish.')
+            return
         answer_busy = self._streaming or (self._agent_task is not None and not self._agent_task.done())
         if answer_busy and name in {"session", "clear"}:
             self.add_system_message("回答正在执行；结束后再切换或清空会话。")
@@ -1369,9 +1423,11 @@ class CodePlusApp(App):
 
     async def _send_message(self, text: str, is_notification: bool = False) -> None:
         assert self.agent is not None
-        self._refresh_skills_if_needed()
+        knowledge = self.agent.execution_policy is not None
+        if not knowledge:
+            self._refresh_skills_if_needed()
 
-        if self._mcp_init_task and not self._mcp_init_task.done():
+        if not knowledge and self._mcp_init_task and not self._mcp_init_task.done():
             self._show_system_message("Waiting for MCP servers to connect...")
             await self._mcp_init_task
 
@@ -1379,13 +1435,13 @@ class CodePlusApp(App):
         chat = self.query_one("#chat-area", VerticalScroll)
         input_widget = self.query_one("#chat-input", ChatInput)
 
-        if text and "@" in text:
+        if not knowledge and text and "@" in text:
             text = expand_at_refs(text, self.agent.work_dir)
 
         # Start memory recall prefetch before UI work.
         prefetch_task = asyncio.create_task(
             self._prefetch_relevant_memories(text)
-        ) if text else None
+        ) if text and not knowledge else None
 
         if text:
             user_row = Vertical(classes="user-row")
@@ -1402,7 +1458,7 @@ class CodePlusApp(App):
             if self.session:
                 self.session.append(Message(role="user", content=text))
 
-        if self._mcp_instructions and not self._mcp_instructions_ok:
+        if not knowledge and self._mcp_instructions and not self._mcp_instructions_ok:
             self.conversation.add_system_reminder(self._mcp_instructions)
             self._mcp_instructions_ok = True
 
@@ -1436,7 +1492,8 @@ class CodePlusApp(App):
         self._teammate_tree = TeammateTree(id="teammate-tree")
         self._teammate_tree.display = False
         await chat.mount(self._teammate_tree)
-        self._start_teammate_polling()
+        if not knowledge:
+            self._start_teammate_polling()
 
         self.call_after_refresh(chat.scroll_end, animate=False)
         self._start_spinner()
@@ -1444,152 +1501,157 @@ class CodePlusApp(App):
         await asyncio.sleep(0)
 
         try:
-            async for event in self.agent.run(self.conversation):
-                if isinstance(event, ThinkingText):
-                    self.call_after_refresh(chat.scroll_end, animate=False)
+            async with aclosing(self.agent.run(self.conversation)) as run_stream:
+                async for event in run_stream:
+                    if isinstance(event, ThinkingText):
+                        self.call_after_refresh(chat.scroll_end, animate=False)
 
-                elif isinstance(event, StreamText):
-                    if not accumulated_text:
-                        if streaming_label is not None:
+                    elif isinstance(event, StreamText):
+                        if not accumulated_text:
+                            if streaming_label is not None:
+                                await streaming_label.remove()
+                            streaming_label = Static("", classes="message ai-message")
+                            await ai_row.mount(streaming_label)
+                        accumulated_text += event.text
+                        from rich.text import Text as RichText
+                        t = RichText()
+                        t.append("● ", style="bold color(99)")
+                        t.append(accumulated_text)
+                        streaming_label.update(t)
+                        self.call_after_refresh(chat.scroll_end, animate=False)
+
+                    elif isinstance(event, RetryEvent):
+                        self._show_system_message(f"↻ Retrying: {event.reason}")
+
+                    elif isinstance(event, ToolUseEvent):
+                        if accumulated_text:
+                            if streaming_label is not None:
+                                await streaming_label.remove()
+                            from rich.text import Text as RichText
+                            prefix = Static(RichText("●  ", style="bold color(99)"), classes="message")
+                            await ai_row.mount(prefix)
+                            md = self._answer_markdown(accumulated_text)
+                            await ai_row.mount(md)
+                            streaming_label = None
+                            accumulated_text = ""
+                        elif streaming_label is not None:
                             await streaming_label.remove()
+                            streaming_label = None
+
+                        if _is_subagent_tool(event.tool_name):
+                            agent_type = event.arguments.get("subagent_type", "")
+                            desc = event.arguments.get("description", "")
+                            block = SubAgentBlock(
+                                agent_type or "agent",
+                                desc,
+                                classes="tool-block subagent-block",
+                            )
+                        else:
+                            block = ToolCallBlock(
+                                event.tool_name, event.arguments, classes="tool-block"
+                            )
+                        await ai_row.mount(block)
+                        tool_blocks[event.tool_id] = block
+                        self.call_after_refresh(chat.scroll_end, animate=False)
+
+                    elif isinstance(event, PermissionRequest):
+                        await self._handle_permission_request(event)
+
+                    elif isinstance(event, ToolResultEvent):
+                        block = tool_blocks.get(event.tool_id)
+                        if block:
+                            block.set_result(event.output, event.is_error, event.elapsed)
+                        self.call_after_refresh(chat.scroll_end, animate=False)
+
+                        ask_tool = self.registry.get("AskUserQuestion")
+                        if ask_tool and isinstance(ask_tool, AskUserTool) and ask_tool._pending_event:
+                            await self._handle_askuser(ask_tool._pending_event)
+
+                    elif isinstance(event, TurnComplete):
+                        if self.session and not knowledge:
+                            for msg in self.conversation.history[history_cursor:]:
+                                self.session.append(msg)
+                            history_cursor = len(self.conversation.history)
+
+                        collapsible = [
+                            (tid, blk) for tid, blk in tool_blocks.items()
+                            if isinstance(blk, ToolCallBlock)
+                            and blk.tool_name in COLLAPSIBLE_TOOLS
+                            and not blk._loading
+                        ]
+                        if len(collapsible) >= 2:
+                            total_elapsed = sum(b._elapsed for _, b in collapsible)
+                            summary = ToolGroupSummary(
+                                len(collapsible), total_elapsed,
+                                classes="tool-block tool-group-summary",
+                            )
+                            for _, blk in collapsible:
+                                blk.display = False
+                            await ai_row.mount(summary)
+
+                        tool_blocks.clear()
+                        ai_row = Vertical(classes="ai-row")
+                        await chat.mount(ai_row)
                         streaming_label = Static("", classes="message ai-message")
                         await ai_row.mount(streaming_label)
-                    accumulated_text += event.text
-                    from rich.text import Text as RichText
-                    t = RichText()
-                    t.append("● ", style="bold color(99)")
-                    t.append(accumulated_text)
-                    streaming_label.update(t)
-                    self.call_after_refresh(chat.scroll_end, animate=False)
+                        accumulated_text = ""
+                        self.call_after_refresh(chat.scroll_end, animate=False)
 
-                elif isinstance(event, RetryEvent):
-                    self._show_system_message(f"↻ Retrying: {event.reason}")
+                    elif isinstance(event, UsageEvent):
+                        pass  # token 展示已移除
 
-                elif isinstance(event, ToolUseEvent):
-                    if accumulated_text:
-                        if streaming_label is not None:
+                    elif isinstance(event, HookEvent):
+                        status = "✓" if event.success else "✗"
+                        self._show_system_message(
+                            f"Hook [{event.hook_id}] {status} {event.output}"
+                        )
+
+                    elif isinstance(event, CompactNotification):
+                        self._show_system_message(event.message)
+                        # auto_compact 已重写 conversation.history（摘要 +
+                        # boundary + 保留尾部）。先持久化 boundary 记录，然后
+                        # 将游标推进到重建后的历史末尾，这样 TurnComplete/LoopComplete
+                        # 刷盘时只追加 boundary 之后的新消息，不会把已压缩的
+                        # 前缀作为普通记录重复写入。
+                        if not knowledge:
+                            self._persist_compact_boundary(event)
+                        history_cursor = len(self.conversation.history)
+
+                    elif isinstance(event, ErrorEvent):
+                        # 保留错误前已输出的流式文本
+                        if accumulated_text and streaming_label is not None:
                             await streaming_label.remove()
-                        from rich.text import Text as RichText
-                        prefix = Static(RichText("●  ", style="bold color(99)"), classes="message")
-                        await ai_row.mount(prefix)
-                        md = self._answer_markdown(accumulated_text)
-                        await ai_row.mount(md)
-                        streaming_label = None
-                        accumulated_text = ""
-                    elif streaming_label is not None:
-                        await streaming_label.remove()
-                        streaming_label = None
+                            md = self._answer_markdown(accumulated_text)
+                            await ai_row.mount(md)
+                            streaming_label = None
+                            accumulated_text = ""
+                        self._show_error(event.message)
 
-                    if _is_subagent_tool(event.tool_name):
-                        agent_type = event.arguments.get("subagent_type", "")
-                        desc = event.arguments.get("description", "")
-                        block = SubAgentBlock(
-                            agent_type or "agent",
-                            desc,
-                            classes="tool-block subagent-block",
+                    elif isinstance(event, LoopComplete):
+                        if knowledge and self.session and accumulated_text:
+                            self.session.append(Message(role='assistant', content=accumulated_text))
+                        total_time = _time.monotonic() - self._thinking_start
+                        done_label = Static(
+                            f"✻ {_to_past_tense(self._thinking_verb)} for {total_time:.1f}s",
+                            classes="message thinking-done",
                         )
-                    else:
-                        block = ToolCallBlock(
-                            event.tool_name, event.arguments, classes="tool-block"
-                        )
-                    await ai_row.mount(block)
-                    tool_blocks[event.tool_id] = block
-                    self.call_after_refresh(chat.scroll_end, animate=False)
+                        await ai_row.mount(done_label)
+                        if self.session and not knowledge:
+                            for msg in self.conversation.history[history_cursor:]:
+                                self.session.append(msg)
+                            history_cursor = len(self.conversation.history)
+                            self.session.meta.total_tokens = (
+                                self.agent.total_input_tokens
+                                + self.agent.total_output_tokens
+                            )
+                            asyncio.ensure_future(
+                                self._update_session_summary()
+                            )
+                        if self.agent.plan_mode and not knowledge:
+                            asyncio.ensure_future(
+                                self._show_plan_approval()
+                            )
 
-                elif isinstance(event, PermissionRequest):
-                    await self._handle_permission_request(event)
-
-                elif isinstance(event, ToolResultEvent):
-                    block = tool_blocks.get(event.tool_id)
-                    if block:
-                        block.set_result(event.output, event.is_error, event.elapsed)
-                    self.call_after_refresh(chat.scroll_end, animate=False)
-
-                    ask_tool = self.registry.get("AskUserQuestion")
-                    if ask_tool and isinstance(ask_tool, AskUserTool) and ask_tool._pending_event:
-                        await self._handle_askuser(ask_tool._pending_event)
-
-                elif isinstance(event, TurnComplete):
-                    if self.session:
-                        for msg in self.conversation.history[history_cursor:]:
-                            self.session.append(msg)
-                        history_cursor = len(self.conversation.history)
-
-                    collapsible = [
-                        (tid, blk) for tid, blk in tool_blocks.items()
-                        if isinstance(blk, ToolCallBlock)
-                        and blk.tool_name in COLLAPSIBLE_TOOLS
-                        and not blk._loading
-                    ]
-                    if len(collapsible) >= 2:
-                        total_elapsed = sum(b._elapsed for _, b in collapsible)
-                        summary = ToolGroupSummary(
-                            len(collapsible), total_elapsed,
-                            classes="tool-block tool-group-summary",
-                        )
-                        for _, blk in collapsible:
-                            blk.display = False
-                        await ai_row.mount(summary)
-
-                    tool_blocks.clear()
-                    ai_row = Vertical(classes="ai-row")
-                    await chat.mount(ai_row)
-                    streaming_label = Static("", classes="message ai-message")
-                    await ai_row.mount(streaming_label)
-                    accumulated_text = ""
-                    self.call_after_refresh(chat.scroll_end, animate=False)
-
-                elif isinstance(event, UsageEvent):
-                    pass  # token 展示已移除
-
-                elif isinstance(event, HookEvent):
-                    status = "✓" if event.success else "✗"
-                    self._show_system_message(
-                        f"Hook [{event.hook_id}] {status} {event.output}"
-                    )
-
-                elif isinstance(event, CompactNotification):
-                    self._show_system_message(event.message)
-                    # auto_compact 已重写 conversation.history（摘要 +
-                    # boundary + 保留尾部）。先持久化 boundary 记录，然后
-                    # 将游标推进到重建后的历史末尾，这样 TurnComplete/LoopComplete
-                    # 刷盘时只追加 boundary 之后的新消息，不会把已压缩的
-                    # 前缀作为普通记录重复写入。
-                    self._persist_compact_boundary(event)
-                    history_cursor = len(self.conversation.history)
-
-                elif isinstance(event, ErrorEvent):
-                    # 保留错误前已输出的流式文本
-                    if accumulated_text and streaming_label is not None:
-                        await streaming_label.remove()
-                        md = self._answer_markdown(accumulated_text)
-                        await ai_row.mount(md)
-                        streaming_label = None
-                        accumulated_text = ""
-                    self._show_error(event.message)
-
-                elif isinstance(event, LoopComplete):
-                    total_time = _time.monotonic() - self._thinking_start
-                    done_label = Static(
-                        f"✻ {_to_past_tense(self._thinking_verb)} for {total_time:.1f}s",
-                        classes="message thinking-done",
-                    )
-                    await ai_row.mount(done_label)
-                    if self.session:
-                        for msg in self.conversation.history[history_cursor:]:
-                            self.session.append(msg)
-                        history_cursor = len(self.conversation.history)
-                        self.session.meta.total_tokens = (
-                            self.agent.total_input_tokens
-                            + self.agent.total_output_tokens
-                        )
-                        asyncio.ensure_future(
-                            self._update_session_summary()
-                        )
-                    if self.agent.plan_mode:
-                        asyncio.ensure_future(
-                            self._show_plan_approval()
-                        )
 
             # 收尾：渲染剩余的累积文本
             if accumulated_text and streaming_label is not None:
@@ -1614,9 +1676,12 @@ class CodePlusApp(App):
             self._finish_streaming()
             input_widget.focus()
 
-            await self._process_task_notifications()
+            if not knowledge:
+                await self._process_task_notifications()
 
     async def _process_task_notifications(self) -> None:
+        if self._knowledge_active:
+            return
         completed = self.task_manager.poll_completed()
         if not completed or self.agent is None:
             return
@@ -1644,6 +1709,8 @@ class CodePlusApp(App):
                 await self._process_mailbox_notifications()
 
     async def _process_mailbox_notifications(self) -> None:
+        if self._knowledge_active:
+            return
         if not hasattr(self, "team_manager") or self.team_manager is None:
             return
         if self._streaming or self.agent is None:
@@ -1851,10 +1918,20 @@ class CodePlusApp(App):
     async def _handle_permission_request(self, request: PermissionRequest) -> None:
         from codeplus.permission_dialog import InlinePermissionWidget
 
+        if request.future.done():
+            return
+
+        class BoundPermissionWidget(InlinePermissionWidget):
+            def post_message(self, message):
+                if isinstance(message, InlinePermissionWidget.Responded):
+                    message._request_future = request.future
+                return super().post_message(message)
+
         chat = self.query_one("#chat-area", VerticalScroll)
-        widget = InlinePermissionWidget(request.tool_name, request.description)
+        widget = BoundPermissionWidget(request.tool_name, request.description)
         self._pending_perm_request = request
         await chat.mount(widget)
+        request.future.add_done_callback(lambda _: self.call_later(self._revoke_permission, request, widget))
         self.call_after_refresh(chat.scroll_end, animate=False)
         # 权限提示弹窗期间禁用输入框
         try:
@@ -1862,12 +1939,27 @@ class CodePlusApp(App):
         except Exception:
             pass
 
+    def _revoke_permission(self, request, widget) -> None:
+        try:
+            widget.remove()
+        except Exception:
+            pass
+        if getattr(self, '_pending_perm_request', None) is request:
+            self._pending_perm_request = None
+            try:
+                self.query_one('#chat-input').disabled = False
+                self.query_one('#chat-input').focus()
+            except Exception:
+                pass
+
     def on_inline_permission_widget_responded(
         self, event: "InlinePermissionWidget.Responded"
     ) -> None:
         from codeplus.permission_dialog import InlinePermissionWidget
 
         req = getattr(self, "_pending_perm_request", None)
+        if req is None or getattr(event, '_request_future', None) is not req.future:
+            return
         # future 可能已经结束（本轮被取消时会被 cancel），此时不能再回填结果
         if req is not None and not req.future.done():
             req.future.set_result(event.response)
@@ -1921,16 +2013,17 @@ class CodePlusApp(App):
     # -----------------------------------------------------------------
 
     async def _update_session_summary(self) -> None:
-        if not self.session or not self.client or not self.agent:
+        if self._knowledge_active or not self.session or not self.client or not self.agent:
             return
+        session, conversation, client, protocol = self.session, self.conversation, self.client, self.agent.protocol
         try:
             summary = await generate_session_summary(
-                self.client, self.conversation, self.agent.protocol
+                client, conversation, protocol
             )
             if summary:
-                self.session.meta.summary = summary
-                self.session.meta.save(
-                    self.session._sessions_dir / f"{self.session.session_id}.meta"
+                session.meta.summary = summary
+                session.meta.save(
+                    session._sessions_dir / f"{session.session_id}.meta"
                 )
         except Exception:
             pass
@@ -2009,6 +2102,11 @@ class CodePlusApp(App):
     # -----------------------------------------------------------------
 
     async def action_handle_ctrl_c(self) -> None:
+        if self._knowledge_active:
+            if self._agent_task and not self._agent_task.done():
+                self._agent_task.cancel()
+            self._show_system_message('Knowledge cancellation requested; waiting for cleanup.')
+            return
         if self._streaming:
             if self._agent_task and not self._agent_task.done():
                 self._agent_task.cancel()

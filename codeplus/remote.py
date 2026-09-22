@@ -64,6 +64,8 @@ log = logging.getLogger(__name__)
 
 
 class RemoteServer:
+    # The shared command registry must not route knowledge commands into chat.
+    knowledge_feature_available = False
     """Remote Control 核心：桥接 Agent 事件和 WebSocket 客户端。"""
 
     def __init__(

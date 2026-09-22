@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from pydantic import BaseModel
+from codeplus.run_policy import SourceSpan
 
 SKIP_DIRS = {".git", ".venv", "node_modules", "__pycache__", ".tox", ".mypy_cache"}
 
@@ -30,6 +31,7 @@ class ToolResult:
     # tool_reference 块，由服务端把 schema 展开进上下文。填了这个字段时
     # output 仍然保留一份人可读的等价文本，供 TUI 和日志展示。
     content_blocks: list[dict[str, Any]] | None = None
+    source_spans: tuple[SourceSpan, ...] = ()
 
 
 class Tool(ABC):
@@ -114,6 +116,12 @@ class StreamEnd:
     # 计数，所以 cache_creation 在那边始终为 0。
     cache_read: int = 0
     cache_creation: int = 0
+    # Optional trusted request accounting; missing usage is never inferred from
+    # the legacy integer defaults above.
+    raw_usage: dict[str, Any] | None = None
+    terminal: str | None = None
+    delivery: str | None = None
+    response_model: str | None = None
 
 
 StreamEvent = TextDelta | ThinkingDelta | ThinkingComplete | ToolCallStart | ToolCallDelta | ToolCallComplete | StreamEnd

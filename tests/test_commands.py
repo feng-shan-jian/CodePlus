@@ -453,7 +453,7 @@ class TestRegisterAllCommands:
             "session", "mcp", "memory",
             "sandbox", "rewind", "status", "skill",
         }
-        assert names == expected
+        assert names == expected | {'knowledge'}
 
     def test_no_alias_conflicts(self) -> None:
         from codeplus.commands.handlers import register_all_commands
