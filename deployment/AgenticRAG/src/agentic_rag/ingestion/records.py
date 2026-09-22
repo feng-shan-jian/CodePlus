@@ -49,8 +49,8 @@ class InputManifest(Record):
 
     @model_validator(mode='after')
     def valid_entries(self):
-        if not self.selections or len({e.item_id for e in self.entries}) != len(self.entries):
-            raise ValueError('selections required and item IDs must be unique')
+        if len({e.item_id for e in self.entries}) != len(self.entries):
+            raise ValueError('item IDs must be unique')
         if any(e.selection_index >= len(self.selections) for e in self.entries):
             raise ValueError('input selection index out of range')
         return self

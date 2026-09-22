@@ -1,0 +1,22 @@
+{
+  "python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Scripts\\python.exe",
+  "cwd": "D:\\CodePlus",
+  "argv": [
+    "deployment/AgenticRAG/tests",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--import-mode=importlib",
+    "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\pytest-core",
+    "--junitxml=D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-leader-core.xml"
+  ],
+  "before": {
+    "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+    "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+  },
+  "after": {
+    "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+    "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+  },
+  "exit_code": 0
+}

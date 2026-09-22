@@ -8,7 +8,6 @@ from uuid import UUID
 
 from .._schema import fingerprint
 from ..domain import RagError, ErrorCode, RevisionMember
-from ..ingestion.processing import read_processed
 
 TEXT_MAX_BYTES = 65535
 LAYOUT = 'uuid1024-bm25-utf8-v1'
@@ -59,11 +58,34 @@ class PreparedRevision:
     manifest_hash: str
     schema_hash: str
     spec: dict
+    encoded_vectors: tuple = ()
+
+
+def rows_for_document(kb_id, revision_id, snapshot, version, result):
+    """The same source-to-row transform serves first builds and ordinary changes."""
+    from ..capabilities import ModelInput
+    rows, inputs, counts = [], [], []
+    for entry in result.inputs:
+        chunk = entry.chunk
+        span, = chunk.spans
+        body = result.parsed.text[span.start:span.end]
+        text = text_for_index(entry.index_title, body)
+        rows.append(dict(chunk_id=str(chunk.chunk_id), kb_id=str(kb_id), revision_id=str(revision_id),
+            document_id=str(version.document_id), document_version_id=str(version.document_version_id),
+            section_id=str(chunk.section_id), text=text, text_hash=hashlib.sha256(text.encode()).hexdigest(),
+            body_hash=chunk.text_hash, raw_hash=version.raw_hash, parsed_hash=version.parsed_hash,
+            encoding_hash=snapshot.document_encoding_fingerprint, span_start=span.start, span_end=span.end))
+        inputs.append(ModelInput(item_id=chunk.chunk_id,title=entry.index_title or None,text=body))
+        counts.append(entry.complete_embedding_tokens)
+    return tuple(rows), tuple(inputs), tuple(counts)
 
 
 def prepare(catalog, batch_id, revision_id):
     """Full first-import only. Filesystem/hash checks finish before any SQL write."""
-    from ..capabilities import ModelInput
+    from ..ingestion.mutations import request, prepare_changes
+    from ..ingestion.processing import read_processed
+    if request(catalog,batch_id) is not None:
+        return prepare_changes(catalog,batch_id,revision_id)
     batch = catalog.get_batch(batch_id)
     snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
     members, rows, inputs, counts = [], [], [], []
@@ -80,20 +102,8 @@ def prepare(catalog, batch_id, revision_id):
         chunks_hash = next(a.sha256 for a in item.output_hashes if a.kind == 'chunks')
         members.append(RevisionMember(revision_id=revision_id, document_id=version.document_id,
                                       document_version_id=version.document_version_id, chunk_set_hash=chunks_hash))
-        for entry in result.inputs:
-            chunk = entry.chunk
-            span, = chunk.spans
-            body = result.parsed.text[span.start:span.end]
-            text = text_for_index(entry.index_title, body)
-            row = dict(chunk_id=str(chunk.chunk_id), kb_id=str(batch.kb_id), revision_id=str(revision_id),
-                       document_id=str(version.document_id), document_version_id=str(version.document_version_id),
-                       section_id=str(chunk.section_id), text=text,
-                       text_hash=hashlib.sha256(text.encode()).hexdigest(), body_hash=chunk.text_hash,
-                       raw_hash=version.raw_hash, parsed_hash=version.parsed_hash,
-                       encoding_hash=snapshot.document_encoding_fingerprint, span_start=span.start, span_end=span.end)
-            rows.append(row)
-            inputs.append(ModelInput(item_id=chunk.chunk_id, title=entry.index_title or None, text=body))
-            counts.append(entry.complete_embedding_tokens)
+        document_rows, document_inputs, document_counts = rows_for_document(batch.kb_id,revision_id,snapshot,version,result)
+        rows.extend(document_rows); inputs.extend(document_inputs); counts.extend(document_counts)
     if not rows or len({r['chunk_id'] for r in rows}) != len(rows):
         raise index_error('candidate requires nonempty unique chunks')
     ordered = sorted(zip(rows, inputs, counts), key=lambda t: t[0]['chunk_id'])

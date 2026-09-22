@@ -82,6 +82,12 @@ class Mutation:
                         token.store_id == self._database.directory.store_id and row ==
                         ('PUBLISHED', str(token.owner_nonce), token.owner_epoch, str(token.owner_nonce), token.owner_epoch)):
                     return
+                if (self._lock.path == lock_for(self._database, token.kb_id).path and
+                        token.store_id == self._database.directory.store_id and row ==
+                        ('COMPLETED_NO_CHANGE', str(token.owner_nonce), token.owner_epoch, None, None) and
+                        connection.execute('SELECT 1 FROM mutation_completions WHERE batch_id=? AND kb_id=?',
+                                           (str(token.batch_id), str(token.kb_id))).fetchone() == (1,)):
+                    return
                 self.require(self._database, connection)
                 connection.execute("UPDATE mutation_batches SET recovery_stage=state,state='WAITING_RECOVERY' WHERE batch_id=?", (str(self.token.batch_id),))
         finally:

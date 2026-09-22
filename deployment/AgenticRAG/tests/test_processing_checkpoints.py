@@ -169,7 +169,7 @@ def test_actual_schema2_to3_upgrade_preserves_authenticated_history(tmp_path,dam
         assert catalog.get_version(old['version']).raw_hash==old['raw']
         assert catalog.archives.read(old['raw'])==b'real archived original in schema1'
         with catalog._db.transaction() as connection:
-            assert connection.pragma('user_version')==6
+            assert connection.pragma('user_version')==7
             assert connection.execute('SELECT sha256 FROM schema_migrations WHERE version=2').fetchone()==(digest,)
             assert connection.execute('PRAGMA foreign_key_check').fetchall()==[]
 
@@ -187,6 +187,10 @@ def test_schema2_upgrade_retains_actual_r07_captured_input_and_archive(tmp_path)
     # no raw row/archive or original migration resource/hash is synthesized.
     connection=apsw.Connection(str(catalog._directory.root/'catalog.sqlite'))
     with connection:
+        for table in ('mutation_completions','mutation_item_results','ordinary_mutations'):
+            assert connection.execute('SELECT count(*) FROM '+table).fetchone()==(0,)
+            connection.execute('DROP TABLE '+table)
+        connection.execute('DELETE FROM schema_migrations WHERE version=7')
         for table in ('host_tool_calls','model_requests','host_runs'):
             assert connection.execute('SELECT count(*) FROM '+table).fetchone()==(0,)
             connection.execute('DROP TABLE '+table)
@@ -215,6 +219,6 @@ def test_schema2_upgrade_retains_actual_r07_captured_input_and_archive(tmp_path)
     assert upgraded.get_snapshot(snapshot.snapshot_id)==snapshot
     assert read_input(upgraded,raw.batch_id,raw.entry.item_id)==original
     with upgraded._db.transaction() as connection:
-        assert connection.pragma('user_version')==6
+        assert connection.pragma('user_version')==7
         assert connection.execute('PRAGMA integrity_check').fetchone()==('ok',)
         assert connection.execute('PRAGMA foreign_key_check').fetchall()==[]

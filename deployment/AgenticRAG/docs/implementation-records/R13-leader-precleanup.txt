@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r13-leader-20260922\precleanup.py", line 36, in <module>
+    assert ignored==old_ignored,'repository ignored files changed during Leader checks'
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: repository ignored files changed during Leader checks

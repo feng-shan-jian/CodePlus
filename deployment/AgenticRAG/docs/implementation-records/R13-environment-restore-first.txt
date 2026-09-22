@@ -1,0 +1,12 @@
+{"status": "FAIL", "frozen_fingerprint": "365df50e99520acfc88eb1b6d8512d37f0ac18f326610fc0f154233ab05aa292", "wheels": {"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\final-wheel\\codeplus-0.2.0-py3-none-any.whl": "1ac2f7c8ca498bfe749f1458b990557f8cc98024f5b8509a1f30b5f1c187ebe5", "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\final-wheel\\codeplus_agentic_rag-0.1.0-py3-none-any.whl": "d8967e612116849884497423763af4c29792d4c0948a19641146b47beb9ba8da"}}
+Traceback (most recent call last):
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r13-executor-20260922\finalize_environment.py", line 30, in <module>
+    command(['uv','pip','sync','--python',core,'--require-hashes','-r',lock])
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r13-executor-20260922\finalize_environment.py", line 15, in command
+    result.check_returncode();return result.stdout
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\subprocess.py", line 508, in check_returncode
+    raise CalledProcessError(self.returncode, self.args, self.stdout,
+                             self.stderr)
+subprocess.CalledProcessError: Command '['uv', 'pip', 'sync', '--python', 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Scripts\\python.exe', '--require-hashes', '-r', 'D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R12-windows-integration-lock.txt']' returned non-zero exit status 2.

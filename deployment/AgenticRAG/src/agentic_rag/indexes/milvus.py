@@ -163,7 +163,7 @@ class MilvusRevisionIndex:
                          index_name=s.index_name, index_id=s.index_id, mem_size=s.mem_size)
                     for s in c.list_loaded_segments(name, timeout=self.timeout)]
         unique = {s['segment_id']:s for s in segments}
-        if (not unique or sum(s['num_rows'] for s in unique.values()) != count or
+        if ((count > 0 and not unique) or sum(s['num_rows'] for s in unique.values()) != count or
                 any(s['state'] != 'Sealed' or s['index_name'] not in ('IVF_FLAT','SPARSE_INVERTED_INDEX') or s['index_id'] <= 0 for s in segments)):
             raise index_error('loaded sealed segments do not cover all indexed rows')
         return {'schema': schema, 'indexes': indexes, 'load_state': state, 'segments': segments}
@@ -190,6 +190,30 @@ class MilvusRevisionIndex:
             result.append({'id':str(hit['chunk_id']), 'distance':float(hit['distance']), 'entity':row})
         return result
 
+    def read_vectors(self, artifact, expected):
+        """Authenticate every source scalar and float32 value before reuse."""
+        self.inspect(artifact,len(expected))
+        by_id = {r['chunk_id']:r for r in expected}
+        if len(by_id) != len(expected):
+            raise index_error('base encoded manifest has duplicate IDs')
+        vectors = {}
+        iterator = self.client.query_iterator(self._name(artifact),filter='',output_fields=[*SCALAR_FIELDS,'dense'],
+            batch_size=256,consistency_level='Strong',timeout=self.timeout)
+        try:
+            while batch := iterator.next():
+                for row in batch:
+                    identity = row['chunk_id']
+                    if (identity in vectors or identity not in by_id or
+                            {k:row[k] for k in SCALAR_FIELDS} != by_id[identity] or
+                            vector_hash(row['dense']) != by_id[identity]['vector_hash']):
+                        raise index_error('base vector reuse identity/source/config/float32 digest differs')
+                    vectors[identity] = {'chunk_id':identity,'dense':list(row['dense']),'vector_hash':row['vector_hash']}
+        finally:
+            iterator.close()
+        if set(vectors) != set(by_id):
+            raise index_error('base vector reuse member set is incomplete')
+        return vectors
+
     def validate(self, artifact, expected):
         name = self._name(artifact)
         proof = self.inspect(artifact, len(expected))
@@ -213,6 +237,19 @@ class MilvusRevisionIndex:
             iterator.close()
         if seen != set(by_id):
             raise index_error('Milvus full iterator ID set incomplete')
+        # Empty published revisions are valid after explicit last-document
+        # deletion. Exercise both query paths without inserting a dummy document.
+        if first is None:
+            dense = self.search(artifact,[1.0]+[0.0]*1023,limit=1,nprobe=artifact['spec']['index']['nlist'])
+            sparse = self.search(artifact,'empty revision verification',field='sparse',limit=1)
+            if dense or sparse:
+                raise index_error('empty revision returned foreign rows')
+            proof.update(rows_checked=0,id_set_hash=fingerprint('index-ids',{'ids':[]}),
+                row_manifest_hash=fingerprint('index-rows',{'rows':expected}),
+                vector_validation='empty set; no document vectors',max_norm_error=0.0,
+                dense_smoke=[],bm25_smoke=[],bm25_analyzer_token_count=0,bm25_empty_is_valid=True,
+                empty_revision=True,server_version=self.server_version,client_version='3.0.2')
+            return json.loads(json.dumps(proof,default=list))
         dense = self.search(artifact, first['dense'], limit=min(10, len(expected)), nprobe=artifact['spec']['index']['nlist'])
         # Query text is an existing complete index input, never a fabricated constant.
         config = artifact['spec']['index']

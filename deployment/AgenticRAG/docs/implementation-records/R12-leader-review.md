@@ -1,6 +1,6 @@
 # R12 Leader 独立验收
 
-状态：**ACCEPTED，待精确本地提交**。执行者与独立清理会话均已 STOP_WRITE，Leader 接回唯一写入权并完成清理复核。R13–R26 及总体验收仍未完成。
+状态：**COMMITTED：`44b861a235233f7072fda267e7a75321431c4e88`**。执行者与独立清理会话均已 STOP_WRITE，Leader完成独立验收、清理复核及本地提交。R13–R26 及总体验收仍未完成。
 
 ## 冻结与范围
 
@@ -73,3 +73,7 @@ Leader 读取实际删除命令与路径检查后，独立核对清理交付3份
 首次149路径暂存检查还发现5份原始失败XML含尾空白、Leader任务卡多一个末尾LF，退出2。再次交给独立清理会话，仅为5份XML追加精确属性例外并删除任务卡最后1字节LF，原报告及200源码不变，旧index149路径/blob不变，见 [格式整理记录](R12-final-format-cleanup.json)。Leader重新核对清理输出SHA后精确重暂存并重跑最终检查；不做reset、不修改原失败证据。该记录也保留Leader一次git write-tree审计命令可能刷新cache-tree的事实；清理实际before/after index字节及语义均相同。
 
 功能、代码与授权清理复核已完成，下一步仅精确暂存和本地提交；不 push。R12 真正提交后记录真实SHA并准备新 Leader 接续 R13–R26，完整目标不变。
+
+## 提交后记
+
+COMMITTED：`44b861a235233f7072fda267e7a75321431c4e88`，parent `5dbe979a330a6b157adfba7ad3ea8299fecf73a9`。150条精确提交路径及blob全部核对，index空，200源码/6553保护输入无未授权漂移，未push/发布。见 [最终暂存清单](R12-leader-stage.json)、[提交后核验](R12-leader-postcommit.json)。C02–C05通过，下一项R13；本后记、真实SHA台账与交接文件随下一正常任务提交，不amend。Leader最终审计临时脚本及pathspec均已删除。

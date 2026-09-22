@@ -147,6 +147,8 @@ def publish(catalog, owner, revision_id):
         if (old['kb_id'], old['owner_nonce'], old['owner_epoch']) != (str(owner.token.kb_id), str(owner.token.owner_nonce), owner.token.owner_epoch):
             raise failure('publication retry belongs to a different owner')
         return old
+    from ..ingestion.mutations import request, completion_value
+    completion = completion_value(catalog,owner.token.batch_id,revision_id) if request(catalog,owner.token.batch_id) is not None else None
     with catalog._owned(owner) as connection:
         batch = connection.execute('SELECT base_revision_id,processing_snapshot_id,state FROM mutation_batches WHERE batch_id=?', (str(owner.token.batch_id),)).fetchone()
         current = connection.execute('SELECT current_revision_id FROM libraries WHERE kb_id=?', (str(owner.token.kb_id),)).fetchone()
@@ -162,5 +164,43 @@ def publish(catalog, owner, revision_id):
                             str(owner.token.owner_nonce), owner.token.owner_epoch, row[3], datetime.now(timezone.utc).isoformat()))
         connection.execute('UPDATE libraries SET current_revision_id=?,pending_mutation_id=NULL WHERE kb_id=?', (str(revision_id), str(owner.token.kb_id)))
         connection.execute("UPDATE mutation_batches SET state='PUBLISHED',published_revision_id=? WHERE batch_id=?", (str(revision_id), str(owner.token.batch_id)))
+        if completion is not None:
+            # Path ownership follows only successful versions admitted to this
+            # publication. Failed updates keep their previous logical identity.
+            for item in completion['items']:
+                if item['state'] != 'encoded':
+                    continue
+                source = connection.execute('SELECT source_key,original_name FROM document_sources WHERE item_id=? AND kb_id=?',
+                                            (item['item_id'],str(owner.token.kb_id))).fetchone()
+                if source is None:
+                    raise failure('published update lacks its captured source identity')
+                connection.execute('UPDATE documents SET source_key=?,original_name=? WHERE document_id=? AND kb_id=?',
+                                   (*source,item['document_id'],str(owner.token.kb_id)))
+            connection.execute('INSERT INTO mutation_completions VALUES(?,?,?)',
+                               (str(owner.token.batch_id),str(owner.token.kb_id),canonical_json(completion)))
         connection.execute('DELETE FROM revision_dependencies WHERE batch_id=?', (str(owner.token.batch_id),))
     return receipt(catalog, owner.token.batch_id, revision_id)
+
+
+def complete_no_change(catalog, owner):
+    """Normal terminal batch, no revision/collection/publication is created."""
+    from ..ingestion.mutations import prepare_changes, completion_value
+    prepared = prepare_changes(catalog,owner.token.batch_id,uuid4())
+    summary = completion_value(catalog,owner.token.batch_id)
+    target = [(str(m.document_id),str(m.document_version_id),m.chunk_set_hash) for m in prepared.members]
+    with catalog._owned(owner) as connection:
+        batch = catalog.get_batch(owner.token.batch_id)
+        current = connection.execute('SELECT current_revision_id FROM libraries WHERE kb_id=?',(str(batch.kb_id),)).fetchone()
+        members = connection.execute('SELECT document_id,document_version_id,chunk_set_hash FROM revision_members WHERE revision_id=? ORDER BY document_id',
+                                     (str(batch.base_revision_id),)).fetchall()
+        if any(i.stage=='captured' and i.change=='index_changed' for i in catalog.get_input_items(batch.batch_id)):
+            raise failure('successful index changes require a validated new candidate')
+        if (batch.state.value != 'PROCESSING' or current != (str(batch.base_revision_id) if batch.base_revision_id else None,) or
+                target != members or connection.execute('SELECT 1 FROM index_artifacts WHERE batch_id=?',(str(batch.batch_id),)).fetchone()):
+            raise failure('no-change completion requires unchanged membership and no candidate')
+        connection.execute('INSERT INTO mutation_completions VALUES(?,?,?)',
+                           (str(batch.batch_id),str(batch.kb_id),canonical_json(summary)))
+        connection.execute("UPDATE mutation_batches SET state='COMPLETED_NO_CHANGE',recovery_stage=NULL WHERE batch_id=?",(str(batch.batch_id),))
+        connection.execute('UPDATE libraries SET pending_mutation_id=NULL WHERE kb_id=?',(str(batch.kb_id),))
+        connection.execute('DELETE FROM revision_dependencies WHERE batch_id=?',(str(batch.batch_id),))
+    return summary

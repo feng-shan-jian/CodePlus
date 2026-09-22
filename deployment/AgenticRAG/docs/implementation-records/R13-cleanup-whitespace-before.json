@@ -1,0 +1,85 @@
+[
+  {
+    "scope": "tracked working tree",
+    "exit_code": 0,
+    "output": [
+      "warning: in the working copy of 'deployment/AgenticRAG/README.md', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/docs/first-publication.md', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/docs/implementation-checklist.md', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/docs/implementation-records/.gitattributes', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/docs/implementation-records/R12-leader-review.md', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/docs/implementation-records/R12.md', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/ingestion/__init__.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/ingestion/records.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/storage/database.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/storage/inputs.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/storage/ownership.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/storage/publication.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/tests/test_input_migration.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/tests/test_package_install.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/tests/test_processing_checkpoints.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/tests/test_storage.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'deployment/AgenticRAG/tests/test_worker_history.py', LF will be replaced by CRLF the next time Git touches it",
+      "warning: in the working copy of 'eval/README.md', LF will be replaced by CRLF the next time Git touches it"
+    ]
+  },
+  {
+    "scope": "R13-leader-core.txt",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-core.xml",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-host.txt",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-host.xml",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-infra.txt",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-precleanup.txt",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-real.txt",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-runtime-verification.txt",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-setup.txt",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-upgrade.txt",
+    "exit_code": 1,
+    "output": []
+  },
+  {
+    "scope": "R13-leader-validation.txt",
+    "exit_code": 1,
+    "output": []
+  }
+]

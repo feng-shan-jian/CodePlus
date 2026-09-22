@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/resolve/dba1be0a40aa45a94ad051997016db3960a90277/tokenizer.json",
+  "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\answer-tokenizer-v41\\tokenizer.json",
+  "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+  "size_bytes": 6367257,
+  "purpose": "existing R12 production-meter regression; own downloaded tokenizer only",
+  "command": "Invoke-WebRequest -Uri <pinned URL> -OutFile <owned tokenizer>",
+  "time": "2026-09-22T21:30:20.5529107+08:00"
+}

@@ -1,0 +1,40 @@
+{
+  "source": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda",
+  "target": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\cuda",
+  "started_at": "2026-09-22T13:04:19.626807+00:00",
+  "copy_mode": "independent bytes; no hardlinks",
+  "commands": [
+    {
+      "argv": [
+        "uv",
+        "pip",
+        "install",
+        "--python",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\cuda\\Scripts\\python.exe",
+        "--link-mode",
+        "copy",
+        "--no-deps",
+        "--reinstall",
+        "-e",
+        "D:/CodePlus/deployment/AgenticRAG"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Using Python 3.14.3 environment at: cuda\nResolved 1 package in 12ms\n   Building codeplus-agentic-rag @ file:///D:/CodePlus/deployment/AgenticRAG\n      Built codeplus-agentic-rag @ file:///D:/CodePlus/deployment/AgenticRAG\nPrepared 1 package in 2.94s\nUninstalled 1 package in 22ms\nInstalled 1 package in 27ms\n - codeplus-agentic-rag==0.1.0 (from file:///C:/Users/18221/AppData/Local/Temp/codeplus-r10-leader-20260922/core-tests/test_wheel_and_sdist_install_i0/direct/codeplus_agentic_rag-0.1.0-py3-none-any.whl)\n + codeplus-agentic-rag==0.1.0 (from file:///D:/CodePlus/deployment/AgenticRAG)\n"
+    }
+  ],
+  "installed": {
+    "prefix": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\cuda",
+    "packages": {
+      "torch": "2.14.0+cu130",
+      "transformers": "5.17.0",
+      "tokenizers": "0.23.2",
+      "pydantic": "2.13.5",
+      "apsw": "3.53.4.0",
+      "codeplus-agentic-rag": "0.1.0"
+    }
+  },
+  "status": "PASS",
+  "finished_at": "2026-09-22T13:05:21.100788+00:00"
+}

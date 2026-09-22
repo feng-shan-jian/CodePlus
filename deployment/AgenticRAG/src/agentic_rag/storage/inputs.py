@@ -13,8 +13,13 @@ def _identity_error(message):
     return ErrorInfo(code=ErrorCode.IDENTITY_MISMATCH, stage='input_manifest', message=message)
 
 
-def begin_import(catalog, kb_id, snapshot, manifest, *, batch_id=None):
+def begin_import(catalog, kb_id, snapshot, manifest, *, batch_id=None, _ordinary=None):
+    if not manifest.selections and not (_ordinary and _ordinary['deletions']):
+        raise failure('import requires selections or explicit deletions')
     def register(connection, batch):
+        if _ordinary is not None:
+            from ..ingestion.mutations import register_request
+            register_request(catalog, connection, batch, snapshot, manifest, _ordinary)
         connection.execute('INSERT INTO input_manifests VALUES(?,?,?,?,?)',
                            (str(batch.batch_id), str(kb_id), manifest.identity, manifest.model_dump_json(), batch.owner_epoch))
         plans = []
@@ -113,8 +118,11 @@ def record_result(catalog, owner, item, *, produced_by):
             connection.execute('INSERT INTO document_sources VALUES(?,?,?,?,?,?)',
                                (str(item.entry.item_id), str(item.document_id), str(owner.token.kb_id), previous,
                                 item.raw.source_key, item.raw.metadata.original_name))
-            connection.execute('UPDATE documents SET source_key=?,original_name=? WHERE document_id=? AND kb_id=?',
-                               (item.raw.source_key, item.raw.metadata.original_name, str(item.document_id), str(owner.token.kb_id)))
+            # Ordinary changes transfer path ownership only in the publication
+            # transaction. A failed moved-file update retains the published path.
+            if connection.execute('SELECT 1 FROM ordinary_mutations WHERE batch_id=?', (str(item.batch_id),)).fetchone() is None:
+                connection.execute('UPDATE documents SET source_key=?,original_name=? WHERE document_id=? AND kb_id=?',
+                                   (item.raw.source_key, item.raw.metadata.original_name, str(item.document_id), str(owner.token.kb_id)))
         else:
             _insert_result(connection, owner.token.kb_id, item)
 
@@ -139,8 +147,8 @@ def compare_base(catalog, batch_id, document_id, raw_hash, source_uri):
         return 'content_changed', rebuild
     if rebuild:
         return 'encoding_changed', True
-    if row[3] != target[1]:
-        return 'index_changed', False
     if row[1] != source_uri:
         return 'source_changed', False
+    if row[3] != target[1]:
+        return 'index_changed', False
     return 'unchanged', False

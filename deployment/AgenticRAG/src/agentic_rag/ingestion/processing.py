@@ -10,7 +10,7 @@ from .chunking import chunk_document, CHUNKER_IMPLEMENTATION, CHUNKER_VERSION
 from .parsing import parse_document, PARSER, PARSER_FINGERPRINT
 
 
-def process_inputs(catalog, owner, tokenizer):
+def process_inputs(catalog, owner, tokenizer, *, skip_unchanged=False, cancelled=None):
     token = owner.token
     with catalog._owned(owner, token):
         pass
@@ -27,8 +27,12 @@ def process_inputs(catalog, owner, tokenizer):
         connection.execute("UPDATE mutation_batches SET state='PROCESSING' WHERE batch_id=? AND state='SNAPSHOTTING'", (str(token.batch_id),))
     output = []
     for raw_item in inputs:
+        if cancelled is not None and cancelled():
+            raise RagError(ErrorCode.CANCELLED, 'processing cancelled', stage='process')
         if raw_item.stage != 'captured':
             continue  # R07 failures remain authoritative raw failures.
+        if skip_unchanged and raw_item.change in ('unchanged', 'index_changed'):
+            continue
         existing = processing_store.read(catalog, token.batch_id, raw_item.entry.item_id)
         if existing is not None:
             output.append(existing[0])
@@ -46,6 +50,8 @@ def process_inputs(catalog, owner, tokenizer):
                 parser_fingerprint=PARSER_FINGERPRINT, source_uri=raw_item.raw.source_uri,
                 captured_at=raw_item.raw.captured_at, source_metadata=raw_item.raw.metadata.model_copy(update={'title': parsed.title or None}))
         except RagError as exc:
+            if exc.error.code in (ErrorCode.CANCELLED, ErrorCode.STORAGE_FAILURE, ErrorCode.LIBRARY_BUSY):
+                raise
             output.append(processing_store.persist(catalog, owner, raw_item, snapshot, error=exc.error, produced_by=token))
             continue
         # Acceptance failures propagate; never overwrite uncertain committed

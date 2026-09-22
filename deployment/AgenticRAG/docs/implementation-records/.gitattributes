@@ -14,3 +14,6 @@ R12-full-a.xml whitespace=-blank-at-eol
 R12-integration-b.xml whitespace=-blank-at-eol
 R12-leader-host.xml whitespace=-blank-at-eol
 R12-migration-b.xml whitespace=-blank-at-eol
+R13-compose-up.txt whitespace=-blank-at-eol
+R13-core-final.txt whitespace=-blank-at-eol
+R13-focused.txt whitespace=-blank-at-eol

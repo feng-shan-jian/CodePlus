@@ -11,7 +11,7 @@ from .selection import error_info
 from .source import VerifiedReader, file_stamp, input_error, normalize_source, open_source
 
 
-def capture_inputs(catalog, owner, *, cancelled=None):
+def capture_inputs(catalog, owner, *, cancelled=None, abort_cancelled=False):
     """Finish pending raw inputs only in their original owner's capture epoch."""
     token = owner.token
     for item in catalog.get_input_items(token.batch_id):
@@ -48,6 +48,9 @@ def capture_inputs(catalog, owner, *, cancelled=None):
                                                 'requires_rebuild_confirmation': rebuild})
                 input_store.record_result(catalog, owner, result, produced_by=token)
         except (OSError, RagError) as exc:
+            if isinstance(exc, RagError) and (exc.error.code in (ErrorCode.STORAGE_FAILURE, ErrorCode.LIBRARY_BUSY) or
+                                             (abort_cancelled and exc.error.code==ErrorCode.CANCELLED)):
+                raise
             # Metadata/ownership failures must not overwrite an already committed
             # success or conceal loss of authority. A second insert fails closed.
             error = error_info(exc)

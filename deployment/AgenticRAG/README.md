@@ -1,6 +1,6 @@
 # AgenticRAG 独立开发区
 
-状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、固定 Dense 检索、原文与引用，以及 R12 宿主开发接入候选。实际验收和提交状态见任务台账。更新日期：2026-09-22。R12 是中间节点，完整生命周期与产品能力仍继续 R13–R26。
+状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、普通增删改整批发布、固定 Dense 检索、原文与引用，以及 R12 宿主开发接入候选。实际验收和提交状态见任务台账。更新日期：2026-09-22。R12 是中间节点，后续生命周期与产品能力仍按 R14–R26 完成。
 
 在本目录完成 RAG 重建的规划、独立实现和验收，达到迁移条件后再接入 CodePlus 主模块。
 
@@ -29,6 +29,8 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 `agentic_rag.ingestion` 处理明确选择的本机 Markdown/TXT 文件或目录。`select_inputs` 固定清单，`Catalog.begin_import` 登记基准版和完整配置，`capture_inputs` 保存完整原件，`process_inputs` 从归档解析并原子接纳完整处理检查点，`read_processed` 核验重开结果。相同路径延续文档身份，显式更新支持改名，缺失文件不自动删除；没有 watcher，完整恢复交互留 R14。见 [输入快照](docs/input-snapshots.md)、[解析与来源映射](docs/parsing-and-source-maps.md)。
 
 `ingestion.build.build_first_revision` 在全部捕获/处理成功后，通过 R09 provider 编码并构建每版独立 Milvus Collection。`storage.publication` 以全量真实校验凭据原子登记回执和当前指针；`retrieval.DenseSearch` 使用运行绑定版的编码、来源和 canonical body。数据库SDK通过 `milvus` extra安装（PyMilvus3.0.2 / Milvus3.0.1），与核心和CUDA环境分开。运行时token显式传入adapter，不入业务快照。正式路径、UTF-8限额、schema和复跑入口见 [首次发布与Dense](docs/first-publication.md)。
+
+`ingestion.begin_changes/build_changes` 将普通新增、更新与显式删除形成完整候选，一批只发布一次；未变向量经完整身份与 float32 摘要核验后复用，失败更新保留旧版，无变化/全失败正常解除占用且不发布。`retry_failed` 只处理失败项并拒绝覆盖后续更新；删除最后成员发布真实空版本。SQLite schema 7 只追加迁移，旧运行、历史原文与引用不漂移。接口和当前边界见 [普通增删改](docs/ordinary-mutations.md)。
 
 `SourceSession` 复用实际 RunLease，以不透明来源/游标读取固定版本归档；工具公开文本保留 canonical 码点并附构建时来源边车。`DeliveryGateway` 核对最终协议正文后，仅凭可信 confirmed 回执激活实际子区间；`CitationRegistry` 核验精确摘录并生成稳定脚注，历史引用独立于当前源文件和 Milvus。search/open 共用次数与累计窗口限制，回答模型计量由宿主显式注入。核心受控回执测试不代表真实 HTTP 交付；后者由 R12 验收。接口与边界见 [原文、证据与引用](docs/sources-and-evidence.md)。
 

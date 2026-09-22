@@ -1,0 +1,262 @@
+{
+  "status": "PASS_WITH_METADATA_OBSERVATION",
+  "time": "2026-09-22T14:53:55.479501+00:00",
+  "base": "44b861a235233f7072fda267e7a75321431c4e88",
+  "script_sha256": "99aa925a01169d29c81b1c84f555bc7082a1bc2bd2962a98f43b6edee0893a09",
+  "commands": [
+    {
+      "time": "2026-09-22T14:53:55.517620+00:00",
+      "cwd": "D:\\CodePlus",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "69942538e984b767364fd955ef96eb11804a1fcb2b137bbeeb354bef535a3990",
+      "stderr": ""
+    },
+    {
+      "time": "2026-09-22T14:53:55.556557+00:00",
+      "cwd": "D:\\CodePlus",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7487b286d9f7e79c53097699923cf299cbe5cb94d76f4cd2b56953cb10f8d785",
+      "stderr": ""
+    },
+    {
+      "time": "2026-09-22T14:53:55.600503+00:00",
+      "cwd": "D:\\CodePlus",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "time": "2026-09-22T14:53:56.488122+00:00",
+      "cwd": "D:\\CodePlus",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "ls-files",
+        "--others",
+        "--ignored",
+        "--exclude-standard",
+        "-z",
+        "--",
+        ":!.venv",
+        ":!**/node_modules/**"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "45c3be8cf559d4140e92990cec2bb124cd2aea409da4315f3427fb956f32ce72",
+      "stderr": ""
+    },
+    {
+      "time": "2026-09-22T14:53:59.421489+00:00",
+      "cwd": "D:\\CodePlus",
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-Command",
+        "$v = @(Get-NetTCPConnection -State Listen | Where-Object LocalPort -In @(19536,9097,19537,9098) | Select-Object LocalAddress,LocalPort,OwningProcess); ConvertTo-Json -InputObject $v -Compress"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+      "stderr": ""
+    },
+    {
+      "time": "2026-09-22T14:53:59.634485+00:00",
+      "cwd": "D:\\CodePlus",
+      "argv": [
+        "docker",
+        "ps",
+        "-a",
+        "--no-trunc",
+        "--format",
+        "{{json .}}"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "380c831d591c45d5f936528f28c65919e880cf858d664b227562bcf088bebabb",
+      "stderr": ""
+    },
+    {
+      "time": "2026-09-22T14:53:59.800112+00:00",
+      "cwd": "D:\\CodePlus",
+      "argv": [
+        "docker",
+        "volume",
+        "ls",
+        "--format",
+        "{{json .}}"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "85dd2ae6b1cef635fb34fbcd232d97c7b2568e1df85d00988ac376d04bf9b6f9",
+      "stderr": ""
+    },
+    {
+      "time": "2026-09-22T14:53:59.965620+00:00",
+      "cwd": "D:\\CodePlus",
+      "argv": [
+        "docker",
+        "network",
+        "ls",
+        "--no-trunc",
+        "--format",
+        "{{json .}}"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "5bbbc18ceadf7338790b920b4e02ef5ad94809e85d5f627897e9eca7cb5e312d",
+      "stderr": ""
+    }
+  ],
+  "freeze": {
+    "production_sources": {
+      "count": 202,
+      "differences": [],
+      "sha256": "29b24287ee49a2c9e363c5cfa2b41b0b74e387a06b72cf64f50ce23cca1a20ab"
+    },
+    "reviewed_files": {
+      "count": 107,
+      "differences": [],
+      "sha256": "719162e343f53b063cbab0d834fa8654ef02bf0fe3a7640ab0d458b292162488"
+    },
+    "protected_inputs": {
+      "count": 6553,
+      "differences": [],
+      "sha256": "cb0119d2922ac3a46d4477270b76f7131c98c1c5c9f4be9ec5bb03bf9ff044b1"
+    }
+  },
+  "historical_sql": {
+    "count": 6,
+    "differences": [],
+    "sha256": "4eb54ad2fb06c9cfbfa038dc33f5df49b4f895b1707b7431874ceeaf38a2f90d"
+  },
+  "ignored": {
+    "entries": 411,
+    "regular_files": 408,
+    "directory_entries": [
+      ".codeplus/worktrees/runtime-53de558373ef/",
+      ".codeplus/worktrees/team-demo-team+reader-a/",
+      ".codeplus/worktrees/team-demo-team+reader-b/"
+    ],
+    "differences": []
+  },
+  "roots": {
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r13-executor-20260922": false,
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r13-leader-20260922": false,
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r13-cleanup-20260922": false
+  },
+  "ports": {
+    "requested": [
+      19536,
+      9097,
+      19537,
+      9098
+    ],
+    "listeners": []
+  },
+  "docker": {
+    "containers": {
+      "removed_exact": [
+        "1edbf4041b9fa88ceeeecd55ec330d44f17756b219d02992c5c3218ef2b38186",
+        "33a164232189f9319ad63dd2ad717e373605ec1868cb2e28c4caf6dd7ce0c2a5",
+        "66c683e5bb4b70f23ce772b0d29221207c523c9bcd9d7e5ca07c95619e91aadb",
+        "76c07f8bdcee098a0fac4de475e1c86c1050df4f604916e8b0f07a6e2b8f8f56",
+        "b5f74bb8c058e81a2cfcbae6767184e56741efd98061a14afd78b13945b94350",
+        "f39993b77ceb29a52cb2389de32e468e19fad5e374affedd1400fc4734dfcd29"
+      ],
+      "retained_foreign": [
+        "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+        "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc"
+      ],
+      "unexpected": []
+    },
+    "volumes": {
+      "removed_exact": [
+        "codeplus-r13-executor-20260922_etcd",
+        "codeplus-r13-executor-20260922_milvus",
+        "codeplus-r13-executor-20260922_minio",
+        "codeplus-r13-leader-20260922_etcd",
+        "codeplus-r13-leader-20260922_milvus",
+        "codeplus-r13-leader-20260922_minio"
+      ],
+      "retained_foreign": [
+        "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+        "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+        "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+        "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+        "approvaplat-mysql-data"
+      ],
+      "unexpected": []
+    },
+    "networks": {
+      "removed_exact": [
+        "3c50d2dbbc3adb26e1d5dacd4a0db9694d5eac82a4ae442b90937e694b08899f",
+        "d80f765b058c7b601a78939256ed732f6e42d6aba82b6398026d7ce49deed6b8"
+      ],
+      "retained_foreign": [
+        "3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6",
+        "831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6",
+        "c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587",
+        "e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f"
+      ],
+      "unexpected": []
+    }
+  },
+  "shared_metadata": {
+    "entries": 172576,
+    "added": 0,
+    "removed": 0,
+    "differences": 6967,
+    "fields": {
+      "size": 6967
+    },
+    "only_root": "C:/Users/18221/AppData/Local/uv/cache",
+    "only_kind": "directory",
+    "regular_file_metadata_differences": 0,
+    "same_script_and_os_stat_call": true,
+    "cause": "Not established; no different-API explanation and no content hash equality claim",
+    "pytest2": {
+      "before": "absent",
+      "after": "absent",
+      "no_R13_exists_baseline": true
+    }
+  },
+  "foreign_stable_fields_independent_comparison": "PASS; full mounts objects sorted, no fields removed; all recorded other container/volume/network fields equal",
+  "cleanup_original_failure": {
+    "report": "R13-cleanup-actions-first-fail.json",
+    "error": "The property 'Name' cannot be found on this object. Verify that the property exists.",
+    "before_any_deletion": true,
+    "corrected_run": "R13-cleanup-actions.json"
+  },
+  "cleanup_reports": {
+    "R13-cleanup-actions-first-fail.json": "1f9ff7dcd02a80a5918d46270c2b0a50c899094ed6618d0ec60bba4acceb22f5",
+    "R13-cleanup-actions.json": "50612801b8c2885ace72b06d6d254e2f4e1bbcd6b9139daed79ff257df24b82a",
+    "R13-cleanup-after.json": "e1b507354c17a837f82767ea5ae79f02a79772476ebd2bfee4d31d2d11059b86",
+    "R13-cleanup-before.json": "9bc319dedf99c81a19f7a722cea255a09a0585e9f837a486bc6d5b2cce4a86f7",
+    "R13-cleanup-dispatch.md": "59ad55d6c9a3d8d1c3b319838006a0c5ec3f646f0d6aa5a3b3f50dd7c4cc7235",
+    "R13-cleanup-finalization-first-fail.json": "d02c3950078c96dfa445537a2aafe097704ebcda4628004a4cc428339ac74707",
+    "R13-cleanup-ports.json": "318ded634037d3644eb4694aa070f62e645094dad0756b7103a35516da959251",
+    "R13-cleanup-self-first-fail.json": "1ded9136c34da071ca8d05f995063db46629a7aa130a5950f5d13302540faf12",
+    "R13-cleanup-shared-after.json.gz": "3ba56c3201c5e77ec9bf25e56e987e51f4e6b48430ddc0d54a59711533b44bec",
+    "R13-cleanup-shared-before.json.gz": "dfda2e19999d6ddf3ea03014198e7512298c6406c54e3153f5f2d04fc3a8ad03",
+    "R13-cleanup-shared-diagnostic.json": "728230de29b2018874263466160ebe722e74bb91082d55bb9d18ca2a387a81c6",
+    "R13-cleanup-whitespace-before.json": "67b2d77f7da3513bddde91672819aeebf7cc882a7178f651cb7128d7710cb3be",
+    "R13-cleanup.json": "d088dbb929644bb8acf99c8f204d9713a3f6b2147da6b320ff07d4e15110284f",
+    "R13-cleanup.md": "11ff62266ca9dfa030b6b0991fb5032f0b57a652f7bbe2fc8061d434d5cc90a1"
+  },
+  "read_only_inspection_note": "An earlier compact JSON inspector assumed all cleanup attachments were objects; the differences attachment is a list. AttributeError occurred without writes; corrected only inspection shape handling.",
+  "finished": "2026-09-22T14:54:01.131287+00:00"
+}

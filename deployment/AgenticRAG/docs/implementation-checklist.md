@@ -32,8 +32,8 @@
 | R09 | COMMITTED | /root/r09_model_worker | [Leader 验收](implementation-records/R09.md) | `9afe7e37982cf63c3e2199403499b289d8a520b1` |
 | R10 | COMMITTED | /root/r10_publication | [Leader独立验收](implementation-records/R10.md)；326核心+11真实+4增量，609/200/重启通过 | 81bf1461c73d9d640144eb1ed8b9a193d0f4f953 |
 | R11 | COMMITTED | /root/r11_sources | [Leader独立验收](implementation-records/R11.md)；393核心无skip、两路安装及三版真实升级通过 | `cd6ed3470c1ce5619c6e8bc6791346ac577e64c1` |
-| R12 | ACCEPTED | /root/r12_agent_integration | [Leader独立验收](implementation-records/R12-leader-review.md)；1271通过/32条件skip、真实安装/Agent及独立清理完成，元数据观察保留 | 待本地提交 |
-| R13 | TODO | — | — | — |
+| R12 | COMMITTED | /root/r12_agent_integration | [Leader独立验收](implementation-records/R12-leader-review.md)；1271通过/32条件skip、真实安装/Agent及独立清理完成，元数据观察保留 | `44b861a235233f7072fda267e7a75321431c4e88` |
+| R13 | ACCEPTED | /root/r13_mutations | [Leader独立验收](implementation-records/R13-leader-review.md)；1302通过/32条件skip，独立清理及复核完成，元数据观察保留 | 待本地提交 |
 | R14 | TODO | — | — | — |
 | R15 | TODO | — | — | — |
 | R16 | TODO | — | — | — |
@@ -201,11 +201,11 @@ R12前置独立整合：旧RAG清理 COMMITTED，`5dbe979a330a6b157adfba7ad3ea82
 <a id="r13"></a>
 ### R13：增删改和整批发布
 
-- [ ] 新增/更新/删除成员正确；成功更新替换新版成员，失败更新保留旧版，失败新增不进入可见范围。
-- [ ] 全批文件完成后只发布一次；处理中旧版继续可查；全失败或无变化不创建新发布版。
-- [ ] 候选包含完整可见资料，兼容未变向量复用经过验证；不把“增量”实现成只保存变化文档。
-- [ ] 两个真实进程验证在途运行继续搜索旧版未见文档，新运行使用新版；Dense、原文及已启用的索引能力范围一致。
-- [ ] 失败清单、重试与正常结束状态准确；普通部分成功不冒充完整评测库，也不用于不兼容模型重建的部分切换。
+- [x] 新增/更新/删除成员正确；成功更新替换新版成员，失败更新保留旧版，失败新增不进入可见范围。
+- [x] 全批文件完成后只发布一次；处理中旧版继续可查；全失败或无变化不创建新发布版。
+- [x] 候选包含完整可见资料，兼容未变向量复用经过验证；不把“增量”实现成只保存变化文档。
+- [x] 两个真实进程验证在途运行继续搜索旧版未见文档，新运行使用新版；Dense、原文及已启用的索引能力范围一致。
+- [x] 失败清单、重试与正常结束状态准确；普通部分成功不冒充完整评测库，也不用于不兼容模型重建的部分切换。
 
 <a id="r14"></a>
 ### R14：恢复与放弃

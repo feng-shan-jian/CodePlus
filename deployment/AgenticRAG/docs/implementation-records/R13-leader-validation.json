@@ -1,0 +1,276 @@
+{
+  "status": "ALL_REQUIRED_LEADER_TESTS_PASS_PENDING_INDEPENDENT_CLEANUP",
+  "time": "2026-09-22T14:26:05.038132+00:00",
+  "frozen_fingerprint": "365df50e99520acfc88eb1b6d8512d37f0ac18f326610fc0f154233ab05aa292",
+  "source_snapshot_unchanged": true,
+  "regressions": {
+    "core": {
+      "counts": {
+        "tests": 616,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 29
+      },
+      "passed": 587,
+      "seconds": 1163.536,
+      "skips": [
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_real_cuda_identity_and_placement",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_document_and_instructed_query_vectors",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_full_tokenizer_inputs_and_explicit_limits",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_rerank_identity_alignment_and_last_token_oracle",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_bounded_batch_measurements_and_release",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_real_dependency_device_and_capped_allocator_failures",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_real_native_bm25_schema_and_index_loading",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_strong_write_then_read_without_flush",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_physical_versions_isolate_members_and_bm25_statistics",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_empty_hits_are_distinct_from_explicit_service_and_capability_errors",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_real_client_process_and_service_restart_keep_persisted_versions",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_resource_ownership_and_test_collection_cleanup",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_two_real_hosts_race_start_share_model_and_independent_exit",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_actual_embedding_rerank_switching_identity_and_limits",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_actual_running_cancel_deadline_queue_oom_and_recovery",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_actual_disconnect_unknown_worker_death_and_stale_restart",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_actual_dependency_device_and_different_runtime_refusals",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_controlled_faults_after_real_gpu_layer_and_actual_fatal_exit",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_candidate_validation_and_failure_never_publish[none]",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_candidate_validation_and_failure_never_publish[row_hash]",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_candidate_validation_and_failure_never_publish[index_timeout]",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_candidate_validation_and_failure_never_publish[schema]",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_missing_endpoint_is_error_not_empty_success",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_processes",
+          "name": "test_real_publication_process_termination_and_concurrent_metadata[before-commit]",
+          "reason": "owned real Milvus acceptance required"
+        },
+        {
+          "class": "tests.test_publication_processes",
+          "name": "test_real_publication_process_termination_and_concurrent_metadata[after-commit]",
+          "reason": "owned real Milvus acceptance required"
+        },
+        {
+          "class": "tests.test_publication_processes",
+          "name": "test_real_publication_process_termination_and_concurrent_metadata[redirector-diagnostic]",
+          "reason": "owned real Milvus acceptance required"
+        },
+        {
+          "class": "tests.test_publication_small",
+          "name": "test_real_single_chunk_publish_and_analyzer_empty[words]",
+          "reason": "owned real Milvus required"
+        },
+        {
+          "class": "tests.test_publication_small",
+          "name": "test_real_single_chunk_publish_and_analyzer_empty[punctuation]",
+          "reason": "owned real Milvus required"
+        },
+        {
+          "class": "tests.test_publication_small",
+          "name": "test_real_single_chunk_publish_and_analyzer_empty[unicode]",
+          "reason": "owned real Milvus required"
+        }
+      ],
+      "xml_sha256": "7e296c9849d7137c2baf17defa888882534283fd0c4f8b718c6a7f1524061f19",
+      "command_sha256": "ce5b841cb4fb845474daa5df158a1d6b406e8fe70be1e7b0453518d9d17795f5",
+      "installed_modules": {
+        "python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Scripts\\python.exe",
+        "cwd": "D:\\CodePlus",
+        "argv": [
+          "deployment/AgenticRAG/tests",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--import-mode=importlib",
+          "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\pytest-core",
+          "--junitxml=D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-leader-core.xml"
+        ],
+        "before": {
+          "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+          "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+        },
+        "after": {
+          "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+          "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+        },
+        "exit_code": 0
+      }
+    },
+    "host": {
+      "counts": {
+        "tests": 718,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 3
+      },
+      "passed": 715,
+      "seconds": 46.454,
+      "skips": [
+        {
+          "class": "tests.test_consolidation",
+          "name": "test_e2e_consolidation_merges_duplicates",
+          "reason": "CODEPLUS_TEST_API_KEY not set"
+        },
+        {
+          "class": "tests.test_hooks.TestAgentHookIntegration",
+          "name": "test_pre_tool_use_reject_skips_tool",
+          "reason": "rm 命令在 Windows 上不可用"
+        },
+        {
+          "class": "tests.test_permissions.TestPathSandbox",
+          "name": "test_symlink_escape",
+          "reason": "No suitable system file found for symlink test"
+        }
+      ],
+      "xml_sha256": "c8588297c522de039f613568382bbf9072201d345adf2c2c2e08dea00561f92a",
+      "command_sha256": "3e89c091f190af0ff34030ae7cca0b027f1c784e3e611a94550e54e982bcd7dd",
+      "installed_modules": {
+        "python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Scripts\\python.exe",
+        "cwd": "D:\\CodePlus",
+        "argv": [
+          "tests",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--import-mode=prepend",
+          "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\pytest-host",
+          "--junitxml=D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-leader-host.xml"
+        ],
+        "before": {
+          "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+          "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+        },
+        "after": {
+          "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+          "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+        },
+        "exit_code": 0
+      }
+    }
+  },
+  "total_passed": 1302,
+  "total_skipped": 32,
+  "r13_cases_passed": 31,
+  "corpus": {
+    "result": "PASS",
+    "files_checked": 609,
+    "failures": [],
+    "total_chunks": 4041,
+    "max_complete_embedding_tokens": 512,
+    "elapsed_seconds": 386.0857614999986,
+    "input_manifest_hash": "85e34ee54fe8138d23e856edbc365e6c550cfc2478ba7096bb9f8544b3fb1e35",
+    "runtime_input_sha256": "8db278a920b290ea9d6f63d5bea473960fb20c26fcb41c5078dececa421d4d0d"
+  },
+  "corpus_sha256": "ef48919f5a6a9602accaa626544f4ed5ff872008a4e559379459c21c39354560",
+  "package_result": "PASS",
+  "artifacts": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\pytest-core\\test_wheel_and_sdist_install_i0\\direct\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "sha256": "d8967e612116849884497423763af4c29792d4c0948a19641146b47beb9ba8da",
+      "size_bytes": 163323
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\pytest-core\\test_wheel_and_sdist_install_i0\\source\\codeplus_agentic_rag-0.1.0.tar.gz",
+      "sha256": "3d6ec5424a710f50031efeaa5bd3fdbbca794567d7194c2adc91e1cbb1694425",
+      "size_bytes": 273925
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922\\pytest-core\\test_wheel_and_sdist_install_i0\\rebuilt\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "sha256": "d8967e612116849884497423763af4c29792d4c0948a19641146b47beb9ba8da",
+      "size_bytes": 163323
+    }
+  ],
+  "real_upgrade_database_crosscheck": "R13-leader-runtime-verification.json",
+  "cleanup": "PENDING",
+  "accepted": false,
+  "committed": false
+}

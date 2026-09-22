@@ -1,0 +1,1049 @@
+{
+  "status": "PASS",
+  "started_at": "2026-09-22T14:04:08.031370+00:00",
+  "project": "codeplus-r13-leader-20260922",
+  "template": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml",
+  "template_sha256": "32f15b84c02f40549b40ed464af120ee7d9411d586d35470f282f158a6dd69c2",
+  "ports": [
+    19537,
+    9098
+  ],
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "ps",
+        "-a",
+        "--no-trunc",
+        "--format",
+        "{{json .}}"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922",
+      "exit_code": 0,
+      "stdout": "{\"Command\":\"\\\"/tini -- milvus run standalone\\\"\",\"CreatedAt\":\"2026-09-22 21:05:23 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"b5f74bb8c058e81a2cfcbae6767184e56741efd98061a14afd78b13945b94350\",\"Image\":\"milvusdb/milvus:v3.0.1\",\"Labels\":\"com.docker.compose.config-hash=759ecbbc90ca5607337afccc42ac5623cd2b544cd5b5c284b57fb717a00aa0e7,com.docker.compose.container-number=1,com.docker.compose.depends_on=etcd:service_healthy:false,minio:service_healthy:false,com.docker.compose.image=sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources\\\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=standalone,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/19530/tcp=127.0.0.1:19536,desktop.docker.io/ports/9091/tcp=127.0.0.1:9097,org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04\",\"LocalVolumes\":\"1\",\"Mounts\":\"codeplus-r13-executor-20260922_milvus\",\"Names\":\"codeplus-r13-executor-20260922-standalone-1\",\"Networks\":\"codeplus-r13-executor-20260922_default\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"127.0.0.1:9097-\\u003e9091/tcp, 127.0.0.1:19536-\\u003e19530/tcp\",\"RunningFor\":\"58 minutes ago\",\"Size\":\"147kB (virtual 3GB)\",\"State\":\"running\",\"Status\":\"Up 58 minutes (healthy)\"}\n{\"Command\":\"\\\"/usr/bin/docker-entrypoint.sh minio server /data --console-address :9001\\\"\",\"CreatedAt\":\"2026-09-22 21:05:23 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"1edbf4041b9fa88ceeeecd55ec330d44f17756b219d02992c5c3218ef2b38186\",\"Image\":\"quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z\",\"Labels\":\"architecture=x86_64,build-date=2024-12-18T09:14:16Z,com.docker.compose.config-hash=299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources\\\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=minio,com.docker.compose.version=5.4.0,com.redhat.component=ubi9-micro-container,com.redhat.license_terms=https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI,description=MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.,desktop.docker.io/ports.scheme=v2,distribution-scope=public,io.buildah.version=1.38.0-dev,io.k8s.description=Very small image which doesn't install the package manager.,io.k8s.display-name=Red Hat Universal Base Image 9 Micro,io.openshift.expose-services=,maintainer=MinIO Inc \\u003cdev@min.io\\u003e,name=MinIO,release=RELEASE.2024-12-18T13-15-44Z,summary=MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.,url=https://www.redhat.com,vcs-ref=10988923ed65297b3e5a5c9cf1c59f779fd76274,vcs-type=git,vendor=MinIO Inc \\u003cdev@min.io\\u003e,version=RELEASE.2024-12-18T13-15-44Z\",\"LocalVolumes\":\"1\",\"Mounts\":\"codeplus-r13-executor-20260922_minio\",\"Names\":\"codeplus-r13-executor-20260922-minio-1\",\"Networks\":\"codeplus-r13-executor-20260922_default\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"9000/tcp\",\"RunningFor\":\"58 minutes ago\",\"Size\":\"24.6kB (virtual 182MB)\",\"State\":\"running\",\"Status\":\"Up 58 minutes (healthy)\"}\n{\"Command\":\"\\\"etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd\\\"\",\"CreatedAt\":\"2026-09-22 21:05:23 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"76c07f8bdcee098a0fac4de475e1c86c1050df4f604916e8b0f07a6e2b8f8f56\",\"Image\":\"quay.io/coreos/etcd:v3.5.25\",\"Labels\":\"com.docker.compose.config-hash=f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources\\\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=etcd,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,io.buildah.version=1.41.5\",\"LocalVolumes\":\"1\",\"Mounts\":\"codeplus-r13-executor-20260922_etcd\",\"Names\":\"codeplus-r13-executor-20260922-etcd-1\",\"Networks\":\"codeplus-r13-executor-20260922_default\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"2379-2380/tcp\",\"RunningFor\":\"58 minutes ago\",\"Size\":\"24.6kB (virtual 69.5MB)\",\"State\":\"running\",\"Status\":\"Up 58 minutes (healthy)\"}\n{\"Command\":\"\\\"/bin/bash -c 'export SONAR_JDBC_PASSWORD=\\\\\\\"$(cat /run/secrets/postgres_password)\\\\\\\"; export SONAR_AUTH_JWTBASE64HS256SECRET=\\\\\\\"$(cat /run/secrets/sonar_jwt_secret)\\\\\\\"; exec /opt/sonarqube/docker/entrypoint.sh'\\\"\",\"CreatedAt\":\"2026-08-24 22:18:32 +0800 CST\",\"HealthStatus\":\"none\",\"ID\":\"4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc\",\"Image\":\"sonarqube:26.8.0.126808-community\",\"Labels\":\"com.docker.compose.config-hash=490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6,com.docker.compose.container-number=1,com.docker.compose.depends_on=db:service_healthy:false,com.docker.compose.image=sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\SonarQube\\\\production\\\\compose.yml,com.docker.compose.project.working_dir=D:\\\\SonarQube\\\\production,com.docker.compose.project=sonarqube-production,com.docker.compose.replace=sonarqube-production,com.docker.compose.service=sonarqube,com.docker.compose.version=5.4.0,desktop.docker.io/binds/0/Source=D:\\\\SonarQube\\\\production\\\\data\\\\sonarqube,desktop.docker.io/binds/0/SourceKind=hostFile,desktop.docker.io/binds/0/Target=/opt/sonarqube/data,desktop.docker.io/binds/1/Source=D:\\\\SonarQube\\\\production\\\\data\\\\sonarqube-extensions,desktop.docker.io/binds/1/SourceKind=hostFile,desktop.docker.io/binds/1/Target=/opt/sonarqube/extensions,desktop.docker.io/binds/2/Source=D:\\\\SonarQube\\\\production\\\\logs\\\\sonarqube,desktop.docker.io/binds/2/SourceKind=hostFile,desktop.docker.io/binds/2/Target=/opt/sonarqube/logs,desktop.docker.io/binds/3/Source=D:\\\\SonarQube\\\\production\\\\temp\\\\sonarqube,desktop.docker.io/binds/3/SourceKind=hostFile,desktop.docker.io/binds/3/Target=/opt/sonarqube/temp,desktop.docker.io/mounts/0/Source=D:\\\\SonarQube\\\\production\\\\secrets\\\\postgres_password.txt,desktop.docker.io/mounts/0/SourceKind=hostFile,desktop.docker.io/mounts/0/Target=/run/secrets/postgres_password,desktop.docker.io/mounts/1/Source=D:\\\\SonarQube\\\\production\\\\secrets\\\\sonar_jwt_secret.txt,desktop.docker.io/mounts/1/SourceKind=hostFile,desktop.docker.io/mounts/1/Target=/run/secrets/sonar_jwt_secret,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/9000/tcp=127.0.0.1:9000,io.k8s.description=SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.,io.openshift.min-cpu=400m,io.openshift.min-memory=2048M,io.openshift.non-scalable=true,io.openshift.tags=sonarqube,static-code-analysis,code-quality,clean-code,org.opencontainers.image.url=https://github.com/SonarSource/docker-sonarqube,org.opencontainers.image.version=24.04\",\"LocalVolumes\":\"0\",\"Mounts\":\"/run/desktop/mnt/host/d/SonarQube/production/data/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/data/sonarqube-extensions,/run/desktop/mnt/host/d/SonarQube/production/logs/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/temp/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/secrets/postgres_password.txt,/run/desktop/mnt/host/d/SonarQube/production/secrets/sonar_jwt_secret.txt\",\"Names\":\"sonarqube-production\",\"Networks\":\"sonarqube-production\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"127.0.0.1:9000-\\u003e9000/tcp\",\"RunningFor\":\"4 weeks ago\",\"Size\":\"197kB (virtual 1.44GB)\",\"State\":\"running\",\"Status\":\"Up 14 hours\"}\n{\"Command\":\"\\\"docker-entrypoint.sh postgres\\\"\",\"CreatedAt\":\"2026-08-24 22:18:31 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5\",\"Image\":\"postgres:17.6-alpine\",\"Labels\":\"com.docker.compose.config-hash=e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\SonarQube\\\\production\\\\compose.yml,com.docker.compose.project.working_dir=D:\\\\SonarQube\\\\production,com.docker.compose.project=sonarqube-production,com.docker.compose.replace=sonarqube-postgres,com.docker.compose.service=db,com.docker.compose.version=5.4.0,desktop.docker.io/binds/0/Source=D:\\\\SonarQube\\\\production\\\\data\\\\postgresql,desktop.docker.io/binds/0/SourceKind=hostFile,desktop.docker.io/binds/0/Target=/var/lib/postgresql/data,desktop.docker.io/mounts/0/Source=D:\\\\SonarQube\\\\production\\\\secrets\\\\postgres_password.txt,desktop.docker.io/mounts/0/SourceKind=hostFile,desktop.docker.io/mounts/0/Target=/run/secrets/postgres_password,desktop.docker.io/ports.scheme=v2\",\"LocalVolumes\":\"0\",\"Mounts\":\"/run/desktop/mnt/host/d/SonarQube/production/secrets/postgres_password.txt,/run/desktop/mnt/host/d/SonarQube/production/data/postgresql\",\"Names\":\"sonarqube-postgres\",\"Networks\":\"sonarqube-production\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"5432/tcp\",\"RunningFor\":\"4 weeks ago\",\"Size\":\"24.6kB (virtual 287MB)\",\"State\":\"running\",\"Status\":\"Up 14 hours (healthy)\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "ls",
+        "--format",
+        "{{json .}}"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922",
+      "exit_code": 0,
+      "stdout": "{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.volume.anonymous=\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data\",\"Name\":\"3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.volume.anonymous=\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data\",\"Name\":\"80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.volume.anonymous=\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data\",\"Name\":\"249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.volume.anonymous=\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data\",\"Name\":\"5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e,com.docker.compose.project=approvaplat,com.docker.compose.version=5.4.0,com.docker.compose.volume=approvaplat-mysql-data\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/approvaplat-mysql-data/_data\",\"Name\":\"approvaplat-mysql-data\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=cc93e01b8b2ba2e8d741cb8a82f0ec63eda977dfabd9624fbb5095874ea9e01d,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=etcd\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/codeplus-r13-executor-20260922_etcd/_data\",\"Name\":\"codeplus-r13-executor-20260922_etcd\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=f889e73991072aae601a6f0f8d0fe87994bdb33a8d172eca72e4ee7ddd8ddc53,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=milvus\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/codeplus-r13-executor-20260922_milvus/_data\",\"Name\":\"codeplus-r13-executor-20260922_milvus\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=6f7483f85fcf42c7b105a1cfa356fdddeb0a2faa2d66b51c2adf0957d511573a,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=minio\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/codeplus-r13-executor-20260922_minio/_data\",\"Name\":\"codeplus-r13-executor-20260922_minio\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "ls",
+        "--no-trunc",
+        "--format",
+        "{{json .}}"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922",
+      "exit_code": 0,
+      "stdout": "{\"CreatedAt\":\"2026-09-21 23:55:35.545820176 +0000 UTC\",\"Driver\":\"bridge\",\"ID\":\"c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"\",\"Name\":\"bridge\",\"Scope\":\"local\"}\n{\"CreatedAt\":\"2026-09-22 13:05:23.494088495 +0000 UTC\",\"Driver\":\"bridge\",\"ID\":\"3c50d2dbbc3adb26e1d5dacd4a0db9694d5eac82a4ae442b90937e694b08899f\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"com.docker.compose.config-hash=c2581553727309bf7d8262fafd53031a42df57cf8d267843a979ef7d3c93501b,com.docker.compose.network=default,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0\",\"Name\":\"codeplus-r13-executor-20260922_default\",\"Scope\":\"local\"}\n{\"CreatedAt\":\"2026-08-24 03:10:40.792555369 +0000 UTC\",\"Driver\":\"host\",\"ID\":\"3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"\",\"Name\":\"host\",\"Scope\":\"local\"}\n{\"CreatedAt\":\"2026-08-24 03:10:40.783778961 +0000 UTC\",\"Driver\":\"null\",\"ID\":\"831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"\",\"Name\":\"none\",\"Scope\":\"local\"}\n{\"CreatedAt\":\"2026-08-24 14:03:17.667304522 +0000 UTC\",\"Driver\":\"bridge\",\"ID\":\"e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"com.docker.compose.config-hash=43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda,com.docker.compose.network=sonarqube,com.docker.compose.project=sonarqube-production,com.docker.compose.version=5.4.0\",\"Name\":\"sonarqube-production\",\"Scope\":\"local\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "compose",
+        "-p",
+        "codeplus-r13-leader-20260922",
+        "-f",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml",
+        "config",
+        "--format",
+        "json"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922",
+      "exit_code": 0,
+      "stdout": "{\n  \"name\": \"codeplus-r13-leader-20260922\",\n  \"networks\": {\n    \"default\": {\n      \"name\": \"codeplus-r13-leader-20260922_default\",\n      \"ipam\": {}\n    }\n  },\n  \"services\": {\n    \"etcd\": {\n      \"command\": [\n        \"etcd\",\n        \"-advertise-client-urls=http://etcd:2379\",\n        \"-listen-client-urls\",\n        \"http://0.0.0.0:2379\",\n        \"--data-dir\",\n        \"/etcd\"\n      ],\n      \"entrypoint\": null,\n      \"environment\": {\n        \"ETCD_AUTO_COMPACTION_MODE\": \"revision\",\n        \"ETCD_AUTO_COMPACTION_RETENTION\": \"1000\",\n        \"ETCD_QUOTA_BACKEND_BYTES\": \"4294967296\",\n        \"ETCD_SNAPSHOT_COUNT\": \"50000\"\n      },\n      \"healthcheck\": {\n        \"test\": [\n          \"CMD\",\n          \"etcdctl\",\n          \"endpoint\",\n          \"health\"\n        ],\n        \"timeout\": \"5s\",\n        \"interval\": \"5s\",\n        \"retries\": 30\n      },\n      \"image\": \"quay.io/coreos/etcd:v3.5.25\",\n      \"networks\": {\n        \"default\": null\n      },\n      \"volumes\": [\n        {\n          \"type\": \"volume\",\n          \"source\": \"etcd\",\n          \"target\": \"/etcd\",\n          \"volume\": {}\n        }\n      ]\n    },\n    \"minio\": {\n      \"command\": [\n        \"minio\",\n        \"server\",\n        \"/data\",\n        \"--console-address\",\n        \":9001\"\n      ],\n      \"entrypoint\": null,\n      \"healthcheck\": {\n        \"test\": [\n          \"CMD\",\n          \"curl\",\n          \"-f\",\n          \"http://localhost:9000/minio/health/live\"\n        ],\n        \"timeout\": \"5s\",\n        \"interval\": \"5s\",\n        \"retries\": 30\n      },\n      \"image\": \"quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z\",\n      \"networks\": {\n        \"default\": null\n      },\n      \"volumes\": [\n        {\n          \"type\": \"volume\",\n          \"source\": \"minio\",\n          \"target\": \"/data\",\n          \"volume\": {}\n        }\n      ]\n    },\n    \"standalone\": {\n      \"command\": [\n        \"milvus\",\n        \"run\",\n        \"standalone\"\n      ],\n      \"depends_on\": {\n        \"etcd\": {\n          \"condition\": \"service_healthy\",\n          \"required\": true\n        },\n        \"minio\": {\n          \"condition\": \"service_healthy\",\n          \"required\": true\n        }\n      },\n      \"entrypoint\": null,\n      \"environment\": {\n        \"ETCD_ENDPOINTS\": \"etcd:2379\",\n        \"MINIO_ADDRESS\": \"minio:9000\",\n        \"MQ_TYPE\": \"woodpecker\"\n      },\n      \"healthcheck\": {\n        \"test\": [\n          \"CMD\",\n          \"curl\",\n          \"-f\",\n          \"http://localhost:9091/healthz\"\n        ],\n        \"timeout\": \"5s\",\n        \"interval\": \"5s\",\n        \"retries\": 60,\n        \"start_period\": \"1m0s\"\n      },\n      \"image\": \"milvusdb/milvus:v3.0.1\",\n      \"networks\": {\n        \"default\": null\n      },\n      \"ports\": [\n        {\n          \"mode\": \"ingress\",\n          \"host_ip\": \"127.0.0.1\",\n          \"target\": 19530,\n          \"published\": \"19537\",\n          \"protocol\": \"tcp\"\n        },\n        {\n          \"mode\": \"ingress\",\n          \"host_ip\": \"127.0.0.1\",\n          \"target\": 9091,\n          \"published\": \"9098\",\n          \"protocol\": \"tcp\"\n        }\n      ],\n      \"security_opt\": [\n        \"seccomp:unconfined\"\n      ],\n      \"volumes\": [\n        {\n          \"type\": \"volume\",\n          \"source\": \"milvus\",\n          \"target\": \"/var/lib/milvus\",\n          \"volume\": {}\n        }\n      ]\n    }\n  },\n  \"volumes\": {\n    \"etcd\": {\n      \"name\": \"codeplus-r13-leader-20260922_etcd\"\n    },\n    \"milvus\": {\n      \"name\": \"codeplus-r13-leader-20260922_milvus\"\n    },\n    \"minio\": {\n      \"name\": \"codeplus-r13-leader-20260922_minio\"\n    }\n  }\n}",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "compose",
+        "-p",
+        "codeplus-r13-leader-20260922",
+        "-f",
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml",
+        "up",
+        "-d",
+        "--wait",
+        "--wait-timeout",
+        "240"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": " Volume codeplus-r13-leader-20260922_minio Creating \n Volume codeplus-r13-leader-20260922_milvus Creating \n Volume codeplus-r13-leader-20260922_minio Creating \n Network codeplus-r13-leader-20260922_default Creating \n Volume codeplus-r13-leader-20260922_etcd Creating \n Volume codeplus-r13-leader-20260922_milvus Creating \n Volume codeplus-r13-leader-20260922_etcd Creating \n Network codeplus-r13-leader-20260922_default Creating \n Volume codeplus-r13-leader-20260922_minio Created \n Volume codeplus-r13-leader-20260922_minio Created \n Volume codeplus-r13-leader-20260922_milvus Created \n Volume codeplus-r13-leader-20260922_milvus Created \n Volume codeplus-r13-leader-20260922_etcd Created \n Volume codeplus-r13-leader-20260922_etcd Created \n Network codeplus-r13-leader-20260922_default Created \n Network codeplus-r13-leader-20260922_default Created \n Container codeplus-r13-leader-20260922-minio-1 Creating \n Container codeplus-r13-leader-20260922-etcd-1 Creating \n Container codeplus-r13-leader-20260922-minio-1 Created \n Container codeplus-r13-leader-20260922-etcd-1 Created \n Container codeplus-r13-leader-20260922-standalone-1 Creating \n Container codeplus-r13-leader-20260922-standalone-1 Created \n Container codeplus-r13-leader-20260922-minio-1 Starting \n Container codeplus-r13-leader-20260922-etcd-1 Starting \n Container codeplus-r13-leader-20260922-etcd-1 Started \n Container codeplus-r13-leader-20260922-minio-1 Started \n Container codeplus-r13-leader-20260922-etcd-1 Waiting \n Container codeplus-r13-leader-20260922-minio-1 Waiting \n Container codeplus-r13-leader-20260922-minio-1 Healthy \n Container codeplus-r13-leader-20260922-etcd-1 Healthy \n Container codeplus-r13-leader-20260922-standalone-1 Starting \n Container codeplus-r13-leader-20260922-standalone-1 Started \n Container codeplus-r13-leader-20260922-etcd-1 Waiting \n Container codeplus-r13-leader-20260922-minio-1 Waiting \n Container codeplus-r13-leader-20260922-standalone-1 Waiting \n Container codeplus-r13-leader-20260922-etcd-1 Healthy \n Container codeplus-r13-leader-20260922-minio-1 Healthy \n Container codeplus-r13-leader-20260922-standalone-1 Healthy \n"
+    },
+    {
+      "argv": [
+        "docker",
+        "ps",
+        "-a",
+        "--no-trunc",
+        "--format",
+        "{{json .}}"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922",
+      "exit_code": 0,
+      "stdout": "{\"Command\":\"\\\"/tini -- milvus run standalone\\\"\",\"CreatedAt\":\"2026-09-22 22:04:10 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"f39993b77ceb29a52cb2389de32e468e19fad5e374affedd1400fc4734dfcd29\",\"Image\":\"milvusdb/milvus:v3.0.1\",\"Labels\":\"com.docker.compose.config-hash=b0f1cd99db1c1040cb788dbcb2f141f4cb67e0633c1ff893865327fcd4f08b16,com.docker.compose.container-number=1,com.docker.compose.depends_on=etcd:service_healthy:false,minio:service_healthy:false,com.docker.compose.image=sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources\\\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.service=standalone,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/19530/tcp=127.0.0.1:19537,desktop.docker.io/ports/9091/tcp=127.0.0.1:9098,org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04\",\"LocalVolumes\":\"1\",\"Mounts\":\"codeplus-r13-leader-20260922_milvus\",\"Names\":\"codeplus-r13-leader-20260922-standalone-1\",\"Networks\":\"codeplus-r13-leader-20260922_default\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"127.0.0.1:9098-\\u003e9091/tcp, 127.0.0.1:19537-\\u003e19530/tcp\",\"RunningFor\":\"17 seconds ago\",\"Size\":\"32.8kB (virtual 3GB)\",\"State\":\"running\",\"Status\":\"Up 11 seconds (healthy)\"}\n{\"Command\":\"\\\"/usr/bin/docker-entrypoint.sh minio server /data --console-address :9001\\\"\",\"CreatedAt\":\"2026-09-22 22:04:10 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"66c683e5bb4b70f23ce772b0d29221207c523c9bcd9d7e5ca07c95619e91aadb\",\"Image\":\"quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z\",\"Labels\":\"architecture=x86_64,build-date=2024-12-18T09:14:16Z,com.docker.compose.config-hash=299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources\\\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.service=minio,com.docker.compose.version=5.4.0,com.redhat.component=ubi9-micro-container,com.redhat.license_terms=https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI,description=MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.,desktop.docker.io/ports.scheme=v2,distribution-scope=public,io.buildah.version=1.38.0-dev,io.k8s.description=Very small image which doesn't install the package manager.,io.k8s.display-name=Red Hat Universal Base Image 9 Micro,io.openshift.expose-services=,maintainer=MinIO Inc \\u003cdev@min.io\\u003e,name=MinIO,release=RELEASE.2024-12-18T13-15-44Z,summary=MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.,url=https://www.redhat.com,vcs-ref=10988923ed65297b3e5a5c9cf1c59f779fd76274,vcs-type=git,vendor=MinIO Inc \\u003cdev@min.io\\u003e,version=RELEASE.2024-12-18T13-15-44Z\",\"LocalVolumes\":\"1\",\"Mounts\":\"codeplus-r13-leader-20260922_minio\",\"Names\":\"codeplus-r13-leader-20260922-minio-1\",\"Networks\":\"codeplus-r13-leader-20260922_default\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"9000/tcp\",\"RunningFor\":\"17 seconds ago\",\"Size\":\"24.6kB (virtual 182MB)\",\"State\":\"running\",\"Status\":\"Up 16 seconds (healthy)\"}\n{\"Command\":\"\\\"etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd\\\"\",\"CreatedAt\":\"2026-09-22 22:04:10 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"33a164232189f9319ad63dd2ad717e373605ec1868cb2e28c4caf6dd7ce0c2a5\",\"Image\":\"quay.io/coreos/etcd:v3.5.25\",\"Labels\":\"com.docker.compose.config-hash=f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources\\\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.service=etcd,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,io.buildah.version=1.41.5\",\"LocalVolumes\":\"1\",\"Mounts\":\"codeplus-r13-leader-20260922_etcd\",\"Names\":\"codeplus-r13-leader-20260922-etcd-1\",\"Networks\":\"codeplus-r13-leader-20260922_default\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"2379-2380/tcp\",\"RunningFor\":\"17 seconds ago\",\"Size\":\"24.6kB (virtual 69.5MB)\",\"State\":\"running\",\"Status\":\"Up 16 seconds (healthy)\"}\n{\"Command\":\"\\\"/tini -- milvus run standalone\\\"\",\"CreatedAt\":\"2026-09-22 21:05:23 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"b5f74bb8c058e81a2cfcbae6767184e56741efd98061a14afd78b13945b94350\",\"Image\":\"milvusdb/milvus:v3.0.1\",\"Labels\":\"com.docker.compose.config-hash=759ecbbc90ca5607337afccc42ac5623cd2b544cd5b5c284b57fb717a00aa0e7,com.docker.compose.container-number=1,com.docker.compose.depends_on=etcd:service_healthy:false,minio:service_healthy:false,com.docker.compose.image=sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources\\\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=standalone,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/19530/tcp=127.0.0.1:19536,desktop.docker.io/ports/9091/tcp=127.0.0.1:9097,org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04\",\"LocalVolumes\":\"1\",\"Mounts\":\"codeplus-r13-executor-20260922_milvus\",\"Names\":\"codeplus-r13-executor-20260922-standalone-1\",\"Networks\":\"codeplus-r13-executor-20260922_default\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"127.0.0.1:9097-\\u003e9091/tcp, 127.0.0.1:19536-\\u003e19530/tcp\",\"RunningFor\":\"59 minutes ago\",\"Size\":\"147kB (virtual 3GB)\",\"State\":\"running\",\"Status\":\"Up 58 minutes (healthy)\"}\n{\"Command\":\"\\\"/usr/bin/docker-entrypoint.sh minio server /data --console-address :9001\\\"\",\"CreatedAt\":\"2026-09-22 21:05:23 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"1edbf4041b9fa88ceeeecd55ec330d44f17756b219d02992c5c3218ef2b38186\",\"Image\":\"quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z\",\"Labels\":\"architecture=x86_64,build-date=2024-12-18T09:14:16Z,com.docker.compose.config-hash=299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources\\\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=minio,com.docker.compose.version=5.4.0,com.redhat.component=ubi9-micro-container,com.redhat.license_terms=https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI,description=MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.,desktop.docker.io/ports.scheme=v2,distribution-scope=public,io.buildah.version=1.38.0-dev,io.k8s.description=Very small image which doesn't install the package manager.,io.k8s.display-name=Red Hat Universal Base Image 9 Micro,io.openshift.expose-services=,maintainer=MinIO Inc \\u003cdev@min.io\\u003e,name=MinIO,release=RELEASE.2024-12-18T13-15-44Z,summary=MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.,url=https://www.redhat.com,vcs-ref=10988923ed65297b3e5a5c9cf1c59f779fd76274,vcs-type=git,vendor=MinIO Inc \\u003cdev@min.io\\u003e,version=RELEASE.2024-12-18T13-15-44Z\",\"LocalVolumes\":\"1\",\"Mounts\":\"codeplus-r13-executor-20260922_minio\",\"Names\":\"codeplus-r13-executor-20260922-minio-1\",\"Networks\":\"codeplus-r13-executor-20260922_default\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"9000/tcp\",\"RunningFor\":\"59 minutes ago\",\"Size\":\"24.6kB (virtual 182MB)\",\"State\":\"running\",\"Status\":\"Up 59 minutes (healthy)\"}\n{\"Command\":\"\\\"etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd\\\"\",\"CreatedAt\":\"2026-09-22 21:05:23 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"76c07f8bdcee098a0fac4de475e1c86c1050df4f604916e8b0f07a6e2b8f8f56\",\"Image\":\"quay.io/coreos/etcd:v3.5.25\",\"Labels\":\"com.docker.compose.config-hash=f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources\\\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\\\CodePlus\\\\deployment\\\\AgenticRAG\\\\tests\\\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=etcd,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,io.buildah.version=1.41.5\",\"LocalVolumes\":\"1\",\"Mounts\":\"codeplus-r13-executor-20260922_etcd\",\"Names\":\"codeplus-r13-executor-20260922-etcd-1\",\"Networks\":\"codeplus-r13-executor-20260922_default\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"2379-2380/tcp\",\"RunningFor\":\"59 minutes ago\",\"Size\":\"24.6kB (virtual 69.5MB)\",\"State\":\"running\",\"Status\":\"Up 59 minutes (healthy)\"}\n{\"Command\":\"\\\"/bin/bash -c 'export SONAR_JDBC_PASSWORD=\\\\\\\"$(cat /run/secrets/postgres_password)\\\\\\\"; export SONAR_AUTH_JWTBASE64HS256SECRET=\\\\\\\"$(cat /run/secrets/sonar_jwt_secret)\\\\\\\"; exec /opt/sonarqube/docker/entrypoint.sh'\\\"\",\"CreatedAt\":\"2026-08-24 22:18:32 +0800 CST\",\"HealthStatus\":\"none\",\"ID\":\"4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc\",\"Image\":\"sonarqube:26.8.0.126808-community\",\"Labels\":\"com.docker.compose.config-hash=490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6,com.docker.compose.container-number=1,com.docker.compose.depends_on=db:service_healthy:false,com.docker.compose.image=sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\SonarQube\\\\production\\\\compose.yml,com.docker.compose.project.working_dir=D:\\\\SonarQube\\\\production,com.docker.compose.project=sonarqube-production,com.docker.compose.replace=sonarqube-production,com.docker.compose.service=sonarqube,com.docker.compose.version=5.4.0,desktop.docker.io/binds/0/Source=D:\\\\SonarQube\\\\production\\\\data\\\\sonarqube,desktop.docker.io/binds/0/SourceKind=hostFile,desktop.docker.io/binds/0/Target=/opt/sonarqube/data,desktop.docker.io/binds/1/Source=D:\\\\SonarQube\\\\production\\\\data\\\\sonarqube-extensions,desktop.docker.io/binds/1/SourceKind=hostFile,desktop.docker.io/binds/1/Target=/opt/sonarqube/extensions,desktop.docker.io/binds/2/Source=D:\\\\SonarQube\\\\production\\\\logs\\\\sonarqube,desktop.docker.io/binds/2/SourceKind=hostFile,desktop.docker.io/binds/2/Target=/opt/sonarqube/logs,desktop.docker.io/binds/3/Source=D:\\\\SonarQube\\\\production\\\\temp\\\\sonarqube,desktop.docker.io/binds/3/SourceKind=hostFile,desktop.docker.io/binds/3/Target=/opt/sonarqube/temp,desktop.docker.io/mounts/0/Source=D:\\\\SonarQube\\\\production\\\\secrets\\\\postgres_password.txt,desktop.docker.io/mounts/0/SourceKind=hostFile,desktop.docker.io/mounts/0/Target=/run/secrets/postgres_password,desktop.docker.io/mounts/1/Source=D:\\\\SonarQube\\\\production\\\\secrets\\\\sonar_jwt_secret.txt,desktop.docker.io/mounts/1/SourceKind=hostFile,desktop.docker.io/mounts/1/Target=/run/secrets/sonar_jwt_secret,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/9000/tcp=127.0.0.1:9000,io.k8s.description=SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.,io.openshift.min-cpu=400m,io.openshift.min-memory=2048M,io.openshift.non-scalable=true,io.openshift.tags=sonarqube,static-code-analysis,code-quality,clean-code,org.opencontainers.image.url=https://github.com/SonarSource/docker-sonarqube,org.opencontainers.image.version=24.04\",\"LocalVolumes\":\"0\",\"Mounts\":\"/run/desktop/mnt/host/d/SonarQube/production/data/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/data/sonarqube-extensions,/run/desktop/mnt/host/d/SonarQube/production/logs/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/temp/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/secrets/postgres_password.txt,/run/desktop/mnt/host/d/SonarQube/production/secrets/sonar_jwt_secret.txt\",\"Names\":\"sonarqube-production\",\"Networks\":\"sonarqube-production\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"127.0.0.1:9000-\\u003e9000/tcp\",\"RunningFor\":\"4 weeks ago\",\"Size\":\"197kB (virtual 1.44GB)\",\"State\":\"running\",\"Status\":\"Up 14 hours\"}\n{\"Command\":\"\\\"docker-entrypoint.sh postgres\\\"\",\"CreatedAt\":\"2026-08-24 22:18:31 +0800 CST\",\"HealthStatus\":\"healthy\",\"ID\":\"44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5\",\"Image\":\"postgres:17.6-alpine\",\"Labels\":\"com.docker.compose.config-hash=e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\\\SonarQube\\\\production\\\\compose.yml,com.docker.compose.project.working_dir=D:\\\\SonarQube\\\\production,com.docker.compose.project=sonarqube-production,com.docker.compose.replace=sonarqube-postgres,com.docker.compose.service=db,com.docker.compose.version=5.4.0,desktop.docker.io/binds/0/Source=D:\\\\SonarQube\\\\production\\\\data\\\\postgresql,desktop.docker.io/binds/0/SourceKind=hostFile,desktop.docker.io/binds/0/Target=/var/lib/postgresql/data,desktop.docker.io/mounts/0/Source=D:\\\\SonarQube\\\\production\\\\secrets\\\\postgres_password.txt,desktop.docker.io/mounts/0/SourceKind=hostFile,desktop.docker.io/mounts/0/Target=/run/secrets/postgres_password,desktop.docker.io/ports.scheme=v2\",\"LocalVolumes\":\"0\",\"Mounts\":\"/run/desktop/mnt/host/d/SonarQube/production/secrets/postgres_password.txt,/run/desktop/mnt/host/d/SonarQube/production/data/postgresql\",\"Names\":\"sonarqube-postgres\",\"Networks\":\"sonarqube-production\",\"Platform\":{\"architecture\":\"amd64\",\"os\":\"linux\"},\"Ports\":\"5432/tcp\",\"RunningFor\":\"4 weeks ago\",\"Size\":\"24.6kB (virtual 287MB)\",\"State\":\"running\",\"Status\":\"Up 14 hours (healthy)\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "ls",
+        "--format",
+        "{{json .}}"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922",
+      "exit_code": 0,
+      "stdout": "{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.volume.anonymous=\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data\",\"Name\":\"3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.volume.anonymous=\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data\",\"Name\":\"80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.volume.anonymous=\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data\",\"Name\":\"249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.volume.anonymous=\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data\",\"Name\":\"5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e,com.docker.compose.project=approvaplat,com.docker.compose.version=5.4.0,com.docker.compose.volume=approvaplat-mysql-data\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/approvaplat-mysql-data/_data\",\"Name\":\"approvaplat-mysql-data\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=cc93e01b8b2ba2e8d741cb8a82f0ec63eda977dfabd9624fbb5095874ea9e01d,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=etcd\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/codeplus-r13-executor-20260922_etcd/_data\",\"Name\":\"codeplus-r13-executor-20260922_etcd\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=f889e73991072aae601a6f0f8d0fe87994bdb33a8d172eca72e4ee7ddd8ddc53,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=milvus\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/codeplus-r13-executor-20260922_milvus/_data\",\"Name\":\"codeplus-r13-executor-20260922_milvus\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=6f7483f85fcf42c7b105a1cfa356fdddeb0a2faa2d66b51c2adf0957d511573a,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=minio\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/codeplus-r13-executor-20260922_minio/_data\",\"Name\":\"codeplus-r13-executor-20260922_minio\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=6c099f015a22d7db0eaa9735e38b8a0167bf9c507aa0d8c77632747952a55b68,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=etcd\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/codeplus-r13-leader-20260922_etcd/_data\",\"Name\":\"codeplus-r13-leader-20260922_etcd\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=dd7123607addd4ac1c92921d9b8e19541209e5c2e91cdb1046556f2030e318e1,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=milvus\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/codeplus-r13-leader-20260922_milvus/_data\",\"Name\":\"codeplus-r13-leader-20260922_milvus\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n{\"Availability\":\"N/A\",\"Driver\":\"local\",\"Group\":\"N/A\",\"Labels\":\"com.docker.compose.config-hash=69d81ec73beb64709137ba89f916d6f1a736b74b5dc4e7ae6880b325c48884ed,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=minio\",\"Links\":\"N/A\",\"Mountpoint\":\"/var/lib/docker/volumes/codeplus-r13-leader-20260922_minio/_data\",\"Name\":\"codeplus-r13-leader-20260922_minio\",\"Scope\":\"local\",\"Size\":\"N/A\",\"Status\":\"N/A\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "ls",
+        "--no-trunc",
+        "--format",
+        "{{json .}}"
+      ],
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-leader-20260922",
+      "exit_code": 0,
+      "stdout": "{\"CreatedAt\":\"2026-09-21 23:55:35.545820176 +0000 UTC\",\"Driver\":\"bridge\",\"ID\":\"c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"\",\"Name\":\"bridge\",\"Scope\":\"local\"}\n{\"CreatedAt\":\"2026-09-22 13:05:23.494088495 +0000 UTC\",\"Driver\":\"bridge\",\"ID\":\"3c50d2dbbc3adb26e1d5dacd4a0db9694d5eac82a4ae442b90937e694b08899f\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"com.docker.compose.config-hash=c2581553727309bf7d8262fafd53031a42df57cf8d267843a979ef7d3c93501b,com.docker.compose.network=default,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0\",\"Name\":\"codeplus-r13-executor-20260922_default\",\"Scope\":\"local\"}\n{\"CreatedAt\":\"2026-09-22 14:04:10.374686457 +0000 UTC\",\"Driver\":\"bridge\",\"ID\":\"d80f765b058c7b601a78939256ed732f6e42d6aba82b6398026d7ce49deed6b8\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"com.docker.compose.config-hash=27ac84dd0aee54a699c85ff8ea2d6f3c9ee9520382883e59b859f5eb5cc708f6,com.docker.compose.network=default,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0\",\"Name\":\"codeplus-r13-leader-20260922_default\",\"Scope\":\"local\"}\n{\"CreatedAt\":\"2026-08-24 03:10:40.792555369 +0000 UTC\",\"Driver\":\"host\",\"ID\":\"3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"\",\"Name\":\"host\",\"Scope\":\"local\"}\n{\"CreatedAt\":\"2026-08-24 03:10:40.783778961 +0000 UTC\",\"Driver\":\"null\",\"ID\":\"831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"\",\"Name\":\"none\",\"Scope\":\"local\"}\n{\"CreatedAt\":\"2026-08-24 14:03:17.667304522 +0000 UTC\",\"Driver\":\"bridge\",\"ID\":\"e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f\",\"IPv4\":\"true\",\"IPv6\":\"false\",\"Internal\":\"false\",\"Labels\":\"com.docker.compose.config-hash=43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda,com.docker.compose.network=sonarqube,com.docker.compose.project=sonarqube-production,com.docker.compose.version=5.4.0\",\"Name\":\"sonarqube-production\",\"Scope\":\"local\"}\n",
+      "stderr": ""
+    }
+  ],
+  "before": {
+    "containers": [
+      {
+        "Command": "\"/tini -- milvus run standalone\"",
+        "CreatedAt": "2026-09-22 21:05:23 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "b5f74bb8c058e81a2cfcbae6767184e56741efd98061a14afd78b13945b94350",
+        "Image": "milvusdb/milvus:v3.0.1",
+        "Labels": "com.docker.compose.config-hash=759ecbbc90ca5607337afccc42ac5623cd2b544cd5b5c284b57fb717a00aa0e7,com.docker.compose.container-number=1,com.docker.compose.depends_on=etcd:service_healthy:false,minio:service_healthy:false,com.docker.compose.image=sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=standalone,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/19530/tcp=127.0.0.1:19536,desktop.docker.io/ports/9091/tcp=127.0.0.1:9097,org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-executor-20260922_milvus",
+        "Names": "codeplus-r13-executor-20260922-standalone-1",
+        "Networks": "codeplus-r13-executor-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "127.0.0.1:9097->9091/tcp, 127.0.0.1:19536->19530/tcp",
+        "RunningFor": "58 minutes ago",
+        "Size": "147kB (virtual 3GB)",
+        "State": "running",
+        "Status": "Up 58 minutes (healthy)"
+      },
+      {
+        "Command": "\"/usr/bin/docker-entrypoint.sh minio server /data --console-address :9001\"",
+        "CreatedAt": "2026-09-22 21:05:23 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "1edbf4041b9fa88ceeeecd55ec330d44f17756b219d02992c5c3218ef2b38186",
+        "Image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+        "Labels": "architecture=x86_64,build-date=2024-12-18T09:14:16Z,com.docker.compose.config-hash=299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=minio,com.docker.compose.version=5.4.0,com.redhat.component=ubi9-micro-container,com.redhat.license_terms=https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI,description=MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.,desktop.docker.io/ports.scheme=v2,distribution-scope=public,io.buildah.version=1.38.0-dev,io.k8s.description=Very small image which doesn't install the package manager.,io.k8s.display-name=Red Hat Universal Base Image 9 Micro,io.openshift.expose-services=,maintainer=MinIO Inc <dev@min.io>,name=MinIO,release=RELEASE.2024-12-18T13-15-44Z,summary=MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.,url=https://www.redhat.com,vcs-ref=10988923ed65297b3e5a5c9cf1c59f779fd76274,vcs-type=git,vendor=MinIO Inc <dev@min.io>,version=RELEASE.2024-12-18T13-15-44Z",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-executor-20260922_minio",
+        "Names": "codeplus-r13-executor-20260922-minio-1",
+        "Networks": "codeplus-r13-executor-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "9000/tcp",
+        "RunningFor": "58 minutes ago",
+        "Size": "24.6kB (virtual 182MB)",
+        "State": "running",
+        "Status": "Up 58 minutes (healthy)"
+      },
+      {
+        "Command": "\"etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd\"",
+        "CreatedAt": "2026-09-22 21:05:23 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "76c07f8bdcee098a0fac4de475e1c86c1050df4f604916e8b0f07a6e2b8f8f56",
+        "Image": "quay.io/coreos/etcd:v3.5.25",
+        "Labels": "com.docker.compose.config-hash=f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=etcd,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,io.buildah.version=1.41.5",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-executor-20260922_etcd",
+        "Names": "codeplus-r13-executor-20260922-etcd-1",
+        "Networks": "codeplus-r13-executor-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "2379-2380/tcp",
+        "RunningFor": "58 minutes ago",
+        "Size": "24.6kB (virtual 69.5MB)",
+        "State": "running",
+        "Status": "Up 58 minutes (healthy)"
+      },
+      {
+        "Command": "\"/bin/bash -c 'export SONAR_JDBC_PASSWORD=\\\"$(cat /run/secrets/postgres_password)\\\"; export SONAR_AUTH_JWTBASE64HS256SECRET=\\\"$(cat /run/secrets/sonar_jwt_secret)\\\"; exec /opt/sonarqube/docker/entrypoint.sh'\"",
+        "CreatedAt": "2026-08-24 22:18:32 +0800 CST",
+        "HealthStatus": "none",
+        "ID": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+        "Image": "sonarqube:26.8.0.126808-community",
+        "Labels": "com.docker.compose.config-hash=490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6,com.docker.compose.container-number=1,com.docker.compose.depends_on=db:service_healthy:false,com.docker.compose.image=sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\SonarQube\\production\\compose.yml,com.docker.compose.project.working_dir=D:\\SonarQube\\production,com.docker.compose.project=sonarqube-production,com.docker.compose.replace=sonarqube-production,com.docker.compose.service=sonarqube,com.docker.compose.version=5.4.0,desktop.docker.io/binds/0/Source=D:\\SonarQube\\production\\data\\sonarqube,desktop.docker.io/binds/0/SourceKind=hostFile,desktop.docker.io/binds/0/Target=/opt/sonarqube/data,desktop.docker.io/binds/1/Source=D:\\SonarQube\\production\\data\\sonarqube-extensions,desktop.docker.io/binds/1/SourceKind=hostFile,desktop.docker.io/binds/1/Target=/opt/sonarqube/extensions,desktop.docker.io/binds/2/Source=D:\\SonarQube\\production\\logs\\sonarqube,desktop.docker.io/binds/2/SourceKind=hostFile,desktop.docker.io/binds/2/Target=/opt/sonarqube/logs,desktop.docker.io/binds/3/Source=D:\\SonarQube\\production\\temp\\sonarqube,desktop.docker.io/binds/3/SourceKind=hostFile,desktop.docker.io/binds/3/Target=/opt/sonarqube/temp,desktop.docker.io/mounts/0/Source=D:\\SonarQube\\production\\secrets\\postgres_password.txt,desktop.docker.io/mounts/0/SourceKind=hostFile,desktop.docker.io/mounts/0/Target=/run/secrets/postgres_password,desktop.docker.io/mounts/1/Source=D:\\SonarQube\\production\\secrets\\sonar_jwt_secret.txt,desktop.docker.io/mounts/1/SourceKind=hostFile,desktop.docker.io/mounts/1/Target=/run/secrets/sonar_jwt_secret,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/9000/tcp=127.0.0.1:9000,io.k8s.description=SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.,io.openshift.min-cpu=400m,io.openshift.min-memory=2048M,io.openshift.non-scalable=true,io.openshift.tags=sonarqube,static-code-analysis,code-quality,clean-code,org.opencontainers.image.url=https://github.com/SonarSource/docker-sonarqube,org.opencontainers.image.version=24.04",
+        "LocalVolumes": "0",
+        "Mounts": "/run/desktop/mnt/host/d/SonarQube/production/data/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/data/sonarqube-extensions,/run/desktop/mnt/host/d/SonarQube/production/logs/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/temp/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/secrets/postgres_password.txt,/run/desktop/mnt/host/d/SonarQube/production/secrets/sonar_jwt_secret.txt",
+        "Names": "sonarqube-production",
+        "Networks": "sonarqube-production",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "127.0.0.1:9000->9000/tcp",
+        "RunningFor": "4 weeks ago",
+        "Size": "197kB (virtual 1.44GB)",
+        "State": "running",
+        "Status": "Up 14 hours"
+      },
+      {
+        "Command": "\"docker-entrypoint.sh postgres\"",
+        "CreatedAt": "2026-08-24 22:18:31 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+        "Image": "postgres:17.6-alpine",
+        "Labels": "com.docker.compose.config-hash=e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\SonarQube\\production\\compose.yml,com.docker.compose.project.working_dir=D:\\SonarQube\\production,com.docker.compose.project=sonarqube-production,com.docker.compose.replace=sonarqube-postgres,com.docker.compose.service=db,com.docker.compose.version=5.4.0,desktop.docker.io/binds/0/Source=D:\\SonarQube\\production\\data\\postgresql,desktop.docker.io/binds/0/SourceKind=hostFile,desktop.docker.io/binds/0/Target=/var/lib/postgresql/data,desktop.docker.io/mounts/0/Source=D:\\SonarQube\\production\\secrets\\postgres_password.txt,desktop.docker.io/mounts/0/SourceKind=hostFile,desktop.docker.io/mounts/0/Target=/run/secrets/postgres_password,desktop.docker.io/ports.scheme=v2",
+        "LocalVolumes": "0",
+        "Mounts": "/run/desktop/mnt/host/d/SonarQube/production/secrets/postgres_password.txt,/run/desktop/mnt/host/d/SonarQube/production/data/postgresql",
+        "Names": "sonarqube-postgres",
+        "Networks": "sonarqube-production",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "5432/tcp",
+        "RunningFor": "4 weeks ago",
+        "Size": "24.6kB (virtual 287MB)",
+        "State": "running",
+        "Status": "Up 14 hours (healthy)"
+      }
+    ],
+    "volumes": [
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.volume.anonymous=",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data",
+        "Name": "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.volume.anonymous=",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data",
+        "Name": "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.volume.anonymous=",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data",
+        "Name": "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.volume.anonymous=",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data",
+        "Name": "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e,com.docker.compose.project=approvaplat,com.docker.compose.version=5.4.0,com.docker.compose.volume=approvaplat-mysql-data",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/approvaplat-mysql-data/_data",
+        "Name": "approvaplat-mysql-data",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=cc93e01b8b2ba2e8d741cb8a82f0ec63eda977dfabd9624fbb5095874ea9e01d,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=etcd",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-executor-20260922_etcd/_data",
+        "Name": "codeplus-r13-executor-20260922_etcd",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=f889e73991072aae601a6f0f8d0fe87994bdb33a8d172eca72e4ee7ddd8ddc53,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=milvus",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-executor-20260922_milvus/_data",
+        "Name": "codeplus-r13-executor-20260922_milvus",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=6f7483f85fcf42c7b105a1cfa356fdddeb0a2faa2d66b51c2adf0957d511573a,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=minio",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-executor-20260922_minio/_data",
+        "Name": "codeplus-r13-executor-20260922_minio",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      }
+    ],
+    "networks": [
+      {
+        "CreatedAt": "2026-09-21 23:55:35.545820176 +0000 UTC",
+        "Driver": "bridge",
+        "ID": "c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "",
+        "Name": "bridge",
+        "Scope": "local"
+      },
+      {
+        "CreatedAt": "2026-09-22 13:05:23.494088495 +0000 UTC",
+        "Driver": "bridge",
+        "ID": "3c50d2dbbc3adb26e1d5dacd4a0db9694d5eac82a4ae442b90937e694b08899f",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "com.docker.compose.config-hash=c2581553727309bf7d8262fafd53031a42df57cf8d267843a979ef7d3c93501b,com.docker.compose.network=default,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0",
+        "Name": "codeplus-r13-executor-20260922_default",
+        "Scope": "local"
+      },
+      {
+        "CreatedAt": "2026-08-24 03:10:40.792555369 +0000 UTC",
+        "Driver": "host",
+        "ID": "3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "",
+        "Name": "host",
+        "Scope": "local"
+      },
+      {
+        "CreatedAt": "2026-08-24 03:10:40.783778961 +0000 UTC",
+        "Driver": "null",
+        "ID": "831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "",
+        "Name": "none",
+        "Scope": "local"
+      },
+      {
+        "CreatedAt": "2026-08-24 14:03:17.667304522 +0000 UTC",
+        "Driver": "bridge",
+        "ID": "e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "com.docker.compose.config-hash=43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda,com.docker.compose.network=sonarqube,com.docker.compose.project=sonarqube-production,com.docker.compose.version=5.4.0",
+        "Name": "sonarqube-production",
+        "Scope": "local"
+      }
+    ]
+  },
+  "resolved": {
+    "name": "codeplus-r13-leader-20260922",
+    "networks": {
+      "default": {
+        "name": "codeplus-r13-leader-20260922_default",
+        "ipam": {}
+      }
+    },
+    "services": {
+      "etcd": {
+        "command": [
+          "etcd",
+          "-advertise-client-urls=http://etcd:2379",
+          "-listen-client-urls",
+          "http://0.0.0.0:2379",
+          "--data-dir",
+          "/etcd"
+        ],
+        "entrypoint": null,
+        "environment": {
+          "ETCD_AUTO_COMPACTION_MODE": "revision",
+          "ETCD_AUTO_COMPACTION_RETENTION": "1000",
+          "ETCD_QUOTA_BACKEND_BYTES": "4294967296",
+          "ETCD_SNAPSHOT_COUNT": "50000"
+        },
+        "healthcheck": {
+          "test": [
+            "CMD",
+            "etcdctl",
+            "endpoint",
+            "health"
+          ],
+          "timeout": "5s",
+          "interval": "5s",
+          "retries": 30
+        },
+        "image": "quay.io/coreos/etcd:v3.5.25",
+        "networks": {
+          "default": null
+        },
+        "volumes": [
+          {
+            "type": "volume",
+            "source": "etcd",
+            "target": "/etcd",
+            "volume": {}
+          }
+        ]
+      },
+      "minio": {
+        "command": [
+          "minio",
+          "server",
+          "/data",
+          "--console-address",
+          ":9001"
+        ],
+        "entrypoint": null,
+        "healthcheck": {
+          "test": [
+            "CMD",
+            "curl",
+            "-f",
+            "http://localhost:9000/minio/health/live"
+          ],
+          "timeout": "5s",
+          "interval": "5s",
+          "retries": 30
+        },
+        "image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+        "networks": {
+          "default": null
+        },
+        "volumes": [
+          {
+            "type": "volume",
+            "source": "minio",
+            "target": "/data",
+            "volume": {}
+          }
+        ]
+      },
+      "standalone": {
+        "command": [
+          "milvus",
+          "run",
+          "standalone"
+        ],
+        "depends_on": {
+          "etcd": {
+            "condition": "service_healthy",
+            "required": true
+          },
+          "minio": {
+            "condition": "service_healthy",
+            "required": true
+          }
+        },
+        "entrypoint": null,
+        "environment": {
+          "ETCD_ENDPOINTS": "etcd:2379",
+          "MINIO_ADDRESS": "minio:9000",
+          "MQ_TYPE": "woodpecker"
+        },
+        "healthcheck": {
+          "test": [
+            "CMD",
+            "curl",
+            "-f",
+            "http://localhost:9091/healthz"
+          ],
+          "timeout": "5s",
+          "interval": "5s",
+          "retries": 60,
+          "start_period": "1m0s"
+        },
+        "image": "milvusdb/milvus:v3.0.1",
+        "networks": {
+          "default": null
+        },
+        "ports": [
+          {
+            "mode": "ingress",
+            "host_ip": "127.0.0.1",
+            "target": 19530,
+            "published": "19537",
+            "protocol": "tcp"
+          },
+          {
+            "mode": "ingress",
+            "host_ip": "127.0.0.1",
+            "target": 9091,
+            "published": "9098",
+            "protocol": "tcp"
+          }
+        ],
+        "security_opt": [
+          "seccomp:unconfined"
+        ],
+        "volumes": [
+          {
+            "type": "volume",
+            "source": "milvus",
+            "target": "/var/lib/milvus",
+            "volume": {}
+          }
+        ]
+      }
+    },
+    "volumes": {
+      "etcd": {
+        "name": "codeplus-r13-leader-20260922_etcd"
+      },
+      "milvus": {
+        "name": "codeplus-r13-leader-20260922_milvus"
+      },
+      "minio": {
+        "name": "codeplus-r13-leader-20260922_minio"
+      }
+    }
+  },
+  "after": {
+    "containers": [
+      {
+        "Command": "\"/tini -- milvus run standalone\"",
+        "CreatedAt": "2026-09-22 22:04:10 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "f39993b77ceb29a52cb2389de32e468e19fad5e374affedd1400fc4734dfcd29",
+        "Image": "milvusdb/milvus:v3.0.1",
+        "Labels": "com.docker.compose.config-hash=b0f1cd99db1c1040cb788dbcb2f141f4cb67e0633c1ff893865327fcd4f08b16,com.docker.compose.container-number=1,com.docker.compose.depends_on=etcd:service_healthy:false,minio:service_healthy:false,com.docker.compose.image=sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.service=standalone,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/19530/tcp=127.0.0.1:19537,desktop.docker.io/ports/9091/tcp=127.0.0.1:9098,org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-leader-20260922_milvus",
+        "Names": "codeplus-r13-leader-20260922-standalone-1",
+        "Networks": "codeplus-r13-leader-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "127.0.0.1:9098->9091/tcp, 127.0.0.1:19537->19530/tcp",
+        "RunningFor": "17 seconds ago",
+        "Size": "32.8kB (virtual 3GB)",
+        "State": "running",
+        "Status": "Up 11 seconds (healthy)"
+      },
+      {
+        "Command": "\"/usr/bin/docker-entrypoint.sh minio server /data --console-address :9001\"",
+        "CreatedAt": "2026-09-22 22:04:10 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "66c683e5bb4b70f23ce772b0d29221207c523c9bcd9d7e5ca07c95619e91aadb",
+        "Image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+        "Labels": "architecture=x86_64,build-date=2024-12-18T09:14:16Z,com.docker.compose.config-hash=299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.service=minio,com.docker.compose.version=5.4.0,com.redhat.component=ubi9-micro-container,com.redhat.license_terms=https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI,description=MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.,desktop.docker.io/ports.scheme=v2,distribution-scope=public,io.buildah.version=1.38.0-dev,io.k8s.description=Very small image which doesn't install the package manager.,io.k8s.display-name=Red Hat Universal Base Image 9 Micro,io.openshift.expose-services=,maintainer=MinIO Inc <dev@min.io>,name=MinIO,release=RELEASE.2024-12-18T13-15-44Z,summary=MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.,url=https://www.redhat.com,vcs-ref=10988923ed65297b3e5a5c9cf1c59f779fd76274,vcs-type=git,vendor=MinIO Inc <dev@min.io>,version=RELEASE.2024-12-18T13-15-44Z",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-leader-20260922_minio",
+        "Names": "codeplus-r13-leader-20260922-minio-1",
+        "Networks": "codeplus-r13-leader-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "9000/tcp",
+        "RunningFor": "17 seconds ago",
+        "Size": "24.6kB (virtual 182MB)",
+        "State": "running",
+        "Status": "Up 16 seconds (healthy)"
+      },
+      {
+        "Command": "\"etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd\"",
+        "CreatedAt": "2026-09-22 22:04:10 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "33a164232189f9319ad63dd2ad717e373605ec1868cb2e28c4caf6dd7ce0c2a5",
+        "Image": "quay.io/coreos/etcd:v3.5.25",
+        "Labels": "com.docker.compose.config-hash=f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.service=etcd,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,io.buildah.version=1.41.5",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-leader-20260922_etcd",
+        "Names": "codeplus-r13-leader-20260922-etcd-1",
+        "Networks": "codeplus-r13-leader-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "2379-2380/tcp",
+        "RunningFor": "17 seconds ago",
+        "Size": "24.6kB (virtual 69.5MB)",
+        "State": "running",
+        "Status": "Up 16 seconds (healthy)"
+      },
+      {
+        "Command": "\"/tini -- milvus run standalone\"",
+        "CreatedAt": "2026-09-22 21:05:23 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "b5f74bb8c058e81a2cfcbae6767184e56741efd98061a14afd78b13945b94350",
+        "Image": "milvusdb/milvus:v3.0.1",
+        "Labels": "com.docker.compose.config-hash=759ecbbc90ca5607337afccc42ac5623cd2b544cd5b5c284b57fb717a00aa0e7,com.docker.compose.container-number=1,com.docker.compose.depends_on=etcd:service_healthy:false,minio:service_healthy:false,com.docker.compose.image=sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=standalone,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/19530/tcp=127.0.0.1:19536,desktop.docker.io/ports/9091/tcp=127.0.0.1:9097,org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-executor-20260922_milvus",
+        "Names": "codeplus-r13-executor-20260922-standalone-1",
+        "Networks": "codeplus-r13-executor-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "127.0.0.1:9097->9091/tcp, 127.0.0.1:19536->19530/tcp",
+        "RunningFor": "59 minutes ago",
+        "Size": "147kB (virtual 3GB)",
+        "State": "running",
+        "Status": "Up 58 minutes (healthy)"
+      },
+      {
+        "Command": "\"/usr/bin/docker-entrypoint.sh minio server /data --console-address :9001\"",
+        "CreatedAt": "2026-09-22 21:05:23 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "1edbf4041b9fa88ceeeecd55ec330d44f17756b219d02992c5c3218ef2b38186",
+        "Image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+        "Labels": "architecture=x86_64,build-date=2024-12-18T09:14:16Z,com.docker.compose.config-hash=299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=minio,com.docker.compose.version=5.4.0,com.redhat.component=ubi9-micro-container,com.redhat.license_terms=https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI,description=MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.,desktop.docker.io/ports.scheme=v2,distribution-scope=public,io.buildah.version=1.38.0-dev,io.k8s.description=Very small image which doesn't install the package manager.,io.k8s.display-name=Red Hat Universal Base Image 9 Micro,io.openshift.expose-services=,maintainer=MinIO Inc <dev@min.io>,name=MinIO,release=RELEASE.2024-12-18T13-15-44Z,summary=MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.,url=https://www.redhat.com,vcs-ref=10988923ed65297b3e5a5c9cf1c59f779fd76274,vcs-type=git,vendor=MinIO Inc <dev@min.io>,version=RELEASE.2024-12-18T13-15-44Z",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-executor-20260922_minio",
+        "Names": "codeplus-r13-executor-20260922-minio-1",
+        "Networks": "codeplus-r13-executor-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "9000/tcp",
+        "RunningFor": "59 minutes ago",
+        "Size": "24.6kB (virtual 182MB)",
+        "State": "running",
+        "Status": "Up 59 minutes (healthy)"
+      },
+      {
+        "Command": "\"etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd\"",
+        "CreatedAt": "2026-09-22 21:05:23 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "76c07f8bdcee098a0fac4de475e1c86c1050df4f604916e8b0f07a6e2b8f8f56",
+        "Image": "quay.io/coreos/etcd:v3.5.25",
+        "Labels": "com.docker.compose.config-hash=f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.service=etcd,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,io.buildah.version=1.41.5",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-executor-20260922_etcd",
+        "Names": "codeplus-r13-executor-20260922-etcd-1",
+        "Networks": "codeplus-r13-executor-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "2379-2380/tcp",
+        "RunningFor": "59 minutes ago",
+        "Size": "24.6kB (virtual 69.5MB)",
+        "State": "running",
+        "Status": "Up 59 minutes (healthy)"
+      },
+      {
+        "Command": "\"/bin/bash -c 'export SONAR_JDBC_PASSWORD=\\\"$(cat /run/secrets/postgres_password)\\\"; export SONAR_AUTH_JWTBASE64HS256SECRET=\\\"$(cat /run/secrets/sonar_jwt_secret)\\\"; exec /opt/sonarqube/docker/entrypoint.sh'\"",
+        "CreatedAt": "2026-08-24 22:18:32 +0800 CST",
+        "HealthStatus": "none",
+        "ID": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+        "Image": "sonarqube:26.8.0.126808-community",
+        "Labels": "com.docker.compose.config-hash=490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6,com.docker.compose.container-number=1,com.docker.compose.depends_on=db:service_healthy:false,com.docker.compose.image=sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\SonarQube\\production\\compose.yml,com.docker.compose.project.working_dir=D:\\SonarQube\\production,com.docker.compose.project=sonarqube-production,com.docker.compose.replace=sonarqube-production,com.docker.compose.service=sonarqube,com.docker.compose.version=5.4.0,desktop.docker.io/binds/0/Source=D:\\SonarQube\\production\\data\\sonarqube,desktop.docker.io/binds/0/SourceKind=hostFile,desktop.docker.io/binds/0/Target=/opt/sonarqube/data,desktop.docker.io/binds/1/Source=D:\\SonarQube\\production\\data\\sonarqube-extensions,desktop.docker.io/binds/1/SourceKind=hostFile,desktop.docker.io/binds/1/Target=/opt/sonarqube/extensions,desktop.docker.io/binds/2/Source=D:\\SonarQube\\production\\logs\\sonarqube,desktop.docker.io/binds/2/SourceKind=hostFile,desktop.docker.io/binds/2/Target=/opt/sonarqube/logs,desktop.docker.io/binds/3/Source=D:\\SonarQube\\production\\temp\\sonarqube,desktop.docker.io/binds/3/SourceKind=hostFile,desktop.docker.io/binds/3/Target=/opt/sonarqube/temp,desktop.docker.io/mounts/0/Source=D:\\SonarQube\\production\\secrets\\postgres_password.txt,desktop.docker.io/mounts/0/SourceKind=hostFile,desktop.docker.io/mounts/0/Target=/run/secrets/postgres_password,desktop.docker.io/mounts/1/Source=D:\\SonarQube\\production\\secrets\\sonar_jwt_secret.txt,desktop.docker.io/mounts/1/SourceKind=hostFile,desktop.docker.io/mounts/1/Target=/run/secrets/sonar_jwt_secret,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/9000/tcp=127.0.0.1:9000,io.k8s.description=SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.,io.openshift.min-cpu=400m,io.openshift.min-memory=2048M,io.openshift.non-scalable=true,io.openshift.tags=sonarqube,static-code-analysis,code-quality,clean-code,org.opencontainers.image.url=https://github.com/SonarSource/docker-sonarqube,org.opencontainers.image.version=24.04",
+        "LocalVolumes": "0",
+        "Mounts": "/run/desktop/mnt/host/d/SonarQube/production/data/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/data/sonarqube-extensions,/run/desktop/mnt/host/d/SonarQube/production/logs/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/temp/sonarqube,/run/desktop/mnt/host/d/SonarQube/production/secrets/postgres_password.txt,/run/desktop/mnt/host/d/SonarQube/production/secrets/sonar_jwt_secret.txt",
+        "Names": "sonarqube-production",
+        "Networks": "sonarqube-production",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "127.0.0.1:9000->9000/tcp",
+        "RunningFor": "4 weeks ago",
+        "Size": "197kB (virtual 1.44GB)",
+        "State": "running",
+        "Status": "Up 14 hours"
+      },
+      {
+        "Command": "\"docker-entrypoint.sh postgres\"",
+        "CreatedAt": "2026-08-24 22:18:31 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+        "Image": "postgres:17.6-alpine",
+        "Labels": "com.docker.compose.config-hash=e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\SonarQube\\production\\compose.yml,com.docker.compose.project.working_dir=D:\\SonarQube\\production,com.docker.compose.project=sonarqube-production,com.docker.compose.replace=sonarqube-postgres,com.docker.compose.service=db,com.docker.compose.version=5.4.0,desktop.docker.io/binds/0/Source=D:\\SonarQube\\production\\data\\postgresql,desktop.docker.io/binds/0/SourceKind=hostFile,desktop.docker.io/binds/0/Target=/var/lib/postgresql/data,desktop.docker.io/mounts/0/Source=D:\\SonarQube\\production\\secrets\\postgres_password.txt,desktop.docker.io/mounts/0/SourceKind=hostFile,desktop.docker.io/mounts/0/Target=/run/secrets/postgres_password,desktop.docker.io/ports.scheme=v2",
+        "LocalVolumes": "0",
+        "Mounts": "/run/desktop/mnt/host/d/SonarQube/production/secrets/postgres_password.txt,/run/desktop/mnt/host/d/SonarQube/production/data/postgresql",
+        "Names": "sonarqube-postgres",
+        "Networks": "sonarqube-production",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "5432/tcp",
+        "RunningFor": "4 weeks ago",
+        "Size": "24.6kB (virtual 287MB)",
+        "State": "running",
+        "Status": "Up 14 hours (healthy)"
+      }
+    ],
+    "volumes": [
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.volume.anonymous=",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data",
+        "Name": "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.volume.anonymous=",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data",
+        "Name": "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.volume.anonymous=",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data",
+        "Name": "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.volume.anonymous=",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data",
+        "Name": "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e,com.docker.compose.project=approvaplat,com.docker.compose.version=5.4.0,com.docker.compose.volume=approvaplat-mysql-data",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/approvaplat-mysql-data/_data",
+        "Name": "approvaplat-mysql-data",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=cc93e01b8b2ba2e8d741cb8a82f0ec63eda977dfabd9624fbb5095874ea9e01d,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=etcd",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-executor-20260922_etcd/_data",
+        "Name": "codeplus-r13-executor-20260922_etcd",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=f889e73991072aae601a6f0f8d0fe87994bdb33a8d172eca72e4ee7ddd8ddc53,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=milvus",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-executor-20260922_milvus/_data",
+        "Name": "codeplus-r13-executor-20260922_milvus",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=6f7483f85fcf42c7b105a1cfa356fdddeb0a2faa2d66b51c2adf0957d511573a,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=minio",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-executor-20260922_minio/_data",
+        "Name": "codeplus-r13-executor-20260922_minio",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=6c099f015a22d7db0eaa9735e38b8a0167bf9c507aa0d8c77632747952a55b68,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=etcd",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-leader-20260922_etcd/_data",
+        "Name": "codeplus-r13-leader-20260922_etcd",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=dd7123607addd4ac1c92921d9b8e19541209e5c2e91cdb1046556f2030e318e1,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=milvus",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-leader-20260922_milvus/_data",
+        "Name": "codeplus-r13-leader-20260922_milvus",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=69d81ec73beb64709137ba89f916d6f1a736b74b5dc4e7ae6880b325c48884ed,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=minio",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-leader-20260922_minio/_data",
+        "Name": "codeplus-r13-leader-20260922_minio",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      }
+    ],
+    "networks": [
+      {
+        "CreatedAt": "2026-09-21 23:55:35.545820176 +0000 UTC",
+        "Driver": "bridge",
+        "ID": "c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "",
+        "Name": "bridge",
+        "Scope": "local"
+      },
+      {
+        "CreatedAt": "2026-09-22 13:05:23.494088495 +0000 UTC",
+        "Driver": "bridge",
+        "ID": "3c50d2dbbc3adb26e1d5dacd4a0db9694d5eac82a4ae442b90937e694b08899f",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "com.docker.compose.config-hash=c2581553727309bf7d8262fafd53031a42df57cf8d267843a979ef7d3c93501b,com.docker.compose.network=default,com.docker.compose.project=codeplus-r13-executor-20260922,com.docker.compose.version=5.4.0",
+        "Name": "codeplus-r13-executor-20260922_default",
+        "Scope": "local"
+      },
+      {
+        "CreatedAt": "2026-09-22 14:04:10.374686457 +0000 UTC",
+        "Driver": "bridge",
+        "ID": "d80f765b058c7b601a78939256ed732f6e42d6aba82b6398026d7ce49deed6b8",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "com.docker.compose.config-hash=27ac84dd0aee54a699c85ff8ea2d6f3c9ee9520382883e59b859f5eb5cc708f6,com.docker.compose.network=default,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0",
+        "Name": "codeplus-r13-leader-20260922_default",
+        "Scope": "local"
+      },
+      {
+        "CreatedAt": "2026-08-24 03:10:40.792555369 +0000 UTC",
+        "Driver": "host",
+        "ID": "3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "",
+        "Name": "host",
+        "Scope": "local"
+      },
+      {
+        "CreatedAt": "2026-08-24 03:10:40.783778961 +0000 UTC",
+        "Driver": "null",
+        "ID": "831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "",
+        "Name": "none",
+        "Scope": "local"
+      },
+      {
+        "CreatedAt": "2026-08-24 14:03:17.667304522 +0000 UTC",
+        "Driver": "bridge",
+        "ID": "e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "com.docker.compose.config-hash=43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda,com.docker.compose.network=sonarqube,com.docker.compose.project=sonarqube-production,com.docker.compose.version=5.4.0",
+        "Name": "sonarqube-production",
+        "Scope": "local"
+      }
+    ]
+  },
+  "owned": {
+    "containers": [
+      {
+        "Command": "\"/tini -- milvus run standalone\"",
+        "CreatedAt": "2026-09-22 22:04:10 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "f39993b77ceb29a52cb2389de32e468e19fad5e374affedd1400fc4734dfcd29",
+        "Image": "milvusdb/milvus:v3.0.1",
+        "Labels": "com.docker.compose.config-hash=b0f1cd99db1c1040cb788dbcb2f141f4cb67e0633c1ff893865327fcd4f08b16,com.docker.compose.container-number=1,com.docker.compose.depends_on=etcd:service_healthy:false,minio:service_healthy:false,com.docker.compose.image=sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.service=standalone,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/19530/tcp=127.0.0.1:19537,desktop.docker.io/ports/9091/tcp=127.0.0.1:9098,org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-leader-20260922_milvus",
+        "Names": "codeplus-r13-leader-20260922-standalone-1",
+        "Networks": "codeplus-r13-leader-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "127.0.0.1:9098->9091/tcp, 127.0.0.1:19537->19530/tcp",
+        "RunningFor": "17 seconds ago",
+        "Size": "32.8kB (virtual 3GB)",
+        "State": "running",
+        "Status": "Up 11 seconds (healthy)"
+      },
+      {
+        "Command": "\"/usr/bin/docker-entrypoint.sh minio server /data --console-address :9001\"",
+        "CreatedAt": "2026-09-22 22:04:10 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "66c683e5bb4b70f23ce772b0d29221207c523c9bcd9d7e5ca07c95619e91aadb",
+        "Image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+        "Labels": "architecture=x86_64,build-date=2024-12-18T09:14:16Z,com.docker.compose.config-hash=299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.service=minio,com.docker.compose.version=5.4.0,com.redhat.component=ubi9-micro-container,com.redhat.license_terms=https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI,description=MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.,desktop.docker.io/ports.scheme=v2,distribution-scope=public,io.buildah.version=1.38.0-dev,io.k8s.description=Very small image which doesn't install the package manager.,io.k8s.display-name=Red Hat Universal Base Image 9 Micro,io.openshift.expose-services=,maintainer=MinIO Inc <dev@min.io>,name=MinIO,release=RELEASE.2024-12-18T13-15-44Z,summary=MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.,url=https://www.redhat.com,vcs-ref=10988923ed65297b3e5a5c9cf1c59f779fd76274,vcs-type=git,vendor=MinIO Inc <dev@min.io>,version=RELEASE.2024-12-18T13-15-44Z",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-leader-20260922_minio",
+        "Names": "codeplus-r13-leader-20260922-minio-1",
+        "Networks": "codeplus-r13-leader-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "9000/tcp",
+        "RunningFor": "17 seconds ago",
+        "Size": "24.6kB (virtual 182MB)",
+        "State": "running",
+        "Status": "Up 16 seconds (healthy)"
+      },
+      {
+        "Command": "\"etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd\"",
+        "CreatedAt": "2026-09-22 22:04:10 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "33a164232189f9319ad63dd2ad717e373605ec1868cb2e28c4caf6dd7ce0c2a5",
+        "Image": "quay.io/coreos/etcd:v3.5.25",
+        "Labels": "com.docker.compose.config-hash=f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r13-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.service=etcd,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,io.buildah.version=1.41.5",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r13-leader-20260922_etcd",
+        "Names": "codeplus-r13-leader-20260922-etcd-1",
+        "Networks": "codeplus-r13-leader-20260922_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "2379-2380/tcp",
+        "RunningFor": "17 seconds ago",
+        "Size": "24.6kB (virtual 69.5MB)",
+        "State": "running",
+        "Status": "Up 16 seconds (healthy)"
+      }
+    ],
+    "volumes": [
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=6c099f015a22d7db0eaa9735e38b8a0167bf9c507aa0d8c77632747952a55b68,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=etcd",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-leader-20260922_etcd/_data",
+        "Name": "codeplus-r13-leader-20260922_etcd",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=dd7123607addd4ac1c92921d9b8e19541209e5c2e91cdb1046556f2030e318e1,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=milvus",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-leader-20260922_milvus/_data",
+        "Name": "codeplus-r13-leader-20260922_milvus",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=69d81ec73beb64709137ba89f916d6f1a736b74b5dc4e7ae6880b325c48884ed,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0,com.docker.compose.volume=minio",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r13-leader-20260922_minio/_data",
+        "Name": "codeplus-r13-leader-20260922_minio",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      }
+    ],
+    "networks": [
+      {
+        "CreatedAt": "2026-09-22 14:04:10.374686457 +0000 UTC",
+        "Driver": "bridge",
+        "ID": "d80f765b058c7b601a78939256ed732f6e42d6aba82b6398026d7ce49deed6b8",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "com.docker.compose.config-hash=27ac84dd0aee54a699c85ff8ea2d6f3c9ee9520382883e59b859f5eb5cc708f6,com.docker.compose.network=default,com.docker.compose.project=codeplus-r13-leader-20260922,com.docker.compose.version=5.4.0",
+        "Name": "codeplus-r13-leader-20260922_default",
+        "Scope": "local"
+      }
+    ]
+  },
+  "finished_at": "2026-09-22T14:04:28.026567+00:00"
+}

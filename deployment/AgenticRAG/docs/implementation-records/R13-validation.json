@@ -1,0 +1,413 @@
+{
+  "status": "PASS",
+  "time": "2026-09-22T14:00:09.160610+00:00",
+  "frozen_fingerprint": "365df50e99520acfc88eb1b6d8512d37f0ac18f326610fc0f154233ab05aa292",
+  "snapshot_unchanged": true,
+  "tests": {
+    "core": {
+      "tests": 616,
+      "passed": 587,
+      "skipped": [
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_real_cuda_identity_and_placement",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_document_and_instructed_query_vectors",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_full_tokenizer_inputs_and_explicit_limits",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_rerank_identity_alignment_and_last_token_oracle",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_bounded_batch_measurements_and_release",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_local_model_capabilities",
+          "name": "test_real_dependency_device_and_capped_allocator_failures",
+          "reason": "R03 real GPU probe not requested; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_real_native_bm25_schema_and_index_loading",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_strong_write_then_read_without_flush",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_physical_versions_isolate_members_and_bm25_statistics",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_empty_hits_are_distinct_from_explicit_service_and_capability_errors",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_real_client_process_and_service_restart_keep_persisted_versions",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_milvus_capabilities",
+          "name": "test_resource_ownership_and_test_collection_cleanup",
+          "reason": "R02 real Milvus not requested; set R02_RUN_REAL=1; no acceptance evidence"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_two_real_hosts_race_start_share_model_and_independent_exit",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_actual_embedding_rerank_switching_identity_and_limits",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_actual_running_cancel_deadline_queue_oom_and_recovery",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_actual_disconnect_unknown_worker_death_and_stale_restart",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_actual_dependency_device_and_different_runtime_refusals",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_model_worker_gpu",
+          "name": "test_controlled_faults_after_real_gpu_layer_and_actual_fatal_exit",
+          "reason": "explicit installed CUDA acceptance required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_candidate_validation_and_failure_never_publish[none]",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_candidate_validation_and_failure_never_publish[row_hash]",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_candidate_validation_and_failure_never_publish[index_timeout]",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_candidate_validation_and_failure_never_publish[schema]",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_milvus",
+          "name": "test_real_missing_endpoint_is_error_not_empty_success",
+          "reason": "explicit real owned Milvus required"
+        },
+        {
+          "class": "tests.test_publication_processes",
+          "name": "test_real_publication_process_termination_and_concurrent_metadata[before-commit]",
+          "reason": "owned real Milvus acceptance required"
+        },
+        {
+          "class": "tests.test_publication_processes",
+          "name": "test_real_publication_process_termination_and_concurrent_metadata[after-commit]",
+          "reason": "owned real Milvus acceptance required"
+        },
+        {
+          "class": "tests.test_publication_processes",
+          "name": "test_real_publication_process_termination_and_concurrent_metadata[redirector-diagnostic]",
+          "reason": "owned real Milvus acceptance required"
+        },
+        {
+          "class": "tests.test_publication_small",
+          "name": "test_real_single_chunk_publish_and_analyzer_empty[words]",
+          "reason": "owned real Milvus required"
+        },
+        {
+          "class": "tests.test_publication_small",
+          "name": "test_real_single_chunk_publish_and_analyzer_empty[punctuation]",
+          "reason": "owned real Milvus required"
+        },
+        {
+          "class": "tests.test_publication_small",
+          "name": "test_real_single_chunk_publish_and_analyzer_empty[unicode]",
+          "reason": "owned real Milvus required"
+        }
+      ],
+      "time": "1256.121",
+      "xml_sha256": "39c162a35449d1f763bfaf54cbac1b94e970932198e092da46e13aa979d2a573",
+      "command": {
+        "mode": "core",
+        "status": "PASS",
+        "started_at": "2026-09-22T13:38:03.978545+00:00",
+        "argv": [
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Scripts\\python.exe",
+          "-I",
+          "-B",
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\pytest_installed.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-core-modules.json",
+          "deployment/AgenticRAG/tests",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--import-mode=importlib",
+          "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\pytest-core-frozen",
+          "--junitxml=D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-core.xml"
+        ],
+        "cwd": "D:\\CodePlus",
+        "environment": {
+          "UV_CACHE_DIR": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\uv-cache",
+          "UV_LINK_MODE": "copy",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONUTF8": "1",
+          "R12_ANSWER_TOKENIZER": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\answer-tokenizer-v41\\tokenizer.json",
+          "R08_CORPUS_REPORT": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\final-parsing-corpus.json",
+          "R06_INSTALL_REPORT": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-installations-frozen.json"
+        },
+        "frozen_fingerprint": "365df50e99520acfc88eb1b6d8512d37f0ac18f326610fc0f154233ab05aa292",
+        "rag_wheel": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\final-wheel-locked\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+        "rag_wheel_sha256": "d8967e612116849884497423763af4c29792d4c0948a19641146b47beb9ba8da",
+        "launcher_pid": 60272,
+        "launcher_birth": "134345578839809183",
+        "exit_code": 0,
+        "snapshot_unchanged_after": true,
+        "corpus": {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\final-parsing-corpus.json",
+          "sha256": "19dac7d2706c01768752adba5b44bd1efa5715d9750aace512fbc43eb9c169e4",
+          "result": "PASS",
+          "files_checked": 609,
+          "failures": [],
+          "total_chunks": 4041,
+          "max_complete_embedding_tokens": 512,
+          "elapsed_seconds": 412.4161849999946,
+          "input_manifest_hash": "f7dbb7e51109cbd72f2b54a92cc11a619387eaf2b0a3389808eb00daa4b7cf2d",
+          "runtime_input_sha256": "8db278a920b290ea9d6f63d5bea473960fb20c26fcb41c5078dececa421d4d0d"
+        },
+        "finished_at": "2026-09-22T13:59:03.320879+00:00"
+      },
+      "modules": {
+        "python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Scripts\\python.exe",
+        "cwd": "D:\\CodePlus",
+        "argv": [
+          "--import-mode=importlib",
+          "deployment/AgenticRAG/tests",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--import-mode=importlib",
+          "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\pytest-core-frozen",
+          "--junitxml=D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-core.xml"
+        ],
+        "before": {
+          "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+          "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+        },
+        "after": {
+          "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+          "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+        },
+        "exit_code": 0
+      }
+    },
+    "host": {
+      "tests": 718,
+      "passed": 715,
+      "skipped": [
+        {
+          "class": "tests.test_consolidation",
+          "name": "test_e2e_consolidation_merges_duplicates",
+          "reason": "CODEPLUS_TEST_API_KEY not set"
+        },
+        {
+          "class": "tests.test_hooks.TestAgentHookIntegration",
+          "name": "test_pre_tool_use_reject_skips_tool",
+          "reason": "rm 命令在 Windows 上不可用"
+        },
+        {
+          "class": "tests.test_permissions.TestPathSandbox",
+          "name": "test_symlink_escape",
+          "reason": "No suitable system file found for symlink test"
+        }
+      ],
+      "time": "45.775",
+      "xml_sha256": "d17dfad310e3796fd78f908c80ed878ac308bf75297aab3b9381a21a7ddeb14b",
+      "command": {
+        "mode": "host",
+        "status": "PASS",
+        "started_at": "2026-09-22T13:38:03.985412+00:00",
+        "argv": [
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Scripts\\python.exe",
+          "-I",
+          "-B",
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\pytest_installed.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-host-modules.json",
+          "tests",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--import-mode=prepend",
+          "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\pytest-host-frozen",
+          "--junitxml=D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-host.xml"
+        ],
+        "cwd": "D:\\CodePlus",
+        "environment": {
+          "UV_CACHE_DIR": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\uv-cache",
+          "UV_LINK_MODE": "copy",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONUTF8": "1",
+          "R12_ANSWER_TOKENIZER": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\answer-tokenizer-v41\\tokenizer.json",
+          "R08_CORPUS_REPORT": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\final-parsing-corpus.json",
+          "R06_INSTALL_REPORT": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-installations-frozen.json"
+        },
+        "frozen_fingerprint": "365df50e99520acfc88eb1b6d8512d37f0ac18f326610fc0f154233ab05aa292",
+        "rag_wheel": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\final-wheel-locked\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+        "rag_wheel_sha256": "d8967e612116849884497423763af4c29792d4c0948a19641146b47beb9ba8da",
+        "launcher_pid": 67016,
+        "launcher_birth": "134345578839880283",
+        "exit_code": 0,
+        "snapshot_unchanged_after": true,
+        "finished_at": "2026-09-22T13:38:52.689558+00:00"
+      },
+      "modules": {
+        "python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Scripts\\python.exe",
+        "cwd": "D:\\CodePlus",
+        "argv": [
+          "tests",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--import-mode=prepend",
+          "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\pytest-host-frozen",
+          "--junitxml=D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R13-host.xml"
+        ],
+        "before": {
+          "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+          "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+        },
+        "after": {
+          "codeplus": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+          "agentic_rag": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\core\\Lib\\site-packages\\agentic_rag\\__init__.py"
+        },
+        "exit_code": 0
+      }
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "deployment\\AgenticRAG\\README.md",
+        "deployment\\AgenticRAG\\docs\\first-publication.md",
+        "deployment\\AgenticRAG\\docs\\ordinary-mutations.md",
+        "deployment\\AgenticRAG\\src",
+        "deployment\\AgenticRAG\\tests",
+        "deployment\\AgenticRAG\\docs\\implementation-records\\.gitattributes"
+      ],
+      "cwd": "D:\\CodePlus",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'deployment/AgenticRAG/README.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/docs/first-publication.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/docs/implementation-records/.gitattributes', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/ingestion/__init__.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/ingestion/records.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/storage/database.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/storage/inputs.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/storage/ownership.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/src/agentic_rag/storage/publication.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/tests/test_input_migration.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/tests/test_package_install.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/tests/test_processing_checkpoints.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/tests/test_storage.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'deployment/AgenticRAG/tests/test_worker_history.py', LF will be replaced by CRLF the next time Git touches it\n"
+    }
+  ],
+  "ordinary_mutation_cases": [
+    "test_mixed_batch_complete_candidate_path_identity_and_reuse",
+    "test_normal_no_change_releases_owner_without_artifact[unchanged]",
+    "test_normal_no_change_releases_owner_without_artifact[parse_failed]",
+    "test_normal_no_change_releases_owner_without_artifact[capture_failed]",
+    "test_normal_no_change_releases_owner_without_artifact[empty_directory]",
+    "test_all_failed_new_library_has_no_published_version",
+    "test_explicit_delete_last_document_publishes_empty_revision",
+    "test_failed_explicit_move_does_not_steal_old_path_then_retry_moves_atomically",
+    "test_retry_is_only_failed_and_checks_input_config_and_newer_versions",
+    "test_incompatible_encoding_rejected_before_durable_batch",
+    "test_cancel_never_publishes_completed_subset[capture]",
+    "test_cancel_never_publishes_completed_subset[after_files]",
+    "test_cancel_never_publishes_completed_subset[before_publish]",
+    "test_library_failure_retains_old_pointer_and_reports_unpublished[model_service]",
+    "test_library_failure_retains_old_pointer_and_reports_unpublished[insert]",
+    "test_library_failure_retains_old_pointer_and_reports_unpublished[publish]",
+    "test_old_receipt_retry_does_not_publish_again_or_rewind",
+    "test_corrupt_reused_float32_vector_is_library_failure",
+    "test_same_library_busy_and_missing_path_is_not_deletion",
+    "test_retry_rejects_add_delete_aba_but_allows_unrelated_publication",
+    "test_all_failures_with_changed_index_do_not_publish",
+    "test_successful_index_change_reuses_every_vector",
+    "test_missing_selection_retry_cannot_overwrite_later_identity",
+    "test_explicit_same_content_move_and_index_change_preserve_both_changes",
+    "test_later_encoding_batch_failure_discards_complete_document_prefix",
+    "test_failed_directory_retry_does_not_expand_unbounded_range",
+    "test_public_modules_import_independently_without_optional_engines[agentic_rag.indexes.manifest]",
+    "test_public_modules_import_independently_without_optional_engines[agentic_rag.indexes.milvus]",
+    "test_public_modules_import_independently_without_optional_engines[agentic_rag.storage.publication]",
+    "test_public_modules_import_independently_without_optional_engines[agentic_rag.ingestion]",
+    "test_public_modules_import_independently_without_optional_engines[agentic_rag.retrieval.dense]"
+  ],
+  "real": {
+    "command_sha256": "ddaadb6032ea0c4b198c2b32016df77b9323e85d96170728328d1d46dc531355",
+    "result_sha256": "af7c9f8ea5fe799cdc9fd1ad5c039b6f9d896fa1ba11579adb02aa1cd6581cc2",
+    "frozen_fingerprint": "365df50e99520acfc88eb1b6d8512d37f0ac18f326610fc0f154233ab05aa292"
+  },
+  "upgrade": {
+    "command_sha256": "2e0f826e5776bdd9594b9c32f879a3699d08471f726f7721a3518f0680e1464a",
+    "result_sha256": "fe138d04b89d9d4b9ccb778b1084193cfbfdbc337d92c87875c8d65bd8cf9a1d",
+    "frozen_fingerprint": "365df50e99520acfc88eb1b6d8512d37f0ac18f326610fc0f154233ab05aa292"
+  },
+  "installations": {
+    "report_sha256": "dc7846ff5b1ff5f6c9135f67ba81de468a02fa29247c9c5150b095d1df824b61",
+    "artifacts": [
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\pytest-core-frozen\\test_wheel_and_sdist_install_i0\\direct\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+        "sha256": "d8967e612116849884497423763af4c29792d4c0948a19641146b47beb9ba8da",
+        "size_bytes": 163323
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\pytest-core-frozen\\test_wheel_and_sdist_install_i0\\source\\codeplus_agentic_rag-0.1.0.tar.gz",
+        "sha256": "3d6ec5424a710f50031efeaa5bd3fdbbca794567d7194c2adc91e1cbb1694425",
+        "size_bytes": 273925
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r13-executor-20260922\\pytest-core-frozen\\test_wheel_and_sdist_install_i0\\rebuilt\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+        "sha256": "d8967e612116849884497423763af4c29792d4c0948a19641146b47beb9ba8da",
+        "size_bytes": 163323
+      }
+    ],
+    "routes": [
+      "direct-wheel",
+      "sdist-wheel"
+    ]
+  },
+  "frozen_corpus": {
+    "report": "R13-corpus.json",
+    "sha256": "19dac7d2706c01768752adba5b44bd1efa5715d9750aace512fbc43eb9c169e4",
+    "files_checked": 609,
+    "chunks": 4041,
+    "failures": []
+  },
+  "authored_whitespace_check": {
+    "files": 26,
+    "violations": []
+  }
+}
