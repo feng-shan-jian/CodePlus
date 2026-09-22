@@ -25,8 +25,8 @@
 | R02 | COMMITTED | /root/r02_milvus | [R02](implementation-records/R02.md) | `776025c30ddbf51ecdcd26b16f9ce891c749b706` |
 | R03 | COMMITTED | /root/r03_models | [独立验收](implementation-records/R03.md) | `43e9af9de44212342850f3668826a0e5b4bf9a49` |
 | R04 | COMMITTED | /root/r04_host_contract_resume1 | [独立验收](implementation-records/R04.md) | `63e97a37b2b7389a104b3c96240fd6d95b5a11d5` |
-| R05 | ACCEPTED | /root/r05_domain_config | [独立验收](implementation-records/R05.md) | 待本地提交 |
-| R06 | TODO | — | — | — |
+| R05 | COMMITTED | /root/r05_domain_config | [独立验收](implementation-records/R05.md) | `5325d517ac383bfad1fb28caebd0f3674b90b03d` |
+| R06 | ACCEPTED | /root/r06_storage | [独立验收](implementation-records/R06.md) | 提交后记录真实 SHA |
 | R07 | TODO | — | — | — |
 | R08 | TODO | — | — | — |
 | R09 | TODO | — | — | — |
@@ -135,11 +135,11 @@
 <a id="r06"></a>
 ### R06：存储与并发基础
 
-- [ ] SQLite 外键、schema 版本与短事务可用；多库/文档身份和版本关系完整，重启后读回一致。
-- [ ] 原件/解析归档采用校验后原子完成协议；磁盘/写入失败不会留下被元数据引用的半文件，历史内容不会被覆盖。
-- [ ] 两个真实进程竞争同库修改仅一个获得执行权；查询登记不被长写事务阻塞，其他库不被业务锁一起锁住。
-- [ ] 批次拥有者/代次、运行 pin 和生命周期锁能识别归属；真实退出后的占用恢复不依赖删除锁文件或只看 PID。
-- [ ] 数据目录独立于源码，配置路径解析正确；未开始自动清理历史归档或假设网络共享 SQLite 可多机写入。
+- [x] SQLite 外键、schema 版本与短事务可用；多库/文档身份和版本关系完整，重启后读回一致。
+- [x] 原件/解析归档采用校验后原子完成协议；磁盘/写入失败不会留下被元数据引用的半文件，历史内容不会被覆盖。
+- [x] 两个真实进程竞争同库修改仅一个获得执行权；查询登记不被长写事务阻塞，其他库不被业务锁一起锁住。
+- [x] 批次拥有者/代次、运行 pin 和生命周期锁能识别归属；真实退出后的占用恢复不依赖删除锁文件或只看 PID。
+- [x] 数据目录独立于源码，配置路径解析正确；未开始自动清理历史归档或假设网络共享 SQLite 可多机写入。
 
 <a id="r07"></a>
 ### R07：输入与身份

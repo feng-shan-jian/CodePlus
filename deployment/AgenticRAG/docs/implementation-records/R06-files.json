@@ -1,0 +1,193 @@
+{
+  "task": "R06",
+  "base_head": "5325d517ac383bfad1fb28caebd0f3674b90b03d",
+  "file_count_excluding_manifest": 36,
+  "manifest_self": "deployment/AgenticRAG/docs/implementation-records/R06-files.json",
+  "self_hash_note": "Reported separately at handoff, not recursively included",
+  "git_index_empty": true,
+  "tracked_diff_check": "PASS",
+  "all_delivered_text_trailing_whitespace_check": "PASS",
+  "executor_write_scope": "Only listed files; Leader checklist/dispatch/R05 SHA excluded",
+  "files": [
+    {
+      "path": "deployment/AgenticRAG/docs/domain-and-configuration.md",
+      "sha256": "f706f33ed1a7d53a82a40e8893a6ddc49e96ed7f5d05aaec21fd0687df286246",
+      "bytes": 10589
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-cleanup.json",
+      "sha256": "cda8ffee65be36821ecbefcc7a31d2aad1def082ab7ac771c196a1bb11fe95ac",
+      "bytes": 610
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-environment.json",
+      "sha256": "c1f1797aa1bb069a9525b1312e7fc1910b848b57fb25ad45170219165aa75bef",
+      "bytes": 3798
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-install-first.txt",
+      "sha256": "68f99c55bcc53ab28d256f21ecf8ea082893112e1190935d8cdcc12714d02adf",
+      "bytes": 11073
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-install-second.txt",
+      "sha256": "e1ff44659c17f0de9c9552d1bf2c31b7d5c1d3a212f29fd2ddbf25cc77b270a9",
+      "bytes": 523
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-installations-first.json",
+      "sha256": "40492f48b7ba7c66b7365857fc2c8840d5661600ab4b9d5c6e0d83fe2513b72e",
+      "bytes": 28512
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-installations-second.json",
+      "sha256": "4d3aef8c9562177bfcf0e21f21f922d5e7d1cff7c1bbf6d6a87935369a02c142",
+      "bytes": 46399
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-installations.json",
+      "sha256": "549926135721e46276d08568730f1240fbbbf79053e99323eeddd8128b8381a2",
+      "bytes": 45760
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-processes-first.json",
+      "sha256": "ef090c5f7e0d126f684eb2e21b1cce2ec19adca3e6c61ab54177fb48ee306b8f",
+      "bytes": 144
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-processes-second.json",
+      "sha256": "14dd19b88659d2bafb3474d248e9a652c143d939c9e7b10669377496afeeaf06",
+      "bytes": 9192
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-processes-third.json",
+      "sha256": "4f0b07f9d66223aad6b9e3ff6228930682b23a9d97e8ae4cf05b9ffa6a6971f1",
+      "bytes": 10063
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-processes.json",
+      "sha256": "b86b84728a2fffa7fbda0f82c8ebb994a9bd7c46f7162a24ebf420be1b3e513e",
+      "bytes": 10056
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-protection-audit.json",
+      "sha256": "a405040ef56a0b56b71a0e97ea1bfc078a9e1353cd88e6bd8becd832cfba0959",
+      "bytes": 2264
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-tests-first.txt",
+      "sha256": "28c820401f5a1f12943b9a5724375574867bf7ad33bfe50e4e9e5d484b868036",
+      "bytes": 33482
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-tests-second.txt",
+      "sha256": "3ab98315754448ff8a17d8241d5abe4e576c4b3f810deb9be8f2f484e231d725",
+      "bytes": 4832
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-tests-third.txt",
+      "sha256": "1dc9275b24744e950442de50d0cfbcbbbe2043024bf19916193cc166092a1bc8",
+      "bytes": 5193
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06-tests.txt",
+      "sha256": "1af36c890b209a76ad550569addfb9825062d2f9172a62e29cd30a053ca40689",
+      "bytes": 13756
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R06.md",
+      "sha256": "4ad763b539a076f55ebe463929018692f002b43c57f1b71f1acf10dfcbde6a0f",
+      "bytes": 12612
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/storage-and-concurrency.md",
+      "sha256": "b0505545737cd5e0171561d10dcf902ab8b58ac64f94b30b0a26141f5a499661",
+      "bytes": 9210
+    },
+    {
+      "path": "deployment/AgenticRAG/pyproject.toml",
+      "sha256": "03bda11d9b4fdab3265796343536f7327ae9105860106844dd6367d254407cd0",
+      "bytes": 771
+    },
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "sha256": "b350565e3cd14abb3490e1621f47490da3bc86854f803901034c4092ba537cf6",
+      "bytes": 16758
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/__init__.py",
+      "sha256": "80d52fffd41289d15b5024028abda239d354c5d99086f24be447c8911e808b95",
+      "bytes": 306
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/archives.py",
+      "sha256": "cce567865dc2f2732507ef698b1900d7b857fe8bb1d9024f65df5c3f2278ffab",
+      "bytes": 4195
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/catalog.py",
+      "sha256": "8d6876ea552e2832f55fe2f137268835527be0f7de2c290f89d5217524e60a84",
+      "bytes": 10226
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+      "sha256": "800024ca009490bd237fc55694f1a61866cd6fb424210c4592c4939d8c37cf6d",
+      "bytes": 5526
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/locks.py",
+      "sha256": "a183b2270626cebe866d630244527b583a0ab3b5b8c798c2e7a5e4610a769ea5",
+      "bytes": 2786
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/ownership.py",
+      "sha256": "6902abb91b28f7f07be31f064fdfcbf390536f743362e7d1e8aadaf541785c91",
+      "bytes": 8836
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/paths.py",
+      "sha256": "9d476a8d4db81df53727408f6bc4f81e9c3f0606eb8cc14968aa29bc21650804",
+      "bytes": 5460
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/runs.py",
+      "sha256": "bd14521bb9183591291fbaa572341d2d09506e2869321e529d91282217687fae",
+      "bytes": 6463
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/schema.sql",
+      "sha256": "d2032ebe2981d22d765f6ab16d2610a7032cc37d3c7cdaf00d19b5d9cdab161e",
+      "bytes": 8503
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/storage_process_helper.py",
+      "sha256": "0317399d725a62f8ca336b119acb719e866005949a1ebe236d5f900e69186b71",
+      "bytes": 4659
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_archives.py",
+      "sha256": "baa1fea777ab9c8575bdaa072b1a2a9a4b720d41f539dad76ebb321e2b030e33",
+      "bytes": 4648
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_package_install.py",
+      "sha256": "bd8831265e2a39c30a56519a4bca4adb3f0be9cb4b3e9d646b092a2530e2e62e",
+      "bytes": 9579
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_storage_processes.py",
+      "sha256": "130239b7097d3d24f885ea9300918685f700c38fe7c0e6fa7e25124e6fa683ba",
+      "bytes": 9720
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_storage.py",
+      "sha256": "2a9a8b492207a453842381cb6ae041a7948066fa29910afa213351f50dd067fa",
+      "bytes": 19017
+    },
+    {
+      "path": "deployment/AgenticRAG/uv.lock",
+      "sha256": "c684234a7193bbe1b3b94cd2c981002e6a4f2ce49e4c80ffd9545f7a1afea5f2",
+      "bytes": 62252
+    }
+  ]
+}

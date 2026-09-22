@@ -1,0 +1,124 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.3, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Scripts\python.exe
+rootdir: D:\CodePlus\deployment\AgenticRAG
+configfile: pyproject.toml
+collecting ... collected 1 item
+
+deployment\AgenticRAG\tests\test_package_install.py::test_wheel_and_sdist_install_in_isolated_environments FAILED [100%]
+
+================================== FAILURES ===================================
+____________ test_wheel_and_sdist_install_in_isolated_environments ____________
+
+tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/install-first/test_wheel_and_sdist_install_i0')
+
+    def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
+        package = Path(__file__).resolve().parents[1]
+        uv = shutil.which("uv")
+        assert uv, "uv is required for real package installation acceptance"
+        outside = tmp_path / "outside repository 中文"
+        outside.mkdir()
+        env = dict(os.environ)
+        env.pop("PYTHONPATH", None)
+        env.pop("PYTHONHOME", None)
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+        report = {"platform": platform.platform(), "build_python": sys.executable,
+                  "build_dependencies": {name: importlib.metadata.version(name) for name in
+                                         ("hatchling", "packaging", "pathspec", "pluggy", "trove-classifiers")},
+                  "commands": [], "artifacts": [], "installations": []}
+
+        def command(args, cwd=outside):
+            completed = subprocess.run([str(arg) for arg in args], cwd=cwd, env=env, text=True,
+                                       encoding="utf-8", errors="replace", capture_output=True, timeout=180)
+            report["commands"].append({"argv": [str(arg) for arg in args], "cwd": str(cwd),
+                                       "exit_code": completed.returncode, "stdout": completed.stdout,
+                                       "stderr": completed.stderr})
+            assert completed.returncode == 0, completed.stdout + completed.stderr
+            return completed.stdout
+
+        try:
+            build_flags = ["--python", sys.executable, "--no-build-isolation", "--no-create-gitignore"]
+            direct, source, rebuilt = tmp_path / "direct", tmp_path / "source", tmp_path / "rebuilt"
+            command([uv, "build", package, "--wheel", "--out-dir", direct, *build_flags])
+            command([uv, "build", package, "--sdist", "--out-dir", source, *build_flags])
+            sdist, = source.glob("*.tar.gz")
+            command([uv, "build", sdist, "--wheel", "--out-dir", rebuilt, *build_flags])
+            direct_wheel, = direct.glob("*.whl")
+            rebuilt_wheel, = rebuilt.glob("*.whl")
+            expected_sources = {file.relative_to(package / "src").as_posix() for file in
+                                (package / "src/agentic_rag").rglob("*") if file.suffix in {".py", ".sql"}}
+            root_sources = {"agentic_rag/" + name for name in
+                            ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py")}
+            storage_sources = {"agentic_rag/storage/" + name for name in
+                               ("__init__.py", "archives.py", "catalog.py", "database.py", "locks.py",
+                                "ownership.py", "paths.py", "runs.py", "schema.sql")}
+            assert expected_sources == root_sources | storage_sources
+            for artifact in (direct_wheel, sdist, rebuilt_wheel):
+                if artifact.suffix == ".whl":
+                    with zipfile.ZipFile(artifact) as archive:
+                        names = sorted(archive.namelist())
+                        code = {name for name in names if name.startswith("agentic_rag/")}
+                        assert code == expected_sources
+                        assert any(name.endswith("/licenses/LICENSE") for name in names)
+                        assert all(name.startswith(("agentic_rag/", "codeplus_agentic_rag-0.1.0.dist-info/")) for name in names)
+                else:
+                    with tarfile.open(artifact) as archive:
+                        names = sorted(member.name for member in archive.getmembers() if member.isfile())
+                        relative = {name.split("/", 1)[1] for name in names}
+                        # Hatch preserves the package's own VCS exclusion manifest in
+                        # sdist for reproducible rebuilding (force-include metadata).
+                        expected = {"src/" + name for name in expected_sources} | {"pyproject.toml", "README.md", "LICENSE", "uv.lock", "PKG-INFO", ".gitignore"}
+                        assert relative == expected
+                report["artifacts"].append({"path": str(artifact), "sha256": hashlib.sha256(artifact.read_bytes()).hexdigest(),
+                                            "size_bytes": artifact.stat().st_size, "members": names})
+            requirements = tmp_path / "runtime-requirements.txt"
+            command([uv, "export", "--project", package, "--locked", "--no-dev", "--no-emit-project",
+                     "--no-header", "--output-file", requirements])
+            config = runpy.run_path(str(package / "tests/test_configuration.py"))["example_config"]()
+            config_path = outside / "config.json"
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            smoke = outside / "installed_smoke.py"
+            smoke.write_text(SMOKE, encoding="utf-8")
+            for label, wheel in (("direct-wheel", direct_wheel), ("sdist-wheel", rebuilt_wheel)):
+                install = tmp_path / label
+                assert not install.exists()
+                command([uv, "venv", install, "--python", sys.executable])
+                python = install / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+                command([uv, "pip", "install", "--python", python, "--require-hashes", "-r", requirements])
+                command([uv, "pip", "install", "--python", python, "--no-deps", wheel])
+                command([uv, "pip", "check", "--python", python])
+>               evidence = json.loads(command([python, "-I", "-B", smoke, config_path]))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+deployment\AgenticRAG\tests\test_package_install.py:150:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = [WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/install-first/test_wheel_and_sdist_install_i0/di...ata/Local/Temp/codeplus-r06-executor/install-first/test_wheel_and_sdist_install_i0/outside repository 中文/config.json')]
+cwd = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/install-first/test_wheel_and_sdist_install_i0/outside repository 中文')
+
+    def command(args, cwd=outside):
+        completed = subprocess.run([str(arg) for arg in args], cwd=cwd, env=env, text=True,
+                                   encoding="utf-8", errors="replace", capture_output=True, timeout=180)
+        report["commands"].append({"argv": [str(arg) for arg in args], "cwd": str(cwd),
+                                   "exit_code": completed.returncode, "stdout": completed.stdout,
+                                   "stderr": completed.stderr})
+>       assert completed.returncode == 0, completed.stdout + completed.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "C:\Users\18221\AppData\Local\Temp\codeplus-r06-executor\install-first\test_wheel_and_sdist_install_i0\outside repository ����\installed_smoke.py", line 46, in <module>
+E             assert len(requirements) == 2 and {item.split('=')[0].split('>')[0] for item in requirements} == {'pydantic', 'apsw'}
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         AssertionError
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\install-first\\test_wheel_and_sdist_install_i0\\direct-wheel\\Scripts\\python.exe', '-I', '-B', 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\install-first\\test_wheel_and_sdist_install_i0\\outside repository \u4e2d\u6587\\installed_smoke.py', 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\install-first\\test_wheel_and_sdist_install_i0\\outside repository \u4e2d\u6587\\config.json'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\install-first\\test_wheel_and_sdist_install_i0\\outside repository \ufffd\ufffd\ufffd\ufffd\\installed_smoke.py", line 46, in <module>\n    assert len(requirements) == 2 and {item.split(\'=\')[0].split(\'>\')[0] for item in requirements} == {\'pydantic\', \'apsw\'}\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n').returncode
+
+deployment\AgenticRAG\tests\test_package_install.py:96: AssertionError
+=========================== short test summary info ===========================
+FAILED deployment\AgenticRAG\tests\test_package_install.py::test_wheel_and_sdist_install_in_isolated_environments - AssertionError: Traceback (most recent call last):
+    File "C:\Users\18221\AppData\Local\Temp\codeplus-r06-executor\install-first\test_wheel_and_sdist_install_i0\outside repository ����\installed_smoke.py", line 46, in <module>
+      assert len(requirements) == 2 and {item.split('=')[0].split('>')[0] for item in requirements} == {'pydantic', 'apsw'}
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  AssertionError
+
+assert 1 == 0
+ +  where 1 = CompletedProcess(args=['C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\install-first\\test_wheel_and_sdist_install_i0\\direct-wheel\\Scripts\\python.exe', '-I', '-B', 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\install-first\\test_wheel_and_sdist_install_i0\\outside repository \u4e2d\u6587\\installed_smoke.py', 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\install-first\\test_wheel_and_sdist_install_i0\\outside repository \u4e2d\u6587\\config.json'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\install-first\\test_wheel_and_sdist_install_i0\\outside repository \ufffd\ufffd\ufffd\ufffd\\installed_smoke.py", line 46, in <module>\n    assert len(requirements) == 2 and {item.split(\'=\')[0].split(\'>\')[0] for item in requirements} == {\'pydantic\', \'apsw\'}\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n').returncode
+============================== 1 failed in 5.69s ==============================

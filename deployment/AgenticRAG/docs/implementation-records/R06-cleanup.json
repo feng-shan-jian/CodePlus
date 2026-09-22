@@ -1,0 +1,13 @@
+{
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor",
+  "resolved_absolute_root_verified": true,
+  "deletion_method": "Native PowerShell/.NET, unlink reparse objects then individual files and empty directories; no recursive cross-shell delete",
+  "regular_files": 2075,
+  "reparse_objects_unlinked": 87,
+  "directories": 831,
+  "root_exists_after": false,
+  "storage_helper_processes_after": [],
+  "reusable_environment_preserved": "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-core",
+  "root_and_cuda_environment_untouched": true,
+  "manifest_helper_removed": true
+}

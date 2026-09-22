@@ -1,6 +1,6 @@
 # R05 领域对象与配置契约
 
-2026-09-22；schema_version=1，开发发行 codeplus-agentic-rag 0.1.0。当前只有数据类型、装配、指纹和模型能力协议，没有数据库、解析器、worker、检索或 Agent 执行器。R06/R08/R09 分别实现这些能力；R05 不做索引重建或文件系统写入。
+2026-09-22；schema_version=1，开发发行 codeplus-agentic-rag 0.1.0。本文记录 R05 数据类型、装配、指纹和模型能力协议；R06 已增加独立的 [存储与并发基础](storage-and-concurrency.md)，领域／配置类型接口保持不变。解析器、worker、检索和宿主接入仍待后续任务；R05 类型本身不做索引重建或文件系统写入。
 
 ## 记录和身份
 
@@ -78,4 +78,4 @@ EmbeddingProvider 的 embed_documents/embed_query、RerankProvider 的 rerank �
 
 RequestContext 使用 `time.monotonic_ns()` 域的绝对 deadline_monotonic_ns 作为同机临时硬时限，可选 deadline_at 仅作带时区审计。不能跨重启复用单调值，R09 握手必须确认同机/同启动时钟域，排队/加载/推理共用同一截止点；R05 不实现调度或取消。
 
-发行包只含六个必要 Python 源码、MIT 许可证和 metadata；sdist 另含 pyproject/README/uv.lock，以及 Hatch 为重建保留的包级 .gitignore 排除清单。tests、probes、eval、docs、Compose、缓存、权重及用户资料不发布。真实 package-install 测试构建直接 wheel 与 sdist→wheel，用两个新环境和非仓库 Unicode/空格 cwd，清空 PYTHONPATH，以 `python -I -B` 核验 site-packages 导入、metadata、完整快照调用、缺依赖诊断及未加载 GPU/宿主。构建工具采用独立核心环境的锁定 Hatchling，不依赖根打包配置；运行环境仅安装锁中核心依赖。GPU、Milvus、Linux/宿主联装及最终同一实现迁移尚未验收。
+发行包含六个领域／配置 Python 源码，以及 R06 的八个 storage Python 源码和 schema.sql 迁移资源、MIT 许可证和 metadata；sdist 另含 pyproject/README/uv.lock，以及 Hatch 为重建保留的包级 .gitignore 排除清单。tests、probes、eval、docs、Compose、缓存、权重及用户资料不发布。真实 package-install 测试构建直接 wheel 与 sdist→wheel，用两个新环境和非仓库 Unicode/空格 cwd，清空 PYTHONPATH，以 `python -I -B` 核验 site-packages 导入、metadata、完整快照／存储调用、缺依赖诊断及未加载 GPU/宿主。构建工具采用独立核心环境的锁定 Hatchling，不依赖根打包配置；运行环境仅安装锁中 Pydantic 与 APSW 核心依赖。GPU、Milvus、Linux/宿主联装及最终同一实现迁移尚未验收。

@@ -1,0 +1,543 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.3, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Scripts\python.exe
+rootdir: D:\CodePlus\deployment\AgenticRAG
+configfile: pyproject.toml
+collecting ... collected 38 items
+
+deployment\AgenticRAG\tests\test_storage.py::test_runtime_and_connection_requirements ERROR [  2%]
+deployment\AgenticRAG\tests\test_storage.py::test_metadata_roundtrip_reopen_and_full_snapshot ERROR [  5%]
+deployment\AgenticRAG\tests\test_storage.py::test_owner_release_pending_resume_epoch_late_result ERROR [  7%]
+deployment\AgenticRAG\tests\test_storage.py::test_owner_cannot_cross_catalog_or_library ERROR [ 10%]
+deployment\AgenticRAG\tests\test_storage.py::test_composite_constraints_and_transaction_rollback ERROR [ 13%]
+deployment\AgenticRAG\tests\test_storage.py::test_immutable_history[document_versions-source_uri-other] ERROR [ 15%]
+deployment\AgenticRAG\tests\test_storage.py::test_immutable_history[processing_snapshots-config_fingerprint-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] ERROR [ 18%]
+deployment\AgenticRAG\tests\test_storage.py::test_candidate_cannot_publish_or_use_another_snapshot ERROR [ 21%]
+deployment\AgenticRAG\tests\test_storage.py::test_bounded_busy_and_reader_can_progress ERROR [ 23%]
+deployment\AgenticRAG\tests\test_storage.py::test_reject_unknown_schema_before_mutation[user_version-2] ERROR [ 26%]
+deployment\AgenticRAG\tests\test_storage.py::test_reject_unknown_schema_before_mutation[application_id-123] ERROR [ 28%]
+deployment\AgenticRAG\tests\test_storage.py::test_reject_database_from_different_owned_directory ERROR [ 31%]
+deployment\AgenticRAG\tests\test_storage.py::test_path_invalid_for_actual_os[relative] PASSED [ 34%]
+deployment\AgenticRAG\tests\test_storage.py::test_path_invalid_for_actual_os[../escape] PASSED [ 36%]
+deployment\AgenticRAG\tests\test_storage.py::test_path_invalid_for_actual_os[//server/share] PASSED [ 39%]
+deployment\AgenticRAG\tests\test_storage.py::test_path_invalid_for_actual_os[C:relative] PASSED [ 42%]
+deployment\AgenticRAG\tests\test_storage.py::test_path_invalid_for_actual_os[/linux-only] PASSED [ 44%]
+deployment\AgenticRAG\tests\test_storage.py::test_unowned_directory_and_symlink_rejected ERROR [ 47%]
+deployment\AgenticRAG\tests\test_storage.py::test_run_pins_whole_revision_and_cannot_bind_reclaiming ERROR [ 50%]
+deployment\AgenticRAG\tests\test_storage.py::test_same_process_os_lock_and_failed_acquisition_cleanup ERROR [ 52%]
+deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[PREPARING-True] ERROR [ 55%]
+deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[READY-True] ERROR [ 57%]
+deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[FAILED-True] ERROR [ 60%]
+deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[RECLAIMING-False] ERROR [ 63%]
+deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[RECLAIMED-False] ERROR [ 65%]
+deployment\AgenticRAG\tests\test_storage.py::test_historical_version_structure_is_sealed_for_new_batch ERROR [ 68%]
+deployment\AgenticRAG\tests\test_archives.py::test_reuse_same_bytes_for_distinct_purposes_and_history ERROR [ 71%]
+deployment\AgenticRAG\tests\test_archives.py::test_corruption_is_rejected_and_never_replaced ERROR [ 73%]
+deployment\AgenticRAG\tests\test_archives.py::test_injected_io_failure_no_metadata_or_partial_final[read] ERROR [ 76%]
+deployment\AgenticRAG\tests\test_archives.py::test_injected_io_failure_no_metadata_or_partial_final[fsync] ERROR [ 78%]
+deployment\AgenticRAG\tests\test_archives.py::test_injected_io_failure_no_metadata_or_partial_final[complete] ERROR [ 81%]
+deployment\AgenticRAG\tests\test_archives.py::test_hash_mismatch_and_completed_orphan ERROR [ 84%]
+deployment\AgenticRAG\tests\test_archives.py::test_reference_requires_completed_verified_objects ERROR [ 86%]
+deployment\AgenticRAG\tests\test_archives.py::test_final_object_complete_before_metadata_transaction ERROR [ 89%]
+deployment\AgenticRAG\tests\test_storage_processes.py::test_same_library_exclusion_other_library_and_pin_progress ERROR [ 92%]
+deployment\AgenticRAG\tests\test_storage_processes.py::test_real_owner_death_preserves_pending_and_fences_new_epoch ERROR [ 94%]
+deployment\AgenticRAG\tests\test_storage_processes.py::test_real_run_death_and_nonce_checked_cleanup ERROR [ 97%]
+deployment\AgenticRAG\tests\test_storage_processes.py::test_two_processes_publish_identical_archive_once ERROR [100%]
+
+=================================== ERRORS ====================================
+_________ ERROR at setup of test_runtime_and_connection_requirements __________
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_____ ERROR at setup of test_metadata_roundtrip_reopen_and_full_snapshot ______
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+____ ERROR at setup of test_owner_release_pending_resume_epoch_late_result ____
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+________ ERROR at setup of test_owner_cannot_cross_catalog_or_library _________
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+____ ERROR at setup of test_composite_constraints_and_transaction_rollback ____
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_immutable_history[document_versions-source_uri-other] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_immutable_history[processing_snapshots-config_fingerprint-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+___ ERROR at setup of test_candidate_cannot_publish_or_use_another_snapshot ___
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_________ ERROR at setup of test_bounded_busy_and_reader_can_progress _________
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_reject_unknown_schema_before_mutation[user_version-2] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_reject_unknown_schema_before_mutation[application_id-123] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+____ ERROR at setup of test_reject_database_from_different_owned_directory ____
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+________ ERROR at setup of test_unowned_directory_and_symlink_rejected ________
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+__ ERROR at setup of test_run_pins_whole_revision_and_cannot_bind_reclaiming __
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_same_process_os_lock_and_failed_acquisition_cleanup __
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_dependency_cannot_be_added_after_reclamation_claim[PREPARING-True] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_dependency_cannot_be_added_after_reclamation_claim[READY-True] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_dependency_cannot_be_added_after_reclamation_claim[FAILED-True] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_dependency_cannot_be_added_after_reclamation_claim[RECLAIMING-False] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_dependency_cannot_be_added_after_reclamation_claim[RECLAIMED-False] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_historical_version_structure_is_sealed_for_new_batch _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+__ ERROR at setup of test_reuse_same_bytes_for_distinct_purposes_and_history __
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+______ ERROR at setup of test_corruption_is_rejected_and_never_replaced _______
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_injected_io_failure_no_metadata_or_partial_final[read] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_injected_io_failure_no_metadata_or_partial_final[fsync] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_injected_io_failure_no_metadata_or_partial_final[complete] _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+__________ ERROR at setup of test_hash_mismatch_and_completed_orphan __________
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+____ ERROR at setup of test_reference_requires_completed_verified_objects _____
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+__ ERROR at setup of test_final_object_complete_before_metadata_transaction ___
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_same_library_exclusion_other_library_and_pin_progress _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_ ERROR at setup of test_real_owner_death_preserves_pending_and_fences_new_epoch _
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_______ ERROR at setup of test_real_run_death_and_nonce_checked_cleanup _______
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+_____ ERROR at setup of test_two_processes_publish_identical_archive_once _____
+
+self = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r06-executor/first')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+
+C:\Python314\Lib\pathlib\__init__.py:1011: FileNotFoundError
+=========================== short test summary info ===========================
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_runtime_and_connection_requirements - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_metadata_roundtrip_reopen_and_full_snapshot - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_owner_release_pending_resume_epoch_late_result - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_owner_cannot_cross_catalog_or_library - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_composite_constraints_and_transaction_rollback - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_immutable_history[document_versions-source_uri-other] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_immutable_history[processing_snapshots-config_fingerprint-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_candidate_cannot_publish_or_use_another_snapshot - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_bounded_busy_and_reader_can_progress - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_reject_unknown_schema_before_mutation[user_version-2] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_reject_unknown_schema_before_mutation[application_id-123] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_reject_database_from_different_owned_directory - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_unowned_directory_and_symlink_rejected - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_run_pins_whole_revision_and_cannot_bind_reclaiming - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_same_process_os_lock_and_failed_acquisition_cleanup - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[PREPARING-True] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[READY-True] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[FAILED-True] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[RECLAIMING-False] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_dependency_cannot_be_added_after_reclamation_claim[RECLAIMED-False] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage.py::test_historical_version_structure_is_sealed_for_new_batch - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_archives.py::test_reuse_same_bytes_for_distinct_purposes_and_history - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_archives.py::test_corruption_is_rejected_and_never_replaced - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_archives.py::test_injected_io_failure_no_metadata_or_partial_final[read] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_archives.py::test_injected_io_failure_no_metadata_or_partial_final[fsync] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_archives.py::test_injected_io_failure_no_metadata_or_partial_final[complete] - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_archives.py::test_hash_mismatch_and_completed_orphan - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_archives.py::test_reference_requires_completed_verified_objects - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_archives.py::test_final_object_complete_before_metadata_transaction - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage_processes.py::test_same_library_exclusion_other_library_and_pin_progress - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage_processes.py::test_real_owner_death_preserves_pending_and_fences_new_epoch - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage_processes.py::test_real_run_death_and_nonce_checked_cleanup - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+ERROR deployment\AgenticRAG\tests\test_storage_processes.py::test_two_processes_publish_identical_archive_once - FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-executor\\first'
+======================== 5 passed, 33 errors in 1.04s =========================

@@ -1,6 +1,6 @@
 # AgenticRAG 独立开发区
 
-状态：R00–R05 已通过 Leader 独立验收；当前提供独立包骨架、领域对象、配置 Schema 与能力协议，提交状态见任务台账。更新日期：2026-09-22。存储、检索、worker 与宿主 Agent 接入仍按 R06–R26 实施。
+状态：当前提供独立领域／配置核心与 R06 本地元数据、不可变归档、OS 锁及运行 pin 基础；实际验收和提交状态见任务台账。更新日期：2026-09-22。输入处理、检索、worker 与宿主 Agent 接入仍按 R07–R26 实施。
 
 在本目录完成 RAG 重建的规划、独立实现和验收，达到迁移条件后再接入 CodePlus 主模块。
 
@@ -8,7 +8,7 @@
 
 ## 当前开发包
 
-发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心只依赖 Pydantic 2；当前验证环境为 Windows/Python 3.14.3。没有产品 CLI、真实模型适配器、存储或自动重建动作；导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
+发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2 与 APSW 3.53.4.0；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。没有产品 CLI、真实模型适配器或自动重建动作；导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
 
 独立安装与开发（Windows/pwsh，显式设置独立环境，避免改根 `.venv`）：
 
@@ -18,9 +18,11 @@ uv sync --project deployment/AgenticRAG --locked
 uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 ```
 
-安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具；运行依赖只有 Pydantic。Windows/Linux 使用各自环境；Linux、完整产品安装及最终主发行仍在 R25/R26 验收。
+安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具；运行依赖只有 Pydantic 与 APSW。必须使用带 WAL 修复的 SQLite，存储层拒绝低于 3.51.3 的实际运行版本，不使用当前标准库的 SQLite 3.50.4。Windows/Linux 使用各自环境；Linux、完整产品安装及最终主发行仍在 R25/R26 验收。
 
 配置只接收调用方显式传入的 `knowledge` 对象，优先级为 `explicit > configured > defaults > Schema 默认`。默认检索模式为 `auto`；候选数量、分块参数、QA/报告预算必须显式提供试验值，尚未冻结质量参数。字段、可运行示例、身份与协议边界见 [领域与配置](docs/domain-and-configuration.md)，R05 的两条真实发行安装证据见 [R05](docs/implementation-records/R05.md)。分发包不包含该文档目录，源码开发区可查阅。
+
+`agentic_rag.storage.Catalog` 接收宿主已解析的本机绝对目录，创建或打开明确属于本应用的数据目录。当前提供关系约束、短事务、归档、批次手动接管与完整版本 pin；生产索引验证/发布、导入恢复交互及自动 GC 仍在后续任务。接口、路径限制、持久化边界和 R06 证据见 [存储与并发](docs/storage-and-concurrency.md)。
 
 ## 完整产品目标
 
@@ -36,7 +38,7 @@ Milvus 首版提供 Docker Compose 部署配置供用户启动，也支持配置
 
 原文及必要解析归档保存在可配置的本地数据目录，SQLite 保存文档身份、版本、引用与任务状态，Milvus 负责检索索引。架构草案提出先准备不可变归档与候选索引，再原子切换 SQLite 发布指针；每个发布版本使用独立 Collection，保护在途查询与 BM25 统计范围。该协议尚待实现和实测，未来更换存储后端仍需配套数据迁移及引用完整性验证。
 
-同机多个 CodePlus 进程可以同时查询同一知识库；同一库的导入、更新、删除及重建等修改任务同时只执行一个，冲突时提示忙、稍后重试。已有问答保持原版本，修改成功后供新任务使用。跨进程锁、持久化待恢复状态、运行占用及索引回收协议已写入架构草案，尚待真实多进程验证。
+同机多个 CodePlus 进程可以同时查询同一知识库；同一库的导入、更新、删除及重建等修改任务同时只执行一个，冲突时提示忙、稍后重试。已有问答保持原版本，修改成功后供新任务使用。R06 已在独立核心中实际验证库锁互斥、其他库和 pin 登记可进展、进程死亡后的占用核验；CodePlus 宿主接入、完整发布与索引回收仍待后续任务。
 
 本地 Embedding/Rerank 由 CodePlus 按需启动并复用的模型工作进程承担，相同配置共享已加载实例，统一安排推理请求。RAG 核心和 Agent 仍在各自 CodePlus 进程内运行。GPU 优先处理问答及报告的查询编码和重排，导入/重建按小批次穿插执行并保证持续推进；模型工作进程的生命周期、具体调度参数与 GPU 容量随后细化和验收。
 

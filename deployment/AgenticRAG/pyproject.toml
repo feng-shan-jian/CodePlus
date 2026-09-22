@@ -6,7 +6,7 @@ requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-dependencies = ["pydantic>=2.12,<3"]
+dependencies = ["pydantic>=2.12,<3", "apsw==3.53.4.0"]
 
 [dependency-groups]
 dev = ["pytest>=9,<10", "hatchling==1.29.0"]
@@ -19,7 +19,7 @@ build-backend = "hatchling.build"
 packages = ["src/agentic_rag"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/src/agentic_rag/*.py", "/pyproject.toml", "/README.md", "/LICENSE", "/uv.lock"]
+include = ["/src/agentic_rag/**/*.py", "/src/agentic_rag/storage/*.sql", "/pyproject.toml", "/README.md", "/LICENSE", "/uv.lock"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

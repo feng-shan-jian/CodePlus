@@ -17,12 +17,14 @@ import zipfile
 SMOKE = r'''
 import importlib.metadata as metadata
 import importlib.util
-import json, pathlib, sys
+import io, json, pathlib, sys
 from uuid import uuid4
 import agentic_rag
 from agentic_rag.config import KnowledgeConfig, ProcessingSnapshot, RunOverride, resolve_run
 from agentic_rag.domain import KnowledgeBase, Span, ErrorCode, RagError
 from agentic_rag.capabilities import require_optional_dependencies, require_provider
+from agentic_rag.storage import Catalog
+from agentic_rag.storage.database import runtime_fingerprint
 root = pathlib.Path(sys.prefix).resolve()
 location = pathlib.Path(agentic_rag.__file__).resolve()
 assert location.is_relative_to(root) and 'site-packages' in location.parts, location
@@ -35,6 +37,16 @@ assert resolve_run(config, 'report', RunOverride(mode='fixed')).retrieval.mode =
 assert config.retrieval.mode == 'auto'
 assert KnowledgeBase(kb_id=uuid4(), name='installed').name == 'installed'
 assert Span.model_validate_json('{"start":0,"end":4}').end == 4
+catalog = Catalog(pathlib.Path(sys.argv[1]).parent / ('installed-data-' + str(uuid4())))
+library = catalog.create_library('installed storage')
+archive = catalog.archives.put(io.BytesIO(b'installed archive'))
+assert catalog.archives.read(archive.sha256) == b'installed archive'
+with catalog.begin_mutation(library.kb_id, snapshot, 'a' * 64) as owner:
+    assert catalog.get_batch(owner.token.batch_id).owner_epoch == 1
+    owner.abandon()
+assert Catalog(catalog._directory.root).get_library(library.kb_id).name == 'installed storage'
+sqlite = runtime_fingerprint()
+assert sqlite['apsw'] == '3.53.4.0' and sqlite['sqlite'] == '3.53.4'
 for action, code in ((lambda: require_optional_dependencies('embedding'), ErrorCode.DEPENDENCY_UNAVAILABLE),
                      (lambda: require_provider(None, 'rerank'), ErrorCode.CAPABILITY_UNAVAILABLE)):
     try:
@@ -47,13 +59,14 @@ for name in ('codeplus', 'torch', 'transformers', 'tokenizers', 'pymilvus', 'tex
     assert importlib.util.find_spec(name) is None, name
     assert not any(key == name or key.startswith(name + '.') for key in sys.modules), name
 requirements = metadata.requires('codeplus-agentic-rag')
-assert len(requirements) == 1 and requirements[0].startswith('pydantic')
+assert len(requirements) == 2 and 'apsw==3.53.4.0' in requirements and any(item.startswith('pydantic') for item in requirements)
 distribution = metadata.distribution('codeplus-agentic-rag')
 assert not distribution.entry_points
 installed = {dist.metadata['Name']: dist.version for dist in metadata.distributions()}
 print(json.dumps({'executable':sys.executable, 'python':sys.version, 'prefix':str(root),
                   'cwd':str(pathlib.Path.cwd()), 'import_path':str(location), 'isolated':bool(sys.flags.isolated),
                   'version':agentic_rag.__version__, 'requirements':requirements, 'installed':installed,
+                  'sqlite':sqlite, 'storage_roundtrip':True,
                   'document_encoding_fingerprint':snapshot.document_encoding_fingerprint,
                   'forbidden_modules_loaded':[], 'missing_dependencies_diagnostic':True}))
 '''
@@ -92,8 +105,14 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
         command([uv, "build", sdist, "--wheel", "--out-dir", rebuilt, *build_flags])
         direct_wheel, = direct.glob("*.whl")
         rebuilt_wheel, = rebuilt.glob("*.whl")
-        expected_sources = {"agentic_rag/" + file.name for file in (package / "src/agentic_rag").glob("*.py")}
-        assert len(expected_sources) == 6
+        expected_sources = {file.relative_to(package / "src").as_posix() for file in
+                            (package / "src/agentic_rag").rglob("*") if file.suffix in {".py", ".sql"}}
+        root_sources = {"agentic_rag/" + name for name in
+                        ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py")}
+        storage_sources = {"agentic_rag/storage/" + name for name in
+                           ("__init__.py", "archives.py", "catalog.py", "database.py", "locks.py",
+                            "ownership.py", "paths.py", "runs.py", "schema.sql")}
+        assert expected_sources == root_sources | storage_sources
         for artifact in (direct_wheel, sdist, rebuilt_wheel):
             if artifact.suffix == ".whl":
                 with zipfile.ZipFile(artifact) as archive:
@@ -135,6 +154,6 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
             report["installations"].append(evidence)
         report["result"] = "PASS"
     finally:
-        evidence_path = os.environ.get("R05_INSTALL_REPORT")
+        evidence_path = os.environ.get("R06_INSTALL_REPORT") or os.environ.get("R05_INSTALL_REPORT")
         if evidence_path:
             Path(evidence_path).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

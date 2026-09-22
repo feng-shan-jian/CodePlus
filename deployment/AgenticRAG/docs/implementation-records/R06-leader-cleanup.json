@@ -1,0 +1,11 @@
+{
+  "owned_root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r06-leader-20260922",
+  "audited_entries": 1119,
+  "regular_files": 795,
+  "hardlink_entries": 486,
+  "reparse_points": 30,
+  "directories": 294,
+  "removed": true,
+  "remaining_helper_processes": 0,
+  "method": "Verified exact absolute root and every entry; no reparse traversal; unlink files/links individually then delete only empty directories; reusable core environment retained"
+}
