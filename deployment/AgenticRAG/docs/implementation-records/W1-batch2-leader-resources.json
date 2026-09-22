@@ -1,0 +1,1303 @@
+{
+  "status": "READY_FOR_INDEPENDENT_CLEANUP",
+  "captured_at": 1790103033.4958017,
+  "roots": [
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923"
+  ],
+  "root_children": {
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923": [
+      {
+        "name": "answer-tokenizer-v41",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "apply-dev-fix.py",
+        "directory": false,
+        "bytes": 5382
+      },
+      {
+        "name": "apply.py",
+        "directory": false,
+        "bytes": 6621
+      },
+      {
+        "name": "checks.py",
+        "directory": false,
+        "bytes": 3392
+      },
+      {
+        "name": "compose-up.py",
+        "directory": false,
+        "bytes": 3812
+      },
+      {
+        "name": "core",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "crosscheck.py",
+        "directory": false,
+        "bytes": 9783
+      },
+      {
+        "name": "cuda",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "dist",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "dist-v2",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "envprep.py",
+        "directory": false,
+        "bytes": 2927
+      },
+      {
+        "name": "fresh-dev",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "fresh-dev-source",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "precleanup.py",
+        "directory": false,
+        "bytes": 9294
+      },
+      {
+        "name": "pytest-core",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "pytest-dev",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "pytest-focused",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "pytest-host",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "pytest-installed.py",
+        "directory": false,
+        "bytes": 1450
+      },
+      {
+        "name": "real",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "real-checks-v2.py",
+        "directory": false,
+        "bytes": 4032
+      },
+      {
+        "name": "real-checks.py",
+        "directory": false,
+        "bytes": 4009
+      },
+      {
+        "name": "release-sdist",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "release-wheel",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "setup-v2.py",
+        "directory": false,
+        "bytes": 6947
+      },
+      {
+        "name": "setup.py",
+        "directory": false,
+        "bytes": 5392
+      },
+      {
+        "name": "smoke",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "upgrade",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "uv-cache",
+        "directory": true,
+        "bytes": null
+      },
+      {
+        "name": "verify-v2.py",
+        "directory": false,
+        "bytes": 5593
+      },
+      {
+        "name": "wait-worker-idle.py",
+        "directory": false,
+        "bytes": 1890
+      }
+    ]
+  },
+  "temporary_scripts": {
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\apply-dev-fix.py": "a157bd0cfe5a5d5e131d78fd89c5a77d1287f3b1d56e7c9f0483942d31d6c3c3",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\apply.py": "e3cb0a626292dcd3637987dfae2e11b2219a56eb8a94eb28ec07037b9d6354b8",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\checks.py": "aa0d1b6361dbae3e6e25bd7fbc046bb2faf37dfd0531974f2ca088a5be29cee9",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\compose-up.py": "943278299b4439d076b83c1c6e563da41bb9d8ab464109abb50fcd4ab684dd6f",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\crosscheck.py": "698a00c5c8b0793aa46fb3d0bd483147df5c94112f64b84543dd49aea248d3ba",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\envprep.py": "203ed60f34a8bda2339fa3eb1d24c4ad63752db722e92142af0548764d35e8dc",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\precleanup.py": "3861e041a41b28ddfd00074cb8206d5397782254454fdc522f985677f9dff17d",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\pytest-installed.py": "f4a4b400d473e7c94a5904aaaeb8316ec1e66eee1b51664d4c57f0d3e596459c",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\real-checks-v2.py": "4990b6a51c15ae4b363ddc9b72a987d9311fecb23d57cdee88a4d1314a2674ad",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\real-checks.py": "85764911bf6c46fbfb205ad9ce2b64af75a99d1c47119d55d72b52a723b5d1da",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\setup-v2.py": "c6b9c055981e1986fcee7e557a63568f75e9f66bacb9f783d297f2297a056f2e",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\setup.py": "443bab0ba5572e78440da246c7c2ea2509666de37f0d90877dc8d7204b199c4f",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\verify-v2.py": "766d64447837ff65459e8d30176bec127cf8773d843baec151a6bd43b0ef5010",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\wait-worker-idle.py": "05b1292c05557e8dba83c86e41b76e4147867d97a98f21714b31bd807443b158"
+  },
+  "processes_referencing_targets": [
+    {
+      "ProcessId": 54136,
+      "ParentProcessId": 17360,
+      "Name": "pwsh.exe",
+      "ExecutablePath": "C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "CommandLine": "\"C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe\" -Command \"try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}\n& 'C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/core/Scripts/python.exe' -I -B 'C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/precleanup.py'\"",
+      "Birth": "2026-09-22T18:50:27.9107320Z"
+    },
+    {
+      "ProcessId": 61872,
+      "ParentProcessId": 54136,
+      "Name": "python.exe",
+      "ExecutablePath": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Scripts\\python.exe",
+      "CommandLine": "\"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Scripts\\python.exe\" -I -B C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/precleanup.py",
+      "Birth": "2026-09-22T18:50:28.1018530Z"
+    },
+    {
+      "ProcessId": 8048,
+      "ParentProcessId": 61872,
+      "Name": "python.exe",
+      "ExecutablePath": "C:\\Python314\\python.exe",
+      "CommandLine": "\"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Scripts\\python.exe\" -I -B C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/precleanup.py",
+      "Birth": "2026-09-22T18:50:28.1258810Z"
+    }
+  ],
+  "owned_live_processes": [],
+  "audit_pid": 8048,
+  "audit_ancestor_pids": [
+    8048,
+    61872,
+    54136,
+    17360,
+    3240,
+    20172,
+    2756
+  ],
+  "audit_sampler_pids": [
+    66040
+  ],
+  "projects": {
+    "codeplus-w1-batch2-leader-20260923": {
+      "containers": [
+        {
+          "id": "e60577848f538f23cf6f2ed83877d1116493931e37e615ac2fbe47c4fe35a7a1",
+          "name": "/codeplus-w1-batch2-leader-20260923-standalone-1",
+          "image": "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+          "labels": {
+            "com.docker.compose.config-hash": "d2a5592802c1ba916f4262acc0bac0d2ba55981454be51a6ac10de94b8407119",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "minio:service_healthy:false,etcd:service_healthy:false",
+            "com.docker.compose.image": "sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+            "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+            "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+            "com.docker.compose.service": "standalone",
+            "com.docker.compose.version": "5.4.0",
+            "org.opencontainers.image.ref.name": "ubuntu",
+            "org.opencontainers.image.version": "22.04"
+          },
+          "mounts": [
+            {
+              "Type": "volume",
+              "Name": "codeplus-w1-batch2-leader-20260923_milvus",
+              "Source": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_milvus/_data",
+              "Destination": "/var/lib/milvus",
+              "Driver": "local",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": ""
+            }
+          ],
+          "ports": {
+            "19530/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "19542"
+              }
+            ],
+            "9091/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "9103"
+              }
+            ]
+          },
+          "networks": [
+            "codeplus-w1-batch2-leader-20260923_default"
+          ]
+        },
+        {
+          "id": "08185f369a45d759dd8d4578c2ba0e6f91b7fab4da48aec3dab89355267c4e62",
+          "name": "/codeplus-w1-batch2-leader-20260923-minio-1",
+          "image": "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+          "labels": {
+            "architecture": "x86_64",
+            "build-date": "2024-12-18T09:14:16Z",
+            "com.docker.compose.config-hash": "299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+            "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+            "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+            "com.docker.compose.service": "minio",
+            "com.docker.compose.version": "5.4.0",
+            "com.redhat.component": "ubi9-micro-container",
+            "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+            "description": "MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.",
+            "distribution-scope": "public",
+            "io.buildah.version": "1.38.0-dev",
+            "io.k8s.description": "Very small image which doesn't install the package manager.",
+            "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+            "io.openshift.expose-services": "",
+            "maintainer": "MinIO Inc <dev@min.io>",
+            "name": "MinIO",
+            "release": "RELEASE.2024-12-18T13-15-44Z",
+            "summary": "MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.",
+            "url": "https://www.redhat.com",
+            "vcs-ref": "10988923ed65297b3e5a5c9cf1c59f779fd76274",
+            "vcs-type": "git",
+            "vendor": "MinIO Inc <dev@min.io>",
+            "version": "RELEASE.2024-12-18T13-15-44Z"
+          },
+          "mounts": [
+            {
+              "Type": "volume",
+              "Name": "codeplus-w1-batch2-leader-20260923_minio",
+              "Source": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_minio/_data",
+              "Destination": "/data",
+              "Driver": "local",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": ""
+            }
+          ],
+          "ports": {
+            "9000/tcp": null
+          },
+          "networks": [
+            "codeplus-w1-batch2-leader-20260923_default"
+          ]
+        },
+        {
+          "id": "21a57a4e5cf35a209a01e4293392920408982b634806ebfa98a420d123238aaa",
+          "name": "/codeplus-w1-batch2-leader-20260923-etcd-1",
+          "image": "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+          "labels": {
+            "com.docker.compose.config-hash": "f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+            "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+            "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+            "com.docker.compose.service": "etcd",
+            "com.docker.compose.version": "5.4.0",
+            "io.buildah.version": "1.41.5"
+          },
+          "mounts": [
+            {
+              "Type": "volume",
+              "Name": "codeplus-w1-batch2-leader-20260923_etcd",
+              "Source": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_etcd/_data",
+              "Destination": "/etcd",
+              "Driver": "local",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": ""
+            }
+          ],
+          "ports": {
+            "2379/tcp": null,
+            "2380/tcp": null
+          },
+          "networks": [
+            "codeplus-w1-batch2-leader-20260923_default"
+          ]
+        }
+      ],
+      "volumes": [
+        {
+          "Name": "codeplus-w1-batch2-leader-20260923_etcd",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_etcd/_data",
+          "CreatedAt": "2026-09-22T18:12:52Z",
+          "Labels": {
+            "com.docker.compose.config-hash": "1e1ee19f2507caab57b992b9390421062563db495dd4c8e0068ccda57cf54a76",
+            "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "etcd"
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "codeplus-w1-batch2-leader-20260923_milvus",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_milvus/_data",
+          "CreatedAt": "2026-09-22T18:12:52Z",
+          "Labels": {
+            "com.docker.compose.config-hash": "2ad541b8ec32f7d911362c7ce53ada164100dc4d18080a78f96efc48cab40b47",
+            "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "milvus"
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "codeplus-w1-batch2-leader-20260923_minio",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_minio/_data",
+          "CreatedAt": "2026-09-22T18:12:52Z",
+          "Labels": {
+            "com.docker.compose.config-hash": "bb8c30f34c6a5efd693f5118af07d6131e00770e8c01e62f6f331a5d9404cfea",
+            "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "minio"
+          },
+          "Options": null,
+          "Scope": "local"
+        }
+      ],
+      "networks": [
+        {
+          "Id": "324a7ca0dfad549ed89553ea9a3a463c4c1df01649e9c0cc98201ba28e93f3c0",
+          "Name": "codeplus-w1-batch2-leader-20260923_default",
+          "Created": "2026-09-22T18:12:52.891173325Z",
+          "Scope": "local",
+          "Driver": "bridge",
+          "Labels": {
+            "com.docker.compose.config-hash": "2dcc99e73662d936cf4b0155f429a26966268dd99b0b16cc108e6f77b7cfa3e3",
+            "com.docker.compose.network": "default",
+            "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+            "com.docker.compose.version": "5.4.0"
+          },
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+              {
+                "Subnet": "172.19.0.0/16",
+                "Gateway": "172.19.0.1"
+              }
+            ]
+          },
+          "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+          }
+        }
+      ]
+    }
+  },
+  "compose": {
+    "path": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+    "sha256": "6de63bc2c4921a9afabd3fa66d1302168c26a48531a840e7758d1f57582ec52d",
+    "environment": {
+      "R14_PROJECT": "codeplus-w1-batch2-leader-20260923",
+      "R14_MILVUS_PORT": "19542",
+      "R14_HEALTH_PORT": "9103"
+    }
+  },
+  "docker": {
+    "containers": [
+      {
+        "id": "e60577848f538f23cf6f2ed83877d1116493931e37e615ac2fbe47c4fe35a7a1",
+        "name": "/codeplus-w1-batch2-leader-20260923-standalone-1",
+        "image": "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+        "labels": {
+          "com.docker.compose.config-hash": "d2a5592802c1ba916f4262acc0bac0d2ba55981454be51a6ac10de94b8407119",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "minio:service_healthy:false,etcd:service_healthy:false",
+          "com.docker.compose.image": "sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+          "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+          "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+          "com.docker.compose.service": "standalone",
+          "com.docker.compose.version": "5.4.0",
+          "org.opencontainers.image.ref.name": "ubuntu",
+          "org.opencontainers.image.version": "22.04"
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "codeplus-w1-batch2-leader-20260923_milvus",
+            "Source": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_milvus/_data",
+            "Destination": "/var/lib/milvus",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "ports": {
+          "19530/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "19542"
+            }
+          ],
+          "9091/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "9103"
+            }
+          ]
+        },
+        "networks": [
+          "codeplus-w1-batch2-leader-20260923_default"
+        ]
+      },
+      {
+        "id": "08185f369a45d759dd8d4578c2ba0e6f91b7fab4da48aec3dab89355267c4e62",
+        "name": "/codeplus-w1-batch2-leader-20260923-minio-1",
+        "image": "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+        "labels": {
+          "architecture": "x86_64",
+          "build-date": "2024-12-18T09:14:16Z",
+          "com.docker.compose.config-hash": "299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+          "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+          "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+          "com.docker.compose.service": "minio",
+          "com.docker.compose.version": "5.4.0",
+          "com.redhat.component": "ubi9-micro-container",
+          "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+          "description": "MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.",
+          "distribution-scope": "public",
+          "io.buildah.version": "1.38.0-dev",
+          "io.k8s.description": "Very small image which doesn't install the package manager.",
+          "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+          "io.openshift.expose-services": "",
+          "maintainer": "MinIO Inc <dev@min.io>",
+          "name": "MinIO",
+          "release": "RELEASE.2024-12-18T13-15-44Z",
+          "summary": "MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.",
+          "url": "https://www.redhat.com",
+          "vcs-ref": "10988923ed65297b3e5a5c9cf1c59f779fd76274",
+          "vcs-type": "git",
+          "vendor": "MinIO Inc <dev@min.io>",
+          "version": "RELEASE.2024-12-18T13-15-44Z"
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "codeplus-w1-batch2-leader-20260923_minio",
+            "Source": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_minio/_data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "ports": {
+          "9000/tcp": null
+        },
+        "networks": [
+          "codeplus-w1-batch2-leader-20260923_default"
+        ]
+      },
+      {
+        "id": "21a57a4e5cf35a209a01e4293392920408982b634806ebfa98a420d123238aaa",
+        "name": "/codeplus-w1-batch2-leader-20260923-etcd-1",
+        "image": "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+        "labels": {
+          "com.docker.compose.config-hash": "f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+          "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+          "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+          "com.docker.compose.service": "etcd",
+          "com.docker.compose.version": "5.4.0",
+          "io.buildah.version": "1.41.5"
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "codeplus-w1-batch2-leader-20260923_etcd",
+            "Source": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_etcd/_data",
+            "Destination": "/etcd",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "ports": {
+          "2379/tcp": null,
+          "2380/tcp": null
+        },
+        "networks": [
+          "codeplus-w1-batch2-leader-20260923_default"
+        ]
+      },
+      {
+        "id": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+        "name": "/sonarqube-production",
+        "image": "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+        "labels": {
+          "com.docker.compose.config-hash": "490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "db:service_healthy:false",
+          "com.docker.compose.image": "sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+          "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+          "com.docker.compose.replace": "sonarqube-production",
+          "com.docker.compose.service": "sonarqube",
+          "com.docker.compose.version": "5.4.0",
+          "io.k8s.description": "SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.",
+          "io.openshift.min-cpu": "400m",
+          "io.openshift.min-memory": "2048M",
+          "io.openshift.non-scalable": "true",
+          "io.openshift.tags": "sonarqube,static-code-analysis,code-quality,clean-code",
+          "org.opencontainers.image.url": "https://github.com/SonarSource/docker-sonarqube",
+          "org.opencontainers.image.version": "24.04"
+        },
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\sonarqube",
+            "Destination": "/opt/sonarqube/data",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\sonarqube-extensions",
+            "Destination": "/opt/sonarqube/extensions",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\logs\\sonarqube",
+            "Destination": "/opt/sonarqube/logs",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\temp\\sonarqube",
+            "Destination": "/opt/sonarqube/temp",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+            "Destination": "/run/secrets/postgres_password",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\sonar_jwt_secret.txt",
+            "Destination": "/run/secrets/sonar_jwt_secret",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          }
+        ],
+        "ports": {
+          "9000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "9000"
+            }
+          ]
+        },
+        "networks": [
+          "sonarqube-production"
+        ]
+      },
+      {
+        "id": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+        "name": "/sonarqube-postgres",
+        "image": "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+        "labels": {
+          "com.docker.compose.config-hash": "e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+          "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+          "com.docker.compose.replace": "sonarqube-postgres",
+          "com.docker.compose.service": "db",
+          "com.docker.compose.version": "5.4.0"
+        },
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+            "Destination": "/run/secrets/postgres_password",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\postgresql",
+            "Destination": "/var/lib/postgresql/data",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          }
+        ],
+        "ports": {
+          "5432/tcp": null
+        },
+        "networks": [
+          "sonarqube-production"
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "Name": "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data",
+        "CreatedAt": "2026-08-27T12:38:40Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data",
+        "CreatedAt": "2026-08-27T12:34:57Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data",
+        "CreatedAt": "2026-08-27T12:32:48Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data",
+        "CreatedAt": "2026-08-27T12:37:34Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "approvaplat-mysql-data",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/approvaplat-mysql-data/_data",
+        "CreatedAt": "2026-08-27T12:37:34Z",
+        "Labels": {
+          "com.docker.compose.config-hash": "27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e",
+          "com.docker.compose.project": "approvaplat",
+          "com.docker.compose.version": "5.4.0",
+          "com.docker.compose.volume": "approvaplat-mysql-data"
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "codeplus-w1-batch2-leader-20260923_etcd",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_etcd/_data",
+        "CreatedAt": "2026-09-22T18:12:52Z",
+        "Labels": {
+          "com.docker.compose.config-hash": "1e1ee19f2507caab57b992b9390421062563db495dd4c8e0068ccda57cf54a76",
+          "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+          "com.docker.compose.version": "5.4.0",
+          "com.docker.compose.volume": "etcd"
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "codeplus-w1-batch2-leader-20260923_milvus",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_milvus/_data",
+        "CreatedAt": "2026-09-22T18:12:52Z",
+        "Labels": {
+          "com.docker.compose.config-hash": "2ad541b8ec32f7d911362c7ce53ada164100dc4d18080a78f96efc48cab40b47",
+          "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+          "com.docker.compose.version": "5.4.0",
+          "com.docker.compose.volume": "milvus"
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "codeplus-w1-batch2-leader-20260923_minio",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-w1-batch2-leader-20260923_minio/_data",
+        "CreatedAt": "2026-09-22T18:12:52Z",
+        "Labels": {
+          "com.docker.compose.config-hash": "bb8c30f34c6a5efd693f5118af07d6131e00770e8c01e62f6f331a5d9404cfea",
+          "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+          "com.docker.compose.version": "5.4.0",
+          "com.docker.compose.volume": "minio"
+        },
+        "Options": null,
+        "Scope": "local"
+      }
+    ],
+    "networks": [
+      {
+        "Id": "c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587",
+        "Name": "bridge",
+        "Created": "2026-09-21T23:55:35.545820176Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": [
+            {
+              "Subnet": "172.17.0.0/16",
+              "Gateway": "172.17.0.1"
+            }
+          ]
+        },
+        "Options": {
+          "com.docker.network.bridge.default_bridge": "true",
+          "com.docker.network.bridge.enable_icc": "true",
+          "com.docker.network.bridge.enable_ip_masquerade": "true",
+          "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+          "com.docker.network.bridge.name": "docker0",
+          "com.docker.network.driver.mtu": "1500"
+        }
+      },
+      {
+        "Id": "324a7ca0dfad549ed89553ea9a3a463c4c1df01649e9c0cc98201ba28e93f3c0",
+        "Name": "codeplus-w1-batch2-leader-20260923_default",
+        "Created": "2026-09-22T18:12:52.891173325Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Labels": {
+          "com.docker.compose.config-hash": "2dcc99e73662d936cf4b0155f429a26966268dd99b0b16cc108e6f77b7cfa3e3",
+          "com.docker.compose.network": "default",
+          "com.docker.compose.project": "codeplus-w1-batch2-leader-20260923",
+          "com.docker.compose.version": "5.4.0"
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": [
+            {
+              "Subnet": "172.19.0.0/16",
+              "Gateway": "172.19.0.1"
+            }
+          ]
+        },
+        "Options": {
+          "com.docker.network.enable_ipv4": "true",
+          "com.docker.network.enable_ipv6": "false"
+        }
+      },
+      {
+        "Id": "3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6",
+        "Name": "host",
+        "Created": "2026-08-24T03:10:40.792555369Z",
+        "Scope": "local",
+        "Driver": "host",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": null
+        },
+        "Options": {}
+      },
+      {
+        "Id": "831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6",
+        "Name": "none",
+        "Created": "2026-08-24T03:10:40.783778961Z",
+        "Scope": "local",
+        "Driver": "null",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": null
+        },
+        "Options": {}
+      },
+      {
+        "Id": "e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f",
+        "Name": "sonarqube-production",
+        "Created": "2026-08-24T14:03:17.667304522Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Labels": {
+          "com.docker.compose.config-hash": "43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda",
+          "com.docker.compose.network": "sonarqube",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.version": "5.4.0"
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": [
+            {
+              "Subnet": "172.18.0.0/16",
+              "Gateway": "172.18.0.1"
+            }
+          ]
+        },
+        "Options": {
+          "com.docker.network.enable_ipv4": "true",
+          "com.docker.network.enable_ipv6": "false"
+        }
+      }
+    ]
+  },
+  "foreign_docker": {
+    "containers": [
+      {
+        "id": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+        "name": "/sonarqube-production",
+        "image": "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+        "labels": {
+          "com.docker.compose.config-hash": "490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "db:service_healthy:false",
+          "com.docker.compose.image": "sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+          "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+          "com.docker.compose.replace": "sonarqube-production",
+          "com.docker.compose.service": "sonarqube",
+          "com.docker.compose.version": "5.4.0",
+          "io.k8s.description": "SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.",
+          "io.openshift.min-cpu": "400m",
+          "io.openshift.min-memory": "2048M",
+          "io.openshift.non-scalable": "true",
+          "io.openshift.tags": "sonarqube,static-code-analysis,code-quality,clean-code",
+          "org.opencontainers.image.url": "https://github.com/SonarSource/docker-sonarqube",
+          "org.opencontainers.image.version": "24.04"
+        },
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\sonarqube",
+            "Destination": "/opt/sonarqube/data",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\sonarqube-extensions",
+            "Destination": "/opt/sonarqube/extensions",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\logs\\sonarqube",
+            "Destination": "/opt/sonarqube/logs",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\temp\\sonarqube",
+            "Destination": "/opt/sonarqube/temp",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+            "Destination": "/run/secrets/postgres_password",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\sonar_jwt_secret.txt",
+            "Destination": "/run/secrets/sonar_jwt_secret",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          }
+        ],
+        "ports": {
+          "9000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "9000"
+            }
+          ]
+        },
+        "networks": [
+          "sonarqube-production"
+        ]
+      },
+      {
+        "id": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+        "name": "/sonarqube-postgres",
+        "image": "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+        "labels": {
+          "com.docker.compose.config-hash": "e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513",
+          "com.docker.compose.container-number": "1",
+          "com.docker.compose.depends_on": "",
+          "com.docker.compose.image": "sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be",
+          "com.docker.compose.oneoff": "False",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+          "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+          "com.docker.compose.replace": "sonarqube-postgres",
+          "com.docker.compose.service": "db",
+          "com.docker.compose.version": "5.4.0"
+        },
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+            "Destination": "/run/secrets/postgres_password",
+            "Mode": "",
+            "RW": false,
+            "Propagation": "rprivate"
+          },
+          {
+            "Type": "bind",
+            "Source": "D:\\SonarQube\\production\\data\\postgresql",
+            "Destination": "/var/lib/postgresql/data",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": "rprivate"
+          }
+        ],
+        "ports": {
+          "5432/tcp": null
+        },
+        "networks": [
+          "sonarqube-production"
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "Name": "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data",
+        "CreatedAt": "2026-08-27T12:38:40Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data",
+        "CreatedAt": "2026-08-27T12:34:57Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data",
+        "CreatedAt": "2026-08-27T12:32:48Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data",
+        "CreatedAt": "2026-08-27T12:37:34Z",
+        "Labels": {
+          "com.docker.volume.anonymous": ""
+        },
+        "Options": null,
+        "Scope": "local"
+      },
+      {
+        "Name": "approvaplat-mysql-data",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/approvaplat-mysql-data/_data",
+        "CreatedAt": "2026-08-27T12:37:34Z",
+        "Labels": {
+          "com.docker.compose.config-hash": "27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e",
+          "com.docker.compose.project": "approvaplat",
+          "com.docker.compose.version": "5.4.0",
+          "com.docker.compose.volume": "approvaplat-mysql-data"
+        },
+        "Options": null,
+        "Scope": "local"
+      }
+    ],
+    "networks": [
+      {
+        "Id": "c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587",
+        "Name": "bridge",
+        "Created": "2026-09-21T23:55:35.545820176Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": [
+            {
+              "Subnet": "172.17.0.0/16",
+              "Gateway": "172.17.0.1"
+            }
+          ]
+        },
+        "Options": {
+          "com.docker.network.bridge.default_bridge": "true",
+          "com.docker.network.bridge.enable_icc": "true",
+          "com.docker.network.bridge.enable_ip_masquerade": "true",
+          "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+          "com.docker.network.bridge.name": "docker0",
+          "com.docker.network.driver.mtu": "1500"
+        }
+      },
+      {
+        "Id": "3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6",
+        "Name": "host",
+        "Created": "2026-08-24T03:10:40.792555369Z",
+        "Scope": "local",
+        "Driver": "host",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": null
+        },
+        "Options": {}
+      },
+      {
+        "Id": "831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6",
+        "Name": "none",
+        "Created": "2026-08-24T03:10:40.783778961Z",
+        "Scope": "local",
+        "Driver": "null",
+        "Labels": {},
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": null
+        },
+        "Options": {}
+      },
+      {
+        "Id": "e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f",
+        "Name": "sonarqube-production",
+        "Created": "2026-08-24T14:03:17.667304522Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "Labels": {
+          "com.docker.compose.config-hash": "43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda",
+          "com.docker.compose.network": "sonarqube",
+          "com.docker.compose.project": "sonarqube-production",
+          "com.docker.compose.version": "5.4.0"
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "IPAM": {
+          "Driver": "default",
+          "Options": null,
+          "Config": [
+            {
+              "Subnet": "172.18.0.0/16",
+              "Gateway": "172.18.0.1"
+            }
+          ]
+        },
+        "Options": {
+          "com.docker.network.enable_ipv4": "true",
+          "com.docker.network.enable_ipv6": "false"
+        }
+      }
+    ]
+  },
+  "ports": [
+    19542,
+    9103
+  ],
+  "temporary_repository_files": [],
+  "protected_shared_roots": [
+    "C:/Users/18221/.cache/codeplus-agenticrag/models",
+    "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-core",
+    "C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda",
+    "C:/Users/18221/AppData/Local/uv/cache",
+    "C:/Users/18221/AppData/Local/Temp/.codeplus-agenticrag-workers",
+    "C:/Users/18221/AppData/Local/Temp/pytest-of-18221/pytest-2"
+  ],
+  "protected_external_worktree": "C:/Users/18221/.codex/worktrees/bf43/CodePlus",
+  "blocked_r14_finalizer": {
+    "status": "BLOCKED_AUTO_APPROVAL",
+    "root": "C:/Users/18221/AppData/Local/Temp/codeplus-r14-finalizer-20260923",
+    "exists_after": true,
+    "reason": "Exec command was rejected before execution: blocked by policy. No further specific reason was provided; the tool echo was truncated.",
+    "action": "pwsh native Remove-Item -LiteralPath <resolved exact root> -Recurse -Force after inline path/type/hardlink verification",
+    "execution": "No deletion or inline prechecks ran in the rejected command. Fresh separate read-only checks followed.",
+    "files": {
+      "postcleanup.py": {
+        "bytes": 7722,
+        "sha256": "56c0b73257456affe49a54fcce3323163d981deae00cd60b6ca6b7691f2c0b7e"
+      },
+      "r14-compose-before.yaml": {
+        "bytes": 1637,
+        "sha256": "68ca4e0b7685e991d5904b9a92fb78a44736fa2544b93854b5562554fa3e0cf9"
+      },
+      "stage.py": {
+        "bytes": 6641,
+        "sha256": "7aabdb2f6341bb12998e56038dbe245673f2e853e4631e2510c0ce513a709bbf"
+      },
+      "whitespace.py": {
+        "bytes": 2611,
+        "sha256": "e87edda850ecb9d86a29d21bf64b5e2c7d00e5f0950e89f357eaa545096778b5"
+      }
+    },
+    "total_bytes": 18611,
+    "independent_R14_cleanup": "Completed before this bookkeeping helper was created; unchanged.",
+    "no_product_changes": true,
+    "remaining_action": "Await explicit approval to retry this exact four-file directory, or user-directed retention/manual removal. Do not bypass rejection via another tool."
+  },
+  "blocked_batch1_finalizer": {
+    "status": "BLOCKED_AUTO_APPROVAL",
+    "target": "C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch1-finalizer-20260923.py",
+    "exists_after": true,
+    "bytes": 12511,
+    "sha256": "09377d6f3c74da9b1cdb98aeaa12337d1226887be26701b5738c2e33f28e09fa",
+    "hardlinks_before": 1,
+    "reason": "Exec command rejected before execution: blocked by policy. No more specific reason was provided; tool command echo truncated.",
+    "action": "PowerShell native Remove-Item -LiteralPath exact helper file -Force, after path/ancestors/hash/type/hardlink verification.",
+    "execution": "No command or inline precheck ran in rejected call. Previous separate file SHA/type/nlink check passed; fresh read-only ancestor/hash check followed.",
+    "independent_cleanup": "Own CPU root and independent cleanup root were successfully removed and independently verified before this bookkeeping file was created.",
+    "commit": "8c764644c57e59c9aa9ae2337f61efc3447d88ee",
+    "remaining_action": "Await explicit user instruction for retry of this exact file. Do not delegate or bypass rejection.",
+    "older_r14_blocked_root": "Separate four-file R14 root remains retained under the earlier pending question."
+  },
+  "blocked_convergence_report": {
+    "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-resource-status-v4.json",
+    "sha256": "03a75a0d423615e822a3be17d0eaedc5ce637f6255988f6d144be3c3311da207",
+    "formal_copy": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-batch2-convergence-resource-status-v4.json",
+    "scope": "All convergence worktree and associated tree-external resources protected, including 10 rejected directory paths and 4 rejected single-file paths; no delegation bypass."
+  },
+  "scope": "Only own leader root and exact Docker project resources are cleanup targets; all shared roots, foreign Docker, inherited inputs, other worktrees and prior blocked scopes protected."
+}

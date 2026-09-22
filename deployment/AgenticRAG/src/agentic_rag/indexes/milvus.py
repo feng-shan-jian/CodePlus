@@ -5,6 +5,7 @@ import json
 import math
 import time
 from contextlib import contextmanager
+from functools import partial
 from uuid import UUID
 
 from .manifest import (UUID_FIELDS, HASH_FIELDS, SCALAR_FIELDS, TEXT_MAX_BYTES, LAYOUT,
@@ -12,6 +13,16 @@ from .manifest import (UUID_FIELDS, HASH_FIELDS, SCALAR_FIELDS, TEXT_MAX_BYTES, 
 from .._schema import fingerprint
 from ..storage.locks import ProcessLock
 from ..storage import recovery as recovery_store
+from ..storage.paths import failure
+
+
+def publication_validator(catalog, storage, backend):
+    """Bind the official proof algorithm before any source validation IO."""
+    if (type(backend) is not MilvusRevisionIndex or backend.catalog is not catalog or
+            backend.storage != storage):
+        raise failure('validation requires the explicitly bound production Milvus adapter')
+    # Dispatch the one production algorithm, never a caller/subclass pass flag.
+    return partial(MilvusRevisionIndex.validate, backend)
 
 
 class MilvusRevisionIndex:

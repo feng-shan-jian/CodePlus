@@ -91,3 +91,62 @@ def test_schema1_identity_is_verified_before_upgrade(tmp_path,damage):
     assert connection.pragma('user_version')==1
     assert connection.execute("SELECT name FROM sqlite_master WHERE name='input_manifests'").fetchone() is None
     connection.close()
+
+
+def test_interrupted_middle_migration_rolls_back_only_that_step_then_resumes(tmp_path, monkeypatch):
+    from agentic_rag.storage.database import Database
+    path = tmp_path / 'interrupted-upgrade'
+    old = schema1_fixture(path)
+    original = Database._connect
+    class Interrupted(BaseException):
+        pass
+    class Connection:
+        def __init__(self, actual):
+            self.actual = actual
+        def __getattr__(self, name):
+            return getattr(self.actual, name)
+        def execute(self, sql, bindings=None):
+            result = self.actual.execute(sql) if bindings is None else self.actual.execute(sql, bindings)
+            if sql == 'INSERT INTO schema_migrations VALUES(?,?,?)' and bindings[0] == 4:
+                raise Interrupted('after schema and receipt writes, before version/commit')
+            return result
+    monkeypatch.setattr(Database, '_connect', lambda self, **kw: Connection(original(self, **kw)))
+    with pytest.raises(Interrupted):
+        Catalog(path)
+    connection = apsw.Connection(str(path / 'catalog.sqlite'))
+    try:
+        assert connection.pragma('user_version') == 3
+        assert list(connection.execute('SELECT version FROM schema_migrations ORDER BY version')) == [(1,), (2,), (3,)]
+        assert connection.execute("SELECT name FROM sqlite_master WHERE name='processing_items'").fetchone()
+        assert connection.execute("SELECT name FROM sqlite_master WHERE name='index_artifacts'").fetchone() is None
+    finally:
+        connection.close()
+    monkeypatch.setattr(Database, '_connect', original)
+    catalog = Catalog(path)
+    assert catalog.get_version(old['version']).raw_hash == old['raw']
+    assert catalog.archives.read(old['raw']) == b'real archived original in schema1'
+    with catalog._db.transaction() as connection:
+        assert connection.pragma('user_version') == 8
+        assert connection.execute('SELECT count(*) FROM schema_migrations').fetchone() == (8,)
+        assert connection.execute('PRAGMA foreign_key_check').fetchall() == []
+        assert connection.execute('PRAGMA integrity_check').fetchone() == ('ok',)
+
+
+@pytest.mark.parametrize('version', range(2, 8))
+def test_every_applied_additive_migration_is_authenticated_on_reopen(tmp_path, version):
+    path = tmp_path / 'authenticated-upgrades'
+    Catalog(path)
+    connection = apsw.Connection(str(path / 'catalog.sqlite'))
+    try:
+        connection.execute('UPDATE schema_migrations SET sha256=? WHERE version=?', ('f' * 64, version))
+        before = list(connection.execute('SELECT * FROM schema_migrations ORDER BY version'))
+    finally:
+        connection.close()
+    with pytest.raises(RagError, match='migration fingerprint'):
+        Catalog(path)
+    connection = apsw.Connection(str(path / 'catalog.sqlite'))
+    try:
+        assert connection.pragma('user_version') == 8
+        assert list(connection.execute('SELECT * FROM schema_migrations ORDER BY version')) == before
+    finally:
+        connection.close()

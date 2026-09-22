@@ -316,6 +316,7 @@ milvus = [
 [package.dev-dependencies]
 dev = [
     { name = "hatchling" },
+    { name = "pymilvus" },
     { name = "pytest" },
 ]
 
@@ -334,6 +335,7 @@ provides-extras = ["milvus", "local-models"]
 [package.metadata.requires-dev]
 dev = [
     { name = "hatchling", specifier = "==1.29.0" },
+    { name = "pymilvus", specifier = "==3.0.2" },
     { name = "pytest", specifier = ">=9,<10" },
 ]
 

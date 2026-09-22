@@ -1,0 +1,165 @@
+{
+  "status": "PASS_READ_ONLY_RETAINED",
+  "captured": "2026-09-22T19:12:13.8899597Z",
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923",
+  "exists": true,
+  "regular_files": 12,
+  "logical_bytes": 63232,
+  "all_ancestors_non_reparse": true,
+  "all_files_nlink_one": true,
+  "all_file_hashes_equal_inventory": true,
+  "nodes": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923",
+      "size": 4096,
+      "nlink": 1,
+      "attributes": 16,
+      "directory": true,
+      "sha256": null
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp",
+      "size": 2621440,
+      "nlink": 1,
+      "attributes": 16,
+      "directory": true,
+      "sha256": null
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local",
+      "size": 0,
+      "nlink": 1,
+      "attributes": 16432,
+      "directory": true,
+      "sha256": null
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData",
+      "size": 0,
+      "nlink": 1,
+      "attributes": 16432,
+      "directory": true,
+      "sha256": null
+    },
+    {
+      "path": "C:\\Users\\18221",
+      "size": 28672,
+      "nlink": 1,
+      "attributes": 16,
+      "directory": true,
+      "sha256": null
+    },
+    {
+      "path": "C:\\Users",
+      "size": 4096,
+      "nlink": 1,
+      "attributes": 17,
+      "directory": true,
+      "sha256": null
+    },
+    {
+      "path": "C:\\",
+      "size": 8192,
+      "nlink": 1,
+      "attributes": 22,
+      "directory": true,
+      "sha256": null
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\after.py",
+      "size": 3911,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "750d56546175a97d32630ec5b8d17a315befd51cd3709f2783fa3059fdf72c39"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\audit.py",
+      "size": 17307,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "d927425ccd8b35f02ea1f859ac6d4b092ed7ac338d1a368aedbb1208efccd723"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned-v2.ps1",
+      "size": 5019,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "b8de4de9b65ffa6ec35cd654f4c0feb3078d3ee2f3b63f6f95fb18b8112df551"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned-v3.ps1",
+      "size": 5013,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "5501730dc1c85d99e974d7fca5e08434df83b2db9c591f737c3f42129a329420"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned.ps1",
+      "size": 4966,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "818fbf85152967233b373b8cb2c9fede9a8d94929e1cb2594e039f2e19785048"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate.py",
+      "size": 1958,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "28519f097e4c0eb9f29ef2c8c9e5daa8791439c14215146612f35111c0033a50"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate_v2.py",
+      "size": 4717,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "a7b174a492f5cea048d01e92840ed4e7083b056b21271e5b55b19a308f9bf4c2"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate_v3.py",
+      "size": 6306,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "09aee9968b7a54679e1d4077c2a90a034de26b2ea58f8d93ed21fd7338a046d6"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\handle_probe.py",
+      "size": 1934,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "a4d268b6e1bba88ac5fd0e256b8e23ee83718d7c1f3f9faa50bc9b01fd52b167"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\inspect_owned_drift.py",
+      "size": 1454,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "dc59b399e478bd6ff6d99940888140ee025d8aafb3df897e6fd48d2c9c909e53"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\inspect_shared_drift.py",
+      "size": 1612,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "ed4b8fbf861a68b90f353f1e2efd99b7d982f9bd6320a7c4aaa66d54974e5057"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\report.py",
+      "size": 9035,
+      "nlink": 1,
+      "attributes": 32,
+      "directory": false,
+      "sha256": "b2e5863b10b9dc46409cb6da093b0bca7336be0a46aca538351efd4723a4f344"
+    }
+  ]
+}

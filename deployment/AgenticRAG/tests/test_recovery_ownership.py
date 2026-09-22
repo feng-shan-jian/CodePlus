@@ -9,7 +9,6 @@ import pytest
 from pymilvus import MilvusClient
 
 from agentic_rag.domain import RagError
-from agentic_rag.indexes.milvus import MilvusRevisionIndex
 from agentic_rag.ingestion import process_changes,abandon_recovery
 from agentic_rag.storage import publication,recovery
 
@@ -18,19 +17,17 @@ s=H['s']
 
 
 def physical(s):
-    backend=object.__new__(MilvusRevisionIndex)
-    backend.catalog,backend.storage,backend.store_id=s.catalog,s.config.storage,s.catalog.store_id
-    backend.timeout,backend.database_name=1,'default'
     collections={};dropped=[]
     class Client:
         create_schema=staticmethod(MilvusClient.create_schema)
+        def get_server_version(self,**kw):return '3.0.1'
         def has_collection(self,name,**kw):return name in collections
         def create_collection(self,name,*,schema,**kw):
             collections[name]={'description':schema.description,'collection_id':len(collections)+100,'created_timestamp':10000+len(collections)}
         def describe_collection(self,name,**kw):return dict(collections[name])
         def drop_collection(self,name,**kw):dropped.append(name);del collections[name]
         def insert(self,name,rows,**kw):return {'insert_count':len(rows)}
-    backend.client=Client()
+    backend=H['H']['HELPER']['constructed_backend'](s.catalog,s.config,Client())
     return backend,collections,dropped
 
 

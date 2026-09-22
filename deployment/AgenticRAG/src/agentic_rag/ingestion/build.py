@@ -3,8 +3,9 @@
 import time
 from ..indexes.manifest import index_error
 from ..storage import publication
+from ..storage.inputs import _InputRead
 from ..storage.recovery import terminal
-from .encoding import encode_documents, outcomes, read_encoded
+from .encoding import encode_documents, outcomes, _read_encoded
 
 
 def build_first_revision(catalog, owner, provider, backend, *, request_seconds=120, index_timeout=180, observer=None):
@@ -43,8 +44,9 @@ def build_first_revision(catalog, owner, provider, backend, *, request_seconds=1
     expected = []
     checkpoint_read_start = time.perf_counter()
     states = outcomes(catalog,batch.batch_id)
-    vectors = {v['chunk_id']:v for raw in catalog.get_input_items(batch.batch_id)
-               for v in read_encoded(catalog,batch.batch_id,raw,states[str(raw.entry.item_id)])}
+    input_read = _InputRead(catalog, batch.batch_id)
+    vectors = {v['chunk_id']:v for raw in input_read.items
+               for v in _read_encoded(catalog,batch.batch_id,raw,states[str(raw.entry.item_id)],_inputs=input_read)}
     metrics['checkpoint_seconds'] = (checkpoint_encode_seconds-metrics['encode_seconds']+
                                      time.perf_counter()-checkpoint_read_start)
     for offset in range(0,len(candidate.rows),256):

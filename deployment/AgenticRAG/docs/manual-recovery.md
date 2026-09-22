@@ -36,6 +36,8 @@ if plan["state"] == "WAITING_RECOVERY":
 
 完整文档编码检查点核对原件、配置与编码身份、DocumentVersion、解析/映射/结构归档、完整有序 Chunk、规范文本和 little-endian float32 摘要。只有全部 Chunk 的真实结果均已提交，文档才能复用；有效的完整文档不会再次调用编码。没有提交的编码工作从原件重算，不使用成功前缀冒充完整文档。真正 v7 的编码归档保留原字节，并通过其不可变 SQL 和完整处理链验证。
 
+每次处理、编码、准备或恢复检查可在本次调用内复用一次完整认证的输入集合；读取每一项时仍窄查当前 SQL 行并与已认证 checkpoint 比较，真实原件和处理归档仍逐次读取校验，不缓存成功状态。inspect 与取得新 owner 后的 continue 各自建立读取范围，不复用前次计划中的校验结果。公开读取有效检查点时也重新认证集合；原有无检查点返回 None 的语义保持。该读取范围不授予写权限，旧 capture epoch 的有效原件可以读取，写入仍由当前 owner/CAS 决定。
+
 普通导入与 `build_first_revision` 使用同一完整文档编码实现；后者继续要求所有文件成功。首次建库指标分开保存 `prepare_seconds`、`checkpoint_seconds`、`encode_seconds` 和 `insert_seconds`，兼容字段 `encode_and_insert_seconds` 包含实际编码与插入；恢复有效检查点时本次编码可为零，`build_seconds` 仍包含整个调用。
 
 每次恢复取得新 owner nonce/epoch，以全新 revision、artifact 和 Collection 构建候选。旧 artifact 的创建 epoch 永远不改写，当前候选由显式表选择。旧 worker 的 `produced_by` 被元数据拒收；在失权前已经通过检查并发送的 SDK 请求最多写入旧物理候选，不能写新候选或切换发布指针。

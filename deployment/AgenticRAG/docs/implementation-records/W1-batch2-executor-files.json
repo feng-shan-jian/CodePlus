@@ -1,0 +1,241 @@
+{
+  "task": "01a0c9c1-0a2a-7eb3-9e79-a007a6a9d1e4",
+  "batch": "W1 batch 2: BS02, BS03, BS04 search reuse, BS07, BS08",
+  "base": "8c764644c57e59c9aa9ae2337f61efc3447d88ee",
+  "branch": "c-woker/agentic-rag-convergence",
+  "patch": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch2.patch",
+  "patch_bytes": 111654,
+  "patch_sha256": "c6157e107cf72a552221c0863b8e020687174f1ff062a17efd87b18df84790f8",
+  "scope": "25 exact W1 files. No W2 worker/diagnostic/model-IO adaptation, Milvus finalize change, SQL, historical material migration, commit, or push.",
+  "checks": [
+    "scoped git diff --check",
+    "forward git apply --cached --check on private base index",
+    "forward private-index apply reproduces all 25 candidate blobs",
+    "reverse apply --check on current worktree",
+    "all 25 raw working files unchanged during freezing",
+    "actual worktree index remains empty"
+  ],
+  "validation": {
+    "combined_13_test_files": "251 passed in 203.64s; includes 39 new contract cases (13 build, 12 input, 14 source)",
+    "host_source_budget_integration": "138 passed in 243.81s; pinned production tokenizer; no skips",
+    "old_installed_wheels_to_schema8": "3 passed in 14.78s; relocated fixture itself belongs to separate materials batch",
+    "independent_static_review": "All five changes approved with explicit scope; reviewers did not rerun tests",
+    "environment": "Own Windows Python 3.14.3 editable tree includes pending W2 CPU code; not a pure-W1 wheel acceptance",
+    "leader_required": "Fresh pure-W1 release installation and independent actual GPU/Milvus, recovery, upgrade validation",
+    "real_gpu_milvus": "not executed by this task"
+  },
+  "observations": [
+    "BS07 first two collections failed because PyMilvus was absent or its async installation had not completed; install finished before unchanged assertions passed.",
+    "Cross-checkout SQL raw-equality assertion initially failed for all eight files: own CRLF versus Leader LF only; canonical Git blobs unchanged; no SQL rewriting.",
+    "Reuse counts are SourceSession/ordinary-build IO observations, not end-to-end performance claims."
+  ],
+  "resource_status": {
+    "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-resource-status-v2.json",
+    "bytes": 6769,
+    "sha256": "4e56e47fffd581a64de17b60410883d4d20abe151843c46cb84638518982c868",
+    "status": "22 completed test directories retained; 10 earlier recursive deletes policy-blocked; no retries"
+  },
+  "integration": "not integrated; sole Leader must apply/review/validate/clean/commit and return actual SHA",
+  "files": [
+    {
+      "path": "deployment/AgenticRAG/docs/convergence.md",
+      "mode": "100644",
+      "base_blob": "198380d01522c8b94a4d8bfdcc2242a7d21decd0",
+      "candidate_blob": "4da943314cdc9ca8c29676224044f2408c9c7fb0",
+      "raw_bytes": 13646,
+      "raw_sha256": "763628eb2030bb9c0ca5f0c8c1da490c20636aba6e08ad032d64a28341bb4a77"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/first-publication.md",
+      "mode": "100644",
+      "base_blob": "56d8a10f3757de2850dc38583651983c9e1d41ff",
+      "candidate_blob": "e504fd65b9e2777975359fd3e82368b90136056c",
+      "raw_bytes": 6550,
+      "raw_sha256": "bb569e6e4c48aeacb39f3bb0939e2df16b856d80eb3f3f9710ab6f2dd24e5f21"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/manual-recovery.md",
+      "mode": "100644",
+      "base_blob": "02631d673675527541b1a458ca76d08fcdb2421d",
+      "candidate_blob": "6efa463fd5c8645cb164a2695dc4fc4d6fa614b8",
+      "raw_bytes": 8802,
+      "raw_sha256": "b1aac0307bf666f3ab33812b6a0d12487cf7876ea072f4b22d878fa053a4e584"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/ordinary-mutations.md",
+      "mode": "100644",
+      "base_blob": "a9427994befa95b4f26bd8ca8dfe3b63c07af555",
+      "candidate_blob": "aba0ed998b0015b3ac291051dccd0e4d44ee097d",
+      "raw_bytes": 6293,
+      "raw_sha256": "c68a00df557d8773679f85577b14e314996e08a45287dd24f190c67a0116a9a1"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py",
+      "mode": "100644",
+      "base_blob": "4d3a5e282b5c7bc03ee57e4beb179183068c114a",
+      "candidate_blob": "d9dad37c16760695b0d03946ca0470d6febaa33b",
+      "raw_bytes": 6022,
+      "raw_sha256": "85b60a11d44b79a01778ae6c3eb828f955590f8b924200e33f711445e3912c27"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py",
+      "mode": "100644",
+      "base_blob": "a5d417af74b9925582259adb696fd9f82d796659",
+      "candidate_blob": "96b53553ef8065b8c42ca5d3e69616e15145eaa2",
+      "raw_bytes": 24301,
+      "raw_sha256": "269893e11943d5303325f8036872011447e191afa2f16e4316012e951161c27b"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py",
+      "mode": "100644",
+      "base_blob": "1642504d15d895de42ae53c950784fce935adfb0",
+      "candidate_blob": "601bb78861ea44cb1952b23e9359c99370ee4980",
+      "raw_bytes": 4428,
+      "raw_sha256": "c5b887b416fa53ff9e38cc1cce2acee544c11bc1e78c171a87ab69426685739c"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py",
+      "mode": "100644",
+      "base_blob": "19b411c6dbbb177d88dddb12c8e93b5895006abe",
+      "candidate_blob": "ca9a1ae6d62ffe139f3c24473b4b876052989ef7",
+      "raw_bytes": 6366,
+      "raw_sha256": "42726a31f1c5a9d0162654f07393ac8698c8193c1e96f22705ee21bb4818e8cd"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py",
+      "mode": "100644",
+      "base_blob": "2faaec4de4465c507d1d92cce8b990f53b13250b",
+      "candidate_blob": "c790cb8cef67cddb35d9a380b20f755504d8c0b9",
+      "raw_bytes": 11541,
+      "raw_sha256": "9ec877133b7f018a430e1113ddff07993435de2907a48d24f79857a132fd1a4c"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+      "mode": "100644",
+      "base_blob": "ea934c6327c5964ac340932f26d04f6b437f1ac2",
+      "candidate_blob": "f4ad42905edcff41cc9b773c30fdc5eb1612aa33",
+      "raw_bytes": 26599,
+      "raw_sha256": "a930022c9232880e37d76d436885e474fa4b1b4fd7bc17f5b011edfb15703cd2"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py",
+      "mode": "100644",
+      "base_blob": "a1068b585eb075022a3ee80cd2efac03b0dd6496",
+      "candidate_blob": "a88d0cef073eec1b9e8842ca2aa787349e14c454",
+      "raw_bytes": 3977,
+      "raw_sha256": "bd91fd391ac28492b678a26ddbb82add9a10de24bcf434507eb20675ac2422fb"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py",
+      "mode": "100644",
+      "base_blob": "a1cf4d096961483a07a4422cffbcb5bf6e304f6e",
+      "candidate_blob": "5d4ed38df15610cd576fefb1995be4ec205fce86",
+      "raw_bytes": 9991,
+      "raw_sha256": "22100688a018e62276ce96babae2de54231ca8bd343d8ec6985ccdbd1b34afe7"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/sources.py",
+      "mode": "100644",
+      "base_blob": "8c0f18b47679d50c66e3e693168bb0c58d1ee0a2",
+      "candidate_blob": "6925a0425649b94741ca46c7abc391d729cd12be",
+      "raw_bytes": 25551,
+      "raw_sha256": "bfb7c1fd93aad8793258e7fdba53284d971df024d930db308ff368c9d37b5dcb"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+      "mode": "100644",
+      "base_blob": "d803e64b82bf94ca98b5dac500cee5780ea290c9",
+      "candidate_blob": "56d9a48d1419ac1c6228fc06bc0f915d8407ca86",
+      "raw_bytes": 9127,
+      "raw_sha256": "5f6bee23133d7f260e8cc82f30847a81e3030891f336c606c78b8e8300ab1553"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/inputs.py",
+      "mode": "100644",
+      "base_blob": "3dd3ed9cb93cbd7d514cc1716e458c6957fc84dc",
+      "candidate_blob": "e574d6038454e64b396ec2ac56215a0411cb6d83",
+      "raw_bytes": 11801,
+      "raw_sha256": "176c2b8916d5898a156c21befa59a3aa772b8ef7b159b2d4ae804dc97424e477"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/processing.py",
+      "mode": "100644",
+      "base_blob": "e2441ce1f41429ea51fce9728450cef75ac02cd8",
+      "candidate_blob": "64f4277d715e0fc6b9f1d1e21b744432e70412e5",
+      "raw_bytes": 13817,
+      "raw_sha256": "ffcf714f531150ab5aa89f71427e6fdfbb28e4e20172607c209450b819d3b491"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/publication.py",
+      "mode": "100644",
+      "base_blob": "3425f3a2a2e5a28f9838fb1844c7c8d575f8b03f",
+      "candidate_blob": "35c17468ee6c0c8396c30494458e33f913efa4c1",
+      "raw_bytes": 18063,
+      "raw_sha256": "13d37662fe6b6d26255711b2c2355d4f5ccf77162a82f52addd6672d597805ed"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/publication_support.py",
+      "mode": "100644",
+      "base_blob": "3e93ca68d8abebdd25349b175db1e24dc70745a0",
+      "candidate_blob": "10b82ab28318f268b5352c8b61be31a279a93597",
+      "raw_bytes": 3848,
+      "raw_sha256": "8f270b7ac9c286e4e22e8b84ee540ac5764dcc77c058af7d224f6523c24bb373"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_input_migration.py",
+      "mode": "100644",
+      "base_blob": "56aa1d59de759919e8c07463bd4bdeac5b48a234",
+      "candidate_blob": "0f8087c4b417236c84c96279c7aee7a406ec32cf",
+      "raw_bytes": 8876,
+      "raw_sha256": "42d9b4ef304f8aa78eeed9fbe6f2d8357bd1cce278190ceb6b5e857861be4422"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_mutations.py",
+      "mode": "100644",
+      "base_blob": "4a0b133a240bd2587088d14f9ce332106e254df0",
+      "candidate_blob": "da6e1d2af84cbf2e6288c80d848e7230811587b9",
+      "raw_bytes": 21619,
+      "raw_sha256": "f95072c4509d2405b15f9f482b43edd8b0facb97e490452fac5869ea94d8a80a"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_publication.py",
+      "mode": "100644",
+      "base_blob": "1ef2a203a43ef2363c4246f31f15a0c5dec70828",
+      "candidate_blob": "45ee3f6547a2029de0dc5983fc54eeeaf92a21a6",
+      "raw_bytes": 10646,
+      "raw_sha256": "b583b34ebd182c889ce8d0e6b892422af09a017365df7293ad413d68b1716558"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_recovery_ownership.py",
+      "mode": "100644",
+      "base_blob": "24a6724c227a584b050d697ceeb07897cf1ed653",
+      "candidate_blob": "f7740b43e86508053e8a2fcdd5c41c84abb75e6b",
+      "raw_bytes": 6132,
+      "raw_sha256": "31c65218053939c542b7d164771694969108436f2c35bee7f7c26aec2e738bc7"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_build_preparation.py",
+      "mode": "100644",
+      "base_blob": null,
+      "candidate_blob": "8fd0ac1f7d190053497fe1bb5feeebdc8b2c20a3",
+      "raw_bytes": 8054,
+      "raw_sha256": "2242473f7e8494bfec66bb8581bc0cd8a1235ae7dbbb701f46cb45ce7fad3f14"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_input_read_scope.py",
+      "mode": "100644",
+      "base_blob": null,
+      "candidate_blob": "1c3e436bf7335bf59cb6080b56bab14a98fd6318",
+      "raw_bytes": 10450,
+      "raw_sha256": "895556c0797ee19fc7f758510f6effe4651ae07e8e03b5932e2657f00d5fcf7b"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_source_read_reuse.py",
+      "mode": "100644",
+      "base_blob": null,
+      "candidate_blob": "f4b2fa326c7bbdc9d168c7909e04fe8ac28dff6e",
+      "raw_bytes": 5580,
+      "raw_sha256": "73a5f89a2477e06f42474ad80a8a2dba7889024218e28f3f930b194eccb2aa01"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "suite": "smoke",
+  "started": 1790101754.8783646,
+  "script_sha256": "05b1292c05557e8dba83c86e41b76e4147867d97a98f21714b31bd807443b158",
+  "method": "Observe actual PID and birth normal configured idle exit. No kill or shared coordination manipulation.",
+  "workers": [
+    {
+      "pid": 72640,
+      "birth": "134345752494719807",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\worker",
+      "instance_id": "9a1ce6a7-2cfb-4ad4-aa5f-34caddbdf42f"
+    }
+  ],
+  "finished": 1790101754.8817005
+}

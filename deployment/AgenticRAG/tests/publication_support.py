@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import runpy
+from unittest.mock import patch
 from uuid import uuid4
 
 from agentic_rag.config import KnowledgeConfig, ProcessingSnapshot
@@ -42,11 +43,16 @@ def synthetic_encoded(catalog, owner):
     return prepared, artifact, expected
 
 
+def constructed_backend(catalog, config, client):
+    """Run the real adapter constructor with an explicitly controlled SDK."""
+    with patch('pymilvus.MilvusClient', return_value=client) as constructor:
+        backend = MilvusRevisionIndex(config.storage, catalog, timeout=1)
+    constructor.assert_called_once_with(uri=config.storage.milvus_uri, token='', db_name='default', timeout=1)
+    return backend
+
+
 def unit_backend(catalog, config, expected):
     """Production iterator validator with explicitly stubbed transport/index IO."""
-    backend = object.__new__(MilvusRevisionIndex)
-    backend.catalog, backend.storage, backend.store_id = catalog, config.storage, catalog.store_id
-    backend.timeout, backend.server_version = 1, '3.0.1'
     class Iterator:
         def __init__(self): self.offset = 0
         def next(self):
@@ -55,11 +61,12 @@ def unit_backend(catalog, config, expected):
             return batch
         def close(self): pass
     class Client:
+        def get_server_version(self, **kwargs): return '3.0.1'
         def query_iterator(self, *args, **kwargs): return Iterator()
         def run_analyzer(self, *args, **kwargs):
             from types import SimpleNamespace
             return [SimpleNamespace(tokens=['synthetic'])]
-    backend.client = Client()
+    backend = constructed_backend(catalog, config, Client())
     backend.inspect = lambda artifact, count: {'indexes':{'synthetic_transport':True}, 'load_state':'Loaded'}
     backend.search = lambda artifact, value, **kwargs: [{'id':expected[0]['chunk_id'], 'distance':1.0, 'entity':expected[0]}]
     return backend

@@ -13,7 +13,7 @@ milvus = ["pymilvus==3.0.2"]
 local-models = ["torch==2.14.0+cu130; sys_platform == 'win32' or sys_platform == 'linux'", "transformers==5.17.0"]
 
 [dependency-groups]
-dev = ["pytest>=9,<10", "hatchling==1.29.0"]
+dev = ["pytest>=9,<10", "hatchling==1.29.0", "pymilvus==3.0.2"]
 
 [build-system]
 requires = ["hatchling==1.29.0"]

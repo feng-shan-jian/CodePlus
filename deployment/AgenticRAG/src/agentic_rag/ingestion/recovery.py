@@ -10,9 +10,11 @@ from .._schema import canonical_json
 from ..domain import ErrorCode, RagError
 from ..storage.paths import failure
 from ..storage import recovery as store
-from .capture import capture_inputs, read_input
-from .encoding import outcomes, read_encoded
-from .processing import process_inputs, read_processed
+from ..storage import inputs as input_store
+from ..storage.processing import read as _read_processed
+from .capture import capture_inputs, _read_input
+from .encoding import outcomes, _read_encoded
+from .processing import process_inputs
 
 
 def _token(catalog, expected):
@@ -63,7 +65,8 @@ def inspect_recovery(catalog, batch_id, *, current_config=None):
         manifest = catalog.get_input_manifest(batch_id)
         value['input_manifest'] = manifest.model_dump(mode='json')
         states = outcomes(catalog,batch_id)
-        for raw in catalog.get_input_items(batch_id):
+        input_read = input_store._InputRead(catalog, batch_id)
+        for raw in input_read.items:
             item = {'item_id':str(raw.entry.item_id),'path':raw.entry.requested_path,'raw_state':raw.stage,
                     'raw_hash':raw.raw.sha256 if raw.raw else None,'checkpoint':'uncommitted','reusable':False,'reason':None}
             try:
@@ -72,11 +75,11 @@ def inspect_recovery(catalog, batch_id, *, current_config=None):
                 elif raw.stage == 'failed':
                     item.update(checkpoint='file_failure',reason=raw.error.message)
                 else:
-                    read_input(catalog,batch_id,raw.entry.item_id)
-                    checked = read_processed(catalog,batch_id,raw.entry.item_id)
+                    _read_input(catalog,batch_id,raw.entry.item_id,_inputs=input_read)
+                    checked = _read_processed(catalog,batch_id,raw.entry.item_id,_inputs=input_read)
                     state = states.get(str(raw.entry.item_id))
                     if state and state['state']=='encoded':
-                        vectors = read_encoded(catalog,batch_id,raw,state)
+                        vectors = _read_encoded(catalog,batch_id,raw,state,_inputs=input_read)
                         item.update(checkpoint='encoded',reusable=True,chunks=len(vectors),reason='complete input/config/parsed/ordered Chunk/float32 proof verified')
                     elif state and state['state']=='unchanged':
                         item.update(checkpoint='unchanged',reusable=True,reason='original verified; complete base is rechecked before reuse')
@@ -122,13 +125,14 @@ def continue_recovery(catalog, expected, *, runtime_factory, observer=None, requ
         from .mutations import request, build_changes
         strict = request(catalog,batch.batch_id) is None
         capture_inputs(catalog,owner,abort_cancelled=True)
-        for raw in catalog.get_input_items(batch.batch_id):
+        input_read = input_store._InputRead(catalog, batch.batch_id)
+        for raw in input_read.items:
             if raw.stage == 'captured':
-                read_input(catalog,batch.batch_id,raw.entry.item_id)
-                checked = read_processed(catalog,batch.batch_id,raw.entry.item_id)
+                _read_input(catalog,batch.batch_id,raw.entry.item_id,_inputs=input_read)
+                checked = _read_processed(catalog,batch.batch_id,raw.entry.item_id,_inputs=input_read)
                 if strict and checked and checked[0].stage == 'failed':
                     raise RagError(ErrorCode.CHECKPOINT_INVALID,'strict first build has an immutable processing failure',stage='recovery')
-                read_encoded(catalog,batch.batch_id,raw)
+                _read_encoded(catalog,batch.batch_id,raw,_inputs=input_read)
             elif strict:
                 raise RagError(ErrorCode.CHECKPOINT_INVALID,'strict first build lacks a complete original snapshot',stage='recovery')
         snapshot = catalog.get_snapshot(batch.processing_snapshot_id)

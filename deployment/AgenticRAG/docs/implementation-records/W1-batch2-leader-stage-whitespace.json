@@ -1,0 +1,27 @@
+{
+  "status": "ORIGINAL_STRICT_STAGE_CHECK_FAIL_PRESERVED",
+  "initial_tool_chunk": "3bf709",
+  "initial_exit_code": 1,
+  "commit_executed": false,
+  "index_paths_at_failure": 111,
+  "reproduced_check": {
+    "command": "git --no-optional-locks diff --cached --check",
+    "exit_code": 1,
+    "output": "deployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:1: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-standalone-1 Stopping \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:2: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-standalone-1 Stopped \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:3: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-standalone-1 Removing \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:4: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-standalone-1 Removed \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:5: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-minio-1 Stopping \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:6: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-etcd-1 Stopping \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:7: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-etcd-1 Stopped \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:8: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-etcd-1 Removing \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:9: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-etcd-1 Removed \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:10: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-minio-1 Stopped \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:11: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-minio-1 Removing \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:12: trailing whitespace.\n+ Container codeplus-w1-batch2-leader-20260923-minio-1 Removed \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:13: trailing whitespace.\n+ Volume codeplus-w1-batch2-leader-20260923_minio Removing \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:14: trailing whitespace.\n+ Volume codeplus-w1-batch2-leader-20260923_etcd Removing \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:15: trailing whitespace.\n+ Volume codeplus-w1-batch2-leader-20260923_milvus Removing \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:16: trailing whitespace.\n+ Network codeplus-w1-batch2-leader-20260923_default Removing \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:17: trailing whitespace.\n+ Volume codeplus-w1-batch2-leader-20260923_minio Removed \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:18: trailing whitespace.\n+ Volume codeplus-w1-batch2-leader-20260923_etcd Removed \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:19: trailing whitespace.\n+ Volume codeplus-w1-batch2-leader-20260923_milvus Removed \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt:20: trailing whitespace.\n+ Network codeplus-w1-batch2-leader-20260923_default Removed \ndeployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup.md:22: new blank line at EOF.\n"
+  },
+  "exact_raw_evidence_exceptions": [
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup-docker-down.txt",
+      "sha256": "797f18f7a7629d3815e700202dceca5d115c2c02bd9982eead26db7a195df5fd",
+      "bytes": 1272,
+      "issues": "20 Docker progress lines have original trailing spaces"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-batch2-independent-cleanup.md",
+      "sha256": "0c39e0bc6449e90b34b766496750d2aa88850fceeaf48ca3841a9bf95c7280bb",
+      "bytes": 4050,
+      "issues": "Original signed cleanup markdown has one additional blank line at EOF"
+    }
+  ],
+  "decision": "Retain original independently hashed cleanup evidence bytes and manifests. Run staged whitespace check on every other exact approved path. No source/test/contract whitespace exception, no global suppression and no claim that original full check passed."
+}

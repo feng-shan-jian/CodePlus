@@ -5,7 +5,8 @@ from uuid import uuid5
 
 from ..domain import DocumentVersion, ErrorCode, RagError
 from ..storage import processing as processing_store
-from .capture import read_input
+from ..storage import inputs as input_store
+from .capture import _read_input
 from .chunking import chunk_document, CHUNKER_IMPLEMENTATION, CHUNKER_VERSION
 from .parsing import parse_document, PARSER, PARSER_FINGERPRINT
 
@@ -20,27 +21,27 @@ def process_inputs(catalog, owner, tokenizer, *, skip_unchanged=False, cancelled
     if (config.processing.parser != PARSER or config.processing.chunker.implementation != CHUNKER_IMPLEMENTATION or
             config.processing.chunker.version != CHUNKER_VERSION or config.embedding.identity != tokenizer.profile.identity):
         raise RagError(ErrorCode.IDENTITY_MISMATCH, 'original processing components/configuration unavailable', stage='process')
-    inputs = catalog.get_input_items(token.batch_id)
-    if any(i.stage == 'pending' for i in inputs):
+    inputs = input_store._InputRead(catalog, token.batch_id)
+    if any(i.stage == 'pending' for i in inputs.items):
         raise RagError(ErrorCode.CHECKPOINT_INVALID, 'finish original input capture before processing', stage='process')
     with catalog._owned(owner, token) as connection:
         connection.execute("UPDATE mutation_batches SET state='PROCESSING' WHERE batch_id=? AND state='SNAPSHOTTING'", (str(token.batch_id),))
     output = []
-    for raw_item in inputs:
+    for raw_item in inputs.items:
         if cancelled is not None and cancelled():
             raise RagError(ErrorCode.CANCELLED, 'processing cancelled', stage='process')
         if raw_item.stage != 'captured':
             continue  # R07 failures remain authoritative raw failures.
         if skip_unchanged and raw_item.change in ('unchanged', 'index_changed'):
             continue
-        existing = processing_store.read(catalog, token.batch_id, raw_item.entry.item_id)
+        existing = processing_store.read(catalog, token.batch_id, raw_item.entry.item_id, _inputs=inputs)
         if existing is not None:
             output.append(existing[0])
             continue
         with catalog._owned(owner, token):
             pass
         try:
-            raw = read_input(catalog, token.batch_id, raw_item.entry.item_id)
+            raw = _read_input(catalog, token.batch_id, raw_item.entry.item_id, _inputs=inputs)
             version_id = uuid5(raw_item.entry.item_id, snapshot.document_encoding_fingerprint)
             parsed = parse_document(raw, raw_item.raw.metadata.media_type, version_id)
             result = chunk_document(parsed, config.processing.chunker, tokenizer)

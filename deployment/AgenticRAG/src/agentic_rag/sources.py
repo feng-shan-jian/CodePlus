@@ -182,10 +182,16 @@ class SourceSession:
 
     def issue_source(self, ref: SourceRef, *, anchor_span: Span | None = None):
         """Host-only issuance from an authenticated search/navigation result."""
+        return self._issue_verified_source(ref, self._read_source(ref), anchor_span=anchor_span)
+
+    def _read_source(self, ref):
         if (ref.kb_id, ref.revision_id) != (self.run.kb_id, self.run.revision_id):
             raise invalid('source scope differs from this run','source_scope')
-        source=read_ref(self.catalog, ref)
-        if anchor_span is not None and not contains((source.section(ref.section_id).span,),anchor_span):
+        return read_ref(self.catalog, ref)
+
+    def _issue_verified_source(self, ref, source, *, anchor_span=None):
+        section = source.section(ref.section_id)
+        if anchor_span is not None and not contains((section.span,),anchor_span):
             raise invalid('search anchor is outside the matched section','source_scope')
         with self.catalog._db.transaction(write=True) as connection:
             self._active(connection)
@@ -360,7 +366,7 @@ class SourceSession:
             payload = {'schema_version':1,'call_id':str(call_id),'status':'empty','run_id':str(self.run.run_id),
                        'revision_id':str(self.run.revision_id),'route':{'strategy':'dense','rerank':False},
                        'items':[],'limited':{'by_count':False,'by_tokens':False}}
-            candidates, seen = [], set()
+            candidates, seen, sources = [], set(), {}
             cap, _ = self._token_allowance()
             for hit in result['hits']:
                 if hit['chunk_id'] in seen:
@@ -370,12 +376,16 @@ class SourceSession:
                     payload['limited']['by_count']=True
                     break
                 ref = SourceRef.model_validate_json(encode({key:hit[key] for key in SourceRef.model_fields if key!='schema_version'}))
-                source = read_ref(self.catalog,ref)
+                identity = (ref.kb_id,ref.revision_id,ref.document_id,ref.document_version_id)
+                if identity not in sources:
+                    sources[identity] = self._read_source(ref)
+                source = sources[identity]
+                source.section(ref.section_id)
                 archived = next((c.chunk for c in source.chunks.inputs if str(c.chunk.chunk_id)==hit['chunk_id']),None)
                 if archived is None or archived.section_id != ref.section_id or len(archived.spans)!=1:
                     raise invalid('search candidate not in archived chunk set')
                 span = archived.spans[0]
-                token = self.issue_source(ref,anchor_span=span)
+                token = self._issue_verified_source(ref,source,anchor_span=span)
                 if hit['text'] != source.text[span.start:span.end] or digest(hit['text']) != archived.text_hash:
                     raise invalid('search body differs from canonical chunk')
                 candidate = self._candidate(call_id,ref,span,source)

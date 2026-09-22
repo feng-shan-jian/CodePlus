@@ -73,21 +73,40 @@ def test_terminal_close_rejects_mismatched_owner(tmp_path):
     with pytest.raises(RagError): owner.close()
 
 
-def test_validate_derives_checkpoints_and_rejects_arbitrary_boolean(tmp_path):
+def test_validate_derives_checkpoints_and_rejects_arbitrary_boolean(tmp_path, monkeypatch):
     catalog=Catalog(tmp_path/'data')
     owner,config=H['processed'](catalog,tmp_path/'a.md')
     p,a,expected=H['synthetic_encoded'](catalog,owner)
     class Forged:
         def validate(self,*args): return {'passed':True}
-    with pytest.raises(RagError): publication.validate(catalog,owner,p.revision_id,Forged())
     from agentic_rag.indexes.milvus import MilvusRevisionIndex
     class Subclass(MilvusRevisionIndex):
         def validate(self,*args): return {}
     forged=object.__new__(Subclass);forged.catalog=catalog;forged.storage=config.storage
-    with pytest.raises(RagError): publication.validate(catalog,owner,p.revision_id,forged)
+    with monkeypatch.context() as binding_check:
+        binding_check.setattr(catalog.archives, 'read', lambda *_:pytest.fail('reject adapter before source IO'))
+        for unbound in (Forged(), forged):
+            with pytest.raises(RagError): publication.validate(catalog,owner,p.revision_id,unbound)
     corrupted=copy.deepcopy(expected); corrupted[0]['body_hash']='f'*64
     with pytest.raises(RagError): publication.validate(catalog,owner,p.revision_id,H['unit_backend'](catalog,config,corrupted))
     assert catalog.get_library(owner.token.kb_id).current_revision_id is None
+    owner.abandon()
+
+
+def test_official_validator_ignores_instance_pass_flag_and_constructor_checks_server(tmp_path):
+    from types import SimpleNamespace
+    catalog=Catalog(tmp_path/'data');owner,config=H['processed'](catalog,tmp_path/'a.md')
+    p,a,expected=H['synthetic_encoded'](catalog,owner)
+    corrupted=copy.deepcopy(expected);corrupted[-1]['vector_hash']='0'*64
+    backend=H['unit_backend'](catalog,config,corrupted)
+    backend.validate=lambda *args:{'passed':True}
+    with pytest.raises(RagError):publication.validate(catalog,owner,p.revision_id,backend)
+    closed=[]
+    client=SimpleNamespace(get_server_version=lambda **kw:'2.6.3',close=lambda:closed.append(True))
+    with pytest.raises(RagError,match='unsupported Milvus server version'):
+        H['constructed_backend'](catalog,config,client)
+    assert closed==[True]
+    assert publication.receipt(catalog,owner.token.batch_id) is None
     owner.abandon()
 
 

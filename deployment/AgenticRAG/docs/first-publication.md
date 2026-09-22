@@ -20,7 +20,7 @@ R13 删除最后成员时允许真实零行 Collection 和零 sealed segment；�
 
 仅追加migration4，原schema.sql、inputs.sql、processing.sql保持原字节。新增index_artifacts及不可变publications；旧人工READY元数据不伪造成可信发布。ProcessingSnapshot v1、RunConfiguration和原公共数据结构保持兼容。
 
-候选及artifact登记为一次短事务，同批同revision重试幂等。归档读/hash、模型推理、Milvus写入/查询、proof序列化均在SQLite写事务外完成。验证入口调用正式适配算法，不接收任意passed标志或可替换子类签发的凭据。
+候选及artifact登记为一次短事务，同批同revision重试幂等。归档读/hash、模型推理、Milvus写入/查询、proof序列化均在SQLite写事务外完成。Milvus 适配器在归档验证前核对具体生产类型、catalog 和冻结 storage，并绑定正式验证算法；实例上的 validate 替换不会跳过完整内容检查。不接收任意passed标志或可替换子类签发的凭据。这是应用内生产算法与端点绑定，不是针对可修改 Python 进程的隔离证明。
 
 发布事务检查owner、base CAS、snapshot、manifest和已验证artifact，原子写publications、current_revision_id和PUBLISHED批次。响应丢失后先查原batch/revision receipt；即使后续已发布新版，旧请求只返回旧receipt，不回拨指针。正常终态close只接受完全一致的原owner/epoch/receipt，失权仍报错。提交后的服务不可达是检索故障，不能回滚已发布指针或把索引当未发布候选删除。
 

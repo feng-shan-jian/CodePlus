@@ -48,12 +48,25 @@ def owned_artifact(catalog, owner, revision_id):
 
 
 def register(catalog, owner, revision_id=None):
+    return _register(catalog, owner, revision_id)
+
+
+def _prepared(catalog, owner, revision_id, operation):
+    if operation is None:
+        return prepare(catalog, owner.token.batch_id, revision_id or uuid4())
+    from ..ingestion.mutations import _BuildPreparation
+    if type(operation) is not _BuildPreparation:
+        raise failure('internally verified build preparation required')
+    return operation.checked(catalog, owner, revision_id or operation.revision_id)
+
+
+def _register(catalog, owner, revision_id=None, *, _operation=None):
     batch = catalog.get_batch(owner.token.batch_id)
     with catalog._db.transaction() as connection:
         existing = connection.execute('SELECT a.revision_id FROM current_candidates c JOIN index_artifacts a ON a.artifact_id=c.artifact_id WHERE c.batch_id=? AND c.kb_id=? AND a.owner_epoch=?',
                                       (str(batch.batch_id),str(batch.kb_id),owner.token.owner_epoch)).fetchone()
     revision_id = revision_id or (UUID(existing[0]) if existing else uuid4())
-    prepared = prepare(catalog, batch.batch_id, revision_id)
+    prepared = _prepared(catalog, owner, revision_id, _operation)
     snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
     name = collection_name(snapshot.resolved_config.storage.namespace, catalog.store_id, batch.kb_id, revision_id, owner.token.owner_epoch)
     record = IndexArtifact(artifact_id=uuid4(), revision_id=revision_id, collection_name=name,
@@ -86,10 +99,14 @@ def register(catalog, owner, revision_id=None):
 
 def record_encoded(catalog, owner, revision_id, expected_rows):
     """Persist expected float32 hashes, after full checkpoint derivation; no caller pass flag."""
+    return _record_encoded(catalog, owner, revision_id, expected_rows)
+
+
+def _record_encoded(catalog, owner, revision_id, expected_rows, *, _operation=None):
     stored = owned_artifact(catalog, owner, revision_id)
     if stored['state'] != 'PREPARING' or stored['expected_hash'] is not None:
         raise failure('encoded artifact is already sealed or recorded')
-    candidate = prepare(catalog, owner.token.batch_id, revision_id)
+    candidate = _prepared(catalog, owner, revision_id, _operation)
     if len(expected_rows) != len(candidate.rows):
         raise index_error('encoded manifest row count differs')
     for expected, original in zip(expected_rows, candidate.rows, strict=True):
@@ -111,11 +128,9 @@ def record_encoded(catalog, owner, revision_id, expected_rows):
 
 def validate(catalog, owner, revision_id, backend):
     stored = owned_artifact(catalog, owner, revision_id)
-    from ..indexes.milvus import MilvusRevisionIndex
+    from ..indexes.milvus import publication_validator
     snapshot = catalog.get_snapshot(catalog.get_batch(owner.token.batch_id).processing_snapshot_id)
-    if (type(backend) is not MilvusRevisionIndex or backend.catalog is not catalog or
-            backend.storage != snapshot.resolved_config.storage):
-        raise failure('validation requires the explicitly bound production Milvus adapter')
+    validate_index = publication_validator(catalog, snapshot.resolved_config.storage, backend)
     candidate = prepare(catalog, owner.token.batch_id, revision_id)
     if stored['owner_epoch'] != owner.token.owner_epoch or stored['schema_hash'] != candidate.schema_hash or not stored['expected_hash']:
         raise failure('artifact identity/encoding unavailable')
@@ -123,7 +138,7 @@ def validate(catalog, owner, revision_id, backend):
     if [{k:v for k,v in r.items() if k != 'vector_hash'} for r in expected] != list(candidate.rows):
         raise failure('archived encoded manifest differs from validated processing')
     # Heavy service validation and full archive reads are outside SQLite locks.
-    proof = MilvusRevisionIndex.validate(backend, stored, expected)
+    proof = validate_index(stored, expected)
     proof.update(manifest_hash=candidate.manifest_hash, expected_hash=stored['expected_hash'],
                  schema_hash=candidate.schema_hash, validation_version=1)
     serialized = canonical_json(proof)
@@ -192,6 +207,10 @@ def publish(catalog, owner, revision_id):
 
 def complete_no_change(catalog, owner):
     """Normal terminal batch, no revision/collection/publication is created."""
+    return _complete_no_change(catalog, owner)
+
+
+def _complete_no_change(catalog, owner, *, _operation=None):
     from .recovery import terminal
     old = terminal(catalog,owner.token.batch_id)
     if old is not None:
@@ -199,7 +218,8 @@ def complete_no_change(catalog, owner):
             raise failure('batch already has a different terminal result')
         return old['summary']
     from ..ingestion.mutations import prepare_changes, completion_value
-    prepared = prepare_changes(catalog,owner.token.batch_id,uuid4())
+    prepared = (prepare_changes(catalog,owner.token.batch_id,uuid4()) if _operation is None else
+                _prepared(catalog,owner,None,_operation))
     summary = completion_value(catalog,owner.token.batch_id)
     target = [(str(m.document_id),str(m.document_version_id),m.chunk_set_hash) for m in prepared.members]
     with catalog._owned(owner) as connection:

@@ -66,7 +66,11 @@ def capture_inputs(catalog, owner, *, cancelled=None, abort_cancelled=False):
 
 def read_input(catalog, batch_id, item_id) -> bytes:
     """The R08 input boundary: verified archive only, never the original path."""
-    item = next((i for i in catalog.get_input_items(batch_id) if i.entry.item_id == item_id), None)
+    return _read_input(catalog, batch_id, item_id)
+
+
+def _read_input(catalog, batch_id, item_id, *, _inputs=None) -> bytes:
+    item = input_store._read_item(catalog, batch_id, item_id, _inputs)
     if item is None or item.stage != 'captured':
         raise input_error('input has no complete raw checkpoint', ErrorCode.CHECKPOINT_INVALID)
     try:

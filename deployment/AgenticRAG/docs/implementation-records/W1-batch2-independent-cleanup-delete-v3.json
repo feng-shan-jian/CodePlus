@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "started": "2026-09-22T19:04:52.3473976Z",
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923",
+  "project": "codeplus-w1-batch2-leader-20260923",
+  "docker_down_executed": true,
+  "removed_reparse": 1022,
+  "root_removal_executed": true,
+  "processes_killed": [],
+  "gate_sha256": "2a8e3e4bdc69efa5dd56cf05717161622372281e4dcb46b2dc8ac4cc599c1109",
+  "docker_command": [
+    "docker",
+    "compose",
+    "-f",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+    "-p",
+    "codeplus-w1-batch2-leader-20260923",
+    "down",
+    "--volumes",
+    "--timeout",
+    "30"
+  ],
+  "docker_exit_code": 0,
+  "root_absent": true,
+  "finished": "2026-09-22T19:06:11.1773213Z"
+}

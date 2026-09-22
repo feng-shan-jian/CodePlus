@@ -135,7 +135,7 @@ def persist(catalog, owner, raw_item, snapshot, *, version=None, result=None, er
     return item
 
 
-def read(catalog, batch_id, item_id):
+def read(catalog, batch_id, item_id, *, _inputs=None):
     """Return verified (ImportItem, DocumentVersion|None, ChunkSet|None), or None.
 
     A present but invalid checkpoint always fails explicitly; an orphan archive
@@ -143,6 +143,7 @@ def read(catalog, batch_id, item_id):
     """
     from ..ingestion.chunking import ChunkSet, coverage
     from ..ingestion.parsing import SourceMap, canonicalize, PARSER_FINGERPRINT
+    from .inputs import _read_item
     with catalog._db.transaction() as connection:
         batch = ownership.read_batch(connection, batch_id)
         row = connection.execute('SELECT document_id,document_version_id,snapshot_id,chunk_set_hash,item_json '
@@ -153,8 +154,8 @@ def read(catalog, batch_id, item_id):
         chunk_rows = connection.execute('SELECT chunk_id,document_version_id,section_id,spans,text_hash,chunker_fingerprint FROM chunks WHERE document_version_id=?', (row[1],)).fetchall()
     try:
         item = ImportItem.model_validate_json(row[4])
-        raw_item = next(i for i in catalog.get_input_items(batch_id) if i.entry.item_id == item_id)
-        if (item.batch_id != batch_id or str(item.document_id) != row[0] or raw_item.document_id != item.document_id or
+        raw_item = _read_item(catalog, batch_id, item_id, _inputs)
+        if (raw_item is None or item.batch_id != batch_id or str(item.document_id) != row[0] or raw_item.document_id != item.document_id or
                 raw_item.stage != 'captured' or item.captured_hash != raw_item.raw.sha256 or
                 str(batch.processing_snapshot_id) != row[2]):
             raise ValueError('processing checkpoint identity mismatch')

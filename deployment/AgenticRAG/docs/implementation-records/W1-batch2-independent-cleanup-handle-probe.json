@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "started": 1790103469.0056622,
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923",
+  "scope": "Read-only CreateFileW GENERIC_READ with zero sharing, OPEN_EXISTING, OPEN_REPARSE_POINT on every audited regular file; each handle immediately closed. No process terminated.",
+  "checked": 78139,
+  "failures": [],
+  "finished": 1790103510.8562765
+}

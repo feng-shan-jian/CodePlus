@@ -27,6 +27,31 @@ def require_runtime() -> None:
         raise failure("SQLite >=3.51.3 is required for the WAL-reset fix")
 
 
+_ADDITIVE_MIGRATIONS = (
+    (2, 'inputs.sql'),
+    (3, 'processing.sql'),
+    (4, 'publication.sql'),
+    (5, 'evidence.sql'),
+    (6, 'host_runs.sql'),
+    (7, 'mutations.sql'),
+)
+
+
+def _apply_migration(connection, version, sql, digest):
+    """Commit one additive upgrade; bootstrap and FK rebuilds stay explicit."""
+    connection.execute('BEGIN IMMEDIATE')
+    try:
+        connection.execute(sql)
+        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
+                           (version, digest, datetime.now(timezone.utc).isoformat()))
+        connection.pragma('user_version', version)
+        connection.execute('COMMIT')
+    except BaseException:
+        if not connection.get_autocommit():
+            connection.execute('ROLLBACK')
+        raise
+
+
 class Database:
     def __init__(self, directory: DataDirectory, *, busy_timeout_ms: int = 1500):
         require_runtime()
@@ -66,102 +91,14 @@ class Database:
                 if (connection.pragma('application_id') != APPLICATION_ID or
                         connection.execute('SELECT store_id FROM store_identity WHERE singleton=1').fetchone() != (str(directory.store_id),)):
                     raise failure('catalog identity changed before migration')
-                migration = files(__package__).joinpath('inputs.sql').read_text(encoding='utf-8')
-                migration_hash = hashlib.sha256(migration.encode()).hexdigest()
-                if connection.pragma('user_version') == 1:
-                    connection.execute('BEGIN IMMEDIATE')
-                    try:
-                        connection.execute(migration)
-                        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
-                                           (2, migration_hash, datetime.now(timezone.utc).isoformat()))
-                        connection.pragma('user_version', 2)
-                        connection.execute('COMMIT')
-                    except BaseException:
-                        if not connection.get_autocommit():
-                            connection.execute('ROLLBACK')
-                        raise
-                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=2').fetchone() != (migration_hash,):
-                    raise failure('schema migration fingerprint mismatch')
-                processing = files(__package__).joinpath('processing.sql').read_text(encoding='utf-8')
-                processing_hash = hashlib.sha256(processing.encode()).hexdigest()
-                if connection.pragma('user_version') == 2:
-                    connection.execute('BEGIN IMMEDIATE')
-                    try:
-                        connection.execute(processing)
-                        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
-                                           (3, processing_hash, datetime.now(timezone.utc).isoformat()))
-                        connection.pragma('user_version', 3)
-                        connection.execute('COMMIT')
-                    except BaseException:
-                        if not connection.get_autocommit():
-                            connection.execute('ROLLBACK')
-                        raise
-                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=3').fetchone() != (processing_hash,):
-                    raise failure('schema migration fingerprint mismatch')
-                publication = files(__package__).joinpath('publication.sql').read_text(encoding='utf-8')
-                publication_hash = hashlib.sha256(publication.encode()).hexdigest()
-                if connection.pragma('user_version') == 3:
-                    connection.execute('BEGIN IMMEDIATE')
-                    try:
-                        connection.execute(publication)
-                        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
-                                           (4, publication_hash, datetime.now(timezone.utc).isoformat()))
-                        connection.pragma('user_version', 4)
-                        connection.execute('COMMIT')
-                    except BaseException:
-                        if not connection.get_autocommit():
-                            connection.execute('ROLLBACK')
-                        raise
-                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=4').fetchone() != (publication_hash,):
-                    raise failure('schema migration fingerprint mismatch')
-                evidence = files(__package__).joinpath('evidence.sql').read_text(encoding='utf-8')
-                evidence_hash = hashlib.sha256(evidence.encode()).hexdigest()
-                if connection.pragma('user_version') == 4:
-                    connection.execute('BEGIN IMMEDIATE')
-                    try:
-                        connection.execute(evidence)
-                        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
-                                           (5, evidence_hash, datetime.now(timezone.utc).isoformat()))
-                        connection.pragma('user_version', 5)
-                        connection.execute('COMMIT')
-                    except BaseException:
-                        if not connection.get_autocommit():
-                            connection.execute('ROLLBACK')
-                        raise
-                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=5').fetchone() != (evidence_hash,):
-                    raise failure('schema migration fingerprint mismatch')
-                host_runs = files(__package__).joinpath('host_runs.sql').read_text(encoding='utf-8')
-                host_runs_hash = hashlib.sha256(host_runs.encode()).hexdigest()
-                if connection.pragma('user_version') == 5:
-                    connection.execute('BEGIN IMMEDIATE')
-                    try:
-                        connection.execute(host_runs)
-                        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
-                                           (6, host_runs_hash, datetime.now(timezone.utc).isoformat()))
-                        connection.pragma('user_version', 6)
-                        connection.execute('COMMIT')
-                    except BaseException:
-                        if not connection.get_autocommit():
-                            connection.execute('ROLLBACK')
-                        raise
-                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=6').fetchone() != (host_runs_hash,):
-                    raise failure('schema migration fingerprint mismatch')
-                mutations = files(__package__).joinpath('mutations.sql').read_text(encoding='utf-8')
-                mutations_hash = hashlib.sha256(mutations.encode()).hexdigest()
-                if connection.pragma('user_version') == 6:
-                    connection.execute('BEGIN IMMEDIATE')
-                    try:
-                        connection.execute(mutations)
-                        connection.execute('INSERT INTO schema_migrations VALUES(?,?,?)',
-                                           (7, mutations_hash, datetime.now(timezone.utc).isoformat()))
-                        connection.pragma('user_version', 7)
-                        connection.execute('COMMIT')
-                    except BaseException:
-                        if not connection.get_autocommit():
-                            connection.execute('ROLLBACK')
-                        raise
-                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=7').fetchone() != (mutations_hash,):
-                    raise failure('schema migration fingerprint mismatch')
+                for target, resource in _ADDITIVE_MIGRATIONS:
+                    migration = files(__package__).joinpath(resource).read_text(encoding='utf-8')
+                    migration_hash = hashlib.sha256(migration.encode()).hexdigest()
+                    if connection.pragma('user_version') == target - 1:
+                        _apply_migration(connection, target, migration, migration_hash)
+                    if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=?',
+                                          (target,)).fetchone() != (migration_hash,):
+                        raise failure('schema migration fingerprint mismatch')
                 recovery = files(__package__).joinpath('recovery.sql').read_text(encoding='utf-8')
                 recovery_hash = hashlib.sha256(recovery.encode()).hexdigest()
                 if connection.pragma('user_version') == 7:

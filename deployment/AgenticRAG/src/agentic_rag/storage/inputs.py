@@ -83,6 +83,37 @@ def read_items(catalog, batch_id):
     return items
 
 
+class _InputRead:
+    """One operation's validated manifest; each selected SQL row is reread."""
+
+    def __init__(self, catalog, batch_id):
+        self.catalog, self.batch_id = catalog, batch_id
+        self.items = catalog.get_input_items(batch_id)
+        self._items = {item.entry.item_id:item for item in self.items}
+
+    def read(self, catalog, batch_id, item_id):
+        if catalog is not self.catalog or batch_id != self.batch_id:
+            raise failure('input read belongs to another catalog or batch')
+        expected = self._items.get(item_id)
+        if expected is None:
+            return None
+        with catalog._db.transaction() as connection:
+            row = connection.execute('SELECT COALESCE(r.result_json,i.initial_json) FROM input_items i '
+                'LEFT JOIN input_results r ON r.item_id=i.item_id WHERE i.item_id=? AND i.batch_id=?',
+                (str(item_id), str(batch_id))).fetchone()
+        if row is None or InputCheckpoint.model_validate_json(row[0]) != expected:
+            raise failure('input checkpoint changed during the operation')
+        return expected
+
+
+def _read_item(catalog, batch_id, item_id, operation=None):
+    if operation is None:
+        return next((item for item in catalog.get_input_items(batch_id) if item.entry.item_id == item_id), None)
+    if type(operation) is not _InputRead:
+        raise failure('input read requires the internally validated manifest')
+    return operation.read(catalog, batch_id, item_id)
+
+
 def _insert_result(connection, kb_id, item):
     connection.execute('INSERT INTO input_results VALUES(?,?,?,?,?,?)',
                        (str(item.entry.item_id), str(kb_id), str(item.batch_id), item.stage,

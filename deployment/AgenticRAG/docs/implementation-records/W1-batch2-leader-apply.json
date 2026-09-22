@@ -1,0 +1,777 @@
+{
+  "status": "PASS",
+  "started": 1790100968.657909,
+  "script_sha256": "e3cb0a626292dcd3637987dfae2e11b2219a56eb8a94eb28ec07037b9d6354b8",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "8c764644c57e59c9aa9ae2337f61efc3447d88ee\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0,
+      "stdout": "codex/rag\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--name-only",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee",
+        "--",
+        "deployment/AgenticRAG/docs/convergence.md",
+        "deployment/AgenticRAG/docs/first-publication.md",
+        "deployment/AgenticRAG/docs/manual-recovery.md",
+        "deployment/AgenticRAG/docs/ordinary-mutations.md",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py",
+        "deployment/AgenticRAG/src/agentic_rag/sources.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/inputs.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/processing.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/publication.py",
+        "deployment/AgenticRAG/tests/publication_support.py",
+        "deployment/AgenticRAG/tests/test_input_migration.py",
+        "deployment/AgenticRAG/tests/test_mutations.py",
+        "deployment/AgenticRAG/tests/test_publication.py",
+        "deployment/AgenticRAG/tests/test_recovery_ownership.py",
+        "deployment/AgenticRAG/tests/test_build_preparation.py",
+        "deployment/AgenticRAG/tests/test_input_read_scope.py",
+        "deployment/AgenticRAG/tests/test_source_read_reuse.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/convergence.md"
+      ],
+      "exit_code": 0,
+      "stdout": "198380d01522c8b94a4d8bfdcc2242a7d21decd0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/first-publication.md"
+      ],
+      "exit_code": 0,
+      "stdout": "56d8a10f3757de2850dc38583651983c9e1d41ff\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/manual-recovery.md"
+      ],
+      "exit_code": 0,
+      "stdout": "02631d673675527541b1a458ca76d08fcdb2421d\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/ordinary-mutations.md"
+      ],
+      "exit_code": 0,
+      "stdout": "a9427994befa95b4f26bd8ca8dfe3b63c07af555\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py"
+      ],
+      "exit_code": 0,
+      "stdout": "4d3a5e282b5c7bc03ee57e4beb179183068c114a\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py"
+      ],
+      "exit_code": 0,
+      "stdout": "a5d417af74b9925582259adb696fd9f82d796659\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/ingestion/build.py"
+      ],
+      "exit_code": 0,
+      "stdout": "1642504d15d895de42ae53c950784fce935adfb0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py"
+      ],
+      "exit_code": 0,
+      "stdout": "19b411c6dbbb177d88dddb12c8e93b5895006abe\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py"
+      ],
+      "exit_code": 0,
+      "stdout": "2faaec4de4465c507d1d92cce8b990f53b13250b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py"
+      ],
+      "exit_code": 0,
+      "stdout": "ea934c6327c5964ac340932f26d04f6b437f1ac2\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py"
+      ],
+      "exit_code": 0,
+      "stdout": "a1068b585eb075022a3ee80cd2efac03b0dd6496\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py"
+      ],
+      "exit_code": 0,
+      "stdout": "a1cf4d096961483a07a4422cffbcb5bf6e304f6e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/sources.py"
+      ],
+      "exit_code": 0,
+      "stdout": "8c0f18b47679d50c66e3e693168bb0c58d1ee0a2\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/storage/database.py"
+      ],
+      "exit_code": 0,
+      "stdout": "d803e64b82bf94ca98b5dac500cee5780ea290c9\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/storage/inputs.py"
+      ],
+      "exit_code": 0,
+      "stdout": "3dd3ed9cb93cbd7d514cc1716e458c6957fc84dc\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/storage/processing.py"
+      ],
+      "exit_code": 0,
+      "stdout": "e2441ce1f41429ea51fce9728450cef75ac02cd8\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/storage/publication.py"
+      ],
+      "exit_code": 0,
+      "stdout": "3425f3a2a2e5a28f9838fb1844c7c8d575f8b03f\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/publication_support.py"
+      ],
+      "exit_code": 0,
+      "stdout": "3e93ca68d8abebdd25349b175db1e24dc70745a0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_input_migration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "56aa1d59de759919e8c07463bd4bdeac5b48a234\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_mutations.py"
+      ],
+      "exit_code": 0,
+      "stdout": "4a0b133a240bd2587088d14f9ce332106e254df0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_publication.py"
+      ],
+      "exit_code": 0,
+      "stdout": "1ef2a203a43ef2363c4246f31f15a0c5dec70828\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_recovery_ownership.py"
+      ],
+      "exit_code": 0,
+      "stdout": "24a6724c227a584b050d697ceeb07897cf1ed653\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "apply",
+        "--numstat",
+        "-z",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch2.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "27\t5\tdeployment/AgenticRAG/docs/convergence.md\u00001\t1\tdeployment/AgenticRAG/docs/first-publication.md\u00002\t0\tdeployment/AgenticRAG/docs/manual-recovery.md\u00003\t1\tdeployment/AgenticRAG/docs/ordinary-mutations.md\u00006\t5\tdeployment/AgenticRAG/src/agentic_rag/indexes/manifest.py\u000011\t0\tdeployment/AgenticRAG/src/agentic_rag/indexes/milvus.py\u00005\t3\tdeployment/AgenticRAG/src/agentic_rag/ingestion/build.py\u00005\t1\tdeployment/AgenticRAG/src/agentic_rag/ingestion/capture.py\u000021\t12\tdeployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py\u000094\t18\tdeployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py\u00007\t6\tdeployment/AgenticRAG/src/agentic_rag/ingestion/processing.py\u000015\t11\tdeployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py\u000015\t5\tdeployment/AgenticRAG/src/agentic_rag/sources.py\u000033\t96\tdeployment/AgenticRAG/src/agentic_rag/storage/database.py\u000031\t0\tdeployment/AgenticRAG/src/agentic_rag/storage/inputs.py\u00004\t3\tdeployment/AgenticRAG/src/agentic_rag/storage/processing.py\u000028\t8\tdeployment/AgenticRAG/src/agentic_rag/storage/publication.py\u000011\t4\tdeployment/AgenticRAG/tests/publication_support.py\u0000169\t0\tdeployment/AgenticRAG/tests/test_build_preparation.py\u000059\t0\tdeployment/AgenticRAG/tests/test_input_migration.py\u0000206\t0\tdeployment/AgenticRAG/tests/test_input_read_scope.py\u000019\t7\tdeployment/AgenticRAG/tests/test_mutations.py\u000022\t3\tdeployment/AgenticRAG/tests/test_publication.py\u00002\t5\tdeployment/AgenticRAG/tests/test_recovery_ownership.py\u0000135\t0\tdeployment/AgenticRAG/tests/test_source_read_reuse.py\u0000",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "check-attr",
+        "filter",
+        "working-tree-encoding",
+        "--",
+        "deployment/AgenticRAG/docs/convergence.md",
+        "deployment/AgenticRAG/docs/first-publication.md",
+        "deployment/AgenticRAG/docs/manual-recovery.md",
+        "deployment/AgenticRAG/docs/ordinary-mutations.md",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py",
+        "deployment/AgenticRAG/src/agentic_rag/sources.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/inputs.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/processing.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/publication.py",
+        "deployment/AgenticRAG/tests/publication_support.py",
+        "deployment/AgenticRAG/tests/test_input_migration.py",
+        "deployment/AgenticRAG/tests/test_mutations.py",
+        "deployment/AgenticRAG/tests/test_publication.py",
+        "deployment/AgenticRAG/tests/test_recovery_ownership.py",
+        "deployment/AgenticRAG/tests/test_build_preparation.py",
+        "deployment/AgenticRAG/tests/test_input_read_scope.py",
+        "deployment/AgenticRAG/tests/test_source_read_reuse.py"
+      ],
+      "exit_code": 0,
+      "stdout": "deployment/AgenticRAG/docs/convergence.md: filter: unspecified\ndeployment/AgenticRAG/docs/convergence.md: working-tree-encoding: unspecified\ndeployment/AgenticRAG/docs/first-publication.md: filter: unspecified\ndeployment/AgenticRAG/docs/first-publication.md: working-tree-encoding: unspecified\ndeployment/AgenticRAG/docs/manual-recovery.md: filter: unspecified\ndeployment/AgenticRAG/docs/manual-recovery.md: working-tree-encoding: unspecified\ndeployment/AgenticRAG/docs/ordinary-mutations.md: filter: unspecified\ndeployment/AgenticRAG/docs/ordinary-mutations.md: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/indexes/manifest.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/indexes/manifest.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/indexes/milvus.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/indexes/milvus.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/build.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/build.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/capture.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/capture.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/processing.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/processing.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/sources.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/sources.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/storage/database.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/storage/database.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/storage/inputs.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/storage/inputs.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/storage/processing.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/storage/processing.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/src/agentic_rag/storage/publication.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/storage/publication.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/tests/publication_support.py: filter: unspecified\ndeployment/AgenticRAG/tests/publication_support.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/tests/test_input_migration.py: filter: unspecified\ndeployment/AgenticRAG/tests/test_input_migration.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/tests/test_mutations.py: filter: unspecified\ndeployment/AgenticRAG/tests/test_mutations.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/tests/test_publication.py: filter: unspecified\ndeployment/AgenticRAG/tests/test_publication.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/tests/test_recovery_ownership.py: filter: unspecified\ndeployment/AgenticRAG/tests/test_recovery_ownership.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/tests/test_build_preparation.py: filter: unspecified\ndeployment/AgenticRAG/tests/test_build_preparation.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/tests/test_input_read_scope.py: filter: unspecified\ndeployment/AgenticRAG/tests/test_input_read_scope.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/tests/test_source_read_reuse.py: filter: unspecified\ndeployment/AgenticRAG/tests/test_source_read_reuse.py: working-tree-encoding: unspecified\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "apply",
+        "--check",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch2.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "apply",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch2.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/convergence.md",
+        "--",
+        "deployment/AgenticRAG/docs/convergence.md"
+      ],
+      "exit_code": 0,
+      "stdout": "4da943314cdc9ca8c29676224044f2408c9c7fb0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/first-publication.md",
+        "--",
+        "deployment/AgenticRAG/docs/first-publication.md"
+      ],
+      "exit_code": 0,
+      "stdout": "e504fd65b9e2777975359fd3e82368b90136056c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/manual-recovery.md",
+        "--",
+        "deployment/AgenticRAG/docs/manual-recovery.md"
+      ],
+      "exit_code": 0,
+      "stdout": "6efa463fd5c8645cb164a2695dc4fc4d6fa614b8\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/ordinary-mutations.md",
+        "--",
+        "deployment/AgenticRAG/docs/ordinary-mutations.md"
+      ],
+      "exit_code": 0,
+      "stdout": "aba0ed998b0015b3ac291051dccd0e4d44ee097d\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py"
+      ],
+      "exit_code": 0,
+      "stdout": "d9dad37c16760695b0d03946ca0470d6febaa33b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py"
+      ],
+      "exit_code": 0,
+      "stdout": "96b53553ef8065b8c42ca5d3e69616e15145eaa2\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/build.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py"
+      ],
+      "exit_code": 0,
+      "stdout": "601bb78861ea44cb1952b23e9359c99370ee4980\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py"
+      ],
+      "exit_code": 0,
+      "stdout": "ca9a1ae6d62ffe139f3c24473b4b876052989ef7\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py"
+      ],
+      "exit_code": 0,
+      "stdout": "c790cb8cef67cddb35d9a380b20f755504d8c0b9\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py"
+      ],
+      "exit_code": 0,
+      "stdout": "f4ad42905edcff41cc9b773c30fdc5eb1612aa33\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py"
+      ],
+      "exit_code": 0,
+      "stdout": "a88d0cef073eec1b9e8842ca2aa787349e14c454\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py"
+      ],
+      "exit_code": 0,
+      "stdout": "5d4ed38df15610cd576fefb1995be4ec205fce86\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/sources.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/sources.py"
+      ],
+      "exit_code": 0,
+      "stdout": "6925a0425649b94741ca46c7abc391d729cd12be\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/storage/database.py"
+      ],
+      "exit_code": 0,
+      "stdout": "56d9a48d1419ac1c6228fc06bc0f915d8407ca86\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/storage/inputs.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/storage/inputs.py"
+      ],
+      "exit_code": 0,
+      "stdout": "e574d6038454e64b396ec2ac56215a0411cb6d83\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/storage/processing.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/storage/processing.py"
+      ],
+      "exit_code": 0,
+      "stdout": "64f4277d715e0fc6b9f1d1e21b744432e70412e5\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/storage/publication.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/storage/publication.py"
+      ],
+      "exit_code": 0,
+      "stdout": "35c17468ee6c0c8396c30494458e33f913efa4c1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/publication_support.py",
+        "--",
+        "deployment/AgenticRAG/tests/publication_support.py"
+      ],
+      "exit_code": 0,
+      "stdout": "10b82ab28318f268b5352c8b61be31a279a93597\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_input_migration.py",
+        "--",
+        "deployment/AgenticRAG/tests/test_input_migration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "0f8087c4b417236c84c96279c7aee7a406ec32cf\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_mutations.py",
+        "--",
+        "deployment/AgenticRAG/tests/test_mutations.py"
+      ],
+      "exit_code": 0,
+      "stdout": "da6e1d2af84cbf2e6288c80d848e7230811587b9\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_publication.py",
+        "--",
+        "deployment/AgenticRAG/tests/test_publication.py"
+      ],
+      "exit_code": 0,
+      "stdout": "45ee3f6547a2029de0dc5983fc54eeeaf92a21a6\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_recovery_ownership.py",
+        "--",
+        "deployment/AgenticRAG/tests/test_recovery_ownership.py"
+      ],
+      "exit_code": 0,
+      "stdout": "f7740b43e86508053e8a2fcdd5c41c84abb75e6b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_build_preparation.py",
+        "--",
+        "deployment/AgenticRAG/tests/test_build_preparation.py"
+      ],
+      "exit_code": 0,
+      "stdout": "8fd0ac1f7d190053497fe1bb5feeebdc8b2c20a3\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_input_read_scope.py",
+        "--",
+        "deployment/AgenticRAG/tests/test_input_read_scope.py"
+      ],
+      "exit_code": 0,
+      "stdout": "1c3e436bf7335bf59cb6080b56bab14a98fd6318\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_source_read_reuse.py",
+        "--",
+        "deployment/AgenticRAG/tests/test_source_read_reuse.py"
+      ],
+      "exit_code": 0,
+      "stdout": "f4b2fa326c7bbdc9d168c7909e04fe8ac28dff6e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "apply",
+        "--reverse",
+        "--check",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch2.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--check",
+        "--",
+        "deployment/AgenticRAG/docs/convergence.md",
+        "deployment/AgenticRAG/docs/first-publication.md",
+        "deployment/AgenticRAG/docs/manual-recovery.md",
+        "deployment/AgenticRAG/docs/ordinary-mutations.md",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py",
+        "deployment/AgenticRAG/src/agentic_rag/sources.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/inputs.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/processing.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/publication.py",
+        "deployment/AgenticRAG/tests/publication_support.py",
+        "deployment/AgenticRAG/tests/test_input_migration.py",
+        "deployment/AgenticRAG/tests/test_mutations.py",
+        "deployment/AgenticRAG/tests/test_publication.py",
+        "deployment/AgenticRAG/tests/test_recovery_ownership.py",
+        "deployment/AgenticRAG/tests/test_build_preparation.py",
+        "deployment/AgenticRAG/tests/test_input_read_scope.py",
+        "deployment/AgenticRAG/tests/test_source_read_reuse.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "base": "8c764644c57e59c9aa9ae2337f61efc3447d88ee",
+  "applied_paths": 25,
+  "raw_hashes_equal": 0,
+  "canonical_blobs_equal": true,
+  "tested_files": 319,
+  "historical_sql_unchanged": 8,
+  "finished": 1790100972.1274183
+}

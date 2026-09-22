@@ -20,7 +20,7 @@ uv sync --project deployment/AgenticRAG --locked
 uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 ```
 
-安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具；运行的四项轻量依赖及传递依赖由锁固定，tokenizer 资产使用显式外部缓存。必须使用带 WAL 修复的 SQLite，存储层拒绝低于 3.51.3 的实际运行版本，不使用当前标准库的 SQLite 3.50.4。Windows/Linux 使用各自环境；Linux、完整产品安装及最终主发行仍在 R25/R26 验收。
+安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具及 PyMilvus 3.0.2：上述默认 `uv sync --locked` 会安装 SDK，供发布、来源和恢复等正式测试通过实际适配器构造器注入受控 SDK 传输；这些 CPU 测试不需要连接 Milvus 服务。核心发行 wheel 的四项运行依赖保持不变，SDK 仍只属于可选 `milvus` extra；真实 Milvus、CUDA 和宿主验收另按各自入口显式准备。运行依赖及传递依赖由锁固定，tokenizer 资产使用显式外部缓存。必须使用带 WAL 修复的 SQLite，存储层拒绝低于 3.51.3 的实际运行版本，不使用当前标准库的 SQLite 3.50.4。Windows/Linux 使用各自环境；Linux、完整产品安装及最终主发行仍在 R25/R26 验收。
 
 配置只接收调用方显式传入的 `knowledge` 对象，优先级为 `explicit > configured > defaults > Schema 默认`。默认检索模式为 `auto`；候选数量、分块参数、QA/报告预算必须显式提供试验值，尚未冻结质量参数。字段、可运行示例、身份与协议边界见 [领域与配置](docs/domain-and-configuration.md)，R05 的两条真实发行安装证据见 [R05](docs/implementation-records/R05.md)。分发包不包含该文档目录，源码开发区可查阅。
 

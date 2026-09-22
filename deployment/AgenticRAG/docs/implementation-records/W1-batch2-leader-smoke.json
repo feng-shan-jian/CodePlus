@@ -1,0 +1,4666 @@
+{
+  "status": "PASS",
+  "identity": {
+    "pid": 70780,
+    "birth": "134345752448953117",
+    "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Scripts\\python.exe",
+    "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923",
+    "package": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\__init__.py",
+    "time": "2026-09-22T18:27:25.747019+00:00",
+    "argv": [
+      "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r13_real_acceptance.py",
+      "run",
+      "--root",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke",
+      "--cuda-python",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\cuda\\Scripts\\python.exe",
+      "--model-cache",
+      "C:/Users/18221/.cache/codeplus-agenticrag/models",
+      "--endpoint",
+      "http://127.0.0.1:19542",
+      "--report",
+      "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-batch2-leader-smoke.json"
+    ],
+    "packages": {
+      "codeplus-agentic-rag": "0.1.0",
+      "pydantic": "2.13.5",
+      "apsw": "3.53.4.0",
+      "tokenizers": "0.23.2",
+      "pymilvus": "3.0.2"
+    }
+  },
+  "config": {
+    "schema_version": 1,
+    "parameter_status": "experiment",
+    "storage": {
+      "schema_version": 1,
+      "data_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\data",
+      "milvus_uri": "http://127.0.0.1:19542",
+      "namespace": "r13_acceptance",
+      "credential_ref": null
+    },
+    "processing": {
+      "schema_version": 1,
+      "parser": {
+        "schema_version": 1,
+        "implementation": "markdown_it_txt",
+        "version": "markdown-it-py-4.0.0+source-v1",
+        "normalization_version": "utf8-bom-newlines-v1",
+        "encoding": "utf-8"
+      },
+      "chunker": {
+        "schema_version": 1,
+        "implementation": "structure_sentence_token",
+        "version": "canonical-offsets-v1",
+        "max_tokens": 512,
+        "overlap_tokens": 64
+      },
+      "index": {
+        "schema_version": 1,
+        "schema_version_name": "uuid1024-bm25-utf8-v1",
+        "dense_index": "IVF_FLAT",
+        "dense_metric": "COSINE",
+        "nlist": 1,
+        "sparse_index": "SPARSE_INVERTED_INDEX",
+        "sparse_algorithm": "DAAT_MAXSCORE",
+        "tokenizer": "standard",
+        "filters": [
+          "lowercase"
+        ],
+        "bm25_k1": 1.2,
+        "bm25_b": 0.75
+      }
+    },
+    "models": {
+      "schema_version": 1,
+      "embedding": "embed",
+      "reranker": "rank"
+    },
+    "model_profiles": [
+      {
+        "schema_version": 1,
+        "name": "embed",
+        "backend": "qwen3_local",
+        "runtime": {
+          "schema_version": 1,
+          "dtype": "bfloat16",
+          "attention": "sdpa",
+          "device": "cuda:0",
+          "implementation": "transformers",
+          "torch_version": "2.14.0+cu130",
+          "transformers_version": "5.17.0",
+          "tokenizers_version": "0.23.2",
+          "use_cache": false,
+          "trust_remote_code": false,
+          "local_files_only": true,
+          "allocator_cap_mib": 2048
+        },
+        "limits": {
+          "schema_version": 1,
+          "max_input_tokens": 2048,
+          "max_batch_size": 4,
+          "max_padded_tokens": 4096
+        },
+        "document_template": "title_text_v1",
+        "document_with_title": "Title: {title}\n{text}",
+        "document_without_title": "{text}",
+        "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+        "capability": "embedding",
+        "model": "Qwen/Qwen3-Embedding-0.6B",
+        "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "tokenizer": {
+          "schema_version": 1,
+          "model": "Qwen/Qwen3-Embedding-0.6B",
+          "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+          "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+          "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+          "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "padding_side": "left",
+          "truncation": false
+        },
+        "query_template": "Instruct: {instruction}\nQuery:{query}",
+        "add_special_tokens": true,
+        "dimension": 1024,
+        "pooling": "last_nonpadding_token",
+        "normalization": "float32_L2"
+      },
+      {
+        "schema_version": 1,
+        "name": "rank",
+        "backend": "qwen3_local",
+        "runtime": {
+          "schema_version": 1,
+          "dtype": "bfloat16",
+          "attention": "sdpa",
+          "device": "cuda:0",
+          "implementation": "transformers",
+          "torch_version": "2.14.0+cu130",
+          "transformers_version": "5.17.0",
+          "tokenizers_version": "0.23.2",
+          "use_cache": false,
+          "trust_remote_code": false,
+          "local_files_only": true,
+          "allocator_cap_mib": 2048
+        },
+        "limits": {
+          "schema_version": 1,
+          "max_input_tokens": 2048,
+          "max_batch_size": 4,
+          "max_padded_tokens": 4096
+        },
+        "document_template": "title_text_v1",
+        "document_with_title": "Title: {title}\n{text}",
+        "document_without_title": "{text}",
+        "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+        "capability": "rerank",
+        "model": "Qwen/Qwen3-Reranker-0.6B",
+        "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+        "tokenizer": {
+          "schema_version": 1,
+          "model": "Qwen/Qwen3-Reranker-0.6B",
+          "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+          "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+          "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+          "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+          "padding_side": "left",
+          "truncation": false
+        },
+        "add_special_tokens": false,
+        "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+        "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+        "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "score_type": "softmax_float32([no,yes])[yes]",
+        "logits_to_keep": 1
+      }
+    ],
+    "retrieval": {
+      "schema_version": 1,
+      "mode": "fixed",
+      "route": "dense",
+      "rerank": false,
+      "dense_candidates": 50,
+      "bm25_candidates": 50,
+      "rerank_candidates": 50,
+      "rrf_k": 60,
+      "nprobe": 1,
+      "context_chunks": 32,
+      "context_tokens": 50000
+    },
+    "budgets": {
+      "schema_version": 1,
+      "qa": {
+        "schema_version": 1,
+        "searches": 10,
+        "opens": 20,
+        "total_tokens": 200000,
+        "duration_ms": 300000,
+        "finish_reserve_tokens": 3000,
+        "finish_reserve_ms": 20000
+      },
+      "report": {
+        "schema_version": 1,
+        "searches": 7,
+        "opens": 9,
+        "total_tokens": 36000,
+        "duration_ms": 360000,
+        "finish_reserve_tokens": 6000,
+        "finish_reserve_ms": 40000
+      }
+    }
+  },
+  "worker_config": {
+    "schema_version": 1,
+    "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\cuda\\Scripts\\python.exe",
+    "model_cache": "C:/Users/18221/.cache/codeplus-agenticrag/models",
+    "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\worker",
+    "startup_timeout_ms": 60000,
+    "handshake_timeout_ms": 3000,
+    "io_timeout_ms": 5000,
+    "idle_timeout_ms": 30000,
+    "max_frame_bytes": 1048576,
+    "max_connections": 16,
+    "max_queue_items": 16,
+    "max_queue_bytes": 4194304,
+    "max_session_requests": 4096
+  },
+  "inputs": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\update.md",
+      "sha256": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+      "size": 61,
+      "body": "# Telescope\nTelescope approval uses the oldblue certificate.\n",
+      "time": "2026-09-22T18:27:27.778059+00:00"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\delete.md",
+      "sha256": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+      "size": 67,
+      "body": "# Retired\nRetiredquasar approval uses the legacygreen certificate.\n",
+      "time": "2026-09-22T18:27:27.778764+00:00"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\keep.md",
+      "sha256": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+      "size": 64,
+      "body": "# Mountain\nMountain approval keeps the unchangedviolet archive.\n",
+      "time": "2026-09-22T18:27:27.779362+00:00"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\failed.md",
+      "sha256": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+      "size": 60,
+      "body": "# Failed\nFailed update approval keeps the oldsilver report.\n",
+      "time": "2026-09-22T18:27:27.779897+00:00"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\update.md",
+      "sha256": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+      "size": 68,
+      "body": "# Telescope\nTelescope approval now requires the newred certificate.\n",
+      "time": "2026-09-22T18:27:57.461842+00:00"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\failed.md",
+      "sha256": "f904528cb389786dd254a5ce219eaccc7251b8ed8ba873926f681bb20167db46",
+      "size": 42,
+      "body": null,
+      "time": "2026-09-22T18:27:57.462214+00:00"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\added.md",
+      "sha256": "445c0229eb7aba521d663fcea59818f0439d9e0af002d45a60ce5ba1d5b0589e",
+      "size": 55,
+      "body": "# Island\nIsland approval introduces a newamber record.\n",
+      "time": "2026-09-22T18:27:57.462743+00:00"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\failed.md",
+      "sha256": "0957f3d019ee6f4f24453c9fd5c6dc2febf437990f3eadea6559d0e3a200c88a",
+      "size": 66,
+      "body": "# Failed\nFailed update approval now uses the repairedgold report.\n",
+      "time": "2026-09-22T18:28:13.354890+00:00"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\all-invalid.md",
+      "sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89",
+      "size": 1,
+      "body": null,
+      "time": "2026-09-22T18:28:31.589340+00:00"
+    }
+  ],
+  "events": [
+    {
+      "time": "2026-09-22T18:27:44.483324+00:00",
+      "stage": "encoding_response",
+      "item_id": "36722371-483a-4661-8cfa-8cecdc20aa7e",
+      "complete": 1,
+      "total": 1
+    },
+    {
+      "time": "2026-09-22T18:27:44.546952+00:00",
+      "stage": "file_terminal",
+      "item_id": "36722371-483a-4661-8cfa-8cecdc20aa7e",
+      "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc"
+    },
+    {
+      "time": "2026-09-22T18:27:44.639261+00:00",
+      "stage": "encoding_response",
+      "item_id": "3e64925b-505f-4aaf-8ab1-797f63e3016d",
+      "complete": 1,
+      "total": 1
+    },
+    {
+      "time": "2026-09-22T18:27:44.706804+00:00",
+      "stage": "file_terminal",
+      "item_id": "3e64925b-505f-4aaf-8ab1-797f63e3016d",
+      "document_id": "cbb62631-9649-4b95-b082-929868824bb8"
+    },
+    {
+      "time": "2026-09-22T18:27:44.800794+00:00",
+      "stage": "encoding_response",
+      "item_id": "88c98d90-a665-468f-96ee-1d51f7e96424",
+      "complete": 1,
+      "total": 1
+    },
+    {
+      "time": "2026-09-22T18:27:44.864035+00:00",
+      "stage": "file_terminal",
+      "item_id": "88c98d90-a665-468f-96ee-1d51f7e96424",
+      "document_id": "4623b2d7-4127-414b-86a9-87c990b99963"
+    },
+    {
+      "time": "2026-09-22T18:27:44.960797+00:00",
+      "stage": "encoding_response",
+      "item_id": "70adad89-a732-4386-8752-275bc76ee1ec",
+      "complete": 1,
+      "total": 1
+    },
+    {
+      "time": "2026-09-22T18:27:45.021842+00:00",
+      "stage": "file_terminal",
+      "item_id": "70adad89-a732-4386-8752-275bc76ee1ec",
+      "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d"
+    },
+    {
+      "time": "2026-09-22T18:27:45.895640+00:00",
+      "stage": "created",
+      "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+      "collection_name": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_ec3d797e96d74049bbfaa82324c269eb_e1"
+    },
+    {
+      "time": "2026-09-22T18:27:46.328754+00:00",
+      "stage": "inserted",
+      "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+      "rows": 4
+    },
+    {
+      "time": "2026-09-22T18:27:56.736880+00:00",
+      "stage": "validated",
+      "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+      "rows": 4
+    },
+    {
+      "time": "2026-09-22T18:27:58.237404+00:00",
+      "stage": "encoding_response",
+      "item_id": "175bef96-0264-4815-b212-df488325c961",
+      "complete": 1,
+      "total": 1
+    },
+    {
+      "time": "2026-09-22T18:27:58.301161+00:00",
+      "stage": "file_terminal",
+      "item_id": "175bef96-0264-4815-b212-df488325c961",
+      "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc"
+    },
+    {
+      "time": "2026-09-22T18:27:58.321594+00:00",
+      "stage": "file_terminal",
+      "item_id": "8d404753-97af-4a26-82d5-38eb8d4463bb",
+      "document_id": "4623b2d7-4127-414b-86a9-87c990b99963"
+    },
+    {
+      "time": "2026-09-22T18:27:58.539690+00:00",
+      "stage": "encoding_response",
+      "item_id": "5fa3419e-3836-401b-a50d-001355710e02",
+      "complete": 1,
+      "total": 1
+    },
+    {
+      "time": "2026-09-22T18:27:58.601009+00:00",
+      "stage": "file_terminal",
+      "item_id": "5fa3419e-3836-401b-a50d-001355710e02",
+      "document_id": "eb02b8df-c17a-4c2b-81bc-d5cf5929f0e3"
+    },
+    {
+      "time": "2026-09-22T18:27:59.518356+00:00",
+      "stage": "created",
+      "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "collection_name": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_21173226b03c41438f6141f5c7328176_e2"
+    },
+    {
+      "time": "2026-09-22T18:27:59.949865+00:00",
+      "stage": "inserted",
+      "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "rows": 4
+    },
+    {
+      "time": "2026-09-22T18:28:08.729212+00:00",
+      "stage": "validated",
+      "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "rows": 4
+    },
+    {
+      "time": "2026-09-22T18:28:12.532537+00:00",
+      "stage": "file_terminal",
+      "item_id": "181a9506-1d8c-428d-9ad8-48a614eaafc1",
+      "document_id": "4623b2d7-4127-414b-86a9-87c990b99963"
+    },
+    {
+      "time": "2026-09-22T18:28:13.889225+00:00",
+      "stage": "encoding_response",
+      "item_id": "2f0023f4-cc54-4d61-b720-4268085c7435",
+      "complete": 1,
+      "total": 1
+    },
+    {
+      "time": "2026-09-22T18:28:13.951971+00:00",
+      "stage": "file_terminal",
+      "item_id": "2f0023f4-cc54-4d61-b720-4268085c7435",
+      "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d"
+    },
+    {
+      "time": "2026-09-22T18:28:14.721343+00:00",
+      "stage": "created",
+      "revision_id": "8b484b20-aba1-4f1c-800f-c34faac090e6",
+      "collection_name": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_8b484b20aba14f1c800fc34faac090e6_e5"
+    },
+    {
+      "time": "2026-09-22T18:28:15.157569+00:00",
+      "stage": "inserted",
+      "revision_id": "8b484b20-aba1-4f1c-800f-c34faac090e6",
+      "rows": 4
+    },
+    {
+      "time": "2026-09-22T18:28:24.131349+00:00",
+      "stage": "validated",
+      "revision_id": "8b484b20-aba1-4f1c-800f-c34faac090e6",
+      "rows": 4
+    },
+    {
+      "time": "2026-09-22T18:28:24.957732+00:00",
+      "stage": "created",
+      "revision_id": "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+      "collection_name": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_b641dd6f6d1e49b4a7bbabc1bc4861de_e6"
+    },
+    {
+      "time": "2026-09-22T18:28:25.016046+00:00",
+      "stage": "inserted",
+      "revision_id": "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+      "rows": 0
+    },
+    {
+      "time": "2026-09-22T18:28:31.123704+00:00",
+      "stage": "validated",
+      "revision_id": "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+      "rows": 0
+    }
+  ],
+  "scope": "synthetic named inputs; real GPU and service; no semantic-quality claim",
+  "v1": {
+    "receipt": {
+      "batch_id": "398664f5-eda1-45c8-a122-bc494da65a0a",
+      "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+      "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+      "artifact_id": "55abc602-4eaf-487c-b9de-4a3747e36236",
+      "owner_nonce": "ea3a9724-42a3-4fcd-a7fb-3ae752466918",
+      "owner_epoch": 1,
+      "manifest_hash": "d1c399b6cd6ceeabb2cb02ebf97999d03f25800de92ad47c147a7416fbfc2b12",
+      "published_at": "2026-09-22T18:27:56.815201+00:00"
+    },
+    "summary": {
+      "base_revision_id": null,
+      "batch_id": "398664f5-eda1-45c8-a122-bc494da65a0a",
+      "failed": 0,
+      "items": [
+        {
+          "base_version_id": null,
+          "change": "new",
+          "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+          "encoded_hash": "ebceabae9394cdea449f6cd33b15857fbb4af8c5b62073bba1723a5651dc5062",
+          "error": null,
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/update.md",
+          "item_id": "36722371-483a-4661-8cfa-8cecdc20aa7e",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\update.md",
+          "raw_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+          "state": "encoded"
+        },
+        {
+          "base_version_id": null,
+          "change": "new",
+          "document_id": "cbb62631-9649-4b95-b082-929868824bb8",
+          "encoded_hash": "ebeb04ef8ed27595618684a902af8b2b375d5304f77047faec4cf389d4877214",
+          "error": null,
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/delete.md",
+          "item_id": "3e64925b-505f-4aaf-8ab1-797f63e3016d",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\delete.md",
+          "raw_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+          "state": "encoded"
+        },
+        {
+          "base_version_id": null,
+          "change": "new",
+          "document_id": "4623b2d7-4127-414b-86a9-87c990b99963",
+          "encoded_hash": "e6d0906f80a617fff43f813e7cf0bc51409a3bb8044d7f694b4c32c2d7035eef",
+          "error": null,
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/keep.md",
+          "item_id": "88c98d90-a665-468f-96ee-1d51f7e96424",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\keep.md",
+          "raw_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+          "state": "encoded"
+        },
+        {
+          "base_version_id": null,
+          "change": "new",
+          "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+          "encoded_hash": "04d87e6f606cf24a45fb5982ea0910f6ecdf7341932afd126685afb887264317",
+          "error": null,
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/failed.md",
+          "item_id": "70adad89-a732-4386-8752-275bc76ee1ec",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\failed.md",
+          "raw_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+          "state": "encoded"
+        }
+      ],
+      "processed_unpublished": 0,
+      "published_deleted": 0,
+      "published_index_changed": false,
+      "published_new": 4,
+      "published_revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+      "published_updated": 0,
+      "requested_deletions": [],
+      "state": "PUBLISHED",
+      "unchanged": 0
+    },
+    "validation": {
+      "schema": {
+        "collection_name": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_ec3d797e96d74049bbfaa82324c269eb_e1",
+        "auto_id": false,
+        "num_shards": 1,
+        "description": "agentic-rag-physical-v1:55abc602-4eaf-487c-b9de-4a3747e36236:5469b349a0404be1a37dce30a968c0ee",
+        "fields": [
+          {
+            "field_id": 100,
+            "name": "chunk_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            },
+            "is_primary": true
+          },
+          {
+            "field_id": 101,
+            "name": "kb_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 102,
+            "name": "revision_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 103,
+            "name": "document_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 104,
+            "name": "document_version_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 105,
+            "name": "section_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 106,
+            "name": "text_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 107,
+            "name": "body_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 108,
+            "name": "raw_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 109,
+            "name": "parsed_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 110,
+            "name": "encoding_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 111,
+            "name": "vector_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 112,
+            "name": "text",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 65535,
+              "enable_analyzer": "true",
+              "analyzer_params": "{\"tokenizer\":\"standard\",\"filter\":[\"lowercase\"]}"
+            }
+          },
+          {
+            "field_id": 113,
+            "name": "span_start",
+            "description": "",
+            "type": 5,
+            "params": {}
+          },
+          {
+            "field_id": 114,
+            "name": "span_end",
+            "description": "",
+            "type": 5,
+            "params": {}
+          },
+          {
+            "field_id": 115,
+            "name": "dense",
+            "description": "",
+            "type": 101,
+            "params": {
+              "dim": 1024
+            }
+          },
+          {
+            "field_id": 116,
+            "name": "sparse",
+            "description": "",
+            "type": 104,
+            "params": {},
+            "is_function_output": true
+          }
+        ],
+        "functions": [
+          {
+            "name": "text_bm25",
+            "id": 100,
+            "description": "",
+            "type": 1,
+            "params": {},
+            "input_field_names": [
+              "text"
+            ],
+            "input_field_ids": [
+              112
+            ],
+            "output_field_names": [
+              "sparse"
+            ],
+            "output_field_ids": [
+              116
+            ]
+          }
+        ],
+        "aliases": [],
+        "collection_id": 469264178736010659,
+        "consistency_level": 0,
+        "consistency_level_name": "Strong",
+        "properties": {
+          "timezone": "UTC",
+          "namespace.sharding.enabled": "false",
+          "max_field_id": "116"
+        },
+        "num_partitions": 1,
+        "enable_dynamic_field": false,
+        "enable_namespace": false,
+        "schema_version": 0,
+        "created_timestamp": 469264410988511249,
+        "update_timestamp": 469264410988511249
+      },
+      "indexes": {
+        "dense_cosine": {
+          "nlist": "1",
+          "metric_type": "COSINE",
+          "index_type": "IVF_FLAT",
+          "field_name": "dense",
+          "index_name": "dense_cosine",
+          "total_rows": 4,
+          "indexed_rows": 4,
+          "pending_index_rows": 0,
+          "state": "Finished"
+        },
+        "sparse_bm25": {
+          "inverted_index_algo": "DAAT_MAXSCORE",
+          "bm25_k1": "1.2",
+          "bm25_b": "0.75",
+          "metric_type": "BM25",
+          "index_type": "SPARSE_INVERTED_INDEX",
+          "field_name": "sparse",
+          "index_name": "sparse_bm25",
+          "total_rows": 4,
+          "indexed_rows": 4,
+          "pending_index_rows": 0,
+          "state": "Finished"
+        }
+      },
+      "load_state": "Loaded",
+      "segments": [
+        {
+          "segment_id": 469264178736211685,
+          "num_rows": 4,
+          "state": "Sealed",
+          "index_name": "IVF_FLAT",
+          "index_id": 469264178736301699,
+          "mem_size": 0
+        }
+      ],
+      "rows_checked": 4,
+      "id_set_hash": "ae7de5b556779ed6a2754c73dea2212bbc257d26ac77cb00493941112928913d",
+      "row_manifest_hash": "659aae638f35f47fe0c6306526b1146a9be50a7773393c1ff11405d5a7bad756",
+      "vector_validation": "exact little-endian float32 SHA256; L2 abs_tol=1e-4",
+      "max_norm_error": 8.617154367840385e-08,
+      "dense_smoke": [
+        {
+          "id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+          "score": 1.0
+        },
+        {
+          "id": "80ab1406-1ffb-515a-b9d6-d37875b5131f",
+          "score": 0.4479592442512512
+        },
+        {
+          "id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+          "score": 0.4443029463291168
+        },
+        {
+          "id": "bb982414-0c0c-5a07-9b5b-4a472b38fab7",
+          "score": 0.44028598070144653
+        }
+      ],
+      "bm25_analyzer_token_count": 8,
+      "bm25_empty_is_valid": false,
+      "bm25_smoke": [
+        {
+          "id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+          "score": 9.066353797912598
+        },
+        {
+          "id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+          "score": 0.8714585304260254
+        },
+        {
+          "id": "80ab1406-1ffb-515a-b9d6-d37875b5131f",
+          "score": 0.2133660614490509
+        },
+        {
+          "id": "bb982414-0c0c-5a07-9b5b-4a472b38fab7",
+          "score": 0.2133660614490509
+        }
+      ],
+      "server_version": "3.0.1",
+      "client_version": "3.0.2",
+      "manifest_hash": "d1c399b6cd6ceeabb2cb02ebf97999d03f25800de92ad47c147a7416fbfc2b12",
+      "expected_hash": "73e09ee6cee1394fd27519dea563c06ebe03ed77eaa79a6879ffee66084c3b41",
+      "schema_hash": "1d7f3fc48f26911c7df475b2018dd896a92edc67ed7b2b78bf82d24658cc8e2b",
+      "validation_version": 1
+    },
+    "metrics": {
+      "build_seconds": 29.01459020000766,
+      "reused_vectors": 0,
+      "encoded_vectors": 4,
+      "documents": 4,
+      "chunks": 4,
+      "flush_seconds": 3.6006079000071622,
+      "index_seconds": 1.1959817999886582,
+      "load_sealed_reload_seconds": 4.947132400004193
+    }
+  },
+  "reader_launcher": {
+    "argv": [
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Scripts\\python.exe",
+      "-I",
+      "-B",
+      "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r13_real_acceptance.py",
+      "reader",
+      "--root",
+      "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke"
+    ],
+    "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke",
+    "pid": 70720,
+    "birth": "134345752768525934"
+  },
+  "reader_pinned": {
+    "identity": {
+      "pid": 71616,
+      "birth": "134345752768731397",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Scripts\\python.exe",
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke",
+      "package": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\__init__.py",
+      "time": "2026-09-22T18:27:57.446710+00:00",
+      "argv": [
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r13_real_acceptance.py",
+        "reader",
+        "--root",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke"
+      ],
+      "packages": {
+        "codeplus-agentic-rag": "0.1.0",
+        "pydantic": "2.13.5",
+        "apsw": "3.53.4.0",
+        "tokenizers": "0.23.2",
+        "pymilvus": "3.0.2"
+      }
+    },
+    "run": {
+      "schema_version": 1,
+      "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+      "parent_run_id": null,
+      "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+      "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+      "resolved_config": {
+        "schema_version": 1,
+        "feature": "knowledge",
+        "task_kind": "qa",
+        "knowledge": {
+          "schema_version": 1,
+          "parameter_status": "experiment",
+          "storage": {
+            "schema_version": 1,
+            "data_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\data",
+            "milvus_uri": "http://127.0.0.1:19542",
+            "namespace": "r13_acceptance",
+            "credential_ref": null
+          },
+          "processing": {
+            "schema_version": 1,
+            "parser": {
+              "schema_version": 1,
+              "implementation": "markdown_it_txt",
+              "version": "markdown-it-py-4.0.0+source-v1",
+              "normalization_version": "utf8-bom-newlines-v1",
+              "encoding": "utf-8"
+            },
+            "chunker": {
+              "schema_version": 1,
+              "implementation": "structure_sentence_token",
+              "version": "canonical-offsets-v1",
+              "max_tokens": 512,
+              "overlap_tokens": 64
+            },
+            "index": {
+              "schema_version": 1,
+              "schema_version_name": "uuid1024-bm25-utf8-v1",
+              "dense_index": "IVF_FLAT",
+              "dense_metric": "COSINE",
+              "nlist": 1,
+              "sparse_index": "SPARSE_INVERTED_INDEX",
+              "sparse_algorithm": "DAAT_MAXSCORE",
+              "tokenizer": "standard",
+              "filters": [
+                "lowercase"
+              ],
+              "bm25_k1": 1.2,
+              "bm25_b": 0.75
+            }
+          },
+          "models": {
+            "schema_version": 1,
+            "embedding": "embed",
+            "reranker": "rank"
+          },
+          "model_profiles": [
+            {
+              "schema_version": 1,
+              "name": "embed",
+              "backend": "qwen3_local",
+              "runtime": {
+                "schema_version": 1,
+                "dtype": "bfloat16",
+                "attention": "sdpa",
+                "device": "cuda:0",
+                "implementation": "transformers",
+                "torch_version": "2.14.0+cu130",
+                "transformers_version": "5.17.0",
+                "tokenizers_version": "0.23.2",
+                "use_cache": false,
+                "trust_remote_code": false,
+                "local_files_only": true,
+                "allocator_cap_mib": 2048
+              },
+              "limits": {
+                "schema_version": 1,
+                "max_input_tokens": 2048,
+                "max_batch_size": 4,
+                "max_padded_tokens": 4096
+              },
+              "document_template": "title_text_v1",
+              "document_with_title": "Title: {title}\n{text}",
+              "document_without_title": "{text}",
+              "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+              "capability": "embedding",
+              "model": "Qwen/Qwen3-Embedding-0.6B",
+              "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+              "tokenizer": {
+                "schema_version": 1,
+                "model": "Qwen/Qwen3-Embedding-0.6B",
+                "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+                "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+                "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                "padding_side": "left",
+                "truncation": false
+              },
+              "query_template": "Instruct: {instruction}\nQuery:{query}",
+              "add_special_tokens": true,
+              "dimension": 1024,
+              "pooling": "last_nonpadding_token",
+              "normalization": "float32_L2"
+            },
+            {
+              "schema_version": 1,
+              "name": "rank",
+              "backend": "qwen3_local",
+              "runtime": {
+                "schema_version": 1,
+                "dtype": "bfloat16",
+                "attention": "sdpa",
+                "device": "cuda:0",
+                "implementation": "transformers",
+                "torch_version": "2.14.0+cu130",
+                "transformers_version": "5.17.0",
+                "tokenizers_version": "0.23.2",
+                "use_cache": false,
+                "trust_remote_code": false,
+                "local_files_only": true,
+                "allocator_cap_mib": 2048
+              },
+              "limits": {
+                "schema_version": 1,
+                "max_input_tokens": 2048,
+                "max_batch_size": 4,
+                "max_padded_tokens": 4096
+              },
+              "document_template": "title_text_v1",
+              "document_with_title": "Title: {title}\n{text}",
+              "document_without_title": "{text}",
+              "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+              "capability": "rerank",
+              "model": "Qwen/Qwen3-Reranker-0.6B",
+              "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+              "tokenizer": {
+                "schema_version": 1,
+                "model": "Qwen/Qwen3-Reranker-0.6B",
+                "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+                "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+                "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                "padding_side": "left",
+                "truncation": false
+              },
+              "add_special_tokens": false,
+              "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+              "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+              "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+              "score_type": "softmax_float32([no,yes])[yes]",
+              "logits_to_keep": 1
+            }
+          ],
+          "retrieval": {
+            "schema_version": 1,
+            "mode": "fixed",
+            "route": "dense",
+            "rerank": false,
+            "dense_candidates": 50,
+            "bm25_candidates": 50,
+            "rerank_candidates": 50,
+            "rrf_k": 60,
+            "nprobe": 1,
+            "context_chunks": 32,
+            "context_tokens": 50000
+          },
+          "budgets": {
+            "schema_version": 1,
+            "qa": {
+              "schema_version": 1,
+              "searches": 10,
+              "opens": 20,
+              "total_tokens": 200000,
+              "duration_ms": 300000,
+              "finish_reserve_tokens": 3000,
+              "finish_reserve_ms": 20000
+            },
+            "report": {
+              "schema_version": 1,
+              "searches": 7,
+              "opens": 9,
+              "total_tokens": 36000,
+              "duration_ms": 360000,
+              "finish_reserve_tokens": 6000,
+              "finish_reserve_ms": 40000
+            }
+          }
+        },
+        "retrieval": {
+          "schema_version": 1,
+          "mode": "fixed",
+          "route": "dense",
+          "rerank": false,
+          "dense_candidates": 50,
+          "bm25_candidates": 50,
+          "rerank_candidates": 50,
+          "rrf_k": 60,
+          "nprobe": 1,
+          "context_chunks": 32,
+          "context_tokens": 50000
+        },
+        "budget": {
+          "schema_version": 1,
+          "searches": 10,
+          "opens": 20,
+          "total_tokens": 200000,
+          "duration_ms": 300000,
+          "finish_reserve_tokens": 3000,
+          "finish_reserve_ms": 20000
+        }
+      },
+      "resolved_config_hash": "2f82eb80726e9e264a9ace6859ecb63dbf42531fa6fe7983bec636379405a6bc",
+      "usage": {
+        "schema_version": 1,
+        "searches": 0,
+        "opens": 0,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cached_tokens": null,
+        "total_tokens": null,
+        "elapsed_ms": 0
+      },
+      "status": "running",
+      "stop_reason": null
+    },
+    "pin": {
+      "schema_version": 1,
+      "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+      "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+      "owner_nonce": "7db9b278-25b9-4c39-af69-cdbec9f44418",
+      "state": "active"
+    },
+    "prior_search_calls": 0,
+    "prior_source_reads": 0
+  },
+  "v2": {
+    "receipt": {
+      "batch_id": "c5d41c6c-d91a-41b2-a044-3818ef18a514",
+      "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+      "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "artifact_id": "e9ab565b-4f02-4821-a2d6-366b8c520173",
+      "owner_nonce": "e4491a18-e62b-435d-9f29-ba3ff781c6e1",
+      "owner_epoch": 2,
+      "manifest_hash": "a95099db2f595cc685f52737ba3d25f843b2483beead896e1de6fa7ac17b8442",
+      "published_at": "2026-09-22T18:28:08.812368+00:00"
+    },
+    "summary": {
+      "base_revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+      "batch_id": "c5d41c6c-d91a-41b2-a044-3818ef18a514",
+      "failed": 1,
+      "items": [
+        {
+          "base_version_id": "864fcaf6-fe9d-505e-9c7c-eae4e6f9dec4",
+          "change": "content_changed",
+          "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+          "encoded_hash": "cb8d9873350854341d96c13e9bda342f22705795a7b7d9a8ad3c45a5d47f0075",
+          "error": null,
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/update.md",
+          "item_id": "175bef96-0264-4815-b212-df488325c961",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\update.md",
+          "raw_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+          "state": "encoded"
+        },
+        {
+          "base_version_id": "1994f293-d8eb-5c3e-ae88-99afa99f57fc",
+          "change": "unchanged",
+          "document_id": "4623b2d7-4127-414b-86a9-87c990b99963",
+          "encoded_hash": null,
+          "error": null,
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/keep.md",
+          "item_id": "8d404753-97af-4a26-82d5-38eb8d4463bb",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\keep.md",
+          "raw_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+          "state": "unchanged"
+        },
+        {
+          "base_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+          "change": "content_changed",
+          "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+          "encoded_hash": null,
+          "error": {
+            "call_id": null,
+            "code": "INVALID_INPUT",
+            "message": "unsupported encoding: UTF-8 required at byte 0",
+            "request_id": null,
+            "retryable": false,
+            "schema_version": 1,
+            "stage": "parse"
+          },
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/failed.md",
+          "item_id": "ede5dcba-c21d-4cc1-beb9-d035ad52958d",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\failed.md",
+          "raw_hash": "f904528cb389786dd254a5ce219eaccc7251b8ed8ba873926f681bb20167db46",
+          "state": "failed"
+        },
+        {
+          "base_version_id": null,
+          "change": "new",
+          "document_id": "eb02b8df-c17a-4c2b-81bc-d5cf5929f0e3",
+          "encoded_hash": "bd5dcff9f026fb323dbbf34907ff737a43ee719ad72de981b902d1398321bff9",
+          "error": null,
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/added.md",
+          "item_id": "5fa3419e-3836-401b-a50d-001355710e02",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\added.md",
+          "raw_hash": "445c0229eb7aba521d663fcea59818f0439d9e0af002d45a60ce5ba1d5b0589e",
+          "state": "encoded"
+        }
+      ],
+      "processed_unpublished": 0,
+      "published_deleted": 1,
+      "published_index_changed": false,
+      "published_new": 1,
+      "published_revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "published_updated": 1,
+      "requested_deletions": [
+        "cbb62631-9649-4b95-b082-929868824bb8"
+      ],
+      "state": "PUBLISHED",
+      "unchanged": 1
+    },
+    "validation": {
+      "schema": {
+        "collection_name": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_21173226b03c41438f6141f5c7328176_e2",
+        "auto_id": false,
+        "num_shards": 1,
+        "description": "agentic-rag-physical-v1:e9ab565b-4f02-4821-a2d6-366b8c520173:ed6ef64b40624b079e687ed875d02d9f",
+        "fields": [
+          {
+            "field_id": 100,
+            "name": "chunk_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            },
+            "is_primary": true
+          },
+          {
+            "field_id": 101,
+            "name": "kb_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 102,
+            "name": "revision_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 103,
+            "name": "document_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 104,
+            "name": "document_version_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 105,
+            "name": "section_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 106,
+            "name": "text_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 107,
+            "name": "body_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 108,
+            "name": "raw_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 109,
+            "name": "parsed_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 110,
+            "name": "encoding_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 111,
+            "name": "vector_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 112,
+            "name": "text",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 65535,
+              "enable_analyzer": "true",
+              "analyzer_params": "{\"tokenizer\":\"standard\",\"filter\":[\"lowercase\"]}"
+            }
+          },
+          {
+            "field_id": 113,
+            "name": "span_start",
+            "description": "",
+            "type": 5,
+            "params": {}
+          },
+          {
+            "field_id": 114,
+            "name": "span_end",
+            "description": "",
+            "type": 5,
+            "params": {}
+          },
+          {
+            "field_id": 115,
+            "name": "dense",
+            "description": "",
+            "type": 101,
+            "params": {
+              "dim": 1024
+            }
+          },
+          {
+            "field_id": 116,
+            "name": "sparse",
+            "description": "",
+            "type": 104,
+            "params": {},
+            "is_function_output": true
+          }
+        ],
+        "functions": [
+          {
+            "name": "text_bm25",
+            "id": 100,
+            "description": "",
+            "type": 1,
+            "params": {},
+            "input_field_names": [
+              "text"
+            ],
+            "input_field_ids": [
+              112
+            ],
+            "output_field_names": [
+              "sparse"
+            ],
+            "output_field_ids": [
+              116
+            ]
+          }
+        ],
+        "aliases": [],
+        "collection_id": 469264178736301789,
+        "consistency_level": 0,
+        "consistency_level_name": "Strong",
+        "properties": {
+          "timezone": "UTC",
+          "namespace.sharding.enabled": "false",
+          "max_field_id": "116"
+        },
+        "num_partitions": 1,
+        "enable_dynamic_field": false,
+        "enable_namespace": false,
+        "schema_version": 0,
+        "created_timestamp": 469264414553669649,
+        "update_timestamp": 469264414553669649
+      },
+      "indexes": {
+        "dense_cosine": {
+          "nlist": "1",
+          "metric_type": "COSINE",
+          "index_type": "IVF_FLAT",
+          "field_name": "dense",
+          "index_name": "dense_cosine",
+          "total_rows": 4,
+          "indexed_rows": 4,
+          "pending_index_rows": 0,
+          "state": "Finished"
+        },
+        "sparse_bm25": {
+          "inverted_index_algo": "DAAT_MAXSCORE",
+          "bm25_k1": "1.2",
+          "bm25_b": "0.75",
+          "metric_type": "BM25",
+          "index_type": "SPARSE_INVERTED_INDEX",
+          "field_name": "sparse",
+          "index_name": "sparse_bm25",
+          "total_rows": 4,
+          "indexed_rows": 4,
+          "pending_index_rows": 0,
+          "state": "Finished"
+        }
+      },
+      "load_state": "Loaded",
+      "segments": [
+        {
+          "segment_id": 469264178736301811,
+          "num_rows": 4,
+          "state": "Sealed",
+          "index_name": "IVF_FLAT",
+          "index_id": 469264178736391824,
+          "mem_size": 0
+        }
+      ],
+      "rows_checked": 4,
+      "id_set_hash": "b555c5e6d4c970d4e6f8324bef2a8912b1edaabf52e6e8553db14ee0cdd020bf",
+      "row_manifest_hash": "a0d7adb998d155d80043c20efe3dc01ff736996bdf5e63bc97e9e344e07792fe",
+      "vector_validation": "exact little-endian float32 SHA256; L2 abs_tol=1e-4",
+      "max_norm_error": 2.5627081789991735e-08,
+      "dense_smoke": [
+        {
+          "id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+          "score": 1.0
+        },
+        {
+          "id": "6e19681f-bdb2-504f-bb37-5a3d946a5db5",
+          "score": 0.46779701113700867
+        },
+        {
+          "id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+          "score": 0.4443029463291168
+        },
+        {
+          "id": "eeb119ee-e1d8-51c7-895b-d0120b80d410",
+          "score": 0.4165826439857483
+        }
+      ],
+      "bm25_analyzer_token_count": 8,
+      "bm25_empty_is_valid": false,
+      "bm25_smoke": [
+        {
+          "id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+          "score": 9.39931583404541
+        },
+        {
+          "id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+          "score": 1.128037452697754
+        },
+        {
+          "id": "eeb119ee-e1d8-51c7-895b-d0120b80d410",
+          "score": 0.45117825269699097
+        },
+        {
+          "id": "6e19681f-bdb2-504f-bb37-5a3d946a5db5",
+          "score": 0.10795844346284866
+        }
+      ],
+      "server_version": "3.0.1",
+      "client_version": "3.0.2",
+      "manifest_hash": "a95099db2f595cc685f52737ba3d25f843b2483beead896e1de6fa7ac17b8442",
+      "expected_hash": "2ba037bab2192369e8925d1261d56f307b3a7df49ecf6fb597293dff1815466c",
+      "schema_hash": "1d7f3fc48f26911c7df475b2018dd896a92edc67ed7b2b78bf82d24658cc8e2b",
+      "validation_version": 1
+    },
+    "metrics": {
+      "build_seconds": 11.335786600000574,
+      "reused_vectors": 2,
+      "encoded_vectors": 2,
+      "documents": 4,
+      "chunks": 4,
+      "flush_seconds": 1.5879665999964345,
+      "index_seconds": 1.2201760999887483,
+      "load_sealed_reload_seconds": 5.344322100005229
+    }
+  },
+  "publication_gate": {
+    "time": "2026-09-22T18:28:08.843993+00:00",
+    "receipt": {
+      "batch_id": "c5d41c6c-d91a-41b2-a044-3818ef18a514",
+      "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+      "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "artifact_id": "e9ab565b-4f02-4821-a2d6-366b8c520173",
+      "owner_nonce": "e4491a18-e62b-435d-9f29-ba3ff781c6e1",
+      "owner_epoch": 2,
+      "manifest_hash": "a95099db2f595cc685f52737ba3d25f843b2483beead896e1de6fa7ac17b8442",
+      "published_at": "2026-09-22T18:28:08.812368+00:00"
+    }
+  },
+  "new_run": {
+    "started_at": "2026-09-22T18:28:09.639068+00:00",
+    "run": {
+      "schema_version": 1,
+      "run_id": "97ea1990-7657-44cc-941b-4d3ff49d359d",
+      "parent_run_id": null,
+      "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+      "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "resolved_config": {
+        "schema_version": 1,
+        "feature": "knowledge",
+        "task_kind": "qa",
+        "knowledge": {
+          "schema_version": 1,
+          "parameter_status": "experiment",
+          "storage": {
+            "schema_version": 1,
+            "data_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\data",
+            "milvus_uri": "http://127.0.0.1:19542",
+            "namespace": "r13_acceptance",
+            "credential_ref": null
+          },
+          "processing": {
+            "schema_version": 1,
+            "parser": {
+              "schema_version": 1,
+              "implementation": "markdown_it_txt",
+              "version": "markdown-it-py-4.0.0+source-v1",
+              "normalization_version": "utf8-bom-newlines-v1",
+              "encoding": "utf-8"
+            },
+            "chunker": {
+              "schema_version": 1,
+              "implementation": "structure_sentence_token",
+              "version": "canonical-offsets-v1",
+              "max_tokens": 512,
+              "overlap_tokens": 64
+            },
+            "index": {
+              "schema_version": 1,
+              "schema_version_name": "uuid1024-bm25-utf8-v1",
+              "dense_index": "IVF_FLAT",
+              "dense_metric": "COSINE",
+              "nlist": 1,
+              "sparse_index": "SPARSE_INVERTED_INDEX",
+              "sparse_algorithm": "DAAT_MAXSCORE",
+              "tokenizer": "standard",
+              "filters": [
+                "lowercase"
+              ],
+              "bm25_k1": 1.2,
+              "bm25_b": 0.75
+            }
+          },
+          "models": {
+            "schema_version": 1,
+            "embedding": "embed",
+            "reranker": "rank"
+          },
+          "model_profiles": [
+            {
+              "schema_version": 1,
+              "name": "embed",
+              "backend": "qwen3_local",
+              "runtime": {
+                "schema_version": 1,
+                "dtype": "bfloat16",
+                "attention": "sdpa",
+                "device": "cuda:0",
+                "implementation": "transformers",
+                "torch_version": "2.14.0+cu130",
+                "transformers_version": "5.17.0",
+                "tokenizers_version": "0.23.2",
+                "use_cache": false,
+                "trust_remote_code": false,
+                "local_files_only": true,
+                "allocator_cap_mib": 2048
+              },
+              "limits": {
+                "schema_version": 1,
+                "max_input_tokens": 2048,
+                "max_batch_size": 4,
+                "max_padded_tokens": 4096
+              },
+              "document_template": "title_text_v1",
+              "document_with_title": "Title: {title}\n{text}",
+              "document_without_title": "{text}",
+              "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+              "capability": "embedding",
+              "model": "Qwen/Qwen3-Embedding-0.6B",
+              "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+              "tokenizer": {
+                "schema_version": 1,
+                "model": "Qwen/Qwen3-Embedding-0.6B",
+                "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+                "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+                "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                "padding_side": "left",
+                "truncation": false
+              },
+              "query_template": "Instruct: {instruction}\nQuery:{query}",
+              "add_special_tokens": true,
+              "dimension": 1024,
+              "pooling": "last_nonpadding_token",
+              "normalization": "float32_L2"
+            },
+            {
+              "schema_version": 1,
+              "name": "rank",
+              "backend": "qwen3_local",
+              "runtime": {
+                "schema_version": 1,
+                "dtype": "bfloat16",
+                "attention": "sdpa",
+                "device": "cuda:0",
+                "implementation": "transformers",
+                "torch_version": "2.14.0+cu130",
+                "transformers_version": "5.17.0",
+                "tokenizers_version": "0.23.2",
+                "use_cache": false,
+                "trust_remote_code": false,
+                "local_files_only": true,
+                "allocator_cap_mib": 2048
+              },
+              "limits": {
+                "schema_version": 1,
+                "max_input_tokens": 2048,
+                "max_batch_size": 4,
+                "max_padded_tokens": 4096
+              },
+              "document_template": "title_text_v1",
+              "document_with_title": "Title: {title}\n{text}",
+              "document_without_title": "{text}",
+              "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+              "capability": "rerank",
+              "model": "Qwen/Qwen3-Reranker-0.6B",
+              "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+              "tokenizer": {
+                "schema_version": 1,
+                "model": "Qwen/Qwen3-Reranker-0.6B",
+                "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+                "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+                "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                "padding_side": "left",
+                "truncation": false
+              },
+              "add_special_tokens": false,
+              "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+              "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+              "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+              "score_type": "softmax_float32([no,yes])[yes]",
+              "logits_to_keep": 1
+            }
+          ],
+          "retrieval": {
+            "schema_version": 1,
+            "mode": "fixed",
+            "route": "dense",
+            "rerank": false,
+            "dense_candidates": 50,
+            "bm25_candidates": 50,
+            "rerank_candidates": 50,
+            "rrf_k": 60,
+            "nprobe": 1,
+            "context_chunks": 32,
+            "context_tokens": 50000
+          },
+          "budgets": {
+            "schema_version": 1,
+            "qa": {
+              "schema_version": 1,
+              "searches": 10,
+              "opens": 20,
+              "total_tokens": 200000,
+              "duration_ms": 300000,
+              "finish_reserve_tokens": 3000,
+              "finish_reserve_ms": 20000
+            },
+            "report": {
+              "schema_version": 1,
+              "searches": 7,
+              "opens": 9,
+              "total_tokens": 36000,
+              "duration_ms": 360000,
+              "finish_reserve_tokens": 6000,
+              "finish_reserve_ms": 40000
+            }
+          }
+        },
+        "retrieval": {
+          "schema_version": 1,
+          "mode": "fixed",
+          "route": "dense",
+          "rerank": false,
+          "dense_candidates": 50,
+          "bm25_candidates": 50,
+          "rerank_candidates": 50,
+          "rrf_k": 60,
+          "nprobe": 1,
+          "context_chunks": 32,
+          "context_tokens": 50000
+        },
+        "budget": {
+          "schema_version": 1,
+          "searches": 10,
+          "opens": 20,
+          "total_tokens": 200000,
+          "duration_ms": 300000,
+          "finish_reserve_tokens": 3000,
+          "finish_reserve_ms": 20000
+        }
+      },
+      "resolved_config_hash": "2f82eb80726e9e264a9ace6859ecb63dbf42531fa6fe7983bec636379405a6bc",
+      "usage": {
+        "schema_version": 1,
+        "searches": 0,
+        "opens": 0,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cached_tokens": null,
+        "total_tokens": null,
+        "elapsed_ms": 0
+      },
+      "status": "running",
+      "stop_reason": null
+    },
+    "pin": {
+      "schema_version": 1,
+      "run_id": "97ea1990-7657-44cc-941b-4d3ff49d359d",
+      "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "owner_nonce": "50378a6d-2f73-4d68-9306-9e8ffa93d117",
+      "state": "active"
+    },
+    "collection": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_21173226b03c41438f6141f5c7328176_e2",
+    "dense": {
+      "run_id": "97ea1990-7657-44cc-941b-4d3ff49d359d",
+      "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "request_id": "6e73d013-647a-410c-9a47-b2dd45e9a807",
+      "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+      "hits": [
+        {
+          "chunk_id": "eeb119ee-e1d8-51c7-895b-d0120b80d410",
+          "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+          "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+          "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+          "document_version_id": "8e3f7cf9-fed8-5093-9a34-483ffe7f211d",
+          "section_id": "5cb15dc1-a574-5477-92bd-69df0df8a15d",
+          "source_name": "update.md",
+          "source_uri": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/update.md",
+          "raw_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+          "parsed_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+          "text_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+          "text": "# Telescope\nTelescope approval now requires the newred certificate.\n",
+          "source_spans": [
+            {
+              "char_start": 0,
+              "char_end": 68
+            }
+          ],
+          "score": 0.5691978931427002,
+          "branch": "dense"
+        },
+        {
+          "chunk_id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+          "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+          "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+          "document_id": "4623b2d7-4127-414b-86a9-87c990b99963",
+          "document_version_id": "1994f293-d8eb-5c3e-ae88-99afa99f57fc",
+          "section_id": "685addb8-d5d0-5776-9ac0-9ae2909ab1c4",
+          "source_name": "keep.md",
+          "source_uri": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/keep.md",
+          "raw_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+          "parsed_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+          "text_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+          "text": "# Mountain\nMountain approval keeps the unchangedviolet archive.\n",
+          "source_spans": [
+            {
+              "char_start": 0,
+              "char_end": 64
+            }
+          ],
+          "score": 0.5646949410438538,
+          "branch": "dense"
+        },
+        {
+          "chunk_id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+          "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+          "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+          "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+          "document_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+          "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+          "source_name": "failed.md",
+          "source_uri": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/failed.md",
+          "raw_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+          "parsed_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+          "text_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+          "text": "# Failed\nFailed update approval keeps the oldsilver report.\n",
+          "source_spans": [
+            {
+              "char_start": 0,
+              "char_end": 60
+            }
+          ],
+          "score": 0.3651406764984131,
+          "branch": "dense"
+        },
+        {
+          "chunk_id": "6e19681f-bdb2-504f-bb37-5a3d946a5db5",
+          "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+          "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+          "document_id": "eb02b8df-c17a-4c2b-81bc-d5cf5929f0e3",
+          "document_version_id": "c6469ffe-754b-5d19-b4fa-185efd20b8b7",
+          "section_id": "247224e7-c04f-5aa1-9a5a-e22af77940be",
+          "source_name": "added.md",
+          "source_uri": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/added.md",
+          "raw_hash": "445c0229eb7aba521d663fcea59818f0439d9e0af002d45a60ce5ba1d5b0589e",
+          "parsed_hash": "445c0229eb7aba521d663fcea59818f0439d9e0af002d45a60ce5ba1d5b0589e",
+          "text_hash": "445c0229eb7aba521d663fcea59818f0439d9e0af002d45a60ce5ba1d5b0589e",
+          "text": "# Island\nIsland approval introduces a newamber record.\n",
+          "source_spans": [
+            {
+              "char_start": 0,
+              "char_end": 55
+            }
+          ],
+          "score": 0.30206188559532166,
+          "branch": "dense"
+        }
+      ],
+      "elapsed_ms": 197.9423000011593,
+      "model_timings": {
+        "schema_version": 1,
+        "queue_ms": 0,
+        "load_ms": 0,
+        "inference_ms": 137
+      }
+    },
+    "source_search": {
+      "schema_version": 1,
+      "call_id": "f6722e84-dfa0-42e6-94d0-abda343df63b",
+      "status": "ok",
+      "run_id": "97ea1990-7657-44cc-941b-4d3ff49d359d",
+      "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "route": {
+        "strategy": "dense",
+        "rerank": false
+      },
+      "items": [
+        {
+          "candidate_id": "be9b706c-fb13-4fcf-912c-7a2659869487",
+          "evidence_id": "b777f766-af3e-47e0-9c50-011f36701526",
+          "source_ref": "src_YcJV3aCurizBSDg7p3RnZXJHvRc4bBA88iwvXUcnZfw",
+          "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+          "document_version_id": "8e3f7cf9-fed8-5093-9a34-483ffe7f211d",
+          "file_name": "update.md",
+          "section_id": "5cb15dc1-a574-5477-92bd-69df0df8a15d",
+          "section_path": [
+            "Telescope"
+          ],
+          "chunk_id": "eeb119ee-e1d8-51c7-895b-d0120b80d410",
+          "returned_spans": [
+            {
+              "schema_version": 1,
+              "start": 0,
+              "end": 68
+            }
+          ],
+          "lines": [
+            1,
+            2
+          ],
+          "text": "# Telescope\nTelescope approval now requires the newred certificate.\n",
+          "citation_marker": "[^b777f766-af3e-47e0-9c50-011f36701526]",
+          "delivery_confirmed": false
+        },
+        {
+          "candidate_id": "29916a51-5f3f-4b2f-ad1d-3e958558fa8b",
+          "evidence_id": "ede3011f-b64c-4266-8cc3-42a11b76f45c",
+          "source_ref": "src_ZloCDpJcxc7z3u-539kJcOoGVxO3fPP0fQII9DtnUzA",
+          "document_id": "4623b2d7-4127-414b-86a9-87c990b99963",
+          "document_version_id": "1994f293-d8eb-5c3e-ae88-99afa99f57fc",
+          "file_name": "keep.md",
+          "section_id": "685addb8-d5d0-5776-9ac0-9ae2909ab1c4",
+          "section_path": [
+            "Mountain"
+          ],
+          "chunk_id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+          "returned_spans": [
+            {
+              "schema_version": 1,
+              "start": 0,
+              "end": 64
+            }
+          ],
+          "lines": [
+            1,
+            2
+          ],
+          "text": "# Mountain\nMountain approval keeps the unchangedviolet archive.\n",
+          "citation_marker": "[^ede3011f-b64c-4266-8cc3-42a11b76f45c]",
+          "delivery_confirmed": false
+        },
+        {
+          "candidate_id": "b57ffd66-d90e-48cf-afd0-7a544e00eef9",
+          "evidence_id": "5bc38ed5-f67c-4b19-87a3-6083b137afd2",
+          "source_ref": "src_TpTgPtoJd1yIoc5uKvi0MIeO0uaPkhW9UWBjZc8WXVI",
+          "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+          "document_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+          "file_name": "failed.md",
+          "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+          "section_path": [
+            "Failed"
+          ],
+          "chunk_id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+          "returned_spans": [
+            {
+              "schema_version": 1,
+              "start": 0,
+              "end": 60
+            }
+          ],
+          "lines": [
+            1,
+            2
+          ],
+          "text": "# Failed\nFailed update approval keeps the oldsilver report.\n",
+          "citation_marker": "[^5bc38ed5-f67c-4b19-87a3-6083b137afd2]",
+          "delivery_confirmed": false
+        },
+        {
+          "candidate_id": "988329b8-b601-46f2-a249-73cb3a5cd1ac",
+          "evidence_id": "56a9d86a-6455-46fb-96f5-227bffad1aed",
+          "source_ref": "src_5gaNdx7setjSmYnINJKzS785vv6zFR8ynLPZeaD9qIY",
+          "document_id": "eb02b8df-c17a-4c2b-81bc-d5cf5929f0e3",
+          "document_version_id": "c6469ffe-754b-5d19-b4fa-185efd20b8b7",
+          "file_name": "added.md",
+          "section_id": "247224e7-c04f-5aa1-9a5a-e22af77940be",
+          "section_path": [
+            "Island"
+          ],
+          "chunk_id": "6e19681f-bdb2-504f-bb37-5a3d946a5db5",
+          "returned_spans": [
+            {
+              "schema_version": 1,
+              "start": 0,
+              "end": 55
+            }
+          ],
+          "lines": [
+            1,
+            2
+          ],
+          "text": "# Island\nIsland approval introduces a newamber record.\n",
+          "citation_marker": "[^56a9d86a-6455-46fb-96f5-227bffad1aed]",
+          "delivery_confirmed": false
+        }
+      ],
+      "limited": {
+        "by_count": false,
+        "by_tokens": false
+      }
+    },
+    "opened": [
+      {
+        "schema_version": 1,
+        "call_id": "d48d7a5c-8d74-4778-86e8-5b9fc961815f",
+        "status": "ok",
+        "run_id": "97ea1990-7657-44cc-941b-4d3ff49d359d",
+        "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+        "section_id": "5cb15dc1-a574-5477-92bd-69df0df8a15d",
+        "navigation": [
+          {
+            "section_id": "5cb15dc1-a574-5477-92bd-69df0df8a15d",
+            "section_path": [
+              "Telescope"
+            ],
+            "span": {
+              "schema_version": 1,
+              "start": 0,
+              "end": 68
+            },
+            "parent_section_id": null,
+            "subtree_span": {
+              "schema_version": 1,
+              "start": 0,
+              "end": 68
+            },
+            "has_body": true
+          }
+        ],
+        "navigation_status": {
+          "position": 0,
+          "total_sections": 1,
+          "previous_section_id": null,
+          "next_section_id": null,
+          "unlisted_before": 0,
+          "unlisted_after": 0
+        },
+        "items": [
+          {
+            "candidate_id": "b09717eb-4f9d-425c-a7f3-bbb9f1d04641",
+            "evidence_id": "7a4f6715-dbcb-49a1-b80d-e9f6a51c2f2c",
+            "source_ref": "src_YcJV3aCurizBSDg7p3RnZXJHvRc4bBA88iwvXUcnZfw",
+            "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+            "document_version_id": "8e3f7cf9-fed8-5093-9a34-483ffe7f211d",
+            "file_name": "update.md",
+            "section_id": "5cb15dc1-a574-5477-92bd-69df0df8a15d",
+            "section_path": [
+              "Telescope"
+            ],
+            "chunk_id": null,
+            "returned_spans": [
+              {
+                "schema_version": 1,
+                "start": 0,
+                "end": 68
+              }
+            ],
+            "lines": [
+              1,
+              2
+            ],
+            "text": "# Telescope\nTelescope approval now requires the newred certificate.\n",
+            "citation_marker": "[^7a4f6715-dbcb-49a1-b80d-e9f6a51c2f2c]",
+            "delivery_confirmed": false
+          }
+        ],
+        "next_cursor": null,
+        "previous_cursor": null,
+        "has_more": false,
+        "unread_spans": [],
+        "has_unread": false,
+        "unread_means": "not_returned_by_source_tools",
+        "returned_spans": [
+          {
+            "schema_version": 1,
+            "start": 0,
+            "end": 68
+          }
+        ]
+      },
+      {
+        "schema_version": 1,
+        "call_id": "0f9e6689-cad7-415d-aa63-47daed452eea",
+        "status": "ok",
+        "run_id": "97ea1990-7657-44cc-941b-4d3ff49d359d",
+        "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+        "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+        "navigation": [
+          {
+            "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+            "section_path": [
+              "Failed"
+            ],
+            "span": {
+              "schema_version": 1,
+              "start": 0,
+              "end": 60
+            },
+            "parent_section_id": null,
+            "subtree_span": {
+              "schema_version": 1,
+              "start": 0,
+              "end": 60
+            },
+            "has_body": true
+          }
+        ],
+        "navigation_status": {
+          "position": 0,
+          "total_sections": 1,
+          "previous_section_id": null,
+          "next_section_id": null,
+          "unlisted_before": 0,
+          "unlisted_after": 0
+        },
+        "items": [
+          {
+            "candidate_id": "f8059f49-f28d-4838-abff-e2c61f911033",
+            "evidence_id": "bce39c92-b9b7-442a-89f6-d4d504a0b9fd",
+            "source_ref": "src_TpTgPtoJd1yIoc5uKvi0MIeO0uaPkhW9UWBjZc8WXVI",
+            "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+            "document_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+            "file_name": "failed.md",
+            "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+            "section_path": [
+              "Failed"
+            ],
+            "chunk_id": null,
+            "returned_spans": [
+              {
+                "schema_version": 1,
+                "start": 0,
+                "end": 60
+              }
+            ],
+            "lines": [
+              1,
+              2
+            ],
+            "text": "# Failed\nFailed update approval keeps the oldsilver report.\n",
+            "citation_marker": "[^bce39c92-b9b7-442a-89f6-d4d504a0b9fd]",
+            "delivery_confirmed": false
+          }
+        ],
+        "next_cursor": null,
+        "previous_cursor": null,
+        "has_more": false,
+        "unread_spans": [],
+        "has_unread": false,
+        "unread_means": "not_returned_by_source_tools",
+        "returned_spans": [
+          {
+            "schema_version": 1,
+            "start": 0,
+            "end": 60
+          }
+        ]
+      }
+    ],
+    "bm25": {
+      "telescope": [
+        {
+          "id": "eeb119ee-e1d8-51c7-895b-d0120b80d410",
+          "distance": 1.8684061765670776,
+          "entity": {
+            "section_id": "5cb15dc1-a574-5477-92bd-69df0df8a15d",
+            "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+            "span_end": 68,
+            "span_start": 0,
+            "document_version_id": "8e3f7cf9-fed8-5093-9a34-483ffe7f211d",
+            "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+            "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+            "raw_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+            "text_hash": "58dfbf68b90fbc65242979aa0ac6431d40a2fd85f23dffbfa04b5d70e6bcc80e",
+            "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+            "parsed_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+            "body_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+            "vector_hash": "8cfc9991e9b08da6b4f0e12c8d291948c7cbece25803dde71d8cc4ced8565520",
+            "text": "Telescope\n# Telescope\nTelescope approval now requires the newred certificate.\n",
+            "chunk_id": "eeb119ee-e1d8-51c7-895b-d0120b80d410"
+          }
+        }
+      ],
+      "retiredquasar": [],
+      "approval": [
+        {
+          "id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+          "distance": 0.10795844346284866,
+          "entity": {
+            "section_id": "685addb8-d5d0-5776-9ac0-9ae2909ab1c4",
+            "parsed_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+            "raw_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+            "span_end": 64,
+            "document_version_id": "1994f293-d8eb-5c3e-ae88-99afa99f57fc",
+            "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+            "vector_hash": "cb652ddda260e1596ba34ce6f1dbd3d60941ba1e0da8c174df963064034eda26",
+            "span_start": 0,
+            "body_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+            "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+            "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+            "text_hash": "833e9e74e6df224e6ed076177611ad9461f9d486678f6ea89556d36ac5b8a82b",
+            "text": "Mountain\n# Mountain\nMountain approval keeps the unchangedviolet archive.\n",
+            "document_id": "4623b2d7-4127-414b-86a9-87c990b99963",
+            "chunk_id": "1043524b-883d-5562-8c97-ef0d6c8b6142"
+          }
+        },
+        {
+          "id": "6e19681f-bdb2-504f-bb37-5a3d946a5db5",
+          "distance": 0.10795844346284866,
+          "entity": {
+            "section_id": "247224e7-c04f-5aa1-9a5a-e22af77940be",
+            "parsed_hash": "445c0229eb7aba521d663fcea59818f0439d9e0af002d45a60ce5ba1d5b0589e",
+            "raw_hash": "445c0229eb7aba521d663fcea59818f0439d9e0af002d45a60ce5ba1d5b0589e",
+            "span_end": 55,
+            "document_version_id": "c6469ffe-754b-5d19-b4fa-185efd20b8b7",
+            "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+            "vector_hash": "5f1030bafedd169e6af3986b487e41facb173b85b30efde1ee78045afa2c851f",
+            "span_start": 0,
+            "body_hash": "445c0229eb7aba521d663fcea59818f0439d9e0af002d45a60ce5ba1d5b0589e",
+            "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+            "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+            "text_hash": "20a1782f236e0b88c039af5154807240357a83796f494252406a7262dc3524c3",
+            "text": "Island\n# Island\nIsland approval introduces a newamber record.\n",
+            "document_id": "eb02b8df-c17a-4c2b-81bc-d5cf5929f0e3",
+            "chunk_id": "6e19681f-bdb2-504f-bb37-5a3d946a5db5"
+          }
+        },
+        {
+          "id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+          "distance": 0.1028846874833107,
+          "entity": {
+            "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+            "parsed_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+            "raw_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+            "span_end": 60,
+            "document_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+            "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+            "vector_hash": "ac3cc680a9ca5efd179926ccfa8b45a5ad6ea68258a0c1496f587ceb3ffec1c8",
+            "span_start": 0,
+            "body_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+            "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+            "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+            "text_hash": "328e8fd98fe72556eab318ede80a92da1ee8d432c743cc4d26b9340f99d1e2e7",
+            "text": "Failed\n# Failed\nFailed update approval keeps the oldsilver report.\n",
+            "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+            "chunk_id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4"
+          }
+        },
+        {
+          "id": "eeb119ee-e1d8-51c7-895b-d0120b80d410",
+          "distance": 0.1028846874833107,
+          "entity": {
+            "section_id": "5cb15dc1-a574-5477-92bd-69df0df8a15d",
+            "parsed_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+            "raw_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+            "span_end": 68,
+            "document_version_id": "8e3f7cf9-fed8-5093-9a34-483ffe7f211d",
+            "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+            "vector_hash": "8cfc9991e9b08da6b4f0e12c8d291948c7cbece25803dde71d8cc4ced8565520",
+            "span_start": 0,
+            "body_hash": "94a9ac2f251720bcbd3ba1170c78c2a97ec7370b8aaac39109375da9eb590e99",
+            "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+            "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+            "text_hash": "58dfbf68b90fbc65242979aa0ac6431d40a2fd85f23dffbfa04b5d70e6bcc80e",
+            "text": "Telescope\n# Telescope\nTelescope approval now requires the newred certificate.\n",
+            "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+            "chunk_id": "eeb119ee-e1d8-51c7-895b-d0120b80d410"
+          }
+        }
+      ]
+    }
+  },
+  "reader_exit": {
+    "code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "old_run": {
+    "status": "PASS",
+    "identity": {
+      "pid": 71616,
+      "birth": "134345752768731397",
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Scripts\\python.exe",
+      "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke",
+      "package": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\__init__.py",
+      "time": "2026-09-22T18:27:57.419129+00:00",
+      "argv": [
+        "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r13_real_acceptance.py",
+        "reader",
+        "--root",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke"
+      ],
+      "packages": {
+        "codeplus-agentic-rag": "0.1.0",
+        "pydantic": "2.13.5",
+        "apsw": "3.53.4.0",
+        "tokenizers": "0.23.2",
+        "pymilvus": "3.0.2"
+      }
+    },
+    "pinned_before_gate": {
+      "identity": {
+        "pid": 71616,
+        "birth": "134345752768731397",
+        "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Scripts\\python.exe",
+        "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke",
+        "package": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\__init__.py",
+        "time": "2026-09-22T18:27:57.446710+00:00",
+        "argv": [
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r13_real_acceptance.py",
+          "reader",
+          "--root",
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke"
+        ],
+        "packages": {
+          "codeplus-agentic-rag": "0.1.0",
+          "pydantic": "2.13.5",
+          "apsw": "3.53.4.0",
+          "tokenizers": "0.23.2",
+          "pymilvus": "3.0.2"
+        }
+      },
+      "run": {
+        "schema_version": 1,
+        "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+        "parent_run_id": null,
+        "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+        "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+        "resolved_config": {
+          "schema_version": 1,
+          "feature": "knowledge",
+          "task_kind": "qa",
+          "knowledge": {
+            "schema_version": 1,
+            "parameter_status": "experiment",
+            "storage": {
+              "schema_version": 1,
+              "data_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\data",
+              "milvus_uri": "http://127.0.0.1:19542",
+              "namespace": "r13_acceptance",
+              "credential_ref": null
+            },
+            "processing": {
+              "schema_version": 1,
+              "parser": {
+                "schema_version": 1,
+                "implementation": "markdown_it_txt",
+                "version": "markdown-it-py-4.0.0+source-v1",
+                "normalization_version": "utf8-bom-newlines-v1",
+                "encoding": "utf-8"
+              },
+              "chunker": {
+                "schema_version": 1,
+                "implementation": "structure_sentence_token",
+                "version": "canonical-offsets-v1",
+                "max_tokens": 512,
+                "overlap_tokens": 64
+              },
+              "index": {
+                "schema_version": 1,
+                "schema_version_name": "uuid1024-bm25-utf8-v1",
+                "dense_index": "IVF_FLAT",
+                "dense_metric": "COSINE",
+                "nlist": 1,
+                "sparse_index": "SPARSE_INVERTED_INDEX",
+                "sparse_algorithm": "DAAT_MAXSCORE",
+                "tokenizer": "standard",
+                "filters": [
+                  "lowercase"
+                ],
+                "bm25_k1": 1.2,
+                "bm25_b": 0.75
+              }
+            },
+            "models": {
+              "schema_version": 1,
+              "embedding": "embed",
+              "reranker": "rank"
+            },
+            "model_profiles": [
+              {
+                "schema_version": 1,
+                "name": "embed",
+                "backend": "qwen3_local",
+                "runtime": {
+                  "schema_version": 1,
+                  "dtype": "bfloat16",
+                  "attention": "sdpa",
+                  "device": "cuda:0",
+                  "implementation": "transformers",
+                  "torch_version": "2.14.0+cu130",
+                  "transformers_version": "5.17.0",
+                  "tokenizers_version": "0.23.2",
+                  "use_cache": false,
+                  "trust_remote_code": false,
+                  "local_files_only": true,
+                  "allocator_cap_mib": 2048
+                },
+                "limits": {
+                  "schema_version": 1,
+                  "max_input_tokens": 2048,
+                  "max_batch_size": 4,
+                  "max_padded_tokens": 4096
+                },
+                "document_template": "title_text_v1",
+                "document_with_title": "Title: {title}\n{text}",
+                "document_without_title": "{text}",
+                "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+                "capability": "embedding",
+                "model": "Qwen/Qwen3-Embedding-0.6B",
+                "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+                "tokenizer": {
+                  "schema_version": 1,
+                  "model": "Qwen/Qwen3-Embedding-0.6B",
+                  "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+                  "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+                  "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                  "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                  "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                  "padding_side": "left",
+                  "truncation": false
+                },
+                "query_template": "Instruct: {instruction}\nQuery:{query}",
+                "add_special_tokens": true,
+                "dimension": 1024,
+                "pooling": "last_nonpadding_token",
+                "normalization": "float32_L2"
+              },
+              {
+                "schema_version": 1,
+                "name": "rank",
+                "backend": "qwen3_local",
+                "runtime": {
+                  "schema_version": 1,
+                  "dtype": "bfloat16",
+                  "attention": "sdpa",
+                  "device": "cuda:0",
+                  "implementation": "transformers",
+                  "torch_version": "2.14.0+cu130",
+                  "transformers_version": "5.17.0",
+                  "tokenizers_version": "0.23.2",
+                  "use_cache": false,
+                  "trust_remote_code": false,
+                  "local_files_only": true,
+                  "allocator_cap_mib": 2048
+                },
+                "limits": {
+                  "schema_version": 1,
+                  "max_input_tokens": 2048,
+                  "max_batch_size": 4,
+                  "max_padded_tokens": 4096
+                },
+                "document_template": "title_text_v1",
+                "document_with_title": "Title: {title}\n{text}",
+                "document_without_title": "{text}",
+                "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+                "capability": "rerank",
+                "model": "Qwen/Qwen3-Reranker-0.6B",
+                "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+                "tokenizer": {
+                  "schema_version": 1,
+                  "model": "Qwen/Qwen3-Reranker-0.6B",
+                  "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+                  "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+                  "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                  "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                  "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                  "padding_side": "left",
+                  "truncation": false
+                },
+                "add_special_tokens": false,
+                "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+                "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+                "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+                "score_type": "softmax_float32([no,yes])[yes]",
+                "logits_to_keep": 1
+              }
+            ],
+            "retrieval": {
+              "schema_version": 1,
+              "mode": "fixed",
+              "route": "dense",
+              "rerank": false,
+              "dense_candidates": 50,
+              "bm25_candidates": 50,
+              "rerank_candidates": 50,
+              "rrf_k": 60,
+              "nprobe": 1,
+              "context_chunks": 32,
+              "context_tokens": 50000
+            },
+            "budgets": {
+              "schema_version": 1,
+              "qa": {
+                "schema_version": 1,
+                "searches": 10,
+                "opens": 20,
+                "total_tokens": 200000,
+                "duration_ms": 300000,
+                "finish_reserve_tokens": 3000,
+                "finish_reserve_ms": 20000
+              },
+              "report": {
+                "schema_version": 1,
+                "searches": 7,
+                "opens": 9,
+                "total_tokens": 36000,
+                "duration_ms": 360000,
+                "finish_reserve_tokens": 6000,
+                "finish_reserve_ms": 40000
+              }
+            }
+          },
+          "retrieval": {
+            "schema_version": 1,
+            "mode": "fixed",
+            "route": "dense",
+            "rerank": false,
+            "dense_candidates": 50,
+            "bm25_candidates": 50,
+            "rerank_candidates": 50,
+            "rrf_k": 60,
+            "nprobe": 1,
+            "context_chunks": 32,
+            "context_tokens": 50000
+          },
+          "budget": {
+            "schema_version": 1,
+            "searches": 10,
+            "opens": 20,
+            "total_tokens": 200000,
+            "duration_ms": 300000,
+            "finish_reserve_tokens": 3000,
+            "finish_reserve_ms": 20000
+          }
+        },
+        "resolved_config_hash": "2f82eb80726e9e264a9ace6859ecb63dbf42531fa6fe7983bec636379405a6bc",
+        "usage": {
+          "schema_version": 1,
+          "searches": 0,
+          "opens": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "cached_tokens": null,
+          "total_tokens": null,
+          "elapsed_ms": 0
+        },
+        "status": "running",
+        "stop_reason": null
+      },
+      "pin": {
+        "schema_version": 1,
+        "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+        "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+        "owner_nonce": "7db9b278-25b9-4c39-af69-cdbec9f44418",
+        "state": "active"
+      },
+      "prior_search_calls": 0,
+      "prior_source_reads": 0
+    },
+    "gate": {
+      "time": "2026-09-22T18:28:08.843993+00:00",
+      "receipt": {
+        "batch_id": "c5d41c6c-d91a-41b2-a044-3818ef18a514",
+        "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+        "revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+        "artifact_id": "e9ab565b-4f02-4821-a2d6-366b8c520173",
+        "owner_nonce": "e4491a18-e62b-435d-9f29-ba3ff781c6e1",
+        "owner_epoch": 2,
+        "manifest_hash": "a95099db2f595cc685f52737ba3d25f843b2483beead896e1de6fa7ac17b8442",
+        "published_at": "2026-09-22T18:28:08.812368+00:00"
+      }
+    },
+    "gate_observed_at": "2026-09-22T18:28:08.865035+00:00",
+    "read_after_gate": {
+      "started_at": "2026-09-22T18:28:12.072246+00:00",
+      "run": {
+        "schema_version": 1,
+        "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+        "parent_run_id": null,
+        "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+        "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+        "resolved_config": {
+          "schema_version": 1,
+          "feature": "knowledge",
+          "task_kind": "qa",
+          "knowledge": {
+            "schema_version": 1,
+            "parameter_status": "experiment",
+            "storage": {
+              "schema_version": 1,
+              "data_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\data",
+              "milvus_uri": "http://127.0.0.1:19542",
+              "namespace": "r13_acceptance",
+              "credential_ref": null
+            },
+            "processing": {
+              "schema_version": 1,
+              "parser": {
+                "schema_version": 1,
+                "implementation": "markdown_it_txt",
+                "version": "markdown-it-py-4.0.0+source-v1",
+                "normalization_version": "utf8-bom-newlines-v1",
+                "encoding": "utf-8"
+              },
+              "chunker": {
+                "schema_version": 1,
+                "implementation": "structure_sentence_token",
+                "version": "canonical-offsets-v1",
+                "max_tokens": 512,
+                "overlap_tokens": 64
+              },
+              "index": {
+                "schema_version": 1,
+                "schema_version_name": "uuid1024-bm25-utf8-v1",
+                "dense_index": "IVF_FLAT",
+                "dense_metric": "COSINE",
+                "nlist": 1,
+                "sparse_index": "SPARSE_INVERTED_INDEX",
+                "sparse_algorithm": "DAAT_MAXSCORE",
+                "tokenizer": "standard",
+                "filters": [
+                  "lowercase"
+                ],
+                "bm25_k1": 1.2,
+                "bm25_b": 0.75
+              }
+            },
+            "models": {
+              "schema_version": 1,
+              "embedding": "embed",
+              "reranker": "rank"
+            },
+            "model_profiles": [
+              {
+                "schema_version": 1,
+                "name": "embed",
+                "backend": "qwen3_local",
+                "runtime": {
+                  "schema_version": 1,
+                  "dtype": "bfloat16",
+                  "attention": "sdpa",
+                  "device": "cuda:0",
+                  "implementation": "transformers",
+                  "torch_version": "2.14.0+cu130",
+                  "transformers_version": "5.17.0",
+                  "tokenizers_version": "0.23.2",
+                  "use_cache": false,
+                  "trust_remote_code": false,
+                  "local_files_only": true,
+                  "allocator_cap_mib": 2048
+                },
+                "limits": {
+                  "schema_version": 1,
+                  "max_input_tokens": 2048,
+                  "max_batch_size": 4,
+                  "max_padded_tokens": 4096
+                },
+                "document_template": "title_text_v1",
+                "document_with_title": "Title: {title}\n{text}",
+                "document_without_title": "{text}",
+                "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+                "capability": "embedding",
+                "model": "Qwen/Qwen3-Embedding-0.6B",
+                "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+                "tokenizer": {
+                  "schema_version": 1,
+                  "model": "Qwen/Qwen3-Embedding-0.6B",
+                  "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+                  "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+                  "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                  "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                  "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                  "padding_side": "left",
+                  "truncation": false
+                },
+                "query_template": "Instruct: {instruction}\nQuery:{query}",
+                "add_special_tokens": true,
+                "dimension": 1024,
+                "pooling": "last_nonpadding_token",
+                "normalization": "float32_L2"
+              },
+              {
+                "schema_version": 1,
+                "name": "rank",
+                "backend": "qwen3_local",
+                "runtime": {
+                  "schema_version": 1,
+                  "dtype": "bfloat16",
+                  "attention": "sdpa",
+                  "device": "cuda:0",
+                  "implementation": "transformers",
+                  "torch_version": "2.14.0+cu130",
+                  "transformers_version": "5.17.0",
+                  "tokenizers_version": "0.23.2",
+                  "use_cache": false,
+                  "trust_remote_code": false,
+                  "local_files_only": true,
+                  "allocator_cap_mib": 2048
+                },
+                "limits": {
+                  "schema_version": 1,
+                  "max_input_tokens": 2048,
+                  "max_batch_size": 4,
+                  "max_padded_tokens": 4096
+                },
+                "document_template": "title_text_v1",
+                "document_with_title": "Title: {title}\n{text}",
+                "document_without_title": "{text}",
+                "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+                "capability": "rerank",
+                "model": "Qwen/Qwen3-Reranker-0.6B",
+                "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+                "tokenizer": {
+                  "schema_version": 1,
+                  "model": "Qwen/Qwen3-Reranker-0.6B",
+                  "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+                  "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+                  "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                  "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                  "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                  "padding_side": "left",
+                  "truncation": false
+                },
+                "add_special_tokens": false,
+                "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+                "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+                "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+                "score_type": "softmax_float32([no,yes])[yes]",
+                "logits_to_keep": 1
+              }
+            ],
+            "retrieval": {
+              "schema_version": 1,
+              "mode": "fixed",
+              "route": "dense",
+              "rerank": false,
+              "dense_candidates": 50,
+              "bm25_candidates": 50,
+              "rerank_candidates": 50,
+              "rrf_k": 60,
+              "nprobe": 1,
+              "context_chunks": 32,
+              "context_tokens": 50000
+            },
+            "budgets": {
+              "schema_version": 1,
+              "qa": {
+                "schema_version": 1,
+                "searches": 10,
+                "opens": 20,
+                "total_tokens": 200000,
+                "duration_ms": 300000,
+                "finish_reserve_tokens": 3000,
+                "finish_reserve_ms": 20000
+              },
+              "report": {
+                "schema_version": 1,
+                "searches": 7,
+                "opens": 9,
+                "total_tokens": 36000,
+                "duration_ms": 360000,
+                "finish_reserve_tokens": 6000,
+                "finish_reserve_ms": 40000
+              }
+            }
+          },
+          "retrieval": {
+            "schema_version": 1,
+            "mode": "fixed",
+            "route": "dense",
+            "rerank": false,
+            "dense_candidates": 50,
+            "bm25_candidates": 50,
+            "rerank_candidates": 50,
+            "rrf_k": 60,
+            "nprobe": 1,
+            "context_chunks": 32,
+            "context_tokens": 50000
+          },
+          "budget": {
+            "schema_version": 1,
+            "searches": 10,
+            "opens": 20,
+            "total_tokens": 200000,
+            "duration_ms": 300000,
+            "finish_reserve_tokens": 3000,
+            "finish_reserve_ms": 20000
+          }
+        },
+        "resolved_config_hash": "2f82eb80726e9e264a9ace6859ecb63dbf42531fa6fe7983bec636379405a6bc",
+        "usage": {
+          "schema_version": 1,
+          "searches": 0,
+          "opens": 0,
+          "input_tokens": null,
+          "output_tokens": null,
+          "cached_tokens": null,
+          "total_tokens": null,
+          "elapsed_ms": 0
+        },
+        "status": "running",
+        "stop_reason": null
+      },
+      "pin": {
+        "schema_version": 1,
+        "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+        "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+        "owner_nonce": "7db9b278-25b9-4c39-af69-cdbec9f44418",
+        "state": "active"
+      },
+      "collection": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_ec3d797e96d74049bbfaa82324c269eb_e1",
+      "dense": {
+        "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+        "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+        "request_id": "8000d537-e09c-43d8-9df6-0695d6463fb4",
+        "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+        "hits": [
+          {
+            "chunk_id": "bb982414-0c0c-5a07-9b5b-4a472b38fab7",
+            "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+            "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+            "document_id": "cbb62631-9649-4b95-b082-929868824bb8",
+            "document_version_id": "278ba6da-d2f9-5a5f-9f1c-aaa6103dd354",
+            "section_id": "6a17a7bb-5856-5d16-8275-20c950a998bf",
+            "source_name": "delete.md",
+            "source_uri": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/delete.md",
+            "raw_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+            "parsed_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+            "text_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+            "text": "# Retired\nRetiredquasar approval uses the legacygreen certificate.\n",
+            "source_spans": [
+              {
+                "char_start": 0,
+                "char_end": 67
+              }
+            ],
+            "score": 0.6213244199752808,
+            "branch": "dense"
+          },
+          {
+            "chunk_id": "80ab1406-1ffb-515a-b9d6-d37875b5131f",
+            "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+            "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+            "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+            "document_version_id": "864fcaf6-fe9d-505e-9c7c-eae4e6f9dec4",
+            "section_id": "eaf99d8a-d544-59b2-ae69-805463e5a248",
+            "source_name": "update.md",
+            "source_uri": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/update.md",
+            "raw_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+            "parsed_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+            "text_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+            "text": "# Telescope\nTelescope approval uses the oldblue certificate.\n",
+            "source_spans": [
+              {
+                "char_start": 0,
+                "char_end": 61
+              }
+            ],
+            "score": 0.5708172917366028,
+            "branch": "dense"
+          },
+          {
+            "chunk_id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+            "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+            "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+            "document_id": "4623b2d7-4127-414b-86a9-87c990b99963",
+            "document_version_id": "1994f293-d8eb-5c3e-ae88-99afa99f57fc",
+            "section_id": "685addb8-d5d0-5776-9ac0-9ae2909ab1c4",
+            "source_name": "keep.md",
+            "source_uri": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/keep.md",
+            "raw_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+            "parsed_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+            "text_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+            "text": "# Mountain\nMountain approval keeps the unchangedviolet archive.\n",
+            "source_spans": [
+              {
+                "char_start": 0,
+                "char_end": 64
+              }
+            ],
+            "score": 0.5646949410438538,
+            "branch": "dense"
+          },
+          {
+            "chunk_id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+            "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+            "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+            "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+            "document_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+            "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+            "source_name": "failed.md",
+            "source_uri": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/failed.md",
+            "raw_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+            "parsed_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+            "text_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+            "text": "# Failed\nFailed update approval keeps the oldsilver report.\n",
+            "source_spans": [
+              {
+                "char_start": 0,
+                "char_end": 60
+              }
+            ],
+            "score": 0.3651406764984131,
+            "branch": "dense"
+          }
+        ],
+        "elapsed_ms": 799.6465000032913,
+        "model_timings": {
+          "schema_version": 1,
+          "queue_ms": 0,
+          "load_ms": 0,
+          "inference_ms": 137
+        }
+      },
+      "source_search": {
+        "schema_version": 1,
+        "call_id": "1309e17d-ba19-4f89-be6a-0137f3c72b0f",
+        "status": "ok",
+        "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+        "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+        "route": {
+          "strategy": "dense",
+          "rerank": false
+        },
+        "items": [
+          {
+            "candidate_id": "a4b04546-7a25-4844-b2d9-6e59488b75f0",
+            "evidence_id": "7718915c-3732-4908-bb7b-0e4fb5037feb",
+            "source_ref": "src_x5qkJQRzD7IZc4Carfh8E4UW7EhZfZldXwBNRnbM3W4",
+            "document_id": "cbb62631-9649-4b95-b082-929868824bb8",
+            "document_version_id": "278ba6da-d2f9-5a5f-9f1c-aaa6103dd354",
+            "file_name": "delete.md",
+            "section_id": "6a17a7bb-5856-5d16-8275-20c950a998bf",
+            "section_path": [
+              "Retired"
+            ],
+            "chunk_id": "bb982414-0c0c-5a07-9b5b-4a472b38fab7",
+            "returned_spans": [
+              {
+                "schema_version": 1,
+                "start": 0,
+                "end": 67
+              }
+            ],
+            "lines": [
+              1,
+              2
+            ],
+            "text": "# Retired\nRetiredquasar approval uses the legacygreen certificate.\n",
+            "citation_marker": "[^7718915c-3732-4908-bb7b-0e4fb5037feb]",
+            "delivery_confirmed": false
+          },
+          {
+            "candidate_id": "79ec0957-2229-4600-8418-0dd05508d389",
+            "evidence_id": "e745d3a7-4107-4621-97d9-012a9d37709d",
+            "source_ref": "src_CPk_hWiGOVDS-xG-BS-xC99Bj2pwVlfuEaFp2UfeQ_o",
+            "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+            "document_version_id": "864fcaf6-fe9d-505e-9c7c-eae4e6f9dec4",
+            "file_name": "update.md",
+            "section_id": "eaf99d8a-d544-59b2-ae69-805463e5a248",
+            "section_path": [
+              "Telescope"
+            ],
+            "chunk_id": "80ab1406-1ffb-515a-b9d6-d37875b5131f",
+            "returned_spans": [
+              {
+                "schema_version": 1,
+                "start": 0,
+                "end": 61
+              }
+            ],
+            "lines": [
+              1,
+              2
+            ],
+            "text": "# Telescope\nTelescope approval uses the oldblue certificate.\n",
+            "citation_marker": "[^e745d3a7-4107-4621-97d9-012a9d37709d]",
+            "delivery_confirmed": false
+          },
+          {
+            "candidate_id": "1ac21182-373d-4637-aa0c-f01baba867d4",
+            "evidence_id": "c65fd9b9-c5b5-497a-989f-5422ed46cf1d",
+            "source_ref": "src_m-ZgKVgTNVjHc0HlXRF8Sl411nR3xzHfkk7fizlXPzk",
+            "document_id": "4623b2d7-4127-414b-86a9-87c990b99963",
+            "document_version_id": "1994f293-d8eb-5c3e-ae88-99afa99f57fc",
+            "file_name": "keep.md",
+            "section_id": "685addb8-d5d0-5776-9ac0-9ae2909ab1c4",
+            "section_path": [
+              "Mountain"
+            ],
+            "chunk_id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+            "returned_spans": [
+              {
+                "schema_version": 1,
+                "start": 0,
+                "end": 64
+              }
+            ],
+            "lines": [
+              1,
+              2
+            ],
+            "text": "# Mountain\nMountain approval keeps the unchangedviolet archive.\n",
+            "citation_marker": "[^c65fd9b9-c5b5-497a-989f-5422ed46cf1d]",
+            "delivery_confirmed": false
+          },
+          {
+            "candidate_id": "4a119329-f7ea-43d6-891e-394302ca3f3c",
+            "evidence_id": "f8daa447-d26c-404b-822f-31d72921ef66",
+            "source_ref": "src_xEWCOHMp3ChGbwbfQG3xzw8ytzstE70bKASCNAJP2cs",
+            "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+            "document_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+            "file_name": "failed.md",
+            "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+            "section_path": [
+              "Failed"
+            ],
+            "chunk_id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+            "returned_spans": [
+              {
+                "schema_version": 1,
+                "start": 0,
+                "end": 60
+              }
+            ],
+            "lines": [
+              1,
+              2
+            ],
+            "text": "# Failed\nFailed update approval keeps the oldsilver report.\n",
+            "citation_marker": "[^f8daa447-d26c-404b-822f-31d72921ef66]",
+            "delivery_confirmed": false
+          }
+        ],
+        "limited": {
+          "by_count": false,
+          "by_tokens": false
+        }
+      },
+      "opened": [
+        {
+          "schema_version": 1,
+          "call_id": "81197087-4810-4aeb-8937-14d27c200a9f",
+          "status": "ok",
+          "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+          "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+          "section_id": "6a17a7bb-5856-5d16-8275-20c950a998bf",
+          "navigation": [
+            {
+              "section_id": "6a17a7bb-5856-5d16-8275-20c950a998bf",
+              "section_path": [
+                "Retired"
+              ],
+              "span": {
+                "schema_version": 1,
+                "start": 0,
+                "end": 67
+              },
+              "parent_section_id": null,
+              "subtree_span": {
+                "schema_version": 1,
+                "start": 0,
+                "end": 67
+              },
+              "has_body": true
+            }
+          ],
+          "navigation_status": {
+            "position": 0,
+            "total_sections": 1,
+            "previous_section_id": null,
+            "next_section_id": null,
+            "unlisted_before": 0,
+            "unlisted_after": 0
+          },
+          "items": [
+            {
+              "candidate_id": "ae9718a2-5baa-4dec-8214-ce93a1e1b1e3",
+              "evidence_id": "af120d4e-bfe3-41ff-a155-40ea2f8994b9",
+              "source_ref": "src_x5qkJQRzD7IZc4Carfh8E4UW7EhZfZldXwBNRnbM3W4",
+              "document_id": "cbb62631-9649-4b95-b082-929868824bb8",
+              "document_version_id": "278ba6da-d2f9-5a5f-9f1c-aaa6103dd354",
+              "file_name": "delete.md",
+              "section_id": "6a17a7bb-5856-5d16-8275-20c950a998bf",
+              "section_path": [
+                "Retired"
+              ],
+              "chunk_id": null,
+              "returned_spans": [
+                {
+                  "schema_version": 1,
+                  "start": 0,
+                  "end": 67
+                }
+              ],
+              "lines": [
+                1,
+                2
+              ],
+              "text": "# Retired\nRetiredquasar approval uses the legacygreen certificate.\n",
+              "citation_marker": "[^af120d4e-bfe3-41ff-a155-40ea2f8994b9]",
+              "delivery_confirmed": false
+            }
+          ],
+          "next_cursor": null,
+          "previous_cursor": null,
+          "has_more": false,
+          "unread_spans": [],
+          "has_unread": false,
+          "unread_means": "not_returned_by_source_tools",
+          "returned_spans": [
+            {
+              "schema_version": 1,
+              "start": 0,
+              "end": 67
+            }
+          ]
+        },
+        {
+          "schema_version": 1,
+          "call_id": "225be55d-3055-416e-b3b1-638ab0926f43",
+          "status": "ok",
+          "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+          "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+          "section_id": "eaf99d8a-d544-59b2-ae69-805463e5a248",
+          "navigation": [
+            {
+              "section_id": "eaf99d8a-d544-59b2-ae69-805463e5a248",
+              "section_path": [
+                "Telescope"
+              ],
+              "span": {
+                "schema_version": 1,
+                "start": 0,
+                "end": 61
+              },
+              "parent_section_id": null,
+              "subtree_span": {
+                "schema_version": 1,
+                "start": 0,
+                "end": 61
+              },
+              "has_body": true
+            }
+          ],
+          "navigation_status": {
+            "position": 0,
+            "total_sections": 1,
+            "previous_section_id": null,
+            "next_section_id": null,
+            "unlisted_before": 0,
+            "unlisted_after": 0
+          },
+          "items": [
+            {
+              "candidate_id": "1ef03bea-3738-42fc-8965-a3fdc2f8ed1c",
+              "evidence_id": "6970be84-0b1b-46b7-934a-6cd738f7bf8e",
+              "source_ref": "src_CPk_hWiGOVDS-xG-BS-xC99Bj2pwVlfuEaFp2UfeQ_o",
+              "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+              "document_version_id": "864fcaf6-fe9d-505e-9c7c-eae4e6f9dec4",
+              "file_name": "update.md",
+              "section_id": "eaf99d8a-d544-59b2-ae69-805463e5a248",
+              "section_path": [
+                "Telescope"
+              ],
+              "chunk_id": null,
+              "returned_spans": [
+                {
+                  "schema_version": 1,
+                  "start": 0,
+                  "end": 61
+                }
+              ],
+              "lines": [
+                1,
+                2
+              ],
+              "text": "# Telescope\nTelescope approval uses the oldblue certificate.\n",
+              "citation_marker": "[^6970be84-0b1b-46b7-934a-6cd738f7bf8e]",
+              "delivery_confirmed": false
+            }
+          ],
+          "next_cursor": null,
+          "previous_cursor": null,
+          "has_more": false,
+          "unread_spans": [],
+          "has_unread": false,
+          "unread_means": "not_returned_by_source_tools",
+          "returned_spans": [
+            {
+              "schema_version": 1,
+              "start": 0,
+              "end": 61
+            }
+          ]
+        },
+        {
+          "schema_version": 1,
+          "call_id": "3b3c2310-0ebc-470a-9a6d-e4895951ab69",
+          "status": "ok",
+          "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+          "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+          "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+          "navigation": [
+            {
+              "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+              "section_path": [
+                "Failed"
+              ],
+              "span": {
+                "schema_version": 1,
+                "start": 0,
+                "end": 60
+              },
+              "parent_section_id": null,
+              "subtree_span": {
+                "schema_version": 1,
+                "start": 0,
+                "end": 60
+              },
+              "has_body": true
+            }
+          ],
+          "navigation_status": {
+            "position": 0,
+            "total_sections": 1,
+            "previous_section_id": null,
+            "next_section_id": null,
+            "unlisted_before": 0,
+            "unlisted_after": 0
+          },
+          "items": [
+            {
+              "candidate_id": "7be46b3a-6094-4fc6-a0eb-15e38aa94f07",
+              "evidence_id": "100d06f3-d30c-4518-b74d-709af1d38662",
+              "source_ref": "src_xEWCOHMp3ChGbwbfQG3xzw8ytzstE70bKASCNAJP2cs",
+              "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+              "document_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+              "file_name": "failed.md",
+              "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+              "section_path": [
+                "Failed"
+              ],
+              "chunk_id": null,
+              "returned_spans": [
+                {
+                  "schema_version": 1,
+                  "start": 0,
+                  "end": 60
+                }
+              ],
+              "lines": [
+                1,
+                2
+              ],
+              "text": "# Failed\nFailed update approval keeps the oldsilver report.\n",
+              "citation_marker": "[^100d06f3-d30c-4518-b74d-709af1d38662]",
+              "delivery_confirmed": false
+            }
+          ],
+          "next_cursor": null,
+          "previous_cursor": null,
+          "has_more": false,
+          "unread_spans": [],
+          "has_unread": false,
+          "unread_means": "not_returned_by_source_tools",
+          "returned_spans": [
+            {
+              "schema_version": 1,
+              "start": 0,
+              "end": 60
+            }
+          ]
+        }
+      ],
+      "bm25": {
+        "telescope": [
+          {
+            "id": "80ab1406-1ffb-515a-b9d6-d37875b5131f",
+            "distance": 1.9043231010437012,
+            "entity": {
+              "document_version_id": "864fcaf6-fe9d-505e-9c7c-eae4e6f9dec4",
+              "raw_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+              "section_id": "eaf99d8a-d544-59b2-ae69-805463e5a248",
+              "span_start": 0,
+              "span_end": 61,
+              "text": "Telescope\n# Telescope\nTelescope approval uses the oldblue certificate.\n",
+              "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+              "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+              "vector_hash": "08ea99eab2ada0844de1af326b85d8cb888564d9294bd2e5aace36e634b3ca76",
+              "parsed_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+              "body_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+              "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+              "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+              "text_hash": "64bd08d55aaf62a0037d95d07b88bbfd12bf846971b9884c4ef400c4f40e4f66",
+              "chunk_id": "80ab1406-1ffb-515a-b9d6-d37875b5131f"
+            }
+          }
+        ],
+        "retiredquasar": [
+          {
+            "id": "bb982414-0c0c-5a07-9b5b-4a472b38fab7",
+            "distance": 1.219085454940796,
+            "entity": {
+              "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+              "text": "Retired\n# Retired\nRetiredquasar approval uses the legacygreen certificate.\n",
+              "span_start": 0,
+              "document_id": "cbb62631-9649-4b95-b082-929868824bb8",
+              "raw_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+              "span_end": 67,
+              "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+              "body_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+              "section_id": "6a17a7bb-5856-5d16-8275-20c950a998bf",
+              "vector_hash": "43371f3ef9f02030631ca5c5214110a67c9617c7f84a96b6901f352b5d1fc34c",
+              "document_version_id": "278ba6da-d2f9-5a5f-9f1c-aaa6103dd354",
+              "parsed_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+              "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+              "text_hash": "9395edb09b6bef95c9fefe0d334564a80815d0ce0393418f9ee3aa4105ce3d72",
+              "chunk_id": "bb982414-0c0c-5a07-9b5b-4a472b38fab7"
+            }
+          }
+        ],
+        "approval": [
+          {
+            "id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+            "distance": 0.10668303072452545,
+            "entity": {
+              "span_end": 64,
+              "text": "Mountain\n# Mountain\nMountain approval keeps the unchangedviolet archive.\n",
+              "document_id": "4623b2d7-4127-414b-86a9-87c990b99963",
+              "vector_hash": "cb652ddda260e1596ba34ce6f1dbd3d60941ba1e0da8c174df963064034eda26",
+              "raw_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+              "span_start": 0,
+              "document_version_id": "1994f293-d8eb-5c3e-ae88-99afa99f57fc",
+              "section_id": "685addb8-d5d0-5776-9ac0-9ae2909ab1c4",
+              "text_hash": "833e9e74e6df224e6ed076177611ad9461f9d486678f6ea89556d36ac5b8a82b",
+              "body_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+              "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+              "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+              "parsed_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+              "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+              "chunk_id": "1043524b-883d-5562-8c97-ef0d6c8b6142"
+            }
+          },
+          {
+            "id": "80ab1406-1ffb-515a-b9d6-d37875b5131f",
+            "distance": 0.10668303072452545,
+            "entity": {
+              "span_end": 61,
+              "text": "Telescope\n# Telescope\nTelescope approval uses the oldblue certificate.\n",
+              "document_id": "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+              "vector_hash": "08ea99eab2ada0844de1af326b85d8cb888564d9294bd2e5aace36e634b3ca76",
+              "raw_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+              "span_start": 0,
+              "document_version_id": "864fcaf6-fe9d-505e-9c7c-eae4e6f9dec4",
+              "section_id": "eaf99d8a-d544-59b2-ae69-805463e5a248",
+              "text_hash": "64bd08d55aaf62a0037d95d07b88bbfd12bf846971b9884c4ef400c4f40e4f66",
+              "body_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+              "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+              "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+              "parsed_hash": "0c97fbeab8b899f8cd0bcd898ce6f36aa6f2a0e6d70bd00701f1b3fa2a5e0e20",
+              "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+              "chunk_id": "80ab1406-1ffb-515a-b9d6-d37875b5131f"
+            }
+          },
+          {
+            "id": "bb982414-0c0c-5a07-9b5b-4a472b38fab7",
+            "distance": 0.10668303072452545,
+            "entity": {
+              "span_end": 67,
+              "text": "Retired\n# Retired\nRetiredquasar approval uses the legacygreen certificate.\n",
+              "document_id": "cbb62631-9649-4b95-b082-929868824bb8",
+              "vector_hash": "43371f3ef9f02030631ca5c5214110a67c9617c7f84a96b6901f352b5d1fc34c",
+              "raw_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+              "span_start": 0,
+              "document_version_id": "278ba6da-d2f9-5a5f-9f1c-aaa6103dd354",
+              "section_id": "6a17a7bb-5856-5d16-8275-20c950a998bf",
+              "text_hash": "9395edb09b6bef95c9fefe0d334564a80815d0ce0393418f9ee3aa4105ce3d72",
+              "body_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+              "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+              "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+              "parsed_hash": "17a775add60a91f4cadf39af8c2f6c17fcae13a7456f476fa1ccce3b5996a121",
+              "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+              "chunk_id": "bb982414-0c0c-5a07-9b5b-4a472b38fab7"
+            }
+          },
+          {
+            "id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4",
+            "distance": 0.10158263891935349,
+            "entity": {
+              "span_end": 60,
+              "text": "Failed\n# Failed\nFailed update approval keeps the oldsilver report.\n",
+              "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+              "vector_hash": "ac3cc680a9ca5efd179926ccfa8b45a5ad6ea68258a0c1496f587ceb3ffec1c8",
+              "raw_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+              "span_start": 0,
+              "document_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+              "section_id": "2fb5e869-bb36-51d1-a778-a3b29e06fb1e",
+              "text_hash": "328e8fd98fe72556eab318ede80a92da1ee8d432c743cc4d26b9340f99d1e2e7",
+              "body_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+              "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+              "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+              "parsed_hash": "b8913c78016d87dcfe4edc8a2c9b7ba0ef62a7c686a5d50146a956de094f2deb",
+              "encoding_hash": "d0825fcd545e1dc90d93a8c979fa6e53a36583177d7f0e4ddae0b288d0e7eddc",
+              "chunk_id": "ec6fc88e-68f0-5517-8eb9-b0de62486fd4"
+            }
+          }
+        ]
+      }
+    },
+    "worker": {
+      "instance_id": "9a1ce6a7-2cfb-4ad4-aa5f-34caddbdf42f",
+      "pid": 72640,
+      "process_birth": "134345752494719807",
+      "port": 64425,
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\worker",
+      "identity": {
+        "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\cuda\\Scripts\\python.exe",
+        "module_path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\cuda\\Lib\\site-packages\\agentic_rag\\models\\identity.py",
+        "python": "3.14.3",
+        "packages": {
+          "torch": "2.14.0+cu130",
+          "transformers": "5.17.0",
+          "tokenizers": "0.23.2"
+        },
+        "device": "cuda:0",
+        "clock_domain": "1e1523c9d9951e4d9427bd3a80f64b378b4b874582701f9e7423f58e14a20952",
+        "device_environment": {
+          "CUDA_VISIBLE_DEVICES": null,
+          "NVIDIA_VISIBLE_DEVICES": null,
+          "CUDA_DEVICE_ORDER": null
+        },
+        "implementation_digest": "c6ed3d1d5de5566268b7343ee44a3f0cd9000101783bb58c3ea7bd6ecc447158",
+        "runtime_fingerprint": "35271b009c44dc8012a5123406c726867195293286653b40863705489a745936"
+      },
+      "actual_device": {
+        "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+        "index": 0,
+        "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+        "total_memory_bytes": 8585216000
+      },
+      "config": {
+        "schema_version": 1,
+        "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\cuda\\Scripts\\python.exe",
+        "model_cache": "C:/Users/18221/.cache/codeplus-agenticrag/models",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\worker",
+        "startup_timeout_ms": 60000,
+        "handshake_timeout_ms": 3000,
+        "io_timeout_ms": 5000,
+        "idle_timeout_ms": 30000,
+        "max_frame_bytes": 1048576,
+        "max_connections": 16,
+        "max_queue_items": 16,
+        "max_queue_bytes": 4194304,
+        "max_session_requests": 4096
+      }
+    },
+    "released_pin": {
+      "schema_version": 1,
+      "run_id": "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+      "revision_id": "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+      "owner_nonce": "7db9b278-25b9-4c39-af69-cdbec9f44418",
+      "state": "released"
+    },
+    "finished_at": "2026-09-22T18:28:12.097992+00:00"
+  },
+  "two_process_assertions": "PASS: pin before publish; first search/open after publish; all Dense/source/BM25 scopes isolated",
+  "unchanged": {
+    "receipt": null,
+    "summary": {
+      "batch_id": "fb2ffa74-af07-4bf2-af3f-de5041f49a60",
+      "state": "COMPLETED_NO_CHANGE",
+      "base_revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "published_revision_id": null,
+      "published_new": 0,
+      "published_updated": 0,
+      "published_deleted": 0,
+      "published_index_changed": false,
+      "processed_unpublished": 0,
+      "unchanged": 1,
+      "failed": 0,
+      "items": [
+        {
+          "item_id": "181a9506-1d8c-428d-9ad8-48a614eaafc1",
+          "document_id": "4623b2d7-4127-414b-86a9-87c990b99963",
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/keep.md",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\keep.md",
+          "base_version_id": "1994f293-d8eb-5c3e-ae88-99afa99f57fc",
+          "raw_hash": "4e6ad9ef143afe36d36565d39c8790efcec3a18379537aea9164ad76720260c3",
+          "change": "unchanged",
+          "state": "unchanged",
+          "encoded_hash": null,
+          "error": null
+        }
+      ],
+      "requested_deletions": []
+    },
+    "metrics": {
+      "build_seconds": 0.43476319999899715,
+      "reused_vectors": 0,
+      "encoded_vectors": 0
+    }
+  },
+  "all_failed": {
+    "receipt": null,
+    "summary": {
+      "batch_id": "83f16378-8a79-48c4-8434-c1db983aa63f",
+      "state": "COMPLETED_NO_CHANGE",
+      "base_revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "published_revision_id": null,
+      "published_new": 0,
+      "published_updated": 0,
+      "published_deleted": 0,
+      "published_index_changed": false,
+      "processed_unpublished": 0,
+      "unchanged": 0,
+      "failed": 1,
+      "items": [
+        {
+          "item_id": "75b7528c-320e-4b56-8e7c-af183271205e",
+          "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/failed.md",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\failed.md",
+          "base_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+          "raw_hash": "f904528cb389786dd254a5ce219eaccc7251b8ed8ba873926f681bb20167db46",
+          "change": "content_changed",
+          "state": "failed",
+          "encoded_hash": null,
+          "error": {
+            "schema_version": 1,
+            "code": "INVALID_INPUT",
+            "stage": "parse",
+            "message": "unsupported encoding: UTF-8 required at byte 0",
+            "retryable": false,
+            "request_id": null,
+            "call_id": null
+          }
+        }
+      ],
+      "requested_deletions": []
+    },
+    "metrics": {
+      "build_seconds": 0.5001878999901237,
+      "reused_vectors": 0,
+      "encoded_vectors": 0
+    }
+  },
+  "retry": {
+    "receipt": {
+      "batch_id": "abe781c7-a71b-4b65-96cf-cb5a4ea16676",
+      "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+      "revision_id": "8b484b20-aba1-4f1c-800f-c34faac090e6",
+      "artifact_id": "99f5c1da-4d4b-442a-97f3-878948b82c93",
+      "owner_nonce": "4d26e9b3-a341-4766-bd1d-4739d80c38b2",
+      "owner_epoch": 5,
+      "manifest_hash": "4b5e74075f7b92c68d90a1d04c1887db06f8deb66307605f39e5dc542500ee49",
+      "published_at": "2026-09-22T18:28:24.195444+00:00"
+    },
+    "summary": {
+      "base_revision_id": "21173226-b03c-4143-8f61-41f5c7328176",
+      "batch_id": "abe781c7-a71b-4b65-96cf-cb5a4ea16676",
+      "failed": 0,
+      "items": [
+        {
+          "base_version_id": "9c7cd4e9-b15a-54a5-a57e-5e2bbe0652e2",
+          "change": "content_changed",
+          "document_id": "caefb5c0-6952-4330-bc4f-239c515c287d",
+          "encoded_hash": "09cf6d00e35832e982a180ca87f9f643be289c1c77adde5173fd66c98dfc9611",
+          "error": null,
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/failed.md",
+          "item_id": "2f0023f4-cc54-4d61-b720-4268085c7435",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\failed.md",
+          "raw_hash": "0957f3d019ee6f4f24453c9fd5c6dc2febf437990f3eadea6559d0e3a200c88a",
+          "state": "encoded"
+        }
+      ],
+      "processed_unpublished": 0,
+      "published_deleted": 0,
+      "published_index_changed": false,
+      "published_new": 0,
+      "published_revision_id": "8b484b20-aba1-4f1c-800f-c34faac090e6",
+      "published_updated": 1,
+      "requested_deletions": [],
+      "state": "PUBLISHED",
+      "unchanged": 0
+    },
+    "validation": {
+      "schema": {
+        "collection_name": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_8b484b20aba14f1c800fc34faac090e6_e5",
+        "auto_id": false,
+        "num_shards": 1,
+        "description": "agentic-rag-physical-v1:99f5c1da-4d4b-442a-97f3-878948b82c93:46abaef8b5c344f4a82dff671eaf43e3",
+        "fields": [
+          {
+            "field_id": 100,
+            "name": "chunk_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            },
+            "is_primary": true
+          },
+          {
+            "field_id": 101,
+            "name": "kb_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 102,
+            "name": "revision_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 103,
+            "name": "document_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 104,
+            "name": "document_version_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 105,
+            "name": "section_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 106,
+            "name": "text_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 107,
+            "name": "body_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 108,
+            "name": "raw_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 109,
+            "name": "parsed_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 110,
+            "name": "encoding_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 111,
+            "name": "vector_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 112,
+            "name": "text",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 65535,
+              "enable_analyzer": "true",
+              "analyzer_params": "{\"tokenizer\":\"standard\",\"filter\":[\"lowercase\"]}"
+            }
+          },
+          {
+            "field_id": 113,
+            "name": "span_start",
+            "description": "",
+            "type": 5,
+            "params": {}
+          },
+          {
+            "field_id": 114,
+            "name": "span_end",
+            "description": "",
+            "type": 5,
+            "params": {}
+          },
+          {
+            "field_id": 115,
+            "name": "dense",
+            "description": "",
+            "type": 101,
+            "params": {
+              "dim": 1024
+            }
+          },
+          {
+            "field_id": 116,
+            "name": "sparse",
+            "description": "",
+            "type": 104,
+            "params": {},
+            "is_function_output": true
+          }
+        ],
+        "functions": [
+          {
+            "name": "text_bm25",
+            "id": 100,
+            "description": "",
+            "type": 1,
+            "params": {},
+            "input_field_names": [
+              "text"
+            ],
+            "input_field_ids": [
+              112
+            ],
+            "output_field_names": [
+              "sparse"
+            ],
+            "output_field_ids": [
+              116
+            ]
+          }
+        ],
+        "aliases": [],
+        "collection_id": 469264178736391940,
+        "consistency_level": 0,
+        "consistency_level_name": "Strong",
+        "properties": {
+          "timezone": "UTC",
+          "namespace.sharding.enabled": "false",
+          "max_field_id": "116"
+        },
+        "num_partitions": 1,
+        "enable_dynamic_field": false,
+        "enable_namespace": false,
+        "schema_version": 0,
+        "created_timestamp": 469264418537472018,
+        "update_timestamp": 469264418537472018
+      },
+      "indexes": {
+        "dense_cosine": {
+          "nlist": "1",
+          "metric_type": "COSINE",
+          "index_type": "IVF_FLAT",
+          "field_name": "dense",
+          "index_name": "dense_cosine",
+          "total_rows": 4,
+          "indexed_rows": 4,
+          "pending_index_rows": 0,
+          "state": "Finished"
+        },
+        "sparse_bm25": {
+          "inverted_index_algo": "DAAT_MAXSCORE",
+          "bm25_k1": "1.2",
+          "bm25_b": "0.75",
+          "metric_type": "BM25",
+          "index_type": "SPARSE_INVERTED_INDEX",
+          "field_name": "sparse",
+          "index_name": "sparse_bm25",
+          "total_rows": 4,
+          "indexed_rows": 4,
+          "pending_index_rows": 0,
+          "state": "Finished"
+        }
+      },
+      "load_state": "Loaded",
+      "segments": [
+        {
+          "segment_id": 469264178736391956,
+          "num_rows": 4,
+          "state": "Sealed",
+          "index_name": "IVF_FLAT",
+          "index_id": 469264178736481969,
+          "mem_size": 0
+        }
+      ],
+      "rows_checked": 4,
+      "id_set_hash": "4f55c923b98e8afda7cabee4a23e639255f188d9d5017d692c8fa34528b2bbcb",
+      "row_manifest_hash": "374ec264582fa610523cbfcce07cb7f9d987cca213f35d2d6dc4a3a78e192cac",
+      "vector_validation": "exact little-endian float32 SHA256; L2 abs_tol=1e-4",
+      "max_norm_error": 2.5627081789991735e-08,
+      "dense_smoke": [
+        {
+          "id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+          "score": 1.0
+        },
+        {
+          "id": "6e19681f-bdb2-504f-bb37-5a3d946a5db5",
+          "score": 0.46779701113700867
+        },
+        {
+          "id": "b423e8be-dd56-543e-a9d8-b7cdead44b69",
+          "score": 0.44445523619651794
+        },
+        {
+          "id": "eeb119ee-e1d8-51c7-895b-d0120b80d410",
+          "score": 0.4165826439857483
+        }
+      ],
+      "bm25_analyzer_token_count": 8,
+      "bm25_empty_is_valid": false,
+      "bm25_smoke": [
+        {
+          "id": "1043524b-883d-5562-8c97-ef0d6c8b6142",
+          "score": 10.004072189331055
+        },
+        {
+          "id": "eeb119ee-e1d8-51c7-895b-d0120b80d410",
+          "score": 0.4566974639892578
+        },
+        {
+          "id": "b423e8be-dd56-543e-a9d8-b7cdead44b69",
+          "score": 0.43652427196502686
+        },
+        {
+          "id": "6e19681f-bdb2-504f-bb37-5a3d946a5db5",
+          "score": 0.1091892272233963
+        }
+      ],
+      "server_version": "3.0.1",
+      "client_version": "3.0.2",
+      "manifest_hash": "4b5e74075f7b92c68d90a1d04c1887db06f8deb66307605f39e5dc542500ee49",
+      "expected_hash": "3587d110de214b13badb88ad8e1eae25767d1bd9eba81d85f007978f005e95eb",
+      "schema_hash": "1d7f3fc48f26911c7df475b2018dd896a92edc67ed7b2b78bf82d24658cc8e2b",
+      "validation_version": 1
+    },
+    "metrics": {
+      "build_seconds": 10.782718999995268,
+      "reused_vectors": 3,
+      "encoded_vectors": 1,
+      "documents": 4,
+      "chunks": 4,
+      "flush_seconds": 1.599366900001769,
+      "index_seconds": 1.2670674999972107,
+      "load_sealed_reload_seconds": 5.742635699993116
+    }
+  },
+  "empty": {
+    "receipt": {
+      "batch_id": "58421fd8-4334-4b64-a2c9-29890a940458",
+      "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+      "revision_id": "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+      "artifact_id": "188f66f0-3427-4d55-b7ce-27e387ece7f1",
+      "owner_nonce": "0704d42e-542a-4e45-9124-1fb0bb209ef8",
+      "owner_epoch": 6,
+      "manifest_hash": "295780d2eeecbb236897189ba432e76988e497c954796f32bd0cf16b69bce4f1",
+      "published_at": "2026-09-22T18:28:31.186856+00:00"
+    },
+    "summary": {
+      "base_revision_id": "8b484b20-aba1-4f1c-800f-c34faac090e6",
+      "batch_id": "58421fd8-4334-4b64-a2c9-29890a940458",
+      "failed": 0,
+      "items": [],
+      "processed_unpublished": 0,
+      "published_deleted": 4,
+      "published_index_changed": false,
+      "published_new": 0,
+      "published_revision_id": "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+      "published_updated": 0,
+      "requested_deletions": [
+        "10633aaf-a83b-4ac8-a38f-b85ef2350cdc",
+        "4623b2d7-4127-414b-86a9-87c990b99963",
+        "caefb5c0-6952-4330-bc4f-239c515c287d",
+        "eb02b8df-c17a-4c2b-81bc-d5cf5929f0e3"
+      ],
+      "state": "PUBLISHED",
+      "unchanged": 0
+    },
+    "validation": {
+      "schema": {
+        "collection_name": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_b641dd6f6d1e49b4a7bbabc1bc4861de_e6",
+        "auto_id": false,
+        "num_shards": 1,
+        "description": "agentic-rag-physical-v1:188f66f0-3427-4d55-b7ce-27e387ece7f1:257345978a524146a2db329f558d5e22",
+        "fields": [
+          {
+            "field_id": 100,
+            "name": "chunk_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            },
+            "is_primary": true
+          },
+          {
+            "field_id": 101,
+            "name": "kb_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 102,
+            "name": "revision_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 103,
+            "name": "document_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 104,
+            "name": "document_version_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 105,
+            "name": "section_id",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 36
+            }
+          },
+          {
+            "field_id": 106,
+            "name": "text_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 107,
+            "name": "body_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 108,
+            "name": "raw_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 109,
+            "name": "parsed_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 110,
+            "name": "encoding_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 111,
+            "name": "vector_hash",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 64
+            }
+          },
+          {
+            "field_id": 112,
+            "name": "text",
+            "description": "",
+            "type": 21,
+            "params": {
+              "max_length": 65535,
+              "enable_analyzer": "true",
+              "analyzer_params": "{\"tokenizer\":\"standard\",\"filter\":[\"lowercase\"]}"
+            }
+          },
+          {
+            "field_id": 113,
+            "name": "span_start",
+            "description": "",
+            "type": 5,
+            "params": {}
+          },
+          {
+            "field_id": 114,
+            "name": "span_end",
+            "description": "",
+            "type": 5,
+            "params": {}
+          },
+          {
+            "field_id": 115,
+            "name": "dense",
+            "description": "",
+            "type": 101,
+            "params": {
+              "dim": 1024
+            }
+          },
+          {
+            "field_id": 116,
+            "name": "sparse",
+            "description": "",
+            "type": 104,
+            "params": {},
+            "is_function_output": true
+          }
+        ],
+        "functions": [
+          {
+            "name": "text_bm25",
+            "id": 100,
+            "description": "",
+            "type": 1,
+            "params": {},
+            "input_field_names": [
+              "text"
+            ],
+            "input_field_ids": [
+              112
+            ],
+            "output_field_names": [
+              "sparse"
+            ],
+            "output_field_ids": [
+              116
+            ]
+          }
+        ],
+        "aliases": [],
+        "collection_id": 469264178736482057,
+        "consistency_level": 0,
+        "consistency_level_name": "Strong",
+        "properties": {
+          "timezone": "UTC",
+          "namespace.sharding.enabled": "false",
+          "max_field_id": "116"
+        },
+        "num_partitions": 1,
+        "enable_dynamic_field": false,
+        "enable_namespace": false,
+        "schema_version": 0,
+        "created_timestamp": 469264421211602961,
+        "update_timestamp": 469264421211602961
+      },
+      "indexes": {
+        "dense_cosine": {
+          "nlist": "1",
+          "metric_type": "COSINE",
+          "index_type": "IVF_FLAT",
+          "field_name": "dense",
+          "index_name": "dense_cosine",
+          "total_rows": 0,
+          "indexed_rows": 0,
+          "pending_index_rows": 0,
+          "state": "Finished"
+        },
+        "sparse_bm25": {
+          "inverted_index_algo": "DAAT_MAXSCORE",
+          "bm25_k1": "1.2",
+          "bm25_b": "0.75",
+          "metric_type": "BM25",
+          "index_type": "SPARSE_INVERTED_INDEX",
+          "field_name": "sparse",
+          "index_name": "sparse_bm25",
+          "total_rows": 0,
+          "indexed_rows": 0,
+          "pending_index_rows": 0,
+          "state": "Finished"
+        }
+      },
+      "load_state": "Loaded",
+      "segments": [],
+      "rows_checked": 0,
+      "id_set_hash": "71832d1cb5c341435e5e10984015cdf2a248b1f93b9e0a544997c99cd02821e5",
+      "row_manifest_hash": "7a19f1c7d8e6110651c9c0bf0be3edb5dadd471fc52433477a0c8aee738e7e42",
+      "vector_validation": "empty set; no document vectors",
+      "max_norm_error": 0.0,
+      "dense_smoke": [],
+      "bm25_smoke": [],
+      "bm25_analyzer_token_count": 0,
+      "bm25_empty_is_valid": true,
+      "empty_revision": true,
+      "server_version": "3.0.1",
+      "client_version": "3.0.2",
+      "manifest_hash": "295780d2eeecbb236897189ba432e76988e497c954796f32bd0cf16b69bce4f1",
+      "expected_hash": "1633902c6cbba5e7770dbed172df754a25078bb76efe1f23474edc87f1a47655",
+      "schema_hash": "1d7f3fc48f26911c7df475b2018dd896a92edc67ed7b2b78bf82d24658cc8e2b",
+      "validation_version": 1
+    },
+    "metrics": {
+      "build_seconds": 6.946702100001858,
+      "reused_vectors": 0,
+      "encoded_vectors": 0,
+      "documents": 0,
+      "chunks": 0,
+      "flush_seconds": 0.5678188000019873,
+      "index_seconds": 1.2494919000018854,
+      "load_sealed_reload_seconds": 3.9363183000095887
+    }
+  },
+  "empty_run": {
+    "started_at": "2026-09-22T18:28:31.557607+00:00",
+    "run": {
+      "schema_version": 1,
+      "run_id": "d3a75f5d-99c2-4dc4-9daf-fc2a4adbc245",
+      "parent_run_id": null,
+      "kb_id": "cb40c492-2678-4d2f-846b-301f2e90965e",
+      "revision_id": "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+      "resolved_config": {
+        "schema_version": 1,
+        "feature": "knowledge",
+        "task_kind": "qa",
+        "knowledge": {
+          "schema_version": 1,
+          "parameter_status": "experiment",
+          "storage": {
+            "schema_version": 1,
+            "data_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\data",
+            "milvus_uri": "http://127.0.0.1:19542",
+            "namespace": "r13_acceptance",
+            "credential_ref": null
+          },
+          "processing": {
+            "schema_version": 1,
+            "parser": {
+              "schema_version": 1,
+              "implementation": "markdown_it_txt",
+              "version": "markdown-it-py-4.0.0+source-v1",
+              "normalization_version": "utf8-bom-newlines-v1",
+              "encoding": "utf-8"
+            },
+            "chunker": {
+              "schema_version": 1,
+              "implementation": "structure_sentence_token",
+              "version": "canonical-offsets-v1",
+              "max_tokens": 512,
+              "overlap_tokens": 64
+            },
+            "index": {
+              "schema_version": 1,
+              "schema_version_name": "uuid1024-bm25-utf8-v1",
+              "dense_index": "IVF_FLAT",
+              "dense_metric": "COSINE",
+              "nlist": 1,
+              "sparse_index": "SPARSE_INVERTED_INDEX",
+              "sparse_algorithm": "DAAT_MAXSCORE",
+              "tokenizer": "standard",
+              "filters": [
+                "lowercase"
+              ],
+              "bm25_k1": 1.2,
+              "bm25_b": 0.75
+            }
+          },
+          "models": {
+            "schema_version": 1,
+            "embedding": "embed",
+            "reranker": "rank"
+          },
+          "model_profiles": [
+            {
+              "schema_version": 1,
+              "name": "embed",
+              "backend": "qwen3_local",
+              "runtime": {
+                "schema_version": 1,
+                "dtype": "bfloat16",
+                "attention": "sdpa",
+                "device": "cuda:0",
+                "implementation": "transformers",
+                "torch_version": "2.14.0+cu130",
+                "transformers_version": "5.17.0",
+                "tokenizers_version": "0.23.2",
+                "use_cache": false,
+                "trust_remote_code": false,
+                "local_files_only": true,
+                "allocator_cap_mib": 2048
+              },
+              "limits": {
+                "schema_version": 1,
+                "max_input_tokens": 2048,
+                "max_batch_size": 4,
+                "max_padded_tokens": 4096
+              },
+              "document_template": "title_text_v1",
+              "document_with_title": "Title: {title}\n{text}",
+              "document_without_title": "{text}",
+              "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+              "capability": "embedding",
+              "model": "Qwen/Qwen3-Embedding-0.6B",
+              "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+              "tokenizer": {
+                "schema_version": 1,
+                "model": "Qwen/Qwen3-Embedding-0.6B",
+                "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+                "tokenizer_sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a",
+                "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                "padding_side": "left",
+                "truncation": false
+              },
+              "query_template": "Instruct: {instruction}\nQuery:{query}",
+              "add_special_tokens": true,
+              "dimension": 1024,
+              "pooling": "last_nonpadding_token",
+              "normalization": "float32_L2"
+            },
+            {
+              "schema_version": 1,
+              "name": "rank",
+              "backend": "qwen3_local",
+              "runtime": {
+                "schema_version": 1,
+                "dtype": "bfloat16",
+                "attention": "sdpa",
+                "device": "cuda:0",
+                "implementation": "transformers",
+                "torch_version": "2.14.0+cu130",
+                "transformers_version": "5.17.0",
+                "tokenizers_version": "0.23.2",
+                "use_cache": false,
+                "trust_remote_code": false,
+                "local_files_only": true,
+                "allocator_cap_mib": 2048
+              },
+              "limits": {
+                "schema_version": 1,
+                "max_input_tokens": 2048,
+                "max_batch_size": 4,
+                "max_padded_tokens": 4096
+              },
+              "document_template": "title_text_v1",
+              "document_with_title": "Title: {title}\n{text}",
+              "document_without_title": "{text}",
+              "instruction": "Given a web search query, retrieve relevant passages that answer the query",
+              "capability": "rerank",
+              "model": "Qwen/Qwen3-Reranker-0.6B",
+              "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+              "tokenizer": {
+                "schema_version": 1,
+                "model": "Qwen/Qwen3-Reranker-0.6B",
+                "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+                "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+                "config_sha256": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+                "vocab_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+                "merges_sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+                "padding_side": "left",
+                "truncation": false
+              },
+              "add_special_tokens": false,
+              "prefix": "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n",
+              "body": "<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {document}",
+              "suffix": "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+              "score_type": "softmax_float32([no,yes])[yes]",
+              "logits_to_keep": 1
+            }
+          ],
+          "retrieval": {
+            "schema_version": 1,
+            "mode": "fixed",
+            "route": "dense",
+            "rerank": false,
+            "dense_candidates": 50,
+            "bm25_candidates": 50,
+            "rerank_candidates": 50,
+            "rrf_k": 60,
+            "nprobe": 1,
+            "context_chunks": 32,
+            "context_tokens": 50000
+          },
+          "budgets": {
+            "schema_version": 1,
+            "qa": {
+              "schema_version": 1,
+              "searches": 10,
+              "opens": 20,
+              "total_tokens": 200000,
+              "duration_ms": 300000,
+              "finish_reserve_tokens": 3000,
+              "finish_reserve_ms": 20000
+            },
+            "report": {
+              "schema_version": 1,
+              "searches": 7,
+              "opens": 9,
+              "total_tokens": 36000,
+              "duration_ms": 360000,
+              "finish_reserve_tokens": 6000,
+              "finish_reserve_ms": 40000
+            }
+          }
+        },
+        "retrieval": {
+          "schema_version": 1,
+          "mode": "fixed",
+          "route": "dense",
+          "rerank": false,
+          "dense_candidates": 50,
+          "bm25_candidates": 50,
+          "rerank_candidates": 50,
+          "rrf_k": 60,
+          "nprobe": 1,
+          "context_chunks": 32,
+          "context_tokens": 50000
+        },
+        "budget": {
+          "schema_version": 1,
+          "searches": 10,
+          "opens": 20,
+          "total_tokens": 200000,
+          "duration_ms": 300000,
+          "finish_reserve_tokens": 3000,
+          "finish_reserve_ms": 20000
+        }
+      },
+      "resolved_config_hash": "2f82eb80726e9e264a9ace6859ecb63dbf42531fa6fe7983bec636379405a6bc",
+      "usage": {
+        "schema_version": 1,
+        "searches": 0,
+        "opens": 0,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cached_tokens": null,
+        "total_tokens": null,
+        "elapsed_ms": 0
+      },
+      "status": "running",
+      "stop_reason": null
+    },
+    "pin": {
+      "schema_version": 1,
+      "run_id": "d3a75f5d-99c2-4dc4-9daf-fc2a4adbc245",
+      "revision_id": "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+      "owner_nonce": "bb7eda57-c274-4baf-b9bc-c118abcb579e",
+      "state": "active"
+    },
+    "collection": "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_b641dd6f6d1e49b4a7bbabc1bc4861de_e6",
+    "dense": {
+      "run_id": "d3a75f5d-99c2-4dc4-9daf-fc2a4adbc245",
+      "revision_id": "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+      "request_id": "0555159d-5ca9-41a1-9f6f-6fd987b7f495",
+      "profile_fingerprint": "245470939d9656f4f78f46413ca730eff4a798d5005c90e51e957ede9e85e1ea",
+      "hits": [],
+      "elapsed_ms": 144.4694000092568,
+      "model_timings": {
+        "schema_version": 1,
+        "queue_ms": 0,
+        "load_ms": 0,
+        "inference_ms": 137
+      }
+    },
+    "source_search": {
+      "schema_version": 1,
+      "call_id": "e7c44948-0b5d-4478-9c71-9d0bb6152f6f",
+      "status": "empty",
+      "run_id": "d3a75f5d-99c2-4dc4-9daf-fc2a4adbc245",
+      "revision_id": "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+      "route": {
+        "strategy": "dense",
+        "rerank": false
+      },
+      "items": [],
+      "limited": {
+        "by_count": false,
+        "by_tokens": false
+      }
+    },
+    "opened": [],
+    "bm25": {
+      "telescope": [],
+      "retiredquasar": [],
+      "approval": []
+    }
+  },
+  "unpublished_initial": {
+    "receipt": null,
+    "summary": {
+      "batch_id": "8844cbad-d1f1-434c-8a60-9d6ab9cad67f",
+      "state": "COMPLETED_NO_CHANGE",
+      "base_revision_id": null,
+      "published_revision_id": null,
+      "published_new": 0,
+      "published_updated": 0,
+      "published_deleted": 0,
+      "published_index_changed": false,
+      "processed_unpublished": 0,
+      "unchanged": 0,
+      "failed": 1,
+      "items": [
+        {
+          "item_id": "d35114f8-9b22-409d-a70a-58a7204c09e5",
+          "document_id": "4c205335-2144-4c32-9afd-ec47c51eaf9d",
+          "identity_source_key": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-leader-20260923/smoke/all-invalid.md",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\all-invalid.md",
+          "base_version_id": null,
+          "raw_hash": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89",
+          "change": "new",
+          "state": "failed",
+          "encoded_hash": null,
+          "error": {
+            "schema_version": 1,
+            "code": "INVALID_INPUT",
+            "stage": "parse",
+            "message": "unsupported encoding: UTF-8 required at byte 0",
+            "retryable": false,
+            "request_id": null,
+            "call_id": null
+          }
+        }
+      ],
+      "requested_deletions": []
+    },
+    "metrics": {
+      "build_seconds": 0.4037988000054611,
+      "reused_vectors": 0,
+      "encoded_vectors": 0
+    }
+  },
+  "unpublished_run_error": {
+    "schema_version": 1,
+    "code": "NOT_READY",
+    "stage": "run",
+    "message": "library has no queryable current revision",
+    "retryable": false,
+    "request_id": null,
+    "call_id": null
+  },
+  "worker": {
+    "instance_id": "9a1ce6a7-2cfb-4ad4-aa5f-34caddbdf42f",
+    "pid": 72640,
+    "process_birth": "134345752494719807",
+    "port": 64425,
+    "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\worker",
+    "identity": {
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\cuda\\Scripts\\python.exe",
+      "module_path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\cuda\\Lib\\site-packages\\agentic_rag\\models\\identity.py",
+      "python": "3.14.3",
+      "packages": {
+        "torch": "2.14.0+cu130",
+        "transformers": "5.17.0",
+        "tokenizers": "0.23.2"
+      },
+      "device": "cuda:0",
+      "clock_domain": "1e1523c9d9951e4d9427bd3a80f64b378b4b874582701f9e7423f58e14a20952",
+      "device_environment": {
+        "CUDA_VISIBLE_DEVICES": null,
+        "NVIDIA_VISIBLE_DEVICES": null,
+        "CUDA_DEVICE_ORDER": null
+      },
+      "implementation_digest": "c6ed3d1d5de5566268b7343ee44a3f0cd9000101783bb58c3ea7bd6ecc447158",
+      "runtime_fingerprint": "35271b009c44dc8012a5123406c726867195293286653b40863705489a745936"
+    },
+    "actual_device": {
+      "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "index": 0,
+      "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+      "total_memory_bytes": 8585216000
+    },
+    "config": {
+      "schema_version": 1,
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\cuda\\Scripts\\python.exe",
+      "model_cache": "C:/Users/18221/.cache/codeplus-agenticrag/models",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-leader-20260923\\smoke\\worker",
+      "startup_timeout_ms": 60000,
+      "handshake_timeout_ms": 3000,
+      "io_timeout_ms": 5000,
+      "idle_timeout_ms": 30000,
+      "max_frame_bytes": 1048576,
+      "max_connections": 16,
+      "max_queue_items": 16,
+      "max_queue_bytes": 4194304,
+      "max_session_requests": 4096
+    }
+  },
+  "worker_handles": [
+    {
+      "request_id": "ef9f680d-67a3-4cd7-8d96-501f40a83be5",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "loading",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "4024ec9d-6789-40a0-8445-f0c9bfce7a98",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "e1b50316-2fc8-4b1f-9646-b524cae8c3ab",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "e5634605-24c5-43a9-beaf-4dce4c71344a",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "a6455b1f-9c1d-4028-9296-93769959cd5e",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "da0305ba-a8c8-4b9e-8704-7e9d173cf942",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "6e73d013-647a-410c-9a47-b2dd45e9a807",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "0caca39c-7e98-43b3-af56-454662cec211",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "df2a78f7-dd53-432e-bef4-f01e2bba830b",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "0555159d-5ca9-41a1-9f6f-6fd987b7f495",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    },
+    {
+      "request_id": "10415831-c233-407d-881c-b8e5f3e3db9b",
+      "finished": true,
+      "phases": [
+        "queued",
+        "validation",
+        "inference_started"
+      ]
+    }
+  ],
+  "catalog": {
+    "integrity": [
+      [
+        "ok"
+      ]
+    ],
+    "foreign_keys": [],
+    "publications": [
+      [
+        "398664f5-eda1-45c8-a122-bc494da65a0a",
+        "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+        1
+      ],
+      [
+        "c5d41c6c-d91a-41b2-a044-3818ef18a514",
+        "21173226-b03c-4143-8f61-41f5c7328176",
+        2
+      ],
+      [
+        "abe781c7-a71b-4b65-96cf-cb5a4ea16676",
+        "8b484b20-aba1-4f1c-800f-c34faac090e6",
+        5
+      ],
+      [
+        "58421fd8-4334-4b64-a2c9-29890a940458",
+        "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+        6
+      ]
+    ],
+    "pins": [
+      [
+        "87f22fef-8084-4d92-a00c-4bf3b3cbc925",
+        "ec3d797e-96d7-4049-bbfa-a82324c269eb",
+        "released"
+      ],
+      [
+        "97ea1990-7657-44cc-941b-4d3ff49d359d",
+        "21173226-b03c-4143-8f61-41f5c7328176",
+        "released"
+      ],
+      [
+        "d3a75f5d-99c2-4dc4-9daf-fc2a4adbc245",
+        "b641dd6f-6d1e-49b4-a7bb-abc1bc4861de",
+        "released"
+      ]
+    ]
+  },
+  "collections": [
+    "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_21173226b03c41438f6141f5c7328176_e2",
+    "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_8b484b20aba14f1c800fc34faac090e6_e5",
+    "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_b641dd6f6d1e49b4a7bbabc1bc4861de_e6",
+    "ar_r13_acceptance_3b09d56c619c40f9adf115e41f4d536e_cb40c49226784d2f846b301f2e90965e_ec3d797e96d74049bbfaa82324c269eb_e1"
+  ],
+  "finished_at": "2026-09-22T18:28:32.057607+00:00"
+}

@@ -1,0 +1,584 @@
+{
+  "status": "PASS",
+  "started": 1790102418.0547113,
+  "commands": [
+    {
+      "argv": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "8c764644c57e59c9aa9ae2337f61efc3447d88ee\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/README.md",
+        "deployment/AgenticRAG/README.md"
+      ],
+      "exit_code": 0,
+      "stdout": "d59d78b9f803f0ebabd8a23e7def9beb3457f87f\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/pyproject.toml",
+        "deployment/AgenticRAG/pyproject.toml"
+      ],
+      "exit_code": 0,
+      "stdout": "c35406ab12330d097910647bf607c12d67808fa0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/uv.lock",
+        "deployment/AgenticRAG/uv.lock"
+      ],
+      "exit_code": 0,
+      "stdout": "31c149ac7789d920262c8e74bdf5be376c584285\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "apply",
+        "--check",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch2-dev-fix.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "apply",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch2-dev-fix.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "apply",
+        "--reverse",
+        "--check",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch2-dev-fix.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "apply",
+        "--reverse",
+        "--check",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-batch2-v2.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "diff",
+        "--check",
+        "--",
+        "deployment/AgenticRAG/README.md",
+        "deployment/AgenticRAG/pyproject.toml",
+        "deployment/AgenticRAG/uv.lock"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/convergence.md",
+        "deployment/AgenticRAG/docs/convergence.md"
+      ],
+      "exit_code": 0,
+      "stdout": "4da943314cdc9ca8c29676224044f2408c9c7fb0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/first-publication.md",
+        "deployment/AgenticRAG/docs/first-publication.md"
+      ],
+      "exit_code": 0,
+      "stdout": "e504fd65b9e2777975359fd3e82368b90136056c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/manual-recovery.md",
+        "deployment/AgenticRAG/docs/manual-recovery.md"
+      ],
+      "exit_code": 0,
+      "stdout": "6efa463fd5c8645cb164a2695dc4fc4d6fa614b8\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/ordinary-mutations.md",
+        "deployment/AgenticRAG/docs/ordinary-mutations.md"
+      ],
+      "exit_code": 0,
+      "stdout": "aba0ed998b0015b3ac291051dccd0e4d44ee097d\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py"
+      ],
+      "exit_code": 0,
+      "stdout": "d9dad37c16760695b0d03946ca0470d6febaa33b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py",
+        "deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py"
+      ],
+      "exit_code": 0,
+      "stdout": "96b53553ef8065b8c42ca5d3e69616e15145eaa2\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/build.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py"
+      ],
+      "exit_code": 0,
+      "stdout": "601bb78861ea44cb1952b23e9359c99370ee4980\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py"
+      ],
+      "exit_code": 0,
+      "stdout": "ca9a1ae6d62ffe139f3c24473b4b876052989ef7\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py"
+      ],
+      "exit_code": 0,
+      "stdout": "c790cb8cef67cddb35d9a380b20f755504d8c0b9\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py"
+      ],
+      "exit_code": 0,
+      "stdout": "f4ad42905edcff41cc9b773c30fdc5eb1612aa33\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py"
+      ],
+      "exit_code": 0,
+      "stdout": "a88d0cef073eec1b9e8842ca2aa787349e14c454\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py"
+      ],
+      "exit_code": 0,
+      "stdout": "5d4ed38df15610cd576fefb1995be4ec205fce86\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/sources.py",
+        "deployment/AgenticRAG/src/agentic_rag/sources.py"
+      ],
+      "exit_code": 0,
+      "stdout": "6925a0425649b94741ca46c7abc391d729cd12be\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/database.py"
+      ],
+      "exit_code": 0,
+      "stdout": "56d9a48d1419ac1c6228fc06bc0f915d8407ca86\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/storage/inputs.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/inputs.py"
+      ],
+      "exit_code": 0,
+      "stdout": "e574d6038454e64b396ec2ac56215a0411cb6d83\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/storage/processing.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/processing.py"
+      ],
+      "exit_code": 0,
+      "stdout": "64f4277d715e0fc6b9f1d1e21b744432e70412e5\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/storage/publication.py",
+        "deployment/AgenticRAG/src/agentic_rag/storage/publication.py"
+      ],
+      "exit_code": 0,
+      "stdout": "35c17468ee6c0c8396c30494458e33f913efa4c1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/publication_support.py",
+        "deployment/AgenticRAG/tests/publication_support.py"
+      ],
+      "exit_code": 0,
+      "stdout": "10b82ab28318f268b5352c8b61be31a279a93597\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_input_migration.py",
+        "deployment/AgenticRAG/tests/test_input_migration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "0f8087c4b417236c84c96279c7aee7a406ec32cf\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_mutations.py",
+        "deployment/AgenticRAG/tests/test_mutations.py"
+      ],
+      "exit_code": 0,
+      "stdout": "da6e1d2af84cbf2e6288c80d848e7230811587b9\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_publication.py",
+        "deployment/AgenticRAG/tests/test_publication.py"
+      ],
+      "exit_code": 0,
+      "stdout": "45ee3f6547a2029de0dc5983fc54eeeaf92a21a6\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_recovery_ownership.py",
+        "deployment/AgenticRAG/tests/test_recovery_ownership.py"
+      ],
+      "exit_code": 0,
+      "stdout": "f7740b43e86508053e8a2fcdd5c41c84abb75e6b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_build_preparation.py",
+        "deployment/AgenticRAG/tests/test_build_preparation.py"
+      ],
+      "exit_code": 0,
+      "stdout": "8fd0ac1f7d190053497fe1bb5feeebdc8b2c20a3\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_input_read_scope.py",
+        "deployment/AgenticRAG/tests/test_input_read_scope.py"
+      ],
+      "exit_code": 0,
+      "stdout": "1c3e436bf7335bf59cb6080b56bab14a98fd6318\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_source_read_reuse.py",
+        "deployment/AgenticRAG/tests/test_source_read_reuse.py"
+      ],
+      "exit_code": 0,
+      "stdout": "f4b2fa326c7bbdc9d168c7909e04fe8ac28dff6e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/README.md",
+        "deployment/AgenticRAG/README.md"
+      ],
+      "exit_code": 0,
+      "stdout": "c9e22bb7c2cf509f614a8ce1ce8ae7ee72d0ab79\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/pyproject.toml",
+        "deployment/AgenticRAG/pyproject.toml"
+      ],
+      "exit_code": 0,
+      "stdout": "f89eb7efde1254776bec003c31cddf541c6036a7\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "hash-object",
+        "--path=deployment/AgenticRAG/uv.lock",
+        "deployment/AgenticRAG/uv.lock"
+      ],
+      "exit_code": 0,
+      "stdout": "ef147b13b23980fb7bc19977ba21fac254cbc5c6\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "script_sha256": "a157bd0cfe5a5d5e131d78fd89c5a77d1287f3b1d56e7c9f0483942d31d6c3c3",
+  "frozen_artifacts": {
+    "agentic-rag-convergence-batch2.patch": "c6157e107cf72a552221c0863b8e020687174f1ff062a17efd87b18df84790f8",
+    "agentic-rag-convergence-batch2.json": "049a486e11ed94ecfe730118168b3aa3d9c8178cec577f81c623822054f8bc65",
+    "agentic-rag-convergence-batch2-dev-fix.patch": "ed2e64242da8fce916a486aa12c9e0829b944155b140af26fc0af40651a8235d",
+    "agentic-rag-convergence-batch2-dev-fix.json": "52f071c57adb886cad6f8e640c4ef9a8754a58c8554f488495317866eec727c4",
+    "agentic-rag-convergence-batch2-v2.patch": "da86985356438b56b96f35e38209e11a79a0e7c2f8d720cff3d11965aa53df28",
+    "agentic-rag-convergence-batch2-v2.json": "00f3d6777e0597670b0f59cd1653be9c0f23f048ece364dce038c0fe67b141e0"
+  },
+  "freeze_sha256": "fb2ca821ed22e410d368d8bf79e45605c7d5208a2494f91200b0cc564f3346cd",
+  "files": {
+    "deployment/AgenticRAG/docs/convergence.md": {
+      "git_blob": "4da943314cdc9ca8c29676224044f2408c9c7fb0",
+      "raw_sha256": "ba22c32af358caf520314672347c1eb3f9fd1ca24dee9b1af5c942c3b093c7ed",
+      "bytes": 13711,
+      "executor_raw_sha256": "763628eb2030bb9c0ca5f0c8c1da490c20636aba6e08ad032d64a28341bb4a77"
+    },
+    "deployment/AgenticRAG/docs/first-publication.md": {
+      "git_blob": "e504fd65b9e2777975359fd3e82368b90136056c",
+      "raw_sha256": "6c74896abfb8f1265dada2acdf50b234088ffb4ca5a6f2a2be6405ffaa469d32",
+      "bytes": 6551,
+      "executor_raw_sha256": "bb569e6e4c48aeacb39f3bb0939e2df16b856d80eb3f3f9710ab6f2dd24e5f21"
+    },
+    "deployment/AgenticRAG/docs/manual-recovery.md": {
+      "git_blob": "6efa463fd5c8645cb164a2695dc4fc4d6fa614b8",
+      "raw_sha256": "b29281488aa5fa46c0b673d123ba59886757f0fb0e64669f37759b38e907e607",
+      "bytes": 8805,
+      "executor_raw_sha256": "b1aac0307bf666f3ab33812b6a0d12487cf7876ea072f4b22d878fa053a4e584"
+    },
+    "deployment/AgenticRAG/docs/ordinary-mutations.md": {
+      "git_blob": "aba0ed998b0015b3ac291051dccd0e4d44ee097d",
+      "raw_sha256": "53328f701e83b7e30eb3cb55da0e9887aeac3f8f1f717d88c60f346da4d0157b",
+      "bytes": 6296,
+      "executor_raw_sha256": "c68a00df557d8773679f85577b14e314996e08a45287dd24f190c67a0116a9a1"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/indexes/manifest.py": {
+      "git_blob": "d9dad37c16760695b0d03946ca0470d6febaa33b",
+      "raw_sha256": "d30aa6e87623642f1b2b6545f78e29866c9080a788f60170c80dc92fb7f41437",
+      "bytes": 6028,
+      "executor_raw_sha256": "85b60a11d44b79a01778ae6c3eb828f955590f8b924200e33f711445e3912c27"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py": {
+      "git_blob": "96b53553ef8065b8c42ca5d3e69616e15145eaa2",
+      "raw_sha256": "a3a7354b882399c6ce30a52f12a3cc59b8c75a00d7f5a3f2c7c638bd5fb5f2f1",
+      "bytes": 24318,
+      "executor_raw_sha256": "269893e11943d5303325f8036872011447e191afa2f16e4316012e951161c27b"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py": {
+      "git_blob": "601bb78861ea44cb1952b23e9359c99370ee4980",
+      "raw_sha256": "c3ff40a72c5099c30bd8ec1907f7fedce454c16136343fc00f9f6b2ad0577361",
+      "bytes": 4435,
+      "executor_raw_sha256": "c5b887b416fa53ff9e38cc1cce2acee544c11bc1e78c171a87ab69426685739c"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/capture.py": {
+      "git_blob": "ca9a1ae6d62ffe139f3c24473b4b876052989ef7",
+      "raw_sha256": "ad9271f8d8e5c73243678cfcf85eb8724845141259ceb28aad6edec216402cb7",
+      "bytes": 6373,
+      "executor_raw_sha256": "42726a31f1c5a9d0162654f07393ac8698c8193c1e96f22705ee21bb4818e8cd"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py": {
+      "git_blob": "c790cb8cef67cddb35d9a380b20f755504d8c0b9",
+      "raw_sha256": "eebda1aeab5049514618ba9196f151508b104382e03a873fa594a941a4c3bb73",
+      "bytes": 11571,
+      "executor_raw_sha256": "9ec877133b7f018a430e1113ddff07993435de2907a48d24f79857a132fd1a4c"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py": {
+      "git_blob": "f4ad42905edcff41cc9b773c30fdc5eb1612aa33",
+      "raw_sha256": "37bc9190ab18af73c743f0a21be9bc1bc853c731f8cba27a2a1b1a213a394c3c",
+      "bytes": 26695,
+      "executor_raw_sha256": "a930022c9232880e37d76d436885e474fa4b1b4fd7bc17f5b011edfb15703cd2"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/processing.py": {
+      "git_blob": "a88d0cef073eec1b9e8842ca2aa787349e14c454",
+      "raw_sha256": "ef3c5936b38ee2b8f6fc1fb0adccb582d1fb95352bc43b4b58436a04033f4327",
+      "bytes": 3985,
+      "executor_raw_sha256": "bd91fd391ac28492b678a26ddbb82add9a10de24bcf434507eb20675ac2422fb"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py": {
+      "git_blob": "5d4ed38df15610cd576fefb1995be4ec205fce86",
+      "raw_sha256": "643684fe60d4632dade3a4438982159d3ebb5b5ce04cef41d252c7c80381ba2f",
+      "bytes": 10007,
+      "executor_raw_sha256": "22100688a018e62276ce96babae2de54231ca8bd343d8ec6985ccdbd1b34afe7"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/sources.py": {
+      "git_blob": "6925a0425649b94741ca46c7abc391d729cd12be",
+      "raw_sha256": "2e55fe86c8041f4efbc6bbcc7e4ba1ef1860b97d9433be773da0e2e084e10c12",
+      "bytes": 25614,
+      "executor_raw_sha256": "bfb7c1fd93aad8793258e7fdba53284d971df024d930db308ff368c9d37b5dcb"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/storage/database.py": {
+      "git_blob": "56d9a48d1419ac1c6228fc06bc0f915d8407ca86",
+      "raw_sha256": "a6c618e5d22b98ef73f773c54d1bb5715cf2ad5f33e037078ebb46d859514db7",
+      "bytes": 9304,
+      "executor_raw_sha256": "5f6bee23133d7f260e8cc82f30847a81e3030891f336c606c78b8e8300ab1553"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/storage/inputs.py": {
+      "git_blob": "e574d6038454e64b396ec2ac56215a0411cb6d83",
+      "raw_sha256": "f2fd7737b4d40537fb24c59ec64382f8c067ccd88f3765b7e027d5d19081d89a",
+      "bytes": 11837,
+      "executor_raw_sha256": "176c2b8916d5898a156c21befa59a3aa772b8ef7b159b2d4ae804dc97424e477"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/storage/processing.py": {
+      "git_blob": "64f4277d715e0fc6b9f1d1e21b744432e70412e5",
+      "raw_sha256": "09e02439ab6edc5a565629338ab0bc4fefdb31f847b37027889efdba972675e3",
+      "bytes": 13822,
+      "executor_raw_sha256": "ffcf714f531150ab5aa89f71427e6fdfbb28e4e20172607c209450b819d3b491"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/storage/publication.py": {
+      "git_blob": "35c17468ee6c0c8396c30494458e33f913efa4c1",
+      "raw_sha256": "2116e9c165660c7249a8051a3883bf764d5aaa378b853ba99355db424577f4ce",
+      "bytes": 18098,
+      "executor_raw_sha256": "13d37662fe6b6d26255711b2c2355d4f5ccf77162a82f52addd6672d597805ed"
+    },
+    "deployment/AgenticRAG/tests/publication_support.py": {
+      "git_blob": "10b82ab28318f268b5352c8b61be31a279a93597",
+      "raw_sha256": "8158698cf8adb5ae6184c97913a0e54c245d1d25813dbae4fc7ec16439d7396f",
+      "bytes": 3864,
+      "executor_raw_sha256": "8f270b7ac9c286e4e22e8b84ee540ac5764dcc77c058af7d224f6523c24bb373"
+    },
+    "deployment/AgenticRAG/tests/test_input_migration.py": {
+      "git_blob": "0f8087c4b417236c84c96279c7aee7a406ec32cf",
+      "raw_sha256": "e2a37a2fa123533d39df2cec87743213dd49110bf07b8d7d1495e00b54200086",
+      "bytes": 8938,
+      "executor_raw_sha256": "42d9b4ef304f8aa78eeed9fbe6f2d8357bd1cce278190ceb6b5e857861be4422"
+    },
+    "deployment/AgenticRAG/tests/test_mutations.py": {
+      "git_blob": "da6e1d2af84cbf2e6288c80d848e7230811587b9",
+      "raw_sha256": "a146ae42820a0b6fe143b7da98bb042097260db3c900fb763705e9582f44d860",
+      "bytes": 21644,
+      "executor_raw_sha256": "f95072c4509d2405b15f9f482b43edd8b0facb97e490452fac5869ea94d8a80a"
+    },
+    "deployment/AgenticRAG/tests/test_publication.py": {
+      "git_blob": "45ee3f6547a2029de0dc5983fc54eeeaf92a21a6",
+      "raw_sha256": "c03606cda9c2a87b3efda06dd426b476414180b433532f5af0585ed8ed609499",
+      "bytes": 10669,
+      "executor_raw_sha256": "b583b34ebd182c889ce8d0e6b892422af09a017365df7293ad413d68b1716558"
+    },
+    "deployment/AgenticRAG/tests/test_recovery_ownership.py": {
+      "git_blob": "f7740b43e86508053e8a2fcdd5c41c84abb75e6b",
+      "raw_sha256": "5e56996d94d74be82ee9e2d9096d8838fb953b547f76a5910d2b7611d4c4d2ef",
+      "bytes": 6138,
+      "executor_raw_sha256": "31c65218053939c542b7d164771694969108436f2c35bee7f7c26aec2e738bc7"
+    },
+    "deployment/AgenticRAG/tests/test_build_preparation.py": {
+      "git_blob": "8fd0ac1f7d190053497fe1bb5feeebdc8b2c20a3",
+      "raw_sha256": "6e08f3a72d7856ab0ddc5a1e4c0f945299715581c14c63bc9cef22c10dcc9a1d",
+      "bytes": 8223,
+      "executor_raw_sha256": "2242473f7e8494bfec66bb8581bc0cd8a1235ae7dbbb701f46cb45ce7fad3f14"
+    },
+    "deployment/AgenticRAG/tests/test_input_read_scope.py": {
+      "git_blob": "1c3e436bf7335bf59cb6080b56bab14a98fd6318",
+      "raw_sha256": "bdb38e3ffda0e6aa11ee1efa76e21aa0729e928bd867197e58a63a331ae09c90",
+      "bytes": 10656,
+      "executor_raw_sha256": "895556c0797ee19fc7f758510f6effe4651ae07e8e03b5932e2657f00d5fcf7b"
+    },
+    "deployment/AgenticRAG/tests/test_source_read_reuse.py": {
+      "git_blob": "f4b2fa326c7bbdc9d168c7909e04fe8ac28dff6e",
+      "raw_sha256": "47ca0aa2cc4aef367eecfaa8c1b1b0cf629ebc1798676679f6f41f6222b637b5",
+      "bytes": 5715,
+      "executor_raw_sha256": "73a5f89a2477e06f42474ad80a8a2dba7889024218e28f3f930b194eccb2aa01"
+    },
+    "deployment/AgenticRAG/README.md": {
+      "git_blob": "c9e22bb7c2cf509f614a8ce1ce8ae7ee72d0ab79",
+      "raw_sha256": "ea2c620ce6b6d44e6d0d4446d12651690d4b6635168fe84dd1e7741e05c7cf1f",
+      "bytes": 21284,
+      "executor_raw_sha256": "eca26d2c91469013e1c0bded178c6cbbe51c7c2fbbc6025fe9bd98d7299f03d4"
+    },
+    "deployment/AgenticRAG/pyproject.toml": {
+      "git_blob": "f89eb7efde1254776bec003c31cddf541c6036a7",
+      "raw_sha256": "6e7be1e279371a910521fb55cc02d2828aadeb67008797a4e64595fa59e02f3c",
+      "bytes": 1294,
+      "executor_raw_sha256": "16b6ebc0daf51797b878cdcf9009e46c667d6b08765595fa508c492914f4c0c2"
+    },
+    "deployment/AgenticRAG/uv.lock": {
+      "git_blob": "ef147b13b23980fb7bc19977ba21fac254cbc5c6",
+      "raw_sha256": "1ceed1c7681cd727440d4fafd907dd9db2ed69c568729d2a6f3a94c2c692418a",
+      "bytes": 356058,
+      "executor_raw_sha256": "7d91521bf2e6e549b3725205763892cada3f1753bcf6fb1789e3a83c1204574e"
+    }
+  },
+  "frozen_count": 322,
+  "old_319_unchanged": true,
+  "runtime_dependencies_unchanged": true,
+  "third_party_lock_packages_unchanged": 78,
+  "finished": 1790102419.6834202
+}

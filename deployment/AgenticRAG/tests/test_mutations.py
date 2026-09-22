@@ -17,7 +17,6 @@ from agentic_rag.domain import ErrorCode, RagError
 from agentic_rag.ingestion import (InputSelection, begin_changes, build_changes, process_changes,
                                  retry_failed, mutation_summary)
 from agentic_rag.indexes.manifest import prepare, SCALAR_FIELDS
-from agentic_rag.indexes.milvus import MilvusRevisionIndex
 from agentic_rag.storage import Catalog, publication
 
 HELPER = runpy.run_path(str(Path(__file__).with_name('publication_support.py')))
@@ -40,9 +39,8 @@ class Model:
 
 
 def backend(catalog, config):
-    value = object.__new__(MilvusRevisionIndex)
-    value.catalog,value.storage,value.store_id = catalog,config.storage,catalog.store_id
-    value.server_version,value.timeout = '3.0.1',1
+    client = SimpleNamespace(get_server_version=lambda **kw:'3.0.1')
+    value = HELPER['constructed_backend'](catalog, config, client)
     value.collections = {}
     value.create = lambda artifact,owner: value.collections.__setitem__(artifact['collection_name'],[])
     value.insert = lambda artifact,rows,owner: value.collections[artifact['collection_name']].extend(rows)
@@ -58,8 +56,8 @@ def backend(catalog, config):
             result,self.rows = self.rows,[]
             return result
         def close(self): pass
-    value.client = SimpleNamespace(query_iterator=lambda name,**kw: Iterator(value.collections[name]),
-                                   run_analyzer=lambda **kw: [SimpleNamespace(tokens=['test'])])
+    client.query_iterator = lambda name,**kw: Iterator(value.collections[name])
+    client.run_analyzer = lambda **kw: [SimpleNamespace(tokens=['test'])]
     return value
 
 
@@ -104,8 +102,14 @@ def initial(s):
     return (a,b,c),result
 
 
-def test_mixed_batch_complete_candidate_path_identity_and_reuse(setup):
+def test_mixed_batch_complete_candidate_path_identity_and_reuse(setup,monkeypatch):
     s=setup; (a,b,c),old=initial(s); before=members(s)
+    from agentic_rag.ingestion import mutations
+    base, scans = mutations._base, []
+    def scan(*args):
+        scans.append(args[1].batch_id)
+        return base(*args)
+    monkeypatch.setattr(mutations, '_base', scan)
     a.write_text('# A\nNew telescope approval is red.\n',encoding='utf-8')
     b.write_bytes(b'\xffinvalid UTF-8')
     d=source(s,'d.md','# D\nNew island report.\n')
@@ -125,6 +129,7 @@ def test_mixed_batch_complete_candidate_path_identity_and_reuse(setup):
         assert len(s.model.calls)-before_calls==3
         assert len(set(members(s)) & set(before))==3
         assert sum(members(s)[key]==value for key,value in before.items())==2
+        assert scans == [owner.token.batch_id] * 2  # Initial preparation and final validation.
         # Stable full candidate on every prepare invocation after publication.
         assert prepare(s.catalog,owner.token.batch_id,UUID(result['receipt']['revision_id'])).manifest_hash==result['receipt']['manifest_hash']
     assert len(s.backend.collections)==2
@@ -133,6 +138,12 @@ def test_mixed_batch_complete_candidate_path_identity_and_reuse(setup):
 @pytest.mark.parametrize('kind',['unchanged','parse_failed','capture_failed','empty_directory'])
 def test_normal_no_change_releases_owner_without_artifact(setup,kind,monkeypatch):
     s=setup; (a,b,c),old=initial(s)
+    from agentic_rag.ingestion import mutations
+    base, scans = mutations._base, []
+    def scan(*args):
+        scans.append(args[1].batch_id)
+        return base(*args)
+    monkeypatch.setattr(mutations, '_base', scan)
     if kind=='parse_failed': a.write_bytes(b'\xff')
     if kind=='capture_failed': a.unlink()
     if kind=='empty_directory':
@@ -144,6 +155,7 @@ def test_normal_no_change_releases_owner_without_artifact(setup,kind,monkeypatch
         result=run(s,owner)
         assert result['summary']['state']=='COMPLETED_NO_CHANGE'
         batch=owner.token.batch_id
+        assert scans == [batch]
     assert s.catalog.get_batch(batch).state.value=='COMPLETED_NO_CHANGE'
     assert s.catalog.get_library(s.kb).pending_mutation_id is None
     assert s.catalog.get_library(s.kb).current_revision_id==UUID(old['receipt']['revision_id'])

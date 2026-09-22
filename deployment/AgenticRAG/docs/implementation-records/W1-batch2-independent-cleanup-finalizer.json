@@ -1,0 +1,20 @@
+{
+  "status": "BLOCKED_AUTO_APPROVAL",
+  "at": "2026-09-22T19:12:13.9048224Z",
+  "target": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923",
+  "exists_after": true,
+  "regular_files": 12,
+  "directories": 1,
+  "logical_bytes": 63232,
+  "reparse": 0,
+  "hardlinks": 0,
+  "inventory_sha256": "d1c1b86599c2467d5099606481cccde4d123dbfd591b5c4dffa0a04ba580e423",
+  "readback_sha256": "3436386848042df813d3ba978783972dc27adffe9a7db63e25cd3fe8b8c557dd",
+  "action": "Native PowerShell Remove-Item -LiteralPath exact helper root -Recurse -Force after inline path/ancestor/file/hash/process checks",
+  "reason": "exec_command CreateProcess was rejected by automatic approval: blocked by policy. No more specific reason was provided; command echo truncated.",
+  "execution": "Entire command rejected before execution. No inline prechecks, deletion, report update or manifest generation ran in that call. Separate earlier inventory and fresh read-only readback are preserved.",
+  "retry_attempts": 0,
+  "external_finalizer_script_created": false,
+  "main_resource_cleanup": "Owned leader root and exact Docker 3 containers/3 volumes/1 network already removed; after audit remains valid.",
+  "remaining_action": "Await explicit user permission to retry this exact helper root or user-directed retention/manual removal. No alternative tool, narrowed deletion or agent retry."
+}

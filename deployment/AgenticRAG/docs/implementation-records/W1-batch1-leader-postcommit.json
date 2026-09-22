@@ -1,0 +1,853 @@
+{
+  "state": "COMMITTED",
+  "commit": "8c764644c57e59c9aa9ae2337f61efc3447d88ee",
+  "parent": "175f8f54ed9e24736a232f6b989d145f7f217dca",
+  "branch": "codex/rag",
+  "at": "2026-09-22T18:05:11.563202+00:00",
+  "script_sha256": "09377d6f3c74da9b1cdb98aeaa12337d1226887be26701b5738c2e33f28e09fa",
+  "cwd": "D:\\CodePlus",
+  "committed_path_count": 60,
+  "exact_paths_and_blobs": true,
+  "index_empty": true,
+  "push_performed": false,
+  "stage_record_sha256": "59f90dd1d7b25b7d87729fa21ab90482459b2823696f84d8db01942eebb618d0",
+  "committed_blobs": {
+    "codeplus/agent.py": "560ac8e406b99779142227c1e59b947ee09f73d8",
+    "deployment/AgenticRAG/docs/convergence.md": "198380d01522c8b94a4d8bfdcc2242a7d21decd0",
+    "deployment/AgenticRAG/docs/domain-and-configuration.md": "e829b9d9c9f3f11309a868fc7e09b42d3dd775bc",
+    "deployment/AgenticRAG/docs/host-integration-contract.md": "2164c84be2d6f7e91dd90f681611a18f1abbfd87",
+    "deployment/AgenticRAG/docs/implementation-checklist.md": "856b16309cf05cf83c327760a81b6a29e438abe3",
+    "deployment/AgenticRAG/docs/implementation-records/R14-leader-finalizer-cleanup.json": "a4fe55303134927a7ab2ae52518a1de69543ea26",
+    "deployment/AgenticRAG/docs/implementation-records/R14-leader-postcommit.json": "a7172c87c648230e960186cda58a6a9afbbcdf7e",
+    "deployment/AgenticRAG/docs/implementation-records/R14-leader-review.md": "afc29e5c0ef8c3007fe1daf7f1e14064a4bd30c0",
+    "deployment/AgenticRAG/docs/implementation-records/R14-leader-stage-execution.json": "9ab39e191b5096f704d50483799780db9fad2bdc",
+    "deployment/AgenticRAG/docs/implementation-records/R14.md": "47179f9bd45590a00cc02c6097ebdc55f4c2500a",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-after.json": "a26ca964bfec51b46c3b37fa2b68887f37a8e7fa",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-before.json": "d6e25a104b802d3de8c8b2186932504b366f28d3",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-delete.json": "af9f3d284b572e4ae9571a04de463ca5f765a979",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-dispatch.md": "41ea0f4a6c9be7beaab637d572877431fddf460f",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-finalizer.json": "c34e037b878942039151ecee17ba40eacb6844b9",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-helper-inventory.json": "836fd96f675312f58b247ee0d21d635f2c6bc765",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-before.jsonl.gz": "0ec6e3906b0f086e15a2a234310d17ed7d72fe84",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-links.jsonl.gz": "58148081a6347ecfba0a83d8cc4e33ddcefe9eae",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-after.jsonl.gz": "6d63d21e192c1a91a93436074cd62e02cb87cbf7",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-before.jsonl.gz": "6d63d21e192c1a91a93436074cd62e02cb87cbf7",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-delta.jsonl.gz": "86e43ea3218b5890302b754bbf8927f94e79f7ee",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-review.json": "ce544634131640e161175e1ca71acefe438af096",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-tool-error.json": "a73cd604c278b724a080c1cb3593e575ffa48532",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.json": "df7ac8b88b2a6ab597bfd53d36454b28f4f2ebdd",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.md": "3126c59f4ed91258bafc28e849b1c5ae76335a98",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-executor-files.json": "0698061b45894bd06101879eafb1d4091177b417",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-apply-first-fail.json": "dce6dee1f9f5e4b9f568e5dbe91b58e1bcb0ea6f",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-baseline.json": "3fb0b910cd7669433ca2e6e51250a843941ed0ea",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-command.json": "738a3b3cae63c15bb8e3d261f6573b4a1095916d",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-corpus.json": "9fec67f42bfdaf55c56d7428e4c2965ceba728f8",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-installations.json": "d2574c329fed1dee9a9c42bf695c6c9612ac0a3c",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-modules.json": "71058d62cfe84f7a3172b61da9de2424c8bfa625",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.txt": "9306f27b3b55452834cc367f05d6ebe5b667e34e",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.xml": "673dc9335e7c66c42a2bc4f9aa62f18ee5ff4c3c",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-command.json": "7428c74dbe30b49d42c9c3fd4872662fb294a414",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-modules.json": "89b92e5813eed788be46bc0978425d8c0662eb34",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.txt": "54300eda7101698fba71b38909c7b3cb5e29493a",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.xml": "ff280da246644ee2fe3916582369d5c0960dbcf1",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-freeze.json": "472feed11576b402b964e36142f74d8e05e9e12f",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-command.json": "b2fbbe5dea94ffd40c182b62145d67c48e3ef50a",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-modules.json": "090baa83fd32cfb056487048b58b3a6d8403fbdc",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.txt": "928dd46ec7262e117adfde2e072da1e38ceca0ab",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.xml": "256be2bca93e49cff1c516ade3e4d262f2e294f3",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-postcleanup.json": "96f926599f860147643c577a7a3b14513d70fd05",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup-first-fail.json": "7a82c1a1f8a25fbbcda0b16c84de9119bf40c3ed",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup.json": "6bdf94e22d888c997cd1376cdfbb53415f8db695",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-resources.json": "d01bfb0612dd477cbe9be437e8721b85c726aaf6",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-review.md": "6f0d8067c0dec2cfc36f4147ae1fca397ee63a6c",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-setup.json": "678b1fc0e2fa72b60085da11bf0d3de9206ed0b5",
+    "deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-stage.json": "5c92e1056f81271856768bba5bba6692befecf98",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py": "1d3ff9ebfcc563621a8ef8337c2855d3bce6cf5a",
+    "deployment/AgenticRAG/src/agentic_rag/domain.py": "540530a706b5bfcbccad93465f38d1f26fec9843",
+    "deployment/AgenticRAG/src/agentic_rag/sources.py": "8c0f18b47679d50c66e3e693168bb0c58d1ee0a2",
+    "deployment/AgenticRAG/src/agentic_rag/storage/archives.py": "eec83473d5580ec84c69ab13c1bbb9d0dc52998e",
+    "deployment/AgenticRAG/tests/test_archives.py": "aa605a061e878631e4a61b198f835bc2a218dbb0",
+    "deployment/AgenticRAG/tests/test_codeplus_integration.py": "b47ae7a367a948680360256ae6804e8f43a01dec",
+    "deployment/AgenticRAG/tests/test_configuration.py": "2d6db0e14f25e8dc62c50e06a97dd502adb77fd3",
+    "deployment/AgenticRAG/tests/test_input_snapshots.py": "ada9193230af867841a1a42f9c828a7a6768ff3e",
+    "deployment/AgenticRAG/tests/test_run_budget.py": "7d538b247ce07a2ef4d35542bcd1b60fa2721cb0",
+    "deployment/AgenticRAG/tests/test_sources.py": "16c667e0e65d6104d2153897562eaacf53f07585"
+  },
+  "pending_r14_helper": "BLOCKED_AUTO_APPROVAL; user question remains pending. Not deleted or delegated.",
+  "remaining_scope": "Remaining W1 batches, R15, W2 and R16-R26 total acceptance",
+  "postcommit_record_policy": "True SHA and own finalizer bookkeeping included in next normal W1 commit; no amend.",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0,
+      "stdout": "codex/rag\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "175f8f54ed9e24736a232f6b989d145f7f217dca\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--raw",
+        "--full-index",
+        "--no-abbrev",
+        "-z"
+      ],
+      "exit_code": 0,
+      "stdout": ":100644 100644 598c297a69130e2b2c1ff5f87600a4ae94924366 560ac8e406b99779142227c1e59b947ee09f73d8 M\u0000codeplus/agent.py\u0000:000000 100644 0000000000000000000000000000000000000000 198380d01522c8b94a4d8bfdcc2242a7d21decd0 A\u0000deployment/AgenticRAG/docs/convergence.md\u0000:100644 100644 f65f818f0e863413ee73fb0d66075a11c9274799 e829b9d9c9f3f11309a868fc7e09b42d3dd775bc M\u0000deployment/AgenticRAG/docs/domain-and-configuration.md\u0000:100644 100644 8e0739d43d345665a8bf50cce424edde84c8dd24 2164c84be2d6f7e91dd90f681611a18f1abbfd87 M\u0000deployment/AgenticRAG/docs/host-integration-contract.md\u0000:100644 100644 1e3a8d2555059e3c69d6a140c6ddd2161567ddce 856b16309cf05cf83c327760a81b6a29e438abe3 M\u0000deployment/AgenticRAG/docs/implementation-checklist.md\u0000:000000 100644 0000000000000000000000000000000000000000 a4fe55303134927a7ab2ae52518a1de69543ea26 A\u0000deployment/AgenticRAG/docs/implementation-records/R14-leader-finalizer-cleanup.json\u0000:000000 100644 0000000000000000000000000000000000000000 a7172c87c648230e960186cda58a6a9afbbcdf7e A\u0000deployment/AgenticRAG/docs/implementation-records/R14-leader-postcommit.json\u0000:100644 100644 2120bac56908fe84468e661a86622c1fecf451e3 afc29e5c0ef8c3007fe1daf7f1e14064a4bd30c0 M\u0000deployment/AgenticRAG/docs/implementation-records/R14-leader-review.md\u0000:000000 100644 0000000000000000000000000000000000000000 9ab39e191b5096f704d50483799780db9fad2bdc A\u0000deployment/AgenticRAG/docs/implementation-records/R14-leader-stage-execution.json\u0000:100644 100644 578beadbd4c3fd531281638df3b71ffd215873c0 47179f9bd45590a00cc02c6097ebdc55f4c2500a M\u0000deployment/AgenticRAG/docs/implementation-records/R14.md\u0000:000000 100644 0000000000000000000000000000000000000000 a26ca964bfec51b46c3b37fa2b68887f37a8e7fa A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-after.json\u0000:000000 100644 0000000000000000000000000000000000000000 d6e25a104b802d3de8c8b2186932504b366f28d3 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-before.json\u0000:000000 100644 0000000000000000000000000000000000000000 af9f3d284b572e4ae9571a04de463ca5f765a979 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-delete.json\u0000:000000 100644 0000000000000000000000000000000000000000 41ea0f4a6c9be7beaab637d572877431fddf460f A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-dispatch.md\u0000:000000 100644 0000000000000000000000000000000000000000 c34e037b878942039151ecee17ba40eacb6844b9 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-finalizer.json\u0000:000000 100644 0000000000000000000000000000000000000000 836fd96f675312f58b247ee0d21d635f2c6bc765 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-helper-inventory.json\u0000:000000 100644 0000000000000000000000000000000000000000 0ec6e3906b0f086e15a2a234310d17ed7d72fe84 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-before.jsonl.gz\u0000:000000 100644 0000000000000000000000000000000000000000 58148081a6347ecfba0a83d8cc4e33ddcefe9eae A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-links.jsonl.gz\u0000:000000 100644 0000000000000000000000000000000000000000 6d63d21e192c1a91a93436074cd62e02cb87cbf7 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-after.jsonl.gz\u0000:000000 100644 0000000000000000000000000000000000000000 6d63d21e192c1a91a93436074cd62e02cb87cbf7 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-before.jsonl.gz\u0000:000000 100644 0000000000000000000000000000000000000000 86e43ea3218b5890302b754bbf8927f94e79f7ee A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-delta.jsonl.gz\u0000:000000 100644 0000000000000000000000000000000000000000 ce544634131640e161175e1ca71acefe438af096 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-review.json\u0000:000000 100644 0000000000000000000000000000000000000000 a73cd604c278b724a080c1cb3593e575ffa48532 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-tool-error.json\u0000:000000 100644 0000000000000000000000000000000000000000 df7ac8b88b2a6ab597bfd53d36454b28f4f2ebdd A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.json\u0000:000000 100644 0000000000000000000000000000000000000000 3126c59f4ed91258bafc28e849b1c5ae76335a98 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.md\u0000:000000 100644 0000000000000000000000000000000000000000 0698061b45894bd06101879eafb1d4091177b417 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-executor-files.json\u0000:000000 100644 0000000000000000000000000000000000000000 dce6dee1f9f5e4b9f568e5dbe91b58e1bcb0ea6f A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-apply-first-fail.json\u0000:000000 100644 0000000000000000000000000000000000000000 3fb0b910cd7669433ca2e6e51250a843941ed0ea A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-baseline.json\u0000:000000 100644 0000000000000000000000000000000000000000 738a3b3cae63c15bb8e3d261f6573b4a1095916d A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-command.json\u0000:000000 100644 0000000000000000000000000000000000000000 9fec67f42bfdaf55c56d7428e4c2965ceba728f8 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-corpus.json\u0000:000000 100644 0000000000000000000000000000000000000000 d2574c329fed1dee9a9c42bf695c6c9612ac0a3c A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-installations.json\u0000:000000 100644 0000000000000000000000000000000000000000 71058d62cfe84f7a3172b61da9de2424c8bfa625 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-modules.json\u0000:000000 100644 0000000000000000000000000000000000000000 9306f27b3b55452834cc367f05d6ebe5b667e34e A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.txt\u0000:000000 100644 0000000000000000000000000000000000000000 673dc9335e7c66c42a2bc4f9aa62f18ee5ff4c3c A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.xml\u0000:000000 100644 0000000000000000000000000000000000000000 7428c74dbe30b49d42c9c3fd4872662fb294a414 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-command.json\u0000:000000 100644 0000000000000000000000000000000000000000 89b92e5813eed788be46bc0978425d8c0662eb34 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-modules.json\u0000:000000 100644 0000000000000000000000000000000000000000 54300eda7101698fba71b38909c7b3cb5e29493a A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.txt\u0000:000000 100644 0000000000000000000000000000000000000000 ff280da246644ee2fe3916582369d5c0960dbcf1 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.xml\u0000:000000 100644 0000000000000000000000000000000000000000 472feed11576b402b964e36142f74d8e05e9e12f A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-freeze.json\u0000:000000 100644 0000000000000000000000000000000000000000 b2fbbe5dea94ffd40c182b62145d67c48e3ef50a A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-command.json\u0000:000000 100644 0000000000000000000000000000000000000000 090baa83fd32cfb056487048b58b3a6d8403fbdc A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-modules.json\u0000:000000 100644 0000000000000000000000000000000000000000 928dd46ec7262e117adfde2e072da1e38ceca0ab A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.txt\u0000:000000 100644 0000000000000000000000000000000000000000 256be2bca93e49cff1c516ade3e4d262f2e294f3 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.xml\u0000:000000 100644 0000000000000000000000000000000000000000 96f926599f860147643c577a7a3b14513d70fd05 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-postcleanup.json\u0000:000000 100644 0000000000000000000000000000000000000000 7a82c1a1f8a25fbbcda0b16c84de9119bf40c3ed A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup-first-fail.json\u0000:000000 100644 0000000000000000000000000000000000000000 6bdf94e22d888c997cd1376cdfbb53415f8db695 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup.json\u0000:000000 100644 0000000000000000000000000000000000000000 d01bfb0612dd477cbe9be437e8721b85c726aaf6 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-resources.json\u0000:000000 100644 0000000000000000000000000000000000000000 6f0d8067c0dec2cfc36f4147ae1fca397ee63a6c A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-review.md\u0000:000000 100644 0000000000000000000000000000000000000000 678b1fc0e2fa72b60085da11bf0d3de9206ed0b5 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-setup.json\u0000:000000 100644 0000000000000000000000000000000000000000 5c92e1056f81271856768bba5bba6692befecf98 A\u0000deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-stage.json\u0000:100644 100644 a860a8da0a097fe920acdb705ce2790ba5b6b68d 1d3ff9ebfcc563621a8ef8337c2855d3bce6cf5a M\u0000deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py\u0000:100644 100644 7cc646d3eb8cef37906547b58633f84ad276d173 540530a706b5bfcbccad93465f38d1f26fec9843 M\u0000deployment/AgenticRAG/src/agentic_rag/domain.py\u0000:100644 100644 82c72ecf34fd51f408de6010eadb4ba1340b5f9c 8c0f18b47679d50c66e3e693168bb0c58d1ee0a2 M\u0000deployment/AgenticRAG/src/agentic_rag/sources.py\u0000:100644 100644 239c6c895e79068340358cc113ceca0d1831a37e eec83473d5580ec84c69ab13c1bbb9d0dc52998e M\u0000deployment/AgenticRAG/src/agentic_rag/storage/archives.py\u0000:100644 100644 f2cf6182d165b24b11e211315e4e18dd85cd098e aa605a061e878631e4a61b198f835bc2a218dbb0 M\u0000deployment/AgenticRAG/tests/test_archives.py\u0000:100644 100644 568964bb2973e94be6e9ec11867da31b28577630 b47ae7a367a948680360256ae6804e8f43a01dec M\u0000deployment/AgenticRAG/tests/test_codeplus_integration.py\u0000:100644 100644 c92869d23f28125b55b6f6a322b9b276fbac9789 2d6db0e14f25e8dc62c50e06a97dd502adb77fd3 M\u0000deployment/AgenticRAG/tests/test_configuration.py\u0000:100644 100644 fd3f63a1df9883d50b34e38f63406c0ddb327812 ada9193230af867841a1a42f9c828a7a6768ff3e M\u0000deployment/AgenticRAG/tests/test_input_snapshots.py\u0000:100644 100644 5a476147eece33af0c4cda20f8c08424c028bacc 7d538b247ce07a2ef4d35542bcd1b60fa2721cb0 M\u0000deployment/AgenticRAG/tests/test_run_budget.py\u0000:100644 100644 9ec963a15dae91b498e9eef9d5ef4dee76c3e552 16c667e0e65d6104d2153897562eaacf53f07585 M\u0000deployment/AgenticRAG/tests/test_sources.py\u0000",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "commit",
+        "-m",
+        "refactor(rag): unify source budget outcomes and archive reads"
+      ],
+      "exit_code": 0,
+      "stdout": "[codex/rag 8c76464] refactor(rag): unify source budget outcomes and archive reads\n 60 files changed, 120990 insertions(+), 89 deletions(-)\n create mode 100644 deployment/AgenticRAG/docs/convergence.md\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/R14-leader-finalizer-cleanup.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/R14-leader-postcommit.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/R14-leader-stage-execution.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-after.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-before.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-delete.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-dispatch.md\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-finalizer.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-helper-inventory.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-before.jsonl.gz\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-links.jsonl.gz\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-after.jsonl.gz\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-before.jsonl.gz\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-delta.jsonl.gz\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-review.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-tool-error.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.md\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-executor-files.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-apply-first-fail.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-baseline.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-command.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-corpus.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-installations.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-modules.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.txt\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.xml\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-command.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-modules.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.txt\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.xml\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-freeze.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-command.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-modules.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.txt\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.xml\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-postcleanup.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup-first-fail.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-resources.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-review.md\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-setup.json\n create mode 100644 deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-stage.json\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "8c764644c57e59c9aa9ae2337f61efc3447d88ee\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^"
+      ],
+      "exit_code": 0,
+      "stdout": "175f8f54ed9e24736a232f6b989d145f7f217dca\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:codeplus/agent.py"
+      ],
+      "exit_code": 0,
+      "stdout": "560ac8e406b99779142227c1e59b947ee09f73d8\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/convergence.md"
+      ],
+      "exit_code": 0,
+      "stdout": "198380d01522c8b94a4d8bfdcc2242a7d21decd0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/domain-and-configuration.md"
+      ],
+      "exit_code": 0,
+      "stdout": "e829b9d9c9f3f11309a868fc7e09b42d3dd775bc\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/host-integration-contract.md"
+      ],
+      "exit_code": 0,
+      "stdout": "2164c84be2d6f7e91dd90f681611a18f1abbfd87\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-checklist.md"
+      ],
+      "exit_code": 0,
+      "stdout": "856b16309cf05cf83c327760a81b6a29e438abe3\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/R14-leader-finalizer-cleanup.json"
+      ],
+      "exit_code": 0,
+      "stdout": "a4fe55303134927a7ab2ae52518a1de69543ea26\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/R14-leader-postcommit.json"
+      ],
+      "exit_code": 0,
+      "stdout": "a7172c87c648230e960186cda58a6a9afbbcdf7e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/R14-leader-review.md"
+      ],
+      "exit_code": 0,
+      "stdout": "afc29e5c0ef8c3007fe1daf7f1e14064a4bd30c0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/R14-leader-stage-execution.json"
+      ],
+      "exit_code": 0,
+      "stdout": "9ab39e191b5096f704d50483799780db9fad2bdc\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/R14.md"
+      ],
+      "exit_code": 0,
+      "stdout": "47179f9bd45590a00cc02c6097ebdc55f4c2500a\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-after.json"
+      ],
+      "exit_code": 0,
+      "stdout": "a26ca964bfec51b46c3b37fa2b68887f37a8e7fa\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-before.json"
+      ],
+      "exit_code": 0,
+      "stdout": "d6e25a104b802d3de8c8b2186932504b366f28d3\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-delete.json"
+      ],
+      "exit_code": 0,
+      "stdout": "af9f3d284b572e4ae9571a04de463ca5f765a979\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-dispatch.md"
+      ],
+      "exit_code": 0,
+      "stdout": "41ea0f4a6c9be7beaab637d572877431fddf460f\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-finalizer.json"
+      ],
+      "exit_code": 0,
+      "stdout": "c34e037b878942039151ecee17ba40eacb6844b9\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-helper-inventory.json"
+      ],
+      "exit_code": 0,
+      "stdout": "836fd96f675312f58b247ee0d21d635f2c6bc765\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-before.jsonl.gz"
+      ],
+      "exit_code": 0,
+      "stdout": "0ec6e3906b0f086e15a2a234310d17ed7d72fe84\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-links.jsonl.gz"
+      ],
+      "exit_code": 0,
+      "stdout": "58148081a6347ecfba0a83d8cc4e33ddcefe9eae\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-after.jsonl.gz"
+      ],
+      "exit_code": 0,
+      "stdout": "6d63d21e192c1a91a93436074cd62e02cb87cbf7\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-before.jsonl.gz"
+      ],
+      "exit_code": 0,
+      "stdout": "6d63d21e192c1a91a93436074cd62e02cb87cbf7\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-delta.jsonl.gz"
+      ],
+      "exit_code": 0,
+      "stdout": "86e43ea3218b5890302b754bbf8927f94e79f7ee\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-review.json"
+      ],
+      "exit_code": 0,
+      "stdout": "ce544634131640e161175e1ca71acefe438af096\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-tool-error.json"
+      ],
+      "exit_code": 0,
+      "stdout": "a73cd604c278b724a080c1cb3593e575ffa48532\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.json"
+      ],
+      "exit_code": 0,
+      "stdout": "df7ac8b88b2a6ab597bfd53d36454b28f4f2ebdd\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.md"
+      ],
+      "exit_code": 0,
+      "stdout": "3126c59f4ed91258bafc28e849b1c5ae76335a98\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-executor-files.json"
+      ],
+      "exit_code": 0,
+      "stdout": "0698061b45894bd06101879eafb1d4091177b417\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-apply-first-fail.json"
+      ],
+      "exit_code": 0,
+      "stdout": "dce6dee1f9f5e4b9f568e5dbe91b58e1bcb0ea6f\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-baseline.json"
+      ],
+      "exit_code": 0,
+      "stdout": "3fb0b910cd7669433ca2e6e51250a843941ed0ea\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-command.json"
+      ],
+      "exit_code": 0,
+      "stdout": "738a3b3cae63c15bb8e3d261f6573b4a1095916d\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-corpus.json"
+      ],
+      "exit_code": 0,
+      "stdout": "9fec67f42bfdaf55c56d7428e4c2965ceba728f8\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-installations.json"
+      ],
+      "exit_code": 0,
+      "stdout": "d2574c329fed1dee9a9c42bf695c6c9612ac0a3c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-modules.json"
+      ],
+      "exit_code": 0,
+      "stdout": "71058d62cfe84f7a3172b61da9de2424c8bfa625\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.txt"
+      ],
+      "exit_code": 0,
+      "stdout": "9306f27b3b55452834cc367f05d6ebe5b667e34e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.xml"
+      ],
+      "exit_code": 0,
+      "stdout": "673dc9335e7c66c42a2bc4f9aa62f18ee5ff4c3c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-command.json"
+      ],
+      "exit_code": 0,
+      "stdout": "7428c74dbe30b49d42c9c3fd4872662fb294a414\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-modules.json"
+      ],
+      "exit_code": 0,
+      "stdout": "89b92e5813eed788be46bc0978425d8c0662eb34\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.txt"
+      ],
+      "exit_code": 0,
+      "stdout": "54300eda7101698fba71b38909c7b3cb5e29493a\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.xml"
+      ],
+      "exit_code": 0,
+      "stdout": "ff280da246644ee2fe3916582369d5c0960dbcf1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-freeze.json"
+      ],
+      "exit_code": 0,
+      "stdout": "472feed11576b402b964e36142f74d8e05e9e12f\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-command.json"
+      ],
+      "exit_code": 0,
+      "stdout": "b2fbbe5dea94ffd40c182b62145d67c48e3ef50a\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-modules.json"
+      ],
+      "exit_code": 0,
+      "stdout": "090baa83fd32cfb056487048b58b3a6d8403fbdc\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.txt"
+      ],
+      "exit_code": 0,
+      "stdout": "928dd46ec7262e117adfde2e072da1e38ceca0ab\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.xml"
+      ],
+      "exit_code": 0,
+      "stdout": "256be2bca93e49cff1c516ade3e4d262f2e294f3\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-postcleanup.json"
+      ],
+      "exit_code": 0,
+      "stdout": "96f926599f860147643c577a7a3b14513d70fd05\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup-first-fail.json"
+      ],
+      "exit_code": 0,
+      "stdout": "7a82c1a1f8a25fbbcda0b16c84de9119bf40c3ed\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup.json"
+      ],
+      "exit_code": 0,
+      "stdout": "6bdf94e22d888c997cd1376cdfbb53415f8db695\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-resources.json"
+      ],
+      "exit_code": 0,
+      "stdout": "d01bfb0612dd477cbe9be437e8721b85c726aaf6\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-review.md"
+      ],
+      "exit_code": 0,
+      "stdout": "6f0d8067c0dec2cfc36f4147ae1fca397ee63a6c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-setup.json"
+      ],
+      "exit_code": 0,
+      "stdout": "678b1fc0e2fa72b60085da11bf0d3de9206ed0b5\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-stage.json"
+      ],
+      "exit_code": 0,
+      "stdout": "5c92e1056f81271856768bba5bba6692befecf98\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py"
+      ],
+      "exit_code": 0,
+      "stdout": "1d3ff9ebfcc563621a8ef8337c2855d3bce6cf5a\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/domain.py"
+      ],
+      "exit_code": 0,
+      "stdout": "540530a706b5bfcbccad93465f38d1f26fec9843\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/sources.py"
+      ],
+      "exit_code": 0,
+      "stdout": "8c0f18b47679d50c66e3e693168bb0c58d1ee0a2\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/src/agentic_rag/storage/archives.py"
+      ],
+      "exit_code": 0,
+      "stdout": "eec83473d5580ec84c69ab13c1bbb9d0dc52998e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_archives.py"
+      ],
+      "exit_code": 0,
+      "stdout": "aa605a061e878631e4a61b198f835bc2a218dbb0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_codeplus_integration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "b47ae7a367a948680360256ae6804e8f43a01dec\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_configuration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "2d6db0e14f25e8dc62c50e06a97dd502adb77fd3\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_input_snapshots.py"
+      ],
+      "exit_code": 0,
+      "stdout": "ada9193230af867841a1a42f9c828a7a6768ff3e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_run_budget.py"
+      ],
+      "exit_code": 0,
+      "stdout": "7d538b247ce07a2ef4d35542bcd1b60fa2721cb0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee:deployment/AgenticRAG/tests/test_sources.py"
+      ],
+      "exit_code": 0,
+      "stdout": "16c667e0e65d6104d2153897562eaacf53f07585\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff-tree",
+        "--no-commit-id",
+        "--name-only",
+        "-r",
+        "8c764644c57e59c9aa9ae2337f61efc3447d88ee"
+      ],
+      "exit_code": 0,
+      "stdout": "codeplus/agent.py\ndeployment/AgenticRAG/docs/convergence.md\ndeployment/AgenticRAG/docs/domain-and-configuration.md\ndeployment/AgenticRAG/docs/host-integration-contract.md\ndeployment/AgenticRAG/docs/implementation-checklist.md\ndeployment/AgenticRAG/docs/implementation-records/R14-leader-finalizer-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/R14-leader-postcommit.json\ndeployment/AgenticRAG/docs/implementation-records/R14-leader-review.md\ndeployment/AgenticRAG/docs/implementation-records/R14-leader-stage-execution.json\ndeployment/AgenticRAG/docs/implementation-records/R14.md\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-after.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-before.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-delete.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-dispatch.md\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-finalizer.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-helper-inventory.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-before.jsonl.gz\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-owned-links.jsonl.gz\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-after.jsonl.gz\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-before.jsonl.gz\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-delta.jsonl.gz\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-shared-review.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup-tool-error.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-cleanup.md\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-executor-files.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-apply-first-fail.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-baseline.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-command.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-corpus.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-installations.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core-modules.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.txt\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-core.xml\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-command.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused-modules.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.txt\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-focused.xml\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-freeze.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-command.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host-modules.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.txt\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-host.xml\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-postcleanup.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup-first-fail.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-precleanup.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-resources.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-review.md\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-setup.json\ndeployment/AgenticRAG/docs/implementation-records/W1-batch1-leader-stage.json\ndeployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py\ndeployment/AgenticRAG/src/agentic_rag/domain.py\ndeployment/AgenticRAG/src/agentic_rag/sources.py\ndeployment/AgenticRAG/src/agentic_rag/storage/archives.py\ndeployment/AgenticRAG/tests/test_archives.py\ndeployment/AgenticRAG/tests/test_codeplus_integration.py\ndeployment/AgenticRAG/tests/test_configuration.py\ndeployment/AgenticRAG/tests/test_input_snapshots.py\ndeployment/AgenticRAG/tests/test_run_budget.py\ndeployment/AgenticRAG/tests/test_sources.py\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--raw",
+        "--full-index",
+        "--no-abbrev",
+        "-z"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

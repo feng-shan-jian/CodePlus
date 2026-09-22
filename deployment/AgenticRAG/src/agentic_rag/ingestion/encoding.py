@@ -11,9 +11,10 @@ from ..capabilities import RequestContext, validate_response
 from ..domain import ErrorCode, RagError
 from ..indexes.manifest import rows_for_document, vector_hash
 from ..storage import recovery as recovery_store
+from ..storage import inputs as input_store
+from ..storage.processing import read as _read_processed
 from ..storage.paths import failure
-from .capture import read_input
-from .processing import read_processed
+from .capture import _read_input
 
 
 def outcomes(catalog, batch_id):
@@ -38,12 +39,19 @@ def binding(catalog, batch_id, raw, checked):
 
 def read_encoded(catalog, batch_id, raw, state=None):
     """Authenticate original, config, parsed structure, exact order and float32."""
+    return _read_encoded(catalog, batch_id, raw, state)
+
+
+def _read_encoded(catalog, batch_id, raw, state=None, *, _inputs=None):
     state = state or outcomes(catalog,batch_id).get(str(raw.entry.item_id))
     if state is None or state['state'] != 'encoded':
         return None
     try:
-        read_input(catalog,batch_id,raw.entry.item_id)
-        checked = read_processed(catalog,batch_id,raw.entry.item_id)
+        inputs = _inputs if _inputs is not None else input_store._InputRead(catalog, batch_id)
+        if input_store._read_item(catalog, batch_id, raw.entry.item_id, inputs) != raw:
+            raise ValueError('encoding input differs from current verified checkpoint')
+        _read_input(catalog,batch_id,raw.entry.item_id,_inputs=inputs)
+        checked = _read_processed(catalog,batch_id,raw.entry.item_id,_inputs=inputs)
         if checked is None or checked[0].stage != 'chunked':
             raise ValueError('no complete parsed document')
         expected = binding(catalog,batch_id,raw,checked)
@@ -64,10 +72,10 @@ def read_encoded(catalog, batch_id, raw, state=None):
         raise RagError(ErrorCode.CHECKPOINT_INVALID,f'complete document encoding checkpoint invalid: {exc}',stage='encoding_checkpoint') from exc
 
 
-def record(catalog, owner, raw, state, *, vectors=None, error=None, produced_by=None):
+def record(catalog, owner, raw, state, *, vectors=None, error=None, produced_by=None, _inputs=None):
     obj = None
     if vectors is not None:
-        checked = read_processed(catalog,owner.token.batch_id,raw.entry.item_id)
+        checked = _read_processed(catalog,owner.token.batch_id,raw.entry.item_id,_inputs=_inputs)
         payload = {'format':2,'binding':binding(catalog,owner.token.batch_id,raw,checked),'vectors':vectors}
         obj = catalog.archives.put(io.BytesIO(canonical_json(payload).encode()))
     with catalog._owned(owner,produced_by or owner.token) as db:
@@ -120,16 +128,17 @@ def encode_documents(catalog, owner, provider, *, ordinary=False, cancelled_chec
     profile, token = snapshot.resolved_config.embedding, owner.token
     previous = outcomes(catalog,batch.batch_id)
     calls = []
-    for raw in catalog.get_input_items(batch.batch_id):
+    input_read = input_store._InputRead(catalog, batch.batch_id)
+    for raw in input_read.items:
         cancelled(cancelled_check)
         state = previous.get(str(raw.entry.item_id))
         if state:
             if state['state'] == 'encoded':
-                read_encoded(catalog,batch.batch_id,raw,state)
+                _read_encoded(catalog,batch.batch_id,raw,state,_inputs=input_read)
             elif state['state'] == 'unchanged':
                 if not ordinary or raw.change not in ('unchanged','index_changed'):
                     raise failure('invalid unchanged document checkpoint')
-                read_input(catalog,batch.batch_id,raw.entry.item_id)
+                _read_input(catalog,batch.batch_id,raw.entry.item_id,_inputs=input_read)
             if not ordinary and state['state'] != 'encoded':
                 raise RagError(ErrorCode.CHECKPOINT_INVALID,'strict first build requires every document to succeed',stage='encoding')
             continue
@@ -138,10 +147,10 @@ def encode_documents(catalog, owner, provider, *, ordinary=False, cancelled_chec
                 raise RagError(ErrorCode.CHECKPOINT_INVALID,'strict first build has a failed original snapshot',stage='encoding')
             record(catalog,owner,raw,'failed',error=raw.error,produced_by=token)
         elif ordinary and raw.change in ('unchanged','index_changed'):
-            read_input(catalog,batch.batch_id,raw.entry.item_id)
+            _read_input(catalog,batch.batch_id,raw.entry.item_id,_inputs=input_read)
             record(catalog,owner,raw,'unchanged',produced_by=token)
         else:
-            checked = read_processed(catalog,batch.batch_id,raw.entry.item_id)
+            checked = _read_processed(catalog,batch.batch_id,raw.entry.item_id,_inputs=input_read)
             if checked is None:
                 raise failure('captured file has no terminal processing result')
             item, version, result = checked
@@ -178,7 +187,7 @@ def encode_documents(catalog, owner, provider, *, ordinary=False, cancelled_chec
                     offset = stop
                     if observer:
                         observer('encoding_response',{'item_id':str(raw.entry.item_id),'complete':offset,'total':len(rows)})
-                record(catalog,owner,raw,'encoded',vectors=encoded,produced_by=token)
+                record(catalog,owner,raw,'encoded',vectors=encoded,produced_by=token,_inputs=input_read)
             except RagError as exc:
                 if not ordinary or exc.error.code not in (ErrorCode.INVALID_INPUT,ErrorCode.INPUT_TOO_LONG):
                     raise

@@ -1,0 +1,244 @@
+{
+  "task": "01a0c9c1-0a2a-7eb3-9e79-a007a6a9d1e4",
+  "observed_utc": "2026-09-22T18:48:03.6364079Z",
+  "previous_frozen_report": {
+    "path": "C:/Users/18221/.codex/worktrees/bf43/agentic-rag-convergence-resource-status-v3.json",
+    "bytes": 8060,
+    "sha256": "5965d8634f0550901debd878391132f5b96c08b1316da1b8d8ee3264c14f9cce"
+  },
+  "cleanup_status": "not complete; no rejected cleanup retried",
+  "new_rejection": {
+    "action": "Native PowerShell Remove-Item -LiteralPath -Force for exact new convergence-bs02-slim.py/index single files; no recursion",
+    "result": "CreateProcess rejected: blocked by policy",
+    "executed": false,
+    "specificity": "No more specific reason was provided",
+    "retry": "No retry or alternate deletion mechanism for these or any previously rejected paths"
+  },
+  "test_directories": [
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-batch2-dev-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-bs02-slim-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-build-scope-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-diagnostics-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-history-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-history-v8-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-host-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-input-read-contract-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-input-scope-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-migrations-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-model-io-contract-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-model-io-owner-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-preparation-contract-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-publication-v3-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-reuse-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-scope-extra-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-session-debug-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-session-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-source-reuse-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-source-scope-extra-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-w1-combined-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-w1-host-combined-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-worker-all-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-worker-host-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-worker-test-data",
+      "exists": true,
+      "top_level_reparse": false,
+      "deleted": false,
+      "role": "completed CPU self-test output"
+    }
+  ],
+  "helper_files": [
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-batch2-revision.py",
+      "bytes": 9287,
+      "sha256": "580bf7dbb453f5b1ce2c652aaf63f3696877058eec845548fb2441e56d2aa97b",
+      "deleted": false,
+      "deletion": "automatic approval rejected before execution: blocked by policy"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-batch2-revision.index",
+      "bytes": 902747,
+      "sha256": "f13a9c03196c73862113e237f07029dbfd11e4885471e1946d9305811922f468",
+      "deleted": false,
+      "deletion": "automatic approval rejected before execution: blocked by policy"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-bs02-slim.py",
+      "bytes": 5013,
+      "sha256": "f1cb3bc653673d9d97deb30cfba7bdfaa2b293c65e8a4fb95419f86aacc4be8f",
+      "deleted": false,
+      "deletion": "automatic approval rejected before execution: blocked by policy"
+    },
+    {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\convergence-bs02-slim.index",
+      "bytes": 903173,
+      "sha256": "ad421641c96b020a76554dd43d1413a84730ce9a5317f48f3516265c2e26e3b7",
+      "deleted": false,
+      "deletion": "automatic approval rejected before execution: blocked by policy"
+    }
+  ],
+  "processes": [],
+  "audits": {
+    "test_roots_under_bf43": true,
+    "top_level_reparse_checked": true,
+    "descendant_reparse_audit": "not executed"
+  },
+  "dev_verification_retained": [
+    "convergence-batch2-dev-source",
+    "convergence-batch2-dev-env: now editable-installed only from pure BS02 slim source",
+    "convergence-batch2-dev-artifacts",
+    "convergence-bs02-slim-source"
+  ],
+  "continuing_resources": "Own convergence-env/cache/tokenizer/backups and frozen handoff artifacts retained for remaining integration and W2; no shared environment or foreign service cleanup"
+}

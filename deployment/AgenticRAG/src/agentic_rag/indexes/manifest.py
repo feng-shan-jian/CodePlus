@@ -83,19 +83,20 @@ def rows_for_document(kb_id, revision_id, snapshot, version, result):
 def prepare(catalog, batch_id, revision_id):
     """Full first-import only. Filesystem/hash checks finish before any SQL write."""
     from ..ingestion.mutations import request, prepare_changes
-    from ..ingestion.processing import read_processed
+    from ..storage.processing import read as read_processed
+    from ..storage.inputs import _InputRead
     if request(catalog,batch_id) is not None:
         return prepare_changes(catalog,batch_id,revision_id)
     batch = catalog.get_batch(batch_id)
     snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
     members, rows, inputs, counts = [], [], [], []
-    raw_items = catalog.get_input_items(batch_id)
-    if not raw_items:
+    input_read = _InputRead(catalog, batch_id)
+    if not input_read.items:
         raise index_error('cannot publish an empty first import')
-    for raw in raw_items:
+    for raw in input_read.items:
         if raw.stage != 'captured':
             raise index_error('first import requires all original snapshots', 'manifest')
-        checked = read_processed(catalog, batch_id, raw.entry.item_id)
+        checked = read_processed(catalog, batch_id, raw.entry.item_id, _inputs=input_read)
         if checked is None or checked[0].stage != 'chunked':
             raise index_error('first import requires all verified processing checkpoints', 'manifest')
         item, version, result = checked

@@ -16,10 +16,11 @@ from ..indexes.manifest import (PreparedRevision, schema_spec, index_error,
 from ..storage import inputs as input_store, publication
 from ..storage.paths import failure
 from .capture import capture_inputs
-from .processing import process_inputs, read_processed
+from .processing import process_inputs
+from ..storage.processing import read as _read_processed
 from .records import InputSelection
 from .selection import select_inputs
-from .encoding import outcomes, read_encoded, encode_documents, cancelled as _cancelled
+from .encoding import outcomes, _read_encoded, encode_documents, cancelled as _cancelled
 
 
 def request(catalog, batch_id):
@@ -147,7 +148,7 @@ def process_changes(catalog, owner, tokenizer, provider, *, cancelled=None, requ
 def _base(catalog, batch, snapshot, revision_id):
     """Re-derive every archived row and membership, authenticate old proof."""
     if batch.base_revision_id is None:
-        return {}, {}, None
+        return {}, {}, None, None
     from ..source_archive import read_version
     stored = publication.artifact(catalog, batch.base_revision_id, published=True)
     old_receipt = publication.receipt(catalog, UUID(stored['batch_id']), batch.base_revision_id)
@@ -176,17 +177,28 @@ def _base(catalog, batch, snapshot, revision_id):
     actual.sort(key=lambda r:r['chunk_id'])
     if [{k:v for k,v in r.items() if k!='vector_hash'} for r in expected] != actual:
         raise failure('base members/archived sources differ from sealed encoded manifest')
-    return members, rows, stored
+    return members, rows, stored, expected
 
 
 def prepare_changes(catalog, batch_id, revision_id):
+    return _prepare_changes_with_base(catalog, batch_id, revision_id)[0]
+
+
+def _preparation_binding(catalog, batch, snapshot, req):
+    return (catalog.store_id, batch.kb_id, batch.batch_id, batch.base_revision_id,
+            batch.input_manifest_hash, batch.processing_snapshot_id,
+            snapshot.config_fingerprint, fingerprint('ordinary-mutation-v1', req))
+
+
+def _prepare_changes_with_base(catalog, batch_id, revision_id):
     batch = catalog.get_batch(batch_id)
     snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
     req, states = request(catalog,batch_id), outcomes(catalog,batch_id)
-    raw_items = catalog.get_input_items(batch_id)
+    input_read = input_store._InputRead(catalog, batch_id)
+    raw_items = input_read.items
     if set(states) != {str(i.entry.item_id) for i in raw_items}:
         raise failure('ordinary candidate requires every file to be terminal')
-    members, rows_by_doc, _ = _base(catalog,batch,snapshot,revision_id)
+    members, rows_by_doc, base_artifact, base_expected = _base(catalog,batch,snapshot,revision_id)
     vectors = []
     for raw in raw_items:
         state = states[str(raw.entry.item_id)]
@@ -196,12 +208,12 @@ def prepare_changes(catalog, batch_id, revision_id):
             if members[str(raw.document_id)].document_version_id != raw.base_version_id:
                 raise failure('unchanged member version differs')
         elif state['state'] == 'encoded':
-            checked = read_processed(catalog,batch_id,raw.entry.item_id)
+            checked = _read_processed(catalog,batch_id,raw.entry.item_id,_inputs=input_read)
             if checked is None or checked[0].stage != 'chunked':
                 raise failure('encoded document lacks complete processing checkpoint')
             item, version, result = checked
             rows, _, _ = rows_for_document(batch.kb_id,revision_id,snapshot,version,result)
-            encoded = read_encoded(catalog,batch_id,raw,state)
+            encoded = _read_encoded(catalog,batch_id,raw,state,_inputs=input_read)
             members[str(raw.document_id)] = RevisionMember(revision_id=revision_id,document_id=raw.document_id,
                 document_version_id=version.document_version_id,chunk_set_hash=next(a.sha256 for a in item.output_hashes if a.kind=='chunks'))
             rows_by_doc[str(raw.document_id)] = rows
@@ -218,7 +230,67 @@ def prepare_changes(catalog, batch_id, revision_id):
     manifest = fingerprint('publication-manifest', {'batch_id':str(batch_id),'input_manifest_hash':batch.input_manifest_hash,
         'snapshot':snapshot.config_fingerprint,'ordinary_request':fingerprint('ordinary-mutation-v1',req),
         'members':[m.model_dump(mode='json') for m in members],'rows':list(rows),'schema':spec})
-    return PreparedRevision(revision_id,members,rows,(),(),manifest,fingerprint('milvus-schema',spec),spec,tuple(vectors))
+    candidate = PreparedRevision(revision_id,members,rows,(),(),manifest,fingerprint('milvus-schema',spec),spec,tuple(vectors))
+    return candidate, _preparation_binding(catalog,batch,snapshot,req), base_artifact, base_expected
+
+
+def _candidate_seal(candidate):
+    """Detect mutation without copying or JSON-serializing dense payloads."""
+    if candidate.model_inputs or candidate.token_counts:
+        raise failure('ordinary candidate cannot carry first-build model inputs')
+    vectors = []
+    for value in candidate.encoded_vectors:
+        if set(value) != {'chunk_id','vector_hash','dense'}:
+            raise failure('prepared vector fields changed')
+        digest = vector_hash(value['dense'])
+        if digest != value['vector_hash']:
+            raise failure('prepared vector content differs from its digest')
+        vectors.append({'chunk_id':value['chunk_id'], 'vector_hash':digest})
+    return fingerprint('ordinary-build-candidate-v1', {
+        'revision_id':str(candidate.revision_id),
+        'members':[member.model_dump(mode='json') for member in candidate.members],
+        'rows':list(candidate.rows), 'manifest_hash':candidate.manifest_hash,
+        'schema_hash':candidate.schema_hash, 'spec':candidate.spec, 'vectors':vectors})
+
+
+class _BuildPreparation:
+    """One ordinary build's verified inputs; never a caller-supplied proof."""
+
+    def __init__(self, catalog, owner, revision_id):
+        with catalog._db.transaction() as db:
+            owner.require(catalog._db, db)
+        self._catalog, self._owner, self.revision_id = catalog, owner.token, revision_id
+        self.candidate, self._binding, self.base_artifact, self.base_expected = _prepare_changes_with_base(
+            catalog, owner.token.batch_id, revision_id)
+        self._seal = _candidate_seal(self.candidate)
+        self._base_seal = fingerprint('ordinary-build-base-v1', {
+            'artifact':self.base_artifact, 'expected':self.base_expected})
+        self._active = self._entered = False
+
+    def __enter__(self):
+        if self._entered:
+            raise failure('build preparation cannot be reused')
+        self._entered = self._active = True
+        return self
+
+    def __exit__(self, *_):
+        self._active = False
+
+    def checked(self, catalog, owner, revision_id):
+        if (not self._active or catalog is not self._catalog or owner.token != self._owner or
+                revision_id != self.revision_id):
+            raise failure('build preparation belongs to a different operation or owner')
+        with catalog._db.transaction() as db:
+            owner.require(catalog._db, db, self._owner)
+        batch = catalog.get_batch(owner.token.batch_id)
+        snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
+        binding = _preparation_binding(catalog, batch, snapshot, request(catalog,batch.batch_id))
+        if binding != self._binding or _candidate_seal(self.candidate) != self._seal:
+            raise failure('build preparation identity or candidate changed')
+        if fingerprint('ordinary-build-base-v1', {
+                'artifact':self.base_artifact, 'expected':self.base_expected}) != self._base_seal:
+            raise failure('build preparation base material changed')
+        return self.candidate
 
 
 def summary(catalog, batch_id):
@@ -273,7 +345,14 @@ def build_changes(catalog, owner, provider, backend, tokenizer, *, cancelled=Non
         raise failure('mutation backend differs from frozen catalog/endpoint')
     started = time.perf_counter()
     process_changes(catalog,owner,tokenizer,provider,cancelled=cancelled,request_seconds=request_seconds,observer=observer)
-    candidate = prepare_changes(catalog,batch.batch_id,uuid4())
+    with _BuildPreparation(catalog,owner,uuid4()) as prepared:
+        return _build_prepared(catalog,owner,backend,batch,snapshot,prepared,started,
+                               cancelled=cancelled,observer=observer,index_timeout=index_timeout)
+
+
+def _build_prepared(catalog, owner, backend, batch, snapshot, prepared, started, *,
+                    cancelled, observer, index_timeout):
+    candidate = prepared.candidate
     with catalog._db.transaction() as db:
         prior = db.execute('SELECT document_id,document_version_id,chunk_set_hash FROM revision_members WHERE revision_id=? ORDER BY document_id',
                            (str(batch.base_revision_id),)).fetchall()
@@ -285,24 +364,21 @@ def build_changes(catalog, owner, provider, backend, tokenizer, *, cancelled=Non
     changed = prior != target or index_change
     _cancelled(cancelled)
     if not changed:
-        value = publication.complete_no_change(catalog,owner)
+        value = publication._complete_no_change(catalog,owner,_operation=prepared)
         return {'receipt':None,'summary':value,'metrics':{'build_seconds':time.perf_counter()-started,'reused_vectors':0,'encoded_vectors':0}}
     # Reuse authenticated rows from the complete immutable base Collection.
     vectors = {v['chunk_id']:v for v in candidate.encoded_vectors}
     reused = 0
     if any(r['chunk_id'] not in vectors for r in candidate.rows):
         catalog.retain_revision(owner,batch.base_revision_id,'vector_reuse')
-        _, _, base_artifact = _base(catalog,batch,snapshot,candidate.revision_id)
-        base_expected = json.loads(catalog.archives.read(base_artifact['expected_hash']))['rows']
-        old_vectors = backend.read_vectors(base_artifact,base_expected)
+        prepared.checked(catalog,owner,candidate.revision_id)
+        old_vectors = backend.read_vectors(prepared.base_artifact,prepared.base_expected)
         for row in candidate.rows:
             if row['chunk_id'] not in vectors:
                 vectors[row['chunk_id']] = old_vectors[row['chunk_id']]
                 reused += 1
     _cancelled(cancelled)
-    registered, artifact = publication.register(catalog,owner,candidate.revision_id)
-    if registered != candidate:
-        raise failure('candidate changed before registration')
+    _, artifact = publication._register(catalog,owner,candidate.revision_id,_operation=prepared)
     backend.create(artifact,owner)
     if observer:
         observer('created',{'revision_id':str(candidate.revision_id),'collection_name':artifact['collection_name']})
@@ -316,7 +392,7 @@ def build_changes(catalog, owner, provider, backend, tokenizer, *, cancelled=Non
             expected.append(encoded)
             rows.append({**encoded,'dense':vector['dense']})
         backend.insert(artifact,rows,owner)
-    publication.record_encoded(catalog,owner,candidate.revision_id,expected)
+    publication._record_encoded(catalog,owner,candidate.revision_id,expected,_operation=prepared)
     if observer:
         observer('inserted',{'revision_id':str(candidate.revision_id),'rows':len(expected)})
     timings = backend.finalize(artifact,len(expected),owner,index_timeout=index_timeout)
