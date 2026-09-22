@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "task": "R04",
+  "leader": "/root",
+  "baseline_commit": "43e9af9de44212342850f3668826a0e5b4bf9a49",
+  "conclusion": "ACCEPTED",
+  "classification": "Read-only host review plus real host transformations/SDK interface tests using synthetic text and MockTransport; not production Agent or package installation acceptance",
+  "test": {
+    "command": "$env:PYTHONDONTWRITEBYTECODE='1'; & '.venv/Scripts/python.exe' -B -m pytest deployment/AgenticRAG/tests/test_host_contract.py -vv -p no:cacheprovider --basetemp=C:/Users/18221/AppData/Local/Temp/codeplus-r04-leader-tests-20260922 *> 'deployment/AgenticRAG/docs/implementation-records/R04-leader-tests.txt'; $r04TestExit=$LASTEXITCODE; Get-Content -LiteralPath 'deployment/AgenticRAG/docs/implementation-records/R04-leader-tests.txt' -Tail 7; exit $r04TestExit",
+    "chunk_id": "e11e03",
+    "wall_time_seconds": 5.3912603,
+    "exit_code": 0,
+    "original_token_count": 176,
+    "output": "deployment/AgenticRAG/tests/test_host_contract.py::test_exact_source_offset_and_partial_mapping PASSED [ 88%]\r\ndeployment/AgenticRAG/tests/test_host_contract.py::test_usage_missing_breakdown_is_unknown_while_known_total_is_preserved PASSED [ 91%]\r\ndeployment/AgenticRAG/tests/test_host_contract.py::test_budget_overrun_stops_future_requests_and_ids_are_never_reused PASSED [ 94%]\r\ndeployment/AgenticRAG/tests/test_host_contract.py::test_current_host_compact_swallows_budget_exception_design_gap PASSED [ 97%]\r\ndeployment/AgenticRAG/tests/test_host_contract.py::test_current_compact_cancellation_propagates PASSED [100%]\r\n\r\n============================= 34 passed in 4.20s ==============================\r\n"
+  },
+  "manifest_verification": {
+    "chunk_id": "533a2a",
+    "wall_time_seconds": 0.17615,
+    "exit_code": 0,
+    "original_token_count": 30,
+    "output": "{\r\n  \"verified_files\": 15,\r\n  \"manifest_sha256\": \"c9649c07fe5ff3b315c6dca307665f84147e7d7bafc3e3f38323465d711601e3\"\r\n}\r\n"
+  },
+  "audit": {
+    "chunk_id": "d72b1c",
+    "wall_time_seconds": 0.4333415,
+    "exit_code": 0,
+    "original_token_count": 144,
+    "output": "{\"captured_at\": \"2026-09-22T00:23:17.617951+00:00\", \"head\": \"43e9af9de44212342850f3668826a0e5b4bf9a49\", \"protected_paths_checked\": 6553, \"unexpected\": [], \"delivery_files_verified\": 15, \"manifest_sha256\": \"c9649c07fe5ff3b315c6dca307665f84147e7d7bafc3e3f38323465d711601e3\", \"source_files_verified\": 24, \"authorized_preedit_source_differences\": [\"deployment/AgenticRAG/docs/architecture-and-contracts.md\", \"deployment/AgenticRAG/docs/deployment-and-packaging.md\"], \"index_paths\": [], \"test_report_sha256\": \"5e4c14a373b231d30408b82b57e60876ebb71c7277e9584e35f5ef156dd12fea\"}\r\n"
+  },
+  "read_only_review": {
+    "reviewer": "/root/r04_readonly_review",
+    "scope": "Read-only actual host and R04 interface contract review; no tests executed by reviewer",
+    "findings": [
+      {
+        "issue": "gather siblings remain running after first failure; require explicit ownership, cancel/drain before pin/client release",
+        "sources": [
+          "codeplus/agent.py:918",
+          "codeplus/agent.py:1254"
+        ],
+        "fixed_contract_lines": "65-69"
+      },
+      {
+        "issue": "PermissionRequest future must honor monotonic deadline and reject late approval",
+        "sources": [
+          "codeplus/agent.py:967"
+        ],
+        "fixed_contract_lines": "63"
+      },
+      {
+        "issue": "LoopComplete triggers background model summary through shared parent client outside run meter",
+        "sources": [
+          "codeplus/app.py:1809",
+          "codeplus/app.py:2151",
+          "codeplus/memory/session.py:377"
+        ],
+        "fixed_contract_lines": "79"
+      },
+      {
+        "issue": "SDK wraps request-hook BudgetStop in APIConnectionError then host NetworkError; trusted per-request gate restores not_sent budget stop",
+        "sources": [
+          ".venv/Lib/site-packages/openai/_base_client.py:1670",
+          ".venv/Lib/site-packages/anthropic/_base_client.py:1740",
+          "codeplus/client.py:342",
+          "codeplus/client.py:467",
+          "codeplus/client.py:638"
+        ],
+        "fixed_contract_lines": "124"
+      }
+    ],
+    "result": "All four closed by bounded read-only follow-up; no remaining R04 contract blocker; production implementation and real Agent acceptance remain R12",
+    "contract_sha256": "d23e25338b6a9d4ad49ef4f6ea3320bf271efa50d3a6d7d90f3c735ed4b87fb7",
+    "leader_additions": [
+      "Source spans uniformly normalized document-version text codepoints, raw CRLF/BOM mapping separate",
+      "R12 CLI/TUI minimal whitelist and Remote enablement boundary",
+      "Explicit uv build SRC recommended"
+    ]
+  },
+  "cleanup": {
+    "original_rejection": "Executor recursive Remove-Item blocked by automatic approval review; preserved in R04-evidence.json",
+    "safer_method": "Read-only inventory of both exact owned pytest directories, only two synthetic files and five internal symlinks per tree; nonrecursive LiteralPath deletion of reviewed files/links then verified-empty directories. Did not follow symlinks or touch old-cleanup resources.",
+    "first_attempt": {
+      "chunk_id": "60b278",
+      "wall_time_seconds": 0.3528248,
+      "exit_code": 1,
+      "original_token_count": 106,
+      "output": "Get-ChildItem: C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r04-cleanup-reviewed.ps1:38\r\nLine |\r\n  38 |  …       if (@(Get-ChildItem -LiteralPath $entry.FullName -Force).Count) …\r\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Cannot find path\r\n     | 'C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r04-resume-tests\\test_aggregate_spill_invalidatcurrent' because it\r\n     | does not exist.\r\n"
+    },
+    "first_attempt_diagnosis": "After deleting links, live FileInfo LinkType property changed to null and directory filter reclassified deleted links; operation stopped at missing link. Reinspected first tree (five empty directories), materialized immutable property snapshots, then completed cleanup.",
+    "final_attempt": {
+      "chunk_id": "574b79",
+      "wall_time_seconds": 0.3757913,
+      "exit_code": 0,
+      "original_token_count": 91,
+      "output": "[\r\n  {\r\n    \"root\": \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r04-resume-tests\",\r\n    \"entries\": 5,\r\n    \"files\": 0,\r\n    \"links\": 0,\r\n    \"exists_after\": false\r\n  },\r\n  {\r\n    \"root\": \"C:\\\\Users\\\\18221\\\\AppData\\\\Local\\\\Temp\\\\codeplus-r04-leader-tests-20260922\",\r\n    \"entries\": 16,\r\n    \"files\": 2,\r\n    \"links\": 5,\r\n    \"exists_after\": false\r\n  }\r\n]\r\n"
+    },
+    "verified_absence": {
+      "chunk_id": "a6f23c",
+      "wall_time_seconds": 0.2036785,
+      "exit_code": 0,
+      "original_token_count": 178,
+      "output": "[\r\n  {\r\n    \"path\": \"C:/Users/18221/AppData/Local/Temp/codeplus-r04-resume-tests\",\r\n    \"exists\": false\r\n  },\r\n  {\r\n    \"path\": \"C:/Users/18221/AppData/Local/Temp/codeplus-r04-leader-tests-20260922\",\r\n    \"exists\": false\r\n  },\r\n  {\r\n    \"path\": \"C:/Users/18221/AppData/Local/Temp/codeplus-r04-cleanup-reviewed.ps1\",\r\n    \"exists\": false\r\n  },\r\n  {\r\n    \"path\": \"C:/Users/18221/AppData/Local/Temp/codeplus-r04-leader-audit.py\",\r\n    \"exists\": false\r\n  }\r\n]\r\n\r\n    Directory: D:\\CodePlus\\deployment\\AgenticRAG\\probes\\host_contract\r\n\r\nMode                 LastWriteTime         Length Name\r\n----                 -------------         ------ ----\r\n-a---           2026/9/22     8:15          11134 contract.py\r\n\r\n"
+    }
+  },
+  "audit_initial_correction": "First Leader audit incorrectly compared two authorized R04 spec edits to pre-edit source snapshot; confirmed no protected or delivery mismatches, checked them against final manifest, then kept all other 22 source fingerprints unchanged. Final audit passed 6553 protected paths, 15 delivery files, and 24 source paths with only two authorized pre-edit differences.",
+  "production_not_executed": [
+    "new Agent policy",
+    "real answer-model call",
+    "GPU or Milvus run",
+    "Windows/Linux wheel or sdist installation"
+  ],
+  "next": "R05 after local commit"
+}

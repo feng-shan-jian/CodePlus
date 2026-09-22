@@ -8,6 +8,8 @@
 
 ### T01：同进程核心，复用宿主 Agent
 
+R04 已形成 [宿主接入与安装契约](host-integration-contract.md)：开发发行名 `codeplus-agentic-rag`、稳定导入空间 `agentic_rag`，最终由 CodePlus 主发行收录同一份实现。当前仍未接入生产 Agent；设计与接口实验证据见 [R04 记录](implementation-records/R04.md)。
+
 ```mermaid
 flowchart TD
     U[现有 CodePlus 命令与会话] --> A[CodePlus 适配层：配置、功能启用、运行绑定]
@@ -195,6 +197,8 @@ fixed 工具 Schema 不暴露路线和重排覆盖项，服务端仍校验禁止
 
 ### T07：为知识库运行装配可选执行策略
 
+两入口共用签名、实际 HTTP 正文回执、可信成功候选、三协议计量/硬上限、一次修正、finally 及 run 工具集合现按 [R04 契约第 1–5 节](host-integration-contract.md) 实施。下文需求语义保持不变；“已读”仅指契约定义的本轮已确认送达资格，不承诺观察模型内部阅读。
+
 当前可复用的真实代码基础是 `Tool`、`ToolResult`、`ToolRegistry` 及 `Agent.run()` / `run_to_completion()`。现有 `codeplus/agent.py` 仍有旧 `_prepare_knowledge` 预搜索、知识库专用写入校验和输出 token 上限自动提升路径；不能把它们直接当成新方案已经接入。
 
 建议最小宿主扩展为可选的运行策略，覆盖模型调用前预算检查、工具执行前检查、工具结果实际交付回执、正式输出校验及 `finally` 结束处理。两条 Agent 执行路径共用同一策略；普通任务不装配该策略。工具实例绑定单次运行，避免多会话共享可变的全局知识库范围。保留现有权限检查与通用工具调度，不另写一套 Agent 循环。
@@ -240,6 +244,8 @@ fixed 工具 Schema 不暴露路线和重排覆盖项，服务端仍校验禁止
 ## 8. 命令、打包与迁移
 
 ### T09：沿用基础命令，分阶段接入同一实现
+
+开发/最终发行布局、可选依赖、`importlib.resources` 资源读取、R05/R25/R26 安装门槛及旧清理先于新 hook 的合入顺序已在 [R04 契约第 6–7 节](host-integration-contract.md) 冻结；实际运行命令和未来命令分见 [环境矩阵](environment-command-matrix.md)。
 
 `/knowledge create/use/import/status/sources/reimport/remove/retry/off/open` 等已有基础形式由新处理器承接；补充恢复/放弃及本次模式选择时扩展该命令帮助，不建设另一套产品 CLI。`codeplus -p` 仍走真实 Agent；无交互运行遇到重建确认，缺少明确授权参数则返回待确认，不能默认同意。具体新增参数在 P6 同步帮助、调用方和测试，尚不能直接使用本草案命令。
 

@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "task": "R04",
+  "executor": "/root/r04_host_contract_resume1",
+  "baseline_commit": "43e9af9de44212342850f3668826a0e5b4bf9a49",
+  "created_at": "2026-09-22T08:19:43.0590873+08:00",
+  "status": "READY_FOR_LEADER_REVIEW_WITH_G09_PENDING",
+  "files": [
+    {
+      "path": "deployment/AgenticRAG/docs/host-integration-contract.md",
+      "bytes": 34671,
+      "sha256": "d23e25338b6a9d4ad49ef4f6ea3320bf271efa50d3a6d7d90f3c735ed4b87fb7"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/environment-command-matrix.md",
+      "bytes": 7680,
+      "sha256": "1302518c658467d3e0d2232c5f2596587454470121f49f31c692314937c025f4"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/architecture-and-contracts.md",
+      "bytes": 29620,
+      "sha256": "efc79e7d6a9084fa678d3ac2c52ebd921495b260517d4712d655eefe6ea8539a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/deployment-and-packaging.md",
+      "bytes": 23636,
+      "sha256": "285c1ba73e00e24cd785bb8f60c72b97f0850046112a6ceca76eaecb65c5684b"
+    },
+    {
+      "path": "deployment/AgenticRAG/probes/host_contract/contract.py",
+      "bytes": 11134,
+      "sha256": "d0f53c00b83e679f92152be90caa5d796e33663d4781905f2a5e741a1654b91a"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_host_contract.py",
+      "bytes": 19177,
+      "sha256": "ddc878a2081d64907184513e2379adf94938f806967fef529b1eae73cdcdb76d"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R04.md",
+      "bytes": 6809,
+      "sha256": "fc63beab9bba240c1ca96d3d25c3065bf17046d342cd1522e607eea62b376fe1"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R04-tests-baseline.txt",
+      "bytes": 101,
+      "sha256": "5e3431ce1fb553dc106627ee3a7a821a1fb27253b2f8572961d822c5e7aaec6a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R04-tests-failure.txt",
+      "bytes": 4829,
+      "sha256": "5c26a3b6f1cadd9c669f4b917b63fadf878e44ab035c9047b122ee6e725c3ad5"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R04-tests-repair-attempt.txt",
+      "bytes": 819,
+      "sha256": "4a7c5f4b6649b34d6bf1ee14504a26cd1f8b5737c398f5c9eb25157b8f780192"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R04-tests-final.txt",
+      "bytes": 4436,
+      "sha256": "10187f0fb665cc2185236813df049bc1acb59a64fdc731b8d7f26d8e2e76e0ce"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R04-tests-final-presend.txt",
+      "bytes": 4857,
+      "sha256": "e6b23f91c2e9eebfd793471f50284b682f2c1f581cc348bcf624b9636370493b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R04-static-evidence.json",
+      "bytes": 22638,
+      "sha256": "aece605b2db14b975f4c78b3efd79ae0b6a665a853a786d6e770cc44c85e93d9"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R04-protection-audit.json",
+      "bytes": 1642,
+      "sha256": "76482ee1a0c9b5c3f76de01cdbe047caca546d7073253703db4964d862024b60"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R04-evidence.json",
+      "bytes": 6776,
+      "sha256": "2e1a88b9a205bb807543ed4f11c57b15c330750c0816704033bc1eab7a25aea7"
+    }
+  ],
+  "self_hash": "Excluded to avoid self-reference; supplied in write-handoff message",
+  "production_host_changes": [],
+  "index_changed": false
+}

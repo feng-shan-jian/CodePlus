@@ -1,0 +1,23 @@
+{
+  "head": "776025c30ddbf51ecdcd26b16f9ce891c749b706",
+  "reviewer": "/root/host_readonly_inventory",
+  "mode": "read-only, no tests or files changed",
+  "findings": [
+    "Agent.run:522/run_to_completion:1106 have separate loops; optional strategy must cover both without second agent.",
+    "ToolRegistry stores tool instance references (tools/__init__.py:30); tool_filter:141/222 clones reuse instances. Do not mutate shared tool KB binding.",
+    "Tool execute paths agent.py:862,920,1284. Keep permission ordering; accepted attempts need atomic shared per-run budget.",
+    "Tool raw UI event occurs before aggregate budget. Actual history processing agent.py:768/792 and1261/1275; context manager truncates 50k single,200k aggregate to2k previews.",
+    "Final provider request may compact, repair tool pairs, replace text with content_blocks. Receipt must account final serialized request; candidate add-to-history alone insufficient.",
+    "StreamEnd default0 can't distinguish absent usage. auto_compact context/manager.py:707-719 calls same client up to3times and drops usage. RAG budget needs all calls including compact/failure/correction.",
+    "OpenAI Responses client.py:372 lacks max_output_tokens despite setter. Parent clients shared by subagents tools/agent_tool.py:545; optional request scoped policy must not mutate shared max_output_tokens.",
+    "Agent.run:676 ordinary max_tokens escalation64000 needs disabled only inRAG; both loops no run-level finally; noninteractive returns last_text at limit must not mean success."
+  ],
+  "cleanup": {
+    "path": "C:/Users/18221/.codex/worktrees/144f/rag-cleanup-review",
+    "status": "54 of56 current files match before,0 after; only R01 check.py/run.ps1 changed. Cleanup NOT integrated.",
+    "overlaps": "agent,__main__,app,remote,config,validator,prompts,memory/session,commands/handlers,commands/completion,.codeplus/config.yaml.example,pyproject",
+    "packaging": "cleanup removes extra+compose mapping and adds sdist exclusion /deployment/AgenticRAG/. Standalone packaging then finalmigration must account.",
+    "R01": "Do not apply old check.py or run.ps1 patches: old cleanup routes Replay straight score.py loses R01 native report shape. Preserve dataset_io/replay helper & validated runner; only add explicit unconnected online engine diagnostic when removing old engine. Old test_multihop additions expect flat Replay summary and must not override R01 contract.",
+    "frozenDocs": "R01 test_evaluation_protocol.py:89-98 freeze eval README/benchmark etc except2seams. When docs are legitimately changed, explicit handoff + update allowed seams needed, never loosen corpus/data/gold hashes."
+  }
+}

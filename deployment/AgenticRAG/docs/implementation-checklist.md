@@ -23,8 +23,8 @@
 | R00 | COMMITTED | Leader 01a0c4b0-f1cd-7370-b273-8472a33c46d4 | [R00](implementation-records/R00.md) | `7ef7ee6c26e5a104da212a6b7788d9b884ef04fa` |
 | R01 | COMMITTED | /root/r01_evaluation | [R01](implementation-records/R01.md) | `79054d92fa05f06f6b2d0b4deee2a976ac7f7c4f` |
 | R02 | COMMITTED | /root/r02_milvus | [R02](implementation-records/R02.md) | `776025c30ddbf51ecdcd26b16f9ce891c749b706` |
-| R03 | ACCEPTED | /root/r03_models | [独立验收](implementation-records/R03.md) | 待本地提交 |
-| R04 | TODO | — | — | — |
+| R03 | COMMITTED | /root/r03_models | [独立验收](implementation-records/R03.md) | `43e9af9de44212342850f3668826a0e5b4bf9a49` |
+| R04 | ACCEPTED | /root/r04_host_contract_resume1 | [独立验收](implementation-records/R04.md) | 待本地提交 |
 | R05 | TODO | — | — | — |
 | R06 | TODO | — | — | — |
 | R07 | TODO | — | — | — |
@@ -117,11 +117,11 @@
 <a id="r04"></a>
 ### R04：宿主和安装契约
 
-- [ ] 同时覆盖 `Agent.run` 与 `run_to_completion` 的取证、工具返回、正文缓冲、校验、token 上限和退出路径。
-- [ ] 最小可选策略与实际交付回执有可实施签名；宿主截断/压缩/落盘的正文不被误记为已读。
-- [ ] 工具实例按运行绑定，普通聊天/编程与权限 `--mode` 保持原职责；没有全局可变知识库范围泄漏。
-- [ ] 明确开发包、宿主安装依赖、最终包布局和 Compose 资源路径；修正方案不依赖当前 cwd 或临时 PYTHONPATH。
-- [ ] 宿主文件白名单、旧清理交接、后续正式测试位置与实际环境命令表已审阅；静态/模拟结论如实标明。
+- [x] 同时覆盖 `Agent.run` 与 `run_to_completion` 的取证、工具返回、正文缓冲、校验、token 上限和退出路径。
+- [x] 最小可选策略与实际交付回执有可实施签名；宿主截断/压缩/落盘的正文不被误记为已读。
+- [x] 工具实例按运行绑定，普通聊天/编程与权限 `--mode` 保持原职责；没有全局可变知识库范围泄漏。
+- [x] 明确开发包、宿主安装依赖、最终包布局和 Compose 资源路径；修正方案不依赖当前 cwd 或临时 PYTHONPATH。
+- [x] 宿主文件白名单、旧清理交接、后续正式测试位置与实际环境命令表已审阅；静态/模拟结论如实标明。
 
 <a id="r05"></a>
 ### R05：骨架与配置

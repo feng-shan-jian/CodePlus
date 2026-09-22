@@ -6,6 +6,8 @@
 
 ## 1. 代码组织与运行方式分开
 
+2026-09-22 R04 接口设计补充：[宿主接入与安装契约第 6 节](host-integration-contract.md) 冻结开发发行 `codeplus-agentic-rag` / 导入 `agentic_rag`，最终将同一源码移到主仓库 `agentic_rag/` 并由 CodePlus 发行包含；资源锚点为 `agentic_rag.resources`。不以当前目录可导入代替 wheel/sdist 验收，R05/R25/R26 门槛及实际命令分别见该契约与 [环境矩阵](environment-command-matrix.md)。本补充未构建安装包或修改根打包配置。
+
 独立 Python 包描述代码、依赖与可发布边界，不要求独立进程；同一份核心包也可以被未来的服务端调用。是否独立服务描述运行、通信及资源隔离方式，不要求复制一套 RAG 业务逻辑。
 
 | 场景 | A：同进程调用独立包 | 后续需要补充的工作 |
@@ -146,7 +148,7 @@ D41 已确认下述调度原则；批大小、队列容量、并发数、闲置�
 
 2026-09-21 只读核对，未执行构建、安装或部署：
 
-- 根 `pyproject.toml` 的 wheel 配置为 `packages = ["codeplus"]`；本目录下未来的新包不会因放在同一仓库就自动进入现有 wheel。当前仍需决定同一发行包包含核心，还是以单独分发包作为依赖；可安装包不等于必须发布到独立 PyPI 项目。
+- 根 `pyproject.toml` 的 wheel 配置为 `packages = ["codeplus"]`；本目录下未来的新包不会因放在同一仓库就自动进入现有 wheel。R04 已选择开发阶段单独分发、最终 CodePlus 主发行同时包含 `codeplus` 与 `agentic_rag`；当前配置仍未实施此变更，可安装包也不要求发布到独立 PyPI 项目。
 - wheel 的 `force-include` 仍指向 `deployment/knowledge/compose.yaml`；本轮确认该源路径不存在，现有文件位于 `deployment/AgenticRAG/compose.yaml`。实施打包时需与旧模块清理及最终部署资源路径一并处理，不能直接沿用旧配置称为迁移完成。
 - sdist 当前只显式排除 `/eval/`。发布前应检查实际产物清单，避免将运行数据、真实配置、模型缓存或非发布材料带入发行包；不能仅凭仓库里能运行就认定发行包正确。
 - 根 `LICENSE` 当前为 MIT。此事实只描述项目自己的许可证文件，不代表模型、数据、服务镜像及所有依赖都采用相同许可。MIT 的正式条文见 [Open Source Initiative](https://opensource.org/license/mit)。
