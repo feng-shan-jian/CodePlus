@@ -1,0 +1,24 @@
+{
+  "head": "63e97a37b2b7389a104b3c96240fd6d95b5a11d5",
+  "protected_count": 6553,
+  "tracked_count": 6211,
+  "authorized_r05_changes": [
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "before": "133955f56193f90d082395dccea7fd613b577f7f9ddd932a1a48d2f739d5f0ac",
+      "after": "53ea3ced5de2391c8cfba09433a5a779009e7caae870e1b4d31661ba84395de8"
+    }
+  ],
+  "tracked_changes_from_takeover": [
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "before": "133955f56193f90d082395dccea7fd613b577f7f9ddd932a1a48d2f739d5f0ac",
+      "after": "53ea3ced5de2391c8cfba09433a5a779009e7caae870e1b4d31661ba84395de8"
+    }
+  ],
+  "unexpected": [],
+  "index_empty": true,
+  "r00_input_fingerprints_sha256": "e5f488d648fd829acaa257da5b8dff5e97d26929d48a70cc3a710220a13543b9",
+  "r00_protected_inputs_sha256": "5a31d92a39054276ca74b2a1b793ecac404a7f01eb9596e93d8ef20e69cdee10",
+  "takeover_snapshot_sha256": "e2ce12898d50e7f7b6718491d323cd7984237275f239cca42d73470f5abcc9e1"
+}

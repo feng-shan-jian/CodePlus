@@ -1,0 +1,9 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.3, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Scripts\python.exe
+rootdir: D:\CodePlus\deployment\AgenticRAG
+configfile: pyproject.toml
+collecting ... collected 1 item
+
+deployment\AgenticRAG\tests\test_package_install.py::test_wheel_and_sdist_install_in_isolated_environments PASSED [100%]
+
+============================== 1 passed in 3.23s ==============================

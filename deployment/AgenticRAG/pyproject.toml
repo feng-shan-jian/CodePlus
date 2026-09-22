@@ -1,0 +1,29 @@
+[project]
+name = "codeplus-agentic-rag"
+version = "0.1.0"
+description = "Independent CodePlus knowledge domain and configuration core"
+requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = ["pydantic>=2.12,<3"]
+
+[dependency-groups]
+dev = ["pytest>=9,<10", "hatchling==1.29.0"]
+
+[build-system]
+requires = ["hatchling==1.29.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentic_rag"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src/agentic_rag/*.py", "/pyproject.toml", "/README.md", "/LICENSE", "/uv.lock"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"
+
+[tool.uv]
+package = true

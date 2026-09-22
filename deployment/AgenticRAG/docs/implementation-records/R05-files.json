@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "status": "READY_FOR_LEADER_REVIEW",
+  "head": "63e97a37b2b7389a104b3c96240fd6d95b5a11d5",
+  "count": 34,
+  "entries": [
+    {
+      "path": "deployment/AgenticRAG/.gitignore",
+      "sha256": "7ecbe1d0981884b86d38f3f56f3f7a7c5294d15962566624fd3d372e8ab99e54",
+      "bytes": 43
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/domain-and-configuration.md",
+      "sha256": "95e713683ed9e421395b7d82ce5419fe579aa3993dd818bc87c67067121bda8f",
+      "bytes": 10390
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-baseline.json",
+      "sha256": "a349a11255757f6671a2e8b92c2c879ceded956234b6f87ebae5c4f812215ab3",
+      "bytes": 1156
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-cleanup.json",
+      "sha256": "527b2c915c888779736e56e7ab1d7ca3a9a20d7d4122a557892c9d96d30ce6a2",
+      "bytes": 2135
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-environment-win-core.freeze.txt",
+      "sha256": "59c7dd2a82955db7a1ce86044b96e6e4f9ed54d7fe5557646f6af76738cc9881",
+      "bytes": 333
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-environment.json",
+      "sha256": "d2f16bad74ecc96c2b77a3e8abf189a5d90ae51d5482854ce083651b79bcdfa4",
+      "bytes": 948
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-evidence.json",
+      "sha256": "f274d7253b7d65c1cb0deb032c1bb049647e0dc1a5bb8b708c8cd240eeb31072",
+      "bytes": 8930
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-installations-first-failure.json",
+      "sha256": "67d80b2e54a56e76589b6d95e61d57d974bc63000851d04c8038556787a61f92",
+      "bytes": 4240
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-installations-second-failure.json",
+      "sha256": "ad42399b6cadf307a997f1e981ca8fd54b43ca04760ba0df088936d7001164b4",
+      "bytes": 4240
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-installations-third-failure.json",
+      "sha256": "ffa290447b0a52073c0fdefa2a3a333761267fbbf1fef25d06ef3a4a9c003ea2",
+      "bytes": 4240
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-installations.json",
+      "sha256": "e9cd76cb81bf227293e11029c028f2c8c46334d1c41365796ad561717af028a1",
+      "bytes": 30984
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-protection-audit.json",
+      "sha256": "b118ec3572126a35cb6b37f395ee5e17e6ab3b2ca8b78d56038732b654933468",
+      "bytes": 1009
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-final.txt",
+      "sha256": "ce1b9460d016686adeffd5571a4a680954b198100cff5f44966894a840964fcc",
+      "bytes": 9045
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-first.txt",
+      "sha256": "f668c394ac79c7cbc25f04ca140908d58935d6d84d2e7ae7aa6d8f703611219f",
+      "bytes": 36396
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-install-final.txt",
+      "sha256": "cf2a6c6a7060c514757b9b56225dee4657efcc2a1b0b7e871547915d53d67bde",
+      "bytes": 532
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-install-first.txt",
+      "sha256": "9165e5b6e1a88daad41e669fe7ab805f7cb94ff2fa28c6b1011a9502028b296a",
+      "bytes": 6947
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-install-second.txt",
+      "sha256": "934677b4c7ea39e6c9a79ef32a9f1f465b5b1855a8a3df3137c2d2f29b81921a",
+      "bytes": 6947
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-install-third.txt",
+      "sha256": "ee34132629a03f345529a4ebccbdd499c97e3e91fada93c96ddaf0a918e05104",
+      "bytes": 6947
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-second.txt",
+      "sha256": "7c4977cc9094b6e15708ac01de2ee7ace7eff04d74ac3f79ec4c516d1c84c7d7",
+      "bytes": 21040
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-unit-final.txt",
+      "sha256": "9eb6e7f4350daefc236f82ee3d4a595728b1854b9453797e716556bffe8c808f",
+      "bytes": 101
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05.md",
+      "sha256": "7ec9ede224f0eafc3cd225db5f0d01928ffe12c4c36f0a8ce5636bb937205ab0",
+      "bytes": 9260
+    },
+    {
+      "path": "deployment/AgenticRAG/LICENSE",
+      "sha256": "8ad8a4c1341585ab6e2db44dc254b5c17603933647a55e21ebe899fbabc9323e",
+      "bytes": 1082
+    },
+    {
+      "path": "deployment/AgenticRAG/pyproject.toml",
+      "sha256": "69024cbd3bbeb4ee0172cbd4ba4ba74b3d141a5151e489663b318b3e70953e08",
+      "bytes": 716
+    },
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "sha256": "53ea3ced5de2391c8cfba09433a5a779009e7caae870e1b4d31661ba84395de8",
+      "bytes": 16064
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/__init__.py",
+      "sha256": "9cf325be264c02568ef08d12eb594eccda599d67b66ba6d8d77b3b4186b302c7",
+      "bytes": 100
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/_schema.py",
+      "sha256": "eece6292cb2925d581881920eb46a34e57cf5b56f7e652ee56535ea2d22e07e8",
+      "bytes": 3088
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/capabilities.py",
+      "sha256": "70ee1e82daa3551c3f5439283fbe80e43f8997f62b0383da91f1806314f75350",
+      "bytes": 6842
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/config.py",
+      "sha256": "e71ec604497ca26f87ec9f788f1c63eafb238aebe23ec94bdb6011c3a8b8af47",
+      "bytes": 12115
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/domain.py",
+      "sha256": "ac0f073ed2bc79eb4eb540a89893ad749b2373c55432fc3bccc252121a427d67",
+      "bytes": 9804
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/profiles.py",
+      "sha256": "a32c16deb5b9da64bf062e8bd1e0f6ffa8d2c8a1743752d1a02d99e49e93b57a",
+      "bytes": 5522
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_configuration.py",
+      "sha256": "1423086789fbc5813456b3bb77d1d516e799eff023c62109538866f39c43f807",
+      "bytes": 15477
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_domain.py",
+      "sha256": "921572975336caca091e1e28b4894c32d8acac52c0645eff8cc1ebf6cbce4941",
+      "bytes": 4691
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_package_install.py",
+      "sha256": "9377a9cef8c47a782aadd9644033a5ac59d6bbd0bc1cd2c2ab1f3fff1423257d",
+      "bytes": 8159
+    },
+    {
+      "path": "deployment/AgenticRAG/uv.lock",
+      "sha256": "2f06ad7047664547769f01c0d4ca89e4c3acc09ed208b2695ed025f5859499eb",
+      "bytes": 40737
+    }
+  ],
+  "excluded": "Leader-owned R05-dispatch.md and this manifest itself"
+}

@@ -1,0 +1,239 @@
+
+=================================== ERRORS ====================================
+____________________ ERROR collecting tests/test_domain.py ____________________
+deployment\AgenticRAG\tests\test_domain.py:9: in <module>
+    from agentic_rag.domain import (
+deployment\AgenticRAG\src\agentic_rag\domain.py:11: in <module>
+    from .config import ProcessingSnapshot, RunConfiguration
+deployment\AgenticRAG\src\agentic_rag\config.py:142: in <module>
+    class KnowledgeConfig(Record):
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_model_construction.py:256: in __new__
+    complete_model_class(
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_model_construction.py:667: in complete_model_class
+    schema = gen_schema.generate_schema(cls)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:744: in generate_schema
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1038: in _generate_schema_inner
+    return self._model_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:868: in _model_schema
+    {k: self._generate_md_field_schema(k, v, decorators) for k, v in fields.items()},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1245: in _generate_md_field_schema
+    schema, metadata = self._common_field_schema(name, field_info, decorators)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1299: in _common_field_schema
+    schema = self._apply_annotations(
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2252: in _apply_annotations
+    schema = get_inner_schema(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_schema_generation_shared.py:83: in __call__
+    schema = self._handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2423: in new_handler
+    schema = annotation_get_schema(source, get_inner_schema)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\functional_validators.py:127: in __get_pydantic_core_schema__
+    schema = handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_schema_generation_shared.py:83: in __call__
+    schema = self._handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2231: in inner_handler
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1043: in _generate_schema_inner
+    return self.match_type(obj)
+           ^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1161: in match_type
+    return self._match_generic_type(obj, origin)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1186: in _match_generic_type
+    return self._tuple_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1693: in _tuple_schema
+    return core_schema.tuple_schema([self.generate_schema(params[0])], variadic_item_index=0)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:744: in generate_schema
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1022: in _generate_schema_inner
+    return self._annotated_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2202: in _annotated_schema
+    schema = self._apply_annotations(source_type, annotations)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2252: in _apply_annotations
+    schema = get_inner_schema(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_schema_generation_shared.py:83: in __call__
+    schema = self._handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2426: in new_handler
+    schema = self._apply_single_annotation(
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2298: in _apply_single_annotation
+    schema = self._apply_discriminator_to_union(schema, metadata.discriminator)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:690: in _apply_discriminator_to_union
+    return _discriminated_union.apply_discriminator(
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:70: in apply_discriminator
+    return _ApplyInferredDiscriminator(discriminator, definitions or {}).apply(schema)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:164: in apply
+    schema = self._apply_to_root(schema)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:211: in _apply_to_root
+    self._handle_choice(choice)
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:289: in _handle_choice
+    inferred_discriminator_values = self._infer_discriminator_values_for_choice(choice, source_name=None)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:365: in _infer_discriminator_values_for_choice
+    return self._infer_discriminator_values_for_choice(self.definitions[schema_ref], source_name=source_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:315: in _infer_discriminator_values_for_choice
+    return self._infer_discriminator_values_for_choice(choice['schema'], source_name=source_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:347: in _infer_discriminator_values_for_choice
+    return self._infer_discriminator_values_for_choice(choice['schema'], source_name=choice['cls'].__name__)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:353: in _infer_discriminator_values_for_choice
+    return self._infer_discriminator_values_for_model_choice(choice, source_name=source_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:398: in _infer_discriminator_values_for_model_choice
+    return self._infer_discriminator_values_for_field(field, source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:430: in _infer_discriminator_values_for_field
+    return self._infer_discriminator_values_for_inner_schema(field['schema'], source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:454: in _infer_discriminator_values_for_inner_schema
+    return self._infer_discriminator_values_for_inner_schema(schema['schema'], source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:466: in _infer_discriminator_values_for_inner_schema
+    raise PydanticUserError(
+E   pydantic.errors.PydanticUserError: Cannot use a mode='before' validator in the discriminator field 'capability' of Model 'EmbeddingProfile'
+E
+E   For further information visit https://errors.pydantic.dev/2.13/u/discriminator-validator
+________________ ERROR collecting tests/test_configuration.py _________________
+deployment\AgenticRAG\tests\test_configuration.py:13: in <module>
+    from agentic_rag.capabilities import (
+deployment\AgenticRAG\src\agentic_rag\capabilities.py:12: in <module>
+    from .domain import ErrorCode, RagError
+deployment\AgenticRAG\src\agentic_rag\domain.py:11: in <module>
+    from .config import ProcessingSnapshot, RunConfiguration
+deployment\AgenticRAG\src\agentic_rag\config.py:142: in <module>
+    class KnowledgeConfig(Record):
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_model_construction.py:256: in __new__
+    complete_model_class(
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_model_construction.py:667: in complete_model_class
+    schema = gen_schema.generate_schema(cls)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:744: in generate_schema
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1038: in _generate_schema_inner
+    return self._model_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:868: in _model_schema
+    {k: self._generate_md_field_schema(k, v, decorators) for k, v in fields.items()},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1245: in _generate_md_field_schema
+    schema, metadata = self._common_field_schema(name, field_info, decorators)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1299: in _common_field_schema
+    schema = self._apply_annotations(
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2252: in _apply_annotations
+    schema = get_inner_schema(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_schema_generation_shared.py:83: in __call__
+    schema = self._handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2423: in new_handler
+    schema = annotation_get_schema(source, get_inner_schema)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\functional_validators.py:127: in __get_pydantic_core_schema__
+    schema = handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_schema_generation_shared.py:83: in __call__
+    schema = self._handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2231: in inner_handler
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1043: in _generate_schema_inner
+    return self.match_type(obj)
+           ^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1161: in match_type
+    return self._match_generic_type(obj, origin)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1186: in _match_generic_type
+    return self._tuple_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1693: in _tuple_schema
+    return core_schema.tuple_schema([self.generate_schema(params[0])], variadic_item_index=0)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:744: in generate_schema
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:1022: in _generate_schema_inner
+    return self._annotated_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2202: in _annotated_schema
+    schema = self._apply_annotations(source_type, annotations)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2252: in _apply_annotations
+    schema = get_inner_schema(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_schema_generation_shared.py:83: in __call__
+    schema = self._handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2426: in new_handler
+    schema = self._apply_single_annotation(
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:2298: in _apply_single_annotation
+    schema = self._apply_discriminator_to_union(schema, metadata.discriminator)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_generate_schema.py:690: in _apply_discriminator_to_union
+    return _discriminated_union.apply_discriminator(
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:70: in apply_discriminator
+    return _ApplyInferredDiscriminator(discriminator, definitions or {}).apply(schema)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:164: in apply
+    schema = self._apply_to_root(schema)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:211: in _apply_to_root
+    self._handle_choice(choice)
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:289: in _handle_choice
+    inferred_discriminator_values = self._infer_discriminator_values_for_choice(choice, source_name=None)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:365: in _infer_discriminator_values_for_choice
+    return self._infer_discriminator_values_for_choice(self.definitions[schema_ref], source_name=source_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:315: in _infer_discriminator_values_for_choice
+    return self._infer_discriminator_values_for_choice(choice['schema'], source_name=source_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:347: in _infer_discriminator_values_for_choice
+    return self._infer_discriminator_values_for_choice(choice['schema'], source_name=choice['cls'].__name__)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:353: in _infer_discriminator_values_for_choice
+    return self._infer_discriminator_values_for_model_choice(choice, source_name=source_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:398: in _infer_discriminator_values_for_model_choice
+    return self._infer_discriminator_values_for_field(field, source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:430: in _infer_discriminator_values_for_field
+    return self._infer_discriminator_values_for_inner_schema(field['schema'], source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:454: in _infer_discriminator_values_for_inner_schema
+    return self._infer_discriminator_values_for_inner_schema(schema['schema'], source)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Lib\site-packages\pydantic\_internal\_discriminated_union.py:466: in _infer_discriminator_values_for_inner_schema
+    raise PydanticUserError(
+E   pydantic.errors.PydanticUserError: Cannot use a mode='before' validator in the discriminator field 'capability' of Model 'EmbeddingProfile'
+E
+E   For further information visit https://errors.pydantic.dev/2.13/u/discriminator-validator
+=========================== short test summary info ===========================
+ERROR deployment\AgenticRAG\tests\test_domain.py - pydantic.errors.PydanticUs...
+ERROR deployment\AgenticRAG\tests\test_configuration.py - pydantic.errors.Pyd...
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!
+2 errors in 0.95s

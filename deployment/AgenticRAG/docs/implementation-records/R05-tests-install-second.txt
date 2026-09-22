@@ -1,0 +1,106 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.3, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\18221\.cache\codeplus-agenticrag\venv-win-core\Scripts\python.exe
+rootdir: D:\CodePlus\deployment\AgenticRAG
+configfile: pyproject.toml
+collecting ... collected 1 item
+
+deployment\AgenticRAG\tests\test_package_install.py::test_wheel_and_sdist_install_in_isolated_environments FAILED [100%]
+
+================================== FAILURES ===================================
+____________ test_wheel_and_sdist_install_in_isolated_environments ____________
+
+tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r05-domain-20260922/install-02/test_wheel_and_sdist_install_i0')
+
+    def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
+        package = Path(__file__).resolve().parents[1]
+        uv = shutil.which("uv")
+        assert uv, "uv is required for real package installation acceptance"
+        outside = tmp_path / "outside repository 中文"
+        outside.mkdir()
+        env = dict(os.environ)
+        env.pop("PYTHONPATH", None)
+        env.pop("PYTHONHOME", None)
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+        report = {"platform": platform.platform(), "build_python": sys.executable,
+                  "build_dependencies": {name: importlib.metadata.version(name) for name in
+                                         ("hatchling", "packaging", "pathspec", "pluggy", "trove-classifiers")},
+                  "commands": [], "artifacts": [], "installations": []}
+
+        def command(args, cwd=outside):
+            completed = subprocess.run([str(arg) for arg in args], cwd=cwd, env=env, text=True,
+                                       encoding="utf-8", errors="replace", capture_output=True, timeout=180)
+            report["commands"].append({"argv": [str(arg) for arg in args], "cwd": str(cwd),
+                                       "exit_code": completed.returncode, "stdout": completed.stdout,
+                                       "stderr": completed.stderr})
+            assert completed.returncode == 0, completed.stdout + completed.stderr
+            return completed.stdout
+
+        try:
+            build_flags = ["--python", sys.executable, "--no-build-isolation", "--no-create-gitignore"]
+            direct, source, rebuilt = tmp_path / "direct", tmp_path / "source", tmp_path / "rebuilt"
+            command([uv, "build", package, "--wheel", "--out-dir", direct, *build_flags])
+            command([uv, "build", package, "--sdist", "--out-dir", source, *build_flags])
+            sdist, = source.glob("*.tar.gz")
+            command([uv, "build", sdist, "--wheel", "--out-dir", rebuilt, *build_flags])
+            direct_wheel, = direct.glob("*.whl")
+            rebuilt_wheel, = rebuilt.glob("*.whl")
+            expected_sources = {"agentic_rag/" + file.name for file in (package / "src/agentic_rag").glob("*.py")}
+            assert len(expected_sources) == 6
+            for artifact in (direct_wheel, sdist, rebuilt_wheel):
+                if artifact.suffix == ".whl":
+                    with zipfile.ZipFile(artifact) as archive:
+                        names = sorted(archive.namelist())
+                        code = {name for name in names if name.startswith("agentic_rag/")}
+                        assert code == expected_sources
+                        assert any(name.endswith("/licenses/LICENSE") for name in names)
+                        assert all(name.startswith(("agentic_rag/", "codeplus_agentic_rag-0.1.0.dist-info/")) for name in names)
+                else:
+                    with tarfile.open(artifact) as archive:
+                        names = sorted(member.name for member in archive.getmembers() if member.isfile())
+                        relative = {name.split("/", 1)[1] for name in names}
+                        expected = {"src/" + name for name in expected_sources} | {"pyproject.toml", "README.md", "LICENSE", "uv.lock", "PKG-INFO"}
+>                       assert relative == expected
+E                       AssertionError: assert {'src/agentic_rag/domain.py', '.gitignore', 'pyproject.toml', 'LICENSE', 'src/agentic_rag/capabilities.py', 'src/agentic_rag/_schema.py', 'uv.lock', 'src/agentic_rag/__init__.py', 'PKG-INFO', 'README.md', 'src/agentic_rag/profiles.py', 'src/agentic_rag/config.py'} == {'src/agentic_rag/domain.py', 'pyproject.toml', 'LICENSE', 'src/agentic_rag/capabilities.py', 'src/agentic_rag/_schema.py', 'uv.lock', 'src/agentic_rag/__init__.py', 'PKG-INFO', 'README.md', 'src/agentic_rag/profiles.py', 'src/agentic_rag/config.py'}
+E
+E                         Extra items in the left set:
+E                         '.gitignore'
+E
+E                         Full diff:
+E                           {
+E                         +     '.gitignore',
+E                               'LICENSE',
+E                               'PKG-INFO',
+E                               'README.md',
+E                               'pyproject.toml',
+E                               'src/agentic_rag/__init__.py',
+E                               'src/agentic_rag/_schema.py',
+E                               'src/agentic_rag/capabilities.py',
+E                               'src/agentic_rag/config.py',
+E                               'src/agentic_rag/domain.py',
+E                               'src/agentic_rag/profiles.py',
+E                               'uv.lock',
+E                           }
+
+deployment\AgenticRAG\tests\test_package_install.py:110: AssertionError
+=========================== short test summary info ===========================
+FAILED deployment\AgenticRAG\tests\test_package_install.py::test_wheel_and_sdist_install_in_isolated_environments - AssertionError: assert {'src/agentic_rag/domain.py', '.gitignore', 'pyproject.toml', 'LICENSE', 'src/agentic_rag/capabilities.py', 'src/agentic_rag/_schema.py', 'uv.lock', 'src/agentic_rag/__init__.py', 'PKG-INFO', 'README.md', 'src/agentic_rag/profiles.py', 'src/agentic_rag/config.py'} == {'src/agentic_rag/domain.py', 'pyproject.toml', 'LICENSE', 'src/agentic_rag/capabilities.py', 'src/agentic_rag/_schema.py', 'uv.lock', 'src/agentic_rag/__init__.py', 'PKG-INFO', 'README.md', 'src/agentic_rag/profiles.py', 'src/agentic_rag/config.py'}
+
+  Extra items in the left set:
+  '.gitignore'
+
+  Full diff:
+    {
+  +     '.gitignore',
+        'LICENSE',
+        'PKG-INFO',
+        'README.md',
+        'pyproject.toml',
+        'src/agentic_rag/__init__.py',
+        'src/agentic_rag/_schema.py',
+        'src/agentic_rag/capabilities.py',
+        'src/agentic_rag/config.py',
+        'src/agentic_rag/domain.py',
+        'src/agentic_rag/profiles.py',
+        'uv.lock',
+    }
+============================== 1 failed in 1.11s ==============================

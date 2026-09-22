@@ -1,0 +1,30 @@
+{
+  "reason": "git diff --cached --check rejected trailing whitespace in five pytest failure logs; removed only horizontal whitespace at line ends; results, text, timestamps and failures unchanged",
+  "files": [
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-first.txt",
+      "before": "f668c394ac79c7cbc25f04ca140908d58935d6d84d2e7ae7aa6d8f703611219f",
+      "after": "69831957405e82b5a8736bbdf0128c1158c15ca1c7c51cff4afb749a91ec8684"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-second.txt",
+      "before": "7c4977cc9094b6e15708ac01de2ee7ace7eff04d74ac3f79ec4c516d1c84c7d7",
+      "after": "9f62eb7618608019e9f19829ae0197c880356a29b8c12a5d7820c385ff7fb2b7"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-install-first.txt",
+      "before": "9165e5b6e1a88daad41e669fe7ab805f7cb94ff2fa28c6b1011a9502028b296a",
+      "after": "22bc23e5a65b33475a5f006df7e8db4644b5229b36b8e8ece1701d2bd659a447"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-install-second.txt",
+      "before": "934677b4c7ea39e6c9a79ef32a9f1f465b5b1855a8a3df3137c2d2f29b81921a",
+      "after": "6f2f0df4acd6b9f93c4e311bfc3c18cc01542432fd934e3686f71b9744af7d25"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R05-tests-install-third.txt",
+      "before": "ee34132629a03f345529a4ebccbdd499c97e3e91fada93c96ddaf0a918e05104",
+      "after": "60c14948af19a296efbc382def753f9889a15bcdd631ec86005460d418a425bf"
+    }
+  ]
+}

@@ -1,14 +1,32 @@
 # AgenticRAG 独立开发区
 
-状态：主要需求已收敛，架构、接口与阶段验收草案已整理，尚未开始功能实现。更新日期：2026-09-21。
+状态：R00–R05 已通过 Leader 独立验收；当前提供独立包骨架、领域对象、配置 Schema 与能力协议，提交状态见任务台账。更新日期：2026-09-22。存储、检索、worker 与宿主 Agent 接入仍按 R06–R26 实施。
 
 在本目录完成 RAG 重建的规划、独立实现和验收，达到迁移条件后再接入 CodePlus 主模块。
 
-已确认：独立 RAG 核心，通过适配层复用现有 CodePlus Agent；不另造一套 Agent 执行引擎。当前阶段只整理规划，后续实现的范围和验收标准继续逐项确认。
+已确认：独立 RAG 核心，通过适配层复用现有 CodePlus Agent；不另造一套 Agent 执行引擎。以下保留完整产品目标，当前实现范围见下一节和任务台账。
+
+## 当前开发包
+
+发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心只依赖 Pydantic 2；当前验证环境为 Windows/Python 3.14.3。没有产品 CLI、真实模型适配器、存储或自动重建动作；导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
+
+独立安装与开发（Windows/pwsh，显式设置独立环境，避免改根 `.venv`）：
+
+```powershell
+$env:UV_PROJECT_ENVIRONMENT = Join-Path $env:LOCALAPPDATA 'CodePlus/agentic-rag-core-venv'
+uv sync --project deployment/AgenticRAG --locked
+uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
+```
+
+安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具；运行依赖只有 Pydantic。Windows/Linux 使用各自环境；Linux、完整产品安装及最终主发行仍在 R25/R26 验收。
+
+配置只接收调用方显式传入的 `knowledge` 对象，优先级为 `explicit > configured > defaults > Schema 默认`。默认检索模式为 `auto`；候选数量、分块参数、QA/报告预算必须显式提供试验值，尚未冻结质量参数。字段、可运行示例、身份与协议边界见 [领域与配置](docs/domain-and-configuration.md)，R05 的两条真实发行安装证据见 [R05](docs/implementation-records/R05.md)。分发包不包含该文档目录，源码开发区可查阅。
+
+## 完整产品目标
 
 使用方式沿用 CodePlus 现有基础命令形式：通过 `/knowledge` 一类命令管理与选择知识库，再正常提问或要求生成报告，并沿用现有非交互调用形式。新模块的命令接入仍待实现；不另建本地 Web 界面或独立产品命令体系。
 
-评测只是开发验收中的批量运行与评分，复用现有 `eval/RAG-eval/` 数据和评分口径，不要求用户使用单独的“评测入口”。现有检查/执行脚本仍依赖旧知识库代码，实施时先解耦再接入新模块；日常调用与内部评测共用新核心和真实 CodePlus Agent。
+评测只是开发验收中的批量运行与评分，复用现有 `eval/RAG-eval/` 数据和评分口径，不要求用户使用单独的“评测入口”。R01 已解耦检查/离线评分入口，新核心在线执行路径仍待接入；目标是日常调用与内部评测共用新核心和真实 CodePlus Agent。
 
 开源首版面向用户各自在自己的电脑或服务器安装使用，不建设带账号和权限管理的多人共享服务。架构草案据此按“同进程独立 RAG 包＋CodePlus 适配层”细化，Milvus 保持独立依赖，模型提供方可配置。首版正式支持 Windows 与 Linux：先在当前 Windows 环境开发，发布前分别完成安装及真实运行验收。具体系统版本、硬件要求与部署组合仍待细化，未来服务化需额外接口与验收工作。
 
@@ -78,8 +96,8 @@ Embedding 与 Rerank 首次试用先本地运行，同时按可替换的模型�
 
 ## 规划入口
 
-- **给新 Leader 会话的交接材料**：[任务拆分与执行流程](docs/implementation-task-plan.md)、[逐任务 checklist](docs/implementation-checklist.md)、[可复制提示词](docs/leader-prompt.md)。目标是完成 R00–R26 全部 27 项任务，逐项验收并本地提交，最后通过总体验收；R12 只是中间节点，通过后继续 R13–R26。当前均未执行。
-- [主规划与已确认需求](docs/plan.md)：D01–D56、功能边界和需求追溯。技术草案与用户确认分别记录，尚未进入新模块实现。
+- **给新 Leader 会话的交接材料**：[任务拆分与执行流程](docs/implementation-task-plan.md)、[逐任务 checklist](docs/implementation-checklist.md)、[可复制提示词](docs/leader-prompt.md)。目标是完成 R00–R26 全部 27 项任务，逐项验收并本地提交，最后通过总体验收；R12 只是中间节点，通过后继续 R13–R26。实际进度以台账和独立验收记录为准。
+- [主规划与已确认需求](docs/plan.md)：D01–D56、功能边界和需求追溯。技术草案、用户确认与实现证据分别记录。
 - [架构与接口契约](docs/architecture-and-contracts.md)：模块依赖、对象/存储、发布恢复、版本隔离、搜索/原文工具、引用与预算、模型工作进程及宿主接点。
 - [验收与分阶段实施计划](docs/acceptance-and-implementation.md)：G0 技术验证、数据隔离、指标口径、功能/故障矩阵、P0–P8 任务及迁移条件。已确认预算内质量优先；数值目标按冻结程序形成，不冒充已实测。
 - [模型提供方与配置设计](docs/model-providers.md)：本地优先、能力接口、配置选择与模型切换的索引边界。

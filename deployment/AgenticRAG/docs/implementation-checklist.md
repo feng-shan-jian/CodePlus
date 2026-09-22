@@ -24,8 +24,8 @@
 | R01 | COMMITTED | /root/r01_evaluation | [R01](implementation-records/R01.md) | `79054d92fa05f06f6b2d0b4deee2a976ac7f7c4f` |
 | R02 | COMMITTED | /root/r02_milvus | [R02](implementation-records/R02.md) | `776025c30ddbf51ecdcd26b16f9ce891c749b706` |
 | R03 | COMMITTED | /root/r03_models | [独立验收](implementation-records/R03.md) | `43e9af9de44212342850f3668826a0e5b4bf9a49` |
-| R04 | ACCEPTED | /root/r04_host_contract_resume1 | [独立验收](implementation-records/R04.md) | 待本地提交 |
-| R05 | TODO | — | — | — |
+| R04 | COMMITTED | /root/r04_host_contract_resume1 | [独立验收](implementation-records/R04.md) | `63e97a37b2b7389a104b3c96240fd6d95b5a11d5` |
+| R05 | ACCEPTED | /root/r05_domain_config | [独立验收](implementation-records/R05.md) | 待本地提交 |
 | R06 | TODO | — | — | — |
 | R07 | TODO | — | — | — |
 | R08 | TODO | — | — | — |
@@ -126,11 +126,11 @@
 <a id="r05"></a>
 ### R05：骨架与配置
 
-- [ ] 独立开发包在指定环境可安装导入；核心不导入宿主 TUI/会话/全局配置，未启用 RAG 不加载 GPU 依赖。
-- [ ] 库/文档/版本/Chunk/批次/运行/证据等身份与状态有统一类型、错误和 schema_version；内容哈希不替代文档身份。
-- [ ] 配置具备 profile 能力校验、实际配置快照及来源优先级；未知提供方/非法组合明确失败，快照没有密钥。
-- [ ] fixed/auto 与 qa/report 分离，最终默认 auto 的定义保持；单次覆盖不回写默认值，不改变功能外设置。
-- [ ] 正式测试验证配置边界和序列化，不只镜像字段声明；必要模块有职责，没有泛化插件框架或复制 Agent。
+- [x] 独立开发包在指定环境可安装导入；核心不导入宿主 TUI/会话/全局配置，未启用 RAG 不加载 GPU 依赖。
+- [x] 库/文档/版本/Chunk/批次/运行/证据等身份与状态有统一类型、错误和 schema_version；内容哈希不替代文档身份。
+- [x] 配置具备 profile 能力校验、实际配置快照及来源优先级；未知提供方/非法组合明确失败，快照没有密钥。
+- [x] fixed/auto 与 qa/report 分离，最终默认 auto 的定义保持；单次覆盖不回写默认值，不改变功能外设置。
+- [x] 正式测试验证配置边界和序列化，不只镜像字段声明；必要模块有职责，没有泛化插件框架或复制 Agent。
 
 <a id="r06"></a>
 ### R06：存储与并发基础
