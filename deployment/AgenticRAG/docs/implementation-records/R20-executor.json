@@ -1,0 +1,3404 @@
+{
+  "schema_version": 1,
+  "task": "R20",
+  "role": "executor",
+  "status": "READY_FOR_LEADER_REVIEW",
+  "generated_at": 1790167036.6470168,
+  "integration_root": "D:\\CodePlus",
+  "branch": "codex/rag",
+  "base_head": "41802ffe9061856dc8d2ea1e4ef0fdbdad1d143a",
+  "executor": "/root/r20_report_continue",
+  "scope": "Existing Agent report saving, Chinese Q&A and explicit continuation. Approved revisions: scoped native JSON output and fit-checked equivalent complete source pair removal. No R21 complete management or R23 quality freeze.",
+  "latest_revision": "Only ModelControl purpose selection changes: tools-enabled agent has no native JSON format; tool-free finalize/citation_repair retain it. Prompt, history order, strict parser/citations, existing one repair, fit-checked deduplication, driver and budgets unchanged.",
+  "authored_files": [
+    "codeplus/__main__.py",
+    "codeplus/agent.py",
+    "codeplus/app.py",
+    "codeplus/client.py",
+    "codeplus/commands/handlers/knowledge.py",
+    "codeplus/run_policy.py",
+    "deployment/AgenticRAG/README.md",
+    "deployment/AgenticRAG/docs/codeplus-integration.md",
+    "deployment/AgenticRAG/docs/host-integration-contract.md",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/ledger.py",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/meter.py",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/research.py",
+    "deployment/AgenticRAG/src/agentic_rag/domain.py",
+    "deployment/AgenticRAG/tests/test_codeplus_integration.py",
+    "deployment/AgenticRAG/tests/test_cursor_window.py",
+    "deployment/AgenticRAG/tests/test_json_output.py",
+    "deployment/AgenticRAG/tests/test_request_window.py",
+    "deployment/AgenticRAG/tests/test_research_reports.py",
+    "deployment/AgenticRAG/tests/r20_real_acceptance.py",
+    "deployment/AgenticRAG/docs/implementation-records/R20.md",
+    "deployment/AgenticRAG/docs/implementation-records/R20-files.txt",
+    "deployment/AgenticRAG/docs/implementation-records/R20-executor.json"
+  ],
+  "authored_sha256_excluding_this_manifest": {
+    "codeplus/__main__.py": "1b6305a97989f41fe2e8602a65096cbae2843c2c2fa997cd24fc20fee96b9aee",
+    "codeplus/agent.py": "7be148865f368435949efb4d1963121ead288dbae6c8f9941c903e67415a7d65",
+    "codeplus/app.py": "6863650c641cc5728af0864973185d3cc9b51e6ad93a01f2a4543a7d6b5c2a3d",
+    "codeplus/client.py": "205ee1ae9435af9fdccfae7cab638d6530b6c578df74939ddfcb30219478e970",
+    "codeplus/commands/handlers/knowledge.py": "9f88d25f1eca30791b9baaeb8ca3b2f41f1d109aebcfb3eb1f7166487cc7277b",
+    "codeplus/run_policy.py": "8a01dd2a24abf41a17ab05ac56eeff171f7305b0d99cc36cc0de966d82269d63",
+    "deployment/AgenticRAG/README.md": "6fee61fe6454fc558aa3665607c22b3120377f40d9b157f87efab26dbd8b7ce4",
+    "deployment/AgenticRAG/docs/codeplus-integration.md": "0a1d173f8be275dad68c13da1da24c37e2ffec52e866ae7438264a49e932bec7",
+    "deployment/AgenticRAG/docs/host-integration-contract.md": "659d5e0e527a1225fbc013208a0eb96bab7d610bf9add4836162d99dee6fc768",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/ledger.py": "059b2d883c5cf802081d3c396f84598af666c6fba6feaf201302934689b40a8b",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/meter.py": "59e4e46c6092712a8fc7bb6c71ef8172b53c81a212990ea9ab540a7528e4d6ee",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py": "0d4d891000d84afd906f67a6699ca164801fb32519bbd6f355e4a32789b802df",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/research.py": "9b2e0dd393a641efd9479e1b0c3d1e4f44d6824b9ea480220adc70bded4013cd",
+    "deployment/AgenticRAG/src/agentic_rag/domain.py": "c1b108d19cb8db6f573ff7501bae243eb7b493489e8070a870bb6e2fdc9e3830",
+    "deployment/AgenticRAG/tests/test_codeplus_integration.py": "39e99f3816a5b4352901d2d1d49a00c88aba4b4187ce0ab4dea53385da8bcf98",
+    "deployment/AgenticRAG/tests/test_cursor_window.py": "4cfc33a768024e22ec1f0a807d8a6909013ab92f89786b2ad49c601697eb6f96",
+    "deployment/AgenticRAG/tests/test_json_output.py": "2829d8135d86b125c2e7b6c231c54b3b182bd61786dcc831e5dcbd3507e82a3a",
+    "deployment/AgenticRAG/tests/test_request_window.py": "a59be927873c1bb9ad5957f5d4ad66c991e34f9eb9ed7fee16452c42cfac1d13",
+    "deployment/AgenticRAG/tests/test_research_reports.py": "ad742943cef67bb11859852b71ebe7ba9abc7c2bea4cc0d7d07525cc2dc350a2",
+    "deployment/AgenticRAG/tests/r20_real_acceptance.py": "0f0ef5fcfe5f0d40dd5390830a1165c9e1785075d4f3b4d262087b024f1dc0a1",
+    "deployment/AgenticRAG/docs/implementation-records/R20.md": "5ee5225fc0c8897c9b05716da634d546fd243419f3d51da7db1909d715bf6903",
+    "deployment/AgenticRAG/docs/implementation-records/R20-files.txt": "ddb947f29bb55463a94e6ab874140a1475bccfa603e963a964c458b123cc6e09"
+  },
+  "raw_root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923",
+  "raw_results_index": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\audit_final_cursor.py",
+      "sha256": "8fc056ace797f7c80ca9de23514a4705c5bb19ff5f026a50dbfe95e021fa36dd",
+      "size_bytes": 1229
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\audit_live.py",
+      "sha256": "115def82b068b3b677c6fba25d66a9ff9b39dafe8a2e89c4b3ee1d2d8b9dc251",
+      "size_bytes": 5328
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\baseline.json",
+      "sha256": "6f711d330202138bb03c2a479010d0bdfc8edc4f7860bde855fcfcdcf2726a1f",
+      "size_bytes": 928980
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\build.py",
+      "sha256": "c93d74801bb31107e30500abb981c9a90ca6ddb278d2f3b34817487be930682a",
+      "size_bytes": 1850
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\capture_resources.ps1",
+      "sha256": "326e8997f78e26a4fbe53139db2ab0f9b62fed3bfc2eec414c7e1b96fa39d17f",
+      "size_bytes": 2622
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\CODEPLUS.md",
+      "sha256": "0871630e64383997ee9bf1ae2167f837d9f3e68b2c43d7cac2acd03c8a1198e7",
+      "size_bytes": 122
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\complete_cuda_dependencies.py",
+      "sha256": "374e29ed90212e4e5247d3f65761359c84dcfd966276abb2790dc1c33dbb5bcc",
+      "size_bytes": 1873
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\cuda-before-versions.txt",
+      "sha256": "9b1fea0ed454ba973ac8bd19ae2eb9209020cd92157fc68095e5414927f58c9c",
+      "size_bytes": 815
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\cursor-failure-audit.json",
+      "sha256": "9026c83d659d6b938f306c0b4159b7179a411617055a596919ff09f176917b5f",
+      "size_bytes": 2026
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\cursor-final-audit.json",
+      "sha256": "0c7ecf8b91d6c0de7e7bdb2fe235b80401453639b4e80c77f314c3e8b012e59c",
+      "size_bytes": 5821
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\cursor-first-retest-audit.json",
+      "sha256": "9cff48cb23a31ab8522fffbcf0789d8e28933176362483c98fa4810dc9cd4c38",
+      "size_bytes": 13062
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\deliver.py",
+      "sha256": "b6f767fb8192ce30d3e7ce1e97e2c731d25f908738d91e02727bd9ab1daa6d07",
+      "size_bytes": 12118
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\diagnose_cursor.py",
+      "sha256": "7ffde09154b32c2cd06b54ae9f4be30f9e223fdd03b4782f55cc05e4fc8006a1",
+      "size_bytes": 1342
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-fit\\host\\codeplus-0.2.0-py3-none-any.whl",
+      "sha256": "f71acfb81fa33ddb9b5dab9b4316a8a427316afe4457162345a18c8c7b64e91b",
+      "size_bytes": 314098
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-fit\\host\\codeplus-0.2.0.tar.gz",
+      "sha256": "1eead8edcce40bdd4eb652eb8c5a4119745b016186416bad2c0fe76aa889b56e",
+      "size_bytes": 1320332
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-fit\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "sha256": "7736d659abfd588e98055ef45dd8b1115948e9a161daf0c0b4bf97798616890a",
+      "size_bytes": 210493
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-fit\\rag\\codeplus_agentic_rag-0.1.0.tar.gz",
+      "sha256": "af635a74abde0efcc703ca5704176b9312289cec33db6c3b7da2ee143f5c6b3d",
+      "size_bytes": 313864
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\host\\codeplus-0.2.0-py3-none-any.whl",
+      "sha256": "f71acfb81fa33ddb9b5dab9b4316a8a427316afe4457162345a18c8c7b64e91b",
+      "size_bytes": 314098
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\host\\codeplus-0.2.0.tar.gz",
+      "sha256": "1eead8edcce40bdd4eb652eb8c5a4119745b016186416bad2c0fe76aa889b56e",
+      "size_bytes": 1320332
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "sha256": "48aba508386ad290fc46e83a558012b4862e20db2b2a577b27aaefb1986258ac",
+      "size_bytes": 210488
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\rag\\codeplus_agentic_rag-0.1.0.tar.gz",
+      "sha256": "62eaad7310e33ebdfcdea1e94979b811f7798764d0e8173c1350b8b34cffb409",
+      "size_bytes": 313858
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\fifth-build.json",
+      "sha256": "a10a76276772831288ff5c12545c8697473c28e1419da0240adc1c3298afd387",
+      "size_bytes": 29742
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-candidate-build.json",
+      "sha256": "f83137ebba0f0bcb6902fecd64c107134390327771c0c5aaeb73b29b80839b12",
+      "size_bytes": 29897
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-cuda-dependencies-retest.json",
+      "sha256": "fd710d37c860abcd2ec2f534c6dab54fa2439fb8805cd9ce7f459d819840fa79",
+      "size_bytes": 12843
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-cursor-command.json",
+      "sha256": "3d8d652974f8c5a04c986e7563397b6efc5a9746363fc6a6a35d85198f0a4f39",
+      "size_bytes": 853
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-cursor-modules.json",
+      "sha256": "7f304d1fafc435b7011e5151087f95c865e84ec6fe79c25a47fc66186a2318d9",
+      "size_bytes": 25405
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-cursor.log",
+      "sha256": "f1cc0f0d4bd45b3776ec456b2b010e6b661198b93d49a9adfe591ba14a02f034",
+      "size_bytes": 101
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-cursor.xml",
+      "sha256": "1a1e17f202e1d5ab8e1efe45d46b26b6b82cbef7c5adfacb0e48d3d1c77a6bea",
+      "size_bytes": 514
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-dependencies.json",
+      "sha256": "babaa306e395fdfc6cef85129f1be9b74ccb8d2aa02621b11f173251f51d85bc",
+      "size_bytes": 1231
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-host-command.json",
+      "sha256": "70ddb88bb37d5aa289919586c22bd09f2a5acb2d6cc0fbbb9805e1ceeb47a932",
+      "size_bytes": 960
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-host-modules.json",
+      "sha256": "4bc8e0b7dd60f87951e98743927f4c56a477081fa96b178607485ba4a10854b0",
+      "size_bytes": 32969
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-host.log",
+      "sha256": "8f6520b0fd159d2313c350c72877986d440cff8df65056581a471cf71e86cf05",
+      "size_bytes": 194
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-host.xml",
+      "sha256": "0ae55ae83c49a817d0e4ca126eb9625d03378f73c35339ec1aa1d342d504dd1d",
+      "size_bytes": 15664
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-preservation.json",
+      "sha256": "d9bc97bf8b2706c7d9953f08f98ce57184152208f6e11cbdb6300639de70d9c5",
+      "size_bytes": 2730
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-related-command.json",
+      "sha256": "1f89a481bc84986f186996a56ed17e05a322c6ff6c5d36ef97c733ec6904b415",
+      "size_bytes": 1892
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-related-modules.json",
+      "sha256": "8ff93d137a56704f49d570e5e5f9f3840d068194c0615d54972152fa2d711fb1",
+      "size_bytes": 48256
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-related.log",
+      "sha256": "c5958813add534f26c08d90740ecbdb3001027f95db51a7543c98effde10dd17",
+      "size_bytes": 3041
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-related.xml",
+      "sha256": "868927b4b650640d39ff1598c6bbf32847fc42fa38edb6f2d05a628604d38dd8",
+      "size_bytes": 58633
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-window-command.json",
+      "sha256": "a6fbcee2a560174da90f78881013d9d8bc41aa4370b7d3de99cd92fa2e055597",
+      "size_bytes": 1156
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-window-modules.json",
+      "sha256": "7f2ac46c493b0947e6dc055dfe0fbef98768413dae28f656e2ad780c85141ca8",
+      "size_bytes": 25405
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-window.log",
+      "sha256": "68cafc63ef74ff31eba44dd8ead636966b3452ea7e6de4288678a10fcf9b4eb7",
+      "size_bytes": 5293
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-window.xml",
+      "sha256": "2096932a73c08aa82551c8eacf385dfd22e637cef2ce322c05c5a191fbb7f5f7",
+      "size_bytes": 8889
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\first-build.json",
+      "sha256": "4bc9dbf05a8a98132feba4aec38c5d5db5a9fbd4ec4ed82312cd9fdaa6bad44d",
+      "size_bytes": 29705
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\first-related-command.json",
+      "sha256": "8353a7566717bd2042735adce90fdb8c9fca6d41649af48d1c268a5718df5dab",
+      "size_bytes": 987
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\first-related-modules.json",
+      "sha256": "d8db6cef9a43d8c438892e4ffcd8a51cebe1b33069d9bb06ea6b2c3ecc7518ff",
+      "size_bytes": 48256
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\first-related.log",
+      "sha256": "3f1ab80cc929b78556770a159e818ccb631776bfb278a3ba7f74737b6680add7",
+      "size_bytes": 179852
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\first-related.xml",
+      "sha256": "bdd2fc77aa69667c86a3f9ed5870ff459f88edd0ed831cf553abfdcc1fa74a6b",
+      "size_bytes": 211177
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\first-reports-command.json",
+      "sha256": "a27ea6a615d63db964fa8a0fad63305c8989a30d65d31a718707a18cda226f12",
+      "size_bytes": 840
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\first-reports-modules.json",
+      "sha256": "94a9b860927d746f279f3f2b5ecfe5994bdafa318691f1b7f7861eb642b0914b",
+      "size_bytes": 32241
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\first-reports.log",
+      "sha256": "c3f504388f199920017b817d0638a4b3e67ca431c7c532d0781f45f0b5f59c84",
+      "size_bytes": 4089
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\first-reports.xml",
+      "sha256": "b89d754a74f73a102f198d3038f3e2c8526045a6908575b90292c560c2c15073",
+      "size_bytes": 6977
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\fourth-build.json",
+      "sha256": "b7c86b8098793851ba2ccbebc7feda0542489e2bb6c39739e5745cdd92ab3641",
+      "size_bytes": 29753
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\freeze.py",
+      "sha256": "565062f64e9151e33ab33d4d1d50830b3c4b583d1e20f63483608404d77dc7bf",
+      "size_bytes": 1491
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\inspect_cursor_attempt.py",
+      "sha256": "53cf653ae6c26a959931a5d7bd6b33f487ec1888455fd56688d178a490314b7b",
+      "size_bytes": 1374
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\live-chain-audit.json",
+      "sha256": "6313c1c35a7b283dd9b54715ff64ace7cb56d85459c144d8d1402d3214942fa3",
+      "size_bytes": 12212
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\package_checks.py",
+      "sha256": "da3d3b7bfd90240ab5a98ac63707025605061418602374ae87b0bc0b8ea4af57",
+      "size_bytes": 708
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\prepare_unknown_probe.py",
+      "sha256": "3ffa5d2bfaea9735ae6b4a7608737771b715af7122e2690f96f3b144ac1514f0",
+      "size_bytes": 2495
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\pyproject.toml",
+      "sha256": "b3352ac691610f88ec2155d1a12fcc13da7a534fbc53b812ae1d1c8f95ff8838",
+      "size_bytes": 691
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\atlas.md",
+      "sha256": "4387cee54795d32e5efbe2addae6487fc49c66568a10fe4551688890e9c798f4",
+      "size_bytes": 192
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\audit.md",
+      "sha256": "552bd2acd37de5f4b41473fadc12c041c98c9ed459c07a658ce29fa61f2acc91",
+      "size_bytes": 131
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\beacon.md",
+      "sha256": "e084cee63629deb477f3948fd6917fc7f8760a55d3c8c4a034a13e3b3eac53d2",
+      "size_bytes": 177
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\cli\\.codeplus\\config.yaml",
+      "sha256": "28d49472e908e528f4eb36ab04a8cca70486e24539c7de92a33f57550d7635de",
+      "size_bytes": 396
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\cli\\.codeplus\\crash.log",
+      "sha256": "9c4ed54ba93aec9df64a70dbbac8769314a9134356d91c6199f79e7e8babeb85",
+      "size_bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\cli\\.codeplus\\debug.log",
+      "sha256": "55a1652f4d4032f10e771984c1de67745baa4d36df99c302786b94f8796229f4",
+      "size_bytes": 440
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\cli\\continued-report-e8becd84.md",
+      "sha256": "cf4bcdae4432e0fdfdae5a49f8c2b4d54ffd5c051993bb2a86a5d09ca1ab4c6c",
+      "size_bytes": 5792
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\data\\catalog.sqlite",
+      "sha256": "9bc6454936b832a1c20eec4948875265d74e4a5ebc946e29889d2578410b3a67",
+      "size_bytes": 1404928
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\development.json",
+      "sha256": "b249c29d950834b84e1cddd1e26edd867331580ab09fbdea0afa5cebce9123ab",
+      "size_bytes": 7649
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\old.md",
+      "sha256": "b7807cbec3668ddec0e155f05060241141558b8263f1193e9f713fa985b11dbe",
+      "size_bytes": 139
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\report-report.md",
+      "sha256": "a72911c46de96cbf9327029c5a670bca13fb71cc52cca5289771929d83db201f",
+      "size_bytes": 5635
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\report-update-88d8666d.md",
+      "sha256": "75d20ef00e32db14f8b3234a6e8593a5da61ee3802f15c1f3b55824403d59c83",
+      "size_bytes": 6590
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real\\state.json",
+      "sha256": "4992d5aed70b6a47b79682d43bea584207cb837c0eb17b7960ccd3c84db40eee",
+      "size_bytes": 938
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-cli-second.json",
+      "sha256": "55c331d0a63c7ab88241d83da1a5949c3583f580f2cd708fe9542976e6cc7a36",
+      "size_bytes": 233451
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-cli-second.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-cli.json",
+      "sha256": "45d3aedb5fc0b29c72a3395e6f9285ae7a583a96db87bf62c165b7d99b3e3b14",
+      "size_bytes": 1298
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-cli.log",
+      "sha256": "f4d35668c0c7deab39cb9919b106db62c567eb5c7cf31594da830e17740a56e5",
+      "size_bytes": 1459
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-delete.json",
+      "sha256": "cd5a5c031dba52413fefc5265a5301bf3618de5f2db9bae0b7729435e75b7981",
+      "size_bytes": 480653
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-delete.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-prepare.json",
+      "sha256": "1ce511550ee7e1700f2f8b7ad2bb4b63f92a2e26d4168a3b6ea4d8107c94655b",
+      "size_bytes": 13856
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-prepare.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-report-first.json",
+      "sha256": "61003779f093e80a3542a7248a228cd397cf60d5c9b4de282e3aadd36d75f0b3",
+      "size_bytes": 1712
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-report-first.log",
+      "sha256": "2e950cb74fab4f9cb33b6073637fe78f5fdd6f295067ed3db0829ea94dce2a6e",
+      "size_bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-report-second.json",
+      "sha256": "0ce9cc45d04ea6cb4b39d06eac05432c82d482bab1ffebb744cff8cd0ff45f29",
+      "size_bytes": 1713
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-report-second.log",
+      "sha256": "2e950cb74fab4f9cb33b6073637fe78f5fdd6f295067ed3db0829ea94dce2a6e",
+      "size_bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-report-third.json",
+      "sha256": "722fee5e31a9fad41c8799ff81c1c1ca9fe80a87f2d52db91ee38740820b7177",
+      "size_bytes": 114912
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-report-third.log",
+      "sha256": "d9be88a818af4affd4b82baeb8fdc6a9bd2c488c69a0adce4585d2a7de45c3b2",
+      "size_bytes": 660
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-update.json",
+      "sha256": "d1d17ccdbd09b4cb301c913f2b4da903ea68f0a8e6228cc5cd533b6ec0f13585",
+      "size_bytes": 627126
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\real-update.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\resource-ownership.json",
+      "sha256": "4fba3367edf292bd47239fe3486e46af93216a3a0fb3d8eb6fba0f15552a7249",
+      "size_bytes": 9122
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-baseline.json",
+      "sha256": "9a8a6cf3fd38ce77e0348133be46acc7a4c2a3ed75734b054648da51e6c0c0dc",
+      "size_bytes": 11919
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis\\atlas.md",
+      "sha256": "18147fc5fa7a75bc24d1d615de1c7d84269ebe6c3bc6dc526fc59f948bbb25df",
+      "size_bytes": 180
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis\\audit.md",
+      "sha256": "c82818ae9ffe68b6923bb692f084b0ebadf4650af1b82a432747f2227426b306",
+      "size_bytes": 184
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis\\beacon.md",
+      "sha256": "e084cee63629deb477f3948fd6917fc7f8760a55d3c8c4a034a13e3b3eac53d2",
+      "size_bytes": 177
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis\\data\\catalog.sqlite",
+      "sha256": "23c17e1805d524c05be2e892935f37598f2b58d2680643b595231dad54eeed5b",
+      "size_bytes": 716800
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis\\development.json",
+      "sha256": "42474e6b9db14e6968b6d47ac05fb1148796d983afacd898bbcce5f17608dd1d",
+      "size_bytes": 7679
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis\\old.md",
+      "sha256": "b7807cbec3668ddec0e155f05060241141558b8263f1193e9f713fa985b11dbe",
+      "size_bytes": 139
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis\\report-report-696bbf24.md",
+      "sha256": "0db81db822fd45033f4355e8f163652226ce0ff85175f6436c8a9b06ca47382e",
+      "size_bytes": 5203
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis\\state.json",
+      "sha256": "181933cf17fd5dd0a74c448748b267a0268ccb4335c426d2a8f7ccc50d55fc1b",
+      "size_bytes": 376
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis-prepare.json",
+      "sha256": "51df3a10736dd9b1ce6d8c2d4ce5299572d70c9222565fade1acd8a40d3c5b20",
+      "size_bytes": 13997
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis-prepare.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis-report.json",
+      "sha256": "8f3af74da5f5216e5479a31d083f08d5bbb83d7ece4dba4c843b1f2b115a2308",
+      "size_bytes": 154712
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-diagnosis-report.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-dependencies.json",
+      "sha256": "d13b5c3108cb875af030b6f45a7f779886d48a5d295c590090802396d550b602",
+      "size_bytes": 9226
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-dependencies.log",
+      "sha256": "6b84044bd29ca16a21beb55d0235fcdf8107a99b34c435a9e4a340c64f934e89",
+      "size_bytes": 59
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-live-audit.json",
+      "sha256": "9920275d50807ea52ad1299221e39622e4be3c87639e6e5c94a50dc2bf53c035",
+      "size_bytes": 45732
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-live-audit.log",
+      "sha256": "f18fac36783810e209ae24c8e0ff10b352949d53b848990843eadeda7efb9fcc",
+      "size_bytes": 676
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-preservation.json",
+      "sha256": "d5a4e5b3f833b15b8f462a832bebca2482e65395357c48481767c6250c381c73",
+      "size_bytes": 5083
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-preservation.log",
+      "sha256": "e48c673a2b7471162c64cc8854f40557605c8096a3f6abf99372f61ca034489e",
+      "size_bytes": 939
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\atlas.md",
+      "sha256": "4387cee54795d32e5efbe2addae6487fc49c66568a10fe4551688890e9c798f4",
+      "size_bytes": 192
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\audit.md",
+      "sha256": "552bd2acd37de5f4b41473fadc12c041c98c9ed459c07a658ce29fa61f2acc91",
+      "size_bytes": 131
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\beacon.md",
+      "sha256": "e084cee63629deb477f3948fd6917fc7f8760a55d3c8c4a034a13e3b3eac53d2",
+      "size_bytes": 177
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\cli\\.codeplus\\config.yaml",
+      "sha256": "d7d2fe2e8e7694886b3de774816210efc56dff5969b4bc0013ad20f52e5d9a60",
+      "size_bytes": 411
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\cli\\.codeplus\\crash.log",
+      "sha256": "c2ff2012e5a8b2bb77f4fc08b6759c99142d04d427f6a59153a7bf22e69280ae",
+      "size_bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\cli\\.codeplus\\debug.log",
+      "sha256": "c0a9e7acd29eed01d8b0422b40f873fda32940782a0a82831ec04c7c8e410a7b",
+      "size_bytes": 110
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\data\\catalog.sqlite",
+      "sha256": "abbf20468bdc93b8678bbfdd4d73059936ae5e47c771eb9c1b608e990d8b4fc1",
+      "size_bytes": 1081344
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\data\\catalog.sqlite-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+      "size_bytes": 32768
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\data\\catalog.sqlite-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\development.json",
+      "sha256": "e9aadc30beefbb2af032faa4c226c9c62093ff55bd7dd611a07ad57eebcf1770",
+      "size_bytes": 7660
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\old.md",
+      "sha256": "b7807cbec3668ddec0e155f05060241141558b8263f1193e9f713fa985b11dbe",
+      "size_bytes": 139
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\report-report-ca0f910e.md",
+      "sha256": "aa9e99f3f3468334131669445823f970655993722358731337def47553e53513",
+      "size_bytes": 6141
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\report-update-bf31f487.md",
+      "sha256": "d0bbdc692cb9fd4f8a1cadc76fc37112ab7a9977f31a6597350c42dfb92ca7ef",
+      "size_bytes": 5453
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real\\state.json",
+      "sha256": "70ccfe72570813e72d4906d479e878b4d9b0bbc9601d62ef86fa4effae772cd2",
+      "size_bytes": 748
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-cli.json",
+      "sha256": "829daf68b82ace7aa3759996407247bcb8bc0321d3dad0eb762b44ef43f81a13",
+      "size_bytes": 85596
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-cli.log",
+      "sha256": "a6d8af979f052942f7749a4758c618fb07132587b44402294a5507a457290920",
+      "size_bytes": 698
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-delete.json",
+      "sha256": "63047c16f793c1fa71e04a7f01a41e8ae5b499caf6f5bd9eb75fc8e7af274e86",
+      "size_bytes": 361437
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-delete.log",
+      "sha256": "b42cce6abbe21fc62fc6c03521572f59b8dcc223bb2afcf17bca7c557c42b067",
+      "size_bytes": 659
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-prepare.json",
+      "sha256": "69c350ee1eb2187e10a8b8faf6f0a7afa041fedbcb6c0c4e921b9dfd88862c4c",
+      "size_bytes": 13965
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-prepare.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-report.json",
+      "sha256": "b64188a6d964ee6559df50a3be05e059edb20203341bd4844ccc05009c218d34",
+      "size_bytes": 116552
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-report.log",
+      "sha256": "62fc1f5fb02af4b430eaf8484d496a587a63efee4e55dea9a3da8d2733a419b0",
+      "size_bytes": 618
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-update.json",
+      "sha256": "0d344995eab364f6dc7e1bdbfde7cf90e38b81057b6b3e1322a4cb087d17f06a",
+      "size_bytes": 244959
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-real-update.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-related-command.json",
+      "sha256": "35f7015407f38f33ac061adb1ff18aa9ddf3f5a9130da92ce614c5fa616c6abb",
+      "size_bytes": 1317
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-related-modules.json",
+      "sha256": "c846c18a891332586eaee70548de6e5c161a00f93d766835e1e56af60b1e863e",
+      "size_bytes": 41227
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-related.log",
+      "sha256": "a2b655ae42daf4bca029778f0402eee2de4060befe7b833c4de2b281b2831f3c",
+      "size_bytes": 194
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-related.xml",
+      "sha256": "5c2a35f78d9dd4bb5fcf6f34835bed18480312403d8d63c0454c693899f26a62",
+      "size_bytes": 23991
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-cases-command.json",
+      "sha256": "fe08e56037b9b1b39f04e22820ac0c5103481c81ffaf40672358d30e524ab7bb",
+      "size_bytes": 960
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-cases-modules.json",
+      "sha256": "57eadba1d653e2e3aa1ef5c77f0c2eeef4f3623c6252a98cff17bc90cbc8572c",
+      "size_bytes": 25405
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-cases-retest-command.json",
+      "sha256": "6765bbc199441e58d5e49eccecbe78b1b10addea9a4e6cd9876679612074e306",
+      "size_bytes": 981
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-cases-retest-modules.json",
+      "sha256": "57eadba1d653e2e3aa1ef5c77f0c2eeef4f3623c6252a98cff17bc90cbc8572c",
+      "size_bytes": 25405
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-cases-retest.log",
+      "sha256": "041db954284bafd42598bee37654e03a7f438ce1c92befdaec2c1353c164c973",
+      "size_bytes": 101
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-cases-retest.xml",
+      "sha256": "3b495b429611284f1196a6bd9ef7b736582ad276f7fdde03b55b1de644331c53",
+      "size_bytes": 10397
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-cases.log",
+      "sha256": "acb1c802992762d86e8ddb506f5092c22b2b83bfb3a366002793b0472318f101",
+      "size_bytes": 14589
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-cases.xml",
+      "sha256": "fdc3a3e949d9e61dba5f0fc50d08d4fc961b12df7f8c5e16e958fbf971543f14",
+      "size_bytes": 18227
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-dedup-build.json",
+      "sha256": "233652fb718da7b2a6cd15d183b73f999afecc517a2460739f52670fd4894f6d",
+      "size_bytes": 30053
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-dedup-build.log",
+      "sha256": "d938fa189912f8776c3deb31a6bec42f403f57b9c8e3ed936bdb076caf6bd61c",
+      "size_bytes": 6
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-direct-command.json",
+      "sha256": "6b83dc91ccf203b313637cb2a816ff4906eff6b280c03114436bb9dd92ba7ff8",
+      "size_bytes": 1109
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-direct-modules.json",
+      "sha256": "57eadba1d653e2e3aa1ef5c77f0c2eeef4f3623c6252a98cff17bc90cbc8572c",
+      "size_bytes": 25405
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-direct.log",
+      "sha256": "221298184394f1a8b4a4ae3ead4115352aa14d8ea1aa6abd31aa91c64ec75715",
+      "size_bytes": 6397
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-direct.xml",
+      "sha256": "ae80670f52060f4b1339ac2e6b1ba3e9e77466022a44ab3fa7ab0e0c395a06d2",
+      "size_bytes": 9389
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-fit-build.json",
+      "sha256": "4f0cc815b7f9601d5c17a32e83bc2a5f3beeeb1a115d8490d2f6c0c8a028213f",
+      "size_bytes": 30026
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-fit-build.log",
+      "sha256": "d938fa189912f8776c3deb31a6bec42f403f57b9c8e3ed936bdb076caf6bd61c",
+      "size_bytes": 6
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-baseline.json",
+      "sha256": "3cdf1b7f9bb9ad024b9064eb07dc79f6c1146da42619cbdcc96d239728b2c7f8",
+      "size_bytes": 10189
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-build.json",
+      "sha256": "bb946dea65bc69c6b846103672bafb3f4c0b39c0c671dc22661716e35d1e25ed",
+      "size_bytes": 30034
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-build.log",
+      "sha256": "d938fa189912f8776c3deb31a6bec42f403f57b9c8e3ed936bdb076caf6bd61c",
+      "size_bytes": 6
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest-command.json",
+      "sha256": "dcb4d89d08a4f74ab1231e5f3c178a0075f62fb1276857fdba9d39a8d540237a",
+      "size_bytes": 969
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest-modules.json",
+      "sha256": "045717fbf70d18247309450ccdf81c05033f3a4cf899d5ad2d5c51188f26881d",
+      "size_bytes": 25405
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest.log",
+      "sha256": "3cb0fe5694c411bd14fff674846f558257ca10bb5ec60f4a58464b69d4049040",
+      "size_bytes": 101
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest.xml",
+      "sha256": "19437fae12bbff4da755eef599a1fc60b47d54bd30c2f5f83e1ddc1797106922",
+      "size_bytes": 872
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-live-audit.json",
+      "sha256": "40a15810fbdfb5245954b1df1d196a9aac77e4be6108484458f80c81a7de7353",
+      "size_bytes": 49491
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-live-audit.log",
+      "sha256": "39a4a591a425c56753fb1fbc226611f49c4659a87d240ea0e9833d72842839db",
+      "size_bytes": 483
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-preservation.json",
+      "sha256": "7c7011801aa71d577175a996a5f1df44b1cee09f12fb3ca504bd5f492f1e1ebc",
+      "size_bytes": 5716
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-preservation.log",
+      "sha256": "7b5a5734caf53277cd0367b846ab04e4abb6df93628f192619442ed0ba816a5b",
+      "size_bytes": 351
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\atlas.md",
+      "sha256": "4387cee54795d32e5efbe2addae6487fc49c66568a10fe4551688890e9c798f4",
+      "size_bytes": 192
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\audit.md",
+      "sha256": "552bd2acd37de5f4b41473fadc12c041c98c9ed459c07a658ce29fa61f2acc91",
+      "size_bytes": 131
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\beacon.md",
+      "sha256": "e084cee63629deb477f3948fd6917fc7f8760a55d3c8c4a034a13e3b3eac53d2",
+      "size_bytes": 177
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\cli\\.codeplus\\config.yaml",
+      "sha256": "719405b3a7e1d81888dbb7f20af497e82de09522abfdbd63b83dbded76ad9332",
+      "size_bytes": 417
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\cli\\.codeplus\\crash.log",
+      "sha256": "2f802f0e22f29e26b732b0c7affa3d1f096f469fc2a5f2bb7f5589ed8cfede39",
+      "size_bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\cli\\.codeplus\\debug.log",
+      "sha256": "3779fd20fab09c02d19fe7bbc5ad4004e5c0844a02f0cf5e966031c08b78ad10",
+      "size_bytes": 550
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\cli\\continued-report-1f82f63f.md",
+      "sha256": "dc62d0b5171e2b95c39558d2eb815168025292502753eebff52c58f2b9958d4d",
+      "size_bytes": 6055
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\data\\catalog.sqlite",
+      "sha256": "471c8dcb502b91db55b86687e3d8461a1fc57abb0ac35546418b7023f9dd8269",
+      "size_bytes": 1413120
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\data\\catalog.sqlite-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+      "size_bytes": 32768
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\data\\catalog.sqlite-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\development.json",
+      "sha256": "f4c700039952ab01369310802102ba7a70dccc8cf89a2d5d0da7c94eeec5ab91",
+      "size_bytes": 7672
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\old.md",
+      "sha256": "b7807cbec3668ddec0e155f05060241141558b8263f1193e9f713fa985b11dbe",
+      "size_bytes": 139
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\report-report-ec2b6952.md",
+      "sha256": "90a9d95807adec1578c27c68342ef80729d20e5e4ee12195fb513462bfd98f75",
+      "size_bytes": 4137
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\report-update-862947ef.md",
+      "sha256": "e66f8624d5e8307b1fda0e8073c6efa47e6708da354d920bc328c5a541477b8a",
+      "size_bytes": 7026
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\state.json",
+      "sha256": "52aec6ee0d2b19fd18fc75373708645718757c63368b29457e6040467accacf8",
+      "size_bytes": 1010
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-cli.json",
+      "sha256": "594728858fd9c83ebbb24267a815de86b1a37ed0a4f46765acce5e511c7b7de0",
+      "size_bytes": 332331
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-cli.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-delete.json",
+      "sha256": "7b5b8e3d54ab5460edf10637bf167f83e9e57d48fc2a08e940fdbe69ced76223",
+      "size_bytes": 501165
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-delete.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-prepare.json",
+      "sha256": "926c8270b3a9754d2019d79a9023f0b4abf84329b0a8b024c445d0a941ada5cb",
+      "size_bytes": 14026
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-prepare.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-report.json",
+      "sha256": "30e63d197fc93966e6bcf1f450aa9a868a3494a832885c11c2f921b6d23c2dd2",
+      "size_bytes": 149452
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-report.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-update.json",
+      "sha256": "488c258d3d533c7a86eeb7d3a3760e693c1e8cd0cc8c65a55241d8ac11ea7155",
+      "size_bytes": 548053
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-update.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related-command.json",
+      "sha256": "c2e5b8935eb6f21470b99303825f605dd5b99807ddf519d4677bf9710c49fa5b",
+      "size_bytes": 1322
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related-modules.json",
+      "sha256": "2e61b838a5c148d160e7d0292fd6e3c25a1f9d9c985f8488450158ff87355b89",
+      "size_bytes": 41227
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related.log",
+      "sha256": "1560ce524e1f7db032c6497b8a9e46aa347bd66d0ab61cf720d657d89ea432f3",
+      "size_bytes": 2079
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related.xml",
+      "sha256": "4ba280f943f1b011aa8b3d3e0be81a954d210fb17dc4b2e99adc0a1b2c2ee814",
+      "size_bytes": 34529
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-resource-ownership.json",
+      "sha256": "b764610ba2c7ce5ed7c58a4b91b219dca27b23d34d7253f864de1767253e6426",
+      "size_bytes": 9176
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-secret-scan.json",
+      "sha256": "96042c4e381d7ccc62946dfda180de0be8d7909640bc355fec4b584f118322f5",
+      "size_bytes": 288
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-semantic-review.json",
+      "sha256": "7dc758225bbe337bea2350917a07b2fb7de851d71ae4787a8d208a1d0598e11d",
+      "size_bytes": 2892
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-contract-build.json",
+      "sha256": "ed7320a141885b8874f9d98dae7c5bb3caccb45a7cbc1b4f65c08116cdd1a7a8",
+      "size_bytes": 30047
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-contract-build.log",
+      "sha256": "d938fa189912f8776c3deb31a6bec42f403f57b9c8e3ed936bdb076caf6bd61c",
+      "size_bytes": 6
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-contract-driver.py",
+      "sha256": "69670dc8d0b440bb4e37e37bc489b250c9172273c570f8651dc82dd36555b948",
+      "size_bytes": 15668
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-preflight-host-transport.json",
+      "sha256": "6990f39d4005df137b57f89bb37ab21d1d1d96d4694d61e6938ae5269eae8518",
+      "size_bytes": 3027
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-preflight-host-transport.log",
+      "sha256": "d048deab97ed499369bde10c104d07fb27307566f9e645c8dda994c23c6c93d0",
+      "size_bytes": 939
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-preflight-unknown-tool.json",
+      "sha256": "63d6ead67a451d69b2d6ef25b2338cb3c92bb195b13fa27c22be245e70dc9c6a",
+      "size_bytes": 3359
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-preflight-unknown-tool.log",
+      "sha256": "1e7ff3440405c6748e6a97a1a25ce7f7e271d21863c7b37ebaed0f218e19d184",
+      "size_bytes": 62
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-preflight.json",
+      "sha256": "001e024e85f140f5992c3fe09cbc20c57545533b84e29f933183a31830872869",
+      "size_bytes": 1166
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-preflight.log",
+      "sha256": "6c7bbbf45e6e980e5a6f20482dbb5a0a3c938e7c9f5f4754c7f433668f06d50f",
+      "size_bytes": 901
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-contract-command.json",
+      "sha256": "ce508b4bc2f4c3f1fbd1e56d703d91846eb610623bc3c419af94a71e432a985e",
+      "size_bytes": 647
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-contract-modules.json",
+      "sha256": "78251533fd40cc21cc365c7d57fb249ca1e306ce613325d1d8dae3082b541253",
+      "size_bytes": 25405
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-contract.log",
+      "sha256": "430937de9e7dcb90d4ef01e5df670df9e1e2e8030568daba5975861a7830a8ac",
+      "size_bytes": 102
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-contract.xml",
+      "sha256": "cc43f99072d07fb9da9fc0269135503edeff1190b614e0fb0bac96fc76985e71",
+      "size_bytes": 1970
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-json-build.json",
+      "sha256": "1f0394e21f76670b6c412646d5e8cecacfd5569bc2c12102f30512308964e51e",
+      "size_bytes": 30045
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-json-build.log",
+      "sha256": "d938fa189912f8776c3deb31a6bec42f403f57b9c8e3ed936bdb076caf6bd61c",
+      "size_bytes": 6
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\atlas.md",
+      "sha256": "4387cee54795d32e5efbe2addae6487fc49c66568a10fe4551688890e9c798f4",
+      "size_bytes": 192
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\audit.md",
+      "sha256": "552bd2acd37de5f4b41473fadc12c041c98c9ed459c07a658ce29fa61f2acc91",
+      "size_bytes": 131
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\beacon.md",
+      "sha256": "e084cee63629deb477f3948fd6917fc7f8760a55d3c8c4a034a13e3b3eac53d2",
+      "size_bytes": 177
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\cli\\.codeplus\\config.yaml",
+      "sha256": "d9af297b14c6f0e650befc210e0cbe60f7f2ccab9face12a57b1c21bda526b33",
+      "size_bytes": 412
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\cli\\.codeplus\\crash.log",
+      "sha256": "94cb2ee232fdd769b507b7a248ee457020b52b992152bbefa960f6c1e21a0c34",
+      "size_bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\cli\\.codeplus\\debug.log",
+      "sha256": "a4a53bb7a22f0a35561622e0a6eb381f479f8f81a25a536ac36eb3f692776bd1",
+      "size_bytes": 440
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\cli\\continued-report-a8d65bd1.md",
+      "sha256": "2354b788fab7827c3f3be8585cb07014bf5e731c10983ee409ea1f00b8571038",
+      "size_bytes": 6411
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\data\\catalog.sqlite",
+      "sha256": "43ca21469c380a8dcf0e33f9d36d5b0d35776ec4687e72e71d445bf0c0fe59c2",
+      "size_bytes": 1060864
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\data\\catalog.sqlite-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+      "size_bytes": 32768
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\data\\catalog.sqlite-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\development.json",
+      "sha256": "d281e6ddaf4fb26a74402441540325b5dba7bdf5a950e9865a14504695647827",
+      "size_bytes": 7662
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\old.md",
+      "sha256": "b7807cbec3668ddec0e155f05060241141558b8263f1193e9f713fa985b11dbe",
+      "size_bytes": 139
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\report-report-b9b4f342.md",
+      "sha256": "e607372420fb793c32a7fb6e420a1e9b505add8ca57271608f7f3a7534b5e63e",
+      "size_bytes": 5871
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\report-update-4c8ff649.md",
+      "sha256": "3efe964d5850cf8554b1a0954387fa887bc1bdf1e8cc6afefdac810750cb7b4b",
+      "size_bytes": 5024
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real\\state.json",
+      "sha256": "9026112f89f8824c03215e21caa5e776e10bf857010bcd2733f6a8325ce6a297",
+      "size_bytes": 950
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real-cli.json",
+      "sha256": "06cf4c47a31db2dfacc2eb9018bd8001bd80516f165d4a341baeebd6d25fa575",
+      "size_bytes": 291685
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real-cli.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real-prepare.json",
+      "sha256": "4c84e8a0c234683614bc75cbc40633aac2943298136890ab294fd19a65d7676c",
+      "size_bytes": 13974
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real-prepare.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real-report.json",
+      "sha256": "1885608b2de71d90e3c03964f6c1df93e08bcfcc8ea20f41ab68a1b096aa615a",
+      "size_bytes": 131589
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real-report.log",
+      "sha256": "62fc1f5fb02af4b430eaf8484d496a587a63efee4e55dea9a3da8d2733a419b0",
+      "size_bytes": 618
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real-update.json",
+      "sha256": "187984a50cdaee606fafae544612e1e83f958031977e29849c25b0fdb4f45df9",
+      "size_bytes": 322129
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-real-update.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-related-command.json",
+      "sha256": "41d9bfa14163aa3906f4018830041273a66012cc4f118b1eea7ffadabbe47dba",
+      "size_bytes": 1281
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-related-modules.json",
+      "sha256": "1172f26dfab1d30c8df74c24ac6dfa5957a0fac53c03d385b6bbce848e13c9f7",
+      "size_bytes": 41227
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-related.log",
+      "sha256": "f7c55109a601d3d9dc255cd788aef46c487737296ee0163c8d6fd770d1ad70be",
+      "size_bytes": 5338
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-related.xml",
+      "sha256": "c6e4fc464964e1e6c775e8c1035c83b62df95598b7ea9136d8bb497201667147",
+      "size_bytes": 17690
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-repair-diagnosis.json",
+      "sha256": "56f004c2abeb2e573fdc6e2400629c769b906ce697c1515ccefed6ca39067774",
+      "size_bytes": 6915
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-repair-diagnosis.log",
+      "sha256": "b079919f40aa10572e09ad0636de9d4a3c0caae62c82204e1a05f15ddb42d2ec",
+      "size_bytes": 5334
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-window-boundary.json",
+      "sha256": "60f299d2a74fd413095946ec270d2921699ad738b786709f7524d81d3453ed7d",
+      "size_bytes": 2590
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-window-boundary.log",
+      "sha256": "10aced7ee6874bb6c9b13b93ef07e9caeb2c2fadbd1205f0bfb5efe2b92d0fa8",
+      "size_bytes": 1520
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-window-diagnosis.json",
+      "sha256": "f191db99e42ac97023deb68e608b4399b93c7389ce9277fea25b7cf315455f59",
+      "size_bytes": 24752
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-window-retest-command.json",
+      "sha256": "31665eedaeff98201ece79f4b98c82b2e26bf8b139d808be751198bbce9f8b2c",
+      "size_bytes": 939
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-window-retest-modules.json",
+      "sha256": "c3db2d5587603a7dd5b2329da1dbdff929248f368c27cab6e081430e46cc69e2",
+      "size_bytes": 25405
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-window-retest.log",
+      "sha256": "fc802489b28402c02d690fd9bcc4e962823e4d51337e2d48c83ee653a8af79dd",
+      "size_bytes": 101
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-native-window-retest.xml",
+      "sha256": "d97c05eee76d84376b58edb966c77fd2024c223fdbe693debaa571a3f5157119",
+      "size_bytes": 1481
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-public-draft-diagnosis.json",
+      "sha256": "5a68d21543dd42c6b7560135dca8159dea4ab1c9cc61d839a0bab64656f30483",
+      "size_bytes": 2269
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real\\atlas.md",
+      "sha256": "18147fc5fa7a75bc24d1d615de1c7d84269ebe6c3bc6dc526fc59f948bbb25df",
+      "size_bytes": 180
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real\\audit.md",
+      "sha256": "c82818ae9ffe68b6923bb692f084b0ebadf4650af1b82a432747f2227426b306",
+      "size_bytes": 184
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real\\beacon.md",
+      "sha256": "e084cee63629deb477f3948fd6917fc7f8760a55d3c8c4a034a13e3b3eac53d2",
+      "size_bytes": 177
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real\\data\\catalog.sqlite",
+      "sha256": "4f2d757151a14b368f2949443bf2dc0d6f7323740280dd247d3dfd56dbe6aee6",
+      "size_bytes": 770048
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real\\development.json",
+      "sha256": "f33d0910865515e3aadc196e74f1ff8137da9804d178f0dfa3eb05377ac5c87d",
+      "size_bytes": 7669
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real\\old.md",
+      "sha256": "b7807cbec3668ddec0e155f05060241141558b8263f1193e9f713fa985b11dbe",
+      "size_bytes": 139
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real\\report-report-c182e16b.md",
+      "sha256": "cf6600234b25ee1a3a1493e9536bcae068dbcad25b0a420bd2a593773204e606",
+      "size_bytes": 3781
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real\\state.json",
+      "sha256": "a7cff8b24897bfca9b2b80fa1503ffd7efef529a06319ae741a545ab32e6d46a",
+      "size_bytes": 371
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real-prepare.json",
+      "sha256": "45810f9a59a3a2f351c847da41d62a21e30b7364fb83f4daa0434135334f2b52",
+      "size_bytes": 13932
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real-prepare.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real-report.json",
+      "sha256": "ab7e2a799cc69381cb6d4d1e09739558b808ddb72562464e32966e40d18216f6",
+      "size_bytes": 227180
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-real-report.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-related-command.json",
+      "sha256": "160e3725871600103d41b309f638063a86c9216f61a44b8be1e0dd75e50a0ac0",
+      "size_bytes": 1246
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-related-modules.json",
+      "sha256": "b396629f176d751e18733715a5339e1b12017c843dfee768c1ea402fc6fea99e",
+      "size_bytes": 41227
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-related.log",
+      "sha256": "bcbe908158e747ba891c2325f040e6b747e2e562cf5bedd05ad54da85bf07565",
+      "size_bytes": 113
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-related.xml",
+      "sha256": "45171fbb68e1a384ba16a93a42cd033a107beef774cfb2ddca2c5544af686205",
+      "size_bytes": 8176
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-resource-ownership.json",
+      "sha256": "c33f3d157903841eb209b7b00c9f985ea1408355a2c05093f8f323df5f16464c",
+      "size_bytes": 9176
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-secret-scan.json",
+      "sha256": "bcbed892b5af442dd6c2c39905d3d1f2964c1f36777a3c3ae8218efa449769c4",
+      "size_bytes": 289
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_bootstrap.py",
+      "sha256": "b28b548493d17b062583f721427d9ce6022f11df0abc18c855c3aee82539ff0a",
+      "size_bytes": 1976
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_capture_resources.ps1",
+      "sha256": "8859af59b743532a89fe25ff24bfd37582d95e1a44eb24553236dc07bf298a9e",
+      "size_bytes": 2704
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_deliver.py",
+      "sha256": "f519aff1ef238fa5d47c0b47e48d60edced29d3728cc4e50606476c988066818",
+      "size_bytes": 12318
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_dependencies.py",
+      "sha256": "4ac77cb337bc353b8da7be7e9ab7e8996a90eed9d4e563565929870ba08dba79",
+      "size_bytes": 1678
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_diagnose.py",
+      "sha256": "5297e3350d4bc941a1f8d74e3a271f6eb2cd42714650fcc6ae5c17fd4fcfd3dd",
+      "size_bytes": 1561
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_final_audit.py",
+      "sha256": "78d6b7807849d1c2ffe7ecc91c034c7af180a58c3ea047d81cc567e625e6006c",
+      "size_bytes": 10257
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_finish_only_audit.py",
+      "sha256": "006ef18ff2c75ee31ed381d5e1e8d0e1c5fa91c9f703a42c018f1a94185c3130",
+      "size_bytes": 8150
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_finish_only_bootstrap.py",
+      "sha256": "5297750734ef7b3c9cc782585f959079f71f185dba86ddf77ae27d609fed509b",
+      "size_bytes": 1833
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_finish_only_deliver.py",
+      "sha256": "02ff23ae3bbcd77c9298b568faf657c69c5d3b1c60abe1031715c5ad6f39de01",
+      "size_bytes": 10103
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_finish_only_resources.ps1",
+      "sha256": "300567ac5506b108b6291abf23b49e8f9e2fe497a16f4eb9a5c8ceb91e1b5a25",
+      "size_bytes": 2718
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_finish_only_verify.py",
+      "sha256": "bab3ae47109a5d8802e95709398683dcea1ff9ff1b180098d448dcb5cf177c14",
+      "size_bytes": 5248
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_json_preflight.py",
+      "sha256": "d154df9c453aa210495dcbb1c3dc16f08203ff3af8fa9a44ed65aea8cabb8cd3",
+      "size_bytes": 7713
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_json_preflight_host_transport.py",
+      "sha256": "04f741bb38118837c10fac927d0c15fd440313d47639eb2fc0d9833fa782e998",
+      "size_bytes": 7899
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_json_preflight_unknown_tool.py",
+      "sha256": "e7a2b642241f75266095c65b563980f8fe12ace5651c4133118288fe4a17724b",
+      "size_bytes": 8060
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_repair_diagnose.py",
+      "sha256": "9e0f067c7f6e3e56f9a23e4f3795c0a048f801c29eb59b9dcce15735a1a79b35",
+      "size_bytes": 2219
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_summary.py",
+      "sha256": "a5b327aacd2af798246c266431f89c4c00cac76859a0f31ed7c36516137d0467",
+      "size_bytes": 967
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_verify.py",
+      "sha256": "496a3de6296c8779b0035d6252eeaf164e975874e0ffe30b2b579d2c4ff699e9",
+      "size_bytes": 3646
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_window_boundary.py",
+      "sha256": "1ef4cd68934948746cc0a41d4c69836eb82bd930f6bc9d433e19eb669a83bdcd",
+      "size_bytes": 2041
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision_window_diagnose.py",
+      "sha256": "1e5ae6060e36397127b41014bd4dcbd6264c57bda157d9de507979126ca94bdb",
+      "size_bytes": 958
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\run_tests.py",
+      "sha256": "d4b060ae7f2d10d60c8fb7094de8f61886caf52eae6a40bb0239e924ebe7d20a",
+      "size_bytes": 1240
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\second-build.json",
+      "sha256": "35fade5e7fdacf98cfde426225242763bf4d4fd1585164c5d9d55aacc61e297c",
+      "size_bytes": 29752
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\second-reports-command.json",
+      "sha256": "6db75f15fe877e914eee2bfc36d48f70df5202254bf38bd1392c3c5c124a3adc",
+      "size_bytes": 843
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\second-reports-modules.json",
+      "sha256": "53218f0ec326f0ada3b6b491a2cd4b6a64a75326745c5ec5c6b02c16f0196514",
+      "size_bytes": 41227
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\second-reports.log",
+      "sha256": "a35b028bcd710d11e79cc21d42440ef7ccca5d13b4d7136f9bd92cb56eb6bb31",
+      "size_bytes": 113
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\second-reports.xml",
+      "sha256": "3a0c555834db61cd690a6bfe8a00419ffbf14665f2a7cc775f72ebc9d9f2d384",
+      "size_bytes": 3770
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\secret-scan.json",
+      "sha256": "f739e2059e201c91ac5b25b98fd4a6a71a544433fe1fc9d03a3dbbdfe31f8400",
+      "size_bytes": 301
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\third-build.json",
+      "sha256": "321cad6b4367ba981514eb92dc3742ab05341393b8c09e8622dee6e1040036e7",
+      "size_bytes": 29742
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\verify.py",
+      "sha256": "6f62e49dc239b20bf58e73ed96ea31959e13512a4ae974529b2b261d7603ceaa",
+      "size_bytes": 2273
+    }
+  ],
+  "previous_delivery": {
+    "manifest": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\executor-manifest.json",
+      "sha256": "d54d0ce6041093c94e64233762334ef3b46f5bcc7feb9a6afca8a9314e5e52fb",
+      "size_bytes": 181233
+    },
+    "accepted": false,
+    "real_chain": "FAIL",
+    "known_tokens_through_previous_delivery": 510978,
+    "initial_delivery_manifest": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\initial-executor-manifest.json",
+      "sha256": "aef75d366a4ca2150e5a028fc8a5bf9d2cc4df498432783b938c4fc0df187afe",
+      "size_bytes": 49506
+    }
+  },
+  "leader_acceptance_history": {
+    "first": {
+      "status": "FAIL",
+      "total_tokens": 205286,
+      "protected_index": {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-baseline.json",
+        "sha256": "9a8a6cf3fd38ce77e0348133be46acc7a4c2a3ed75734b054648da51e6c0c0dc",
+        "size_bytes": 11919
+      },
+      "protected_files": {
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\accept.json": "461cfb7b0a207db37475b4574b17df096759c6f92d8b25355fdfe2846bdd039c",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\accept.py": "e1f72f58377b78a2884e9a761968d15658bb393826e1dd7c451dc9ada343f3d6",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\answer-tokenizer.json": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\audit_live.py": "beefffa9897fe4eb84e3a0fb227cc2cd814ca4d5c1acd582dc3afd22d4e76c2d",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\CODEPLUS.md": "0871630e64383997ee9bf1ae2167f837d9f3e68b2c43d7cac2acd03c8a1198e7",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\host-command.json": "145e706cedf86cde2784165027f0f2d0985d3dfd30bf6c14e3f29d23e8514436",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\host-invocation.json": "2161c027a48a222a804cacd825daf677a2fdde4853caed1e3df11785ffec6a2e",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\host-modules.json": "a598212006c5891851b04d91524186c96dd9077933924e8c4e3015b317d83071",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\host.log": "99770738f4167d3ffa041af3206f825c2e74860e3917bd4e2bd13fc2c0f5c5a9",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\host.xml": "5a0af34d284268480a50c4087369984b3c21dfd20fb6e5416460140489c3e9cc",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\initial-executor-manifest.json": "aef75d366a4ca2150e5a028fc8a5bf9d2cc4df498432783b938c4fc0df187afe",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\live-audit.json": "8f99ff03d853b8504acdeb0c3aeb5801228f7818114257b3b728b7aad786b1df",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\live-chain.json": "f3d6a8e223e0031231cc292a6ba0edd33e5244f7081f7585468a3cf640f72af6",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\live-resume.json": "bdf6619e699960edc645b54c0d74a40c7d3e9b1798de9a6bd63e468a2bd304a4",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\package-qualification-invocation.json": "c2f636251255e5cf371faa316985a3ed20973ac95a1bdf4f38f328a6b7eff794",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\package-qualification.json": "4cec192cb5f94afb9fd9fec9bbcac5c803c3a55b0d4e9e7543893f5ef965ed1e",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\package-qualification.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\package_qualification.py": "20abb7b5ecff371887aac3d679d10575dfd572bdabfca0f1db56245e2a8e633a",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\prepare.json": "27846194504706d96aa499fe6ed17fba055f8465f072b621072fad2f0b2a7813",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\prepare.py": "d50d6f84586b9fece68cbdad26e5eb5817e9338544a31ebe8da2ae687cec436f",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\pyproject.toml": "b3352ac691610f88ec2155d1a12fcc13da7a534fbc53b812ae1d1c8f95ff8838",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\quality-observations.json": "c2d677322c246373681610303cb1d02627713d8b04ed96e6e185582c8b09d22a",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-cli-invocation.json": "ffbba592d30535091181ceb7be1743eb6a7024a3fa37b011dd6205e291b38937",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-cli.json": "48bfee1a5082b7f4b5006cf64372967f7740b4e793191ef521451c27259de258",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-cli.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-delete-invocation.json": "76f1d59ab7a743391cbdcaa4cd471d59331bb7a0062bde1cb951410cedec373c",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-delete.json": "c218755a0791cb1186573560c1d40d33bb3259d2825f9721cb9e7722ab425e16",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-delete.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-prepare-invocation.json": "4f7d86935ab72b0b7229063b1442bf38924dea5e8c57ede8974e35c49e0db55b",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-prepare.json": "44168af582ecdd3ed61ad57f381e653deb319f94ca0fe52180de19c9658d9805",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-prepare.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-report-invocation.json": "4f193024dd73acdbc6af10a1a3161963bff28d696aa91a21a22f34b1bd4f377e",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-report.json": "3f174e02763eba1130ada1c0392d296072cb218444032f8f0f111873c44466c1",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-report.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-update-continue-invocation.json": "1e6d7d431e40fdac334a891d8a22ce2ceea5d7549cb37446c0c2305f8b6bfa28",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-update-continue.json": "2eb03092ee4ff6eafd768e3abc3e4936d55f4e1008ef455704971340ff23bf7a",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-update-continue.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-update-invocation.json": "1ecea82893ec6beedb5ac2dfa353f1f8c6dd9860e1848b0917473e0289e1cb55",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-update.json": "e94de6a08081aebe8688ee30419f616a4e5fd15e238e559f2ed507e7b798fbe2",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real-update.log": "8cbb99d12e87670f0a54907fd5d36ee49a86326a50932f371cdd0c7c1b7e27c9",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\related-command.json": "a33529be9976f2d79cf8020647eceeb43730d74bfecaec5567b9b26a42bf20b2",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\related-invocation.json": "8a5a1d367335e83b3b1cc35938c5ec04307a68d572c26427ddc0efe83ae8afce",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\related-modules.json": "d691e6411c155f2d3e8a13c8a262d802d2515d9a9cc196c5bdc1c48eba1222b4",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\related.log": "64bd211030acdfb0eb9e93d64d5864042e933ff7544c238d767bef22681be16b",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\related.xml": "39f2fe1f25f554637b32079731c3f93b00a4ff0bc227e1129be678b25a0c30ef",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\resume_live.py": "c9c1f42608f0255cc55140ca2509d0b1f066addbbdbe06dd79c802f575f140e7",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\run_tests.py": "d4b060ae7f2d10d60c8fb7094de8f61886caf52eae6a40bb0239e924ebe7d20a",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\tui_report.py": "9bf83bf3f5b262602fb494367e2762ceffe08b4143bd33e9a227936ee0d5d8a5",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real\\atlas.md": "4387cee54795d32e5efbe2addae6487fc49c66568a10fe4551688890e9c798f4",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real\\audit.md": "552bd2acd37de5f4b41473fadc12c041c98c9ed459c07a658ce29fa61f2acc91",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real\\beacon.md": "e084cee63629deb477f3948fd6917fc7f8760a55d3c8c4a034a13e3b3eac53d2",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real\\old.md": "b7807cbec3668ddec0e155f05060241141558b8263f1193e9f713fa985b11dbe",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real\\report-report-1d7511e6.md": "cef683d532a3a499ea15b8bce95c85e88a74c832feb24e45fc3aaf88d8ac3a30",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real\\cli\\continued-report-d0da993b.md": "5f0e6148570c22fe9d133227ffe0fb0bf3fef73d6d413effd9c9668ce6d5b0ab",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\real\\cli\\continued-report-d401b3b7.md": "bca1bc32fae95d9a61bcc6905ff153e01e6006a3a12ca96f49383106f325b80b"
+      },
+      "revision_card": {
+        "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R20-leader-revision-request.md",
+        "sha256": "49865026e8010ca4e92f8bb9b9c71698010d44bc2a2e8bbe605e025264b47c13"
+      }
+    },
+    "second": {
+      "status": "FAIL",
+      "known_total_tokens": 26711,
+      "related_tests": "248 passed",
+      "ordinary_host_tests": "148 passed / 1 Windows skip",
+      "clean_installs": "wheel and sdist rebuild passed",
+      "protected_evidence": {
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\accept.json": "e6854166979f913ed4198151a9c96cbf1696d8d35e7ff6bfe01fc1b9063bb2a4",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\diff-check.json": "8bdd0fe138a7f8d2573edd8bd80bf0bce61edddb90f9b1e2ea74e3a16917d509",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\executor-manifest.json": "d54d0ce6041093c94e64233762334ef3b46f5bcc7feb9a6afca8a9314e5e52fb",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\host-command.json": "2ee9c38899bd79e4595ce0da17d2e0d72a63a2313aaaa044de1551d0e5903fec",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\host-invocation.json": "279a25f2753d053e0f8bdf64cf0a6da1b3a5052617619cfce3963790facce067",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\host-modules.json": "dc1a862f246f615d5bd7e71b5055af7eeb0c46da9a093837584f3d752803a890",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\host.log": "a94c5dfea5db3625fff80f021108326563a619087f961aab2a5a56050a5c8040",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\host.xml": "c683390e56dfc8421286879ec756ca1246a7c75d74eb7afec70e1796eb6abfa5",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\live-audit.json": "619bde32f9b7f1421ba95ffc52ce1c86095355a1fe769e90c49e5955a2ae314e",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\live-chain.json": "463ad9c2b565a5beb498ab88fbb7f5d752375985622aba5ad386ea2db150cd40",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\modes-budget-command.json": "f2d0875b54eefefdac2d13d05d54cc11000ec671d3a794e4882ed754c3d6ec27",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\modes-budget-invocation.json": "9e9c7843346f3a2c602d72d3b98d71ad078a8d8df3fb37bd7f23fa549ea7ea24",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\modes-budget-modules.json": "ecdede7315e6f8d900703aee7fc01e995fc2eab301f394396edab8615a7b29bb",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\modes-budget.log": "9def6c28646cd2ec86e440aac2e13c8704a0da8db4745cda3b019e2f9f48dd43",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\modes-budget.xml": "b7ff7077e7eba88ba867b5a4106e49eb790f72364da811e940e2b7359eccfec6",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\package-qualification-invocation.json": "32ad3d7b372f605cb6e779936b8e454280ea482ecf2f4b64b28202dbe4a926b8",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\package-qualification.json": "b8f7ed9b54b28771eacc4343d9daa1aff02ac0fcacd345a54464f15d4af0733d",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\package-qualification.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\prepare.json": "77628f8acd70976028c5c245847be7803e5fd733d314b3c077cda6aab61d0943",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-cli-invocation.json": "fa5b08f1bac03959c26b1db058fd9bf9fa4fe70e26378532ea2d8547379c689a",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-cli.json": "aa1800a1d177c7ee4526be7d1305f87c4c447eaf57d824299c6781235847b8d4",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-cli.log": "a6d8af979f052942f7749a4758c618fb07132587b44402294a5507a457290920",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-delete-invocation.json": "a26e51de724c3647e76e92938d301054dba4a007421417e618b381777dd7cba8",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-delete.json": "2cba10309ec5433d5e381999ac5f3604f78be1432a3e3ded6936b2f8d3c0f7ca",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-delete.log": "a6d8af979f052942f7749a4758c618fb07132587b44402294a5507a457290920",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-prepare-invocation.json": "511aa525db34c1b008d20bcae4b495f8c755405aa8ab9d7d97cb478b762e96c1",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-prepare.json": "2b77e5b541774cbf78b1bedea1c231e8bba819e1b0df4054636bec3117b18c01",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-prepare.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-report-invocation.json": "ee11489bc85c303503ba5dd644b306b2347b9b26c7ff95cdfb1db8f9da332475",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-report.json": "ef475a481a075ca01a69234cc2e0588377936926227dae7d4a6f9d3ac9bd6f3b",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-report.log": "a257a7c8bb7409814f397e47081d4187f493e0d88bcb048ebf615a267fd0bf51",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-update-invocation.json": "8de5315f69fede5faa386b4c41aa69a94e345a87d17cf09528a9070cd92e9b08",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-update.json": "725733550b6ba60adaa80667ac168d0d7b1c6d780e8a5fec8e16aeb98001ca18",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real-update.log": "62fc1f5fb02af4b430eaf8484d496a587a63efee4e55dea9a3da8d2733a419b0",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\report-integration-command.json": "39db32b709f5ba7aa846887e066d628572d98597f4d5d586ef08d4a73590bc50",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\report-integration-invocation.json": "0681443635c892c3d90f564c22d18717a2fe03bfd1506f9bf28276759351eb5d",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\report-integration-modules.json": "408cbcdd86de1b96424a066ba2f597e26390e79cb378c54f7dafcb455c83829f",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\report-integration.log": "82a47c40499d8ba582343f4474ad31592ea0d720010d21dd470196d407490c5b",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\report-integration.xml": "983a8e5dec3b9a5de35afcc734145082481d8047800dcece5c8ef376f4bed098",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\semantic-review.json": "f7d6faf9836c6295b7ffa48acca9e12c5b70cb8cc3a32463524926463d503062",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\window-delivery-command.json": "3d2b5136280ffa2d5d1e95f2a1b87c2e40b594dee69d3fd505c2789df6ca3aef",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\window-delivery-invocation.json": "a4cc4ee9948c57029415a1ba661c4130df184b4a4f99e76f72d9710472488390",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\window-delivery-modules.json": "c9dd6e5aeb7821091187c23770df89a07fa80641f343c14af6489aae68ecd373",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\window-delivery.log": "8d9b4edca60ed8e1c7e2e1dcfd85bffb0cc4c2e427d3793129fbfa352ca9dce7",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\window-delivery.xml": "1bae51f1b284dea1c65296888a86e1cf8c2db1ddbeec66e29aea61eaa49729ee",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real\\atlas.md": "4387cee54795d32e5efbe2addae6487fc49c66568a10fe4551688890e9c798f4",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real\\audit.md": "552bd2acd37de5f4b41473fadc12c041c98c9ed459c07a658ce29fa61f2acc91",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real\\beacon.md": "e084cee63629deb477f3948fd6917fc7f8760a55d3c8c4a034a13e3b3eac53d2",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real\\old.md": "b7807cbec3668ddec0e155f05060241141558b8263f1193e9f713fa985b11dbe",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real\\report-report-351929a0.md": "b8d4e7ef24bdcec6d0d580fb2a448c4cecff004b50599a8a3abf056dc967034a",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\real\\report-update-d446c138.md": "9740a8050f8660a7e6898621cf9d2b0a10192e662eb4bff60dd21f71f920aa55"
+      },
+      "baseline": {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-baseline.json",
+        "sha256": "3cdf1b7f9bb9ad024b9064eb07dc79f6c1146da42619cbdcc96d239728b2c7f8",
+        "size_bytes": 10189
+      },
+      "revision_card": {
+        "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R20-leader-native-tools-revision.md",
+        "sha256": "53d82d65109cb0fa052960b3703f3e57c4be88c3f7ee6bbad02743a8f72c075f"
+      },
+      "direct_public_evidence": "Delete draft contained native DSML calls/invoke/parameter text inside JSON markdown with no actual tool_calls; SHA b0931fef52002905701ec31dc04646f4817a8b6976263ee24b7f1bb041b4968f"
+    }
+  },
+  "formal_validation": {
+    "final_affected_original": {
+      "tests": 125,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 124,
+      "seconds": 339.234,
+      "evidence": [
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related.xml",
+          "sha256": "4ba280f943f1b011aa8b3d3e0be81a954d210fb17dc4b2e99adc0a1b2c2ee814",
+          "size_bytes": 34529
+        },
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related.log",
+          "sha256": "1560ce524e1f7db032c6497b8a9e46aa347bd66d0ab61cf720d657d89ea432f3",
+          "size_bytes": 2079
+        },
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related-command.json",
+          "sha256": "c2e5b8935eb6f21470b99303825f605dd5b99807ddf519d4677bf9710c49fa5b",
+          "size_bytes": 1322
+        },
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related-modules.json",
+          "sha256": "2e61b838a5c148d160e7d0292fd6e3c25a1f9d9c985f8488450158ff87355b89",
+          "size_bytes": 41227
+        }
+      ]
+    },
+    "contract_retest": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 4,
+      "seconds": 13.706,
+      "evidence": [
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest.xml",
+          "sha256": "19437fae12bbff4da755eef599a1fc60b47d54bd30c2f5f83e1ddc1797106922",
+          "size_bytes": 872
+        },
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest.log",
+          "sha256": "3cb0fe5694c411bd14fff674846f558257ca10bb5ec60f4a58464b69d4049040",
+          "size_bytes": 101
+        },
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest-command.json",
+          "sha256": "dcb4d89d08a4f74ab1231e5f3c178a0075f62fb1276857fdba9d39a8d540237a",
+          "size_bytes": 969
+        },
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest-modules.json",
+          "sha256": "045717fbf70d18247309450ccdf81c05033f3a4cf899d5ad2d5c51188f26881d",
+          "size_bytes": 25405
+        }
+      ]
+    },
+    "accepted_unique_affected_cases": 125,
+    "remaining_failures": 0,
+    "original_failed_cases_covered_by_retest": [
+      [
+        "tests.test_json_output",
+        "test_knowledge_previews_and_actual_wire_match_without_changing_ordinary_calls[agent]"
+      ]
+    ],
+    "freeze": "Production revision-finish-only installed before the affected 125-case run. One new test assertion confused flat host schemas with SDK function wrappers; only that comparison was corrected, then all four purposes reran. No production change or broad repeated suite.",
+    "prior_validation": "Previous formal and independent host/clean-install evidence retained by immutable manifest references; not represented as rerun on the latest RAG package."
+  },
+  "build": {
+    "evidence": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-build.json",
+    "sha256": "bb946dea65bc69c6b846103672bafb3f4c0b39c0c671dc22661716e35d1e25ed",
+    "packages": {
+      "host": {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\host\\codeplus-0.2.0-py3-none-any.whl",
+        "sha256": "f71acfb81fa33ddb9b5dab9b4316a8a427316afe4457162345a18c8c7b64e91b"
+      },
+      "rag": {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+        "sha256": "48aba508386ad290fc46e83a558012b4862e20db2b2a577b27aaefb1986258ac"
+      }
+    },
+    "artifacts": [
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\host\\codeplus-0.2.0-py3-none-any.whl",
+        "sha256": "f71acfb81fa33ddb9b5dab9b4316a8a427316afe4457162345a18c8c7b64e91b",
+        "size_bytes": 314098
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\host\\codeplus-0.2.0.tar.gz",
+        "sha256": "1eead8edcce40bdd4eb652eb8c5a4119745b016186416bad2c0fe76aa889b56e",
+        "size_bytes": 1320332
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+        "sha256": "48aba508386ad290fc46e83a558012b4862e20db2b2a577b27aaefb1986258ac",
+        "size_bytes": 210488
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\dist\\revision-finish-only\\rag\\codeplus_agentic_rag-0.1.0.tar.gz",
+        "sha256": "62eaad7310e33ebdfcdea1e94979b811f7798764d0e8173c1350b8b34cffb409",
+        "size_bytes": 313858
+      }
+    ],
+    "source_install_match": {
+      "host-core": 143,
+      "host-cuda": 143,
+      "rag-core": 73,
+      "rag-cuda": 73
+    },
+    "production_changed_since_previous_delivery": {
+      "host": [],
+      "rag": [
+        "agentic_rag/adapters/codeplus/ledger.py"
+      ]
+    },
+    "dependency_checks": {
+      "final": {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-final-dependencies.json",
+        "sha256": "d13b5c3108cb875af030b6f45a7f779886d48a5d295c590090802396d550b602",
+        "size_bytes": 9226
+      },
+      "original_failure_and_fix": {
+        "original": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-dependencies.json",
+        "retest": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\final-cuda-dependencies-retest.json",
+        "cuda_change_after_build": true,
+        "existing_versions_changed": {},
+        "added_packages": {
+          "anthropic": "1.8.0",
+          "attrs": "26.1.0",
+          "cffi": "2.1.1",
+          "cryptography": "50.0.1",
+          "docstring-parser": "0.18.0",
+          "httpcore2": "2.13.1",
+          "httpx2": "2.13.1",
+          "jiter": "0.17.0",
+          "jsonschema": "4.26.0",
+          "jsonschema-specifications": "2025.9.1",
+          "linkify-it-py": "2.2.0",
+          "mcp": "2.2.0",
+          "mcp-types": "2.2.0",
+          "mdit-py-plugins": "0.6.1",
+          "openai": "3.19.0",
+          "opentelemetry-api": "1.44.0",
+          "platformdirs": "4.11.12",
+          "pycparser": "3.0",
+          "pyjwt": "2.14.0",
+          "python-multipart": "0.0.32",
+          "pywin32": "312",
+          "referencing": "0.37.0",
+          "rpds-py": "2026.6.3",
+          "sniffio": "1.3.1",
+          "sse-starlette": "3.4.11",
+          "starlette": "1.7.0",
+          "textual": "8.2.8",
+          "truststore": "0.10.4",
+          "uvicorn": "0.53.0",
+          "websockets": "17.1"
+        },
+        "boundary": "Added host dependency closure in private CUDA after build and live runs; original model dependency versions and all production source/package bytes unchanged. Core test environment unchanged."
+      },
+      "changed_original_cuda_versions": {}
+    },
+    "dependency_boundary": "Existing environments reused. Final wheel reinstall used --no-deps; no new dependency or environment changes in this revision."
+  },
+  "answer_tokenizer": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\answer-tokenizer.json",
+    "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+  },
+  "meter_contract": {
+    "identity": "deepseek-v41-full-template-json-object-utf8-upper-v2",
+    "frozen_encoder_sha256": "502bdaec8a3fd88ebc24c4721a7038fbe42f2063c664638127056107920035c1",
+    "format": {
+      "type": "json_object"
+    },
+    "enabled_purposes": [
+      "finalize",
+      "citation_repair"
+    ],
+    "ordinary_and_compact": "No response_format",
+    "preflight": [
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-preflight.json",
+        "sha256": "001e024e85f140f5992c3fe09cbc20c57545533b84e29f933183a31830872869",
+        "size_bytes": 1166
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-preflight-host-transport.json",
+        "sha256": "6990f39d4005df137b57f89bb37ab21d1d1d96d4694d61e6938ae5269eae8518",
+        "size_bytes": 3027
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-json-preflight-unknown-tool.json",
+        "sha256": "63d6ead67a451d69b2d6ef25b2338cb3c92bb195b13fa27c22be245e70dc9c6a",
+        "size_bytes": 3359
+      }
+    ],
+    "agent_exploration": "Actual knowledge tools, no response_format"
+  },
+  "original_failures_and_retests": [
+    {
+      "name": "revision-finish-only-related",
+      "result": {
+        "tests": 125,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 124,
+        "seconds": 339.234,
+        "evidence": [
+          {
+            "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related.xml",
+            "sha256": "4ba280f943f1b011aa8b3d3e0be81a954d210fb17dc4b2e99adc0a1b2c2ee814",
+            "size_bytes": 34529
+          },
+          {
+            "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related.log",
+            "sha256": "1560ce524e1f7db032c6497b8a9e46aa347bd66d0ab61cf720d657d89ea432f3",
+            "size_bytes": 2079
+          },
+          {
+            "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related-command.json",
+            "sha256": "c2e5b8935eb6f21470b99303825f605dd5b99807ddf519d4677bf9710c49fa5b",
+            "size_bytes": 1322
+          },
+          {
+            "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-related-modules.json",
+            "sha256": "2e61b838a5c148d160e7d0292fd6e3c25a1f9d9c985f8488450158ff87355b89",
+            "size_bytes": 41227
+          }
+        ]
+      },
+      "cause": "Test-only flat registry vs nested SDK tool schema comparison; format selection and actual tools were already correct.",
+      "retest": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 4,
+        "seconds": 13.706,
+        "evidence": [
+          {
+            "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest.xml",
+            "sha256": "19437fae12bbff4da755eef599a1fc60b47d54bd30c2f5f83e1ddc1797106922",
+            "size_bytes": 872
+          },
+          {
+            "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest.log",
+            "sha256": "3cb0fe5694c411bd14fff674846f558257ca10bb5ec60f4a58464b69d4049040",
+            "size_bytes": 101
+          },
+          {
+            "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest-command.json",
+            "sha256": "dcb4d89d08a4f74ab1231e5f3c178a0075f62fb1276857fdba9d39a8d540237a",
+            "size_bytes": 969
+          },
+          {
+            "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-contract-retest-modules.json",
+            "sha256": "045717fbf70d18247309450ccdf81c05033f3a4cf899d5ad2d5c51188f26881d",
+            "size_bytes": 25405
+          }
+        ]
+      }
+    },
+    {
+      "name": "previous_executions",
+      "evidence": {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-leader-20260923\\revision-verified\\executor-manifest.json",
+        "sha256": "d54d0ce6041093c94e64233762334ef3b46f5bcc7feb9a6afca8a9314e5e52fb",
+        "size_bytes": 181233
+      },
+      "preserved_raw_files": 240
+    }
+  ],
+  "live_validation": {
+    "status": "NORMAL_CHAIN_PASS",
+    "evidence": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-live-audit.json",
+      "sha256": "40a15810fbdfb5245954b1df1d196a9aac77e4be6108484458f80c81a7de7353",
+      "size_bytes": 49491
+    },
+    "final_chain": [
+      {
+        "action": "report",
+        "raw_path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-report.json",
+        "raw_sha256": "30e63d197fc93966e6bcf1f450aa9a868a3494a832885c11c2f921b6d23c2dd2",
+        "driver_status": "PASS",
+        "run_id": "80e2a30c-f772-4385-8ec7-4badff3d55e6",
+        "parent_run_id": null,
+        "revision_id": "6017f2a9-a671-4ce3-8585-15897e67e35e",
+        "status": "completed",
+        "stop_reason": "finished",
+        "usage": {
+          "schema_version": 1,
+          "searches": 2,
+          "opens": 4,
+          "input_tokens": 15474,
+          "output_tokens": 3560,
+          "cached_tokens": 7552,
+          "total_tokens": 19034,
+          "elapsed_ms": 45708
+        },
+        "save": {
+          "status": "saved",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\report-report-ec2b6952.md",
+          "sha256": "90a9d95807adec1578c27c68342ef80729d20e5e4ee12195fb513462bfd98f75",
+          "size_bytes": 4137,
+          "message": "",
+          "logical_markdown_sha256": "4562255c8a5d29f4ea77c256b17403439a2bf5fa28c774d14b1ee3b0317f6618",
+          "universal_newline_readback_equal": true
+        },
+        "artifact_sha256": "4562255c8a5d29f4ea77c256b17403439a2bf5fa28c774d14b1ee3b0317f6618",
+        "citation_ids": [
+          "b7080381-fa18-4ef5-91f8-f10548f4ad3b",
+          "1995a40b-2a3f-4f9a-ac5c-4c39f6dde800",
+          "b595ef72-24c9-4976-a72e-3590909d92d3",
+          "89a1099e-1408-4636-8086-64aa7b329df3"
+        ],
+        "current_revision_members": [
+          {
+            "document_id": "571f05da-b789-4d97-b11b-ce4196bef8e8",
+            "document_version_id": "85b58468-0f8d-5a9d-80d4-f0595909f492",
+            "file_name": "audit.md"
+          },
+          {
+            "document_id": "76fd15ce-a5d6-4f31-9ecc-d9532551cd71",
+            "document_version_id": "cc89753c-3d38-5adf-a9ea-64e1964c1372",
+            "file_name": "old.md"
+          },
+          {
+            "document_id": "8514cf63-31bc-46c8-8bba-3e6a5f381cb2",
+            "document_version_id": "aee0fe0b-51fc-59e9-92d8-6bc91cacfd1f",
+            "file_name": "atlas.md"
+          },
+          {
+            "document_id": "9f64470b-edc3-47b1-8364-cab2764c8aa8",
+            "document_version_id": "47f0aa79-c1c4-58d9-8da1-62e1e7067371",
+            "file_name": "beacon.md"
+          }
+        ],
+        "successful_open_calls_with_delivered_body": 4,
+        "delivered_evidence_count": 12,
+        "public_drafts": [
+          {
+            "purpose": "agent",
+            "stop_reason": "end_turn",
+            "sha256": "a6cb6abe2f19de57ad73a941f62035bc61a69efee9f5b58c48e1fa666a1b835c",
+            "json_object": false,
+            "json_error": "Expecting value: line 1 column 1 (char 0)",
+            "decision": "repair",
+            "public_prefix": "I have verified all four sections fully. Now I'll compose the report.\n\n{\"markdown\":\"# 2024 年 Atlas 与 Beacon 望远镜对比报告\\n\\n## 研究范围\\n本报告仅比较 **2024 年** Atlas 与 Beacon 望远镜的三项内容：①安全认证（safety certificate）、②登记存",
+            "contains_dsml_marker": false
+          },
+          {
+            "purpose": "citation_repair",
+            "stop_reason": "end_turn",
+            "sha256": "e6eda5c6fca9d1cdcfe70312ee789ebef954f618b56f8edcbd71d82dde14740b",
+            "json_object": true,
+            "keys": [
+              "markdown",
+              "citations"
+            ],
+            "decision": "accept",
+            "public_prefix": "{\"markdown\":\"# 2024 年 Atlas 与 Beacon 望远镜比较研究\\n\\n## 结论摘要\\n\\n在 2024 年，Atlas 与 Beacon 在三个方面存在明确差异：安全认证类型不同、登记存放地点不同、夜间作业资格相反。Beacon 获得夜间作业认证，Atlas 则未获认证。\\n\\n## 比较\\n\\n| 维度 | Atlas（2024） | Beacon（2024） |\\n",
+            "contains_dsml_marker": false
+          }
+        ],
+        "citation_validation_errors": [
+          "invalid_json offset=0 line=1 column=1"
+        ],
+        "http_requests": [
+          {
+            "request_id": "f586994b-72b9-4fe1-82b1-34085f136460",
+            "purpose": "agent",
+            "input_upper": 5878,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 1399,
+            "body_sha256": "8f4b3636f85d1bbbb9444e88e87205e4b82eac6fce6f4f0f77beba1d16414bff"
+          },
+          {
+            "request_id": "a9df0301-627f-42ad-a021-b8c3f5a81b30",
+            "purpose": "agent",
+            "input_upper": 13897,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 4714,
+            "body_sha256": "04162932a27444e8b345ac97d6b591116dfe0b1d628ec5c9f26b39d869dee86a"
+          },
+          {
+            "request_id": "899b0137-a8e7-4f4a-9d8b-5d41f6a5de03",
+            "purpose": "agent",
+            "input_upper": 21578,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 9439,
+            "body_sha256": "b41d2bfcce2946fdca1eef0d4f03a8a7ab72442cc94535f90a9929ad90c30b9b"
+          },
+          {
+            "request_id": "4517c2eb-2a8c-4d7c-9391-50202e95f143",
+            "purpose": "citation_repair",
+            "input_upper": 8177,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 3482,
+            "body_sha256": "9dad4d758d0b2a06cc5965c1af21eb41213aa5e509206c37facff7580b9be91b"
+          }
+        ],
+        "request_contracts": [
+          {
+            "purpose": "agent",
+            "request_id": "f586994b-72b9-4fe1-82b1-34085f136460",
+            "body_sha256": "8f4b3636f85d1bbbb9444e88e87205e4b82eac6fce6f4f0f77beba1d16414bff",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "a9df0301-627f-42ad-a021-b8c3f5a81b30",
+            "body_sha256": "04162932a27444e8b345ac97d6b591116dfe0b1d628ec5c9f26b39d869dee86a",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "899b0137-a8e7-4f4a-9d8b-5d41f6a5de03",
+            "body_sha256": "b41d2bfcce2946fdca1eef0d4f03a8a7ab72442cc94535f90a9929ad90c30b9b",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "citation_repair",
+            "request_id": "4517c2eb-2a8c-4d7c-9391-50202e95f143",
+            "body_sha256": "9dad4d758d0b2a06cc5965c1af21eb41213aa5e509206c37facff7580b9be91b",
+            "model": "deepseek-chat",
+            "response_format": {
+              "type": "json_object"
+            },
+            "tool_count": 0
+          }
+        ],
+        "queries": [
+          "2024 Atlas telescope safety certification night operations eligibility",
+          "2024 Beacon telescope safety certification registration storage location night work"
+        ],
+        "window_evidence": [
+          {
+            "actual_window_transform": {
+              "purpose": "citation_repair",
+              "input_upper": 8177,
+              "before_candidates": [
+                "d6c68603-8f7a-4f7d-919e-58b99f44ad82",
+                "0e9c251d-b3a0-4432-b915-07d51279b487",
+                "dc5b61bc-5bb2-4646-8039-de7421aab438",
+                "57683bde-b9a7-46ea-8a01-c566bbd33de6",
+                "6dbb301c-757e-44ea-a041-67d440c66eb6",
+                "18f0c5dd-bc8c-44fc-ad0d-8af9434bf87d",
+                "5e853fe4-faf9-4b60-ab3a-58ea795ed1e0",
+                "63f8c5c7-2f29-4808-b71c-a368958feda2",
+                "c31f344c-ff8d-4f26-b73c-b12b95ece791",
+                "7c2a6c4b-bf71-4464-9eb8-293e5293d525",
+                "bf0f5880-e44e-43ab-8ec8-ca358fe55e1f",
+                "75d4b613-eb97-41d2-8977-f244449d1c60"
+              ],
+              "after_candidates": [
+                "6dbb301c-757e-44ea-a041-67d440c66eb6",
+                "18f0c5dd-bc8c-44fc-ad0d-8af9434bf87d",
+                "5e853fe4-faf9-4b60-ab3a-58ea795ed1e0",
+                "63f8c5c7-2f29-4808-b71c-a368958feda2"
+              ],
+              "deduplicated_tool_call_ids": [
+                "call_00_5xkU5j9jeNp2wlSPCs547870",
+                "call_00_lRk7fSr9l68u7ZICW8Qo0997",
+                "call_01_gzibomj9wN5TX7PHG7CP3063",
+                "call_02_X6eEfSvEI8H7zz2VvEly5192",
+                "call_03_LiCmnBEMZMVCgoDn4xAQ6606"
+              ],
+              "input_upper_before_dedup": 19604,
+              "input_upper_after_dedup": 8177
+            },
+            "source_groups": [
+              {
+                "document_version_id": "aee0fe0b-51fc-59e9-92d8-6bc91cacfd1f",
+                "spans": [
+                  {
+                    "schema_version": 1,
+                    "start": 0,
+                    "end": 178
+                  }
+                ],
+                "body_sha256": "f7959981b4f9997db0de9492bb6103d8715c76b7c16fc56dd2b6483eb04b1eb6",
+                "body": "# Atlas final register\nIn 2024, the Atlas telescope blue safety certificate was approved and archived in the ocean registry. Atlas was not certified for night operation in 2024.\n",
+                "before": [
+                  {
+                    "candidate_id": "d6c68603-8f7a-4f7d-919e-58b99f44ad82",
+                    "kind": "search",
+                    "call_id": "4990ef9d-0d17-486a-af38-ca6fa8b38911"
+                  },
+                  {
+                    "candidate_id": "18f0c5dd-bc8c-44fc-ad0d-8af9434bf87d",
+                    "kind": "search",
+                    "call_id": "e4b307bf-e536-4210-b866-b48f0bace4e8"
+                  },
+                  {
+                    "candidate_id": "c31f344c-ff8d-4f26-b73c-b12b95ece791",
+                    "kind": "open",
+                    "call_id": "9abee4cc-9940-4095-94ac-59debfbbcb82"
+                  }
+                ],
+                "after": [
+                  "18f0c5dd-bc8c-44fc-ad0d-8af9434bf87d"
+                ]
+              },
+              {
+                "document_version_id": "85b58468-0f8d-5a9d-80d4-f0595909f492",
+                "spans": [
+                  {
+                    "schema_version": 1,
+                    "start": 0,
+                    "end": 182
+                  }
+                ],
+                "body_sha256": "16659ed526700d107a6431a6428b0ddad99dfde03f5ff59cdeba6d6f2fc01f47",
+                "body": "# Atlas audit\nThe preliminary 2024 register listed Atlas night operation as approved. The final 2024 audit corrected that entry: Atlas was not certified for night operation in 2024.\n",
+                "before": [
+                  {
+                    "candidate_id": "0e9c251d-b3a0-4432-b915-07d51279b487",
+                    "kind": "search",
+                    "call_id": "4990ef9d-0d17-486a-af38-ca6fa8b38911"
+                  },
+                  {
+                    "candidate_id": "5e853fe4-faf9-4b60-ab3a-58ea795ed1e0",
+                    "kind": "search",
+                    "call_id": "e4b307bf-e536-4210-b866-b48f0bace4e8"
+                  },
+                  {
+                    "candidate_id": "bf0f5880-e44e-43ab-8ec8-ca358fe55e1f",
+                    "kind": "open",
+                    "call_id": "c1ec4b0d-9cdd-4504-80ef-c0c45666ac2d"
+                  }
+                ],
+                "after": [
+                  "5e853fe4-faf9-4b60-ab3a-58ea795ed1e0"
+                ]
+              },
+              {
+                "document_version_id": "47f0aa79-c1c4-58d9-8da1-62e1e7067371",
+                "spans": [
+                  {
+                    "schema_version": 1,
+                    "start": 0,
+                    "end": 175
+                  }
+                ],
+                "body_sha256": "4c3dbc2e70250c41c66a6e9e4021c5a69a3efa6baff06d359cde530758dbc63a",
+                "body": "# Beacon final register\nIn 2024, the Beacon telescope red safety certificate was approved and archived in the hill registry. Beacon was certified for night operation in 2024.\n",
+                "before": [
+                  {
+                    "candidate_id": "dc5b61bc-5bb2-4646-8039-de7421aab438",
+                    "kind": "search",
+                    "call_id": "4990ef9d-0d17-486a-af38-ca6fa8b38911"
+                  },
+                  {
+                    "candidate_id": "6dbb301c-757e-44ea-a041-67d440c66eb6",
+                    "kind": "search",
+                    "call_id": "e4b307bf-e536-4210-b866-b48f0bace4e8"
+                  },
+                  {
+                    "candidate_id": "7c2a6c4b-bf71-4464-9eb8-293e5293d525",
+                    "kind": "open",
+                    "call_id": "bdf7df92-a49e-4c8e-bf79-816f8328b2d6"
+                  }
+                ],
+                "after": [
+                  "6dbb301c-757e-44ea-a041-67d440c66eb6"
+                ]
+              },
+              {
+                "document_version_id": "cc89753c-3d38-5adf-a9ea-64e1964c1372",
+                "spans": [
+                  {
+                    "schema_version": 1,
+                    "start": 0,
+                    "end": 137
+                  }
+                ],
+                "body_sha256": "77884bc3db98ea36e6d59381a7ee5b46ceea33b11a5fc5c478a6939c9975db8c",
+                "body": "# Previous year\nIn 2023, Atlas had a green draft certificate in the river registry. This entry does not describe its 2024 certification.\n",
+                "before": [
+                  {
+                    "candidate_id": "57683bde-b9a7-46ea-8a01-c566bbd33de6",
+                    "kind": "search",
+                    "call_id": "4990ef9d-0d17-486a-af38-ca6fa8b38911"
+                  },
+                  {
+                    "candidate_id": "63f8c5c7-2f29-4808-b71c-a368958feda2",
+                    "kind": "search",
+                    "call_id": "e4b307bf-e536-4210-b866-b48f0bace4e8"
+                  },
+                  {
+                    "candidate_id": "75d4b613-eb97-41d2-8977-f244449d1c60",
+                    "kind": "open",
+                    "call_id": "7a32acb7-2394-4d44-aef6-05fad814737e"
+                  }
+                ],
+                "after": [
+                  "63f8c5c7-2f29-4808-b71c-a368958feda2"
+                ]
+              }
+            ]
+          }
+        ],
+        "assessment": {
+          "normal_acceptance": "PASS",
+          "core_facts": "Atlas blue/ocean/not certified, Beacon red/hill/certified, final audit correction and 2023 exclusion are present with current citations.",
+          "first_draft": "Observed public preamble followed by JSON; strict invalid_json offset=0; existing single native-JSON repair accepted. Four actual successful open bodies were delivered.",
+          "wording_limits": [
+            "The unresolved registry-relationship sentence groups river under a 2024 qualifier although the river record is from 2023; the core comparison explicitly excludes that 2023 record."
+          ],
+          "quality_boundary": "Small fixture core facts checked; no R23 quality freeze."
+        },
+        "no_old_evidence_reused": true,
+        "only_current_revision_delivered": true,
+        "pin_released": true,
+        "all_requests_within_budget": true
+      },
+      {
+        "action": "cli",
+        "raw_path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-cli.json",
+        "raw_sha256": "594728858fd9c83ebbb24267a815de86b1a37ed0a4f46765acce5e511c7b7de0",
+        "driver_status": "PASS",
+        "run_id": "f2d1e317-724f-4407-b702-a20126381a9f",
+        "parent_run_id": "80e2a30c-f772-4385-8ec7-4badff3d55e6",
+        "revision_id": "6017f2a9-a671-4ce3-8585-15897e67e35e",
+        "status": "completed",
+        "stop_reason": "finished",
+        "usage": {
+          "schema_version": 1,
+          "searches": 4,
+          "opens": 4,
+          "input_tokens": 28687,
+          "output_tokens": 3964,
+          "cached_tokens": 18688,
+          "total_tokens": 32651,
+          "elapsed_ms": 60512
+        },
+        "save": {
+          "status": "saved",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\cli\\continued-report-1f82f63f.md",
+          "sha256": "dc62d0b5171e2b95c39558d2eb815168025292502753eebff52c58f2b9958d4d",
+          "size_bytes": 6055,
+          "message": "",
+          "logical_markdown_sha256": "b9e1b69495334eefddf1a917b388a3b90693d8e3524a7e353b76cf608ddbb2b8",
+          "universal_newline_readback_equal": true
+        },
+        "artifact_sha256": "b9e1b69495334eefddf1a917b388a3b90693d8e3524a7e353b76cf608ddbb2b8",
+        "citation_ids": [
+          "a05dd03b-20c5-4c48-9d5b-604f3053c600",
+          "965dfa1c-4488-46bf-b7c5-c837a2ae6abb",
+          "bc0edb6c-0dea-4662-a73e-45230855d0fb",
+          "6eee1a3a-de54-4914-bac2-00e8fe5f1907"
+        ],
+        "current_revision_members": [
+          {
+            "document_id": "571f05da-b789-4d97-b11b-ce4196bef8e8",
+            "document_version_id": "85b58468-0f8d-5a9d-80d4-f0595909f492",
+            "file_name": "audit.md"
+          },
+          {
+            "document_id": "76fd15ce-a5d6-4f31-9ecc-d9532551cd71",
+            "document_version_id": "cc89753c-3d38-5adf-a9ea-64e1964c1372",
+            "file_name": "old.md"
+          },
+          {
+            "document_id": "8514cf63-31bc-46c8-8bba-3e6a5f381cb2",
+            "document_version_id": "aee0fe0b-51fc-59e9-92d8-6bc91cacfd1f",
+            "file_name": "atlas.md"
+          },
+          {
+            "document_id": "9f64470b-edc3-47b1-8364-cab2764c8aa8",
+            "document_version_id": "47f0aa79-c1c4-58d9-8da1-62e1e7067371",
+            "file_name": "beacon.md"
+          }
+        ],
+        "successful_open_calls_with_delivered_body": 4,
+        "delivered_evidence_count": 12,
+        "public_drafts": [],
+        "citation_validation_errors": [
+          "invalid_json offset=0 line=1 column=1"
+        ],
+        "http_requests": [
+          {
+            "request_id": "7d90d914-ce0f-4c59-9b04-9f60ae676262",
+            "purpose": "agent",
+            "input_upper": 10534,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 2670,
+            "body_sha256": "a127f85c22b9f13227a494fe55a7f74f48dc5d0f84efed8d449008497dbf70d8"
+          },
+          {
+            "request_id": "9cf76196-c08a-4b3e-9798-3fbe818a14ec",
+            "purpose": "agent",
+            "input_upper": 18572,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 5988,
+            "body_sha256": "2a7459cf7199fcdaa2c03787777d393f78ef8d0f8f83d902bf284b24e6c7693f"
+          },
+          {
+            "request_id": "23a569e9-f2c5-4623-94fb-dd560b2c6675",
+            "purpose": "agent",
+            "input_upper": 26274,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 8706,
+            "body_sha256": "eda1de8ce815eca1510a27dcaf3b1336d3f7815824d7e1aa5cc5929f9a6b5cbd"
+          },
+          {
+            "request_id": "0377e70e-061a-455a-9ae9-f53ec9e0066f",
+            "purpose": "agent",
+            "input_upper": 27584,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 10478,
+            "body_sha256": "8c4c9608aec9fcd825c72dac8d3fcfabd3b18d22e3856a3e0a804c5d47a48edf"
+          },
+          {
+            "request_id": "e93d8c8d-0405-4a5b-a3b7-2a5ad2d81c2e",
+            "purpose": "citation_repair",
+            "input_upper": 9746,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 4809,
+            "body_sha256": "cb0f93ec06d29f08c199f2056f982a68a3f65b144d4a739d42a20d8ad6f378c2"
+          }
+        ],
+        "request_contracts": [],
+        "queries": [
+          "Atlas telescope 2024 night operation certification safety certificate registry",
+          "Beacon telescope 2024 night operation certified safety certificate registry",
+          "Beacon audit preliminary register corrected night operation 2024",
+          "Atlas Beacon registry certificate 2024 conflicting audit record"
+        ],
+        "window_evidence": [
+          {
+            "actual_window_transform": {
+              "purpose": "citation_repair",
+              "input_upper": 9746,
+              "before_candidates": [
+                "84d34410-2aa6-448b-b47b-737a6268b6cc",
+                "973e52ab-ebc2-4ddf-ac11-2c28fb16d58a",
+                "7b148cb8-20e0-4004-aeeb-72734052ac0c",
+                "fd641da0-79ec-494f-a234-89e9e5c3def6",
+                "9dbca066-76af-40bf-8813-c420e66d160f",
+                "c05ffcaa-3f9b-4617-8f53-37a53b121467",
+                "e70107f7-accb-4063-ab0b-1cce05c1f866",
+                "7c9717e0-ca83-4ad0-b355-67f129e5351f",
+                "2c88621a-0311-4b83-8100-bc6b6f1c3f5e",
+                "86d7d3a6-b053-4453-bdf6-cc5cd8798a1e",
+                "9f66e57b-db9d-48fa-85a5-dee33223a07d",
+                "cffe57e8-2e9b-4080-ae99-8a2504c93f2a"
+              ],
+              "after_candidates": [
+                "9dbca066-76af-40bf-8813-c420e66d160f",
+                "c05ffcaa-3f9b-4617-8f53-37a53b121467",
+                "e70107f7-accb-4063-ab0b-1cce05c1f866",
+                "7c9717e0-ca83-4ad0-b355-67f129e5351f"
+              ],
+              "deduplicated_tool_call_ids": [
+                "call_00_HAmhxXh5vZn4ZaETJC553351",
+                "call_00_wxX3FP8A8Jjg13CCkYY47977",
+                "call_01_aQH0ACdKjw3J8WllNDxj7908",
+                "call_02_SkWeE22MAlHgDAIXpa3F4857",
+                "call_03_dAJwZ22bWxcx3PfMgEjv0634"
+              ],
+              "input_upper_before_dedup": 21216,
+              "input_upper_after_dedup": 9746
+            },
+            "source_groups": [
+              {
+                "document_version_id": "aee0fe0b-51fc-59e9-92d8-6bc91cacfd1f",
+                "spans": [
+                  {
+                    "schema_version": 1,
+                    "start": 0,
+                    "end": 178
+                  }
+                ],
+                "body_sha256": "f7959981b4f9997db0de9492bb6103d8715c76b7c16fc56dd2b6483eb04b1eb6",
+                "body": "# Atlas final register\nIn 2024, the Atlas telescope blue safety certificate was approved and archived in the ocean registry. Atlas was not certified for night operation in 2024.\n",
+                "before": [
+                  {
+                    "candidate_id": "84d34410-2aa6-448b-b47b-737a6268b6cc",
+                    "kind": "search",
+                    "call_id": "54d370eb-b8c8-48fa-a744-d0198c7cd31a"
+                  },
+                  {
+                    "candidate_id": "c05ffcaa-3f9b-4617-8f53-37a53b121467",
+                    "kind": "search",
+                    "call_id": "96b8ea89-3e4a-4d80-9afc-3a0bd1e4cf99"
+                  },
+                  {
+                    "candidate_id": "2c88621a-0311-4b83-8100-bc6b6f1c3f5e",
+                    "kind": "open",
+                    "call_id": "f0cfde4c-4752-453f-b51f-5af3dd9847b2"
+                  }
+                ],
+                "after": [
+                  "c05ffcaa-3f9b-4617-8f53-37a53b121467"
+                ]
+              },
+              {
+                "document_version_id": "47f0aa79-c1c4-58d9-8da1-62e1e7067371",
+                "spans": [
+                  {
+                    "schema_version": 1,
+                    "start": 0,
+                    "end": 175
+                  }
+                ],
+                "body_sha256": "4c3dbc2e70250c41c66a6e9e4021c5a69a3efa6baff06d359cde530758dbc63a",
+                "body": "# Beacon final register\nIn 2024, the Beacon telescope red safety certificate was approved and archived in the hill registry. Beacon was certified for night operation in 2024.\n",
+                "before": [
+                  {
+                    "candidate_id": "973e52ab-ebc2-4ddf-ac11-2c28fb16d58a",
+                    "kind": "search",
+                    "call_id": "54d370eb-b8c8-48fa-a744-d0198c7cd31a"
+                  },
+                  {
+                    "candidate_id": "9dbca066-76af-40bf-8813-c420e66d160f",
+                    "kind": "search",
+                    "call_id": "96b8ea89-3e4a-4d80-9afc-3a0bd1e4cf99"
+                  },
+                  {
+                    "candidate_id": "86d7d3a6-b053-4453-bdf6-cc5cd8798a1e",
+                    "kind": "open",
+                    "call_id": "b5cb6a74-dfde-4c31-9d9e-37427302c9c8"
+                  }
+                ],
+                "after": [
+                  "9dbca066-76af-40bf-8813-c420e66d160f"
+                ]
+              },
+              {
+                "document_version_id": "85b58468-0f8d-5a9d-80d4-f0595909f492",
+                "spans": [
+                  {
+                    "schema_version": 1,
+                    "start": 0,
+                    "end": 182
+                  }
+                ],
+                "body_sha256": "16659ed526700d107a6431a6428b0ddad99dfde03f5ff59cdeba6d6f2fc01f47",
+                "body": "# Atlas audit\nThe preliminary 2024 register listed Atlas night operation as approved. The final 2024 audit corrected that entry: Atlas was not certified for night operation in 2024.\n",
+                "before": [
+                  {
+                    "candidate_id": "7b148cb8-20e0-4004-aeeb-72734052ac0c",
+                    "kind": "search",
+                    "call_id": "54d370eb-b8c8-48fa-a744-d0198c7cd31a"
+                  },
+                  {
+                    "candidate_id": "e70107f7-accb-4063-ab0b-1cce05c1f866",
+                    "kind": "search",
+                    "call_id": "96b8ea89-3e4a-4d80-9afc-3a0bd1e4cf99"
+                  },
+                  {
+                    "candidate_id": "9f66e57b-db9d-48fa-85a5-dee33223a07d",
+                    "kind": "open",
+                    "call_id": "f26fa2b6-35e9-4302-8db7-6fa037224ef3"
+                  }
+                ],
+                "after": [
+                  "e70107f7-accb-4063-ab0b-1cce05c1f866"
+                ]
+              },
+              {
+                "document_version_id": "cc89753c-3d38-5adf-a9ea-64e1964c1372",
+                "spans": [
+                  {
+                    "schema_version": 1,
+                    "start": 0,
+                    "end": 137
+                  }
+                ],
+                "body_sha256": "77884bc3db98ea36e6d59381a7ee5b46ceea33b11a5fc5c478a6939c9975db8c",
+                "body": "# Previous year\nIn 2023, Atlas had a green draft certificate in the river registry. This entry does not describe its 2024 certification.\n",
+                "before": [
+                  {
+                    "candidate_id": "fd641da0-79ec-494f-a234-89e9e5c3def6",
+                    "kind": "search",
+                    "call_id": "54d370eb-b8c8-48fa-a744-d0198c7cd31a"
+                  },
+                  {
+                    "candidate_id": "7c9717e0-ca83-4ad0-b355-67f129e5351f",
+                    "kind": "search",
+                    "call_id": "96b8ea89-3e4a-4d80-9afc-3a0bd1e4cf99"
+                  },
+                  {
+                    "candidate_id": "cffe57e8-2e9b-4080-ae99-8a2504c93f2a",
+                    "kind": "open",
+                    "call_id": "49388e9a-f433-4686-a67d-725964007935"
+                  }
+                ],
+                "after": [
+                  "7c9717e0-ca83-4ad0-b355-67f129e5351f"
+                ]
+              }
+            ]
+          }
+        ],
+        "assessment": {
+          "normal_acceptance": "PASS",
+          "core_facts": "Same-version current retrieval preserves Atlas blue/ocean/not certified, Beacon red/hill/certified, final audit correction and explicit 2023 exclusion.",
+          "first_draft": "Public draft text was not collected by the real CLI. Persisted invalid_json offset=0 and one citation_repair request prove strict repair occurred; the draft's exact form is unknown.",
+          "tool_evidence": "Four successful open calls delivered current source bodies; completed and saved a new file.",
+          "quality_boundary": "Accepted Chinese report and lifecycle, not broad semantic quality acceptance."
+        },
+        "no_old_evidence_reused": true,
+        "only_current_revision_delivered": true,
+        "pin_released": true,
+        "all_requests_within_budget": true
+      },
+      {
+        "action": "update",
+        "raw_path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-update.json",
+        "raw_sha256": "488c258d3d533c7a86eeb7d3a3760e693c1e8cd0cc8c65a55241d8ac11ea7155",
+        "driver_status": "PASS",
+        "run_id": "55caf39d-8020-4f1a-b58e-990bb60d13e5",
+        "parent_run_id": "f2d1e317-724f-4407-b702-a20126381a9f",
+        "revision_id": "dc12fd53-656b-457c-acc4-a00c20bcf41b",
+        "status": "completed",
+        "stop_reason": "finished",
+        "usage": {
+          "schema_version": 1,
+          "searches": 8,
+          "opens": 4,
+          "input_tokens": 49760,
+          "output_tokens": 2897,
+          "cached_tokens": 40576,
+          "total_tokens": 52657,
+          "elapsed_ms": 77519
+        },
+        "save": {
+          "status": "saved",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real\\report-update-862947ef.md",
+          "sha256": "e66f8624d5e8307b1fda0e8073c6efa47e6708da354d920bc328c5a541477b8a",
+          "size_bytes": 7026,
+          "message": "",
+          "logical_markdown_sha256": "5d3f41df0e6e805f2feacf12aa8bef417d9f103462264d51ea47f2fe3d1d10f4",
+          "universal_newline_readback_equal": true
+        },
+        "artifact_sha256": "5d3f41df0e6e805f2feacf12aa8bef417d9f103462264d51ea47f2fe3d1d10f4",
+        "citation_ids": [
+          "f2f5b824-3b58-4707-83fe-444e42058524",
+          "53a8f8d1-0202-4bc4-b1b6-7f6c91440ace",
+          "37dafde4-04f0-4f78-8b85-1450c2a1ac50",
+          "82c937b4-2aa7-4743-bdd1-87418a3bf3c9"
+        ],
+        "current_revision_members": [
+          {
+            "document_id": "571f05da-b789-4d97-b11b-ce4196bef8e8",
+            "document_version_id": "2f9e2161-f2ac-5b2a-8ff5-a6c0ead98868",
+            "file_name": "audit.md"
+          },
+          {
+            "document_id": "76fd15ce-a5d6-4f31-9ecc-d9532551cd71",
+            "document_version_id": "cc89753c-3d38-5adf-a9ea-64e1964c1372",
+            "file_name": "old.md"
+          },
+          {
+            "document_id": "8514cf63-31bc-46c8-8bba-3e6a5f381cb2",
+            "document_version_id": "7e1f0792-0073-5349-b0a8-b8a016ccedbe",
+            "file_name": "atlas.md"
+          },
+          {
+            "document_id": "9f64470b-edc3-47b1-8364-cab2764c8aa8",
+            "document_version_id": "47f0aa79-c1c4-58d9-8da1-62e1e7067371",
+            "file_name": "beacon.md"
+          }
+        ],
+        "successful_open_calls_with_delivered_body": 4,
+        "delivered_evidence_count": 12,
+        "public_drafts": [
+          {
+            "purpose": "agent",
+            "stop_reason": "end_turn",
+            "sha256": "93ddaefb760ec09b7914e2a5f0dd7aa616ddfae6e5081895926ecc6d7ec080d4",
+            "json_object": true,
+            "keys": [
+              "markdown",
+              "citations",
+              "progress"
+            ],
+            "decision": "accept",
+            "public_prefix": "{\"markdown\":\"# 2024 年 Atlas 与 Beacon 夜间作业资格复核（当前修订版）\\n\\n> 当前库修订：`dc12fd53-656b-457c-acc4-a00c20bcf41b`（较历史轮次的 `6017f2a9-a671-4ce3-8585-15897e67e35e` 已发布新修订）。以下结论仅基于本次检索并打开的原文。\\n\\n## 1. 结论摘要（重大变化）\\n\\n*",
+            "contains_dsml_marker": false
+          }
+        ],
+        "citation_validation_errors": [],
+        "http_requests": [
+          {
+            "request_id": "0257911e-930e-42d0-aa67-b5441d8e4aee",
+            "purpose": "agent",
+            "input_upper": 12394,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 3303,
+            "body_sha256": "682e7459d19bc53b7688f09274fa6b6029d12d5822a25cfa0ae80089c755b64d"
+          },
+          {
+            "request_id": "a5526044-78b1-4cbe-8c7a-5fb56ce4800d",
+            "purpose": "agent",
+            "input_upper": 20323,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 6432,
+            "body_sha256": "1cfc8dbbc081c90f2d8343f20ed828d870a6058dccc2088e973422ff3fa1b47d"
+          },
+          {
+            "request_id": "b59abc49-84f9-40fc-945f-81cc3124ad51",
+            "purpose": "agent",
+            "input_upper": 21424,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 6781,
+            "body_sha256": "6ff6ea873c0ef4ec6250f70cadb63bd1a958d51c478a4659868e5e3ff66a8679"
+          },
+          {
+            "request_id": "8dd3abf0-6b72-4aa1-9ec2-25be28c24cf8",
+            "purpose": "agent",
+            "input_upper": 22548,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 7127,
+            "body_sha256": "5ab00b252338f48ec3e31416ee14556721d6b36e20e6f299e92ea2a1919c0b66"
+          },
+          {
+            "request_id": "1effb411-22c7-422c-92f0-07f58297ee32",
+            "purpose": "agent",
+            "input_upper": 23648,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 7532,
+            "body_sha256": "689f5f01375872db7d2b1c6df0636750683f8f8f3cf24d5eb1ac563babbe7dd8"
+          },
+          {
+            "request_id": "a7ba64fa-d8e2-4f4a-aa6c-30cf61d32eb6",
+            "purpose": "agent",
+            "input_upper": 27581,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 8944,
+            "body_sha256": "b8414244a8b8f67b844fc93bc3766451fd273eabf7099a1875d7f81b179d16ca"
+          },
+          {
+            "request_id": "6a211e8b-5215-432a-963b-72205bfe40ea",
+            "purpose": "agent",
+            "input_upper": 31402,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 12538,
+            "body_sha256": "9fcfb89ba0e0d0681956a37fb906272a34eb13c1ab408a3e7240f23647789f97"
+          }
+        ],
+        "request_contracts": [
+          {
+            "purpose": "agent",
+            "request_id": "0257911e-930e-42d0-aa67-b5441d8e4aee",
+            "body_sha256": "682e7459d19bc53b7688f09274fa6b6029d12d5822a25cfa0ae80089c755b64d",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "a5526044-78b1-4cbe-8c7a-5fb56ce4800d",
+            "body_sha256": "1cfc8dbbc081c90f2d8343f20ed828d870a6058dccc2088e973422ff3fa1b47d",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "b59abc49-84f9-40fc-945f-81cc3124ad51",
+            "body_sha256": "6ff6ea873c0ef4ec6250f70cadb63bd1a958d51c478a4659868e5e3ff66a8679",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "8dd3abf0-6b72-4aa1-9ec2-25be28c24cf8",
+            "body_sha256": "5ab00b252338f48ec3e31416ee14556721d6b36e20e6f299e92ea2a1919c0b66",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "1effb411-22c7-422c-92f0-07f58297ee32",
+            "body_sha256": "689f5f01375872db7d2b1c6df0636750683f8f8f3cf24d5eb1ac563babbe7dd8",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "a7ba64fa-d8e2-4f4a-aa6c-30cf61d32eb6",
+            "body_sha256": "b8414244a8b8f67b844fc93bc3766451fd273eabf7099a1875d7f81b179d16ca",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "6a211e8b-5215-432a-963b-72205bfe40ea",
+            "body_sha256": "9fcfb89ba0e0d0681956a37fb906272a34eb13c1ab408a3e7240f23647789f97",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          }
+        ],
+        "queries": [
+          "Atlas telescope night operation certification 2024",
+          "Beacon telescope night operation certified 2024",
+          "Beacon revised audit night operation 2024",
+          "Atlas not certified night operation correction",
+          "Atlas blue safety certificate ocean registry 2024",
+          "Beacon red safety certificate hill registry approved archived",
+          "telescope certification registry 2024",
+          "2023 green draft certificate river registry Atlas"
+        ],
+        "window_evidence": [],
+        "assessment": {
+          "normal_acceptance": "PASS",
+          "core_facts": "Latest published revision corrects historical Atlas night qualification to certified, while retaining blue/ocean. Beacon red/hill/certified remains; 2023 is excluded.",
+          "first_draft": "Directly observed valid JSON with markdown/citations/progress; accepted without repair. Four successful open calls delivered current source bodies.",
+          "wording_limits": [
+            "The phrase 复议后修订 is more specific than the source's revised/later audit wording.",
+            "Altas appears once as a spelling error; an extra > occurs in one prose quotation. Canonical citation quotes remain exact."
+          ],
+          "quality_boundary": "Core update facts and source lifecycle checked; prose polishing and broader fidelity remain R23."
+        },
+        "no_old_evidence_reused": true,
+        "only_current_revision_delivered": true,
+        "pin_released": true,
+        "all_requests_within_budget": true
+      },
+      {
+        "action": "delete",
+        "raw_path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-real-delete.json",
+        "raw_sha256": "7b5b8e3d54ab5460edf10637bf167f83e9e57d48fc2a08e940fdbe69ced76223",
+        "driver_status": "PASS",
+        "run_id": "44b66aca-61ce-4055-bdec-58583571de67",
+        "parent_run_id": "55caf39d-8020-4f1a-b58e-990bb60d13e5",
+        "revision_id": "d1e88999-38e5-49be-b353-d5308ddae7ff",
+        "status": "completed",
+        "stop_reason": "finished",
+        "usage": {
+          "schema_version": 1,
+          "searches": 9,
+          "opens": 1,
+          "input_tokens": 29056,
+          "output_tokens": 2817,
+          "cached_tokens": 21376,
+          "total_tokens": 31873,
+          "elapsed_ms": 76963
+        },
+        "save": null,
+        "artifact_sha256": "eb4591c0fef8f06995bf476ea39c4d10e6fcf23cb5ab085f2242ed02508d82e9",
+        "citation_ids": [
+          "f86a2e92-5ae9-4c1b-b029-fb1cb6d883df"
+        ],
+        "current_revision_members": [
+          {
+            "document_id": "9f64470b-edc3-47b1-8364-cab2764c8aa8",
+            "document_version_id": "47f0aa79-c1c4-58d9-8da1-62e1e7067371",
+            "file_name": "beacon.md"
+          }
+        ],
+        "successful_open_calls_with_delivered_body": 1,
+        "delivered_evidence_count": 3,
+        "public_drafts": [
+          {
+            "purpose": "agent",
+            "stop_reason": "end_turn",
+            "sha256": "e8b6a345bf843b7893dfd739fb9189941f70700b1e1d24bf1eaf2eed0a019a7a",
+            "json_object": false,
+            "json_error": "Expecting value: line 1 column 1 (char 0)",
+            "decision": "repair",
+            "public_prefix": "I have thoroughly verified the current state. Beacon is confirmed; Atlas and all comparison/audit/2023 sources return empty in the current revision.\n\n{\"markdown\":\"# 2024 年夜间作业资格核对（Atlas 与 Beacon）\\n\\n#",
+            "contains_dsml_marker": false
+          },
+          {
+            "purpose": "citation_repair",
+            "stop_reason": "end_turn",
+            "sha256": "6eaf244ce12e956bab786cee5393c8dfc4422a18f496d3967f1eef9f8e949024",
+            "json_object": true,
+            "keys": [
+              "markdown",
+              "citations",
+              "progress"
+            ],
+            "decision": "accept",
+            "public_prefix": "{\"markdown\":\"# 2024年 Atlas 与 Beacon 望远镜比较研究报告\\n\\n## 结论摘要\\n\\n在当前已发布的资料库修订版（revision `d1e88999-38e5-49be-b353-d5308ddae7ff`）中，**只能核实 Beacon 的相关结论，无法核实 Atlas 的任何内容**。用户已删除 Atlas 相关来源，本轮检索中所有涉及 Atlas 的查询均",
+            "contains_dsml_marker": false
+          }
+        ],
+        "citation_validation_errors": [
+          "invalid_json offset=0 line=1 column=1"
+        ],
+        "http_requests": [
+          {
+            "request_id": "520c00e9-decf-4471-8b5d-61bf8cfb288a",
+            "purpose": "agent",
+            "input_upper": 13995,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 3860,
+            "body_sha256": "215e3c8333444b5adbc285ea6df8a4a2c04bd6b1e3a9850fd7d807878155bea5"
+          },
+          {
+            "request_id": "b49ec024-2c52-4f8b-bd8b-2c1d095f927d",
+            "purpose": "agent",
+            "input_upper": 16954,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 4915,
+            "body_sha256": "bba115ea22fb62006e70d7ec47ef2546f4da3762c47320ea25442f18bf6a496a"
+          },
+          {
+            "request_id": "7f4d3105-e3ac-45b0-b3e7-be2aacefa67a",
+            "purpose": "agent",
+            "input_upper": 18153,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 5306,
+            "body_sha256": "c0f2be646a5cd68c996a3a90224210dbd0b3632c1abf1610b479c554da888923"
+          },
+          {
+            "request_id": "708872f9-b4b4-41e6-bf56-1df9fac6cba3",
+            "purpose": "agent",
+            "input_upper": 19923,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 5857,
+            "body_sha256": "f5b2b9a28b393ec616ac4815c97f8cc8e1b0683125657316dcdb4724883c7ab1"
+          },
+          {
+            "request_id": "4002e3cb-6bb9-472e-9e5e-99da70a4a204",
+            "purpose": "agent",
+            "input_upper": 23080,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 7827,
+            "body_sha256": "cc4edd8795267f3abe8108fee154edbec2881c4ed2413fff9152a9fedd1d05e0"
+          },
+          {
+            "request_id": "e883c84c-9b69-4e82-9486-c50e920aa1b4",
+            "purpose": "citation_repair",
+            "input_upper": 10721,
+            "output_cap": 4096,
+            "state": "confirmed",
+            "charged": 4108,
+            "body_sha256": "7a2aae97fc35e36c1f6605b347b41fedcaa9b36c4ebccccbd017d6c98dd16ca0"
+          }
+        ],
+        "request_contracts": [
+          {
+            "purpose": "agent",
+            "request_id": "520c00e9-decf-4471-8b5d-61bf8cfb288a",
+            "body_sha256": "215e3c8333444b5adbc285ea6df8a4a2c04bd6b1e3a9850fd7d807878155bea5",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "b49ec024-2c52-4f8b-bd8b-2c1d095f927d",
+            "body_sha256": "bba115ea22fb62006e70d7ec47ef2546f4da3762c47320ea25442f18bf6a496a",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "7f4d3105-e3ac-45b0-b3e7-be2aacefa67a",
+            "body_sha256": "c0f2be646a5cd68c996a3a90224210dbd0b3632c1abf1610b479c554da888923",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "708872f9-b4b4-41e6-bf56-1df9fac6cba3",
+            "body_sha256": "f5b2b9a28b393ec616ac4815c97f8cc8e1b0683125657316dcdb4724883c7ab1",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "agent",
+            "request_id": "4002e3cb-6bb9-472e-9e5e-99da70a4a204",
+            "body_sha256": "cc4edd8795267f3abe8108fee154edbec2881c4ed2413fff9152a9fedd1d05e0",
+            "model": "deepseek-chat",
+            "response_format": null,
+            "tool_count": 2
+          },
+          {
+            "purpose": "citation_repair",
+            "request_id": "e883c84c-9b69-4e82-9486-c50e920aa1b4",
+            "body_sha256": "7a2aae97fc35e36c1f6605b347b41fedcaa9b36c4ebccccbd017d6c98dd16ca0",
+            "model": "deepseek-chat",
+            "response_format": {
+              "type": "json_object"
+            },
+            "tool_count": 0
+          }
+        ],
+        "queries": [
+          "Atlas telescope 2024 night operation certified",
+          "Beacon telescope 2024 night operation certified certificate registry",
+          "Atlas telescope safety certificate 2024 registry",
+          "Atlas 2024 audit night operation certification correction",
+          "Atlas final register blue safety certificate ocean registry",
+          "audit register 2024 night operation approved corrected",
+          "2023 previous year telescope certificate river registry",
+          "Atlas telescope",
+          "telescope night operation 2024 comparison Atlas Beacon"
+        ],
+        "window_evidence": [
+          {
+            "actual_window_transform": {
+              "purpose": "citation_repair",
+              "input_upper": 10721,
+              "before_candidates": [
+                "253e8f85-1462-41f7-82d4-4f306e34cffe",
+                "d3e54dd2-1b9c-4743-9fe9-7f56ba0997eb",
+                "734d4743-61d3-4f7e-aadb-cd6cd9656d49"
+              ],
+              "after_candidates": [
+                "734d4743-61d3-4f7e-aadb-cd6cd9656d49"
+              ],
+              "deduplicated_tool_call_ids": [
+                "call_00_Yt8HeVgEBgBYlss4tfXc3275",
+                "call_01_bEO6t1Qr1MzNIGvDyRzk7122"
+              ],
+              "input_upper_before_dedup": 13532,
+              "input_upper_after_dedup": 10721
+            },
+            "source_groups": [
+              {
+                "document_version_id": "47f0aa79-c1c4-58d9-8da1-62e1e7067371",
+                "spans": [
+                  {
+                    "schema_version": 1,
+                    "start": 0,
+                    "end": 175
+                  }
+                ],
+                "body_sha256": "4c3dbc2e70250c41c66a6e9e4021c5a69a3efa6baff06d359cde530758dbc63a",
+                "body": "# Beacon final register\nIn 2024, the Beacon telescope red safety certificate was approved and archived in the hill registry. Beacon was certified for night operation in 2024.\n",
+                "before": [
+                  {
+                    "candidate_id": "253e8f85-1462-41f7-82d4-4f306e34cffe",
+                    "kind": "search",
+                    "call_id": "f864a908-4a10-4292-a342-30022b113517"
+                  },
+                  {
+                    "candidate_id": "d3e54dd2-1b9c-4743-9fe9-7f56ba0997eb",
+                    "kind": "search",
+                    "call_id": "257d0f58-db08-4a4a-b76e-e95ee1bd5775"
+                  },
+                  {
+                    "candidate_id": "734d4743-61d3-4f7e-aadb-cd6cd9656d49",
+                    "kind": "open",
+                    "call_id": "197db4df-3430-4865-868c-b4695b04a8a8"
+                  }
+                ],
+                "after": [
+                  "734d4743-61d3-4f7e-aadb-cd6cd9656d49"
+                ]
+              }
+            ]
+          }
+        ],
+        "assessment": {
+          "normal_acceptance": "PASS",
+          "core_facts": "Only current Beacon source remains and is cited. All Atlas dimensions are explicitly currently unverified; no deleted Atlas body or old evidence is restored. 2023 is not used for current conclusions.",
+          "first_draft": "Observed invalid_json offset=0, then existing single native-JSON repair accepted. One successful open call delivered Beacon; completed before search limit.",
+          "wording_limits": [
+            "The phrase unable to confirm whether 2023 records ever existed is broader than inability to verify them in the current revision; historical records remain readable in storage."
+          ],
+          "quality_boundary": "Normal source-deletion lifecycle passes, without claiming every historical phrasing is optimal."
+        },
+        "no_old_evidence_reused": true,
+        "only_current_revision_delivered": true,
+        "pin_released": true,
+        "all_requests_within_budget": true
+      }
+    ],
+    "total_usage": {
+      "searches": 23,
+      "opens": 13,
+      "input_tokens": 122977,
+      "output_tokens": 13238,
+      "cached_tokens": 88192,
+      "total_tokens": 136215,
+      "elapsed_ms": 260702
+    },
+    "known_costs": {
+      "all_known_through_previous_executor_delivery": 510978,
+      "second_leader_chain": 26711,
+      "finish_only_chain": 136215,
+      "all_known_total_tokens": 673904,
+      "unknown_usage_requests": 1
+    },
+    "boundary": "Each action executed once. Public draft syntax, strict citations, actual source delivery and lifecycle are separately reported. Passing normal driver is not R23 semantic quality acceptance."
+  },
+  "preservation": {
+    "evidence": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-preservation.json",
+      "sha256": "7c7011801aa71d577175a996a5f1df44b1cee09f12fb3ca504bd5f492f1e1ebc",
+      "size_bytes": 5716
+    },
+    "status": "PASS",
+    "time": 1790167001.678012,
+    "base_head": "41802ffe9061856dc8d2ea1e4ef0fdbdad1d143a",
+    "branch": "codex/rag",
+    "inherited_count": 6537,
+    "protected_count": 18,
+    "old_executor_raw_unchanged": 240,
+    "leader_protected_unchanged": [
+      55,
+      51
+    ],
+    "revision_cards": [
+      {
+        "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R20-leader-revision-request.md",
+        "sha256": "49865026e8010ca4e92f8bb9b9c71698010d44bc2a2e8bbe605e025264b47c13"
+      },
+      {
+        "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R20-leader-native-tools-revision.md",
+        "sha256": "53d82d65109cb0fa052960b3703f3e57c4be88c3f7ee6bbad02743a8f72c075f"
+      }
+    ],
+    "installed_source_match": {
+      "host-core": 143,
+      "host-cuda": 143,
+      "rag-core": 73,
+      "rag-cuda": 73
+    },
+    "production_changed_since_previous_delivery": {
+      "host": [],
+      "rag": [
+        "agentic_rag/adapters/codeplus/ledger.py"
+      ]
+    },
+    "answer_tokenizer_sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+    "source_build_evidence": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-build.json",
+    "driver_unchanged": true,
+    "prompts_and_history_order_unchanged": true,
+    "live_config_identical_except_private_paths": true,
+    "index_empty": true,
+    "git_diff_check": "PASS",
+    "exact_authored_paths": [
+      "codeplus/__main__.py",
+      "codeplus/agent.py",
+      "codeplus/app.py",
+      "codeplus/client.py",
+      "codeplus/commands/handlers/knowledge.py",
+      "codeplus/run_policy.py",
+      "deployment/AgenticRAG/README.md",
+      "deployment/AgenticRAG/docs/codeplus-integration.md",
+      "deployment/AgenticRAG/docs/host-integration-contract.md",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/ledger.py",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/meter.py",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/research.py",
+      "deployment/AgenticRAG/src/agentic_rag/domain.py",
+      "deployment/AgenticRAG/tests/test_codeplus_integration.py",
+      "deployment/AgenticRAG/tests/test_cursor_window.py",
+      "deployment/AgenticRAG/tests/test_json_output.py",
+      "deployment/AgenticRAG/tests/test_request_window.py",
+      "deployment/AgenticRAG/tests/test_research_reports.py",
+      "deployment/AgenticRAG/tests/r20_real_acceptance.py",
+      "deployment/AgenticRAG/docs/implementation-records/R20.md",
+      "deployment/AgenticRAG/docs/implementation-records/R20-files.txt",
+      "deployment/AgenticRAG/docs/implementation-records/R20-executor.json"
+    ],
+    "external_leader_cards_excluded": [
+      "deployment/AgenticRAG/docs/implementation-records/R20-leader-native-tools-revision.md",
+      "deployment/AgenticRAG/docs/implementation-records/R20-leader-revision-request.md"
+    ],
+    "authored_sha256_excluding_manifest": {
+      "codeplus/__main__.py": "1b6305a97989f41fe2e8602a65096cbae2843c2c2fa997cd24fc20fee96b9aee",
+      "codeplus/agent.py": "7be148865f368435949efb4d1963121ead288dbae6c8f9941c903e67415a7d65",
+      "codeplus/app.py": "6863650c641cc5728af0864973185d3cc9b51e6ad93a01f2a4543a7d6b5c2a3d",
+      "codeplus/client.py": "205ee1ae9435af9fdccfae7cab638d6530b6c578df74939ddfcb30219478e970",
+      "codeplus/commands/handlers/knowledge.py": "9f88d25f1eca30791b9baaeb8ca3b2f41f1d109aebcfb3eb1f7166487cc7277b",
+      "codeplus/run_policy.py": "8a01dd2a24abf41a17ab05ac56eeff171f7305b0d99cc36cc0de966d82269d63",
+      "deployment/AgenticRAG/README.md": "6fee61fe6454fc558aa3665607c22b3120377f40d9b157f87efab26dbd8b7ce4",
+      "deployment/AgenticRAG/docs/codeplus-integration.md": "0a1d173f8be275dad68c13da1da24c37e2ffec52e866ae7438264a49e932bec7",
+      "deployment/AgenticRAG/docs/host-integration-contract.md": "659d5e0e527a1225fbc013208a0eb96bab7d610bf9add4836162d99dee6fc768",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/ledger.py": "059b2d883c5cf802081d3c396f84598af666c6fba6feaf201302934689b40a8b",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/meter.py": "59e4e46c6092712a8fc7bb6c71ef8172b53c81a212990ea9ab540a7528e4d6ee",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py": "0d4d891000d84afd906f67a6699ca164801fb32519bbd6f355e4a32789b802df",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/research.py": "9b2e0dd393a641efd9479e1b0c3d1e4f44d6824b9ea480220adc70bded4013cd",
+      "deployment/AgenticRAG/src/agentic_rag/domain.py": "c1b108d19cb8db6f573ff7501bae243eb7b493489e8070a870bb6e2fdc9e3830",
+      "deployment/AgenticRAG/tests/test_codeplus_integration.py": "39e99f3816a5b4352901d2d1d49a00c88aba4b4187ce0ab4dea53385da8bcf98",
+      "deployment/AgenticRAG/tests/test_cursor_window.py": "4cfc33a768024e22ec1f0a807d8a6909013ab92f89786b2ad49c601697eb6f96",
+      "deployment/AgenticRAG/tests/test_json_output.py": "2829d8135d86b125c2e7b6c231c54b3b182bd61786dcc831e5dcbd3507e82a3a",
+      "deployment/AgenticRAG/tests/test_request_window.py": "a59be927873c1bb9ad5957f5d4ad66c991e34f9eb9ed7fee16452c42cfac1d13",
+      "deployment/AgenticRAG/tests/test_research_reports.py": "ad742943cef67bb11859852b71ebe7ba9abc7c2bea4cc0d7d07525cc2dc350a2",
+      "deployment/AgenticRAG/tests/r20_real_acceptance.py": "0f0ef5fcfe5f0d40dd5390830a1165c9e1785075d4f3b4d262087b024f1dc0a1",
+      "deployment/AgenticRAG/docs/implementation-records/R20.md": "5ee5225fc0c8897c9b05716da634d546fd243419f3d51da7db1909d715bf6903",
+      "deployment/AgenticRAG/docs/implementation-records/R20-files.txt": "ddb947f29bb55463a94e6ab874140a1475bccfa603e963a964c458b123cc6e09"
+    }
+  },
+  "resource_ownership": {
+    "evidence": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923\\revision-finish-only-resource-ownership.json",
+      "sha256": "b764610ba2c7ce5ed7c58a4b91b219dca27b23d34d7253f864de1767253e6426",
+      "size_bytes": 9176
+    },
+    "owner": "/root/r20_report_continue",
+    "captured_at": "2026-09-23T12:36:43.5820595+00:00",
+    "private_root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r20-executor-20260923",
+    "owned_contents": [
+      "core",
+      "cuda",
+      "dist",
+      "real and all revision-*-real/diagnosis data roots",
+      "all original and revision test basetemp directories",
+      "temporary scripts",
+      "logs and indexed evidence",
+      "answer-tokenizer.json copy"
+    ],
+    "reused_pytest_cache_paths": [
+      "D:\\CodePlus\\.pytest_cache",
+      "D:\\CodePlus\\deployment\\AgenticRAG\\.pytest_cache"
+    ],
+    "reused_cache_note": "Pytest may update existing ignored cache metadata. These are shared repository caches, not exclusive cleanup targets; no inherited cache was deleted.",
+    "copy_source_readonly": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r19-leader-20260923",
+    "environment_copy_method": "ordinary file copy, not hard links",
+    "shared_model_cache_readonly": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models",
+    "docker_project": "codeplus-r20-executor-20260923",
+    "compose_file": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+    "owned_host_ports": [
+      19550,
+      9111
+    ],
+    "containers": [
+      {
+        "Command": "\"/tini -- milvus run…\"",
+        "CreatedAt": "2026-09-23 17:52:56 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "a9be2a2184f3",
+        "Image": "milvusdb/milvus:v3.0.1",
+        "Labels": "com.docker.compose.config-hash=e563267413fe96e59daafb8b11e6da3879543fb44a0dc3e76522052b2910fdf3,com.docker.compose.container-number=1,com.docker.compose.depends_on=minio:service_healthy:false,etcd:service_healthy:false,com.docker.compose.image=sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r20-executor-20260923,com.docker.compose.service=standalone,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/19530/tcp=127.0.0.1:19550,desktop.docker.io/ports/9091/tcp=127.0.0.1:9111,org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r20-e…",
+        "Names": "codeplus-r20-executor-20260923-standalone-1",
+        "Networks": "codeplus-r20-executor-20260923_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "127.0.0.1:9111->9091/tcp, 127.0.0.1:19550->19530/tcp",
+        "RunningFor": "3 hours ago",
+        "Size": "279kB (virtual 3GB)",
+        "State": "running",
+        "Status": "Up 3 hours (healthy)"
+      },
+      {
+        "Command": "\"/usr/bin/docker-ent…\"",
+        "CreatedAt": "2026-09-23 17:52:56 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "c07f09e0fdcb",
+        "Image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+        "Labels": "architecture=x86_64,build-date=2024-12-18T09:14:16Z,com.docker.compose.config-hash=299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r20-executor-20260923,com.docker.compose.service=minio,com.docker.compose.version=5.4.0,com.redhat.component=ubi9-micro-container,com.redhat.license_terms=https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI,description=MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.,desktop.docker.io/ports.scheme=v2,distribution-scope=public,io.buildah.version=1.38.0-dev,io.k8s.description=Very small image which doesn't install the package manager.,io.k8s.display-name=Red Hat Universal Base Image 9 Micro,io.openshift.expose-services=,maintainer=MinIO Inc <dev@min.io>,name=MinIO,release=RELEASE.2024-12-18T13-15-44Z,summary=MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.,url=https://www.redhat.com,vcs-ref=10988923ed65297b3e5a5c9cf1c59f779fd76274,vcs-type=git,vendor=MinIO Inc <dev@min.io>,version=RELEASE.2024-12-18T13-15-44Z",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r20-e…",
+        "Names": "codeplus-r20-executor-20260923-minio-1",
+        "Networks": "codeplus-r20-executor-20260923_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "9000/tcp",
+        "RunningFor": "3 hours ago",
+        "Size": "24.6kB (virtual 182MB)",
+        "State": "running",
+        "Status": "Up 3 hours (healthy)"
+      },
+      {
+        "Command": "\"etcd -advertise-cli…\"",
+        "CreatedAt": "2026-09-23 17:52:56 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "02bcfe0a52db",
+        "Image": "quay.io/coreos/etcd:v3.5.25",
+        "Labels": "com.docker.compose.config-hash=f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r20-executor-20260923,com.docker.compose.service=etcd,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,io.buildah.version=1.41.5",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r20-e…",
+        "Names": "codeplus-r20-executor-20260923-etcd-1",
+        "Networks": "codeplus-r20-executor-20260923_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "2379-2380/tcp",
+        "RunningFor": "3 hours ago",
+        "Size": "24.6kB (virtual 69.5MB)",
+        "State": "running",
+        "Status": "Up 3 hours (healthy)"
+      }
+    ],
+    "volumes": [
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=da83c7ff2640a6e3ca4f43d27e089ee2fc23822aa16cdd2aec9d18cda63b680d,com.docker.compose.project=codeplus-r20-executor-20260923,com.docker.compose.version=5.4.0,com.docker.compose.volume=etcd",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r20-executor-20260923_etcd/_data",
+        "Name": "codeplus-r20-executor-20260923_etcd",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=bb6f1ecf23e147fccb61c8d7dc870c6271687d9ce0a4fa2d381cb92390750ee2,com.docker.compose.project=codeplus-r20-executor-20260923,com.docker.compose.version=5.4.0,com.docker.compose.volume=milvus",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r20-executor-20260923_milvus/_data",
+        "Name": "codeplus-r20-executor-20260923_milvus",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      },
+      {
+        "Availability": "N/A",
+        "Driver": "local",
+        "Group": "N/A",
+        "Labels": "com.docker.compose.config-hash=7a28be39959bf00c2329853c42566dee601a4816293ea26d68c5f149ceb8ba69,com.docker.compose.project=codeplus-r20-executor-20260923,com.docker.compose.version=5.4.0,com.docker.compose.volume=minio",
+        "Links": "N/A",
+        "Mountpoint": "/var/lib/docker/volumes/codeplus-r20-executor-20260923_minio/_data",
+        "Name": "codeplus-r20-executor-20260923_minio",
+        "Scope": "local",
+        "Size": "N/A",
+        "Status": "N/A"
+      }
+    ],
+    "networks": [
+      {
+        "CreatedAt": "2026-09-23 09:52:56.059642687 +0000 UTC",
+        "Driver": "bridge",
+        "ID": "6c5b0d144ca8",
+        "IPv4": "true",
+        "IPv6": "false",
+        "Internal": "false",
+        "Labels": "com.docker.compose.config-hash=4ab87516813aebd19ed472737420e6d4abba12208a386e3686774d4fb2e76959,com.docker.compose.network=default,com.docker.compose.project=codeplus-r20-executor-20260923,com.docker.compose.version=5.4.0",
+        "Name": "codeplus-r20-executor-20260923_default",
+        "Scope": "local"
+      }
+    ],
+    "active_owned_python_processes": [],
+    "cleanup_handoff": "User assigned separate cleanup. Retain indexed evidence until that handoff. No cleanup or material-copy gate imposed."
+  },
+  "not_executed": [
+    "Real visual TUI operation",
+    "Linux or cross-platform release validation",
+    "Clean dependency environment and sdist rebuild installation by executor",
+    "200-question fixed/auto comparison",
+    "R23 answer quality, faithfulness and P95 gates",
+    "R21 complete management commands and RemoteServer assembly",
+    "Stage, commit, push or cleanup of unrelated resources",
+    "Further real reruns, prompt experiments, forced tools or quality tuning after final four-run chain",
+    "Final new source sdist install in a clean environment by executor",
+    "No repeated real action or further prompt/history experiment in finish-only revision"
+  ],
+  "final_scoped_checks": {
+    "path_count": 23,
+    "exact_paths": [
+      "codeplus/__main__.py",
+      "codeplus/agent.py",
+      "codeplus/app.py",
+      "codeplus/client.py",
+      "codeplus/commands/handlers/knowledge.py",
+      "codeplus/run_policy.py",
+      "deployment/AgenticRAG/README.md",
+      "deployment/AgenticRAG/docs/codeplus-integration.md",
+      "deployment/AgenticRAG/docs/host-integration-contract.md",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/ledger.py",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/meter.py",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/research.py",
+      "deployment/AgenticRAG/src/agentic_rag/domain.py",
+      "deployment/AgenticRAG/tests/test_codeplus_integration.py",
+      "deployment/AgenticRAG/tests/test_cursor_window.py",
+      "deployment/AgenticRAG/tests/test_json_output.py",
+      "deployment/AgenticRAG/tests/test_request_window.py",
+      "deployment/AgenticRAG/tests/test_research_reports.py",
+      "deployment/AgenticRAG/tests/r20_real_acceptance.py",
+      "deployment/AgenticRAG/docs/implementation-records/R20.md",
+      "deployment/AgenticRAG/docs/implementation-records/R20-files.txt",
+      "deployment/AgenticRAG/docs/implementation-records/R20-executor.json"
+    ],
+    "index_empty": true,
+    "git_diff_check": "PASS",
+    "manifest_credential_scan": "PASS",
+    "no_commit_push": true
+  }
+}

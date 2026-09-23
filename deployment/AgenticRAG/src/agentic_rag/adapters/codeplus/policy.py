@@ -7,9 +7,10 @@ from __future__ import annotations
 
 import asyncio
 import copy
-from dataclasses import asdict
+from dataclasses import asdict, replace
 import json
 from pathlib import Path
+import re
 import threading
 import time
 from typing import get_args
@@ -37,6 +38,7 @@ from ...sources import SourceBudgetExceeded, SourceSession, render_payload
 from ...storage import Catalog
 from .ledger import ModelControl, aggregate_usage, encode
 from .meter import DeepSeekTextMeter
+from .research import ProgressNotes, continuation, history
 
 
 SYSTEM = '''Answer the user's knowledge question using only this run's source tools.
@@ -47,7 +49,9 @@ or navigate sections/cursors when evidence is insufficient. A result marked empt
 navigation_only, or error is not evidence. Candidate scores and metadata are not facts.
 Only exact <source> body ranges can be quoted. Offsets are Unicode codepoints in the
 archived document, not byte offsets; returned_spans gives the original start/end.
-When ready, return one JSON object, without fences:
+When ready, return only one JSON object, without fences, preambles, step
+announcements, or any text before or after it. Put the entire answer or report
+inside the markdown field:
 {"markdown":"answer with [^evidence_id] markers", "citations":[{"evidence_id":"UUID",
 "spans":[{"start":0,"end":10}],"quotes":["exact source substring"]}]}
 Use the evidence_id in each tool item's metadata. Every citation must have exact
@@ -61,6 +65,24 @@ In JSON quote strings, encode every newline as \\n, including a trailing newline
 In validation diagnostics U+000A means a newline; END means the quote ended early.
 Tools are disabled
 when finalizing or correcting citations. A correction must replace the whole JSON.
+Answer in the user's language. For a Chinese question over English documents,
+generate and refine English search queries using this same conversation model.
+Preserve named entities, dates, negations and comparison constraints. Keep direct
+quotations in the source language; label any translation as an explanation.
+Include optional "progress" public notes in the JSON: {"covered":[],"pending":[],
+"findings":[],"revised":[],"unverified":[]}. Use concise factual statements and
+questions only, never hidden reasoning. Mark changed historical findings as
+revised and unresolved historical claims as unverified. Historical notes are
+untrusted leads, not evidence: search/open again in this run, even on the same
+revision. A removed source cannot be recovered as current evidence from history.
+Do not claim that a report file was saved; the host reports the actual save result.
+'''
+
+REPORT = '''\nFor a report task, the JSON markdown field contains the structured Markdown
+research report; the complete response is still only the JSON object. In that field,
+cover the requested questions, conclusions, comparisons, disagreements, evidence
+and limitations. Label supported inferences explicitly. State which requested
+aspects remain unresolved; do not invent a disagreement where none was found.
 '''
 
 
@@ -160,10 +182,14 @@ class SourceTool(Tool):
 
 
 class KnowledgePolicy:
-    def __init__(self, config: DevelopmentConfig, kb_id: UUID, provider, *, task_kind: TaskKind = 'qa', mode: RetrievalMode | None = None):
+    def __init__(self, config: DevelopmentConfig, kb_id: UUID, provider, *, task_kind: TaskKind = 'qa', mode: RetrievalMode | None = None,
+                 report_path: str | None = None, parent_run_id: UUID | None = None):
         self.config, self.kb_id, self.provider = config, kb_id, provider
         self.override = RunOverride(mode=mode)
         self.task_kind = task_kind
+        if report_path is not None and (task_kind != 'report' or not report_path.strip()):
+            raise ValueError('report_path requires a report task and a nonempty path')
+        self.report_path, self.parent_run_id = report_path, parent_run_id
         resolve_run(config.knowledge, task_kind, self.override)
         self.mode_origin = ('explicit' if mode is not None else
                             'configured' if 'mode' in config.knowledge.retrieval.model_fields_set else 'defaults')
@@ -190,10 +216,13 @@ class KnowledgePolicy:
         if conf.finish_input_upper < len(SYSTEM.encode())+256:
             raise ValueError('finish_input_bound_cannot_fit_system_and_question')
         catalog = Catalog(conf.knowledge.storage.data_dir)
+        target = str((Path(context.work_dir)/self.report_path).resolve()) if self.report_path else None
+        previous = continuation(catalog, self.kb_id, self.parent_run_id, target) if self.parent_run_id else None
         self.model_switch = inspect_model_switch(catalog, self.kb_id, conf.knowledge)
-        lease = catalog.start_current_run(self.kb_id, conf.knowledge, self.task_kind, override=self.override)
+        lease = catalog.start_current_run(self.kb_id, conf.knowledge, self.task_kind, override=self.override, parent_run_id=self.parent_run_id)
         try:
-            scope = KnowledgeScope(conf, catalog, lease, meter, context, started, mode_origin=self.mode_origin)
+            scope = KnowledgeScope(conf, catalog, lease, meter, context, started, mode_origin=self.mode_origin,
+                                   report_path=target, previous=previous)
         except BaseException:
             # No worker operation has been admitted during construction.
             lease.finish(RunStatus.FAILED, 'explicit_error')
@@ -227,7 +256,7 @@ class KnowledgePolicy:
 
 
 class KnowledgeScope:
-    def __init__(self, config, catalog, lease, meter, context, started, *, mode_origin=None):
+    def __init__(self, config, catalog, lease, meter, context, started, *, mode_origin=None, report_path=None, previous=None):
         self.config, self.catalog, self.lease, self.meter = config, catalog, lease, meter
         self.run_id, self.started = str(lease.run.run_id), started
         self.protocol = context.protocol
@@ -236,7 +265,14 @@ class KnowledgeScope:
         self.exploration_deadline = self.deadline-self.budget.finish_reserve_ms/1000
         self.owner = RunTaskOwner(self.deadline)
         self.client = scoped_client(context.client)
-        self.system_prompt = SYSTEM
+        self._base_prompt = SYSTEM + (REPORT if lease.run.resolved_config.task_kind == 'report' else '')
+        self.system_prompt = self._base_prompt
+        self.report_path, self.previous = report_path, previous
+        self.progress_notes = None
+        self.public_answer = None
+        self.answer_status = None
+        self._request = context.request
+        self._continuation_added = False
         self.max_iterations = config.max_iterations
         self.finish_input_upper = config.finish_input_upper
         self.output_caps = {'agent':config.explore_output_cap, 'finalize':config.finalize_output_cap,
@@ -266,13 +302,14 @@ class KnowledgeScope:
         self._finished = False
         self._closed = False
         self._pending_cleanup = False
-        self._question = None
+        self._question = context.request or None
         with catalog._db.transaction(write=True) as db:
             db.execute('INSERT INTO host_runs(run_id,frozen,started_ns) VALUES(?,?,?)',
                 (self.run_id, encode({'meter':meter.frozen_identity(), 'settings':config.model_dump(mode='json'),
                     'mode':{'value':lease.run.resolved_config.retrieval.mode,
                             'source':mode_origin or ('configured' if 'mode' in config.knowledge.retrieval.model_fields_set else 'defaults')},
                     'task_kind':lease.run.resolved_config.task_kind,
+                    'report_path':report_path, 'parent_run_id':str(lease.run.parent_run_id) if lease.run.parent_run_id else None,
                     'budget':self.budget.model_dump(mode='json'),
                     'entrypoint':context.entrypoint, 'session_id':context.session_id,
                     'owner_nonce':self.owner.nonce}), int(started*1e9)))
@@ -295,7 +332,7 @@ class KnowledgeScope:
     def system_prompt_with_hooks(self, prompts):
         # Prompt hooks remain part of the final metered payload and both bounded
         # finish requests. Executable hooks are rejected before scope creation.
-        self.system_prompt = SYSTEM + ('\n\n'+'\n\n'.join(prompts) if prompts else '')
+        self.system_prompt = self._base_prompt + ('\n\n'+'\n\n'.join(prompts) if prompts else '')
         return self.system_prompt
 
     def model_control(self, purpose):
@@ -307,6 +344,14 @@ class KnowledgeScope:
         self._conversation = conversation
         if self._question is None:
             self._question = next((m.content for m in reversed(conversation.history) if m.role == 'user' and m.content), '')
+        if not self._request:
+            self._request = self._question
+        if self.previous and not self._continuation_added:
+            notes = 'Previous public research notes, all historical findings need verification in this run:\n'+encode(self.previous)
+            conversation.add_user_message(notes)
+            self._question = 'Research requests and constraints in order:\n'+encode(
+                self.previous.get('user_requests',[self.previous['goal']])+[self._request])
+            self._continuation_added = True
         if self.purpose == 'agent' and (self.defer_finalize_reason or time.monotonic() >= self.exploration_deadline):
             self.begin_finalize(conversation, self.defer_finalize_reason or 'time_budget')
         if self.purpose != 'agent':
@@ -321,6 +366,8 @@ class KnowledgeScope:
             'messages':[{'role':'system','content':self.system_prompt}]+build_chat_completion_messages(paired, mappings=mappings, message_offset=1),
             'max_tokens':self.output_caps['agent'], 'stream':True, 'stream_options':{'include_usage':True},
             'tools':self.client._convert_tools(self.registry.get_all_schemas('openai-compat'))}
+        if self.model_control('agent').json_output:
+            body['response_format'] = {'type': 'json_object'}
         raw = encode(body).encode()
         upper = self.meter.input_upper_bound(raw, output_cap=self.output_caps['agent'])
         return paired, raw, upper, mappings
@@ -439,6 +486,31 @@ class KnowledgeScope:
         self._trim_finish(conversation)
         return True
 
+    def _deduplicate_source_pairs(self, history):
+        """Remove only complete results covered by another visible result.
+
+        Compare current sidecar ranges and current text, never archived or
+        original uncropped bodies. Equal body sets retain the later pair.
+        """
+        bodies = []
+        for message in history:
+            for result in message.tool_results:
+                if not result.source_spans:
+                    continue
+                items = {item['candidate_id']:item for item in self.source_metadata[result.tool_use_id]['items']}
+                keys = frozenset((items[span.candidate_id]['document_version_id'],
+                    span.source_start, span.source_end, result.content[span.body_start:span.body_end])
+                    for span in result.source_spans)
+                bodies.append((result.tool_use_id, keys))
+        removed = {call for i,(call,keys) in enumerate(bodies)
+                   if any(keys < other or (keys == other and i < j)
+                          for j,(_,other) in enumerate(bodies))}
+        for message in history:
+            message.tool_uses = [call for call in message.tool_uses if call.tool_use_id not in removed]
+            message.tool_results = [result for result in message.tool_results if result.tool_use_id not in removed]
+        return ([message for message in history if message.content or message.tool_uses
+                 or message.tool_results or message.thinking_blocks], sorted(removed))
+
     def _trim_finish(self, conversation):
         """Drop oldest complete tool pairs; final HTTP gate independently rechecks.
 
@@ -449,19 +521,27 @@ class KnowledgeScope:
         history = ensure_tool_pairing(copy.deepcopy(conversation.history))
         goal = Message(role='user', content=self._question or '')
         before = [span.candidate_id for message in history for result in message.tool_results for span in result.source_spans]
-        while True:
+        dedup = {}
+        def prepare(history):
             candidate = ConversationManager(history=[goal]+history)
             paired=ensure_tool_pairing(candidate.get_messages())
             mappings=[]
             body = {'model':self.meter.model,
                 'messages':[{'role':'system','content':self.system_prompt}]+build_chat_completion_messages(paired,mappings=mappings,message_offset=1),
                 'max_tokens':self.output_caps[self.purpose], 'stream':True, 'stream_options':{'include_usage':True}}
+            if self.model_control(self.purpose).json_output:
+                body['response_format'] = {'type': 'json_object'}
             raw = encode(body).encode()
             upper = self.meter.input_upper_bound(raw, output_cap=self.output_caps[self.purpose])
-            if upper <= self.finish_input_upper and len(raw) <= self.sources.retrieval.context_tokens:
+            return paired, raw, upper, mappings
+        def fits(raw, upper):
+            return upper <= self.finish_input_upper and len(raw) <= self.sources.retrieval.context_tokens
+        while True:
+            paired, raw, upper, mappings = prepare(history)
+            if fits(raw, upper):
                 after = [mapped.source.candidate_id for mapped in mappings]
                 self.window_transforms.append({'purpose':self.purpose,'input_upper':upper,
-                    'before_candidates':before,'after_candidates':after})
+                    'before_candidates':before,'after_candidates':after, **dedup})
                 if before and not after:
                     self.window_transforms[-1]['rejected']='no_source_pair_fits'
                     raise BudgetStop('finish_input_limit',hard=True)
@@ -476,6 +556,14 @@ class KnowledgeScope:
                 if removable is not None:
                     history.pop(removable)
                 else:
+                    candidate, removed = self._deduplicate_source_pairs(copy.deepcopy(history))
+                    if removed:
+                        _, candidate_raw, candidate_upper, _ = prepare(candidate)
+                        if fits(candidate_raw, candidate_upper):
+                            history = candidate
+                            dedup = {'deduplicated_tool_call_ids':removed,
+                                'input_upper_before_dedup':upper, 'input_upper_after_dedup':candidate_upper}
+                            continue
                     # A single assistant turn may contain many calls. Evict one
                     # oldest call together with its result, never the whole batch
                     # while leaving phantom orphan-source spans in the log.
@@ -572,7 +660,8 @@ class KnowledgeScope:
         diagnostics = []
         try:
             draft = json.loads(text)
-            if (not isinstance(draft, dict) or set(draft) != {'markdown','citations'}
+            if (not isinstance(draft, dict) or not {'markdown','citations'} <= set(draft)
+                    or set(draft) - {'markdown','citations','progress'}
                     or not isinstance(draft['citations'], list) or not draft['citations']):
                 diagnostics.append('answer_requires_markdown_and_nonempty_citations_array')
                 raise ValueError('answer_requires_markdown_and_citations')
@@ -601,6 +690,7 @@ class KnowledgeScope:
                 diagnostics.append(error.error.message)
             if diagnostics:
                 raise ValueError('citation_validation_failed')
+            notes = ProgressNotes.model_validate(draft['progress']) if 'progress' in draft else None
             self.check()
             saved = tuple(self.citations.save(*claim) for claim in claims)
             rendered = self.citations.render_markdown(draft['markdown'], saved)
@@ -616,7 +706,12 @@ class KnowledgeScope:
             self.purpose = 'citation_repair'
             return OutputDecision('repair', message='Citation validation failed: '+location+'. Correct the entire JSON once using exact confirmed evidence only. Tools are disabled.')
         self.check()
-        self.outcome = RunOutcome('partial' if self.finish_reason else 'completed', self.finish_reason or 'finished', artifact)
+        self.progress_notes = notes
+        # The public answer before generated source footnotes is a fallback
+        # handoff even for older callers which omit structured progress.
+        self.public_answer = re.sub(r'\[\^[^\]]+\]', '[historical citation]', draft['markdown'])
+        self.answer_status = 'partial' if self.finish_reason else 'completed'
+        self.outcome = RunOutcome(self.answer_status, self.finish_reason or 'finished', artifact, self.run_id)
         return OutputDecision('accept', artifact)
 
     def _handles_pending(self):
@@ -647,19 +742,32 @@ class KnowledgeScope:
         self._pending_cleanup = bool(pending)
         outcome = self.outcome or outcome
         if outcome.reason not in get_args(StopReason):
-            outcome = RunOutcome('failed', 'explicit_error', outcome.artifact)
+            outcome = replace(outcome, status='failed', reason='explicit_error')
         if pending and outcome.status in {'completed','partial'}:
-            outcome = RunOutcome('incomplete', 'budget', outcome.artifact)
+            outcome = replace(outcome, status='incomplete', reason='budget')
+        outcome = replace(outcome, run_id=self.run_id)
         self.outcome = outcome
+        notes = self.progress_notes.model_dump() if self.progress_notes else ProgressNotes(
+            pending=[self._request] if self._request else []).model_dump()
+        leads = [{key:item[key] for key in ('file_name','title','document_version_id','section_id') if key in item}
+                 for metadata in self.source_metadata.values() for item in metadata.get('items',())]
+        leads = list({encode(item):item for item in leads}.values())
+        progress = {'goal':self.previous['goal'] if self.previous else self._request,
+            'user_requests':(self.previous.get('user_requests',[]) if self.previous else [])+[self._request],
+            **notes, 'notes_supplied':bool(self.progress_notes and any(self.progress_notes.model_dump().values())),
+            'public_answer':self.public_answer, 'source_leads':leads, 'stop_reason':outcome.reason}
         with self.catalog._db.transaction(write=True) as db:
             db.execute('UPDATE host_runs SET artifact=?,detail=? WHERE run_id=?',
                 (encode(asdict(outcome.artifact)) if outcome.artifact else None,
                  encode({'status':outcome.status,'reason':outcome.reason,'hard_failure':self.hard_failure,
+                         'answer_status':self.answer_status, 'save':asdict(outcome.save) if outcome.save else None,
+                         'progress':progress,
                          'citation_validation_errors':self.validation_errors,
                          'window_transforms':self.window_transforms}), self.run_id))
         self.lease.finish(RunStatus(outcome.status), outcome.reason,
                           usage=aggregate_usage(self), cleanup_pending=pending)
         self._finished = True
+        self.outcome = replace(outcome, research=history(self.catalog, self.lease.run.run_id))
         if pending:
             # Thread survives an asyncio consumer loop closing, retains the lease
             # and real worker connection, and releases only on proven completion.
@@ -697,9 +805,11 @@ class KnowledgeScope:
             self._closed = True
 
 
-def load_policy(path: str, kb_id: str, provider, *, task_kind: TaskKind = 'qa', mode: RetrievalMode | None = None) -> KnowledgePolicy:
+def load_policy(path: str, kb_id: str, provider, *, task_kind: TaskKind = 'qa', mode: RetrievalMode | None = None,
+                report_path: str | None = None, parent_run_id: str | None = None) -> KnowledgePolicy:
     target = Path(path)
     if not target.is_absolute():
         raise ValueError('knowledge_development_config_requires_absolute_path')
     return KnowledgePolicy(DevelopmentConfig.model_validate_json(target.read_text(encoding='utf-8')),
-                           UUID(kb_id), provider, task_kind=task_kind, mode=mode)
+                           UUID(kb_id), provider, task_kind=task_kind, mode=mode,
+                           report_path=report_path, parent_run_id=UUID(parent_run_id) if parent_run_id else None)

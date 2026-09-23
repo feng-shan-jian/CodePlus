@@ -17,7 +17,7 @@ from ._vendor.deepseek_v41 import encode_messages
 REVISION = 'dba1be0a40aa45a94ad051997016db3960a90277'
 TOKENIZER_SHA256 = 'c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b'
 ENCODER_SHA256 = '502bdaec8a3fd88ebc24c4721a7038fbe42f2063c664638127056107920035c1'
-METER_VERSION = 'deepseek-v41-full-template-utf8-upper-v1'
+METER_VERSION = 'deepseek-v41-full-template-json-object-utf8-upper-v2'
 
 
 class MeterUnavailable(ValueError):
@@ -91,7 +91,7 @@ class DeepSeekTextMeter:
 
     def input_upper_bound(self, raw_body: bytes, *, output_cap: int) -> int:
         body = _keys(json.loads(raw_body),
-            {'model', 'messages', 'tools', 'max_tokens', 'stream', 'stream_options'},
+            {'model', 'messages', 'tools', 'max_tokens', 'stream', 'stream_options', 'response_format'},
             {'model', 'messages', 'max_tokens', 'stream', 'stream_options'})
         self._check_literals(body)
         if (body['model'] != self.model or body['max_tokens'] != output_cap
@@ -149,10 +149,16 @@ class DeepSeekTextMeter:
                 _text(function['description'])
             if 'parameters' in function and not isinstance(function['parameters'], dict):
                 raise MeterUnavailable('invalid_tool_schema')
-        if tools:
+        response_format = body.get('response_format')
+        if 'response_format' in body and response_format != {'type': 'json_object'}:
+            raise MeterUnavailable('unsupported_response_format')
+        if tools or response_format:
             if messages[0]['role'] != 'system':
                 messages.insert(0, {'role': 'system', 'content': ''})
-            messages[0]['tools'] = tools
+            if tools:
+                messages[0]['tools'] = tools
+            if response_format:
+                messages[0]['response_format'] = response_format
         rendered = encode_messages(messages, thinking_mode=self.thinking_mode, reasoning_effort=75)
         return self.count(rendered)
 

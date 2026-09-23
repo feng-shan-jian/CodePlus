@@ -1054,7 +1054,8 @@ class CodePlusApp(App):
             return
         self._agent_task = asyncio.create_task(self._send_message(text))
 
-    def send_knowledge_message(self, text: str, *, mode: str | None = None, task_kind: str = 'qa') -> None:
+    def send_knowledge_message(self, text: str, *, mode: str | None = None, task_kind: str = 'qa',
+                               report_path: str | None = None, parent_run_id: str | None = None) -> None:
         if self._streaming or self._knowledge_active or self.agent is None:
             self._show_system_message('An operation is still active.')
             return
@@ -1064,7 +1065,7 @@ class CodePlusApp(App):
         try:
             from agentic_rag.adapters.codeplus.policy import load_policy
             policy = load_policy(self.knowledge_development_config, self.knowledge_library, self._selected_provider,
-                                 mode=mode, task_kind=task_kind)
+                                 mode=mode, task_kind=task_kind, report_path=report_path, parent_run_id=parent_run_id)
         except ImportError:
             self._show_error('Install the independent codeplus-agentic-rag development package into this host environment.')
             return
@@ -1076,23 +1077,34 @@ class CodePlusApp(App):
 
     async def _send_knowledge(self, text, policy):
         original_agent, original_conversation = self.agent, self.conversation
-        from codeplus.tools import ToolRegistry
-        controlled = Agent(client=original_agent.client, registry=ToolRegistry(), protocol=original_agent.protocol,
+        controlled = Agent(client=original_agent.client, registry=original_agent.registry, protocol=original_agent.protocol,
             work_dir=original_agent.work_dir, permission_checker=original_agent.permission_checker,
             context_window=original_agent.context_window, hook_engine=original_agent.hook_engine,
             execution_policy=policy)
         controlled.session_id = original_agent.session_id
+        controlled.file_history = original_agent.file_history
         self.agent, self.conversation = controlled, ConversationManager()
         try:
             await self._send_message(text)
         except Exception as error:
-            self._show_error('Knowledge run failed: '+type(error).__name__)
+            self._show_error('Knowledge run failed: '+(str(error) if isinstance(error, ValueError) else type(error).__name__))
         finally:
             self.last_knowledge_outcome = controlled.last_run_outcome
             self.agent, self.conversation = original_agent, original_conversation
             self._knowledge_active = False
             if self.last_knowledge_outcome:
-                self._show_system_message('Knowledge run '+self.last_knowledge_outcome.status+': '+self.last_knowledge_outcome.reason)
+                self._show_system_message('Knowledge run '+str(self.last_knowledge_outcome.run_id)+' '+
+                    self.last_knowledge_outcome.status+': '+self.last_knowledge_outcome.reason)
+                saved = self.last_knowledge_outcome.save
+                if saved:
+                    self._show_system_message('Report '+saved.status+': '+saved.path+
+                        (' SHA256 '+saved.sha256 if saved.sha256 else ' '+saved.message))
+                research = self.last_knowledge_outcome.research
+                if research:
+                    current = research['rounds'][-1]['usage']['total_tokens']
+                    total = research['total_usage']['total_tokens']
+                    self._show_system_message(f'Research tokens: this run {current if current is not None else "unknown"}; '
+                        f'{len(research["rounds"])} rounds {total if total is not None else "unknown"}.')
 
     def set_plan_mode(self, enabled: bool) -> None:
         if self.agent is None:

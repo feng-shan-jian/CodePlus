@@ -156,6 +156,8 @@ class ModelControl:
         self.scope, self.purpose = scope, purpose
         self.deadline = scope.deadline
         self.output_cap = scope.output_caps[purpose]
+        self.json_output = (scope.protocol == 'openai-compat'
+                            and purpose in {'finalize', 'citation_repair'})
 
     async def before_send(self, request):
         scope = self.scope

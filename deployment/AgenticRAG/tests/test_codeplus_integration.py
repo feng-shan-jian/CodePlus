@@ -168,7 +168,8 @@ def test_source_limit_finalizes_only_valid_evidence_and_persists_terminal(tmp_pa
             assert (agent.last_run_outcome.status, agent.last_run_outcome.reason) == expected
             if completion:
                 assert [e for e in callbacks if e['type']=='run_status'] == [
-                    {'type':'run_status','status':expected[0],'reason':expected[1]}]
+                    {'type':'run_status','status':expected[0],'reason':expected[1],
+                     'run_id':scope.run_id,'save':None,'research':agent.last_run_outcome.research}]
             assert bool(agent.last_run_outcome.artifact) == (evidence and not hard_failure)
             if hard_failure:
                 assert 'Knowledge run failed: explicit_error' in displayed
@@ -221,7 +222,8 @@ def test_hard_request_window_stops_both_agent_entries_without_finalization(tmp_p
             assert 'Knowledge run incomplete: context_limit' in displayed
             if completion:
                 assert [e for e in callbacks if e['type']=='run_status'] == [
-                    {'type':'run_status','status':'incomplete','reason':'context_limit'}]
+                    {'type':'run_status','status':'incomplete','reason':'context_limit',
+                     'run_id':scope.run_id,'save':None,'research':agent.last_run_outcome.research}]
             assert scope.finish_reason is None and scope.purpose == 'agent'
             assert agent.last_run_outcome.artifact is None
             assert len(seen) == (2 if evidence else 0)
@@ -819,7 +821,9 @@ def test_finish_crops_individual_tool_pairs_and_logs_actual_wire_sources(tmp_pat
     async def run():
         parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
         scope,canonical=setup_scope(tmp_path,parent,raw=('source exact text '*100+'\n').encode())
-        scope.finish_input_upper=6500 if can_fit else 2700
+        # Keep the source allowance fixed as feature instructions evolve.
+        # The real HTTP gate still measures the complete request.
+        scope.finish_input_upper=len(scope.system_prompt.encode())+(4200 if can_fit else 450)
         handle=scope.sources.issue_source(scope._fixture_ref)
         seen=[]
         def transport(request):

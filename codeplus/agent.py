@@ -1,18 +1,20 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import logging
+import os
 import time
 import uuid
 from contextlib import aclosing, asynccontextmanager
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from enum import Enum
 from pathlib import Path
 from typing import Any, AsyncIterator, Callable
 
 from pydantic import ValidationError
 
-from codeplus.run_policy import BudgetStop, HostRunContext, RunExecutionPolicy, RunOutcome
+from codeplus.run_policy import ArtifactSave, BudgetStop, HostRunContext, RunExecutionPolicy, RunOutcome
 from codeplus.client import LLMClient
 from codeplus.context import (
     CompactBoundary,
@@ -296,6 +298,8 @@ class Agent:
         self._scope = None
         self._executing = False
         self.last_run_outcome = None
+        self._artifact_call = None
+        self._artifact_writer = None
         self.client = client
         self.registry = registry
         self.protocol = protocol
@@ -356,7 +360,7 @@ class Agent:
         self._memory_recall_consumed: bool = False
 
     @asynccontextmanager
-    async def _execution_scope(self, entrypoint: str):
+    async def _execution_scope(self, entrypoint: str, request: str = ''):
         if self.execution_policy is None:
             yield None
             return
@@ -373,8 +377,14 @@ class Agent:
         try:
             scope = await self.execution_policy.start(HostRunContext(
                 entrypoint, self.session_id, self.work_dir, self.protocol, self.client,
-                self.hook_engine, self.permission_checker))
+                self.hook_engine, self.permission_checker, request))
             self._scope = scope
+            if getattr(scope, 'report_path', None):
+                from codeplus.tools.write_file import WriteFile
+                from codeplus.tools.file_state_cache import FileStateCache
+                self._artifact_writer = self.registry.get('WriteFile')
+                if self._artifact_writer is None:
+                    self._artifact_writer = WriteFile(file_history=self.file_history, file_state_cache=FileStateCache())
             self.client, self.registry = scope.client, scope.registry
             self.memory_manager = self._consolidator = self.memory_recall_task = None
             self.notification_fn = self.file_history = None
@@ -387,13 +397,16 @@ class Agent:
         except BaseException as error:
             primary = error
             if scope:
+                previous = scope.outcome or RunOutcome('incomplete', 'iteration_limit')
+                if previous.save and previous.save.status == 'pending':
+                    previous = replace(previous, save=replace(previous.save, status='interrupted', message=type(error).__name__))
                 if isinstance(error, (asyncio.CancelledError, GeneratorExit)):
-                    scope.outcome = RunOutcome('cancelled', 'consumer_closed' if isinstance(error, GeneratorExit) else 'user_cancelled')
+                    scope.outcome = replace(previous, status='cancelled', reason='consumer_closed' if isinstance(error, GeneratorExit) else 'user_cancelled')
                 elif isinstance(error, (BudgetStop, TimeoutError)):
                     reason = error.reason if isinstance(error, BudgetStop) else 'time_budget'
-                    scope.outcome = RunOutcome('incomplete', reason)
+                    scope.outcome = replace(previous, status='incomplete', reason=reason)
                 else:
-                    scope.outcome = RunOutcome('failed', 'explicit_error')
+                    scope.outcome = replace(previous, status='failed', reason='explicit_error')
             raise
         finally:
             late_cancel = False
@@ -415,7 +428,7 @@ class Agent:
                                 primary = asyncio.CancelledError()
                                 late_cancel = True
                                 if not getattr(scope, '_finished', False):
-                                    scope.outcome = RunOutcome('cancelled', 'user_cancelled')
+                                    scope.outcome = replace(scope.outcome or RunOutcome('cancelled', 'user_cancelled'), status='cancelled', reason='user_cancelled')
                             continue
                         except BaseException:
                             break
@@ -430,20 +443,22 @@ class Agent:
                 for name, value in saved.items():
                     setattr(self, name, value)
                 self._scope = None
+                self._artifact_call = self._artifact_writer = None
                 self._executing = False
             if late_cancel:
                 raise primary
 
     async def run(self, conversation: ConversationManager) -> AsyncIterator[AgentEvent]:
         try:
-            async with self._execution_scope('stream'):
+            request = next((m.content for m in reversed(conversation.history) if m.role == 'user' and m.content), '')
+            async with self._execution_scope('stream', request):
                 async with aclosing(self._run_loop(conversation)) as loop:
                     async for event in loop:
                         yield event
-        except BudgetStop as stop:
+        except (BudgetStop, TimeoutError) as stop:
             if self.execution_policy is None:
                 raise
-            outcome = self.last_run_outcome or RunOutcome('incomplete', stop.reason)
+            outcome = self.last_run_outcome or RunOutcome('incomplete', stop.reason if isinstance(stop,BudgetStop) else 'time_budget')
             yield ErrorEvent(message=f'Knowledge run {outcome.status}: {outcome.reason}')
 
     async def run_to_completion(
@@ -451,22 +466,80 @@ class Agent:
         event_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> str:
         try:
-            async with self._execution_scope('completion'):
+            async with self._execution_scope('completion', task):
                 text = await self._completion_loop(task, conversation, event_callback)
-        except BudgetStop as stop:
+        except (BudgetStop, TimeoutError) as stop:
             if self.execution_policy is None:
                 raise
-            outcome = self.last_run_outcome or RunOutcome('incomplete', stop.reason)
+            outcome = self.last_run_outcome or RunOutcome('incomplete', stop.reason if isinstance(stop,BudgetStop) else 'time_budget')
             text = f'Knowledge run {outcome.status}: {outcome.reason}'
         if self.execution_policy is not None and event_callback and self.last_run_outcome:
             event_callback({'type': 'run_status', 'status': self.last_run_outcome.status,
-                            'reason': self.last_run_outcome.reason})
+                            'reason': self.last_run_outcome.reason, 'run_id': self.last_run_outcome.run_id,
+                            'save': asdict(self.last_run_outcome.save) if self.last_run_outcome.save else None,
+                            'research': self.last_run_outcome.research})
         return text
+
+    async def _save_artifact(self, artifact, *, interactive):
+        """One host-created call, never registered or exposed to the model."""
+        scope = self._scope
+        path = getattr(scope, 'report_path', None)
+        if not path:
+            return
+        if scope.outcome is None or scope.outcome.artifact is not artifact:
+            raise RuntimeError('report requires the accepted artifact')
+        scope.outcome = replace(scope.outcome, save=ArtifactSave('pending', path))
+        tc = ToolCallComplete(uuid.uuid4().hex, 'WriteFile', {'file_path':path, 'content':artifact.markdown})
+        self._artifact_call = tc
+        try:
+            if interactive:
+                async with aclosing(self._execute_tool(tc)) as execution:
+                    async for item in execution:
+                        if isinstance(item, PermissionRequest):
+                            yield item
+                        else:
+                            result, _ = item
+            else:
+                result = await self._execute_tool_noninteractive(tc)
+            if result.is_error:
+                scope.outcome = replace(scope.outcome, status='incomplete', reason='report_save_failed',
+                    save=ArtifactSave('failed', path, message=result.output))
+        finally:
+            self._artifact_call = None
+
+    async def _write_artifact(self, tool, params):
+        # Record the observed side effect inside the owned task, before the
+        # caller's deadline check or cancellation can replace the run outcome.
+        result = await tool.execute(params)
+        if not result.is_error:
+            try:
+                raw = Path(params.file_path).read_bytes()
+                expected = params.content.replace('\n', os.linesep).encode('utf-8')
+                if raw != expected:
+                    raise ValueError('report_readback_mismatch')
+                self._scope.outcome = replace(self._scope.outcome, save=ArtifactSave(
+                    'saved', params.file_path, hashlib.sha256(raw).hexdigest(), len(raw)))
+            except (OSError, ValueError) as error:
+                result = ToolResult(output='Report readback failed: '+str(error), is_error=True)
+        return result
+
+    def _artifact_notice(self):
+        saved = self._scope.outcome.save
+        if saved is None:
+            return ''
+        if saved.status == 'saved':
+            return f'\n\nReport saved: {saved.path}\nSHA256 (file bytes): {saved.sha256}'
+        return f'\n\nReport was not saved: {saved.path}\n{saved.message}'
 
     async def _execute_admitted(self, tc, tool, params):
         if self._scope is None:
             return await tool.execute(params)
         scope = self._scope
+        if tc is self._artifact_call:
+            scope.check()
+            result = await scope.owner.task(self._write_artifact(tool, params))
+            scope.check()
+            return result
         permit = None
         try:
             permit = await scope.admit_tool(tc.tool_id, tc.tool_name, params)
@@ -826,7 +899,10 @@ class Agent:
                     continue
                 if decision.action == 'stop':
                     raise BudgetStop(decision.message or 'citation_invalid', hard=True)
-                response.text = decision.artifact.markdown
+                async with aclosing(self._save_artifact(decision.artifact, interactive=True)) as saving:
+                    async for event in saving:
+                        yield event
+                response.text = decision.artifact.markdown + self._artifact_notice()
                 conv_thinking = []
                 yield StreamText(response.text)
 
@@ -1054,9 +1130,10 @@ class Agent:
     async def _execute_tool(
         self, tc: ToolCallComplete
     ) -> AsyncIterator[tuple[ToolResult, float] | PermissionRequest]:
-        if self._scope:
+        internal = tc is self._artifact_call
+        if self._scope and not internal:
             self._scope.rejected_tool(tc.tool_id, tc.tool_name, 'not_admitted')
-        tool = self.registry.get(tc.tool_name)
+        tool = self._artifact_writer if internal else self.registry.get(tc.tool_name)
         start = time.monotonic()
 
         if tool is None:
@@ -1068,7 +1145,7 @@ class Agent:
             yield result, elapsed
             return
 
-        if not self.registry.is_enabled(tc.tool_name):
+        if not internal and not self.registry.is_enabled(tc.tool_name):
             result = ToolResult(
                 output=f"Error: tool '{tc.tool_name}' is disabled in current mode",
                 is_error=True,
@@ -1372,7 +1449,10 @@ class Agent:
                     continue
                 if decision.action == 'stop':
                     raise BudgetStop(decision.message or 'citation_invalid', hard=True)
-                response.text = decision.artifact.markdown
+                async with aclosing(self._save_artifact(decision.artifact, interactive=False)) as saving:
+                    async for _ in saving:
+                        pass
+                response.text = decision.artifact.markdown + self._artifact_notice()
                 last_text = response.text
                 if event_callback:
                     event_callback({'type': 'stream_text', 'text': response.text})
@@ -1454,16 +1534,17 @@ class Agent:
     async def _execute_tool_noninteractive(
         self, tc: ToolCallComplete
     ) -> ToolResult:
-        if self._scope:
+        internal = tc is self._artifact_call
+        if self._scope and not internal:
             self._scope.rejected_tool(tc.tool_id, tc.tool_name, 'not_admitted')
-        tool = self.registry.get(tc.tool_name)
+        tool = self._artifact_writer if internal else self.registry.get(tc.tool_name)
 
         if tool is None:
             return ToolResult(
                 output=f"Error: unknown tool '{tc.tool_name}'", is_error=True
             )
 
-        if not self.registry.is_enabled(tc.tool_name):
+        if not internal and not self.registry.is_enabled(tc.tool_name):
             return ToolResult(
                 output=f"Error: tool '{tc.tool_name}' is disabled",
                 is_error=True,

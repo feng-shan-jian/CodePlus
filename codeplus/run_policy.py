@@ -79,6 +79,7 @@ class ModelCallControl(Protocol):
     output_cap: int
     purpose: ModelPurpose
     deadline: float
+    json_output: bool = False
 
     async def before_send(self, request: PreparedRequest) -> Any: ...
     async def settled(self, permit: Any, result: RequestOutcome) -> None: ...
@@ -93,6 +94,7 @@ class HostRunContext:
     client: Any
     hook_engine: Any
     permission_checker: Any
+    request: str = ''
 
 
 @dataclass(frozen=True)
@@ -101,6 +103,15 @@ class ValidatedArtifact:
     markdown: str
     sha256: str
     citation_ids: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class ArtifactSave:
+    status: Literal['pending', 'saved', 'failed', 'interrupted']
+    path: str
+    sha256: str | None = None
+    size_bytes: int | None = None
+    message: str = ''
 
 
 @dataclass(frozen=True)
@@ -115,6 +126,9 @@ class RunOutcome:
     status: str
     reason: str
     artifact: ValidatedArtifact | None = None
+    run_id: str | None = None
+    save: ArtifactSave | None = None
+    research: dict[str, Any] | None = None
 
 
 class RunScope(Protocol):
@@ -126,6 +140,7 @@ class RunScope(Protocol):
     max_iterations: int
     purpose: ModelPurpose
     outcome: RunOutcome | None
+    report_path: str | None
 
     def check(self) -> None: ...
     def model_control(self, purpose: ModelPurpose) -> ModelCallControl: ...

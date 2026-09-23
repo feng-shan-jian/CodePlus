@@ -93,7 +93,7 @@ BudgetStopReason = Literal[
 StopReason = Literal[
     "finished", BudgetStopReason,
     "no_evidence", "no_hits", "citation_invalid", "budget", "provider_truncated", "explicit_error",
-    "user_cancelled", "consumer_closed",
+    "user_cancelled", "consumer_closed", "report_save_failed",
 ]
 
 
@@ -285,7 +285,7 @@ class Run(Record):
         allowed = {
             RunStatus.RUNNING: {None}, RunStatus.COMPLETED: {"finished"},
             RunStatus.PARTIAL: set(get_args(BudgetStopReason)),
-            RunStatus.INCOMPLETE: {"no_evidence", "no_hits", "citation_invalid", "budget", "provider_truncated"}
+            RunStatus.INCOMPLETE: {"no_evidence", "no_hits", "citation_invalid", "budget", "provider_truncated", "report_save_failed"}
                                  | set(get_args(BudgetStopReason)),
             RunStatus.FAILED: {"explicit_error"}, RunStatus.CANCELLED: {"user_cancelled", "consumer_closed"},
         }

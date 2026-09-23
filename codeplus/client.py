@@ -739,6 +739,8 @@ class OpenAICompatClient(LLMClient):
         }
         if tools:
             kwargs["tools"] = self._convert_tools(tools)
+        if getattr(control, 'json_output', False):
+            kwargs['response_format'] = {'type': 'json_object'}
 
         # 用于累积 streaming tool call 的状态。Chat Completions 流按
         # tool_calls 列表中的位置索引下发 delta，我们按索引跟踪每个进行中的调用。

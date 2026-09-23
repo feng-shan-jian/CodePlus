@@ -1,0 +1,206 @@
+{
+  "status": "STAGED_VERIFIED",
+  "time": 1790167974.446816,
+  "head": "41802ffe9061856dc8d2ea1e4ef0fdbdad1d143a",
+  "original_index_was_empty": true,
+  "inherited_count": 6537,
+  "old_sql_count": 11,
+  "inherited_differences": [
+    "deployment/AgenticRAG/docs/implementation-checklist.md"
+  ],
+  "difference_reason": "Leader R20 checklist acceptance state and completed checkboxes only. Other inherited/protected files unchanged.",
+  "files": [
+    {
+      "path": "codeplus/__main__.py",
+      "raw_sha256": "1b6305a97989f41fe2e8602a65096cbae2843c2c2fa997cd24fc20fee96b9aee",
+      "git_blob": "c7aac01ca2f96bb81316a2fe83edfa32e9b5a63f"
+    },
+    {
+      "path": "codeplus/agent.py",
+      "raw_sha256": "7be148865f368435949efb4d1963121ead288dbae6c8f9941c903e67415a7d65",
+      "git_blob": "5a1890969dd448609c7b325af31efcabbc800dec"
+    },
+    {
+      "path": "codeplus/app.py",
+      "raw_sha256": "6863650c641cc5728af0864973185d3cc9b51e6ad93a01f2a4543a7d6b5c2a3d",
+      "git_blob": "ad51dc166b3ba17aa1a8664a33fcfb0bf9544399"
+    },
+    {
+      "path": "codeplus/client.py",
+      "raw_sha256": "205ee1ae9435af9fdccfae7cab638d6530b6c578df74939ddfcb30219478e970",
+      "git_blob": "2e26f86b4bb410feac7b86e5c2d9ea337709562d"
+    },
+    {
+      "path": "codeplus/commands/handlers/knowledge.py",
+      "raw_sha256": "9f88d25f1eca30791b9baaeb8ca3b2f41f1d109aebcfb3eb1f7166487cc7277b",
+      "git_blob": "4fa1b85be24eed137b83686a3847b50d1938dda5"
+    },
+    {
+      "path": "codeplus/run_policy.py",
+      "raw_sha256": "8a01dd2a24abf41a17ab05ac56eeff171f7305b0d99cc36cc0de966d82269d63",
+      "git_blob": "a87a41634ce1b9d73f2f56c6efa20c3b45b83b5b"
+    },
+    {
+      "path": "deployment/AgenticRAG/README.md",
+      "raw_sha256": "6fee61fe6454fc558aa3665607c22b3120377f40d9b157f87efab26dbd8b7ce4",
+      "git_blob": "1c27d596781d944c759f433bd112094c4e27b10f"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/codeplus-integration.md",
+      "raw_sha256": "0a1d173f8be275dad68c13da1da24c37e2ffec52e866ae7438264a49e932bec7",
+      "git_blob": "22dcc9612dad4209b4b34b74cb883b32d86f8b01"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/host-integration-contract.md",
+      "raw_sha256": "659d5e0e527a1225fbc013208a0eb96bab7d610bf9add4836162d99dee6fc768",
+      "git_blob": "e974c088332749980c5d05a6e9c28ab531ab459b"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/ledger.py",
+      "raw_sha256": "059b2d883c5cf802081d3c396f84598af666c6fba6feaf201302934689b40a8b",
+      "git_blob": "78e2333bc28bda87436bc61bd3f0ae0cce1a19bc"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/meter.py",
+      "raw_sha256": "59e4e46c6092712a8fc7bb6c71ef8172b53c81a212990ea9ab540a7528e4d6ee",
+      "git_blob": "a815c4398e5efea95ef9e7e1f6b7947e78794b5a"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py",
+      "raw_sha256": "0d4d891000d84afd906f67a6699ca164801fb32519bbd6f355e4a32789b802df",
+      "git_blob": "1e2773c2b858bbb180ffa5b43c982df794320d91"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/research.py",
+      "raw_sha256": "9b2e0dd393a641efd9479e1b0c3d1e4f44d6824b9ea480220adc70bded4013cd",
+      "git_blob": "584872eb3742f742ebe7cf0097bf73f991b0b964"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/domain.py",
+      "raw_sha256": "c1b108d19cb8db6f573ff7501bae243eb7b493489e8070a870bb6e2fdc9e3830",
+      "git_blob": "fe27bcb56cfb6e6d4ff4e711688dbcf94930787d"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_codeplus_integration.py",
+      "raw_sha256": "39e99f3816a5b4352901d2d1d49a00c88aba4b4187ce0ab4dea53385da8bcf98",
+      "git_blob": "ad1a37b4ac7cfebc92a7e3a39e93fad17a67008f"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_cursor_window.py",
+      "raw_sha256": "4cfc33a768024e22ec1f0a807d8a6909013ab92f89786b2ad49c601697eb6f96",
+      "git_blob": "d6f6ea75ffc2ea890a94ce4c9b16f7f44d65e746"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_json_output.py",
+      "raw_sha256": "2829d8135d86b125c2e7b6c231c54b3b182bd61786dcc831e5dcbd3507e82a3a",
+      "git_blob": "586b31366e66690496b52ec55ffd2c85ff7c8c0b"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_request_window.py",
+      "raw_sha256": "a59be927873c1bb9ad5957f5d4ad66c991e34f9eb9ed7fee16452c42cfac1d13",
+      "git_blob": "83e21b591f94eb8c6712d7a7df62e1574ed707df"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_research_reports.py",
+      "raw_sha256": "ad742943cef67bb11859852b71ebe7ba9abc7c2bea4cc0d7d07525cc2dc350a2",
+      "git_blob": "3408401e6895c2ce4a9c7fe8b5ca2e12dc460544"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/r20_real_acceptance.py",
+      "raw_sha256": "0f0ef5fcfe5f0d40dd5390830a1165c9e1785075d4f3b4d262087b024f1dc0a1",
+      "git_blob": "1443451afafa4de0b8ca8156033a3ef7e7b5b956"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R20.md",
+      "raw_sha256": "5ee5225fc0c8897c9b05716da634d546fd243419f3d51da7db1909d715bf6903",
+      "git_blob": "7d90a1841a77bb2aea72591a17e97db8d8f57381"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R20-files.txt",
+      "raw_sha256": "ddb947f29bb55463a94e6ab874140a1475bccfa603e963a964c458b123cc6e09",
+      "git_blob": "cd66adcd1fef0a86f74949514876ce730f2e8247"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R20-executor.json",
+      "raw_sha256": "05dde75d3ec97fdba135aee376bc2fc1db0c163f12085b0494c5d344818a4c21",
+      "git_blob": "28981b8ad57e930a6770d7300535d24a43f5461c"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R20-assignment.md",
+      "raw_sha256": "ade75fe5b69667dd7716977e51be949aeff44709a2da75b99639405ee95e15ef",
+      "git_blob": "951ccd803b554e1cdcb9a2b0e34c119aec13470f"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R20-leader-revision-request.md",
+      "raw_sha256": "49865026e8010ca4e92f8bb9b9c71698010d44bc2a2e8bbe605e025264b47c13",
+      "git_blob": "79c3b800b5e7c770c17aee98fa8787db25045988"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R20-leader-native-tools-revision.md",
+      "raw_sha256": "53d82d65109cb0fa052960b3703f3e57c4be88c3f7ee6bbad02743a8f72c075f",
+      "git_blob": "be76ee61c49e73de9a4077e5029a73aedafbbfcc"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R20-leader-review.md",
+      "raw_sha256": "4e4c7601bc3feb72c685af75fc0fa65f1ef17b2f023e8f3656c91aa999aee3da",
+      "git_blob": "34bd15eb65d2090d16115b496e24874849280e27"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R20-leader-validation.json",
+      "raw_sha256": "e372001ada8472eeaf8e9077489854881c3bd6e7bc694c6364460b9ec267f388",
+      "git_blob": "5b3db7cef67167b85b4dfcefd7b43f162438910e"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R19-leader-postcommit.json",
+      "raw_sha256": "1849908bc2ffcbb85205f3f8954d2aa3d61ec2859d36b823ac855ec951a3ace3",
+      "git_blob": "0581c14463fcab14031a05fbbc4b11c360128fce"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-checklist.md",
+      "raw_sha256": "29bc8f5fce0199b6f771b34c725418b4c31212075dbb5df92bfd6e19233af042",
+      "git_blob": "156e9c93e1e2a504a4701e3cc3e8d0051ab23fa9"
+    }
+  ],
+  "self_path": "deployment/AgenticRAG/docs/implementation-records/R20-leader-precommit.json",
+  "exact_paths": [
+    "codeplus/__main__.py",
+    "codeplus/agent.py",
+    "codeplus/app.py",
+    "codeplus/client.py",
+    "codeplus/commands/handlers/knowledge.py",
+    "codeplus/run_policy.py",
+    "deployment/AgenticRAG/README.md",
+    "deployment/AgenticRAG/docs/codeplus-integration.md",
+    "deployment/AgenticRAG/docs/host-integration-contract.md",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/ledger.py",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/meter.py",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/research.py",
+    "deployment/AgenticRAG/src/agentic_rag/domain.py",
+    "deployment/AgenticRAG/tests/test_codeplus_integration.py",
+    "deployment/AgenticRAG/tests/test_cursor_window.py",
+    "deployment/AgenticRAG/tests/test_json_output.py",
+    "deployment/AgenticRAG/tests/test_request_window.py",
+    "deployment/AgenticRAG/tests/test_research_reports.py",
+    "deployment/AgenticRAG/tests/r20_real_acceptance.py",
+    "deployment/AgenticRAG/docs/implementation-records/R20.md",
+    "deployment/AgenticRAG/docs/implementation-records/R20-files.txt",
+    "deployment/AgenticRAG/docs/implementation-records/R20-executor.json",
+    "deployment/AgenticRAG/docs/implementation-records/R20-assignment.md",
+    "deployment/AgenticRAG/docs/implementation-records/R20-leader-revision-request.md",
+    "deployment/AgenticRAG/docs/implementation-records/R20-leader-native-tools-revision.md",
+    "deployment/AgenticRAG/docs/implementation-records/R20-leader-review.md",
+    "deployment/AgenticRAG/docs/implementation-records/R20-leader-validation.json",
+    "deployment/AgenticRAG/docs/implementation-records/R19-leader-postcommit.json",
+    "deployment/AgenticRAG/docs/implementation-checklist.md",
+    "deployment/AgenticRAG/docs/implementation-records/R20-leader-precommit.json"
+  ],
+  "count": 31,
+  "normal_chain_boundary": {
+    "strict_normal_chain": "FAIL retained without rewriting or retry. Three completed plus deletion partial/search_limit.",
+    "feature_contract": "D14/D55 truthful budget stop, current evidence, lineage, fresh budgets and preservation verified. Executor completed deletion independently read back with same final packages.",
+    "quality": "Search convergence, unsupported speculative wording and provider preambles retained for R23/R24. No quality threshold changed or declared passed."
+  },
+  "no_push": true,
+  "staged_diff_check_passed": true
+}

@@ -14,7 +14,31 @@
 
 fixed 的 search 工具只接收 query，每次使用绑定路线和重排要求，可改写问题、多轮搜索和 open。auto 额外接收 `strategy: dense|bm25|hybrid` 和 `rerank: bool`；未提供的选项使用运行基础配置，不继承上一次调用。候选数、模型、库、版本、预算不能由模型覆盖；核心直接调用也执行相同的模式约束。BM25 不请求查询 Embedding；无重排时不连接模型，启用重排时只调用精排模型。失败返回阶段、类别、call_id、允许动作和本次选择，下一次 retry/改选必须是 Agent 新的显式调用，程序不自动降级。
 
-`KnowledgePolicy(..., task_kind='report', mode='fixed')` 和 `load_policy(..., task_kind=..., mode=...)` 接通两类预算，旧调用默认 qa。report 在 R19 只选择预算，报告保存与继续研究由 R20 接通。预算类型与检索模式正交，模式来源另存 JSON，不修改旧 `RunConfiguration` 的序列化与指纹。
+`KnowledgePolicy(..., task_kind='report', mode='fixed')` 和 `load_policy(..., task_kind=..., mode=...)` 接通两类预算，旧调用默认 qa。R20 的 report 提示同一 Agent 在既有 JSON 的 `markdown` 字段组织结论、比较、分歧、证据、推断标识和局限；完整响应不能在 JSON 前后添加序言或步骤宣告。中文问题由同一模型生成/改写英文 query，中文答复，英文直接引文保留原样。预算类型与检索模式正交，模式来源另存 JSON，不修改旧 `RunConfiguration` 的序列化与指纹。语义质量和约束保留需要实测，程序引用校验本身不保证结论正确。
+
+知识 compat 仅在不提供工具的 finalize/citation_repair 请求通过可选 `ModelCallControl.json_output` 使用提供方原生 `response_format={"type":"json_object"}`；agent 探索保留普通工具调用，compact 和普通宿主请求也不带此字段。请求预览和最终 HTTP 原始正文门使用同一目的选择，原固定 encoder 的 response format 模板完整计量实际字段，不添加经验常数。计量身份为 `deepseek-v41-full-template-json-object-utf8-upper-v2`；已保存运行的冻结身份不改写。严格 JSON 解析、精确引用校验和既有一次修正仍保留，不剥离前缀或另增重试。
+
+原生格式参数不能替代实际输出校验：真实提供方曾返回空白及损坏的引号转义。收尾超窗时，先移除冗余普通消息，再对当前可信正文做完整工具结果的等价去重；只有去重后的完整请求能装入原窗口才采用。比较当前 document_version、精确区间和实际正文，保留完整 call/result 配对；大结果试算不合时保留原历史继续既有淘汰，不提前丢掉仍可容纳的小结果。不会从归档补回正文或增加预算。
+
+报告与续研使用原有入口：
+
+```text
+/knowledge report --output "D:\Reports\certificates.md" --mode auto 仅比较2024年的认证，说明证据与局限
+/knowledge continue --output "D:\Reports\certificates-followup.md" 优先补查夜间资格的分歧
+/knowledge continue --run <运行UUID> 继续补查尚未解决的问题
+codeplus -p "生成中文研究报告" --knowledge-library <库UUID> --knowledge-report report.md --output-format stream-json
+codeplus -p "继续补查分歧" --knowledge-library <库UUID> --knowledge-continue <运行UUID> --knowledge-report followup.md --output-format stream-json
+```
+
+`--knowledge-task qa|report` 可显式选任务类型；`--knowledge-report` 默认选择 report，不能与 qa 同用。TUI `continue` 默认承接本会话最近运行，也可指定 `--run`；`-p` 必须明确给 `--knowledge-continue`。新一轮默认 QA，有输出路径时使用 report 预算。相对路径按宿主工作目录解析，路径来自用户入口，模型不能提交任意 WriteFile。`KnowledgePolicy` 接收可选 `report_path`、UUID 类型 `parent_run_id`，`load_policy` 接受它们的字符串形式。
+
+引用整份校验通过后，宿主才用原 WriteFile 的权限、读取后覆盖和错误规则落盘。已有文件必须先在普通宿主通过 ReadFile 读取，且此后没有变化；新建的非交互会话无法继承旧读取缓存。权限拒绝、无交互 ask 或实际写入错误均返回失败，不自动批准。`acceptEdits` 等宿主权限模式的意义不变。继续研究必须选择新的报告路径，历史报告路径即使已读也不能复用。
+
+`ValidatedArtifact.sha256` 对应逻辑 Markdown UTF-8；`RunOutcome.save.sha256` 对应实际回读的文件字节，Windows 换行转换时两者可能不同。`save` 还给出绝对路径、字节数、`saved|failed|interrupted` 和原因。`answer_status` 与保存结果分别存于 `host_runs.detail`；保存失败的整体状态为 `incomplete/report_save_failed`。写成后才取消/超时仍保留真实保存结果，整体运行仍标取消/未完成。报告正文与运行状态需一起读取，部分答案文件不会伪装为完整完成。
+
+所有终态的 `RunOutcome`、completion 回调 `run_status` 和 `-p` 最终 JSON 都包含 `run_id`；无有效 artifact 的预算停止也可显式继续。`research.rounds` 给出每轮父子关系、库/版本、预算、状态、停止原因、用量和保存信息，`research.total_usage` 汇总本条父链，任何未知 token 分项继续保持 null。TUI 显示运行 ID、本轮及累计 token；适配层 `research.history(catalog, run_id)` 可重新读取逐轮账本。
+
+继续使用 `Catalog.start_current_run(parent_run_id=...)` 原子绑定开始时最新发布版。公开进度写入现有 `host_runs.detail.progress`，保存目标、按序的真实用户请求/约束、覆盖/待查问题、公开发现及来源线索。模型输出可添加 `progress`，包含 `covered/pending/findings/revised/unverified` 字符串数组；旧 `{markdown,citations}` 答复仍可用，其已校验公开答案正文作为待核后备线索，不复制附加的原文脚注。中间失败轮不会清掉祖先记录。历史发现始终待核，只有本轮 search/open 正文的实际送达回执能产生新证据，即使版本相同也不继承旧 evidence ID。换库、运行仍在进行、目标或记录缺失均给出明确缺口；没有自动后台续研。完整管理命令及 Remote 接入仍属 R21。
 
 候选排名与融合/精排诊断不进入模型正文，详见 [检索调用与追踪](retrieval.md)。其他工具、MCP、子 Agent、团队、外部通知入口不可进入知识库 run。可执行或异步 hooks 不支持；同步 prompt hooks 进入同一完整计量。Remote 明确返回 feature_not_available。活跃知识库任务由自己的循环管理 compact，UI 在取消收束前仍保持 busy；普通手动 compact 不并发修改其上下文。
 

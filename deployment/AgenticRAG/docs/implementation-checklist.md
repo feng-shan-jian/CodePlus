@@ -39,8 +39,8 @@
 | R16 | COMMITTED | /root/r16_model_switch | [Leader 独立验收](implementation-records/R16-leader-review.md)；205项、两路安装、真实切换/恢复及schema9→10通过 | `835b4887c21588f7e0165e1c7ff2477c3b4a1b6c` |
 | R17 | COMMITTED | /root/r17_retrieval | [Leader 独立验收](implementation-records/R17-leader-review.md)；191项、两路安装、真实故障/无模型BM25与schema10→11通过，600条复核/200条RRF复算一致 | `1fd01183f9ce914e022d923debc13553b0f71d27` |
 | R18 | COMMITTED | /root/r18_rerank_context | [Leader 独立验收](implementation-records/R18-leader-review.md)；217项通过/1跳过，必要补测1通过；两路安装、真实GPU/Milvus及600条/10000输入复核通过；完整窗口限制由R19承接 | `cef8821a78447e5dde418cb1d68c6ac73c81fdc7` |
-| R19 | ACCEPTED | /root/r19_modes_budget | [Leader 独立验收](implementation-records/R19-leader-review.md)；318项及宿主139项通过、1条件跳过，两路安装、真实GPU/Milvus和auto/report、实际-p fixed/qa通过 | 待精确本地提交 |
-| R20 | TODO | — | — | — |
+| R19 | COMMITTED | /root/r19_modes_budget | [Leader 独立验收](implementation-records/R19-leader-review.md)；318项及宿主139项通过、1条件跳过，两路安装、真实GPU/Milvus和auto/report、实际-p fixed/qa通过 | `41802ffe9061856dc8d2ea1e4ef0fdbdad1d143a` |
+| R20 | ACCEPTED | /root/r20_report_continue；Leader 独立验收 | [独立验收](implementation-records/R20-leader-review.md)；125相关通过，最终包/实际报告与续研/版本引用保全通过；删除独立轮按D14预算停止，正常整链FAIL原样保留，质量收敛留R23 | 待精确本地提交 |
 | R21 | TODO | — | — | — |
 | R22 | TODO | — | — | — |
 | R23 | TODO | — | — | — |
@@ -266,12 +266,12 @@ R12前置独立整合：旧RAG清理 COMMITTED，`5dbe979a330a6b157adfba7ad3ea82
 <a id="r20"></a>
 ### R20：报告、跨语言与继续研究
 
-- [ ] 同一个 CodePlus Agent 完成结构化 Markdown 报告，覆盖任务维度、比较、分歧、推断标识和局限；未增加专用多阶段报告引擎。
-- [ ] 中文问题由现有聊天模型生成/改写英文 query，约束保留，中文答复及英文原文引用；核心没有独立翻译 LLM，全部调用计入预算。
-- [ ] 报告在引用校验后保存，权限/覆盖规则沿用宿主；真实文件与返回状态一致，失败不声称保存成功。
-- [ ] 明确“继续研究”才开启新运行，承接目标/发现线索/缺口，使用新预算和当前最新发布版；同版也重新取得本轮正文。
-- [ ] 新版更新/删除旧来源、缺少继续记录、换库及预算停止场景正确；不偷用旧 evidence 资格、不覆写旧报告、不自动后台续研。
-- [ ] 父子运行和逐轮/累计成本可核查；保留可交接进度，不保存隐藏推理文本。
+- [x] 同一个 CodePlus Agent 完成结构化 Markdown 报告，覆盖任务维度、比较、分歧、推断标识和局限；未增加专用多阶段报告引擎。
+- [x] 中文问题由现有聊天模型生成/改写英文 query，约束保留，中文答复及英文原文引用；核心没有独立翻译 LLM，全部调用计入预算。
+- [x] 报告在引用校验后保存，权限/覆盖规则沿用宿主；真实文件与返回状态一致，失败不声称保存成功。
+- [x] 明确“继续研究”才开启新运行，承接目标/发现线索/缺口，使用新预算和当前最新发布版；同版也重新取得本轮正文。
+- [x] 新版更新/删除旧来源、缺少继续记录、换库及预算停止场景正确；不偷用旧 evidence 资格、不覆写旧报告、不自动后台续研。
+- [x] 父子运行和逐轮/累计成本可核查；保留可交接进度，不保存隐藏推理文本。
 
 <a id="r21"></a>
 ### R21：命令与使用流程

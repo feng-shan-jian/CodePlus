@@ -8,6 +8,7 @@ import os
 import sys
 import time
 from contextlib import aclosing
+from dataclasses import asdict
 from pathlib import Path
 
 from codeplus import crashlog
@@ -64,11 +65,21 @@ def main() -> None:
                         help='Query the selected knowledge library with -p (development adapter)')
     parser.add_argument('--knowledge-mode', choices=['fixed','auto'], default=None,
                         help='Retrieval mode for this knowledge task only')
+    parser.add_argument('--knowledge-task', choices=['qa','report'], default=None,
+                        help='Question or structured Markdown report budget')
+    parser.add_argument('--knowledge-report', default=None, metavar='PATH',
+                        help='Save the validated report to this user-selected path')
+    parser.add_argument('--knowledge-continue', default=None, metavar='RUN_ID',
+                        help='Explicitly continue this research run with a new budget and latest version')
     args = parser.parse_args()
     if args.knowledge_library and (args.p is None or args.remote):
         parser.error('--knowledge-library requires -p and is unavailable in Remote')
     if args.knowledge_mode is not None and not args.knowledge_library:
         parser.error('--knowledge-mode requires --knowledge-library')
+    if (args.knowledge_task or args.knowledge_report or args.knowledge_continue) and not args.knowledge_library:
+        parser.error('--knowledge-task, --knowledge-report and --knowledge-continue require --knowledge-library')
+    if args.knowledge_report and args.knowledge_task == 'qa':
+        parser.error('--knowledge-report requires a report task')
 
     try:
         config = load_config()
@@ -90,7 +101,9 @@ def main() -> None:
     if args.p is not None:
         output_format = getattr(args, "output_format", "text")
         asyncio.run(_run_prompt(config, permission_mode, hook_engine, args.p, output_format,
-                               knowledge_library=args.knowledge_library, knowledge_mode=args.knowledge_mode))
+                               knowledge_library=args.knowledge_library, knowledge_mode=args.knowledge_mode,
+                               knowledge_task=args.knowledge_task, knowledge_report=args.knowledge_report,
+                               knowledge_continue=args.knowledge_continue))
         return
 
     # Remote 模式：启动 WebSocket 服务器，浏览器访问 http://localhost:18888
@@ -132,7 +145,8 @@ def main() -> None:
         raise
 
 
-async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_format: str = "text", *, knowledge_library: str | None = None, knowledge_mode: str | None = None) -> None:
+async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_format: str = "text", *, knowledge_library: str | None = None, knowledge_mode: str | None = None,
+                      knowledge_task: str | None = None, knowledge_report: str | None = None, knowledge_continue: str | None = None) -> None:
     from codeplus.agent import (
         Agent,
         CompactNotification,
@@ -187,7 +201,12 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
             from agentic_rag.adapters.codeplus.policy import load_policy
         except ImportError as error:
             raise RuntimeError('Install the independent codeplus-agentic-rag development package into this host environment') from error
-        policy = load_policy(config.knowledge_development_config, knowledge_library, provider, mode=knowledge_mode)
+        options = {'mode':knowledge_mode}
+        if knowledge_task or knowledge_report:
+            options.update(task_kind=knowledge_task or 'report', report_path=knowledge_report)
+        if knowledge_continue:
+            options['parent_run_id'] = knowledge_continue
+        policy = load_policy(config.knowledge_development_config, knowledge_library, provider, **options)
     client = create_client(provider)
     # 第 2 层：尽力从 provider 自动拉取模型的 context window（缓存在 provider 上）。
     # 不会抛异常或阻塞启动；失败则退化到映射表。
@@ -421,9 +440,17 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
                 emit_json({'type':'result', 'result':text_buf,
                     'status':outcome.status if outcome else 'failed',
                     'stop_reason':outcome.reason if outcome else 'explicit_error',
+                    'run_id':outcome.run_id if outcome else None,
+                    'save':asdict(outcome.save) if outcome and outcome.save else None,
+                    'research':outcome.research if outcome else None,
                     'duration_ms':int((time.monotonic()-start)*1000), 'tool_calls':tool_calls})
-            elif text_buf:
-                print(text_buf, file=output, flush=True)
+            else:
+                if text_buf:
+                    print(text_buf, file=output, flush=True)
+                if outcome:
+                    print(f'Knowledge run {outcome.run_id} {outcome.status}: {outcome.reason}', file=output, flush=True)
+                    if outcome.save:
+                        print('Report '+outcome.save.status+': '+outcome.save.path, file=output, flush=True)
             return
 
         # 如果有 team 在运行，轮询等待 teammate 完成

@@ -80,7 +80,9 @@ class ModelCallControl(Protocol):
 
 可执行用户 Hooks 能运行任意命令/模型，无法保证预算：首版若该功能会执行这类 Hooks，在 start 前返回明确 `unsupported_execution_hooks` 配置错误；不能静默略过原有拒绝 Hook。无执行副作用的宿主权限规则仍完整保留。提示资料或来源 URL 不是授权，核心不自行访问 URL。模型身份/usage 元数据查询在启动前完成并记录，不在 run 中触发隐形调用。
 
-报告保存是校验后的宿主动作，不是模型可调用的 `WriteFile`。入口把用户指定目标和 ValidatedArtifact 交给宿主既有 WriteFile 实例及原权限执行路径（参数、路径、覆盖、PermissionRequest、适用 Hook 均照旧），使用不可由模型伪造的内部执行能力。能力只批准该 artifact 的 hash/固定路径/一次写入；不能先得到权限再换正文。RAG allowlist 例外只识别此内部能力，不能靠同名工具或模型参数伪造。保存失败分别记录 answer_status 与 artifact_status；不得声称文件已保存。R20 才实现保存，R12 不开放通用写入绕过校验。
+报告保存是校验后的宿主动作，不是模型可调用的 `WriteFile`。入口把用户指定目标和 ValidatedArtifact 交给宿主既有 WriteFile 实例及原权限执行路径（参数、路径、覆盖、PermissionRequest、适用 Hook 均照旧），使用不可由模型伪造的内部执行能力。能力只批准该 artifact 的 hash/固定路径/一次写入；不能先得到权限再换正文。RAG allowlist 例外只识别此内部能力，不能靠同名工具或模型参数伪造。R20 使用 Agent 内部 ToolCallComplete 对象身份完成一次调用，受限 registry 仍只有 search/open；保留原 WriteFile 的读取缓存与文件历史，缺少实例时新建带缓存的 WriteFile。`host_runs.detail.answer_status` 与 `save.status` 分别记录答复和保存结果；不得声称文件已保存。写入及实际字节回读在宿主拥有的任务内完成，先记录路径/摘要再做后续截止检查；取消/超时构造新 outcome 时保留已经发生的保存事实。
+
+R20 向 `HostRunContext` 追加兼容默认值的 `request`，向 `RunOutcome` 追加 `run_id/save/research`，向 `RunScope` 追加可选 `report_path`。`save.sha256` 是实际文件字节摘要，区别于 `ValidatedArtifact.sha256` 的逻辑 Markdown 摘要。completion 回调与 -p 最终结果同步新字段，普通 Agent 不装配策略时接口行为不变。公开进度与父链成本复用 `host_runs` JSON 和原 `runs.parent_run_id`，不增加表；具体参数及失败状态见 [开发使用说明](codeplus-integration.md)。
 
 ## 4. 请求回执与来源精度
 
@@ -181,3 +183,5 @@ R04 当时记录根 force-include 指向旧 `deployment/knowledge/compose.yaml`�
 5. 清理提交后重新定位本表接点、复跑 R04 实验；R12 执行者只在清理后基线接新策略，负责新接口冲突，不能回头套旧清理 patch 删除新 hook。旧临时目录的历史删除阻塞不由 R04 处理，也不作为清理已完成条件虚报。
 
 R12 必测两入口正常/无命中/工具失败/权限拒绝/三路执行/并行预算、每种裁剪/compact/pair修复、三 provider caps与真实终态、取消/consumer-close/finally、一次引用修正、未知usage/隐藏重试、普通任务输出及共享 client 未污染。联网模型/真实 Agent 的完整功能与质量仍由后续 R23/R24 核验；本设计和 MockTransport 只解除接口可实施性问题。
+
+R20 退修在同一 `ModelCallControl` 追加默认关闭的 `json_output`。仅知识 compat 禁用工具的 finalize/citation_repair 启用原生 `response_format={"type":"json_object"}`；agent 探索、compact/无 control 的普通调用均不带字段，其他协议不扩展。`client.py` 在 SDK 序列化前按 control 加固定字段，policy 的完整请求预览遵循同一选择，meter 只接受该精确格式并交给已固定 encoder 的 system response format 模板。原始 HTTP bytes 仍由最后发送门校验和预留，meter 的冻结身份记录模板契约；原 tokenizer/encoder、模型、预算和旧运行记录不变。公开文本仍严格解析为单个 JSON 对象，报告正文位于 markdown 字段。提供方若把 DSML 等工具标记返回在正文中，它们只是文本，不会解析为宿主工具调用。

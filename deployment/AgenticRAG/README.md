@@ -8,7 +8,7 @@
 
 ## 当前开发包
 
-开发接入复用现有 CodePlus 两个 Agent 循环，提供 TUI 的 `/knowledge use/ask/off` 和原 `-p` 的 `--knowledge-library`。显式知识库任务默认 auto，可通过 `--knowledge-mode` 或 `/knowledge ask --mode` 选择 fixed；fixed 搜索只接收 query，auto 只增加三路检索及 Rerank 开关。QA/report 使用各自冻结预算，完整请求与分页均保留原文位置和最终交付校验。普通任务保持原入口。安装、固定回答 tokenizer 和当前限制见 [宿主开发接入](docs/codeplus-integration.md)，调用与追踪见 [检索](docs/retrieval.md)。
+开发接入复用现有 CodePlus 两个 Agent 循环，提供 TUI 的 `/knowledge use/ask/report/continue/off` 和原 `-p` 的 `--knowledge-library`。显式知识库任务默认 auto，可通过 `--knowledge-mode` 或 `/knowledge ask --mode` 选择 fixed；fixed 搜索只接收 query，auto 只增加三路检索及 Rerank 开关。QA/report 使用各自冻结预算，完整请求与分页均保留原文位置和最终交付校验。报告校验后沿宿主权限写文件，继续研究以新运行承接公开线索并重新取证。普通任务保持原入口。安装、固定回答 tokenizer 和当前限制见 [宿主开发接入](docs/codeplus-integration.md)，调用与追踪见 [检索](docs/retrieval.md)。
 
 发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2、APSW 3.53.4.0、markdown-it-py 4.0.0 与 tokenizers 0.23.2；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。本地模型通过独立 CUDA worker 执行；R12 仅提供显式开发接点，完整产品命令与自动重建留后续任务。导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
 

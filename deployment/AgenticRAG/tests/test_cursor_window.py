@@ -13,6 +13,7 @@ from codeplus.client import create_client, scoped_client
 from codeplus.config import ProviderConfig
 from codeplus.conversation import ConversationManager
 from codeplus.tools import ToolRegistry
+from agentic_rag.adapters.codeplus.policy import SYSTEM
 from agentic_rag.domain import Span
 
 H=runpy.run_path(str(Path(__file__).with_name('test_codeplus_integration.py')))
@@ -22,14 +23,21 @@ H=runpy.run_path(str(Path(__file__).with_name('test_codeplus_integration.py')))
 def test_previous_range_continuation_keeps_sibling_tool_pair(tmp_path,completion):
     async def run():
         parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
+        # Keep R19's non-system allowance (8000 - 1693) for the source pairs.
+        # Feature instructions count in the complete request without changing
+        # the space available for the sibling pair or cropped previous page.
+        window=len(SYSTEM.encode())+6307
+        # Force JSON expansion even after SourceSession fits its own page.
+        # This page must still exercise host cropping, not just source paging.
+        line='汉字 '+'"'*8+'\\'*8+'\n'
         scope,canonical=H['setup_scope'](tmp_path,parent,
-            raw=('# Heading\n'+'汉字 "quoted" \\\n'*500).encode(),context_tokens=8000)
+            raw=('# Heading\n'+line*500).encode(),context_tokens=window)
         boundary=3000
         reference=scope.sources.issue_source(scope._fixture_ref,anchor_span=Span(start=boundary,end=boundary+1))
         seen=[];previous=[]
         def transport(request):
             body=json.loads(request.content);seen.append(body)
-            assert len(request.content)<=8000
+            assert len(request.content)<=window
             if len(seen)==1:
                 content=H['sse_text']('Source check. '*140,calls=[
                     ('sibling','knowledge_open',{'source_ref':'src_invalid'}),

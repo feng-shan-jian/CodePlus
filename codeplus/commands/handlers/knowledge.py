@@ -1,5 +1,10 @@
 """Thin development commands; the optional installed adapter owns the feature."""
+import shlex
+
 from codeplus.commands.registry import Command, CommandType
+
+
+USAGE = '/knowledge use <id> | ask [--mode fixed|auto] <question> | report --output <path> [--mode fixed|auto] <task> | continue [--run <id>] [--output <new-path>] [--mode fixed|auto] [request] | off'
 
 
 async def handle_knowledge(ctx):
@@ -35,10 +40,40 @@ async def handle_knowledge(ctx):
             ctx.ui.send_knowledge_message(value)
         else:
             ctx.ui.send_knowledge_message(value, mode=mode)
+    elif action in {'report','continue'}:
+        if not ctx.ui.knowledge_library:
+            ctx.ui.add_system_message('Select a library with /knowledge use <id> first.')
+            return
+        try:
+            tokens = shlex.split(value, posix=False)
+            options = {}
+            while tokens and tokens[0].startswith('--'):
+                key = tokens.pop(0)
+                if key not in {'--mode','--output','--run'} or not tokens or key in options:
+                    raise ValueError('invalid option')
+                options[key] = tokens.pop(0).strip('\"\'')
+            mode, target, parent = (options.get(key) for key in ('--mode','--output','--run'))
+            if mode is not None and mode not in {'fixed','auto'}:
+                raise ValueError('invalid mode')
+            if action == 'report' and (not target or not tokens or parent):
+                raise ValueError('report needs output and task')
+            if action == 'continue':
+                parent = parent or getattr(getattr(ctx.ui, 'last_knowledge_outcome', None), 'run_id', None)
+                if not parent:
+                    ctx.ui.add_system_message('No research run to continue. Use --run <id>, or start a new task with its goal and constraints.')
+                    return
+                from uuid import UUID
+                parent = str(UUID(parent))
+            request = ' '.join(tokens) or 'Continue the previous research, prioritizing unresolved questions.'
+        except ValueError:
+            ctx.ui.add_system_message('Usage: '+USAGE)
+            return
+        ctx.ui.send_knowledge_message(request, mode=mode, task_kind='report' if target else 'qa',
+                                      report_path=target, parent_run_id=parent)
     else:
-        ctx.ui.add_system_message('Usage: /knowledge use <id> | ask [--mode fixed|auto] <question> | off')
+        ctx.ui.add_system_message('Usage: '+USAGE)
 
 
 KNOWLEDGE_COMMAND = Command(name='knowledge', description='Knowledge development queries',
-    usage='/knowledge use <id> | ask [--mode fixed|auto] <question> | off', type=CommandType.LOCAL,
+    usage=USAGE, type=CommandType.LOCAL,
     handler=handle_knowledge)
