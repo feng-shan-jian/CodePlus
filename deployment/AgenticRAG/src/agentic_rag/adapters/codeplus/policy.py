@@ -1,4 +1,4 @@
-"""Fixed retrieval development policy for the existing CodePlus Agent loops.
+"""Run-bound knowledge policy for the existing CodePlus Agent loops.
 
 No model loop lives here. The policy owns only binding, budgets, tools, exact
 citation validation, and resource lifetime for one invocation.
@@ -26,14 +26,14 @@ from codeplus.tools import ToolRegistry
 from codeplus.tools.base import Tool, ToolResult
 
 from ...citations import CitationRegistry
-from ...config import KnowledgeConfig, WorkerExecutionConfig
+from ...config import KnowledgeConfig, WorkerExecutionConfig, RetrievalMode, Route, TaskKind, RunOverride, resolve_run
 from ...model_switch import inspect_model_switch
-from ...domain import RagError, RunStatus, Span, StopReason
-from ...evidence import DeliveryGateway
+from ...domain import RagError, RunStatus, Span, StopReason, SourceRef, ErrorCode
+from ...evidence import DeliveryGateway, MappedSpan
 from ...indexes.milvus import MilvusRevisionIndex
 from ...models.client import LocalModelClient
 from ...retrieval import RetrievalSearch
-from ...sources import SourceBudgetExceeded, SourceSession
+from ...sources import SourceBudgetExceeded, SourceSession, render_payload
 from ...storage import Catalog
 from .ledger import ModelControl, aggregate_usage, encode
 from .meter import DeepSeekTextMeter
@@ -84,6 +84,11 @@ class SearchArguments(BaseModel):
     query: str = Field(min_length=1, max_length=20000)
 
 
+class AutoSearchArguments(SearchArguments):
+    strategy: Route | None = None
+    rerank: bool | None = Field(default=None, strict=True)
+
+
 class OpenArguments(BaseModel):
     model_config = ConfigDict(extra='forbid')
     source_ref: str
@@ -100,40 +105,68 @@ class SourceTool(Tool):
     def __init__(self, scope, kind):
         self.scope, self.kind = scope, kind
         self.name = 'knowledge_'+kind
-        self.params_model = SearchArguments if kind == 'search' else OpenArguments
+        automatic = scope.lease.run.resolved_config.retrieval.mode == 'auto'
+        self.params_model = (AutoSearchArguments if automatic else SearchArguments) if kind == 'search' else OpenArguments
         self.description = ('Search the fixed library revision for relevant canonical source passages. '
             'Repeat with a different query if needed.' if kind == 'search' else
             'Open a source_ref returned by search/open. Read more with next_cursor, or select a section_id. '
             'Use either cursor or section_id, never both.')
+        if kind == 'search':
+            self.description += (' Auto mode: optionally select dense, bm25, or hybrid and rerank; omitted options use this run\'s base selection.'
+                if automatic else ' Fixed mode: every search uses the bound route and rerank setting, including retries.')
 
     async def execute(self, params):
         self.scope.check()
+        previous_page = []
         try:
             if self.kind == 'search':
-                result = await self.scope.owner.run_sync(self.scope.sources.search, params.query)
+                choices = params.model_dump(exclude={'query'}, exclude_none=True)
+                result = await self.scope.owner.run_sync(self.scope.sources.search, params.query, **choices)
             else:
                 result = await self.scope.owner.run_sync(self.scope.sources.open, params.source_ref,
-                    section_id=params.section_id, cursor=params.cursor)
+                    section_id=params.section_id, cursor=params.cursor,
+                    before_read=(lambda:previous_page.append(self.scope._advance_open_window(params))) if params.cursor else None)
             self.scope.check()
         except RagError as error:
+            if previous_page and previous_page[-1] is not None:
+                self.scope._conversation.replace_history(previous_page[-1])
+                self.scope.window_transforms.append({'purpose':'open_cursor_rollback','reason':error.error.code.value})
             if isinstance(error, SourceBudgetExceeded):
                 raise BudgetStop(error.reason) from error
             if error.error.stage == 'source_budget':
                 # A meter/identity failure cannot authorize bounded finalization.
                 self.scope.hard_failure = 'source_budget_failure'
                 raise BudgetStop(self.scope.hard_failure, hard=True) from error
-            return ToolResult(output=encode({'status':'error', 'code':error.error.code,
-                'stage':error.error.stage}), is_error=True)
+            actions = ['retry_same_selection', 'reformulate_query', 'open_returned_source', 'stop_with_gaps']
+            choices = None
+            if self.scope.lease.run.resolved_config.retrieval.mode == 'auto':
+                actions += ['select_strategy', 'select_rerank']
+                choices = {'strategy':['dense','bm25','hybrid'],
+                           'rerank':[False,True] if self.scope.lease.run.resolved_config.knowledge.reranker else [False]}
+            trace = self.scope.sources.retrieval_trace(error.error.call_id) if error.error.call_id else None
+            return ToolResult(output=encode({'status':'error', **error.error.model_dump(mode='json'),
+                'retryable':error.error.retryable or error.error.code in {ErrorCode.WORKER_UNAVAILABLE,ErrorCode.WORKER_BUSY,ErrorCode.DEPENDENCY_UNAVAILABLE},
+                'allowed_actions':actions, 'choices':choices,
+                'selection':trace.get('selection') if trace else None,
+                'next_attempt':'A new explicit tool call uses the same remaining run budget; no automatic retry occurred. '
+                    'In auto mode repeat strategy and rerank to retry that selection; omitted options always use the frozen base, not the previous call.'}), is_error=True)
         output = ToolResult(result.text, source_spans=tuple(SourceSpan(str(m.candidate_id),
             m.source_span.start, m.source_span.end, m.body_span.start, m.body_span.end)
             for m in result.body_mappings))
         self.scope.pending_results[id(output)] = result
+        if self.kind == 'open' and params.cursor:
+            self.scope.pending_ranges[id(output)] = self.scope.sources._resolve(params.cursor,'cursor')['range_end']
         return output
 
 
 class KnowledgePolicy:
-    def __init__(self, config: DevelopmentConfig, kb_id: UUID, provider):
+    def __init__(self, config: DevelopmentConfig, kb_id: UUID, provider, *, task_kind: TaskKind = 'qa', mode: RetrievalMode | None = None):
         self.config, self.kb_id, self.provider = config, kb_id, provider
+        self.override = RunOverride(mode=mode)
+        self.task_kind = task_kind
+        resolve_run(config.knowledge, task_kind, self.override)
+        self.mode_origin = ('explicit' if mode is not None else
+                            'configured' if 'mode' in config.knowledge.retrieval.model_fields_set else 'defaults')
         self.used = False
         self.scope = None
 
@@ -145,13 +178,12 @@ class KnowledgePolicy:
         if context.hook_engine and any(h.action.type != 'prompt' or h.async_exec for h in context.hook_engine.hooks):
             raise ValueError('knowledge_feature_not_available_with_executable_or_async_hooks')
         conf = self.config
-        if conf.knowledge.retrieval.mode != 'fixed':
-            raise ValueError('development_requires_explicit_fixed')
         if context.protocol != self.provider.protocol or context.client.model != self.provider.model:
             raise ValueError('answer_provider_changed_before_run')
         meter = DeepSeekTextMeter(conf.answer_tokenizer, model=self.provider.model,
                                   protocol=context.protocol, base_url=self.provider.base_url)
-        budget = conf.knowledge.budgets.qa
+        resolved = resolve_run(conf.knowledge, self.task_kind, self.override)
+        budget = resolved.budget
         required = 2*conf.finish_input_upper+conf.finalize_output_cap+conf.repair_output_cap
         if required > budget.finish_reserve_tokens:
             raise ValueError('finish_reserve_cannot_cover_two_complete_model_inputs_and_outputs')
@@ -159,9 +191,9 @@ class KnowledgePolicy:
             raise ValueError('finish_input_bound_cannot_fit_system_and_question')
         catalog = Catalog(conf.knowledge.storage.data_dir)
         self.model_switch = inspect_model_switch(catalog, self.kb_id, conf.knowledge)
-        lease = catalog.start_current_run(self.kb_id, conf.knowledge, 'qa')
+        lease = catalog.start_current_run(self.kb_id, conf.knowledge, self.task_kind, override=self.override)
         try:
-            scope = KnowledgeScope(conf, catalog, lease, meter, context, started)
+            scope = KnowledgeScope(conf, catalog, lease, meter, context, started, mode_origin=self.mode_origin)
         except BaseException:
             # No worker operation has been admitted during construction.
             lease.finish(RunStatus.FAILED, 'explicit_error')
@@ -195,9 +227,10 @@ class KnowledgePolicy:
 
 
 class KnowledgeScope:
-    def __init__(self, config, catalog, lease, meter, context, started):
+    def __init__(self, config, catalog, lease, meter, context, started, *, mode_origin=None):
         self.config, self.catalog, self.lease, self.meter = config, catalog, lease, meter
         self.run_id, self.started = str(lease.run.run_id), started
+        self.protocol = context.protocol
         self.budget = lease.run.resolved_config.budget
         self.deadline = started+self.budget.duration_ms/1000
         self.exploration_deadline = self.deadline-self.budget.finish_reserve_ms/1000
@@ -217,6 +250,11 @@ class KnowledgeScope:
         self.validation_errors = []
         self.window_transforms = []
         self.pending_results = {}
+        self.source_metadata = {}
+        self.pending_ranges = {}
+        self.open_ranges = {}
+        self.cursor_pages = {}
+        self._conversation = None
         self.provider = LocalModelClient(config.worker)
         self.backend = None
         self.sources = SourceSession(catalog, lease, meter)
@@ -232,6 +270,10 @@ class KnowledgeScope:
         with catalog._db.transaction(write=True) as db:
             db.execute('INSERT INTO host_runs(run_id,frozen,started_ns) VALUES(?,?,?)',
                 (self.run_id, encode({'meter':meter.frozen_identity(), 'settings':config.model_dump(mode='json'),
+                    'mode':{'value':lease.run.resolved_config.retrieval.mode,
+                            'source':mode_origin or ('configured' if 'mode' in config.knowledge.retrieval.model_fields_set else 'defaults')},
+                    'task_kind':lease.run.resolved_config.task_kind,
+                    'budget':self.budget.model_dump(mode='json'),
                     'entrypoint':context.entrypoint, 'session_id':context.session_id,
                     'owner_nonce':self.owner.nonce}), int(started*1e9)))
             db.execute('UPDATE source_usage SET started_ns=? WHERE run_id=?', (int(started*1e9), self.run_id))
@@ -262,12 +304,131 @@ class KnowledgeScope:
 
     def prepare_turn(self, conversation):
         self.check()
+        self._conversation = conversation
         if self._question is None:
             self._question = next((m.content for m in reversed(conversation.history) if m.role == 'user' and m.content), '')
         if self.purpose == 'agent' and (self.defer_finalize_reason or time.monotonic() >= self.exploration_deadline):
             self.begin_finalize(conversation, self.defer_finalize_reason or 'time_budget')
         if self.purpose != 'agent':
             self._trim_finish(conversation)
+        elif self.protocol == 'openai-compat':
+            self._trim_exploration(conversation)
+
+    def _exploration_window(self, history):
+        paired = ensure_tool_pairing(ConversationManager(history=history).get_messages())
+        mappings = []
+        body = {'model':self.meter.model,
+            'messages':[{'role':'system','content':self.system_prompt}]+build_chat_completion_messages(paired, mappings=mappings, message_offset=1),
+            'max_tokens':self.output_caps['agent'], 'stream':True, 'stream_options':{'include_usage':True},
+            'tools':self.client._convert_tools(self.registry.get_all_schemas('openai-compat'))}
+        raw = encode(body).encode()
+        upper = self.meter.input_upper_bound(raw, output_cap=self.output_caps['agent'])
+        return paired, raw, upper, mappings
+
+    def _crop_source(self, result, index, size):
+        """Re-render actual retained bodies with their exact original positions.
+
+        Existing spill/crop sidecars, rather than stale returned_spans metadata,
+        are authoritative. No archive body is restored by this transformation.
+        """
+        metadata = copy.deepcopy(self.source_metadata[result.tool_use_id])
+        items = {item['candidate_id']:item for item in metadata['items']}
+        selected = []
+        for current, span in enumerate(result.source_spans):
+            kept = span.crop(span.body_start, span.body_start+size) if current == index else span
+            if kept is None:
+                continue
+            # crop() gives offsets relative to its slice; the body still comes
+            # exclusively from the old message and its authenticated sidecar.
+            end = span.body_start+size if current == index else span.body_end
+            item = {**items[span.candidate_id],
+                'returned_spans':[Span(start=kept.source_start,end=kept.source_end).model_dump()],
+                'text':result.content[span.body_start:end]}
+            if item['returned_spans'] != items[span.candidate_id]['returned_spans']:
+                item.pop('lines', None)
+            selected.append(item)
+        metadata['items'] = selected
+        metadata['host_cropped'] = True
+        if 'limited' in metadata:
+            metadata['limited']['by_tokens'] = True
+        if 'returned_spans' in metadata:
+            original_end = metadata['returned_spans'][-1]['end']
+            metadata['returned_spans'] = [span for item in selected for span in item['returned_spans']]
+            if selected and metadata['returned_spans'][-1]['end'] < original_end:
+                metadata['next_cursor'] = 'cur_'+'0'*43
+                metadata['has_more'] = True
+            elif not selected:
+                metadata['next_cursor'] = None
+        result.content, mappings = render_payload(metadata)
+        result.source_spans = tuple(SourceSpan(str(m.candidate_id), m.source_span.start, m.source_span.end,
+                                              m.body_span.start, m.body_span.end) for m in mappings)
+
+    def _trim_exploration(self, conversation):
+        """Fit complete serialized messages and schemas before the actual gate."""
+        history = copy.deepcopy(conversation.history)
+        before = [asdict(span) for m in history for r in m.tool_results for span in r.source_spans]
+        changed = False
+        cropped = set()
+        def fits():
+            paired, raw, upper, mappings = self._exploration_window(history)
+            return (self.sources._count(raw.decode()) <= self.sources.retrieval.context_tokens
+                    and upper+self.output_caps['agent'] <= self.meter.context_window), (paired, raw, upper, mappings)
+        while True:
+            valid, prepared = fits()
+            if valid:
+                if changed:
+                    paired, raw, upper, mappings = prepared
+                    if before and not mappings:
+                        raise BudgetStop('context_limit', hard=True)
+                    self._resume_cropped_opens(paired, cropped)
+                    conversation.replace_history(paired)
+                    self.window_transforms.append({'purpose':'agent','input_upper':upper,'raw_body_bytes':len(raw),
+                        'before_spans':before,'after_spans':[asdict(m.source) for m in mappings]})
+                return
+            bodies = [(r,i,s) for m in history for r in m.tool_results for i,s in enumerate(r.source_spans)]
+            if not bodies:
+                raise BudgetStop('context_limit', hard=True)
+            result,index,span = bodies[0]
+            original = copy.deepcopy(result)
+            # Find the largest retained prefix which fits the complete request;
+            # if no prefix fits, remove this body's contribution, then remeasure.
+            low,high = 0,span.body_end-span.body_start
+            while low < high:
+                middle = (low+high+1)//2
+                result.content,result.source_spans = original.content,original.source_spans
+                self._crop_source(result,index,middle)
+                if fits()[0]: low = middle
+                else: high = middle-1
+            result.content,result.source_spans = original.content,original.source_spans
+            self._crop_source(result,index,low)
+            changed = True
+            cropped.add(result.tool_use_id)
+
+    def _resume_cropped_opens(self, history, cropped):
+        # Issue one actual cursor only after the fitting pass, at the retained
+        # body boundary. The fixed-size placeholder was already fully measured.
+        for message in history:
+            for result in message.tool_results:
+                if not result.source_spans or result.tool_use_id not in cropped:
+                    continue
+                metadata, _ = json.JSONDecoder().raw_decode(result.content)
+                if metadata.get('next_cursor') != 'cur_'+'0'*43:
+                    continue
+                item = metadata['items'][-1]
+                ref = SourceRef.model_validate_json(encode(self.sources._resolve(item['source_ref'],'source')['ref']))
+                ref = ref.model_copy(update={'section_id':UUID(item['section_id'])})
+                section = self.sources._read_source(ref).section(ref.section_id)
+                end = item['returned_spans'][-1]['end']
+                with self.catalog._db.transaction(write=True) as db:
+                    metadata['next_cursor'] = self.sources._handle(db,'cursor',{'source_token':item['source_ref'],
+                        'ref':ref.model_dump(mode='json'), 'next_cp':end,
+                        'range_end':self.open_ranges.get(result.tool_use_id) or section.span.end})
+                self.cursor_pages[metadata['next_cursor']] = result.tool_use_id
+                for payload_item, span in zip(metadata['items'], result.source_spans, strict=True):
+                    payload_item['text'] = result.content[span.body_start:span.body_end]
+                result.content, mappings = render_payload(metadata)
+                result.source_spans = tuple(SourceSpan(str(m.candidate_id), m.source_span.start, m.source_span.end,
+                                                      m.body_span.start, m.body_span.end) for m in mappings)
 
     def begin_finalize(self, conversation, reason):
         self.check()
@@ -350,12 +511,52 @@ class KnowledgeScope:
             db.execute("UPDATE host_tool_calls SET status='admitted',reason=NULL WHERE run_id=? AND tool_call_id=? AND status='rejected'", (self.run_id, tool_id))
         return tool_id
 
+    def _advance_open_window(self, params):
+        """Explicit pagination replaces its previous page in the current window.
+
+        Confirmed historical evidence remains eligible. This local message
+        transition neither sends a model request nor refunds cumulative usage.
+        """
+        self.check()
+        if self._conversation is None:
+            return
+        previous = self.cursor_pages.get(params.cursor)
+        if previous is None:
+            previous = next((call_id for call_id,metadata in self.source_metadata.items()
+                if params.cursor in (metadata.get('next_cursor'),metadata.get('previous_cursor'))),None)
+        if previous is None:
+            return
+        history = self._conversation.history
+        if not any(result.tool_use_id == previous for message in history for result in message.tool_results):
+            return
+        old_history = copy.deepcopy(history)
+        for message in history:
+            message.tool_uses = [use for use in message.tool_uses if use.tool_use_id != previous]
+            message.tool_results = [result for result in message.tool_results if result.tool_use_id != previous]
+        self._conversation.replace_history([message for message in history
+            if message.content or message.tool_uses or message.tool_results or message.thinking_blocks])
+        _,raw,_,mappings = self._exploration_window(self._conversation.history)
+        mapped = tuple(MappedSpan(UUID(item.source.candidate_id),
+            Span(start=item.source.source_start,end=item.source.source_end),item.path,
+            Span(start=item.source.body_start,end=item.source.body_end),item.path[:-1]+('tool_call_id',)) for item in mappings)
+        permit = self.gateway.prepare(raw,mapped,purpose='explore',protocol='compat')
+        try:
+            self.gateway.retain_prepared_window(permit)
+        finally:
+            self.gateway.settle(permit,'not_sent')
+        self.window_transforms.append({'purpose':'open_cursor','removed_tool_call_id':previous,
+                                       'raw_body_bytes':len(raw),'retained_spans':[asdict(m.source) for m in mappings]})
+        return old_history
+
     async def tool_finished(self, permit, result):
         if result is not None:
             self.check()
             source = self.pending_results.pop(id(result), None)
             if source is not None and not result.is_error:
                 self.gateway.bind_tool_result(source, permit)
+                self.source_metadata[permit] = {**source.payload, 'items':[
+                    {key:value for key,value in item.items() if key != 'text'} for item in source.payload.get('items',())]}
+                self.open_ranges[permit] = self.pending_ranges.pop(id(result), None)
         with self.catalog._db.transaction(write=True) as db:
             db.execute('UPDATE host_tool_calls SET status=? WHERE run_id=? AND tool_call_id=?',
                 ('ok' if result is not None and not result.is_error else 'error', self.run_id, permit))
@@ -496,9 +697,9 @@ class KnowledgeScope:
             self._closed = True
 
 
-def load_policy(path: str, kb_id: str, provider) -> KnowledgePolicy:
+def load_policy(path: str, kb_id: str, provider, *, task_kind: TaskKind = 'qa', mode: RetrievalMode | None = None) -> KnowledgePolicy:
     target = Path(path)
     if not target.is_absolute():
         raise ValueError('knowledge_development_config_requires_absolute_path')
     return KnowledgePolicy(DevelopmentConfig.model_validate_json(target.read_text(encoding='utf-8')),
-                           UUID(kb_id), provider)
+                           UUID(kb_id), provider, task_kind=task_kind, mode=mode)

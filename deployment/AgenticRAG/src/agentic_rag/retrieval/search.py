@@ -16,6 +16,17 @@ from ..storage import publication, readers
 from .rrf import reciprocal_rank_fusion
 
 
+def select_retrieval(config, *, strategy=None, rerank=None):
+    """Resolve one call without changing the run's frozen base configuration."""
+    if ((strategy is not None and (not isinstance(strategy,str) or strategy not in {'dense', 'bm25', 'hybrid'})) or
+            (rerank is not None and type(rerank) is not bool)):
+        raise RagError(ErrorCode.INVALID_INPUT, 'unsupported retrieval selection', stage='retrieval_selection')
+    if config.mode == 'fixed' and (strategy is not None or rerank is not None):
+        raise RagError(ErrorCode.INVALID_INPUT, 'fixed mode accepts query only', stage='retrieval_selection')
+    return config.model_copy(update={'route':strategy if strategy is not None else config.route,
+                                     'rerank':rerank if rerank is not None else config.rerank})
+
+
 class RetrievalSearch:
     """Execute the run's frozen route; a BM25 run accepts provider=None.
 
@@ -48,18 +59,23 @@ class RetrievalSearch:
                 pin.state != 'active' or run.status != RunStatus.RUNNING):
             raise index_error('run binding no longer active', 'retrieval')
 
-    def search(self, query, *, limit=10, deadline_monotonic_ns=None):
+    def search(self, query, *, limit=10, deadline_monotonic_ns=None, strategy=None, rerank=None):
         if not isinstance(query, str) or not query.strip() or type(limit) is not int or not 1 <= limit <= 32768:
             raise ValueError('nonempty query and positive bounded candidate limit required')
-        limits = self._limits(limit)
+        config = select_retrieval(self.run.resolved_config.retrieval, strategy=strategy, rerank=rerank)
+        route = strategy if strategy is not None else self.route
+        limits = (self._limits(limit) if strategy is None else
+                  {branch:getattr(config, branch+'_candidates') for branch in
+                   (('dense', 'bm25') if route == 'hybrid' else (route,))})
         if any(not 1 <= value <= 16384 for value in limits.values()):
             raise ValueError('branch candidate limits must be 1..16384')
-        config = self.run.resolved_config.retrieval
         start = time.perf_counter()
         request_id = uuid4()
         trace = {'schema_version':1, 'request_id':str(request_id), 'run_id':str(self.run_id),
             'kb_id':str(self.run.kb_id), 'revision_id':str(self.run.revision_id),
-            'resolved_config_hash':self.run.resolved_config_hash, 'query':query, 'route':self.route,
+            'resolved_config_hash':self.run.resolved_config_hash, 'query':query, 'route':route,
+            'selection':{'mode':config.mode, 'requested':{'strategy':strategy, 'rerank':rerank},
+                         'effective':{'strategy':route, 'rerank':config.rerank}},
             'collection_name':self.artifact['collection_name'], 'filter':'',
             'index':self.artifact['spec']['index'], 'index_schema_hash':self.artifact['schema_hash'],
             'parameters':{'branch_limits':limits, 'result_limit':limit, 'rrf_k':config.rrf_k,
@@ -103,7 +119,7 @@ class RetrievalSearch:
                     finally:
                         detail['elapsed_ms'] = (time.perf_counter()-begin)*1000
                 stage = 'fusion'
-                if self.route == 'hybrid':
+                if route == 'hybrid':
                     trace['fusion'] = reciprocal_rank_fusion(candidates, config.rrf_k)
                     by_id = {hit['chunk_id']:hit for hits in candidates.values() for hit in hits}
                     output = [{**by_id[item['chunk_id']], 'branch':'hybrid', 'score':item['score'],
@@ -111,7 +127,7 @@ class RetrievalSearch:
                 else:
                     # Preserve the backend's order for single-route retrieval.
                     seen = set(); output = []
-                    for hit in candidates[self.route]:
+                    for hit in candidates[route]:
                         if hit['chunk_id'] not in seen:
                             seen.add(hit['chunk_id']); output.append(hit)
                 if config.rerank:
@@ -155,6 +171,8 @@ class RetrievalSearch:
     def _rerank(self, query, hits, trace, deadline):
         """Score complete original Chunks; no partial ranking escapes a failure."""
         profile = self.run.resolved_config.knowledge.reranker
+        if profile is None:
+            raise RagError(ErrorCode.CAPABILITY_UNAVAILABLE, 'no reranker configured for this run', stage='rerank')
         trace['profile_fingerprint'] = profile.identity
         if not hits:
             trace['status'] = 'empty'

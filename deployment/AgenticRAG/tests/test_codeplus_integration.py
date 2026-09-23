@@ -76,9 +76,9 @@ def sse_text(content='', *, calls=None, terminal='stop', reasoning=None):
     return ('data: '+json.dumps(chunk)+'\n\ndata: [DONE]\n\n').encode()
 
 
-def setup_scope(tmp_path, parent, raw=None):
+def setup_scope(tmp_path, parent, raw=None, *, context_tokens=50000, protocol='openai-compat', opens=100):
     kwargs = {'raw':raw} if raw is not None else {}
-    catalog, old, source_session, source, version, chunks, ref = H['fixture'](tmp_path, context_tokens=50000, **kwargs)
+    catalog, old, source_session, source, version, chunks, ref = H['fixture'](tmp_path, context_tokens=context_tokens, opens=opens, **kwargs)
     base = old.run.resolved_config.knowledge.model_dump(mode='json')
     old.close()
     base['budgets']['qa'].update(finish_reserve_tokens=20000)
@@ -88,7 +88,7 @@ def setup_scope(tmp_path, parent, raw=None):
         model_cache=str(tmp_path/'models'), runtime_dir=str(tmp_path/'runtime')), answer_tokenizer=str(tmp_path/'tokenizer'),
         explore_output_cap=1000,finish_input_upper=8000,finalize_output_cap=1000,repair_output_cap=1000,
         compact_output_cap=1000,max_iterations=12,max_tool_attempts=20,cleanup_grace_ms=100)
-    context = HostRunContext('test','session',str(tmp_path),'openai-compat',parent,None,None)
+    context = HostRunContext('test','session',str(tmp_path),protocol,parent,None,None)
     scope = KnowledgeScope(settings,catalog,lease,ControlledMeter(),context,time.monotonic())
     H['dense_fixture'](scope.sources,chunks,version,ref)
     scope._fixture_ref=ref
@@ -745,7 +745,7 @@ def test_sdk_terminal_transport_and_evidence_are_independent(tmp_path,protocol,t
     from codeplus.conversation import Message,ToolResultBlock,ToolUseBlock
     async def run():
         parent=create_client(ProviderConfig('fixture',protocol,'https://fixture.invalid','fixture','synthetic'))
-        scope,_=setup_scope(tmp_path,parent)
+        scope,_=setup_scope(tmp_path,parent,protocol=protocol)
         result,params=await source_tool(scope,'terminal-source')
         conv=ConversationManager(history=[Message('assistant','',tool_uses=[ToolUseBlock('terminal-source','knowledge_open',params)]),
             Message('user','',tool_results=[ToolResultBlock('terminal-source',result.output,source_spans=result.source_spans)])])

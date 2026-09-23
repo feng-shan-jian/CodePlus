@@ -14,13 +14,13 @@ tool_result = session.search(query)
 trace = session.retrieval_trace(tool_result.payload['call_id'])
 ```
 
-BM25 不请求查询 Embedding；`rerank=false` 时零模型连接，启用时仅调用 Rerank。正常宿主策略支持显式 `fixed` 的三路及冻结的 Rerank 开关，仍只向 Agent 暴露 `query`。SourceSession 保留原 `dense=` 接点；自动模式的动态参数留 R19。
+BM25 不请求查询 Embedding；`rerank=false` 时零模型连接，启用时仅调用 Rerank。fixed 模式只接受 query，仍可重复搜索/改写/open。auto 可在 `session.search(query, strategy='bm25', rerank=False)` 或直接 RetrievalSearch.search 中指定本次路线/开关；省略项使用运行基础配置，不沿用前一次选择。选择局部解析，不修改服务的共享 route 或运行配置。fixed 直接传覆盖参数同样报错。SourceSession 保留原 `dense=` 接点，DenseSearch 的显式上限接口不变。
 
 每路使用冻结的 `dense_candidates` / `bm25_candidates`。`RetrievalSearch.search` 的 `limit` 只限制完整评分后的返回数量，完整融合顺序仍在 trace 中。启用 Rerank 时，稳定 ID 去重后的前 `rerank_candidates` 条原始 Chunk 进入评分；关闭时 SourceSession 接纳召回候选并集。原始分数类型分别为 `cosine_similarity` 和 `bm25`。
 
 RRF 只用稳定 Chunk ID 和每路从 1 开始的原始排名：`sum(1 / (rrf_k + rank))`。同一路重复 ID 只取第一次出现的原排名，不压缩其他候选的排名；缺席不贡献分数。同分按 Chunk ID 排序，融合分数类型为 `rrf`，不表示概率或答案置信度。
 
-`result['trace']` 保留 query、库/版本、固定 Collection/过滤条件、索引参数/身份、实际候选上限、每路原候选的 ID/分数/排名、模型耗时、完整融合顺序和最终 ID。异常携带同样的 `retrieval_trace`，保留已完成分支和失败阶段。正常 SourceSession 将它存入 schema11 的 `retrieval_traces`，通过 `call_id` 关联原 `source_calls`。R18 沿用现有表及 JSON，不新增 migration，历史十一份 SQL 保持原字节。
+`result['trace']` 保留 query、库/版本、固定 Collection/过滤条件、索引参数/身份、实际候选上限、每路原候选的 ID/分数/排名、模型耗时、完整融合顺序和最终 ID。`selection` 记录 mode、requested 与 effective；`preceding_call_id` 关联同一运行的上一次搜索，表示调用顺序，不推断模型的重试意图。异常保留已完成分支和失败阶段。SourceSession 将轨迹存入 schema11 的 `retrieval_traces`，通过 call_id 关联原 source_calls。R18/R19 沿用现有表与 JSON，无新 migration，历史十一份 SQL 保持原字节。
 
 一路合法为空允许融合；任一路失败整次报错。失败轨迹不产生 `source_candidates` 或已送达证据，先前已确认的正文仍可引用。轨迹、排名和分数不进入模型正文；引用仍要求既有交付回执。
 

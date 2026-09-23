@@ -62,9 +62,13 @@ def main() -> None:
     )
     parser.add_argument('--knowledge-library', default=None, metavar='UUID',
                         help='Query the selected knowledge library with -p (development adapter)')
+    parser.add_argument('--knowledge-mode', choices=['fixed','auto'], default=None,
+                        help='Retrieval mode for this knowledge task only')
     args = parser.parse_args()
     if args.knowledge_library and (args.p is None or args.remote):
         parser.error('--knowledge-library requires -p and is unavailable in Remote')
+    if args.knowledge_mode is not None and not args.knowledge_library:
+        parser.error('--knowledge-mode requires --knowledge-library')
 
     try:
         config = load_config()
@@ -85,7 +89,8 @@ def main() -> None:
 
     if args.p is not None:
         output_format = getattr(args, "output_format", "text")
-        asyncio.run(_run_prompt(config, permission_mode, hook_engine, args.p, output_format, knowledge_library=args.knowledge_library))
+        asyncio.run(_run_prompt(config, permission_mode, hook_engine, args.p, output_format,
+                               knowledge_library=args.knowledge_library, knowledge_mode=args.knowledge_mode))
         return
 
     # Remote 模式：启动 WebSocket 服务器，浏览器访问 http://localhost:18888
@@ -127,7 +132,7 @@ def main() -> None:
         raise
 
 
-async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_format: str = "text", *, knowledge_library: str | None = None) -> None:
+async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_format: str = "text", *, knowledge_library: str | None = None, knowledge_mode: str | None = None) -> None:
     from codeplus.agent import (
         Agent,
         CompactNotification,
@@ -182,7 +187,7 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
             from agentic_rag.adapters.codeplus.policy import load_policy
         except ImportError as error:
             raise RuntimeError('Install the independent codeplus-agentic-rag development package into this host environment') from error
-        policy = load_policy(config.knowledge_development_config, knowledge_library, provider)
+        policy = load_policy(config.knowledge_development_config, knowledge_library, provider, mode=knowledge_mode)
     client = create_client(provider)
     # 第 2 层：尽力从 provider 自动拉取模型的 context window（缓存在 provider 上）。
     # 不会抛异常或阻塞启动；失败则退化到映射表。
@@ -407,7 +412,7 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
 
                 elif isinstance(event, PermissionRequest):
                     if not event.future.done():
-                        event.future.set_result(PermissionResponse.ALLOW)
+                        event.future.set_result(PermissionResponse.DENY if policy is not None else PermissionResponse.ALLOW)
 
 
         if policy is not None:

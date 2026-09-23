@@ -1,0 +1,790 @@
+{
+  "status": "READY_FOR_LEADER_REVIEW_WITH_EXTERNAL_VALIDATION_BLOCK",
+  "created": 1790150686.2910275,
+  "base_head": "cef8821a78447e5dde418cb1d68c6ac73c81fdc7",
+  "branch": "codex/rag",
+  "written_by": "/root/r19_modes_budget",
+  "no_stage_commit_push": true,
+  "authored_files": [
+    "codeplus/__main__.py",
+    "codeplus/agent.py",
+    "codeplus/app.py",
+    "codeplus/commands/handlers/knowledge.py",
+    "deployment/AgenticRAG/README.md",
+    "deployment/AgenticRAG/docs/codeplus-integration.md",
+    "deployment/AgenticRAG/docs/implementation-records/R19-executor.json",
+    "deployment/AgenticRAG/docs/implementation-records/R19-files.txt",
+    "deployment/AgenticRAG/docs/implementation-records/R19.md",
+    "deployment/AgenticRAG/docs/retrieval.md",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py",
+    "deployment/AgenticRAG/src/agentic_rag/retrieval/search.py",
+    "deployment/AgenticRAG/src/agentic_rag/sources.py",
+    "deployment/AgenticRAG/tests/r19_real_acceptance.py",
+    "deployment/AgenticRAG/tests/test_codeplus_integration.py",
+    "deployment/AgenticRAG/tests/test_cursor_window.py",
+    "deployment/AgenticRAG/tests/test_request_window.py",
+    "deployment/AgenticRAG/tests/test_run_modes.py"
+  ],
+  "private_root": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923",
+  "authored_sha256": {
+    "codeplus/__main__.py": "ffac6deed5fce33a6751d07e1aee101b57c6ad04b48682c89f0fb2e288e12f45",
+    "codeplus/agent.py": "d52b2d5ea6a073676a556fe5976bb21c76ed0efd055f108ea702b5a3db6be061",
+    "codeplus/app.py": "fe40ece6b598a98b200775682013b98e647f259e5864fd1f4278b5cd8eb2e3ea",
+    "codeplus/commands/handlers/knowledge.py": "02c262bf0fcc9fd0893bf9991a77c14db462d9f8de90165f38ee0a3c02e8a0bc",
+    "deployment/AgenticRAG/README.md": "f3a1408a595e4855cced2e57b4823f163b459d4234bb025287f7db21b774a097",
+    "deployment/AgenticRAG/docs/codeplus-integration.md": "b999262146ee521332d60a23933c4dfcb0968cafb85757f09802de17dc33f7fd",
+    "deployment/AgenticRAG/docs/implementation-records/R19-files.txt": "1b3937e2aafc3fcba34913ed64be5ec57d9faeb1558b803b5f9918fc44a8d01b",
+    "deployment/AgenticRAG/docs/implementation-records/R19.md": "e196d43383f0a57aea836d4366e73049ec1364d40feacc28c05c1141dc9a084e",
+    "deployment/AgenticRAG/docs/retrieval.md": "a688ece39f5c1d9fdefc276cc1cc3d45d7be42affc8466f63cb2cd22497836ba",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py": "5754824f7705cb4cd935dc18322c69bc303f243a9df2effde305880a7c15ed40",
+    "deployment/AgenticRAG/src/agentic_rag/retrieval/search.py": "ecba9433668eab3b9ff95242e019eaff1708ba44627910865eab38c9acd6e047",
+    "deployment/AgenticRAG/src/agentic_rag/sources.py": "0efccc45ef65009c85905d62d27087deb535a552c846e85f3522c7006312037d",
+    "deployment/AgenticRAG/tests/r19_real_acceptance.py": "c68e841f18bbd06250984a6d2bea80638b860fb84f7d370ccdce36d953616190",
+    "deployment/AgenticRAG/tests/test_codeplus_integration.py": "b9415b2c038a895f0c26462943ceecba00227625ff191f2eb8028f83273e88ca",
+    "deployment/AgenticRAG/tests/test_cursor_window.py": "1ba52f3e5085e9b4b366b6a31dc4778ed8212de1761a860e697f02928b86cf23",
+    "deployment/AgenticRAG/tests/test_request_window.py": "b4fe7f545e5e75f2aa82df395621212b21d3c53ed37684c726a2168a4f865749",
+    "deployment/AgenticRAG/tests/test_run_modes.py": "bf0ea64b20e45837bf8518f25cd3171591c3cc54dde8cbab260720ac1b68a6f3"
+  },
+  "required_environment": {
+    "R12_ANSWER_TOKENIZER": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r19-executor-20260923\\answer-tokenizer.json"
+  },
+  "answer_tokenizer": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/answer-tokenizer.json",
+    "bytes": 6367257,
+    "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b"
+  },
+  "installed_package_report": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-acceptance.json",
+    "bytes": 29738,
+    "sha256": "3029130f384d42232c5b30f2a2c887c2476917f0dc1a1d7cd72c6a567bc70cd5"
+  },
+  "package_qualification": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/package-qualification.json",
+    "bytes": 150404,
+    "sha256": "6eaee8ceabfebb678b57923436b1d933958de52f487ad087806053d76772026f"
+  },
+  "core_only_package_installation": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/package-install.json",
+    "bytes": 79201,
+    "sha256": "a9493134bc563383e9a4d9766beba8d7d88d8e25afa1684edd0573239a2b357d"
+  },
+  "formal_results": {
+    "cursor-window": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 2,
+      "seconds": 12.731,
+      "skip_reasons": []
+    },
+    "features": {
+      "tests": 56,
+      "failures": 24,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 32,
+      "seconds": 130.988,
+      "skip_reasons": []
+    },
+    "host-regression": {
+      "tests": 140,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 138,
+      "seconds": 8.571,
+      "skip_reasons": [
+        {
+          "type": "pytest.skip",
+          "message": "No suitable system file found for symlink test"
+        }
+      ]
+    },
+    "host-retest": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 1,
+      "seconds": 2.365,
+      "skip_reasons": []
+    },
+    "modes-retest": {
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 20,
+      "seconds": 63.612,
+      "skip_reasons": []
+    },
+    "regression": {
+      "tests": 406,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 406,
+      "seconds": 753.616,
+      "skip_reasons": []
+    },
+    "targeted": {
+      "tests": 160,
+      "failures": 18,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 142,
+      "seconds": 404.799,
+      "skip_reasons": []
+    },
+    "window-final": {
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 16,
+      "seconds": 55.203,
+      "skip_reasons": []
+    },
+    "window-retest": {
+      "tests": 10,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 6,
+      "seconds": 35.975,
+      "skip_reasons": []
+    }
+  },
+  "final_protection": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/protection.json",
+    "bytes": 4207,
+    "sha256": "63e887cf8cd7e430cd078abed9b9705eda7d87281c10f6b23b4d0171e0f57935"
+  },
+  "resources": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/final-resources.json",
+    "bytes": 20955,
+    "sha256": "334c58d232373a321c48e19c86bbae79b6a0fa8c2f32c70550be85478b37a218"
+  },
+  "real_core": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-core.json",
+    "bytes": 109128,
+    "sha256": "97747d0ea1d1c02d6b4e3c31e76380c901d746739327028330ee89c0bbaa9da4"
+  },
+  "real_answer_initial_context_limit": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-completion.json",
+    "bytes": 44108,
+    "sha256": "73ad336d6b8d091029638b19d4363fe6f92bc4bd20235dc240d8d5b451d8da1b"
+  },
+  "real_answer_normal": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-completion-retest.json",
+    "bytes": 91183,
+    "sha256": "f8db1e8b4b884d45da66e32025b712e7b249777a1c20c78b48c3c3fd2c062820"
+  },
+  "real_cli_external_failure": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-cli.json",
+    "bytes": 6061,
+    "sha256": "2385bcd2445c58f4d21620a02ebf9a8509b0763e26e21e38fa78515e98c34bb3"
+  },
+  "real_cli_credential_and_ledger_check": {
+    "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/provider-check.json",
+    "bytes": 22141,
+    "sha256": "44d5ab71668ad703ddabb8ef5ea1d547aa89821c9ca76331c6db0b478abd3500"
+  },
+  "real_scenario_configurations": {
+    "core_original": {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real/development-core.json",
+      "bytes": 7628,
+      "sha256": "2f5e97511dd69cf26256520a792895509370114e71362cc961644c2db9219b58"
+    },
+    "normal_both_entrypoints": {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real/development.json",
+      "bytes": 7626,
+      "sha256": "9bf53d42c461b49db83e11872dbf82319a1c60f470c40a4f1da119e8a592a2de"
+    },
+    "change": "Both normal entrypoints use context_chunks=8 and rerank_candidates=8 instead of core fixture 3/3; token and time budgets unchanged."
+  },
+  "external_validation_block": {
+    "item": "Actual -p fixed/qa completed answer",
+    "status": "NOT_PASSED",
+    "reason": "Official DeepSeek HTTP 402 Insufficient Balance, same effective credential/endpoint/model as successful auto/report",
+    "additional_network_retries": 0,
+    "controlled_permission_test_is_not_a_substitute": true
+  },
+  "required_raw_evidence": [
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/acceptance.json",
+      "bytes": 2976,
+      "sha256": "8e4621e2ec328e8883aaf506126d96325270a5c2fb9f2323c3679cc4b3d9659c"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/acceptance.log",
+      "bytes": 2915,
+      "sha256": "ceb8e744dc790a0401f934e03806dfc17fde708634dbf9630657a55198d8e7b1"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/acceptance.py",
+      "bytes": 1765,
+      "sha256": "07e9e7492d4bbae4b3554bf979cbba4df9c2543e6868e23257a32dc1d0b0d13d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/baseline.json",
+      "bytes": 935396,
+      "sha256": "274fa6f568475148288a9a5baa84ddfe6ebaf63c1a508e99937316f2b2c17ed9"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/CODEPLUS.md",
+      "bytes": 122,
+      "sha256": "0871630e64383997ee9bf1ae2167f837d9f3e68b2c43d7cac2acd03c8a1198e7"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/cursor-window-command.json",
+      "bytes": 743,
+      "sha256": "c8d66a8ebd63cba12813e09b7d58f33764fff3f2d75c6c566f9368f836f19a3f"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/cursor-window-modules.json",
+      "bytes": 25111,
+      "sha256": "bec49dfb1412c5ec503907cb60fec2b13d4bba086ab7f7084e81159650687222"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/cursor-window.log",
+      "bytes": 101,
+      "sha256": "e75e113d6e7aa9fe6ac287ab4914f941e0e65ffcdaf17e0eb6eab3c25f4163d8"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/cursor-window.xml",
+      "bytes": 514,
+      "sha256": "990fabc1c16c8516df99316daddc023385f30ce2ef99a00cfb2b33fcf95ae6a2"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/features-command.json",
+      "bytes": 994,
+      "sha256": "17d44b78714c85fe0946f816a59e7116f2e5fe74ee597f560371f962f3edb220"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/features-modules.json",
+      "bytes": 38837,
+      "sha256": "f5dfa3a713f3ec92efdb2bc7d1ebe7fee0a3b7204c074beea661796f3f6acedc"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/features.log",
+      "bytes": 46257,
+      "sha256": "933954a0401b46f40512c2ee11550165f06121da1cbc4478ccfa41fc9eb353e1"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/features.xml",
+      "bytes": 56272,
+      "sha256": "5b2f33eb68697e4f4989f627d44af7fb263e81a79f17761764fbb0b395c3f576"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/final-resources.json",
+      "bytes": 20955,
+      "sha256": "334c58d232373a321c48e19c86bbae79b6a0fa8c2f32c70550be85478b37a218"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/finalize.py",
+      "bytes": 8178,
+      "sha256": "c8435c089babfada49bd5b506f2361a51bac4dc4e32f9b2fa8d8518d78826546"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host-regression-command.json",
+      "bytes": 957,
+      "sha256": "619845c60a4c5856699b2ff4c0829f2ea6bbee8b74f99f3d96aac4ff4546e992"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host-regression-modules.json",
+      "bytes": 32969,
+      "sha256": "61031515ee566b7a6c102f5bee39e55ef27462d1e8165dd283f645253ab29243"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host-regression.log",
+      "bytes": 798,
+      "sha256": "853727aea72e863026b7a0220490710a2c8271498f715494218f554f16ad267b"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host-regression.xml",
+      "bytes": 16137,
+      "sha256": "af1f44956db5929c6744e7fd767ffc2c4d7febafe83ef8f392e3f425fb4002b2"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host-retest-command.json",
+      "bytes": 836,
+      "sha256": "66b86a5b1b4392ebc6a716bff42daea0b06b6b3c5802b80e09a64cb330133cae"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host-retest-inputs.json",
+      "bytes": 1264,
+      "sha256": "fc66d7435082319a231e7b72f6d9e3095deac3c46ccecc5c5410f428203cacdf"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host-retest-modules.json",
+      "bytes": 13549,
+      "sha256": "ec4ebebfee9e78b82d82ac1fbf75e1d0ac29b9470bd1c8005d8e607da58696b4"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host-retest.log",
+      "bytes": 100,
+      "sha256": "653e6f7390f0c5c00dc20a6f50d4eb79ede4c597dae487883687dad1265d5dc9"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host-retest.xml",
+      "bytes": 341,
+      "sha256": "5c1efcfd601b70bf3f0c950c37cfa4bae855cdcbc57b5463ad8294803efedcbe"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/host_retest.py",
+      "bytes": 1210,
+      "sha256": "1b7ffdee28a2d9ec947b74b508355bc779ffae0f7373b8ada26e21e22048b5e8"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-acceptance.json",
+      "bytes": 29738,
+      "sha256": "3029130f384d42232c5b30f2a2c887c2476917f0dc1a1d7cd72c6a567bc70cd5"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-acceptance.log",
+      "bytes": 66,
+      "sha256": "d73d3c502a8a5c566e2917d8348a131752abba849b282ba0b038b326f53ecec8"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-admitted-window.json",
+      "bytes": 29782,
+      "sha256": "b8e88f5af9de88afb349b79634050fa17eee40a4fb803303a66ed2b30f488acf"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-admitted-window.log",
+      "bytes": 71,
+      "sha256": "aaa8db1e57a78b2f2c38f110b8c4b6d6ea944b47ab437952c2cb1800624ccfb6"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-feature.json",
+      "bytes": 29657,
+      "sha256": "34e6ad7b0bd71f74dcfd83f97cb87557a8837e6f4a255cb67df26ed0fa39d9c2"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-feature.log",
+      "bytes": 63,
+      "sha256": "c63cbb9860ef01897f6411cf56ee100b2ac1c6be0b9cbdf1f415691e18b25e21"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-final-candidate.json",
+      "bytes": 29816,
+      "sha256": "8306d413f1f702248a76f52e65398160e466204185a961fdd7ef0a42a2b6e4ed"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-final-candidate.log",
+      "bytes": 71,
+      "sha256": "f77efbf26e4d1bfa3614994bb719386c668617c9c72d1abe3854119e8ddb558c"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-initial.json",
+      "bytes": 29440,
+      "sha256": "6aaf415191d31e989236e40210de4de12f8579b208f57f4c1d4c201e5e376ed9"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-initial.log",
+      "bytes": 63,
+      "sha256": "ce744e215cd9ed36100be6dc65067fbc8e16eed62ef0d2ee79bccc483665de93"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-window.json",
+      "bytes": 29642,
+      "sha256": "4ec7bf7d1123335a08cfb0376300fa8845388f7af4ce7dc9fbfcf6361fa8457f"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install-window.log",
+      "bytes": 62,
+      "sha256": "a33af9d180eeb451f0537638c1774b6e5aa0aa67bd3831baaffb2b957088b88d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/install.py",
+      "bytes": 1977,
+      "sha256": "e5687e3b3694a1d8aedb550c2238a930867efe913c6bdc829db77bba495753a2"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/modes-retest-command.json",
+      "bytes": 801,
+      "sha256": "04e9ac43e721d4b94f8545e47f1a3745dc5b959f7ec119a64a58dff42c63fd3d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/modes-retest-modules.json",
+      "bytes": 38837,
+      "sha256": "a66f4824a558c1bdc57ad3ffdd7c9bc31cf69eb4616716041fcf81cbca381366"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/modes-retest.log",
+      "bytes": 112,
+      "sha256": "0a60e76562f3341cd774a46d545bc90c3e4e801ddab2534b300e60438b5dacd4"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/modes-retest.xml",
+      "bytes": 3159,
+      "sha256": "c4810fc8cc0d233963d7eddd0d516b2f27e668635a2327212acd98225447c701"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/package-install.json",
+      "bytes": 79201,
+      "sha256": "a9493134bc563383e9a4d9766beba8d7d88d8e25afa1684edd0573239a2b357d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/package-qualification.json",
+      "bytes": 150404,
+      "sha256": "6eaee8ceabfebb678b57923436b1d933958de52f487ad087806053d76772026f"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/package-qualification.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/package_qualification.py",
+      "bytes": 5395,
+      "sha256": "ecc2d4aa051ef6d6a9309d6c38b66f9430a54cc0544258679e33fb2c3c98b520"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/prepare.log",
+      "bytes": 91,
+      "sha256": "7bb5be339241378d9fcae59266c939c3c73bcaf90167c8942621927de6ff32b8"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/prepare.py",
+      "bytes": 2112,
+      "sha256": "738fbc4b331764c10aaffa2d00df21626c5762eb6a0ac28836b8ddd3105ae7a8"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/protection.json",
+      "bytes": 4207,
+      "sha256": "63e887cf8cd7e430cd078abed9b9705eda7d87281c10f6b23b4d0171e0f57935"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/provider-check.json",
+      "bytes": 22141,
+      "sha256": "44d5ab71668ad703ddabb8ef5ea1d547aa89821c9ca76331c6db0b478abd3500"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/provider_check.py",
+      "bytes": 1453,
+      "sha256": "6b70cfaccdc55dec4b04e35953fd9a5c1f8700a73e423d503b040d167fa644ee"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/pyproject.toml",
+      "bytes": 691,
+      "sha256": "b3352ac691610f88ec2155d1a12fcc13da7a534fbc53b812ae1d1c8f95ff8838"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-cli.json",
+      "bytes": 6061,
+      "sha256": "2385bcd2445c58f4d21620a02ebf9a8509b0763e26e21e38fa78515e98c34bb3"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-cli.log",
+      "bytes": 566,
+      "sha256": "9c15ebea5791f228d2ddf2fe95e5930739d0ab89445ad64898e498bfa20e2a26"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-completion-retest.json",
+      "bytes": 91183,
+      "sha256": "f8db1e8b4b884d45da66e32025b712e7b249777a1c20c78b48c3c3fd2c062820"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-completion-retest.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-completion.json",
+      "bytes": 44108,
+      "sha256": "73ad336d6b8d091029638b19d4363fe6f92bc4bd20235dc240d8d5b451d8da1b"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-completion.log",
+      "bytes": 643,
+      "sha256": "fa4f694173079ef2716e2cff06bb7ebed5e016daf020fe4d506dee59609ab7c1"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-core.json",
+      "bytes": 109128,
+      "sha256": "97747d0ea1d1c02d6b4e3c31e76380c901d746739327028330ee89c0bbaa9da4"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/real-core.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/regression-command.json",
+      "bytes": 2025,
+      "sha256": "7fcafda5c8f641fe1bab060ad50cdd41e67132dfab8aa722264486c23b51a9b4"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/regression-modules.json",
+      "bytes": 47962,
+      "sha256": "585b6e36ca74c230e7fd4ea39bb83402c86d29a4e4bf8c046cfed15cf36ac945"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/regression.log",
+      "bytes": 519,
+      "sha256": "f1de80c42b1c9baa67885562af860355676113860412c72ee64b6a9ec22244e0"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/regression.xml",
+      "bytes": 59860,
+      "sha256": "b76271088dc940de65059d1686d495da001783893190b9aca6d9077e0236def7"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/resource_snapshot.ps1",
+      "bytes": 595,
+      "sha256": "8382b55e2fd33ed5c3fc85ec0073e1dba22879b07e6406f93f9f2e29aa39232c"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/resources.json",
+      "bytes": 850,
+      "sha256": "a50c4563b1345c2a66cf12b54cc32b89a5dca9a7e24c9fd087e587eda55b75bf"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/run_tests.py",
+      "bytes": 1240,
+      "sha256": "d4b060ae7f2d10d60c8fb7094de8f61886caf52eae6a40bb0239e924ebe7d20a"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/services.json",
+      "bytes": 8958,
+      "sha256": "0f98847316a217d2e0092c431db0645bf76bb4bab0e8d0ca955107a8b578c384"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/services.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/services.py",
+      "bytes": 1000,
+      "sha256": "2bbc8c3501b21610a4609ff3c5004dc3062a779e4ff996742370440c8b526007"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/targeted-command.json",
+      "bytes": 1072,
+      "sha256": "552289ee283ad30902c7a79aec7a694c29a2223149cbdc1c40ffa24eeb16626e"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/targeted-modules.json",
+      "bytes": 47712,
+      "sha256": "1ed56a666ccbbb1255a438d8c58ec9d33d058038d6442dec9fc2b001245dc43d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/targeted.log",
+      "bytes": 42116,
+      "sha256": "c1032d6c54d4d145fb91cc90998e7f98677f0e8ee81328464a2b53c162b348f4"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/targeted.xml",
+      "bytes": 64116,
+      "sha256": "5a615d57a09940f8938c0004cfea05aa950d6cb057f388160976a64af997a70c"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/window-final-command.json",
+      "bytes": 805,
+      "sha256": "bcb514e4cebcdb7b2bff3ac0f2799aeef31ea5fe33d4123017d188b3a78a8187"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/window-final-modules.json",
+      "bytes": 25111,
+      "sha256": "bdfa53a4390c9ff446b9361a218729e4521c4b419f751f139704ef64ccbacb06"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/window-final.log",
+      "bytes": 102,
+      "sha256": "6ea88b756b508201f4f115c82564981adf27e2e3e76e9fff3e528bc6ba98a75c"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/window-final.xml",
+      "bytes": 2626,
+      "sha256": "7730f9de15dcae914e6480f5b48d21a5d026ea4bb20d91298331735b5076ca26"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/window-retest-command.json",
+      "bytes": 809,
+      "sha256": "b6b686c856b15aa61a51dc36d4d6d4f3929d737627e731037d6ae8ec9dcf1048"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/window-retest-modules.json",
+      "bytes": 25111,
+      "sha256": "0aba0d26f2c60bd36e74f918bdb488bb802b728789a7e69e00089c8d12a09f26"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/window-retest.log",
+      "bytes": 13171,
+      "sha256": "83734b4fab70aced7f19156a55c4e7227b8efccc112bea48964f526e0dd177fa"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/window-retest.xml",
+      "bytes": 14087,
+      "sha256": "52cdd1d5f7f3a280c2b9bc73f4a5627c176746e41fe21f00c8986a92da43745b"
+    }
+  ],
+  "distribution_artifacts": [
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/acceptance/host/codeplus-0.2.0-py3-none-any.whl",
+      "bytes": 311399,
+      "sha256": "221221d6088459826b8c63c46a88b6aa3d8abf51c3a9afb112afebc9abf2571d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/acceptance/host/codeplus-0.2.0.tar.gz",
+      "bytes": 1317938,
+      "sha256": "bd7021f258a04e73aac22fd796ece4baa9eccbb37ed5a266edcfc7db9dc37bf6"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/acceptance/rag/codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "bytes": 206509,
+      "sha256": "23560d6a6122437d1c323f2606af9ba3e39c5bbc814d849110f24bbad0f0a990"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/acceptance/rag/codeplus_agentic_rag-0.1.0.tar.gz",
+      "bytes": 310497,
+      "sha256": "8d39faa91b819b054a1ec1741d054a1988580a31326e2869e309749eedf9e89e"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/admitted-window/host/codeplus-0.2.0-py3-none-any.whl",
+      "bytes": 311399,
+      "sha256": "221221d6088459826b8c63c46a88b6aa3d8abf51c3a9afb112afebc9abf2571d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/admitted-window/host/codeplus-0.2.0.tar.gz",
+      "bytes": 1317938,
+      "sha256": "bd7021f258a04e73aac22fd796ece4baa9eccbb37ed5a266edcfc7db9dc37bf6"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/admitted-window/rag/codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "bytes": 206287,
+      "sha256": "a0ad57868ced2da4f198b94c27a529fd0abccedd63815019a3ba55ecc86ffab7"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/admitted-window/rag/codeplus_agentic_rag-0.1.0.tar.gz",
+      "bytes": 310282,
+      "sha256": "a5b392bcb25eef8becc2fc736cb97bd80fe5c2d4528afea8af7dcb68ce4d355d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/feature/host/codeplus-0.2.0-py3-none-any.whl",
+      "bytes": 311399,
+      "sha256": "221221d6088459826b8c63c46a88b6aa3d8abf51c3a9afb112afebc9abf2571d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/feature/host/codeplus-0.2.0.tar.gz",
+      "bytes": 1317938,
+      "sha256": "bd7021f258a04e73aac22fd796ece4baa9eccbb37ed5a266edcfc7db9dc37bf6"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/feature/rag/codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "bytes": 205627,
+      "sha256": "09311725ba72c265de63b3a5b0f36ecd2ca33cab780242fec563a98517614795"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/feature/rag/codeplus_agentic_rag-0.1.0.tar.gz",
+      "bytes": 309669,
+      "sha256": "343cb998089d96896c1c3b1c0c04c7b48f73646a291f5b06550b865d5af40949"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/final-candidate/host/codeplus-0.2.0-py3-none-any.whl",
+      "bytes": 311399,
+      "sha256": "221221d6088459826b8c63c46a88b6aa3d8abf51c3a9afb112afebc9abf2571d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/final-candidate/host/codeplus-0.2.0.tar.gz",
+      "bytes": 1317938,
+      "sha256": "bd7021f258a04e73aac22fd796ece4baa9eccbb37ed5a266edcfc7db9dc37bf6"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/final-candidate/rag/codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "bytes": 206423,
+      "sha256": "eb050e970e784b22274aec96d2f9e347709b84edbae9c9eb16fbd2c3a1f3e135"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/final-candidate/rag/codeplus_agentic_rag-0.1.0.tar.gz",
+      "bytes": 310409,
+      "sha256": "0ec510fb3296c497d140b40af76a8051ae9268dab60e120b56c3d163e4e63c37"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/initial/host/codeplus-0.2.0-py3-none-any.whl",
+      "bytes": 311399,
+      "sha256": "221221d6088459826b8c63c46a88b6aa3d8abf51c3a9afb112afebc9abf2571d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/initial/host/codeplus-0.2.0.tar.gz",
+      "bytes": 1317938,
+      "sha256": "bd7021f258a04e73aac22fd796ece4baa9eccbb37ed5a266edcfc7db9dc37bf6"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/initial/rag/codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "bytes": 204745,
+      "sha256": "814fbc8739e62465abd16a5887865d427514a424e2bd9c7212d21b1d040a0bd0"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/initial/rag/codeplus_agentic_rag-0.1.0.tar.gz",
+      "bytes": 308814,
+      "sha256": "d68309b10ad2c4d22cee5a804a8d3804d4361b93a8b2815f0247ede077ceecfa"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/window/host/codeplus-0.2.0-py3-none-any.whl",
+      "bytes": 311399,
+      "sha256": "221221d6088459826b8c63c46a88b6aa3d8abf51c3a9afb112afebc9abf2571d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/window/host/codeplus-0.2.0.tar.gz",
+      "bytes": 1317938,
+      "sha256": "bd7021f258a04e73aac22fd796ece4baa9eccbb37ed5a266edcfc7db9dc37bf6"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/window/rag/codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "bytes": 206256,
+      "sha256": "06c22e246cac4bc288df8c16b248fc0b1cbfd0916ceca4736d42de9be1fb1095"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/dist/window/rag/codeplus_agentic_rag-0.1.0.tar.gz",
+      "bytes": 310260,
+      "sha256": "26d7fcaaae9b11959e69bb3f24f1a36b7bcaf8ad9ea3e0c52599bcf2c6a9a0c8"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/package-qualification/rebuilt/host/codeplus-0.2.0-py3-none-any.whl",
+      "bytes": 311399,
+      "sha256": "221221d6088459826b8c63c46a88b6aa3d8abf51c3a9afb112afebc9abf2571d"
+    },
+    {
+      "path": "C:/Users/18221/AppData/Local/Temp/codeplus-r19-executor-20260923/package-qualification/rebuilt/rag/codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "bytes": 206509,
+      "sha256": "23560d6a6122437d1c323f2606af9ba3e39c5bbc814d849110f24bbad0f0a990"
+    }
+  ],
+  "unexecuted": [
+    "R20 report save and continuation",
+    "R21 full management CLI",
+    "R23 fixed/auto 200-question quality and P95 freeze",
+    "Linux and cross-platform release",
+    "Actual -p normal answer after provider balance restoration"
+  ],
+  "working_tree_delta": {
+    "only_authored_paths_added_to_baseline_status": true,
+    "new_changed_paths": [
+      "codeplus/__main__.py",
+      "codeplus/agent.py",
+      "codeplus/app.py",
+      "codeplus/commands/handlers/knowledge.py",
+      "deployment/AgenticRAG/README.md",
+      "deployment/AgenticRAG/docs/codeplus-integration.md",
+      "deployment/AgenticRAG/docs/implementation-records/R19-executor.json",
+      "deployment/AgenticRAG/docs/implementation-records/R19-files.txt",
+      "deployment/AgenticRAG/docs/implementation-records/R19.md",
+      "deployment/AgenticRAG/docs/retrieval.md",
+      "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py",
+      "deployment/AgenticRAG/src/agentic_rag/retrieval/search.py",
+      "deployment/AgenticRAG/src/agentic_rag/sources.py",
+      "deployment/AgenticRAG/tests/r19_real_acceptance.py",
+      "deployment/AgenticRAG/tests/test_codeplus_integration.py",
+      "deployment/AgenticRAG/tests/test_cursor_window.py",
+      "deployment/AgenticRAG/tests/test_request_window.py",
+      "deployment/AgenticRAG/tests/test_run_modes.py"
+    ],
+    "total_changed_paths": 6555,
+    "index_unchanged": true
+  }
+}

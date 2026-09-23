@@ -1054,7 +1054,7 @@ class CodePlusApp(App):
             return
         self._agent_task = asyncio.create_task(self._send_message(text))
 
-    def send_knowledge_message(self, text: str) -> None:
+    def send_knowledge_message(self, text: str, *, mode: str | None = None, task_kind: str = 'qa') -> None:
         if self._streaming or self._knowledge_active or self.agent is None:
             self._show_system_message('An operation is still active.')
             return
@@ -1063,7 +1063,8 @@ class CodePlusApp(App):
             return
         try:
             from agentic_rag.adapters.codeplus.policy import load_policy
-            policy = load_policy(self.knowledge_development_config, self.knowledge_library, self._selected_provider)
+            policy = load_policy(self.knowledge_development_config, self.knowledge_library, self._selected_provider,
+                                 mode=mode, task_kind=task_kind)
         except ImportError:
             self._show_error('Install the independent codeplus-agentic-rag development package into this host environment.')
             return

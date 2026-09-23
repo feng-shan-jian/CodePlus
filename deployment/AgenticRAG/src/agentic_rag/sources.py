@@ -15,6 +15,7 @@ from uuid import UUID, uuid4
 from .domain import BudgetStopReason, ErrorCode, RagError, RunStatus, SourceRef, Span
 from .source_archive import contains, digest, encode, invalid, read_ref, read_version, union
 from .retrieval.context import CONTEXT_POLICY, complementary_order, subtract
+from .retrieval.search import select_retrieval
 from .storage.runs import RunLease, read_pin, read_run
 
 
@@ -277,7 +278,7 @@ class SourceSession:
             unseen.append(Span(start=position,end=section.span.end))
         return [{'start':span.start,'end':span.end} for span in unseen]
 
-    def open(self, source_ref, *, section_id=None, cursor=None):
+    def open(self, source_ref, *, section_id=None, cursor=None, before_read=None):
         with self._call('open') as call_id:
             if section_id is not None and cursor is not None:
                 raise invalid('section_id and cursor are mutually exclusive', 'source_cursor')
@@ -305,6 +306,10 @@ class SourceSession:
                 if (type(start) is not int or type(range_end) is not int or
                         not section.span.start <= start < range_end <= section.span.end):
                     raise invalid('cursor is out of bounds or already at EOF', 'source_cursor')
+            # A trusted host may replace the preceding page in its actual
+            # message window, but only after this call and cursor were admitted.
+            if before_read is not None:
+                before_read()
             # A full table of contents grows without bound and can prevent even
             # a one-character chapter from fitting. Expose the selected node and
             # constant-size previous/next section links instead. Each link opens
@@ -367,38 +372,56 @@ class SourceSession:
                 'WHERE t.call_id=? AND c.run_id=?', (str(call_id), str(self.run.run_id))).fetchone()
         return json.loads(row[0]) if row else None
 
-    def search(self, query):
+    def search(self, query, *, strategy=None, rerank=None):
         with self._call('search') as call_id:
+            with self.catalog._db.transaction() as connection:
+                previous = connection.execute('SELECT call_id FROM source_calls WHERE run_id=? AND kind=? AND call_id!=? ORDER BY rowid DESC LIMIT 1',
+                    (str(self.run.run_id), 'search', str(call_id))).fetchone()
+            trace = {'query':query, 'preceding_call_id':previous[0] if previous else None,
+                     'selection':{'mode':self.retrieval.mode, 'requested':{'strategy':strategy,'rerank':rerank}}, 'status':'running'}
+            try:
+                selected = select_retrieval(self.retrieval, strategy=strategy, rerank=rerank)
+            except RagError as error:
+                trace.update(status='error', error=error.error.model_dump(mode='json'))
+                self._save_retrieval_trace(call_id, trace)
+                raise
+            trace['selection']['effective'] = {'strategy':selected.route, 'rerank':selected.rerank}
             if self.dense is None:
-                raise invalid('retrieval capability unavailable', 'source_search')
+                error = RagError(ErrorCode.CAPABILITY_UNAVAILABLE, 'retrieval capability unavailable', stage='source_search')
+                trace.update(status='error', error=error.error.model_dump(mode='json'))
+                self._save_retrieval_trace(call_id, trace)
+                raise error
             if getattr(self.dense, 'route', 'dense') != self.retrieval.route:
                 raise invalid('search service route differs from the frozen run', 'source_search')
             with self.catalog._db.transaction() as connection:
                 started, = connection.execute('SELECT started_ns FROM source_usage WHERE run_id=?',(str(self.run.run_id),)).fetchone()
-            limit = {'dense':self.retrieval.dense_candidates, 'bm25':self.retrieval.bm25_candidates,
-                     'hybrid':self.retrieval.dense_candidates+self.retrieval.bm25_candidates}[self.retrieval.route]
+            limit = {'dense':selected.dense_candidates, 'bm25':selected.bm25_candidates,
+                     'hybrid':selected.dense_candidates+selected.bm25_candidates}[selected.route]
             try:
+                choices = {key:value for key,value in {'strategy':strategy,'rerank':rerank}.items() if value is not None}
                 result = self.dense.search(query,limit=limit,
-                    deadline_monotonic_ns=started+(self.budget.duration_ms-self.budget.finish_reserve_ms)*1_000_000)
+                    deadline_monotonic_ns=started+(self.budget.duration_ms-self.budget.finish_reserve_ms)*1_000_000,
+                    **choices)
             except Exception as exc:
-                self._save_retrieval_trace(call_id, getattr(exc, 'retrieval_trace', None))
+                trace.update(getattr(exc, 'retrieval_trace', None) or {'status':'error', 'error':str(exc)})
+                self._save_retrieval_trace(call_id, trace)
                 if not isinstance(exc, (RagError, ValueError, TypeError, ConnectionError, TimeoutError)):
                     raise RagError(ErrorCode.DEPENDENCY_UNAVAILABLE, str(exc), stage='source_search') from exc
                 raise
-            self._save_retrieval_trace(call_id, result.get('trace'))
-            trace = result.get('trace') or {'query':query, 'route':self.retrieval.route}
+            trace.update(result.get('trace') or {'route':selected.route})
             trace['context'] = {'policy':CONTEXT_POLICY, 'status':'selecting', 'decisions':[]}
             try:
-                return self._select_context(call_id, result['hits'], trace['context'])
+                return self._select_context(call_id, result['hits'], trace['context'], selected=selected)
             except Exception as exc:
                 trace['context'].update(status='error', error=str(exc))
                 raise
             finally:
                 self._save_retrieval_trace(call_id, trace)
 
-    def _select_context(self, call_id, hits, trace):
+    def _select_context(self, call_id, hits, trace, *, selected=None):
+        selected = selected or self.retrieval
         payload = {'schema_version':1,'call_id':str(call_id),'status':'empty','run_id':str(self.run.run_id),
-                   'revision_id':str(self.run.revision_id),'route':{'strategy':self.retrieval.route,'rerank':self.retrieval.rerank},
+                   'revision_id':str(self.run.revision_id),'route':{'strategy':selected.route,'rerank':selected.rerank},
                    'items':[],'limited':{'by_count':False,'by_tokens':False}}
         with self.catalog._db.transaction() as connection:
             row = connection.execute('SELECT payload FROM evidence_windows WHERE run_id=?', (str(self.run.run_id),)).fetchone()

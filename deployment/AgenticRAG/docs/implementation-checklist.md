@@ -38,8 +38,8 @@
 | R15 | COMMITTED | /root/r15_gc | [Leader 独立验收](implementation-records/R15-leader-review.md)、[精确提交](implementation-records/R15-leader-postcommit.json)；114项、两路安装、9类真实场景及schema8→9通过 | `253047b4f862b7145c2ee3b445a3d9ee0f07afad` |
 | R16 | COMMITTED | /root/r16_model_switch | [Leader 独立验收](implementation-records/R16-leader-review.md)；205项、两路安装、真实切换/恢复及schema9→10通过 | `835b4887c21588f7e0165e1c7ff2477c3b4a1b6c` |
 | R17 | COMMITTED | /root/r17_retrieval | [Leader 独立验收](implementation-records/R17-leader-review.md)；191项、两路安装、真实故障/无模型BM25与schema10→11通过，600条复核/200条RRF复算一致 | `1fd01183f9ce914e022d923debc13553b0f71d27` |
-| R18 | ACCEPTED | /root/r18_rerank_context | [Leader 独立验收](implementation-records/R18-leader-review.md)；217项通过/1跳过，必要补测1通过；两路安装、真实GPU/Milvus及600条/10000输入复核通过；完整窗口限制由R19承接 | 待精确本地提交 |
-| R19 | TODO | — | — | — |
+| R18 | COMMITTED | /root/r18_rerank_context | [Leader 独立验收](implementation-records/R18-leader-review.md)；217项通过/1跳过，必要补测1通过；两路安装、真实GPU/Milvus及600条/10000输入复核通过；完整窗口限制由R19承接 | `cef8821a78447e5dde418cb1d68c6ac73c81fdc7` |
+| R19 | ACCEPTED | /root/r19_modes_budget | [Leader 独立验收](implementation-records/R19-leader-review.md)；318项及宿主139项通过、1条件跳过，两路安装、真实GPU/Milvus和auto/report、实际-p fixed/qa通过 | 待精确本地提交 |
 | R20 | TODO | — | — | — |
 | R21 | TODO | — | — | — |
 | R22 | TODO | — | — | — |
@@ -256,12 +256,12 @@ R12前置独立整合：旧RAG清理 COMMITTED，`5dbe979a330a6b157adfba7ad3ea82
 <a id="r19"></a>
 ### R19：模式、预算与错误
 
-- [ ] 功能默认 auto；单次选择优先于功能配置，运行中冻结；对普通任务及权限模式无全局影响。
-- [ ] fixed 固定单次路线但可改 query、多轮搜索/阅读；auto 只允许 Dense/BM25/Hybrid 与 Rerank 开关，不允许调 top_k/模型/库范围。
-- [ ] QA/报告分别预算且与检索模式正交；改写、失败重试、排队/加载、引用修正都累计，无隐式重置或自动加额。
-- [ ] 输入/输出/缓存 token 口径按提供方归一，缺失值标未知；完整消息窗口与累计 token 分开限制。
-- [ ] 探索达到上限有收尾预留，最终硬上限停止；返回已支持部分、缺口和 stop_reason，不询问追加预算，也不说资料必然不存在。
-- [ ] error/empty/partial/incomplete/cancelled 状态清楚；Agent 显式错误处理受模式权限约束，一次引用修正规则仍生效。
+- [x] 功能默认 auto；单次选择优先于功能配置，运行中冻结；对普通任务及权限模式无全局影响。
+- [x] fixed 固定单次路线但可改 query、多轮搜索/阅读；auto 只允许 Dense/BM25/Hybrid 与 Rerank 开关，不允许调 top_k/模型/库范围。
+- [x] QA/报告分别预算且与检索模式正交；改写、失败重试、排队/加载、引用修正都累计，无隐式重置或自动加额。
+- [x] 输入/输出/缓存 token 口径按提供方归一，缺失值标未知；完整消息窗口与累计 token 分开限制。
+- [x] 探索达到上限有收尾预留，最终硬上限停止；返回已支持部分、缺口和 stop_reason，不询问追加预算，也不说资料必然不存在。
+- [x] error/empty/partial/incomplete/cancelled 状态清楚；Agent 显式错误处理受模式权限约束，一次引用修正规则仍生效。
 
 <a id="r20"></a>
 ### R20：报告、跨语言与继续研究

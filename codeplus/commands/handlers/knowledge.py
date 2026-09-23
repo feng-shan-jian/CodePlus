@@ -21,14 +21,24 @@ async def handle_knowledge(ctx):
         ctx.ui.knowledge_library = value
         ctx.ui.add_system_message('Knowledge library selected: '+value+'. Use /knowledge ask to query it.')
     elif action == 'ask' and value:
+        mode = None
+        if value.startswith('--mode'):
+            selection = value.split(None, 2)
+            if len(selection) != 3 or selection[0] != '--mode' or selection[1] not in {'fixed','auto'}:
+                ctx.ui.add_system_message('Usage: /knowledge ask [--mode fixed|auto] <question>')
+                return
+            _, mode, value = selection
         if not ctx.ui.knowledge_library:
             ctx.ui.add_system_message('Select a library with /knowledge use <id> first.')
             return
-        ctx.ui.send_knowledge_message(value)
+        if mode is None:
+            ctx.ui.send_knowledge_message(value)
+        else:
+            ctx.ui.send_knowledge_message(value, mode=mode)
     else:
-        ctx.ui.add_system_message('Usage: /knowledge use <id> | ask <question> | off')
+        ctx.ui.add_system_message('Usage: /knowledge use <id> | ask [--mode fixed|auto] <question> | off')
 
 
 KNOWLEDGE_COMMAND = Command(name='knowledge', description='Knowledge development queries',
-    usage='/knowledge use <id> | ask <question> | off', type=CommandType.LOCAL,
+    usage='/knowledge use <id> | ask [--mode fixed|auto] <question> | off', type=CommandType.LOCAL,
     handler=handle_knowledge)

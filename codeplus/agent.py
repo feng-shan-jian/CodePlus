@@ -666,7 +666,6 @@ class Agent:
             iteration += 1
             if self._scope:
                 self._scope.check()
-                self._scope.prepare_turn(conversation)
 
             if self._scope and iteration > self._scope.max_iterations:
                 raise BudgetStop('iteration_limit', hard=True)
@@ -753,6 +752,7 @@ class Agent:
 
             collector = StreamCollector(buffer_output=self._scope is not None)
             if self._scope:
+                self._scope.prepare_turn(conversation)
                 tools = self.registry.get_all_schemas(self.protocol) if self._scope.purpose == 'agent' else []
             options = {'control': self._scope.model_control(self._scope.purpose)} if self._scope else {}
             try:
@@ -1298,7 +1298,6 @@ class Agent:
             iteration += 1
             if self._scope:
                 self._scope.check()
-                self._scope.prepare_turn(conversation)
             if self._scope and iteration > self._scope.max_iterations:
                 raise BudgetStop('iteration_limit', hard=True)
             if self.max_iterations > 0 and iteration > self.max_iterations:
@@ -1322,6 +1321,7 @@ class Agent:
 
             collector = StreamCollector(buffer_output=self._scope is not None)
             if self._scope:
+                self._scope.prepare_turn(conversation)
                 tools = self.registry.get_all_schemas(self.protocol) if self._scope.purpose == 'agent' else []
             options = {'control': self._scope.model_control(self._scope.purpose)} if self._scope else {}
             try:
