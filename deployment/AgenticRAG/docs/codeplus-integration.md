@@ -1,8 +1,8 @@
 # R12 宿主开发接入
 
-这是中间开发能力，验收/提交状态以 `implementation-checklist.md` 为准。R13–R26 的生命周期、完整检索、模式、报告、恢复、命令、调度、评测与双平台发行继续执行。
+这是中间开发能力，验收/提交状态以 `implementation-checklist.md` 为准。R13–R24 的生命周期、完整检索、模式、报告、恢复、命令、调度与评测继续执行；本阶段不验收双平台发行。
 
-显式安装本仓库构建的 `codeplus` wheel 与本目录构建的 `codeplus-agentic-rag` wheel 到同一个 Windows CPU 宿主环境；GPU worker 使用另一个独立环境与 `local-models` 锁。不要从同名公共包推断宿主，不使用 `PYTHONPATH` 或仓库 cwd 使未安装源码可见。两份原锁的共享依赖版本不同；R12 已验证组合锁见 `implementation-records/R12-windows-integration-lock.txt`，它不替代 R25/R26 的正式双平台发布验证。
+显式安装本仓库构建的 `codeplus` wheel 与本目录构建的 `codeplus-agentic-rag` wheel 到同一个 Windows CPU 宿主环境；GPU worker 使用另一个独立环境与 `local-models` 锁。不要从同名公共包推断宿主，不使用 `PYTHONPATH` 或仓库 cwd 使未安装源码可见。两份原锁的共享依赖版本不同；R12 已验证组合锁见 `implementation-records/R12-windows-integration-lock.txt`。该记录是开发接入证据，不宣称 Linux 正式发行安装或主包迁入通过。
 
 宿主配置增加可选绝对路径 `knowledge_development_config`。该 JSON 严格解析为 `DevelopmentConfig`，包含完整 `knowledge`、`worker`、`answer_tokenizer`，以及显式的 `explore_output_cap`、`finish_input_upper`、`finalize_output_cap`、`repair_output_cap`、`compact_output_cap`、`max_iterations`、`max_tool_attempts`、`cleanup_grace_ms`。完整合成验收配置与试验值见 `implementation-records/R12-trial-config-02.json`；其中 Temp 数据/运行路径应换成自己的绝对路径，不能复制该机器的缓存位置当默认值。
 

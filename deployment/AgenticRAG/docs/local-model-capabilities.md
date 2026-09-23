@@ -52,6 +52,6 @@ Embedding 新实例加载 1558.21 ms，资产校验/tokenizer 准备 963.66 ms�
 
 复现命令和环境安装见 [探针 README](../probes/models/README.md)，精确命令、首次失败与修复见 [R03 执行记录](implementation-records/R03.md) 和 [执行证据](implementation-records/R03-evidence.json)。首次 5 passed/1 failed 的原始观察另行保留：错误是假定卸载应为零，以及子进程 stderr 的 GBK 解码 warning；以模型前基线、弱引用和 UTF-8 修复后完整重跑通过，没有隐藏失败或调节评分 gold。
 
-未验证共同驻留、两客户端/共享 worker、调度、自然物理显存耗尽、CPU/API fallback、Linux 安装、完整语料质量、中文 Agent 查询改写或生产吞吐。正式 worker 属 R09，跨平台安装属 R25，本探针不替代这些验收。
+未验证共同驻留、两客户端/共享 worker、调度、自然物理显存耗尽、CPU/API fallback、Linux 安装、完整语料质量、中文 Agent 查询改写或生产吞吐。正式 worker 属 R09，完整 Windows 功能与质量属 R23/R24；跨平台安装不在本阶段范围，本探针不替代这些验收。
 
 参考：[Embedding 固定模型卡](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B/blob/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3/README.md)、[Reranker 固定模型卡](https://huggingface.co/Qwen/Qwen3-Reranker-0.6B/blob/e61197ed45024b0ed8a2d74b80b4d909f1255473/README.md)、[PyTorch 2.14 CUDA 环境变量](https://docs.pytorch.org/docs/2.14/cuda_environment_variables.html)。模型卡与源码只是约定依据；当前可用性结论来自本次 GPU 原始记录。

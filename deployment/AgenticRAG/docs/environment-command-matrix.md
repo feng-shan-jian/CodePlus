@@ -1,6 +1,6 @@
 # 环境与命令矩阵
 
-2026-09-22，R04 范围仅为静态源码与本机接口实验。命令的 cwd 均显式给出；未来命令不是已通过记录。R04 未构建/安装新包、未请求真实模型、未启动 GPU/Milvus。
+2026-09-22，R04 范围仅为静态源码与本机接口实验。命令的 cwd 均显式给出；未来命令不是已通过记录。R04 未构建/安装新包、未请求真实模型、未启动 GPU/Milvus。2026-09-23 用户将当前任务范围收敛到 R00–R24 的 Windows 独立模块功能与质量验收；下表只列现行任务。
 
 ## 本次实际环境
 
@@ -11,7 +11,7 @@
 | 实际相关依赖 | pytest 9.0.3、pytest-asyncio 1.3.0、anthropic 0.98.1、openai 2.34.0、httpx 0.28.1；本次未安装或改依赖 |
 | 构建依赖 | 当前根 .venv 查询 hatchling 返回 PackageNotFoundError；R04 未执行构建，不能由此宣称 wheel 已验证。未来隔离构建环境另行安装 build backend |
 | R03 独立环境（只引用已交付证据） | `C:/Users/18221/.cache/codeplus-agenticrag/venv-win-cuda/Scripts/python.exe`；R03 已验证的模型/revision/输入限制以 [R03](implementation-records/R03.md) 为准，本次未执行或修改此环境 |
-| Linux（本次未复测） | 恢复卡记录 WSL Ubuntu 24.04 / Python 3.12.3 / NVIDIA passthrough 存在；不等于 Linux 发行安装已通过。R25 使用 Linux 独立 venv，禁止共用 Windows .venv/node_modules |
+| Linux（本次未复测） | 恢复卡记录 WSL Ubuntu 24.04 / Python 3.12.3 / NVIDIA passthrough 存在；不等于 Linux 发行安装已通过。本阶段不验收 Linux |
 
 ## R04 已执行
 
@@ -48,9 +48,6 @@
 | R05 干净导入 | 切换到不含源码的目录，移除 PYTHONPATH；`<clean-python> -I -c "import agentic_rag; print(agentic_rag.__file__)"` | 路径位于 clean site-packages，不能命中 editable/仓库；相同检查用于 sdist→wheel |
 | R12 Windows 宿主接入 | 清理验收提交后，环境显式安装当前本地宿主 wheel 和开发 RAG wheel；运行届时新增的 `deployment/AgenticRAG/tests/test_codeplus_integration.py`、`test_request_delivery.py`、`test_run_budget.py` | 两个真实 Agent 入口、TUI及-p、权限/取消/终态/实际交付；另列 MockTransport 与联网模型结果；R04 34测试不替代 |
 | R12/R19 普通宿主回归 | `.venv/Scripts/python.exe -B -m pytest tests/test_agent.py tests/test_context.py tests/test_context_window.py tests/test_serialization.py tests/test_conversation_pairing.py tests/test_subagent.py tests/test_commands.py -p no:cacheprovider` | 普通流式、权限、共享 client/工具与会话能力保持；按当时改动扩大必要回归 |
-| R25 Windows 发行安装 | Windows 专用 clean venv 安装本地宿主+RAG wheel；从 sdist 再构建；使用现有 `codeplus --help`、`codeplus -p` 和届时实现的 `/knowledge` 形式 | 非源码cwd；中文/空格路径；资源导出、真实 worker/Milvus/回答/重启历史引用；记录配置不含密钥 |
-| R25 Linux 发行安装 | Linux 文件系统独立 checkout/artifacts 与 `python3 -m venv <linux-clean-venv>`；`<linux-python> -m pip install <host-wheel> <rag-wheel>`；同样执行 sdist 与 `-I` 导入 | 不从 `/mnt/d/CodePlus/.venv` 运行 Python，不共享依赖；实际 GPU/worker、路径大小写/Unicode/换行、真实端到端 |
-| R25 两类 Milvus | 按安装包导出绝对 compose 文件，`docker compose -f <exported-compose> -p <owned-project> up -d`；已有实例用显式 URI/归属范围连接 | 两种方式真实读写、隔离和重启；仅清理本任务拥有的项目/资源；R02历史探针不能当生产验收 |
-| R26 最终主包 | root 构建已含 `codeplus`+`agentic_rag` 的 wheel/sdist；新环境安装主发行，旧环境卸载开发发行后升级 | import路径/单份实现/资源manifest、数据与引用身份迁移、原命令与普通任务回归、备份恢复 |
+| R23/R24 Windows 最终验收 | 从冻结 runner 与现有 CodePlus 入口执行实际命令；具体命令由任务记录按当时实现填写 | 真实 GPU/Milvus/Agent、功能、故障、中文/报告与历史引用、质量和成本门槛；不以额外发行安装重复整套评测 |
 
 真实在线评测入口由 R10/R12/R23 创建并核对后才加入可运行命令；不在此捏造 `agentic_rag.runner` 等模块。R01 现有 `eval/RAG-eval/run.ps1 -Check/-Replay/-Answers` 的已验收离线协议继续保留，不能由旧清理的过时实现覆盖。未来模型/API请求只在其对应任务许可内执行。

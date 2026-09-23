@@ -31,7 +31,7 @@ finally:
 
 输入必须是本机绝对路径；禁止 `..`、UNC/映射网络盘、设备路径、备用流、末尾空格/点和特殊文件。Windows 用实际 GetFinalPathNameByHandleW 规范拼写、统一 file URI；逐父目录检查 case-sensitive 属性，以精确 URI 字符串比较，不对整个路径 casefold/NFC，也不使用 WindowsPath 相等比较。Unicode 组合形式保持文件系统中的原样。8.3 别名解析为其实际名称，与长名同时选入时报告重复；合法 `~` 文件名接受。未知/不可读取的路径属性明确失败。
 
-symlink/junction/reparse 目前明确拒绝，避免跟随路径穿越所选边界。普通硬链接接受，每条实际路径保持独立身份；文件ID仅用来验证采集前后仍是同一对象，不用于身份合并。Windows 大小写别名对应同一现存路径；实际 case-sensitive 目录中的 A/a 可各自导入。Linux 使用本地路径的精确拼写、拒绝符号链接；Linux 真实环境与非 NTFS 文件系统仍需 R25 验证。
+symlink/junction/reparse 目前明确拒绝，避免跟随路径穿越所选边界。普通硬链接接受，每条实际路径保持独立身份；文件ID仅用来验证采集前后仍是同一对象，不用于身份合并。Windows 大小写别名对应同一现存路径；实际 case-sensitive 目录中的 A/a 可各自导入。Linux 使用本地路径的精确拼写、拒绝符号链接；Linux 真实环境与非 NTFS 文件系统的验收不在本阶段范围。
 
 同库同 source_key 命中既有 document_id；改名/移动默认新增；内容 hash 相同不合并身份。显式更新拒绝跨库身份、新路径属于另一文档及同批重复目标。捕获成功后以 owner 短事务更新文档当前来源并追加 document_sources；历史 InputEntry/RawSnapshot/DocumentVersion 的来源不改。这里“当前来源”表示最近成功接纳原件的导入来源，不代表已经发布；新身份可以在未发布批次中存在。不存在隐式删除、版本发布或当前 revision 切换。
 

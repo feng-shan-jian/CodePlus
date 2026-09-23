@@ -1,6 +1,6 @@
 # 本地模型与共享 worker
 
-R09 提供独立包真实 Embedding/Rerank 和本机进程生命周期。Windows/Python3.14.3、RTX4070 Laptop 8GiB、驱动616.92、Torch2.14.0+cu130/Transformers5.17.0/tokenizers0.23.2 是本次实测组合。Linux 在 R25，完整负载公平性在 R22，宿主 drain 在 R12；不把本项称为 Agent 问答或检索质量验收。
+R09 提供独立包真实 Embedding/Rerank 和本机进程生命周期。Windows/Python3.14.3、RTX4070 Laptop 8GiB、驱动616.92、Torch2.14.0+cu130/Transformers5.17.0/tokenizers0.23.2 是本次实测组合。完整负载公平性在 R22，宿主 drain 在 R12；Linux 不在本阶段验收范围，不把本项称为 Agent 问答或检索质量验收。
 
 ## 安装与配置
 

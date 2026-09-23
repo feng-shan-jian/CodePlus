@@ -7,7 +7,7 @@
 ## 1. 已确认的要求
 
 - 首次试用采用本地 Embedding 与本地 Rerank。
-- 首版本地 Embedding 与 Rerank 要求 NVIDIA GPU，在 Windows 与 Linux 分别验收；CPU 支持后续补齐。回答模型继续沿用 CodePlus 配置。
+- 本阶段本地 Embedding 与 Rerank 要求 NVIDIA GPU，在 Windows 验收；Linux 与 CPU 支持不在本阶段范围。回答模型继续沿用 CodePlus 配置。
 - 本地模型由 CodePlus 按需启动并复用的工作进程承载，相同模型配置共享已加载实例，统一安排推理请求；RAG 核心与 Agent 继续在各自宿主进程内运行。
 - GPU 优先处理问答和报告的查询编码及重排；导入/重建按小批次穿插执行并保证持续推进，调度在批次之间进行。
 - 首版端到端支持中文问题检索英文资料、中文回答并引用英文原文，按 D45 单独验收；按 D46，由现有 CodePlus Agent 使用已有对话模型生成和改写英文 query，核心及 Embedding/Rerank 工作进程不另设翻译模型。
@@ -140,7 +140,7 @@ Dense 或 BM25 单路结果、Hybrid 经核心 RRF 融合后的结果均可按�
 
 首版本地适配器为真实执行路径，先实测 Qwen3 的 0.6B Embedding 与 0.6B Reranker 候选，再决定是否采用及如何配置。主规划记录的 8 GiB 级 GPU 仅作为资源条件，不替代性能验证。
 
-按 D35/D36，首版验收覆盖 Windows 与 Linux 的 NVIDIA GPU 环境。CPU 执行路径留待后续；本地适配器设备不可用时明确报告驱动/运行环境、设备或显存问题，不静默切换 CPU、另一模型或外部 API。检查只针对实际启用的能力，GPU 是本地 Embedding/Rerank 的支持要求，不应因此阻断未使用本地模型的 CodePlus 基础功能。在线故障继续遵循 D25，索引重建故障继续遵循 D16。
+按 2026-09-23 修订后的 D35 与 D36，本阶段验收覆盖 Windows 的 NVIDIA GPU 环境。Linux 与 CPU 执行路径留待后续；本地适配器设备不可用时明确报告驱动/运行环境、设备或显存问题，不静默切换 CPU、另一模型或外部 API。检查只针对实际启用的能力，GPU 是本地 Embedding/Rerank 的支持要求，不应因此阻断未使用本地模型的 CodePlus 基础功能。在线故障继续遵循 D25，索引重建故障继续遵循 D16。
 
 D39/D40 已确认同机多进程并发查询及共享本地模型工作进程，D41 已确认问答/报告检索优先、导入/重建分批穿插推进。CodePlus 按需启动并复用工作进程，模型能力接口由本地客户端转交 Embedding/Rerank 请求；知识库业务和 Agent 保持宿主内职责。部署及调度边界见 [部署与迁移设计](deployment-and-packaging.md)。在途运行的模型身份继续按 D12/D15/D16 固定；相同模型配置的实例复用与不同配置的身份隔离分别验收，具体并发、优先级参数、驻留和显存上限仍需确定。
 

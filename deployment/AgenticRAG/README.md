@@ -1,8 +1,8 @@
 # AgenticRAG 独立开发区
 
-状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、普通增删改整批发布、手动恢复与放弃、固定 Dense 检索、原文与引用，以及 R12 宿主开发接入候选。实际验收和提交状态见任务台账。更新日期：2026-09-22。后续回收与产品能力仍按 R15–R26 完成。
+状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、普通增删改整批发布、手动恢复与放弃、固定 Dense 检索、原文与引用，以及 R12 宿主开发接入候选。实际验收和提交状态见任务台账。更新日期：2026-09-23。后续回收与产品能力按 R15–R24 完成；用户已删除本阶段 R25/R26。
 
-在本目录完成 RAG 重建的规划、独立实现和验收，达到迁移条件后再接入 CodePlus 主模块。
+在本目录完成 RAG 的独立实现及 Windows 功能与质量验收。本阶段保留现有 CodePlus Agent 适配接点，不迁入 CodePlus 主发行包。
 
 已确认：独立 RAG 核心，通过适配层复用现有 CodePlus Agent；不另造一套 Agent 执行引擎。以下保留完整产品目标，当前实现范围见下一节和任务台账。
 
@@ -20,7 +20,7 @@ uv sync --project deployment/AgenticRAG --locked
 uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 ```
 
-安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具及 PyMilvus 3.0.2：上述默认 `uv sync --locked` 会安装 SDK，供发布、来源和恢复等正式测试通过实际适配器构造器注入受控 SDK 传输；这些 CPU 测试不需要连接 Milvus 服务。核心发行 wheel 的四项运行依赖保持不变，SDK 仍只属于可选 `milvus` extra；真实 Milvus、CUDA 和宿主验收另按各自入口显式准备。运行依赖及传递依赖由锁固定，tokenizer 资产使用显式外部缓存。必须使用带 WAL 修复的 SQLite，存储层拒绝低于 3.51.3 的实际运行版本，不使用当前标准库的 SQLite 3.50.4。Windows/Linux 使用各自环境；Linux、完整产品安装及最终主发行仍在 R25/R26 验收。
+安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具及 PyMilvus 3.0.2：上述默认 `uv sync --locked` 会安装 SDK，供发布、来源和恢复等正式测试通过实际适配器构造器注入受控 SDK 传输；这些 CPU 测试不需要连接 Milvus 服务。核心发行 wheel 的四项运行依赖保持不变，SDK 仍只属于可选 `milvus` extra；真实 Milvus、CUDA 和宿主验收另按各自入口显式准备。运行依赖及传递依赖由锁固定，tokenizer 资产使用显式外部缓存。必须使用带 WAL 修复的 SQLite，存储层拒绝低于 3.51.3 的实际运行版本，不使用当前标准库的 SQLite 3.50.4。本阶段不以 Linux 或最终主发行安装为验收门槛。
 
 配置只接收调用方显式传入的 `knowledge` 对象，优先级为 `explicit > configured > defaults > Schema 默认`。默认检索模式为 `auto`；候选数量、分块参数、QA/报告预算必须显式提供试验值，尚未冻结质量参数。字段、可运行示例、身份与协议边界见 [领域与配置](docs/domain-and-configuration.md)，R05 的两条真实发行安装证据见 [R05](docs/implementation-records/R05.md)。分发包不包含该文档目录，源码开发区可查阅。
 
@@ -36,7 +36,7 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 
 `SourceSession` 复用实际 RunLease，以不透明来源/游标读取固定版本归档；工具公开文本保留 canonical 码点并附构建时来源边车。`DeliveryGateway` 核对最终协议正文后，仅凭可信 confirmed 回执激活实际子区间；`CitationRegistry` 核验精确摘录并生成稳定脚注，历史引用独立于当前源文件和 Milvus。search/open 共用次数与累计窗口限制，回答模型计量由宿主显式注入。核心受控回执测试不代表真实 HTTP 交付；后者由 R12 验收。接口与边界见 [原文、证据与引用](docs/sources-and-evidence.md)。
 
-`agentic_rag.models.create_local_provider(assembled)` 从统一装配结果的 `worker` 操作配置取得解释器、缓存和私有运行目录。同步 Embedding/Rerank 与 `submit_*` 跟踪句柄共用实际 worker。名称不同但 profile 身份相同复用 GPU 实例；不同身份在单槽卸载后重载，不下载模型、不自动切 CPU/API。安装、显式配置、取消与真实完成区别见 [本地模型 worker](docs/local-model-worker.md)，Windows 实测见 [R09](docs/implementation-records/R09.md)。`local-models` extra 与核心依赖分离，实际 Windows/Python3.14 CUDA 依赖和 hashes 另存 `requirements-local-models-win-py314.lock`；Linux 实测仍属 R25。
+`agentic_rag.models.create_local_provider(assembled)` 从统一装配结果的 `worker` 操作配置取得解释器、缓存和私有运行目录。同步 Embedding/Rerank 与 `submit_*` 跟踪句柄共用实际 worker。名称不同但 profile 身份相同复用 GPU 实例；不同身份在单槽卸载后重载，不下载模型、不自动切 CPU/API。安装、显式配置、取消与真实完成区别见 [本地模型 worker](docs/local-model-worker.md)，Windows 实测见 [R09](docs/implementation-records/R09.md)。`local-models` extra 与核心依赖分离，实际 Windows/Python3.14 CUDA 依赖和 hashes 另存 `requirements-local-models-win-py314.lock`；本阶段不验收 Linux。
 
 ## 完整产品目标
 
@@ -44,11 +44,11 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 
 评测只是开发验收中的批量运行与评分，复用现有 `eval/RAG-eval/` 数据和评分口径，不要求用户使用单独的“评测入口”。R01 已解耦检查/离线评分入口，R10内部runner已调用同一生产Dense核心；真实CodePlus Agent评测仍随宿主接入实现。
 
-开源首版面向用户各自在自己的电脑或服务器安装使用，不建设带账号和权限管理的多人共享服务。架构草案据此按“同进程独立 RAG 包＋CodePlus 适配层”细化，Milvus 保持独立依赖，模型提供方可配置。首版正式支持 Windows 与 Linux：先在当前 Windows 环境开发，发布前分别完成安装及真实运行验收。具体系统版本、硬件要求与部署组合仍待细化，未来服务化需额外接口与验收工作。
+开源分发仍是后续方向，本阶段目标为 Windows 上可用的独立 RAG 包及 CodePlus 适配层，不建设带账号和权限管理的多人共享服务。Milvus 保持独立依赖，模型提供方可配置。Linux 正式支持与发行安装另行规划，不能根据本阶段 Windows 功能验收宣称已经完成。
 
 首版本地 Embedding 和 Rerank 要求 NVIDIA GPU，CPU 支持后续补齐；具体显存、驱动和推理依赖要求通过实测确定。模型能力仍按可替换接口设计，后续 API 适配器需单独实现及验收。回答模型继续沿用 CodePlus 配置。
 
-Milvus 首版提供 Docker Compose 部署配置供用户启动，也支持配置连接已有实例。两种部署路径复用同一检索实现，连接范围、兼容版本和数据隔离需明确；当前 Compose 文件仍待按新模块要求整理及实际验收。
+Milvus 保留 Docker Compose 配置和连接已有实例的能力方向；本阶段以真实 Milvus 功能验收为准，不要求发行包内 Compose 资源和两种部署路径的正式安装验收。
 
 原文及必要解析归档保存在可配置的本地数据目录，SQLite 保存文档身份、版本、引用与任务状态，Milvus 负责检索索引。R10首次发布先准备不可变归档与候选索引，再原子切换 SQLite 发布指针；每个发布版本使用独立 Collection。完整增删改、恢复和回收继续R13–R15，未来更换存储后端仍需配套数据迁移及引用完整性验证。
 
@@ -108,14 +108,14 @@ Agent 打开搜索来源时，默认读取命中片段所在章节，长章节�
 
 首版优先保证证据与答案质量，允许在预算内多花时间查证；时延和成本作为明确约束，仍按上限停止。量化目标通过基线实验提出并在最终验收前冻结，不通过减少证据支持要求来换取表面速度。
 
-Embedding 与 Rerank 首次试用先本地运行，同时按可替换的模型能力设计；已接入的提供方通过配置选择，迁入主模块后由 CodePlus 配置统一指定。更换 Embedding 需要重建时先提示，确认后自动构建，成功后切换；失败时说明原因并提供“重试／保留原版”，连续失败也不破坏原版本。
+Embedding 与 Rerank 首次试用先本地运行，同时按可替换的模型能力设计；已接入的提供方通过配置选择。更换 Embedding 需要重建时先提示，确认后自动构建，成功后切换；失败时说明原因并提供“重试／保留原版”，连续失败也不破坏原版本。
 
 ## 规划入口
 
-- **给新 Leader 会话的交接材料**：[任务拆分与执行流程](docs/implementation-task-plan.md)、[逐任务 checklist](docs/implementation-checklist.md)、[可复制提示词](docs/leader-prompt.md)。目标是完成 R00–R26 全部 27 项任务，逐项验收并本地提交，最后通过总体验收；R12 只是中间节点，通过后继续 R13–R26。实际进度以台账和独立验收记录为准。
+- **给新 Leader 会话的交接材料**：[任务拆分与执行流程](docs/implementation-task-plan.md)、[逐任务 checklist](docs/implementation-checklist.md)、[可复制提示词](docs/leader-prompt.md)。本阶段目标是完成 R00–R24 共 25 项任务，逐项验收并本地提交，最后通过总体验收；R12 只是中间节点。实际进度以台账和独立验收记录为准。
 - [主规划与已确认需求](docs/plan.md)：D01–D56、功能边界和需求追溯。技术草案、用户确认与实现证据分别记录。
 - [架构与接口契约](docs/architecture-and-contracts.md)：模块依赖、对象/存储、发布恢复、版本隔离、搜索/原文工具、引用与预算、模型工作进程及宿主接点。
-- [验收与分阶段实施计划](docs/acceptance-and-implementation.md)：G0 技术验证、数据隔离、指标口径、功能/故障矩阵、P0–P8 任务及迁移条件。已确认预算内质量优先；数值目标按冻结程序形成，不冒充已实测。
+- [验收与分阶段实施计划](docs/acceptance-and-implementation.md)：G0 技术验证、数据隔离、指标口径、功能/故障矩阵及 P0–P7。已确认预算内质量优先；数值目标按冻结程序形成，不冒充已实测。
 - [模型提供方与配置设计](docs/model-providers.md)：本地优先、能力接口、配置选择与模型切换的索引边界。
 - [开源、部署与迁移设计](docs/deployment-and-packaging.md)：同进程包与独立服务的取舍、开源安装、当前打包边界和未来服务化工作。
 - 数据集沿用仓库的 [MultiHop-RAG](../../eval/RAG-eval/README.md)，本目录不复制或修改题目、答案、gold 证据。

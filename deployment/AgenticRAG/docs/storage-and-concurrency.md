@@ -1,6 +1,6 @@
 # R06 本地存储与并发契约
 
-2026-09-22；开发包 0.1.0；SQLite schema version 3。R06 提供元数据、不可变归档、OS 占用、代次与运行 pin 基础；R07 增加原件输入检查点，R08 增加原子完整处理检查点，领域／配置原接口不变。生产索引验证和发布在 R10/R13，完整恢复交互在 R14，GC 在 R15。测试中的 READY 版本由明确的合成元数据夹具生成，没有建 Milvus Collection，也不是生产发布。
+本文前半保留 R06–R08 的 schema3 基础实现说明。当前开发包 0.1.0 追加到 schema9；R10/R13 提供正式索引与发布，R14 提供恢复，R15 的运行保护、实际 reader 和自动物理回收见 [索引生命周期](index-lifetimes.md)。基础测试中的合成 READY 夹具不代表真实 Milvus 验收，各阶段实际执行证据独立记录。
 
 ## 运行时与数据库
 
@@ -20,7 +20,7 @@ R08 保持前两份 SQL 原字节，追加 processing.sql migration 3；验证�
 
 `Catalog(absolute_path, busy_timeout_ms=1500)` 不读取 cwd、环境配置或宿主。只创建新目录或认领已有空目录；非空目录必须已有合法 `.agentic-rag.json` 归属标记，内含随机 store_id。SQLite 保存相同 ID。每次连接和归档操作核验目录身份，路径所有已有分量拒绝 symlink、Windows reparse point、特殊文件与文件硬链接。权限错误直接失败；目录不能由其他程序并发替换，此机制不是对恶意本机同用户进程的安全沙箱。
 
-Windows 要求真实本机绝对路径和 GetDriveTypeW=DRIVE_FIXED；拒绝 UNC、映射网络盘、相对盘符、Linux 风格路径、`..`、备用流和 junction。Linux 分支通过最长匹配 `/proc/self/mountinfo` 保守只接受 ext2/3/4、xfs、btrfs、f2fs、zfs；未知挂载、FUSE、overlay、tmpfs 和网络文件系统明确拒绝。这是当前保守边界，Linux 实际安装／运行仍待 R25，不以 wheel 存在声称已验收。
+Windows 要求真实本机绝对路径和 GetDriveTypeW=DRIVE_FIXED；拒绝 UNC、映射网络盘、相对盘符、Linux 风格路径、`..`、备用流和 junction。Linux 分支通过最长匹配 `/proc/self/mountinfo` 保守只接受 ext2/3/4、xfs、btrfs、f2fs、zfs；未知挂载、FUSE、overlay、tmpfs 和网络文件系统明确拒绝。这是当前保守边界，Linux 实际安装与运行不在本阶段验收范围，不以 wheel 存在声称已验收。
 
 当前按需建立 catalog.sqlite、archives、staging、locks。宿主应传用户独立数据目录，不传源码、包安装或模型缓存目录；不扫描其他应用目录。初次归属标记写入中断留下不完整标记时保守拒绝，需明确诊断／人工处理，不能自动认领其内容。
 

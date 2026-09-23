@@ -1,6 +1,6 @@
 # R04 宿主接入与安装契约
 
-2026-09-22；基线 `43e9af9de44212342850f3668826a0e5b4bf9a49`。本文件冻结 R05/R12 的实施边界，关联 D02/D10/D14/D27–D29/D33–D35/D52–D55、T01/T07/T09。当前只有静态核对与接口实验，宿主尚未安装新策略。运行记录见 [R04](implementation-records/R04.md)，命令见 [环境矩阵](environment-command-matrix.md)。
+2026-09-22；基线 `43e9af9de44212342850f3668826a0e5b4bf9a49`。本文件记录 R05/R12 的实施边界，关联 D02/D10/D14/D27–D29/D33–D35/D52–D55、T01/T07/T09。运行记录见 [R04](implementation-records/R04.md)，命令见 [环境矩阵](environment-command-matrix.md)。2026-09-23 用户删除本阶段发行安装与主包迁入任务；第 6 节原最终发行设想仅作未来设计参考，现行完成判定以 [checklist](implementation-checklist.md) 为准。
 
 ## 1. 实际接点与需要修正的地方
 
@@ -139,21 +139,21 @@ terminal 与 usage 各自独立：Anthropic 要真实 message_stop 及 stop_reas
 
 不要仅因无 tool_calls 或 LoopComplete 事件判 completed。无命中与查询失败分别记录；Tool 错误可在探索预算内由 Agent 决定重试，但单次错误不是成功候选。报告正文通过而保存失败时 artifact_status=failed，完成说明必须明确保存失败。
 
-## 6. 可安装开发包与最终单份实现
+## 6. 可安装开发包与未来单份实现设想
 
 冻结发行名 `codeplus-agentic-rag`，可导入命名空间 `agentic_rag`。开发源码 `deployment/AgenticRAG/src/agentic_rag/`，独立 pyproject/lock/正式 tests；只按 R05 当前需要建文件。domain/config 不导入 codeplus、torch、transformers、pymilvus。`agentic_rag.adapters.codeplus` 才惰性导入宿主；适配层不存在第二套聊天客户端或 Agent 循环。
 
-最终 R26 把同一目录移动为仓库根 `agentic_rag/`，由 CodePlus 主发行包的 Hatch `packages=["codeplus", "agentic_rag"]` 收录。它是 CodePlus 主发行的一部分，保留稳定 `import agentic_rag`，不再同时发布/依赖开发发行包。删除开发源码树和其构建入口，不复制两份业务逻辑；内部用相对导入，核心仍不依赖宿主。最终安装先移除旧开发发行再装主发行，避免两个 distribution 同时拥有 agentic_rag；用 file manifest 验证无重叠/残余。数据 schema、ID、配置语义、历史引用不能因目录迁移改变。
+未来如决定迁入主包，可把同一目录移动为仓库根 `agentic_rag/`，由 CodePlus 主发行包收录；届时应保持稳定 `import agentic_rag`，避免两个发行包同时拥有同一命名空间，删除重复业务实现，并验证数据 schema、ID、配置语义与历史引用不因迁移改变。本阶段不执行该迁移。
 
-开发关系：R05 的干净核心安装不依赖宿主；R12 的开发环境显式安装本地 CodePlus wheel 与开发 RAG wheel（或分别 editable 用于日常开发），不添加到普通宿主强制依赖，不用 PYTHONPATH 或 cwd 解包。开发包不声明可能形成循环的 `codeplus` 硬依赖，也不从同名 PyPI 项目盲取宿主；适配导入时给明确缺失宿主/版本不兼容错误。R26 主发行自身含核心，去掉开发依赖，适配器只加载同发行内模块。
+开发关系：R05 的干净核心安装不依赖宿主；R12 的开发环境显式安装本地 CodePlus wheel 与开发 RAG wheel（或分别 editable 用于日常开发），不添加到普通宿主强制依赖，不用 PYTHONPATH 或 cwd 解包。开发包不声明可能形成循环的 `codeplus` 硬依赖，也不从同名 PyPI 项目盲取宿主；适配导入时给明确缺失宿主/版本不兼容错误。本阶段保留独立发行结构。
 
-依赖组冻结职责：核心基础只包含已需要的轻量 schema 依赖（R05 用 pydantic，与宿主约束取交集）；`milvus` 放 R02 已验证的 pymilvus/client 依赖；`local-models` 放 torch/transformers/tokenizer 等本地模型 worker 依赖，CUDA wheel 索引与环境锁单列，不把 CPU torch 误当验证版本；`dev`/dependency-group 放 pytest/build 等开发工具，不能进入运行依赖。Windows CPU宿主与 CUDA worker 可用独立环境；future API extra 只有正式实现后才增加，不先建空组。每组精确锁定在对应任务的实际平台验证后写入，R03 能力事实不等于任意平台包已兼容。最终主发行使用同职责的 `knowledge`（轻量检索依赖）和 `knowledge-local`（本地 worker）extras；普通安装不得 import GPU 模块。
+依赖组冻结职责：核心基础只包含已需要的轻量 schema 依赖（R05 用 pydantic，与宿主约束取交集）；`milvus` 放 R02 已验证的 pymilvus/client 依赖；`local-models` 放 torch/transformers/tokenizer 等本地模型 worker 依赖，CUDA wheel 索引与环境锁单列，不把 CPU torch 误当验证版本；`dev`/dependency-group 放 pytest/build 等开发工具，不能进入运行依赖。Windows CPU 宿主与 CUDA worker 可用独立环境；future API extra 只有正式实现后才增加，不先建空组。R03 能力事实不等于任意平台包已兼容；本阶段不设计主发行专用 extras。
 
-Compose 唯一发布资源定为 `agentic_rag/resources/compose.yaml`（资源 package 含 `__init__.py`）。R25 将验证后的 compose 迁入开发包此路径，不保留两个手工维护副本；现有目录 compose 只作整理输入。通过 `importlib.resources.files('agentic_rag.resources').joinpath('compose.yaml')` 读取，用 `as_file` 在有界操作中取得路径，或导出到明确配置的绝对部署目录后执行；不从 `Path.cwd()`/源码相对路径查找。持久运行使用导出的用户文件，`docker compose -f <absolute> -p <isolated-project>`，数据卷和地址显式配置；包内资源只读。R26 资源随同一源码迁移，资源锚点保持不变。
+未来若正式发行 Compose 资源，可采用 `agentic_rag/resources/compose.yaml`，使用 `importlib.resources` 读取并明确导出到用户部署目录；不应维护两个手工副本或依赖源码当前目录。本阶段以现有 Compose/真实 Milvus 功能验收为准，不要求发行包内资源交付。
 
-当前根 force-include 指向不存在的 `deployment/knowledge/compose.yaml`，因此不能声称根已可打包。旧清理独立移除此映射并把 deployment/AgenticRAG 排出根 sdist；R05 独立包自己显式包含 src/资源/LICENSE并排除 eval/probes/运行数据/缓存。清理后的根排除不应影响独立构建；R26 源码已迁到根 agentic_rag，不依赖部署目录 force-include。R04 不改根构建配置或 compose。
+R04 当时记录根 force-include 指向旧 `deployment/knowledge/compose.yaml`；该历史诊断不能代替当前打包核查。R05 独立包显式包含必要源码/资源/LICENSE 并排除评测与运行数据；本阶段不修改根构建配置以迁入主包。
 
-门槛分别保持：R05 构建开发 wheel 与 sdist→wheel，在空环境、非仓库 cwd、清空 PYTHONPATH 后验证核心 import/schema、缺可选依赖诊断和无 GPU 导入；R25 Windows/Linux 各自独立环境，从发行包安装宿主+开发包，核验完整建库/真实 worker/Milvus 两类部署/Agent回答/历史引用与资源；R26 移入主发行后再从 wheel 与 sdist 洁净安装，验证旧开发包卸载、单份代码、数据和引用迁移及普通宿主回归。前一阶段通过不替代后一阶段。
+现行门槛为：R05 已验证开发 wheel 与 sdist→wheel 的核心安装；R12 验证 Windows 开发宿主接入；R23/R24 验证完整 Windows 功能、真实 worker/Milvus/Agent、历史引用及质量。跨平台发行安装和主包迁入不属于现行门槛。
 
 ## 7. 宿主精确白名单与旧清理顺序
 
@@ -167,9 +167,8 @@ Compose 唯一发布资源定为 `agentic_rag/resources/compose.yaml`（资源 p
 | R12 最小 CLI/TUI，R21 完整装配 | `codeplus/__main__.py`、`codeplus/app.py`、`codeplus/config.py`、`codeplus/validator.py`、`.codeplus/config.yaml.example`、`codeplus/commands/handlers/knowledge.py`、`codeplus/commands/handlers/__init__.py` | 惰性 feature/任务配置、TUI与-p消费者 aclosing、use/ask/off薄层；R12开发限定fixed Dense，不复用权限 `--mode`，不实现全套管理 |
 | R12 限制门，R21 正式启用 | `codeplus/remote.py` | R12只允许显式拒绝新RAG请求/共享状态误装配的限制门；R21才接完整策略、流式批准正文和aclosing，启用时补取消/断连回归 |
 | R20/R21 | `codeplus/app.py`、`codeplus/commands/handlers/knowledge.py`、`codeplus/commands/handlers/__init__.py`、`codeplus/commands/completion.py`、`codeplus/commands/handlers/session.py`、`codeplus/memory/session.py` | 完善基础管理命令、报告和会话元数据；旧清理删过的命令文件按新适配薄层重建，不恢复旧实现 |
-| R25/R26 | `pyproject.toml`、`uv.lock`、`README.md`、`README_EN.md`、`.codeplus/config.yaml.example` | extras、单份打包/资源、真实使用帮助；保留用户个人叙述 |
 
-工具注册使用现有 ToolRegistry API 在适配层创建新 registry，R04 不预先批准改 `codeplus/tools/__init__.py` 或 `tools/agent_tool.py`；R12 证明无必要则不动。保存复用 `codeplus/tools/write_file.py` 与权限模块现有行为，也不预先批准改其规则。新包正式集成测试放 `deployment/AgenticRAG/tests/test_codeplus_integration.py`、`test_request_delivery.py`、`test_run_budget.py`、`test_packaging.py`（尚不存在，按对应阶段新增）；已有宿主回归为 `tests/test_agent.py`、`test_context.py`、`test_context_window.py`、`test_serialization.py`、`test_conversation_pairing.py`、`test_subagent.py`、`test_commands.py`。R26 随源码迁移测试归属，不复制两套。R04 的 `test_host_contract.py` 是正式保留的小实验，不能命名成端到端通过。
+工具注册使用现有 ToolRegistry API 在适配层创建新 registry，R04 不预先批准改 `codeplus/tools/__init__.py` 或 `tools/agent_tool.py`；R12 证明无必要则不动。保存复用 `codeplus/tools/write_file.py` 与权限模块现有行为，也不预先批准改其规则。新包集成测试与已有宿主回归按实际功能风险选择执行；本阶段不迁移源码或复制两套测试。R04 的 `test_host_contract.py` 是正式保留的小实验，不能命名成端到端通过。
 
 旧清理输入来自 `C:/Users/18221/.codex/worktrees/144f/rag-cleanup-review`。本次核对 README/changes.json/independent-review/patch：patch SHA256 `ddaeacc7e481ea29958bfcef7dcb1e7a1f15fc79a8a38242a3012ef46511aedc`；changes SHA256 `33ee88e37f4e9194f9d7641390d05ebcaa761dea05cb35563389f833a2b449d8`。56 路径的当前状态与精确差异记录在 R04-static-evidence；旧报告 718/197 passed 是历史工作树证据，不能当本次结果。
 
@@ -179,6 +178,6 @@ Compose 唯一发布资源定为 `agentic_rag/resources/compose.yaml`（资源 p
 2. **R12 写宿主 hook 前**由 Leader 单独分派“旧清理整合”，新的唯一执行者接管当前最新 HEAD 的精确补丁；旧任务保持只读。逐文件核对 before/after，保存新基线，禁止整包盲 apply 或整工作树覆盖。
 3. R01 已交付的 `eval/RAG-eval/check.py`、`run.ps1` 不接收旧 patch；`dataset_io.py`、`replay.py`、native report wrapper、正式 R01 tests保持权威。旧 patch 对 `tests/test_multihop_evaluation.py` 不直接应用；如需验证清理，只增加与既有冻结协议一致的 seam 用例，由 Leader/R01 归属复核。eval README/benchmark 仅接必要文档接缝，不改变原题/609语料/gold/upstream指纹/评分分母。完整继承 MultiHop 替换仍未提交，不借此任务顺带入 Git。
 4. agent/config/commands/app/remote/session/packaging 等碰撞以“先清旧实现、验收普通宿主、单独提交”为序；根依赖锁仅按清理实际需求裁剪。清理执行者解决本阶段冲突，Leader独立复跑当前候选树并只 stage 精确范围；继承 README/compose 删除按归属保护。旧报告的“顺带提交评测和旧 compose 删除”建议不沿用。
-5. 清理提交后重新定位本表接点、复跑 R04 实验；R12 执行者只在清理后基线接新策略，负责新接口冲突，不能回头套旧清理 patch 删除新 hook。R25/R26 由各自唯一执行者解决依赖/资源迁移。旧临时目录的历史删除阻塞不由 R04处理，也不作为清理已完成条件虚报。
+5. 清理提交后重新定位本表接点、复跑 R04 实验；R12 执行者只在清理后基线接新策略，负责新接口冲突，不能回头套旧清理 patch 删除新 hook。旧临时目录的历史删除阻塞不由 R04 处理，也不作为清理已完成条件虚报。
 
-R12 必测两入口正常/无命中/工具失败/权限拒绝/三路执行/并行预算、每种裁剪/compact/pair修复、三 provider caps与真实终态、取消/consumer-close/finally、一次引用修正、未知usage/隐藏重试、普通任务输出及共享 client 未污染。联网模型/真实Agent、双平台安装与正式服务验证仍由各自阶段执行；本设计和 MockTransport 只解除接口可实施性问题。
+R12 必测两入口正常/无命中/工具失败/权限拒绝/三路执行/并行预算、每种裁剪/compact/pair修复、三 provider caps与真实终态、取消/consumer-close/finally、一次引用修正、未知usage/隐藏重试、普通任务输出及共享 client 未污染。联网模型/真实 Agent 的完整功能与质量仍由后续 R23/R24 核验；本设计和 MockTransport 只解除接口可实施性问题。
