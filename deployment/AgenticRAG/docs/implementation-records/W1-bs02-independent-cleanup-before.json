@@ -1,0 +1,174 @@
+{
+  "status": "FAIL",
+  "phase": "before",
+  "started": 1790106937.9635336,
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923",
+  "project": "codeplus-w1-bs02-leader-20260923",
+  "precleanup_sha256": "294d51c0e5e33fefa3b3cd8aeacb9e80a66e99dac5fb2fee53a74837999b02f9",
+  "resources_sha256": "4182e8be8145d66ae6040adb875ad9c0d8d628aa46f64c822999319d87fa9de9",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "8fc7129ffc9e23852b41f70e8d8a212cd989b6abbb8b0e066edded9e1e73257e",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7487b286d9f7e79c53097699923cf299cbe5cb94d76f4cd2b56953cb10f8d785",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "f79ebc58a2f828e91822a519ba9bbee94444905ccd4ae0234ee9c9bba6ec521e",
+      "stderr": ""
+    }
+  ],
+  "protection": {
+    "counts": {
+      "tested_files": 322,
+      "production_sources": 206,
+      "protected_inputs": 6553,
+      "previous_reviewed_files": 297,
+      "previous_phase_postnotes": 2,
+      "historical_sql": 8,
+      "spec_files": 7,
+      "reviewed_files": 35,
+      "ignored": 411
+    },
+    "all_equal": true,
+    "actual_hashes": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-protected-before.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+      "rows": 7841,
+      "raw_sha256": "b0dc93b1963733ba26d3a71eb49735744080a24255b1d3dc95214822b0325efb"
+    },
+    "blocked_paths_preserved": [
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\postcleanup.py",
+        "bytes": 7722,
+        "sha256": "56c0b73257456affe49a54fcce3323163d981deae00cd60b6ca6b7691f2c0b7e"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\r14-compose-before.yaml",
+        "bytes": 1637,
+        "sha256": "68ca4e0b7685e991d5904b9a92fb78a44736fa2544b93854b5562554fa3e0cf9"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\stage.py",
+        "bytes": 6641,
+        "sha256": "7aabdb2f6341bb12998e56038dbe245673f2e853e4631e2510c0ce513a709bbf"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\whitespace.py",
+        "bytes": 2611,
+        "sha256": "e87edda850ecb9d86a29d21bf64b5e2c7d00e5f0950e89f357eaa545096778b5"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-finalizer-20260923.py",
+        "bytes": 12511,
+        "sha256": "09377d6f3c74da9b1cdb98aeaa12337d1226887be26701b5738c2e33f28e09fa"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\after.py",
+        "bytes": 3911,
+        "sha256": "750d56546175a97d32630ec5b8d17a315befd51cd3709f2783fa3059fdf72c39"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\audit.py",
+        "bytes": 17307,
+        "sha256": "d927425ccd8b35f02ea1f859ac6d4b092ed7ac338d1a368aedbb1208efccd723"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned-v2.ps1",
+        "bytes": 5019,
+        "sha256": "b8de4de9b65ffa6ec35cd654f4c0feb3078d3ee2f3b63f6f95fb18b8112df551"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned-v3.ps1",
+        "bytes": 5013,
+        "sha256": "5501730dc1c85d99e974d7fca5e08434df83b2db9c591f737c3f42129a329420"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned.ps1",
+        "bytes": 4966,
+        "sha256": "818fbf85152967233b373b8cb2c9fede9a8d94929e1cb2594e039f2e19785048"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate.py",
+        "bytes": 1958,
+        "sha256": "28519f097e4c0eb9f29ef2c8c9e5daa8791439c14215146612f35111c0033a50"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate_v2.py",
+        "bytes": 4717,
+        "sha256": "a7b174a492f5cea048d01e92840ed4e7083b056b21271e5b55b19a308f9bf4c2"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate_v3.py",
+        "bytes": 6306,
+        "sha256": "09aee9968b7a54679e1d4077c2a90a034de26b2ea58f8d93ed21fd7338a046d6"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\handle_probe.py",
+        "bytes": 1934,
+        "sha256": "a4d268b6e1bba88ac5fd0e256b8e23ee83718d7c1f3f9faa50bc9b01fd52b167"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\inspect_owned_drift.py",
+        "bytes": 1454,
+        "sha256": "dc59b399e478bd6ff6d99940888140ee025d8aafb3df897e6fd48d2c9c909e53"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\inspect_shared_drift.py",
+        "bytes": 1612,
+        "sha256": "ed4b8fbf861a68b90f353f1e2efd99b7d982f9bd6320a7c4aaa66d54974e5057"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\report.py",
+        "bytes": 9035,
+        "sha256": "b2e5863b10b9dc46409cb6da093b0bca7336be0a46aca538351efd4723a4f344"
+      }
+    ],
+    "convergence_report": {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-resource-status-v5.json",
+      "bytes": 11446,
+      "sha256": "06d83b7855f1f3326c866d9942377a7c189f167d2e1ae8999f05ceb284b93ab8"
+    },
+    "external_scope": "Entire bf43 worktree and associated resources protected; no write or deletion attempted, W2 may add its own authorized files."
+  },
+  "error": "AssertionError('inherited Git status changed')",
+  "finished": 1790106939.1661708
+}

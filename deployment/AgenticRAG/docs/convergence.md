@@ -7,7 +7,7 @@
 | 问题 | 已复核事实 / 处理边界 | 验证与接入 |
 | --- | --- | --- |
 | BS-01 | 来源额度依赖英文异常文案，片段上限落入非法 partial/budget；source_budget 还混有计量故障。第一批改为明确原因，新增 context_limit，共用终态原因定义；不放宽 partial/budget | 第一批已在R14提交上接入，Leader实际安装独立回归core658/host715、新独立清理及Leader复核通过；实际本地SHA见postcommit记录 |
-| BS-02 | 普通构建内部候选绑定完整 owner 和输入/配置身份，中间步骤复用并核对内容；最终完整归档/索引验证保持。混合旧成员准备 5→2、无变化 2→1，完整发布向量复制保留 | 归档I/O收敛已接入并通过Leader独立验收；内部重复seal另有4路径精简候选待下一批，BS02尚未结项 |
+| BS-02 | 普通构建内部候选绑定完整 owner 和输入/配置身份；传输出口隔离可变 dense 列表，保留最终完整归档/索引验证。混合旧成员准备 5→2、无变化 2→1，完整发布向量复制保留 | 归档I/O收敛已在 b7b4647 接入；追加精简已通过Leader安装、92项回归和真实服务验收；本地提交身份见追加批 postcommit 记录 |
 | BS-03 | N 项批处理在单次操作内完整认证一次输入集合，逐项窄查当前行、每次实读归档；公开读取及恢复各自重新认证 | 已接入并通过Leader独立CPU/真实恢复验收；具体提交与清理边界见末尾记录 |
 | BS-04 | 来源调用准入/异常归并、归档单次读取哈希及返回；搜索在单次调用内按库/版/文档/文档版复用归档来源，各命中仍校验 section/chunk/span/text/hash，签发及提交仍检查当前 run/pin | 第一批归档/审计已本地提交；第二批搜索复用已接入并通过Leader实际安装和真实服务验收 |
 | BS-05 | 完成请求载荷被 client 强持有；累计 session 上限属于现行防重契约，不能仅改活跃计数 | Leader 已批准连接绑定、活跃句柄及安全轮换设计；独立 CPU 实施后在 W2（R15 提交后、R16 前）验收 |
@@ -73,3 +73,35 @@ BS02归档I/O收敛已验，但内部重复全对象seal待后续4路径窄补�
 独立收敛任务最新v3资源报告为8060 bytes，SHA256 5965d8634f0550901debd878391132f5b96c08b1316da1b8d8ee3264c14f9cce：25个完成测试目录，另有2个新单文件被自动审批拒删；此前10目录拒绝及仍供后续工作的环境/缓存/备份保持。不覆盖v1/v2历史报告或宣称递归审计/清理完成。它们与Leader此前R14四文件目录、batch1单文件的待处理拒绝均不在本批独立清理范围内。
 
 本批独立清理实际删除约4.93GB自有根与3容器/3卷/1网络，端口关闭；Leader重核33附件及全部保护哈希通过。shared after与最后predelete的172661节点零差异；最初before仍有5724个uv缓存普通目录size差异，1052个自有目录attrs差异也保留原FAIL与来源未知说明。新helper根12文件63232B的删除被自动审批以blocked by policy拒绝，未执行，未重试；三处Leader相关拒删范围均待各自用户指示。bf43 v4（9042B/SHA03a75a0d423615e822a3be17d0eaedc5ce637f6255988f6d144be3c3311da207）及之后第5个辅助单文件拒绝也不在本批清理范围。代码提交不表示这些残留已清除，详见本批Leader记录及独立清理报告。
+
+## BS02 追加精简候选
+
+此追加以 Leader 已实际本地提交的 `b7b4647598c24734df497dd6f40950dcdb9817a5` 为真实基线，只改 mutations、正式 build preparation 测试及两份说明。前三个代码/测试/ordinary-mutations 文件与已审阅 slim 候选逐字节一致；本说明保留 Leader 新增的全部验收、清理阻断段落和其他 finding 状态。原 v2/slim patch、manifest 与纯 W1 副本保持冻结；本代码批另审另验，不并入材料压缩或 W2。
+
+实际对象传递边界如下：
+
+- `_prepare_changes_with_base` 产生的 candidate 成员、行和配置由内部协调器及 publication 消费。`_register` 先把 spec 序列化存库，再通过 `artifact()` 独立解析返回；传给 backend 的 artifact 不共享 candidate.spec。observer 接收新建的标量字典。
+- 插入行通过 dict 展开建立独立标量字典；原先 dense 列表是唯一仍指向内部编码向量的可变引用。现在每次最多 256 行的发送批次为 dense 建立独立列表，传输消费后的缓冲区修改不会污染内部候选。
+- `base_artifact/base_expected` 只传给 `read_vectors` 一次，之后没有产品消费者。正式方法仍读取全量实际索引，核对 ID 集、全部标量和 little-endian float32 SHA256；无需在后续内部登记时再次对这两份材料计算摘要。
+
+因此删除 `_candidate_seal` 和 `_base_seal`：典型混合向量复用构建移除四轮全候选摘要和四轮旧材料摘要；只有新编码的构建为三轮，无变化构建为两轮。单次作用域、catalog 实例、完整 owner token、revision、当前 owner.require 及 batch/base/输入/配置/请求绑定继续保留。公开入口重新派生、编码记录逐行比对、实际写事务/CAS、最终归档和索引完整校验也全部保留；没有宣称全部扫描消失或端到端提速。
+
+原摘要函数中的 `model_inputs/token_counts` 为空检查重复了内部构造固定值；编码向量字段和 float32 摘要已由真实归档读取 `_read_encoded` 核验。候选不能由公开调用方传入，隔离传输可变引用后，这些内部重复检查没有新增外部或持久化验证边界。
+
+原六个直接改动私有 scope 的参数化用例改为六个从 `build_changes` 发起的传输边界用例：一个验证 SDK 消费后修改发送缓冲区仍可合法发布且内部候选未变；五个分别损坏新插入 dense、旧索引 dense、标量、vector_hash 和 chunk ID，并在实际发生的索引验证阶段拒绝，保留旧指针及回执。原 scope/owner/公开入口与归档损坏用例继续保留。
+
+独立于含 W2 工作树的纯 W1 副本执行 `test_build_preparation.py test_mutations.py test_recovery.py test_publication.py test_recovery_ownership.py`：**92 passed，121.86 秒**，无跳过。包含真实归档、SQLite 事务、正式适配器构造和 read_vectors/validate 算法，SDK 传输为受控替身；本任务未执行真实 GPU/Milvus。相对 v2，生产 mutations 为 **+4/-30，净减 26 行**；正式 preparation 测试为 **+68/-31，净增 37 行**。该结果只属于追加候选，Leader 对 v2 的既有运行证据不冒充此版本验收。
+
+此前开发依赖 P2 已另行修复并冻结 v2：默认 dev 组声明 PyMilvus 3.0.2，核心发行依赖和可选 extra 保持。本任务新环境仅 `uv sync --locked` 后两项发布回归通过（4.77 秒）；父审查独立新环境同样通过（7.36 秒）。本次追加复用该自有 CPU 环境并将 editable 安装切换到树外纯 W1 精简副本，未使用含 W2 的工作树作为验证源。
+
+上述精简随后通过独立静态复审；父审查独立重建候选并运行 build_preparation/mutations/recovery_ownership：**52 passed，137.34 秒**，无跳过。此次对真实提交的适配只调整状态说明，149 个纯 W1 输入中其余 148 个文件原始字节均与已测试 slim 副本一致，因此不重复运行 92 项测试。这些 CPU 证据不替代追加批 Leader 的实际 GPU/Milvus 验收。
+
+同步后的资源附件单独递增为 `agentic-rag-convergence-resource-status-v5.json`，补记第 5 个被自动审批拒删的 `convergence-sync.py`，以及本次同步/适配所需的新资源。未重试任何已被拒绝的删除，也不据历史报告宣称当前全部清理完成。
+
+## BS02 追加批 Leader 实际验收
+
+本轮新包92项受影响回归、wheel/sdist两路干净安装、真实GPU/Milvus普通变更和13场景恢复均通过；Leader独立核对14份数据库/全部归档、actual dense及停服终态重放，322文件冻结无漂移。待新独立清理及本地提交，具体包身份、命令和未重跑边界见[追加批记录](implementation-records/W1-bs02-leader-review.md)。此前所有自动审批拒删范围仍保留；材料/W2/R15未混入。
+
+## 2026-09-23 用户调整执行范围
+
+用户要求主线继续功能实现，清理收敛由用户另派会话处理。以上“等待清理”和“W1 末材料整理”的描述保留为此前状态；它们不再是功能提交或 R15 启动条件。BS02 按已通过的工程验收精确本地提交，随后直接推进 R15。材料压缩、重复副本整理及 W2 独立树保持当前状态，后续由接管会话协调；主线不再主动推进这些清理工作。既有失败、审批阻断和未执行边界均保留。

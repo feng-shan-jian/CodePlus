@@ -1,0 +1,940 @@
+{
+  "status": "PASS_QUALIFIED_METADATA_OBSERVATION",
+  "phase": "after",
+  "started": 1790124566.327253,
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923",
+  "project": "codeplus-w1-bs02-leader-20260923",
+  "precleanup_sha256": "294d51c0e5e33fefa3b3cd8aeacb9e80a66e99dac5fb2fee53a74837999b02f9",
+  "resources_sha256": "4182e8be8145d66ae6040adb875ad9c0d8d628aa46f64c822999319d87fa9de9",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "8fc7129ffc9e23852b41f70e8d8a212cd989b6abbb8b0e066edded9e1e73257e",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7487b286d9f7e79c53097699923cf299cbe5cb94d76f4cd2b56953cb10f8d785",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "35a99dcd6d8ff18de9d7ecf8981cb37efb2844271057868574496def601f9ee5",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-Command",
+        "@(Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CommandLine,@{Name='Birth';Expression={$_.CreationDate.ToUniversalTime().ToString('o')}}) | ConvertTo-Json -Depth 4 -Compress"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "3d14e852176d09378924cebb177f9e3162b133631c60769244080ddf40a34560",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "ps",
+        "-aq"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7b4c358b1a2826747e7d574218eadf7aeafd0ad6f9bfd700e7b32ff085831ad1",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "4bb3885b1aa2"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "122c9848281a6912960ede4f148bf22eb9f80e874b775dbe03140b881b51ffa5",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "44840f5a0ec0"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "8a35c9aaa646b391a7924ff6f465db81dd4c4352cb67ced90e1ed8438b9c76f3",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "ls",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7f336b58bbd8e8777aa1f89b5642e4df5454602beb7446a00f830441952043d2",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e7546bd5295aa33eec60531bbf7997df2629fd1b98f26d710537fb17baa83a9b",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "758908dc6b8fb64484fe0b88356b944401dbaae826ff4f1456e71e6ef46f5333",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "02cb303a0fe37813b21b0149d16570b05991e7eb945cba637f33f412152f4159",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "552facf0613ea1bc0852ee2080b9544a80756d6fb7e2c388727dc493e093729e",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "approvaplat-mysql-data"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "a5ad71068eb6d48997e7daeefed7a0b5718ecbe295b7710f91d82e8909a9db49",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "ls",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "482d0f3e9c49c8f91bc611118458f46a11379484d0534d20a0ce78763af0e1f5",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "c35ac9a18def"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "fcd0d01edc58f50b3c920dca1db40affe62cc4f91bf21622e508a15b306fb3cf",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "3bd9ff598d1b"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "2d294396871e19341662bbd51e4b650f5b8ac7d3a9b2a9eb963d565164e5c966",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "831c0f31d5e3"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "346559a50ade247c1b43c0585f6cbf1ea18a148bf2d47cfde75d88758f00bfff",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "e3597993ac4b"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "beabefa0be2f789fb8c424921cbb694df85f11689e5235a48b35cd419ae08cec",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "image",
+        "ls",
+        "--no-trunc",
+        "--quiet"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "c84faf95639e16cfebc51cabf7cec6c26e9d3821297a089b3326ace0ec1777c6",
+      "stderr": ""
+    }
+  ],
+  "leader_judgment": {
+    "authority": "Leader explicit followup task to this independent cleaner",
+    "independent_review": "Leader fully decompressed original before/predelete shared and owned snapshots and recomputed all deltas using exact Python integers; verified all six gzip SHA256 values.",
+    "shared_observation": {
+      "nodes": 172661,
+      "changed_directories": 6157,
+      "root": "C:/Users/18221/AppData/Local/uv/cache",
+      "only_changed_field": "size",
+      "before": 0,
+      "after": "positive",
+      "attributes": 16,
+      "reparse_tag": 0,
+      "nlink": 1,
+      "path_set_and_all_other_fields_equal": true
+    },
+    "owned_observation": {
+      "nodes": 50760,
+      "changed_directories": 17,
+      "only_changed_field": "attributes",
+      "before": 268435472,
+      "after": 16,
+      "path_set_and_all_other_fields_equal": true
+    },
+    "decision": "These exact observations did not alter file identity, link boundaries, ownership or cleanup scope. Continue the originally authorized root and project cleanup with fresh strict comparisons to v2-predelete.",
+    "limitations": "Cause unknown. Original strict gate remains FAIL. Shared metadata is not a full shared-content hash. No shared files were written or reset.",
+    "new_difference_rule": "Stop on any additional difference; only the two named newly created helpers and exactly frozen root-directory metadata change are authorized."
+  },
+  "qualified_baseline_sha256": {
+    "W1-bs02-independent-cleanup-v2-shared-before.jsonl.gz": "9762f0338f845447ea7e301d4ca5cb41f920ebe6b209bfe4ffb448e71dd3436c",
+    "W1-bs02-independent-cleanup-v2-shared-predelete.jsonl.gz": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476",
+    "W1-bs02-independent-cleanup-v2-shared-before-to-predelete-delta.jsonl.gz": "a44feeac90005ff3d7fc096091629aa05deced3a2bc50277b14f3dad5273d7d7",
+    "W1-bs02-independent-cleanup-v2-owned-before.jsonl.gz": "ff774ef660d597be9d25c3bfa26b6089448892cae40c41126e4f081bc1bf54dd",
+    "W1-bs02-independent-cleanup-v2-owned-predelete.jsonl.gz": "58a7b0dc8c0c591f982c06193e475e74a65c109d53806752531e64b13e99df3f",
+    "W1-bs02-independent-cleanup-v2-owned-before-to-predelete-delta.jsonl.gz": "5fc539236c2d50d04ef02b8759da4f9bcc4723903bf6481ea61d2ca109e01b8a",
+    "W1-bs02-independent-cleanup-before.json": "02f213f9e8b03a1949e1ae56d53d3b88decf60dd27344cb1d0ad40fb2e92b251",
+    "W1-bs02-independent-cleanup-protected-before.jsonl.gz": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+    "W1-bs02-independent-cleanup-v2-predelete.json": "cc6f08ce64d067178d5bcab5334fcb68101c191cdbb0be8192d48ca497570da3"
+  },
+  "original_shared_strict_gate_passed": false,
+  "protection": {
+    "counts": {
+      "tested_files": 322,
+      "production_sources": 206,
+      "protected_inputs": 6553,
+      "previous_reviewed_files": 297,
+      "previous_phase_postnotes": 2,
+      "historical_sql": 8,
+      "spec_files": 7,
+      "reviewed_files": 35,
+      "ignored": 411
+    },
+    "all_equal": true,
+    "actual_hashes": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-protected-after.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+      "rows": 7841,
+      "raw_sha256": "b0dc93b1963733ba26d3a71eb49735744080a24255b1d3dc95214822b0325efb"
+    },
+    "blocked_paths_preserved": [
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\postcleanup.py",
+        "bytes": 7722,
+        "sha256": "56c0b73257456affe49a54fcce3323163d981deae00cd60b6ca6b7691f2c0b7e"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\r14-compose-before.yaml",
+        "bytes": 1637,
+        "sha256": "68ca4e0b7685e991d5904b9a92fb78a44736fa2544b93854b5562554fa3e0cf9"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\stage.py",
+        "bytes": 6641,
+        "sha256": "7aabdb2f6341bb12998e56038dbe245673f2e853e4631e2510c0ce513a709bbf"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\whitespace.py",
+        "bytes": 2611,
+        "sha256": "e87edda850ecb9d86a29d21bf64b5e2c7d00e5f0950e89f357eaa545096778b5"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-finalizer-20260923.py",
+        "bytes": 12511,
+        "sha256": "09377d6f3c74da9b1cdb98aeaa12337d1226887be26701b5738c2e33f28e09fa"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\after.py",
+        "bytes": 3911,
+        "sha256": "750d56546175a97d32630ec5b8d17a315befd51cd3709f2783fa3059fdf72c39"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\audit.py",
+        "bytes": 17307,
+        "sha256": "d927425ccd8b35f02ea1f859ac6d4b092ed7ac338d1a368aedbb1208efccd723"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned-v2.ps1",
+        "bytes": 5019,
+        "sha256": "b8de4de9b65ffa6ec35cd654f4c0feb3078d3ee2f3b63f6f95fb18b8112df551"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned-v3.ps1",
+        "bytes": 5013,
+        "sha256": "5501730dc1c85d99e974d7fca5e08434df83b2db9c591f737c3f42129a329420"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned.ps1",
+        "bytes": 4966,
+        "sha256": "818fbf85152967233b373b8cb2c9fede9a8d94929e1cb2594e039f2e19785048"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate.py",
+        "bytes": 1958,
+        "sha256": "28519f097e4c0eb9f29ef2c8c9e5daa8791439c14215146612f35111c0033a50"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate_v2.py",
+        "bytes": 4717,
+        "sha256": "a7b174a492f5cea048d01e92840ed4e7083b056b21271e5b55b19a308f9bf4c2"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate_v3.py",
+        "bytes": 6306,
+        "sha256": "09aee9968b7a54679e1d4077c2a90a034de26b2ea58f8d93ed21fd7338a046d6"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\handle_probe.py",
+        "bytes": 1934,
+        "sha256": "a4d268b6e1bba88ac5fd0e256b8e23ee83718d7c1f3f9faa50bc9b01fd52b167"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\inspect_owned_drift.py",
+        "bytes": 1454,
+        "sha256": "dc59b399e478bd6ff6d99940888140ee025d8aafb3df897e6fd48d2c9c909e53"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\inspect_shared_drift.py",
+        "bytes": 1612,
+        "sha256": "ed4b8fbf861a68b90f353f1e2efd99b7d982f9bd6320a7c4aaa66d54974e5057"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\report.py",
+        "bytes": 9035,
+        "sha256": "b2e5863b10b9dc46409cb6da093b0bca7336be0a46aca538351efd4723a4f344"
+      }
+    ],
+    "convergence_report": {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-resource-status-v5.json",
+      "bytes": 11446,
+      "sha256": "06d83b7855f1f3326c866d9942377a7c189f167d2e1ae8999f05ceb284b93ab8"
+    },
+    "external_scope": "Entire bf43 worktree and associated resources protected; no write or deletion attempted, W2 may add its own authorized files."
+  },
+  "git": {
+    "head": "b7b4647598c24734df497dd6f40950dcdb9817a5",
+    "branch": "codex/rag",
+    "index_empty": true,
+    "inherited_status_equal": true,
+    "original_entries": 6569,
+    "own_new_report_entries": 28,
+    "known_precleanup_self_record_added": "?? deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-precleanup.json"
+  },
+  "processes": {
+    "audit_pid": 69116,
+    "audit_birth": "134345981662511522",
+    "ancestors": [
+      69116,
+      54984,
+      17360,
+      3240,
+      20172,
+      2756
+    ],
+    "samplers": [
+      22244
+    ],
+    "related": [
+      {
+        "ProcessId": 54984,
+        "ParentProcessId": 17360,
+        "Name": "pwsh.exe",
+        "ExecutablePath": "C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+        "CommandLine": "\"C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe\" -Command \"try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}\n& 'C:/Users/18221/AppData/Local/Temp/codeplus-w1-bs02-leader-20260923/independent-cleanup-delete-v3.ps1'\"",
+        "Birth": "2026-09-23T00:48:25.5995780Z"
+      },
+      {
+        "ProcessId": 69116,
+        "ParentProcessId": 54984,
+        "Name": "python.exe",
+        "ExecutablePath": "C:\\Python314\\python.exe",
+        "CommandLine": "\"C:\\Python314\\python.exe\" -c \"from pathlib import Path\nimport collections,ctypes,gzip,hashlib,json,msvcrt,os,socket,stat,subprocess,sys,time\nROOT=Path('C:/Users/18221/AppData/Local/Temp/codeplus-w1-bs02-leader-20260923')\nREPO=Path('D:/CodePlus'); REC=REPO/'deployment/AgenticRAG/docs/implementation-records'\nPREFIX='W1-bs02-independent-cleanup-v3'; PROJECT='codeplus-w1-bs02-leader-20260923'\nBASE='b7b4647598c24734df497dd6f40950dcdb9817a5'\nPRE_SHA='294d51c0e5e33fefa3b3cd8aeacb9e80a66e99dac5fb2fee53a74837999b02f9'\nRES_SHA='4182e8be8145d66ae6040adb875ad9c0d8d628aa46f64c822999319d87fa9de9'\nCOMMANDS=[]\ndef sha(p):\n    p=Path(p)\n    if not p.is_file():return None\n    h=hashlib.sha256()\n    with p.open('rb') as f:\n        for b in iter(lambda:f.read(1048576),b''):h.update(b)\n    return h.hexdigest()\ndef read(n):return json.loads((REC/n).read_text(encoding='utf-8-sig'))\ndef write(n,v):\n    p=REC/(PREFIX+n); assert not p.exists(),str(p)\n    p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')\n    return artifact(p)\ndef artifact(p):return {'path':str(p),'bytes':p.stat().st_size,'sha256':sha(p)}\ndef zipped(n,rows):\n    p=REC/(PREFIX+n); assert not p.exists(),str(p)\n    raw=b''.join((json.dumps(r,ensure_ascii=False,sort_keys=True,separators=(',',':'))+'\\n').encode() for r in rows)\n    p.write_bytes(gzip.compress(raw,compresslevel=9,mtime=0))\n    return {**artifact(p),'rows':len(rows),'raw_sha256':hashlib.sha256(raw).hexdigest()}\ndef loadrows(n):\n    return [json.loads(s) for s in gzip.decompress((REC/(PREFIX+n)).read_bytes()).splitlines()]\ndef cmd(argv,env=None):\n    argv=list(map(str,argv))\n    p=subprocess.run(argv,cwd=REPO,env=env,capture_output=True)\n    COMMANDS.append({'argv':argv,'exit_code':p.returncode,\n        'stdout_sha256':hashlib.sha256(p.stdout).hexdigest(),\n        'stderr':p.stderr.decode('utf-8','replace')})\n    p.check_returncode()\n    return p.stdout.decode('utf-8-sig')\ndef metadata(p):\n    s=p.lstat()\n    r={'path':str(p),'attributes':getattr(s,'st_file_attributes',0),\n       'birthtime_ns':s.st_birthtime_ns,'ctime_ns':s.st_ctime_ns,'dev':s.st_dev,'ino':s.st_ino,\n       'mode':s.st_mode,'mtime_ns':s.st_mtime_ns,'nlink':s.st_nlink,\n       'reparse_tag':getattr(s,'st_reparse_tag',0),'size':s.st_size}\n    if r['attributes']&0x400:\n        r['link_target']=os.readlink(p)\n    return r\ndef ancestors(p):\n    out=[]\n    for part in (p,*p.parents):\n        r=metadata(part); assert not r['attributes']&0x400 and stat.S_ISDIR(r['mode']),r\n        out.append(r)\n    return out\ndef scan(roots):\n    rows=[]; summaries=[]\n    for root in roots:\n        root=Path(root); start=len(rows)\n        if not root.exists() and not root.is_symlink():\n            summaries.append({'root':str(root),'exists':False,'nodes':0});continue\n        stack=[root]\n        while stack:\n            p=stack.pop();r=metadata(p);rows.append(r)\n            if stat.S_ISDIR(r['mode']) and not r['attributes']&0x400:\n                with os.scandir(p) as it:\n                    stack.extend(Path(e.path) for e in it)\n        group=rows[start:]\n        links=sum(bool(r['attributes']&0x400) for r in group)\n        files=[r for r in group if stat.S_ISREG(r['mode']) and not r['attributes']&0x400]\n        dirs=sum(stat.S_ISDIR(r['mode']) and not r['attributes']&0x400 for r in group)\n        summaries.append({'root':str(root),'exists':True,'nodes':len(group),'reparse':links,\n                          'regular_files':len(files),'directories':dirs,'logical_bytes':sum(r['size'] for r in files)})\n    return sorted(rows,key=lambda r:r['path']),summaries\ndef differences(a,b):\n    a={r['path']:r for r in a};b={r['path']:r for r in b};delta=[]\n    for p in sorted(a.keys()|b.keys()):\n        old=a.get(p);new=b.get(p)\n        if old!=new:\n            fields=sorted(k for k in (old or {}).keys()|(new or {}).keys() if (old or {}).get(k)!=(new or {}).get(k))\n            delta.append({'path':p,'changed_fields':fields,'before':old,'after':new})\n    return delta\ndef kernel():\n    k=ctypes.WinDLL('kernel32',use_last_error=True)\n    k.OpenProcess.argtypes=[ctypes.c_uint32,ctypes.c_int,ctypes.c_uint32];k.OpenProcess.restype=ctypes.c_void_p\n    k.GetProcessTimes.argtypes=[ctypes.c_void_p,*([ctypes.c_void_p]*4)];k.GetProcessTimes.restype=ctypes.c_int\n    k.CloseHandle.argtypes=[ctypes.c_void_p];k.CloseHandle.restype=ctypes.c_int\n    k.CreateFileW.argtypes=[ctypes.c_wchar_p,ctypes.c_uint32,ctypes.c_uint32,ctypes.c_void_p,ctypes.c_uint32,ctypes.c_uint32,ctypes.c_void_p]\n    k.CreateFileW.restype=ctypes.c_void_p\n    return k\nK=kernel()\ndef birth(pid):\n    h=K.OpenProcess(0x1000,False,int(pid))\n    if not h:\n        err=ctypes.get_last_error()\n        assert err==87,{'pid':pid,'OpenProcess_error':err}\n        return None\n    try:\n        values=[ctypes.c_uint64() for _ in range(4)]\n        assert K.GetProcessTimes(h,*map(ctypes.byref,values)),ctypes.get_last_error()\n        return str(values[0].value)\n    finally:K.CloseHandle(h)\ndef process_audit():\n    text=\\\"@(Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CommandLine,@{Name='Birth';Expression={$_.CreationDate.ToUniversalTime().ToString('o')}}) | ConvertTo-Json -Depth 4 -Compress\\\"\n    allp=json.loads(cmd(['pwsh','-NoProfile','-Command',text]))\n    bypid={p['ProcessId']:p for p in allp};chain=[];pid=os.getpid()\n    while pid in bypid and pid not in chain:\n        chain.append(pid);pid=bypid[pid]['ParentProcessId']\n    samplers=[p['ProcessId'] for p in allp if p['ParentProcessId']==os.getpid()\n              and p['Name'].lower()=='pwsh.exe' and 'Get-CimInstance Win32_Process' in (p.get('CommandLine') or '')]\n    roottext=str(ROOT).replace('/','\\\\').lower()\n    related=[p for p in allp if roottext in ((p.get('CommandLine') or '')+' '+(p.get('ExecutablePath') or '')).replace('/','\\\\').lower()]\n    active=[p for p in related if p['ProcessId'] not in chain+samplers]\n    workers=[]\n    for mode in ('smoke','real'):\n        original=read('W1-bs02-leader-'+mode+'-worker-exit.json')\n        assert original['status']=='PASS'\n        for row in original['workers']:\n            assert Path(row['runtime_dir']).is_relative_to(ROOT)\n            actual=birth(row['pid']);workers.append({**row,'actual_birth':actual,'original_identity_gone':actual!=row['birth']})\n    killed=[]\n    for row in read('W1-bs02-leader-crosscheck.json')['process_kills']:\n        actual=birth(row['pid']);killed.append({'pid':row['pid'],'birth':row['birth'],'actual_birth':actual,\n                                               'original_identity_gone':actual!=row['birth']})\n    assert not active,active\n    assert len(workers)==5 and all(r['original_identity_gone'] for r in workers),workers\n    assert len(killed)==12 and all(r['original_identity_gone'] for r in killed),killed\n    return {'audit_pid':os.getpid(),'audit_birth':birth(os.getpid()),'ancestors':chain,'samplers':samplers,\n            'related':related,'active_owned':active,'workers':workers,'killed_identities':killed,'no_process_killed':True}\ndef owned_audit(rows,probe=True):\n    regular=[r for r in rows if stat.S_ISREG(r['mode']) and not r['attributes']&0x400]\n    groups=collections.defaultdict(list)\n    for r in regular:groups[(r['dev'],r['ino'])].append(r)\n    hard=[]\n    for ident,items in groups.items():\n        assert all(r['nlink']==len(items) for r in items),{'identity':ident,'paths':[r['path'] for r in items],'nlinks':[r['nlink'] for r in items]}\n        if len(items)>1:hard.append({'dev':ident[0],'ino':ident[1],'links':len(items),'paths':[r['path'] for r in items]})\n    tested=0\n    if probe:\n        for r in regular:\n            h=K.CreateFileW(r['path'],0x80000000,0,None,3,0x00200000,None)\n            assert h!=ctypes.c_void_p(-1).value,{'path':r['path'],'exclusive_read_error':ctypes.get_last_error()}\n            fd=msvcrt.open_osfhandle(int(h),os.O_RDONLY)\n            try:\n                actual=os.fstat(fd)\n                assert (actual.st_dev,actual.st_ino,actual.st_size,actual.st_nlink)==(r['dev'],r['ino'],r['size'],r['nlink']),r['path']\n            finally:os.close(fd)\n            tested+=1\n    return {'regular_files':len(regular),'hardlink_groups':hard,'external_hardlinks':0,\n            'exclusive_read_tested':tested,'exclusive_read_failed':0,'method':'CreateFileW GENERIC_READ, share=0, OPEN_EXISTING, OPEN_REPARSE_POINT; fstat identity check; each handle closed'}\ndef protection(pre,res,phase):\n    rows=[]; counts={};memo={}\n    keys=('tested_files','production_sources','protected_inputs','previous_reviewed_files','previous_phase_postnotes','historical_sql','spec_files','reviewed_files')\n    for key in keys:\n        values=pre[key];counts[key]=len(values)\n        for name,expected in sorted(values.items()):\n            p=(REPO/'deployment/AgenticRAG/docs'/name) if key=='spec_files' else REPO/name\n            if str(p) not in memo:memo[str(p)]=sha(p)\n            actual=memo[str(p)]\n            assert actual==expected,{'kind':key,'path':str(p),'expected':expected,'actual':actual}\n            rows.append({'kind':key,'path':str(p),'expected':expected,'actual':actual})\n    counts['ignored']=len(pre['ignored']['actual'])\n    for name,expected in sorted(pre['ignored']['actual'].items()):\n        p=REPO/name;actual=sha(p);assert actual==expected,(name,expected,actual)\n        if name in pre['ignored']['directories']:assert p.is_dir() and not p.is_symlink() and not p.is_junction(),name\n        rows.append({'kind':'ignored','path':str(p),'expected':expected,'actual':actual,'directory':p.is_dir()})\n    assert sha(REC/'W1-bs02-leader-precleanup.json')==PRE_SHA\n    assert sha(REC/'W1-bs02-leader-resources.json')==RES_SHA\n    blocked=[]\n    old=res['blocked_r14_finalizer'];p=Path(old['root'])\n    assert p.is_dir() and set(x.name for x in p.iterdir())==set(old['files'])\n    for name,v in old['files'].items():\n        item=p/name;assert sha(item)==v['sha256'] and item.stat().st_size==v['bytes']\n        blocked.append({'path':str(item),'bytes':v['bytes'],'sha256':v['sha256']})\n    old=res['blocked_batch1_finalizer'];p=Path(old['target'])\n    assert sha(p)==old['sha256'] and p.stat().st_size==old['bytes']\n    blocked.append({'path':str(p),'bytes':old['bytes'],'sha256':old['sha256']})\n    old=res['blocked_batch2_cleanup_helper'];p=Path(old['root'])\n    files=[r for r in old['metadata'] if r.get('sha256')]\n    assert p.is_dir() and len(list(p.iterdir()))==len(files)==12\n    for r in files:\n        item=Path(r['path']);s=item.lstat()\n        assert item.parent==p and not s.st_file_attributes&0x400 and s.st_nlink==1\n        assert sha(item)==r['sha256'] and s.st_size==r['size']\n        blocked.append({'path':str(item),'bytes':r['size'],'sha256':r['sha256']})\n    old=res['blocked_convergence_report'];p=Path(old['path'])\n    assert sha(p)==old['sha256']\n    return {'counts':counts,'all_equal':True,'actual_hashes':zipped('-protected-'+phase+'.jsonl.gz',rows),\n            'blocked_paths_preserved':blocked,'convergence_report':artifact(p),\n            'external_scope':'Entire bf43 worktree and associated resources protected; no write or deletion attempted, W2 may add its own authorized files.'}\ndef docker_audit(res,after=False):\n    data={'containers':[],'volumes':[],'networks':[]}\n    for cid in cmd(['docker','ps','-aq']).split():\n        r=json.loads(cmd(['docker','inspect',cid]))[0]\n        data['containers'].append({'id':r['Id'],'name':r['Name'],'image':r['Image'],'labels':r['Config']['Labels'] or {},\n          'mounts':sorted(r['Mounts'],key=lambda x:(x.get('Destination',''),x.get('Source',''))),\n          'ports':r['NetworkSettings']['Ports'],'networks':sorted(r['NetworkSettings']['Networks'])})\n    for name in cmd(['docker','volume','ls','-q']).split():\n        r=json.loads(cmd(['docker','volume','inspect',name]))[0]\n        data['volumes'].append({k:r.get(k) for k in ('Name','Driver','Mountpoint','CreatedAt','Labels','Options','Scope')})\n    for nid in cmd(['docker','network','ls','-q']).split():\n        r=json.loads(cmd(['docker','network','inspect',nid]))[0]\n        data['networks'].append({k:r.get(k) for k in ('Id','Name','Created','Scope','Driver','Labels','Internal','Attachable','Ingress','IPAM','Options')})\n    own={};foreign={}\n    for kind,key in (('containers','id'),('volumes','Name'),('networks','Id')):\n        label='labels' if kind=='containers' else 'Labels'\n        own[kind]=sorted([r for r in data[kind] if (r.get(label) or {}).get('com.docker.compose.project')==PROJECT],key=lambda r:r[key])\n        foreign[kind]=sorted([r for r in data[kind] if r not in own[kind]],key=lambda r:r[key])\n        assert {r[key]:r for r in foreign[kind]}=={r[key]:r for r in res['foreign_docker'][kind]},kind\n        if after:assert not own[kind],own[kind]\n        else:assert {r[key]:r for r in own[kind]}=={r[key]:r for r in res['projects'][PROJECT][kind]},kind\n    images=sorted(set(cmd(['docker','image','ls','--no-trunc','--quiet']).split()))\n    ports={}\n    for port in res['ports']:\n        with socket.socket() as sock:\n            sock.settimeout(1);ports[str(port)]={'tcp_connectable':sock.connect_ex(('127.0.0.1',port))==0}\n        if after:assert not ports[str(port)]['tcp_connectable'],port\n    return {'own':own,'foreign':foreign,'image_ids':images,'ports':ports}\ndef git_audit(pre):\n    head=cmd(['git','--no-optional-locks','rev-parse','HEAD']).strip()\n    branch=cmd(['git','--no-optional-locks','branch','--show-current']).strip()\n    index=cmd(['git','--no-optional-locks','diff','--cached','--name-only'])\n    assert head==BASE and branch=='codex/rag' and not index,(head,branch,index)\n    status=cmd(['git','--no-optional-locks','status','--porcelain=v1','-z','--untracked-files=all'])\n    lines=[x for x in status.split('\\0') if x]\n    own='deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup'\n    unchanged=[x for x in lines if not x[3:].startswith(own)]\n    self_record='?? deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-precleanup.json'\n    assert [x for x in unchanged if x!=self_record]==pre['git_status_entries'],'inherited Git status changed'\n    assert unchanged.count(self_record)==1 and sha(REC/'W1-bs02-leader-precleanup.json')==PRE_SHA\n    unchanged=[x for x in unchanged if x!=self_record]\n    return {'head':head,'branch':branch,'index_empty':True,'inherited_status_equal':True,\n            'original_entries':len(unchanged),'own_new_report_entries':sum(x[3:].startswith(own) for x in lines),'known_precleanup_self_record_added':self_record}\n\nQUALIFIED_BASELINES={\n 'W1-bs02-independent-cleanup-v2-shared-before.jsonl.gz':'9762f0338f845447ea7e301d4ca5cb41f920ebe6b209bfe4ffb448e71dd3436c',\n 'W1-bs02-independent-cleanup-v2-shared-predelete.jsonl.gz':'134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476',\n 'W1-bs02-independent-cleanup-v2-shared-before-to-predelete-delta.jsonl.gz':'a44feeac90005ff3d7fc096091629aa05deced3a2bc50277b14f3dad5273d7d7',\n 'W1-bs02-independent-cleanup-v2-owned-before.jsonl.gz':'ff774ef660d597be9d25c3bfa26b6089448892cae40c41126e4f081bc1bf54dd',\n 'W1-bs02-independent-cleanup-v2-owned-predelete.jsonl.gz':'58a7b0dc8c0c591f982c06193e475e74a65c109d53806752531e64b13e99df3f',\n 'W1-bs02-independent-cleanup-v2-owned-before-to-predelete-delta.jsonl.gz':'5fc539236c2d50d04ef02b8759da4f9bcc4723903bf6481ea61d2ca109e01b8a',\n 'W1-bs02-independent-cleanup-before.json':'02f213f9e8b03a1949e1ae56d53d3b88decf60dd27344cb1d0ad40fb2e92b251',\n 'W1-bs02-independent-cleanup-protected-before.jsonl.gz':'89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8',\n 'W1-bs02-independent-cleanup-v2-predelete.json':'cc6f08ce64d067178d5bcab5334fcb68101c191cdbb0be8192d48ca497570da3'\n}\nNEW_HELPERS=[ROOT/'independent-cleanup-audit-v3.py',ROOT/'independent-cleanup-delete-v3.ps1']\nJUDGMENT={\n 'authority':'Leader explicit followup task to this independent cleaner',\n 'independent_review':'Leader fully decompressed original before/predelete shared and owned snapshots and recomputed all deltas using exact Python integers; verified all six gzip SHA256 values.',\n 'shared_observation':{'nodes':172661,'changed_directories':6157,'root':'C:/Users/18221/AppData/Local/uv/cache',\n    'only_changed_field':'size','before':0,'after':'positive','attributes':16,'reparse_tag':0,'nlink':1,\n    'path_set_and_all_other_fields_equal':True},\n 'owned_observation':{'nodes':50760,'changed_directories':17,'only_changed_field':'attributes',\n    'before':268435472,'after':16,'path_set_and_all_other_fields_equal':True},\n 'decision':'These exact observations did not alter file identity, link boundaries, ownership or cleanup scope. Continue the originally authorized root and project cleanup with fresh strict comparisons to v2-predelete.',\n 'limitations':'Cause unknown. Original strict gate remains FAIL. Shared metadata is not a full shared-content hash. No shared files were written or reset.',\n 'new_difference_rule':'Stop on any additional difference; only the two named newly created helpers and exactly frozen root-directory metadata change are authorized.'\n}\ndef namedrows(name):\n    return [json.loads(s) for s in gzip.decompress((REC/name).read_bytes()).splitlines()]\ndef verify_history():\n    for name,h in QUALIFIED_BASELINES.items():assert sha(REC/name)==h,name\ndef link_check(rows):\n    links=[r for r in rows if r['attributes']&0x400]\n    for r in links:\n        target=r['link_target'];assert target.startswith('\\\\\\\\?\\\\'),target\n        assert Path(target[4:]).is_relative_to(ROOT) and r['reparse_tag']==2684354572,r\n    assert len(links)==56\n    return {'links':56,'targets_lexically_inside_owned_root':56,'external_targets':0,'followed':False}\ndef prepare():\n    report={'status':'RUNNING','started':time.time(),'leader_judgment':JUDGMENT,\n            'qualified_baseline_sha256':QUALIFIED_BASELINES,'new_helpers':[str(p) for p in NEW_HELPERS]}\n    try:\n        verify_history();assert ROOT.absolute()==ROOT.resolve(strict=True)\n        report['ancestors']=ancestors(ROOT)\n        old=namedrows('W1-bs02-independent-cleanup-v2-owned-predelete.jsonl.gz')\n        current,summary=scan([ROOT]);delta=differences(old,current)\n        byold={r['path']:r for r in old};bynew={r['path']:r for r in current}\n        expected={str(ROOT),*(str(p) for p in NEW_HELPERS)}\n        assert {r['path'] for r in delta}==expected,{'unexpected_owned_delta':[r['path'] for r in delta]}\n        rootdiff=next(r for r in delta if r['path']==str(ROOT))\n        assert set(rootdiff['changed_fields'])<={'mtime_ns','size'},rootdiff\n        assert rootdiff['before']['attributes']==rootdiff['after']['attributes']==16\n        for p in NEW_HELPERS:\n            r=bynew[str(p)];assert str(p) not in byold\n            assert stat.S_ISREG(r['mode']) and not r['attributes']&0x400 and r['nlink']==1,r\n        report['authorized_exact_delta']=delta\n        report['authorized_delta_artifact']=zipped('-owned-preparation-delta.jsonl.gz',delta)\n        report['owned_preparation_snapshot']=zipped('-owned-preparation.jsonl.gz',current)\n        report['owned_summary']=summary\n        report['new_helper_files']=[{**artifact(p),'metadata':bynew[str(p)]} for p in NEW_HELPERS]\n        report['all_root_script_sha256']={str(p):sha(p) for p in sorted(ROOT.iterdir()) if p.is_file()}\n        report['previous_cleanup_artifacts']=[artifact(p) for p in sorted(REC.glob('W1-bs02-independent-cleanup*'))\n                                              if p.is_file() and not p.name.startswith(PREFIX)]\n        report['link_check']=link_check(current)\n        report['status']='PREPARED_QUALIFIED_SCOPE'\n    except BaseException as exc:\n        report['status']='FAIL';report['error']=repr(exc);raise\n    finally:\n        report['finished']=time.time();a=write('-preparation.json',report)\n        print(json.dumps({'status':report['status'],'report':a,'error':report.get('error')}))\ndef qualified_main(phase):\n    assert phase in ('predelete','after')\n    report={'status':'RUNNING','phase':phase,'started':time.time(),'root':str(ROOT),'project':PROJECT,\n            'precleanup_sha256':PRE_SHA,'resources_sha256':RES_SHA,'commands':COMMANDS,\n            'leader_judgment':JUDGMENT,'qualified_baseline_sha256':QUALIFIED_BASELINES,\n            'original_shared_strict_gate_passed':False}\n    try:\n        verify_history();auth=read(PREFIX+'-preparation.json')\n        assert auth['status']=='PREPARED_QUALIFIED_SCOPE'\n        for row in auth['previous_cleanup_artifacts']:\n            assert sha(row['path'])==row['sha256'] and Path(row['path']).stat().st_size==row['bytes'],row['path']\n        pre=read('W1-bs02-leader-precleanup.json');res=read('W1-bs02-leader-resources.json')\n        assert sha(REC/'W1-bs02-leader-precleanup.json')==PRE_SHA and sha(REC/'W1-bs02-leader-resources.json')==RES_SHA\n        assert pre['status']=='PASS' and res['roots']==[str(ROOT)]\n        report['protection']=protection(pre,res,phase)\n        report['git']=git_audit(pre)\n        report['processes']=process_audit()\n        report['docker']=docker_audit(res,after=phase=='after')\n        assert report['docker']['image_ids']==read('W1-bs02-independent-cleanup-v2-before.json')['docker']['image_ids']\n        shared,summary=scan(res['protected_shared_roots'])\n        report['shared']={'summary':summary,'snapshot':zipped('-shared-'+phase+'.jsonl.gz',shared),\n            'method':'Complete lstat metadata, no following reparse points, no atime; not a full file-content hash.'}\n        oldshared=namedrows('W1-bs02-independent-cleanup-v2-shared-predelete.jsonl.gz')\n        delta=differences(oldshared,shared)\n        report['shared']['v2_predelete_delta']=zipped('-shared-v2-predelete-to-'+phase+'-delta.jsonl.gz',delta)\n        report['shared']['v2_predelete_strict_equal']=not delta\n        original=namedrows('W1-bs02-independent-cleanup-v2-shared-before.jsonl.gz')\n        original_delta=differences(original,shared)\n        recorded_delta=namedrows('W1-bs02-independent-cleanup-v2-shared-before-to-predelete-delta.jsonl.gz')\n        report['shared']['original_before_delta_count']=len(original_delta)\n        report['shared']['original_before_delta_exactly_matches_accepted']=original_delta==recorded_delta\n        assert not delta and original_delta==recorded_delta,'additional shared metadata drift'\n        if phase=='after':\n            assert not ROOT.exists() and not ROOT.is_symlink(),'owned root remains'\n            report['root_absent']=True\n            last=loadrows('-shared-predelete.jsonl.gz');delta=differences(last,shared)\n            report['shared']['own_predelete_delta']=zipped('-shared-v3-predelete-to-after-delta.jsonl.gz',delta)\n            report['shared']['own_predelete_strict_equal']=not delta\n            assert not delta,'shared changed during deletion'\n        else:\n            assert ROOT.absolute()==ROOT.resolve(strict=True)\n            report['ancestors']=ancestors(ROOT)\n            owned,summary=scan([ROOT])\n            report['owned']={'summary':summary,'snapshot':zipped('-owned-predelete.jsonl.gz',owned)}\n            old=namedrows('W1-bs02-independent-cleanup-v2-owned-predelete.jsonl.gz')\n            delta=differences(old,owned)\n            report['owned']['v2_predelete_delta']=zipped('-owned-v2-predelete-to-predelete-delta.jsonl.gz',delta)\n            report['owned']['only_exact_authorized_helper_delta']=delta==auth['authorized_exact_delta']\n            expected=namedrows(Path(auth['owned_preparation_snapshot']['path']).name)\n            qualified_delta=differences(expected,owned)\n            report['owned']['preparation_delta']=zipped('-owned-preparation-to-predelete-delta.jsonl.gz',qualified_delta)\n            report['owned']['preparation_strict_equal']=not qualified_delta\n            assert delta==auth['authorized_exact_delta'] and not qualified_delta,'additional owned metadata drift'\n            for p,h in res['temporary_scripts'].items():assert sha(p)==h,p\n            for p,h in auth['all_root_script_sha256'].items():assert sha(p)==h,p\n            for row in auth['new_helper_files']:\n                assert sha(row['path'])==row['sha256'] and metadata(Path(row['path']))==row['metadata'],row['path']\n            report['owned']['audit']=owned_audit(owned)\n            report['owned']['link_check']=link_check(owned)\n        report['status']='PASS_QUALIFIED_METADATA_OBSERVATION'\n    except BaseException as exc:\n        report['status']='FAIL';report['error']=repr(exc);raise\n    finally:\n        report['finished']=time.time();a=write('-'+phase+'.json',report)\n        print(json.dumps({'status':report['status'],'phase':phase,'report':a,\n            'owned':report.get('owned',{}).get('summary'),\n            'shared_v2_equal':report.get('shared',{}).get('v2_predelete_strict_equal'),'error':report.get('error')}))\nif __name__=='__main__':\n    if sys.argv[1]=='prepare':prepare()\n    else:qualified_main(sys.argv[1])\n\n\" after",
+        "Birth": "2026-09-23T00:49:26.2511520Z"
+      }
+    ],
+    "active_owned": [],
+    "workers": [
+      {
+        "pid": 37712,
+        "birth": "134345794584948660",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\smoke\\worker",
+        "instance_id": "7bd30e27-eb83-4544-b2ef-cf706868548c",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 56748,
+        "birth": "134345795556518364",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+        "instance_id": "28366fd1-3b48-418f-84b4-be1f1b54ec79",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 72616,
+        "birth": "134345797779657403",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+        "instance_id": "81797737-4d73-459f-9b07-4117f6555298",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 62056,
+        "birth": "134345797278101982",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+        "instance_id": "10a0ff87-66b2-4f06-b5d2-c5a48c32f670",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 60732,
+        "birth": "134345799169901085",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+        "instance_id": "9b50d710-8a4f-4bf3-a084-b70bb884121e",
+        "actual_birth": null,
+        "original_identity_gone": true
+      }
+    ],
+    "killed_identities": [
+      {
+        "pid": 59084,
+        "birth": "134345795776448795",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 72464,
+        "birth": "134345796056407468",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 56388,
+        "birth": "134345796336402175",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 12596,
+        "birth": "134345796622459207",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 60992,
+        "birth": "134345796920356358",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 60100,
+        "birth": "134345797086249457",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 58388,
+        "birth": "134345797500343606",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 43876,
+        "birth": "134345798002308548",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 67168,
+        "birth": "134345798366255144",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 47796,
+        "birth": "134345798536285511",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 55372,
+        "birth": "134345798677605262",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 45300,
+        "birth": "134345798972271768",
+        "actual_birth": null,
+        "original_identity_gone": true
+      }
+    ],
+    "no_process_killed": true
+  },
+  "docker": {
+    "own": {
+      "containers": [],
+      "volumes": [],
+      "networks": []
+    },
+    "foreign": {
+      "containers": [
+        {
+          "id": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+          "name": "/sonarqube-postgres",
+          "image": "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+          "labels": {
+            "com.docker.compose.config-hash": "e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "sonarqube-production",
+            "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+            "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+            "com.docker.compose.replace": "sonarqube-postgres",
+            "com.docker.compose.service": "db",
+            "com.docker.compose.version": "5.4.0"
+          },
+          "mounts": [
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+              "Destination": "/run/secrets/postgres_password",
+              "Mode": "",
+              "RW": false,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\data\\postgresql",
+              "Destination": "/var/lib/postgresql/data",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            }
+          ],
+          "ports": {
+            "5432/tcp": null
+          },
+          "networks": [
+            "sonarqube-production"
+          ]
+        },
+        {
+          "id": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+          "name": "/sonarqube-production",
+          "image": "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+          "labels": {
+            "com.docker.compose.config-hash": "490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "db:service_healthy:false",
+            "com.docker.compose.image": "sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "sonarqube-production",
+            "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+            "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+            "com.docker.compose.replace": "sonarqube-production",
+            "com.docker.compose.service": "sonarqube",
+            "com.docker.compose.version": "5.4.0",
+            "io.k8s.description": "SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.",
+            "io.openshift.min-cpu": "400m",
+            "io.openshift.min-memory": "2048M",
+            "io.openshift.non-scalable": "true",
+            "io.openshift.tags": "sonarqube,static-code-analysis,code-quality,clean-code",
+            "org.opencontainers.image.url": "https://github.com/SonarSource/docker-sonarqube",
+            "org.opencontainers.image.version": "24.04"
+          },
+          "mounts": [
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\data\\sonarqube",
+              "Destination": "/opt/sonarqube/data",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\data\\sonarqube-extensions",
+              "Destination": "/opt/sonarqube/extensions",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\logs\\sonarqube",
+              "Destination": "/opt/sonarqube/logs",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\temp\\sonarqube",
+              "Destination": "/opt/sonarqube/temp",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+              "Destination": "/run/secrets/postgres_password",
+              "Mode": "",
+              "RW": false,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\secrets\\sonar_jwt_secret.txt",
+              "Destination": "/run/secrets/sonar_jwt_secret",
+              "Mode": "",
+              "RW": false,
+              "Propagation": "rprivate"
+            }
+          ],
+          "ports": {
+            "9000/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "9000"
+              }
+            ]
+          },
+          "networks": [
+            "sonarqube-production"
+          ]
+        }
+      ],
+      "volumes": [
+        {
+          "Name": "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data",
+          "CreatedAt": "2026-08-27T12:32:48Z",
+          "Labels": {
+            "com.docker.volume.anonymous": ""
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data",
+          "CreatedAt": "2026-08-27T12:38:40Z",
+          "Labels": {
+            "com.docker.volume.anonymous": ""
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data",
+          "CreatedAt": "2026-08-27T12:37:34Z",
+          "Labels": {
+            "com.docker.volume.anonymous": ""
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data",
+          "CreatedAt": "2026-08-27T12:34:57Z",
+          "Labels": {
+            "com.docker.volume.anonymous": ""
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "approvaplat-mysql-data",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/approvaplat-mysql-data/_data",
+          "CreatedAt": "2026-08-27T12:37:34Z",
+          "Labels": {
+            "com.docker.compose.config-hash": "27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e",
+            "com.docker.compose.project": "approvaplat",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "approvaplat-mysql-data"
+          },
+          "Options": null,
+          "Scope": "local"
+        }
+      ],
+      "networks": [
+        {
+          "Id": "3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6",
+          "Name": "host",
+          "Created": "2026-08-24T03:10:40.792555369Z",
+          "Scope": "local",
+          "Driver": "host",
+          "Labels": {},
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": null
+          },
+          "Options": {}
+        },
+        {
+          "Id": "831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6",
+          "Name": "none",
+          "Created": "2026-08-24T03:10:40.783778961Z",
+          "Scope": "local",
+          "Driver": "null",
+          "Labels": {},
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": null
+          },
+          "Options": {}
+        },
+        {
+          "Id": "c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587",
+          "Name": "bridge",
+          "Created": "2026-09-21T23:55:35.545820176Z",
+          "Scope": "local",
+          "Driver": "bridge",
+          "Labels": {},
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+              {
+                "Subnet": "172.17.0.0/16",
+                "Gateway": "172.17.0.1"
+              }
+            ]
+          },
+          "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0",
+            "com.docker.network.driver.mtu": "1500"
+          }
+        },
+        {
+          "Id": "e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f",
+          "Name": "sonarqube-production",
+          "Created": "2026-08-24T14:03:17.667304522Z",
+          "Scope": "local",
+          "Driver": "bridge",
+          "Labels": {
+            "com.docker.compose.config-hash": "43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda",
+            "com.docker.compose.network": "sonarqube",
+            "com.docker.compose.project": "sonarqube-production",
+            "com.docker.compose.version": "5.4.0"
+          },
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+              {
+                "Subnet": "172.18.0.0/16",
+                "Gateway": "172.18.0.1"
+              }
+            ]
+          },
+          "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+          }
+        }
+      ]
+    },
+    "image_ids": [
+      "sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce",
+      "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+      "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+      "sha256:5dd0d3e6e255913fc30f90b9f2b1d359cc2cbdb48090cc4b65f1676e203243cc",
+      "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+      "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+      "sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb",
+      "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+      "sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf"
+    ],
+    "ports": {
+      "19542": {
+        "tcp_connectable": false
+      },
+      "9103": {
+        "tcp_connectable": false
+      }
+    }
+  },
+  "shared": {
+    "summary": [
+      {
+        "root": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models",
+        "exists": true,
+        "nodes": 20,
+        "reparse": 0,
+        "regular_files": 15,
+        "directories": 5,
+        "logical_bytes": 2414940365
+      },
+      {
+        "root": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core",
+        "exists": true,
+        "nodes": 5833,
+        "reparse": 0,
+        "regular_files": 5261,
+        "directories": 572,
+        "logical_bytes": 147221807
+      },
+      {
+        "root": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda",
+        "exists": true,
+        "nodes": 22381,
+        "reparse": 0,
+        "regular_files": 20450,
+        "directories": 1931,
+        "logical_bytes": 3204201298
+      },
+      {
+        "root": "C:\\Users\\18221\\AppData\\Local\\uv\\cache",
+        "exists": true,
+        "nodes": 144423,
+        "reparse": 0,
+        "regular_files": 130240,
+        "directories": 14183,
+        "logical_bytes": 8792292358
+      },
+      {
+        "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\.codeplus-agenticrag-workers",
+        "exists": true,
+        "nodes": 4,
+        "reparse": 0,
+        "regular_files": 2,
+        "directories": 2,
+        "logical_bytes": 0
+      },
+      {
+        "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\pytest-of-18221\\pytest-2",
+        "exists": false,
+        "nodes": 0
+      }
+    ],
+    "snapshot": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-shared-after.jsonl.gz",
+      "bytes": 4546412,
+      "sha256": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476",
+      "rows": 172661,
+      "raw_sha256": "8b8f99e4d237b08e121acdde211b99df57d497d00574675cdc845c36e3c99f4b"
+    },
+    "method": "Complete lstat metadata, no following reparse points, no atime; not a full file-content hash.",
+    "v2_predelete_delta": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-shared-v2-predelete-to-after-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "rows": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "v2_predelete_strict_equal": true,
+    "original_before_delta_count": 6157,
+    "original_before_delta_exactly_matches_accepted": true,
+    "own_predelete_delta": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-shared-v3-predelete-to-after-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "rows": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "own_predelete_strict_equal": true
+  },
+  "root_absent": true,
+  "finished": 1790124598.5993478
+}

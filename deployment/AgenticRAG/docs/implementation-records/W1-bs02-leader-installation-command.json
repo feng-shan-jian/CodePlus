@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "started": "2026-09-22T19:40:51.047426+00:00",
+  "mode": "installation",
+  "attempt": "",
+  "argv": [
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\core\\Scripts\\python.exe",
+    "-I",
+    "-B",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\pytest-installed.py",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-leader-installation-modules.json",
+    "deployment/AgenticRAG/tests/test_package_install.py",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--import-mode=importlib",
+    "--basetemp=C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\pytest-installation",
+    "--junitxml=D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-leader-installation.xml"
+  ],
+  "cwd": "D:\\CodePlus",
+  "base": "b7b4647598c24734df497dd6f40950dcdb9817a5",
+  "patch_sha256": "cc0bb314b56a51de00949aa3d0bce622e30848c9194ed6537b73e424814e57a6",
+  "environment": {
+    "UV_CACHE_DIR": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\uv-cache",
+    "UV_LINK_MODE": "copy",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1",
+    "R08_CORPUS_REPORT": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-leader-installation-corpus.json",
+    "R06_INSTALL_REPORT": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-leader-installation-installations.json"
+  },
+  "launcher_pid": 9644,
+  "launcher_birth": "134345796510487003",
+  "exit_code": 0,
+  "frozen_files_unchanged": true,
+  "finished": "2026-09-22T19:41:02.188424+00:00"
+}

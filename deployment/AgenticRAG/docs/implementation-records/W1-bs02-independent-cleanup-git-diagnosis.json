@@ -1,0 +1,31 @@
+{
+  "status": "DIAGNOSED_HELPER_EXPECTATION_ERROR",
+  "original_failure": "AssertionError('inherited Git status changed')",
+  "destructive_operations_executed": false,
+  "original_status_count": 6569,
+  "actual_excluding_cleanup_prefix": 6570,
+  "added": [
+    "?? deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-precleanup.json"
+  ],
+  "removed": [],
+  "original_order_preserved": true,
+  "cause": "Leader precleanup.py sampled git_status_entries before its finally block wrote this exact report. The report was therefore absent from its own status snapshot.",
+  "correction": "New v2 attempt adds only this exact untracked path and verifies its pinned SHA256 before every gate. Existing 6569 entries, all protected hashes and the empty index remain strict.",
+  "allowed_report_sha256": "294d51c0e5e33fefa3b3cd8aeacb9e80a66e99dac5fb2fee53a74837999b02f9",
+  "preserved_failure": {
+    "path": "W1-bs02-independent-cleanup-before.json",
+    "bytes": 6915,
+    "sha256": "02f213f9e8b03a1949e1ae56d53d3b88decf60dd27344cb1d0ad40fb2e92b251"
+  },
+  "preserved_protected_snapshot": {
+    "path": "W1-bs02-independent-cleanup-protected-before.jsonl.gz",
+    "bytes": 135597,
+    "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8"
+  },
+  "original_helper_sha256": {
+    "audit": "3dc6e5e1c42a3fedf3bc7474c2355ca7b11ef639a62e2a869aeb623eb5f69197",
+    "delete": "5785bf6a3bda7b4b4ebe66541020c604ba39f3a2dd3b9a63fad93b3c96818b70"
+  },
+  "other_auxiliary_failure": "One functions.exec JavaScript template literal failed to parse with SyntaxError: Unexpected identifier 'n' while constructing the PowerShell helper; no nested tool or deletion ran. Corrected only the helper template newline representation.",
+  "leader_independent_readonly_confirmation": true
+}

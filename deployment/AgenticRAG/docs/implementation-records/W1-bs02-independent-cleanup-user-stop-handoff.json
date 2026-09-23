@@ -1,0 +1,215 @@
+{
+  "status": "STOP_WRITE_USER_REDIRECT",
+  "current_command_running": false,
+  "existing_command_exit_code": 0,
+  "existing_command_pid": 54984,
+  "existing_command_birth_utc": "2026-09-23T00:48:25.5995780Z",
+  "stop_observation_utc": "2026-09-23T00:49:24.2612100Z",
+  "stop_observation": "Docker down already completed; native root deletion already executing. Let that deletion finish safely.",
+  "delete_started_utc": "2026-09-23T00:49:14.6561148Z",
+  "delete_finished_utc": "2026-09-23T00:49:26.2482193Z",
+  "after_readback": "The original already-launched script automatically ran its built-in readback from 00:49:26.327 to 00:49:58.599 UTC before intervention could stop it. No new cleanup or audit invocation was launched after the stop instruction.",
+  "result": "PASS_QUALIFIED_METADATA_OBSERVATION",
+  "root_absent": true,
+  "removed_nodes": 50762,
+  "removed_regular_files": 44679,
+  "removed_directories": 6027,
+  "removed_reparse_entries": 56,
+  "removed_logical_bytes": 3787690648,
+  "hardlink_groups": 0,
+  "external_hardlinks": 0,
+  "removed_docker": {
+    "containers": 3,
+    "volumes": 3,
+    "networks": 1
+  },
+  "foreign_docker_preserved": {
+    "containers": 2,
+    "volumes": 5,
+    "networks": 4
+  },
+  "ports_closed": [
+    19542,
+    9103
+  ],
+  "shared_nodes": 172661,
+  "shared_v2_predelete_and_v3_predelete_and_after_sha256": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476",
+  "shared_new_delta": 0,
+  "original_failures_preserved": true,
+  "qualified_observation": "Original 6157 shared directory size changes and 17 owned directory attribute changes remain recorded; cause unknown. Original strict gate is FAIL; shared metadata is not a whole-content hash.",
+  "protected_readback": "322 tested, 206 production, 6553 protected inputs, 297 previous reviewed, 2 postnotes, 8 SQL, 7 specs, 35 reviewed, 411 ignored all matched",
+  "processes_killed": 0,
+  "old_blocked_scopes": "All three prior Leader blocked targets and all bf43-related resources retained and untouched; no retry",
+  "new_cleanup_resources_remaining": [],
+  "not_executed": [
+    "No further cleanup rounds",
+    "No new external helper directory",
+    "No old blocked-path deletion",
+    "No stage",
+    "No commit",
+    "No push"
+  ],
+  "next_action": "User redirected remaining cleanup/convergence to another task. This cleaner stops writing now.",
+  "artifacts_excluding_this_handoff": [
+    {
+      "name": "W1-bs02-independent-cleanup-before.json",
+      "bytes": 6915,
+      "sha256": "02f213f9e8b03a1949e1ae56d53d3b88decf60dd27344cb1d0ad40fb2e92b251"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-drift-review.json",
+      "bytes": 2515,
+      "sha256": "822249b62bdd44bf4b3878f7b8244c080cab1d6a51be3deb1c6008b17ea22124"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-git-diagnosis.json",
+      "bytes": 1792,
+      "sha256": "c30ddb8cee2387c845ac855895140d4340df2d19514ec59bc13ba0814a3fdab7"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-protected-before.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-before.json",
+      "bytes": 46431,
+      "sha256": "9a48e89dd63d7d7384a73ad6044ac6b10d50c30ca2120b8b3c7cdccbcaf6b1a6"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-link-check.json",
+      "bytes": 330,
+      "sha256": "2f6469f71aac8c1684d05b5858e4fc847b8717be8c07f16cd46000d61c0c0084"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-owned-before-to-predelete-delta.jsonl.gz",
+      "bytes": 1085,
+      "sha256": "5fc539236c2d50d04ef02b8759da4f9bcc4723903bf6481ea61d2ca109e01b8a"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-owned-before.jsonl.gz",
+      "bytes": 1479123,
+      "sha256": "ff774ef660d597be9d25c3bfa26b6089448892cae40c41126e4f081bc1bf54dd"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-owned-predelete.jsonl.gz",
+      "bytes": 1479081,
+      "sha256": "58a7b0dc8c0c591f982c06193e475e74a65c109d53806752531e64b13e99df3f"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-predelete.json",
+      "bytes": 47360,
+      "sha256": "cc6f08ce64d067178d5bcab5334fcb68101c191cdbb0be8192d48ca497570da3"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-protected-before.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-protected-predelete.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-shared-before-to-predelete-delta.jsonl.gz",
+      "bytes": 278082,
+      "sha256": "a44feeac90005ff3d7fc096091629aa05deced3a2bc50277b14f3dad5273d7d7"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-shared-before.jsonl.gz",
+      "bytes": 4541527,
+      "sha256": "9762f0338f845447ea7e301d4ca5cb41f920ebe6b209bfe4ffb448e71dd3436c"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v2-shared-predelete.jsonl.gz",
+      "bytes": 4546412,
+      "sha256": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-after.json",
+      "bytes": 59806,
+      "sha256": "32451b9523faf7ff0a3387a6f05d240649e7bce51c606f3d268dbf1796892741"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-delete.json",
+      "bytes": 669,
+      "sha256": "dbc4f94fcb4aa925189142fc8eb2563257486ce1145bceb7acac4cda12cce551"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-docker-down.json",
+      "bytes": 1629,
+      "sha256": "e26e2fc7c236203f7a1fe0eff05bdd436df43de6b50370baeb8e0a33b1e83d96"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-owned-predelete.jsonl.gz",
+      "bytes": 1479161,
+      "sha256": "d055eb3de035ca19d86d6a6b001914dc2a8cb28ca06ba20cee7b0ab1d7535b00"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-owned-preparation-delta.jsonl.gz",
+      "bytes": 452,
+      "sha256": "10e0e5d7f77e8c06a0848a2c67d8e830a142cb4f9771623924e8e30358c04bfb"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-owned-preparation-to-predelete-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-owned-preparation.jsonl.gz",
+      "bytes": 1479161,
+      "sha256": "d055eb3de035ca19d86d6a6b001914dc2a8cb28ca06ba20cee7b0ab1d7535b00"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-owned-v2-predelete-to-predelete-delta.jsonl.gz",
+      "bytes": 452,
+      "sha256": "10e0e5d7f77e8c06a0848a2c67d8e830a142cb4f9771623924e8e30358c04bfb"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-predelete.json",
+      "bytes": 50928,
+      "sha256": "014765b4a44c258888fd37dd8e00589bfc69dc46c0b9b556a8f2b32033ea705f"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-preparation.json",
+      "bytes": 18132,
+      "sha256": "b1b55c2139b5c55a08fab0b8064f92b95e3199b65d718671076d5eda54928b1e"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-protected-after.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-protected-predelete.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-shared-after.jsonl.gz",
+      "bytes": 4546412,
+      "sha256": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-shared-predelete.jsonl.gz",
+      "bytes": 4546412,
+      "sha256": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-shared-v2-predelete-to-after-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-shared-v2-predelete-to-predelete-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "name": "W1-bs02-independent-cleanup-v3-shared-v3-predelete-to-after-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    }
+  ]
+}

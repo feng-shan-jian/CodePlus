@@ -1,0 +1,1362 @@
+{
+  "status": "PASS_QUALIFIED_METADATA_OBSERVATION",
+  "phase": "predelete",
+  "started": 1790124505.9953468,
+  "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923",
+  "project": "codeplus-w1-bs02-leader-20260923",
+  "precleanup_sha256": "294d51c0e5e33fefa3b3cd8aeacb9e80a66e99dac5fb2fee53a74837999b02f9",
+  "resources_sha256": "4182e8be8145d66ae6040adb875ad9c0d8d628aa46f64c822999319d87fa9de9",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "8fc7129ffc9e23852b41f70e8d8a212cd989b6abbb8b0e066edded9e1e73257e",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7487b286d9f7e79c53097699923cf299cbe5cb94d76f4cd2b56953cb10f8d785",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "0542e699a200f6bfb4a2056bca03f3b6e32debd4b39e3fc1b9c8ab6d9a301424",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-Command",
+        "@(Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CommandLine,@{Name='Birth';Expression={$_.CreationDate.ToUniversalTime().ToString('o')}}) | ConvertTo-Json -Depth 4 -Compress"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "3f9f81e4071b745504c19092b98f95457d34f7f684ebeb329fffc67f1e597249",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "ps",
+        "-aq"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "ca1c74b0725eb60af07b589fdeaf956631cf0d0cb5dd1f551f0c64d6194ddfc5",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "4e3b00774f0a"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "5113f179993474f3a96f1f525a3082c72d65a12552daa6f128ac78b98708be12",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "e30e847e6637"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "544dd07e460d45ff22c1cece5ba882572223db872e4cf28b14a7df15f45480da",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "fdd0e99221fc"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "a92f41a9db919354ea0276502152a57d580f7381e3171b978b67ff9176d68fe6",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "4bb3885b1aa2"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "b56228b7480910e40eeeff61e745835e754484992ca86c3e21c2d9d8a39dde5f",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "44840f5a0ec0"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "967a3f2b1534973dfa369845820f922e3ed60aa68c9e9abc9661a17c6e3c6df9",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "ls",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "60237037d72e56dedb7dc64c95f3b271cafa1312015dd921ec96739cb4ffb0de",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e7546bd5295aa33eec60531bbf7997df2629fd1b98f26d710537fb17baa83a9b",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "758908dc6b8fb64484fe0b88356b944401dbaae826ff4f1456e71e6ef46f5333",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "02cb303a0fe37813b21b0149d16570b05991e7eb945cba637f33f412152f4159",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "552facf0613ea1bc0852ee2080b9544a80756d6fb7e2c388727dc493e093729e",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "approvaplat-mysql-data"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "a5ad71068eb6d48997e7daeefed7a0b5718ecbe295b7710f91d82e8909a9db49",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "codeplus-w1-bs02-leader-20260923_etcd"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e40c5968c4dc4591d1b1d4c1089cc2862b172c7e73c74307b40b9cd06e293827",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "codeplus-w1-bs02-leader-20260923_milvus"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "3f37bbe39d4dd2876841bc3a0c1340119b39f2179df4143f77c982fdebe233ca",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "codeplus-w1-bs02-leader-20260923_minio"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7be967a1fa9093c7eee94a00d490d92f33d6a81ecd753f3ea7bad85a7e057b32",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "ls",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "6bea6e2fa515b4b43e54db9df20ed4fd34611fe09e03becac3bb5e3f4579ed88",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "c35ac9a18def"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "fcd0d01edc58f50b3c920dca1db40affe62cc4f91bf21622e508a15b306fb3cf",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "9df1426a9839"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "d46b07befe974dc0738c79772dfd37966f9d8084dbd5d96edd2c2328a62cda5c",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "3bd9ff598d1b"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "2d294396871e19341662bbd51e4b650f5b8ac7d3a9b2a9eb963d565164e5c966",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "831c0f31d5e3"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "346559a50ade247c1b43c0585f6cbf1ea18a148bf2d47cfde75d88758f00bfff",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "network",
+        "inspect",
+        "e3597993ac4b"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "beabefa0be2f789fb8c424921cbb694df85f11689e5235a48b35cd419ae08cec",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "image",
+        "ls",
+        "--no-trunc",
+        "--quiet"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "c84faf95639e16cfebc51cabf7cec6c26e9d3821297a089b3326ace0ec1777c6",
+      "stderr": ""
+    }
+  ],
+  "leader_judgment": {
+    "authority": "Leader explicit followup task to this independent cleaner",
+    "independent_review": "Leader fully decompressed original before/predelete shared and owned snapshots and recomputed all deltas using exact Python integers; verified all six gzip SHA256 values.",
+    "shared_observation": {
+      "nodes": 172661,
+      "changed_directories": 6157,
+      "root": "C:/Users/18221/AppData/Local/uv/cache",
+      "only_changed_field": "size",
+      "before": 0,
+      "after": "positive",
+      "attributes": 16,
+      "reparse_tag": 0,
+      "nlink": 1,
+      "path_set_and_all_other_fields_equal": true
+    },
+    "owned_observation": {
+      "nodes": 50760,
+      "changed_directories": 17,
+      "only_changed_field": "attributes",
+      "before": 268435472,
+      "after": 16,
+      "path_set_and_all_other_fields_equal": true
+    },
+    "decision": "These exact observations did not alter file identity, link boundaries, ownership or cleanup scope. Continue the originally authorized root and project cleanup with fresh strict comparisons to v2-predelete.",
+    "limitations": "Cause unknown. Original strict gate remains FAIL. Shared metadata is not a full shared-content hash. No shared files were written or reset.",
+    "new_difference_rule": "Stop on any additional difference; only the two named newly created helpers and exactly frozen root-directory metadata change are authorized."
+  },
+  "qualified_baseline_sha256": {
+    "W1-bs02-independent-cleanup-v2-shared-before.jsonl.gz": "9762f0338f845447ea7e301d4ca5cb41f920ebe6b209bfe4ffb448e71dd3436c",
+    "W1-bs02-independent-cleanup-v2-shared-predelete.jsonl.gz": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476",
+    "W1-bs02-independent-cleanup-v2-shared-before-to-predelete-delta.jsonl.gz": "a44feeac90005ff3d7fc096091629aa05deced3a2bc50277b14f3dad5273d7d7",
+    "W1-bs02-independent-cleanup-v2-owned-before.jsonl.gz": "ff774ef660d597be9d25c3bfa26b6089448892cae40c41126e4f081bc1bf54dd",
+    "W1-bs02-independent-cleanup-v2-owned-predelete.jsonl.gz": "58a7b0dc8c0c591f982c06193e475e74a65c109d53806752531e64b13e99df3f",
+    "W1-bs02-independent-cleanup-v2-owned-before-to-predelete-delta.jsonl.gz": "5fc539236c2d50d04ef02b8759da4f9bcc4723903bf6481ea61d2ca109e01b8a",
+    "W1-bs02-independent-cleanup-before.json": "02f213f9e8b03a1949e1ae56d53d3b88decf60dd27344cb1d0ad40fb2e92b251",
+    "W1-bs02-independent-cleanup-protected-before.jsonl.gz": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+    "W1-bs02-independent-cleanup-v2-predelete.json": "cc6f08ce64d067178d5bcab5334fcb68101c191cdbb0be8192d48ca497570da3"
+  },
+  "original_shared_strict_gate_passed": false,
+  "protection": {
+    "counts": {
+      "tested_files": 322,
+      "production_sources": 206,
+      "protected_inputs": 6553,
+      "previous_reviewed_files": 297,
+      "previous_phase_postnotes": 2,
+      "historical_sql": 8,
+      "spec_files": 7,
+      "reviewed_files": 35,
+      "ignored": 411
+    },
+    "all_equal": true,
+    "actual_hashes": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-protected-predelete.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+      "rows": 7841,
+      "raw_sha256": "b0dc93b1963733ba26d3a71eb49735744080a24255b1d3dc95214822b0325efb"
+    },
+    "blocked_paths_preserved": [
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\postcleanup.py",
+        "bytes": 7722,
+        "sha256": "56c0b73257456affe49a54fcce3323163d981deae00cd60b6ca6b7691f2c0b7e"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\r14-compose-before.yaml",
+        "bytes": 1637,
+        "sha256": "68ca4e0b7685e991d5904b9a92fb78a44736fa2544b93854b5562554fa3e0cf9"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\stage.py",
+        "bytes": 6641,
+        "sha256": "7aabdb2f6341bb12998e56038dbe245673f2e853e4631e2510c0ce513a709bbf"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r14-finalizer-20260923\\whitespace.py",
+        "bytes": 2611,
+        "sha256": "e87edda850ecb9d86a29d21bf64b5e2c7d00e5f0950e89f357eaa545096778b5"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch1-finalizer-20260923.py",
+        "bytes": 12511,
+        "sha256": "09377d6f3c74da9b1cdb98aeaa12337d1226887be26701b5738c2e33f28e09fa"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\after.py",
+        "bytes": 3911,
+        "sha256": "750d56546175a97d32630ec5b8d17a315befd51cd3709f2783fa3059fdf72c39"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\audit.py",
+        "bytes": 17307,
+        "sha256": "d927425ccd8b35f02ea1f859ac6d4b092ed7ac338d1a368aedbb1208efccd723"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned-v2.ps1",
+        "bytes": 5019,
+        "sha256": "b8de4de9b65ffa6ec35cd654f4c0feb3078d3ee2f3b63f6f95fb18b8112df551"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned-v3.ps1",
+        "bytes": 5013,
+        "sha256": "5501730dc1c85d99e974d7fca5e08434df83b2db9c591f737c3f42129a329420"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\delete-owned.ps1",
+        "bytes": 4966,
+        "sha256": "818fbf85152967233b373b8cb2c9fede9a8d94929e1cb2594e039f2e19785048"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate.py",
+        "bytes": 1958,
+        "sha256": "28519f097e4c0eb9f29ef2c8c9e5daa8791439c14215146612f35111c0033a50"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate_v2.py",
+        "bytes": 4717,
+        "sha256": "a7b174a492f5cea048d01e92840ed4e7083b056b21271e5b55b19a308f9bf4c2"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\gate_v3.py",
+        "bytes": 6306,
+        "sha256": "09aee9968b7a54679e1d4077c2a90a034de26b2ea58f8d93ed21fd7338a046d6"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\handle_probe.py",
+        "bytes": 1934,
+        "sha256": "a4d268b6e1bba88ac5fd0e256b8e23ee83718d7c1f3f9faa50bc9b01fd52b167"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\inspect_owned_drift.py",
+        "bytes": 1454,
+        "sha256": "dc59b399e478bd6ff6d99940888140ee025d8aafb3df897e6fd48d2c9c909e53"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\inspect_shared_drift.py",
+        "bytes": 1612,
+        "sha256": "ed4b8fbf861a68b90f353f1e2efd99b7d982f9bd6320a7c4aaa66d54974e5057"
+      },
+      {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\report.py",
+        "bytes": 9035,
+        "sha256": "b2e5863b10b9dc46409cb6da093b0bca7336be0a46aca538351efd4723a4f344"
+      }
+    ],
+    "convergence_report": {
+      "path": "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-resource-status-v5.json",
+      "bytes": 11446,
+      "sha256": "06d83b7855f1f3326c866d9942377a7c189f167d2e1ae8999f05ceb284b93ab8"
+    },
+    "external_scope": "Entire bf43 worktree and associated resources protected; no write or deletion attempted, W2 may add its own authorized files."
+  },
+  "git": {
+    "head": "b7b4647598c24734df497dd6f40950dcdb9817a5",
+    "branch": "codex/rag",
+    "index_empty": true,
+    "inherited_status_equal": true,
+    "original_entries": 6569,
+    "own_new_report_entries": 19,
+    "known_precleanup_self_record_added": "?? deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-precleanup.json"
+  },
+  "processes": {
+    "audit_pid": 64544,
+    "audit_birth": "134345981059207711",
+    "ancestors": [
+      64544,
+      54984,
+      17360,
+      3240,
+      20172,
+      2756
+    ],
+    "samplers": [
+      61736
+    ],
+    "related": [
+      {
+        "ProcessId": 54984,
+        "ParentProcessId": 17360,
+        "Name": "pwsh.exe",
+        "ExecutablePath": "C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+        "CommandLine": "\"C:\\Users\\18221\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe\" -Command \"try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}\n& 'C:/Users/18221/AppData/Local/Temp/codeplus-w1-bs02-leader-20260923/independent-cleanup-delete-v3.ps1'\"",
+        "Birth": "2026-09-23T00:48:25.5995780Z"
+      },
+      {
+        "ProcessId": 64544,
+        "ParentProcessId": 54984,
+        "Name": "python.exe",
+        "ExecutablePath": "C:\\Python314\\python.exe",
+        "CommandLine": "\"C:\\Python314\\python.exe\" C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\independent-cleanup-audit-v3.py predelete",
+        "Birth": "2026-09-23T00:48:25.9207710Z"
+      }
+    ],
+    "active_owned": [],
+    "workers": [
+      {
+        "pid": 37712,
+        "birth": "134345794584948660",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\smoke\\worker",
+        "instance_id": "7bd30e27-eb83-4544-b2ef-cf706868548c",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 56748,
+        "birth": "134345795556518364",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+        "instance_id": "28366fd1-3b48-418f-84b4-be1f1b54ec79",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 72616,
+        "birth": "134345797779657403",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+        "instance_id": "81797737-4d73-459f-9b07-4117f6555298",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 62056,
+        "birth": "134345797278101982",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+        "instance_id": "10a0ff87-66b2-4f06-b5d2-c5a48c32f670",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 60732,
+        "birth": "134345799169901085",
+        "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+        "instance_id": "9b50d710-8a4f-4bf3-a084-b70bb884121e",
+        "actual_birth": null,
+        "original_identity_gone": true
+      }
+    ],
+    "killed_identities": [
+      {
+        "pid": 59084,
+        "birth": "134345795776448795",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 72464,
+        "birth": "134345796056407468",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 56388,
+        "birth": "134345796336402175",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 12596,
+        "birth": "134345796622459207",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 60992,
+        "birth": "134345796920356358",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 60100,
+        "birth": "134345797086249457",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 58388,
+        "birth": "134345797500343606",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 43876,
+        "birth": "134345798002308548",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 67168,
+        "birth": "134345798366255144",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 47796,
+        "birth": "134345798536285511",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 55372,
+        "birth": "134345798677605262",
+        "actual_birth": null,
+        "original_identity_gone": true
+      },
+      {
+        "pid": 45300,
+        "birth": "134345798972271768",
+        "actual_birth": null,
+        "original_identity_gone": true
+      }
+    ],
+    "no_process_killed": true
+  },
+  "docker": {
+    "own": {
+      "containers": [
+        {
+          "id": "4e3b00774f0a53c5a7d217e2a352b82f909cd4015441b7028b59fb7f3a1f218a",
+          "name": "/codeplus-w1-bs02-leader-20260923-standalone-1",
+          "image": "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+          "labels": {
+            "com.docker.compose.config-hash": "d2a5592802c1ba916f4262acc0bac0d2ba55981454be51a6ac10de94b8407119",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "minio:service_healthy:false,etcd:service_healthy:false",
+            "com.docker.compose.image": "sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "codeplus-w1-bs02-leader-20260923",
+            "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+            "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+            "com.docker.compose.service": "standalone",
+            "com.docker.compose.version": "5.4.0",
+            "org.opencontainers.image.ref.name": "ubuntu",
+            "org.opencontainers.image.version": "22.04"
+          },
+          "mounts": [
+            {
+              "Type": "volume",
+              "Name": "codeplus-w1-bs02-leader-20260923_milvus",
+              "Source": "/var/lib/docker/volumes/codeplus-w1-bs02-leader-20260923_milvus/_data",
+              "Destination": "/var/lib/milvus",
+              "Driver": "local",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": ""
+            }
+          ],
+          "ports": {
+            "19530/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "19542"
+              }
+            ],
+            "9091/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "9103"
+              }
+            ]
+          },
+          "networks": [
+            "codeplus-w1-bs02-leader-20260923_default"
+          ]
+        },
+        {
+          "id": "e30e847e6637e8ebf850c017dfccf798265fbf268a9de63c84e8a7f00b786286",
+          "name": "/codeplus-w1-bs02-leader-20260923-minio-1",
+          "image": "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+          "labels": {
+            "architecture": "x86_64",
+            "build-date": "2024-12-18T09:14:16Z",
+            "com.docker.compose.config-hash": "299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "codeplus-w1-bs02-leader-20260923",
+            "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+            "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+            "com.docker.compose.service": "minio",
+            "com.docker.compose.version": "5.4.0",
+            "com.redhat.component": "ubi9-micro-container",
+            "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+            "description": "MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.",
+            "distribution-scope": "public",
+            "io.buildah.version": "1.38.0-dev",
+            "io.k8s.description": "Very small image which doesn't install the package manager.",
+            "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+            "io.openshift.expose-services": "",
+            "maintainer": "MinIO Inc <dev@min.io>",
+            "name": "MinIO",
+            "release": "RELEASE.2024-12-18T13-15-44Z",
+            "summary": "MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.",
+            "url": "https://www.redhat.com",
+            "vcs-ref": "10988923ed65297b3e5a5c9cf1c59f779fd76274",
+            "vcs-type": "git",
+            "vendor": "MinIO Inc <dev@min.io>",
+            "version": "RELEASE.2024-12-18T13-15-44Z"
+          },
+          "mounts": [
+            {
+              "Type": "volume",
+              "Name": "codeplus-w1-bs02-leader-20260923_minio",
+              "Source": "/var/lib/docker/volumes/codeplus-w1-bs02-leader-20260923_minio/_data",
+              "Destination": "/data",
+              "Driver": "local",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": ""
+            }
+          ],
+          "ports": {
+            "9000/tcp": null
+          },
+          "networks": [
+            "codeplus-w1-bs02-leader-20260923_default"
+          ]
+        },
+        {
+          "id": "fdd0e99221fc90679f1a9dbcfd532985318ce6259b4a71f4d550b97726712bc5",
+          "name": "/codeplus-w1-bs02-leader-20260923-etcd-1",
+          "image": "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+          "labels": {
+            "com.docker.compose.config-hash": "f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "codeplus-w1-bs02-leader-20260923",
+            "com.docker.compose.project.config_files": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml",
+            "com.docker.compose.project.working_dir": "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources",
+            "com.docker.compose.service": "etcd",
+            "com.docker.compose.version": "5.4.0",
+            "io.buildah.version": "1.41.5"
+          },
+          "mounts": [
+            {
+              "Type": "volume",
+              "Name": "codeplus-w1-bs02-leader-20260923_etcd",
+              "Source": "/var/lib/docker/volumes/codeplus-w1-bs02-leader-20260923_etcd/_data",
+              "Destination": "/etcd",
+              "Driver": "local",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": ""
+            }
+          ],
+          "ports": {
+            "2379/tcp": null,
+            "2380/tcp": null
+          },
+          "networks": [
+            "codeplus-w1-bs02-leader-20260923_default"
+          ]
+        }
+      ],
+      "volumes": [
+        {
+          "Name": "codeplus-w1-bs02-leader-20260923_etcd",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/codeplus-w1-bs02-leader-20260923_etcd/_data",
+          "CreatedAt": "2026-09-22T19:34:18Z",
+          "Labels": {
+            "com.docker.compose.config-hash": "bd2c881d42213c9f69aa9352384caf49d5de98530c852c2d3b54d8a3d61cdfcc",
+            "com.docker.compose.project": "codeplus-w1-bs02-leader-20260923",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "etcd"
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "codeplus-w1-bs02-leader-20260923_milvus",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/codeplus-w1-bs02-leader-20260923_milvus/_data",
+          "CreatedAt": "2026-09-22T19:34:18Z",
+          "Labels": {
+            "com.docker.compose.config-hash": "fbd13b36eb1b8d55e78bd62c0e0ad58fdcf7cca00a8eafcdad7d3102cecf5c8f",
+            "com.docker.compose.project": "codeplus-w1-bs02-leader-20260923",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "milvus"
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "codeplus-w1-bs02-leader-20260923_minio",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/codeplus-w1-bs02-leader-20260923_minio/_data",
+          "CreatedAt": "2026-09-22T19:34:18Z",
+          "Labels": {
+            "com.docker.compose.config-hash": "34e3196b78b3011f3678d47d553f01ef9f0fdb4f01b3bd48957cbec9f82aa9f5",
+            "com.docker.compose.project": "codeplus-w1-bs02-leader-20260923",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "minio"
+          },
+          "Options": null,
+          "Scope": "local"
+        }
+      ],
+      "networks": [
+        {
+          "Id": "9df1426a983916d9a0cce8babe0edaf394f3f5f5bad0ece3d3b949e0da0ddbdc",
+          "Name": "codeplus-w1-bs02-leader-20260923_default",
+          "Created": "2026-09-22T19:34:18.882315375Z",
+          "Scope": "local",
+          "Driver": "bridge",
+          "Labels": {
+            "com.docker.compose.config-hash": "3034a24765f5c64f96d4e6021728976cf0b63ffaa7e5be42221bb90bb77cb11b",
+            "com.docker.compose.network": "default",
+            "com.docker.compose.project": "codeplus-w1-bs02-leader-20260923",
+            "com.docker.compose.version": "5.4.0"
+          },
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+              {
+                "Subnet": "172.19.0.0/16",
+                "Gateway": "172.19.0.1"
+              }
+            ]
+          },
+          "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+          }
+        }
+      ]
+    },
+    "foreign": {
+      "containers": [
+        {
+          "id": "44840f5a0ec074d0e5cf2eb525bee177f8d617481fc2422789a727cff554d2b5",
+          "name": "/sonarqube-postgres",
+          "image": "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+          "labels": {
+            "com.docker.compose.config-hash": "e9c52bda938d45789bc7e1d4aa886a8b0c0d50191ebd066410c446d808b99513",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "",
+            "com.docker.compose.image": "sha256:747d5ed1fdeeb124b880fbe3d7c6557d2c4064ae41d6b6297d417882effce4be",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "sonarqube-production",
+            "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+            "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+            "com.docker.compose.replace": "sonarqube-postgres",
+            "com.docker.compose.service": "db",
+            "com.docker.compose.version": "5.4.0"
+          },
+          "mounts": [
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+              "Destination": "/run/secrets/postgres_password",
+              "Mode": "",
+              "RW": false,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\data\\postgresql",
+              "Destination": "/var/lib/postgresql/data",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            }
+          ],
+          "ports": {
+            "5432/tcp": null
+          },
+          "networks": [
+            "sonarqube-production"
+          ]
+        },
+        {
+          "id": "4bb3885b1aa24da5ae8cac9d1b4451061cbc04e4e456ae0ef5cc516be2c251bc",
+          "name": "/sonarqube-production",
+          "image": "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+          "labels": {
+            "com.docker.compose.config-hash": "490433a93b4b395e84c1bb975c374338e0f768db8a646467f26527f774e495d6",
+            "com.docker.compose.container-number": "1",
+            "com.docker.compose.depends_on": "db:service_healthy:false",
+            "com.docker.compose.image": "sha256:4152a10d90904b97a29e82c964f7eba0c6d587ca118a0320e7dfdaf5d1a99760",
+            "com.docker.compose.oneoff": "False",
+            "com.docker.compose.project": "sonarqube-production",
+            "com.docker.compose.project.config_files": "D:\\SonarQube\\production\\compose.yml",
+            "com.docker.compose.project.working_dir": "D:\\SonarQube\\production",
+            "com.docker.compose.replace": "sonarqube-production",
+            "com.docker.compose.service": "sonarqube",
+            "com.docker.compose.version": "5.4.0",
+            "io.k8s.description": "SonarQube Community Build is a self-managed, automatic code review tool that systematically helps you deliver Clean Code.",
+            "io.openshift.min-cpu": "400m",
+            "io.openshift.min-memory": "2048M",
+            "io.openshift.non-scalable": "true",
+            "io.openshift.tags": "sonarqube,static-code-analysis,code-quality,clean-code",
+            "org.opencontainers.image.url": "https://github.com/SonarSource/docker-sonarqube",
+            "org.opencontainers.image.version": "24.04"
+          },
+          "mounts": [
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\data\\sonarqube",
+              "Destination": "/opt/sonarqube/data",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\data\\sonarqube-extensions",
+              "Destination": "/opt/sonarqube/extensions",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\logs\\sonarqube",
+              "Destination": "/opt/sonarqube/logs",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\temp\\sonarqube",
+              "Destination": "/opt/sonarqube/temp",
+              "Mode": "rw",
+              "RW": true,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\secrets\\postgres_password.txt",
+              "Destination": "/run/secrets/postgres_password",
+              "Mode": "",
+              "RW": false,
+              "Propagation": "rprivate"
+            },
+            {
+              "Type": "bind",
+              "Source": "D:\\SonarQube\\production\\secrets\\sonar_jwt_secret.txt",
+              "Destination": "/run/secrets/sonar_jwt_secret",
+              "Mode": "",
+              "RW": false,
+              "Propagation": "rprivate"
+            }
+          ],
+          "ports": {
+            "9000/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "9000"
+              }
+            ]
+          },
+          "networks": [
+            "sonarqube-production"
+          ]
+        }
+      ],
+      "volumes": [
+        {
+          "Name": "249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/249477e8a85fad4c7a0ed667e44f53b6170077e4516240f6345f8d3432c1f057/_data",
+          "CreatedAt": "2026-08-27T12:32:48Z",
+          "Labels": {
+            "com.docker.volume.anonymous": ""
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/3a48f614082ec9d76824315a53b3d09eadb7252093ac318ffe80a314f38f806e/_data",
+          "CreatedAt": "2026-08-27T12:38:40Z",
+          "Labels": {
+            "com.docker.volume.anonymous": ""
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/5875336256f0a2934eeb06a1053492352f3f1bc8504e3fd59fe60f3afa946eef/_data",
+          "CreatedAt": "2026-08-27T12:37:34Z",
+          "Labels": {
+            "com.docker.volume.anonymous": ""
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/80dbda91a7f4531a6be2fe16dfadb7972c46520593f479b9f75140521f2004ff/_data",
+          "CreatedAt": "2026-08-27T12:34:57Z",
+          "Labels": {
+            "com.docker.volume.anonymous": ""
+          },
+          "Options": null,
+          "Scope": "local"
+        },
+        {
+          "Name": "approvaplat-mysql-data",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/docker/volumes/approvaplat-mysql-data/_data",
+          "CreatedAt": "2026-08-27T12:37:34Z",
+          "Labels": {
+            "com.docker.compose.config-hash": "27f9af3369eaf1ba2a5b573128f3f8781d407fb109a170367ed964f2774a367e",
+            "com.docker.compose.project": "approvaplat",
+            "com.docker.compose.version": "5.4.0",
+            "com.docker.compose.volume": "approvaplat-mysql-data"
+          },
+          "Options": null,
+          "Scope": "local"
+        }
+      ],
+      "networks": [
+        {
+          "Id": "3bd9ff598d1b7538585dff0218d9145b885375a2c6ea867a4bc369f544b0b4e6",
+          "Name": "host",
+          "Created": "2026-08-24T03:10:40.792555369Z",
+          "Scope": "local",
+          "Driver": "host",
+          "Labels": {},
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": null
+          },
+          "Options": {}
+        },
+        {
+          "Id": "831c0f31d5e3cdd220e46b0295613e8fb73118eb29f3dfb116ff9780098221a6",
+          "Name": "none",
+          "Created": "2026-08-24T03:10:40.783778961Z",
+          "Scope": "local",
+          "Driver": "null",
+          "Labels": {},
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": null
+          },
+          "Options": {}
+        },
+        {
+          "Id": "c35ac9a18deff2e13d990143980b08d1ac561f1e55e38ee2f13d304d2b519587",
+          "Name": "bridge",
+          "Created": "2026-09-21T23:55:35.545820176Z",
+          "Scope": "local",
+          "Driver": "bridge",
+          "Labels": {},
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+              {
+                "Subnet": "172.17.0.0/16",
+                "Gateway": "172.17.0.1"
+              }
+            ]
+          },
+          "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0",
+            "com.docker.network.driver.mtu": "1500"
+          }
+        },
+        {
+          "Id": "e3597993ac4b08f1e2358103b13a1fd47983da4da55258b5ef02b0c13f4d422f",
+          "Name": "sonarqube-production",
+          "Created": "2026-08-24T14:03:17.667304522Z",
+          "Scope": "local",
+          "Driver": "bridge",
+          "Labels": {
+            "com.docker.compose.config-hash": "43c197af6d4f2a620f7838d5a40a0c0876a9cb64b5026ae9c733d7fd585bbfda",
+            "com.docker.compose.network": "sonarqube",
+            "com.docker.compose.project": "sonarqube-production",
+            "com.docker.compose.version": "5.4.0"
+          },
+          "Internal": false,
+          "Attachable": false,
+          "Ingress": false,
+          "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+              {
+                "Subnet": "172.18.0.0/16",
+                "Gateway": "172.18.0.1"
+              }
+            ]
+          },
+          "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+          }
+        }
+      ]
+    },
+    "image_ids": [
+      "sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce",
+      "sha256:1dce27c494a16bae114774f1cec295493f3613142713130c2d22dd5696be6ad3",
+      "sha256:52f17f7e56e4f7239f0320dbfcbcc24721163d7d78ae710b466af3254ccf6366",
+      "sha256:5dd0d3e6e255913fc30f90b9f2b1d359cc2cbdb48090cc4b65f1676e203243cc",
+      "sha256:82630c952e887e30b0b09f396cb1fbd4320dea25b4f7a3ba12bf1e10524c735c",
+      "sha256:9026624a61cd25542a402a9e7213dd7dbb39724ac9597e331e6b85362558c079",
+      "sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb",
+      "sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94",
+      "sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf"
+    ],
+    "ports": {
+      "19542": {
+        "tcp_connectable": true
+      },
+      "9103": {
+        "tcp_connectable": true
+      }
+    }
+  },
+  "shared": {
+    "summary": [
+      {
+        "root": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\models",
+        "exists": true,
+        "nodes": 20,
+        "reparse": 0,
+        "regular_files": 15,
+        "directories": 5,
+        "logical_bytes": 2414940365
+      },
+      {
+        "root": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-core",
+        "exists": true,
+        "nodes": 5833,
+        "reparse": 0,
+        "regular_files": 5261,
+        "directories": 572,
+        "logical_bytes": 147221807
+      },
+      {
+        "root": "C:\\Users\\18221\\.cache\\codeplus-agenticrag\\venv-win-cuda",
+        "exists": true,
+        "nodes": 22381,
+        "reparse": 0,
+        "regular_files": 20450,
+        "directories": 1931,
+        "logical_bytes": 3204201298
+      },
+      {
+        "root": "C:\\Users\\18221\\AppData\\Local\\uv\\cache",
+        "exists": true,
+        "nodes": 144423,
+        "reparse": 0,
+        "regular_files": 130240,
+        "directories": 14183,
+        "logical_bytes": 8792292358
+      },
+      {
+        "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\.codeplus-agenticrag-workers",
+        "exists": true,
+        "nodes": 4,
+        "reparse": 0,
+        "regular_files": 2,
+        "directories": 2,
+        "logical_bytes": 0
+      },
+      {
+        "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\pytest-of-18221\\pytest-2",
+        "exists": false,
+        "nodes": 0
+      }
+    ],
+    "snapshot": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-shared-predelete.jsonl.gz",
+      "bytes": 4546412,
+      "sha256": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476",
+      "rows": 172661,
+      "raw_sha256": "8b8f99e4d237b08e121acdde211b99df57d497d00574675cdc845c36e3c99f4b"
+    },
+    "method": "Complete lstat metadata, no following reparse points, no atime; not a full file-content hash.",
+    "v2_predelete_delta": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-shared-v2-predelete-to-predelete-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "rows": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "v2_predelete_strict_equal": true,
+    "original_before_delta_count": 6157,
+    "original_before_delta_exactly_matches_accepted": true
+  },
+  "ancestors": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923",
+      "attributes": 16,
+      "birthtime_ns": 1790105428894795500,
+      "ctime_ns": 1790105428894795500,
+      "dev": 12707498716321973358,
+      "ino": 388716942837429608,
+      "mode": 16895,
+      "mtime_ns": 1790124473354552000,
+      "nlink": 1,
+      "reparse_tag": 0,
+      "size": 8192
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp",
+      "attributes": 16,
+      "birthtime_ns": 1775931180420592500,
+      "ctime_ns": 1775931180420592500,
+      "dev": 12707498716321973358,
+      "ino": 1407374884458395,
+      "mode": 16895,
+      "mtime_ns": 1790124531340043700,
+      "nlink": 1,
+      "reparse_tag": 0,
+      "size": 2621440
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local",
+      "attributes": 16432,
+      "birthtime_ns": 1788066186935389700,
+      "ctime_ns": 1788066186935389700,
+      "dev": 5957413985152947271,
+      "ino": 1970324837109066,
+      "mode": 16895,
+      "mtime_ns": 1790052283045304400,
+      "nlink": 1,
+      "reparse_tag": 0,
+      "size": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData",
+      "attributes": 16432,
+      "birthtime_ns": 1788066186371120100,
+      "ctime_ns": 1788066186371120100,
+      "dev": 5957413985152947271,
+      "ino": 1970324837109056,
+      "mode": 16895,
+      "mtime_ns": 1788066186999502600,
+      "nlink": 1,
+      "reparse_tag": 0,
+      "size": 0
+    },
+    {
+      "path": "C:\\Users\\18221",
+      "attributes": 16,
+      "birthtime_ns": 1775931180387188700,
+      "ctime_ns": 1775931180387188700,
+      "dev": 12707498716321973358,
+      "ino": 1407374884458350,
+      "mode": 16895,
+      "mtime_ns": 1787542816156927500,
+      "nlink": 1,
+      "reparse_tag": 0,
+      "size": 28672
+    },
+    {
+      "path": "C:\\Users",
+      "attributes": 17,
+      "birthtime_ns": 1711956076184434800,
+      "ctime_ns": 1711956076184434800,
+      "dev": 12707498716321973358,
+      "ino": 562949954320857,
+      "mode": 16749,
+      "mtime_ns": 1780721419767210300,
+      "nlink": 1,
+      "reparse_tag": 0,
+      "size": 4096
+    },
+    {
+      "path": "C:\\",
+      "attributes": 22,
+      "birthtime_ns": 1711956076075041000,
+      "ctime_ns": 1711956076075041000,
+      "dev": 12707498716321973358,
+      "ino": 1407374883553285,
+      "mode": 16895,
+      "mtime_ns": 1789939882330243100,
+      "nlink": 1,
+      "reparse_tag": 0,
+      "size": 8192
+    }
+  ],
+  "owned": {
+    "summary": [
+      {
+        "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923",
+        "exists": true,
+        "nodes": 50762,
+        "reparse": 56,
+        "regular_files": 44679,
+        "directories": 6027,
+        "logical_bytes": 3787690648
+      }
+    ],
+    "snapshot": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-owned-predelete.jsonl.gz",
+      "bytes": 1479161,
+      "sha256": "d055eb3de035ca19d86d6a6b001914dc2a8cb28ca06ba20cee7b0ab1d7535b00",
+      "rows": 50762,
+      "raw_sha256": "e01c868af816c2de04a329434fdf33db2aa05833f77c2db652575dc7d8486efe"
+    },
+    "v2_predelete_delta": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-owned-v2-predelete-to-predelete-delta.jsonl.gz",
+      "bytes": 452,
+      "sha256": "10e0e5d7f77e8c06a0848a2c67d8e830a142cb4f9771623924e8e30358c04bfb",
+      "rows": 3,
+      "raw_sha256": "c82063f165111c671471a23358ff1411e69713f9f9010affa86a98439f0b663c"
+    },
+    "only_exact_authorized_helper_delta": true,
+    "preparation_delta": {
+      "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\W1-bs02-independent-cleanup-v3-owned-preparation-to-predelete-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "rows": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation_strict_equal": true,
+    "audit": {
+      "regular_files": 44679,
+      "hardlink_groups": [],
+      "external_hardlinks": 0,
+      "exclusive_read_tested": 44679,
+      "exclusive_read_failed": 0,
+      "method": "CreateFileW GENERIC_READ, share=0, OPEN_EXISTING, OPEN_REPARSE_POINT; fstat identity check; each handle closed"
+    },
+    "link_check": {
+      "links": 56,
+      "targets_lexically_inside_owned_root": 56,
+      "external_targets": 0,
+      "followed": false
+    }
+  },
+  "finished": 1790124549.92223
+}

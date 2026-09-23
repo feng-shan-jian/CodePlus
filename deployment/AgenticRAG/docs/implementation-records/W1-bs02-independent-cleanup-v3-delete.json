@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "started_utc": "2026-09-23T00:49:14.6561148Z",
+  "target": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923",
+  "method": "PowerShell 7 Remove-Item -LiteralPath exact verified root -Recurse -Force",
+  "predelete_report": "W1-bs02-independent-cleanup-v3-predelete.json",
+  "predelete_report_sha256": "014765b4a44c258888fd37dd8e00589bfc69dc46c0b9b556a8f2b32033ea705f",
+  "reparse_handling": "PowerShell 7 default recursive removal removes link entries without traversing targets; full no-follow inventory and hardlink closure verified.",
+  "root_absent": true,
+  "finished_utc": "2026-09-23T00:49:26.2482193Z"
+}

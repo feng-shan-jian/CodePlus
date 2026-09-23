@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "suite": "real",
+  "started": 1790106398.168375,
+  "script_sha256": "81096a2e40128fed814df2c6975c362bf8c0f18d036f1ac1f0b20c40d9f85da1",
+  "method": "Observe actual PID and birth normal configured idle exit. No kill or shared coordination manipulation.",
+  "workers": [
+    {
+      "pid": 56748,
+      "birth": "134345795556518364",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+      "instance_id": "28366fd1-3b48-418f-84b4-be1f1b54ec79"
+    },
+    {
+      "pid": 72616,
+      "birth": "134345797779657403",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+      "instance_id": "81797737-4d73-459f-9b07-4117f6555298"
+    },
+    {
+      "pid": 62056,
+      "birth": "134345797278101982",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+      "instance_id": "10a0ff87-66b2-4f06-b5d2-c5a48c32f670"
+    },
+    {
+      "pid": 60732,
+      "birth": "134345799169901085",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-bs02-leader-20260923\\real\\worker",
+      "instance_id": "9b50d710-8a4f-4bf3-a084-b70bb884121e"
+    }
+  ],
+  "finished": 1790106398.1718934
+}

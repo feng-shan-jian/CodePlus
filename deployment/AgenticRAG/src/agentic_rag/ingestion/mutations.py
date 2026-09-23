@@ -11,8 +11,7 @@ from uuid import UUID, uuid4
 from .._schema import canonical_json, fingerprint
 from ..config import ProcessingSnapshot
 from ..domain import ErrorCode, RagError, RevisionMember
-from ..indexes.manifest import (PreparedRevision, schema_spec, index_error,
-                               rows_for_document, vector_hash)
+from ..indexes.manifest import PreparedRevision, schema_spec, index_error, rows_for_document
 from ..storage import inputs as input_store, publication
 from ..storage.paths import failure
 from .capture import capture_inputs
@@ -234,25 +233,6 @@ def _prepare_changes_with_base(catalog, batch_id, revision_id):
     return candidate, _preparation_binding(catalog,batch,snapshot,req), base_artifact, base_expected
 
 
-def _candidate_seal(candidate):
-    """Detect mutation without copying or JSON-serializing dense payloads."""
-    if candidate.model_inputs or candidate.token_counts:
-        raise failure('ordinary candidate cannot carry first-build model inputs')
-    vectors = []
-    for value in candidate.encoded_vectors:
-        if set(value) != {'chunk_id','vector_hash','dense'}:
-            raise failure('prepared vector fields changed')
-        digest = vector_hash(value['dense'])
-        if digest != value['vector_hash']:
-            raise failure('prepared vector content differs from its digest')
-        vectors.append({'chunk_id':value['chunk_id'], 'vector_hash':digest})
-    return fingerprint('ordinary-build-candidate-v1', {
-        'revision_id':str(candidate.revision_id),
-        'members':[member.model_dump(mode='json') for member in candidate.members],
-        'rows':list(candidate.rows), 'manifest_hash':candidate.manifest_hash,
-        'schema_hash':candidate.schema_hash, 'spec':candidate.spec, 'vectors':vectors})
-
-
 class _BuildPreparation:
     """One ordinary build's verified inputs; never a caller-supplied proof."""
 
@@ -262,9 +242,6 @@ class _BuildPreparation:
         self._catalog, self._owner, self.revision_id = catalog, owner.token, revision_id
         self.candidate, self._binding, self.base_artifact, self.base_expected = _prepare_changes_with_base(
             catalog, owner.token.batch_id, revision_id)
-        self._seal = _candidate_seal(self.candidate)
-        self._base_seal = fingerprint('ordinary-build-base-v1', {
-            'artifact':self.base_artifact, 'expected':self.base_expected})
         self._active = self._entered = False
 
     def __enter__(self):
@@ -285,11 +262,8 @@ class _BuildPreparation:
         batch = catalog.get_batch(owner.token.batch_id)
         snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
         binding = _preparation_binding(catalog, batch, snapshot, request(catalog,batch.batch_id))
-        if binding != self._binding or _candidate_seal(self.candidate) != self._seal:
-            raise failure('build preparation identity or candidate changed')
-        if fingerprint('ordinary-build-base-v1', {
-                'artifact':self.base_artifact, 'expected':self.base_expected}) != self._base_seal:
-            raise failure('build preparation base material changed')
+        if binding != self._binding:
+            raise failure('build preparation identity changed')
         return self.candidate
 
 
@@ -390,7 +364,7 @@ def _build_prepared(catalog, owner, backend, batch, snapshot, prepared, started,
             vector = vectors[row['chunk_id']]
             encoded = {**row,'vector_hash':vector['vector_hash']}
             expected.append(encoded)
-            rows.append({**encoded,'dense':vector['dense']})
+            rows.append({**encoded,'dense':list(vector['dense'])})
         backend.insert(artifact,rows,owner)
     publication._record_encoded(catalog,owner,candidate.revision_id,expected,_operation=prepared)
     if observer:

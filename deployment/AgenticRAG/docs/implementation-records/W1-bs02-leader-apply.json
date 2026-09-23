@@ -1,0 +1,243 @@
+{
+  "status": "PASS",
+  "started": 1790105814.07887,
+  "script_sha256": "ef3da5514bedb8802531e5d0ce8a29b81d02bafb9b279c1371e5397dc4dab9fb",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "b7b4647598c24734df497dd6f40950dcdb9817a5\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0,
+      "stdout": "codex/rag\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--name-only",
+        "b7b4647598c24734df497dd6f40950dcdb9817a5",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+        "deployment/AgenticRAG/tests/test_build_preparation.py",
+        "deployment/AgenticRAG/docs/ordinary-mutations.md",
+        "deployment/AgenticRAG/docs/convergence.md"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "b7b4647598c24734df497dd6f40950dcdb9817a5:deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py"
+      ],
+      "exit_code": 0,
+      "stdout": "f4ad42905edcff41cc9b773c30fdc5eb1612aa33\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "b7b4647598c24734df497dd6f40950dcdb9817a5:deployment/AgenticRAG/tests/test_build_preparation.py"
+      ],
+      "exit_code": 0,
+      "stdout": "8fd0ac1f7d190053497fe1bb5feeebdc8b2c20a3\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "b7b4647598c24734df497dd6f40950dcdb9817a5:deployment/AgenticRAG/docs/ordinary-mutations.md"
+      ],
+      "exit_code": 0,
+      "stdout": "aba0ed998b0015b3ac291051dccd0e4d44ee097d\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "b7b4647598c24734df497dd6f40950dcdb9817a5:deployment/AgenticRAG/docs/convergence.md"
+      ],
+      "exit_code": 0,
+      "stdout": "c98250461ebfa2843571e42badeffc940d74302b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "apply",
+        "--numstat",
+        "-z",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-bs02-slim-v2.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "25\t1\tdeployment/AgenticRAG/docs/convergence.md\u00003\t1\tdeployment/AgenticRAG/docs/ordinary-mutations.md\u00004\t30\tdeployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py\u000068\t31\tdeployment/AgenticRAG/tests/test_build_preparation.py\u0000",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "check-attr",
+        "filter",
+        "working-tree-encoding",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+        "deployment/AgenticRAG/tests/test_build_preparation.py",
+        "deployment/AgenticRAG/docs/ordinary-mutations.md",
+        "deployment/AgenticRAG/docs/convergence.md"
+      ],
+      "exit_code": 0,
+      "stdout": "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py: filter: unspecified\ndeployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/tests/test_build_preparation.py: filter: unspecified\ndeployment/AgenticRAG/tests/test_build_preparation.py: working-tree-encoding: unspecified\ndeployment/AgenticRAG/docs/ordinary-mutations.md: filter: unspecified\ndeployment/AgenticRAG/docs/ordinary-mutations.md: working-tree-encoding: unspecified\ndeployment/AgenticRAG/docs/convergence.md: filter: unspecified\ndeployment/AgenticRAG/docs/convergence.md: working-tree-encoding: unspecified\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "apply",
+        "--check",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-bs02-slim-v2.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "apply",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-bs02-slim-v2.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py"
+      ],
+      "exit_code": 0,
+      "stdout": "9d0b20ef4e1b15dd83ae6b2c5598748894545a1b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/tests/test_build_preparation.py",
+        "--",
+        "deployment/AgenticRAG/tests/test_build_preparation.py"
+      ],
+      "exit_code": 0,
+      "stdout": "1aa260f909f1036b8cf1fcb62ca2c4b9bcddf7fd\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/ordinary-mutations.md",
+        "--",
+        "deployment/AgenticRAG/docs/ordinary-mutations.md"
+      ],
+      "exit_code": 0,
+      "stdout": "550507a046f6a47a51ebf67b1440aefd78a3f2ad\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "hash-object",
+        "--path=deployment/AgenticRAG/docs/convergence.md",
+        "--",
+        "deployment/AgenticRAG/docs/convergence.md"
+      ],
+      "exit_code": 0,
+      "stdout": "6e43ebb7bd7804b649b36677f5eb5fe0a8bb803c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "apply",
+        "--reverse",
+        "--check",
+        "C:\\Users\\18221\\.codex\\worktrees\\bf43\\agentic-rag-convergence-bs02-slim-v2.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--check",
+        "--",
+        "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+        "deployment/AgenticRAG/tests/test_build_preparation.py",
+        "deployment/AgenticRAG/docs/ordinary-mutations.md",
+        "deployment/AgenticRAG/docs/convergence.md"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "base": "b7b4647598c24734df497dd6f40950dcdb9817a5",
+  "applied_paths": 4,
+  "canonical_blobs_equal": true,
+  "raw_hashes_equal": 0,
+  "tested_files": 322,
+  "historical_sql_unchanged": 8,
+  "finished": 1790105816.0333147
+}
