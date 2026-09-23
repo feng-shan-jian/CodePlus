@@ -62,7 +62,7 @@ def main() -> None:
         help="Start in remote mode: WebSocket server on 0.0.0.0:18888 with browser UI",
     )
     parser.add_argument('--knowledge-library', default=None, metavar='UUID',
-                        help='Query the selected knowledge library with -p (development adapter)')
+                        help='Select a library for -p questions or /knowledge commands (optional RAG package)')
     parser.add_argument('--knowledge-mode', choices=['fixed','auto'], default=None,
                         help='Retrieval mode for this knowledge task only')
     parser.add_argument('--knowledge-task', choices=['qa','report'], default=None,
@@ -100,10 +100,25 @@ def main() -> None:
 
     if args.p is not None:
         output_format = getattr(args, "output_format", "text")
-        asyncio.run(_run_prompt(config, permission_mode, hook_engine, args.p, output_format,
-                               knowledge_library=args.knowledge_library, knowledge_mode=args.knowledge_mode,
-                               knowledge_task=args.knowledge_task, knowledge_report=args.knowledge_report,
-                               knowledge_continue=args.knowledge_continue))
+        knowledge = args.knowledge_library or args.p.strip().split(None, 1)[0:1] == ['/knowledge']
+        try:
+            code = asyncio.run(_run_prompt(config, permission_mode, hook_engine, args.p, output_format,
+                                   knowledge_library=args.knowledge_library, knowledge_mode=args.knowledge_mode,
+                                   knowledge_task=args.knowledge_task, knowledge_report=args.knowledge_report,
+                                   knowledge_continue=args.knowledge_continue))
+        except (Exception, KeyboardInterrupt, asyncio.CancelledError) as error:
+            if not knowledge:
+                raise
+            cancelled = isinstance(error, (KeyboardInterrupt, asyncio.CancelledError))
+            message = ('Knowledge request cancelled.' if cancelled else
+                'Knowledge startup failed ('+type(error).__name__+'). Check the optional RAG package, '
+                'knowledge_development_config, selected library and model configuration.')
+            result = {'type': 'result', 'status': 'cancelled' if cancelled else 'failed',
+                      'stop_reason': 'user_cancelled' if cancelled else 'startup_error', 'message': message}
+            print(json.dumps(result, ensure_ascii=False) if output_format == 'stream-json' else message, flush=True)
+            code = 130 if cancelled else 1
+        if knowledge:
+            sys.exit(code or 0)
         return
 
     # Remote 模式：启动 WebSocket 服务器，浏览器访问 http://localhost:18888
@@ -146,7 +161,35 @@ def main() -> None:
 
 
 async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_format: str = "text", *, knowledge_library: str | None = None, knowledge_mode: str | None = None,
-                      knowledge_task: str | None = None, knowledge_report: str | None = None, knowledge_continue: str | None = None) -> None:
+                      knowledge_task: str | None = None, knowledge_report: str | None = None, knowledge_continue: str | None = None) -> int | None:
+    if prompt.strip().split(None, 1)[0:1] == ['/knowledge']:
+        from types import SimpleNamespace
+        from codeplus.commands.handlers.knowledge import handle_knowledge, exit_status
+        ui = SimpleNamespace(knowledge_feature_available=True, knowledge_library=knowledge_library,
+            knowledge_development_config=config.knowledge_development_config, last_knowledge_outcome=None,
+            last_knowledge_run_id=None, last_knowledge_command=None, request=None)
+        def message(text):
+            print(json.dumps({'type': 'system', 'message': text}, ensure_ascii=False) if output_format == 'stream-json' else text, flush=True)
+        def result(value):
+            print(json.dumps({'type': 'result', **value}, ensure_ascii=False,
+                indent=None if output_format == 'stream-json' else 2), flush=True)
+        def send(text, **options):
+            ui.request = (text, options)
+        ui.add_system_message, ui.publish_knowledge_result, ui.send_knowledge_message = message, result, send
+        if any((knowledge_mode, knowledge_task, knowledge_report, knowledge_continue)):
+            result({'status': 'failed', 'stop_reason': 'invalid_input',
+                    'message': 'Use the /knowledge command options for slash commands; only --knowledge-library supplies their scope.'})
+            return 1
+        parts = prompt.strip().split(None, 1)
+        await handle_knowledge(SimpleNamespace(ui=ui, args=parts[1] if len(parts) > 1 else ''))
+        if not ui.request:
+            return exit_status(ui.last_knowledge_command['status']) if ui.last_knowledge_command else 0
+        # The selected ask/report/continue body is data, even when it starts
+        # with a slash. Continue into the Agent path without redispatching it.
+        prompt, options = ui.request
+        knowledge_library = ui.knowledge_library
+        knowledge_mode, knowledge_task = options.get('mode'), options.get('task_kind')
+        knowledge_report, knowledge_continue = options.get('report_path'), options.get('parent_run_id')
     from codeplus.agent import (
         Agent,
         CompactNotification,
@@ -344,94 +387,104 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
     tool_calls: list[dict] = []
 
     try:
-        async with aclosing(agent.run(conv)) as run_stream:
-            async for event in run_stream:
-                if isinstance(event, StreamText):
-                    text_buf += event.text
-                    if is_json:
-                        emit_json({"type": "assistant", "text": event.text})
+        try:
+            async with aclosing(agent.run(conv)) as run_stream:
+                async for event in run_stream:
+                    if isinstance(event, StreamText):
+                        text_buf += event.text
+                        if is_json:
+                            emit_json({"type": "assistant", "text": event.text})
 
-                elif isinstance(event, ThinkingText):
-                    if is_json:
-                        emit_json({"type": "thinking", "text": event.text})
+                    elif isinstance(event, ThinkingText):
+                        if is_json:
+                            emit_json({"type": "thinking", "text": event.text})
 
-                elif isinstance(event, ToolUseEvent):
-                    tool_calls.append({"name": event.tool_name, "is_error": False})
-                    if is_json:
-                        emit_json({
-                            "type": "tool_use",
-                            "tool_name": event.tool_name,
-                            "tool_id": event.tool_id,
-                            "args": event.arguments,
-                        })
+                    elif isinstance(event, ToolUseEvent):
+                        tool_calls.append({"name": event.tool_name, "is_error": False})
+                        if is_json:
+                            emit_json({
+                                "type": "tool_use",
+                                "tool_name": event.tool_name,
+                                "tool_id": event.tool_id,
+                                "args": event.arguments,
+                            })
 
-                elif isinstance(event, ToolResultEvent):
-                    # 回填最后一个同名 tool_call 的 is_error
-                    if tool_calls:
-                        tool_calls[-1]["is_error"] = event.is_error
-                    if is_json:
-                        emit_json({
-                            "type": "tool_result",
-                            "tool_name": event.tool_name,
-                            "tool_id": event.tool_id,
-                            "output": event.output,
-                            "is_error": event.is_error,
-                            "elapsed": round(event.elapsed, 3),
-                        })
+                    elif isinstance(event, ToolResultEvent):
+                        # 回填最后一个同名 tool_call 的 is_error
+                        if tool_calls:
+                            tool_calls[-1]["is_error"] = event.is_error
+                        if is_json:
+                            emit_json({
+                                "type": "tool_result",
+                                "tool_name": event.tool_name,
+                                "tool_id": event.tool_id,
+                                "output": event.output,
+                                "is_error": event.is_error,
+                                "elapsed": round(event.elapsed, 3),
+                            })
 
-                elif isinstance(event, UsageEvent):
-                    total_input = event.input_tokens
-                    total_output = event.output_tokens
-                    if is_json:
-                        emit_json({
-                            "type": "usage",
-                            "input_tokens": event.input_tokens,
-                            "output_tokens": event.output_tokens,
-                        })
+                    elif isinstance(event, UsageEvent):
+                        total_input = event.input_tokens
+                        total_output = event.output_tokens
+                        if is_json:
+                            emit_json({
+                                "type": "usage",
+                                "input_tokens": event.input_tokens,
+                                "output_tokens": event.output_tokens,
+                            })
 
-                elif isinstance(event, TurnComplete):
-                    if is_json:
-                        emit_json({"type": "turn_complete", "turn": event.turn})
+                    elif isinstance(event, TurnComplete):
+                        if is_json:
+                            emit_json({"type": "turn_complete", "turn": event.turn})
 
-                elif isinstance(event, LoopComplete):
-                    if policy is not None:
-                        continue
-                    # 最终结果：stream-json 输出 result 行，text 模式直接打印文本
-                    elapsed_ms = int((time.monotonic() - start) * 1000)
-                    if is_json:
-                        emit_json({
-                            "type": "result",
-                            "result": text_buf,
-                            "duration_ms": elapsed_ms,
-                            "num_turns": event.total_turns,
-                            "tool_calls": tool_calls,
-                            "usage": {
-                                "input_tokens": total_input,
-                                "output_tokens": total_output,
-                            },
-                            "stop_reason": "end_turn",
-                        })
-                    else:
-                        print(text_buf, end="", file=output, flush=True)
-                    break
+                    elif isinstance(event, LoopComplete):
+                        if policy is not None:
+                            continue
+                        # 最终结果：stream-json 输出 result 行，text 模式直接打印文本
+                        elapsed_ms = int((time.monotonic() - start) * 1000)
+                        if is_json:
+                            emit_json({
+                                "type": "result",
+                                "result": text_buf,
+                                "duration_ms": elapsed_ms,
+                                "num_turns": event.total_turns,
+                                "tool_calls": tool_calls,
+                                "usage": {
+                                    "input_tokens": total_input,
+                                    "output_tokens": total_output,
+                                },
+                                "stop_reason": "end_turn",
+                            })
+                        else:
+                            print(text_buf, end="", file=output, flush=True)
+                        break
 
-                elif isinstance(event, ErrorEvent):
-                    if is_json:
-                        emit_json({"type": "error", "message": event.message})
-                    else:
-                        print(f"Error: {event.message}", file=sys.stderr, flush=True)
+                    elif isinstance(event, ErrorEvent):
+                        if is_json:
+                            emit_json({"type": "error", "message": event.message})
+                        else:
+                            print(f"Error: {event.message}", file=sys.stderr, flush=True)
 
-                elif isinstance(event, CompactNotification):
-                    if is_json:
-                        emit_json({"type": "compact", "message": event.message})
+                    elif isinstance(event, CompactNotification):
+                        if is_json:
+                            emit_json({"type": "compact", "message": event.message})
 
-                elif isinstance(event, RetryEvent):
-                    if is_json:
-                        emit_json({"type": "retry", "reason": event.reason})
+                    elif isinstance(event, RetryEvent):
+                        if is_json:
+                            emit_json({"type": "retry", "reason": event.reason})
 
-                elif isinstance(event, PermissionRequest):
-                    if not event.future.done():
-                        event.future.set_result(PermissionResponse.DENY if policy is not None else PermissionResponse.ALLOW)
+                    elif isinstance(event, PermissionRequest):
+                        if not event.future.done():
+                            event.future.set_result(PermissionResponse.DENY if policy is not None else PermissionResponse.ALLOW)
+        except asyncio.CancelledError:
+            if policy is None or agent.last_run_outcome is None:
+                raise
+            # Agent scope has settled its actual RunOutcome and resources.
+        except Exception:
+            if policy is None or agent.last_run_outcome is None:
+                raise
+            # Provider/tool exceptions can propagate after scope.finally has
+            # persisted a failed run. Report that outcome, not a startup error.
 
 
         if policy is not None:
@@ -451,7 +504,8 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
                     print(f'Knowledge run {outcome.run_id} {outcome.status}: {outcome.reason}', file=output, flush=True)
                     if outcome.save:
                         print('Report '+outcome.save.status+': '+outcome.save.path, file=output, flush=True)
-            return
+            from codeplus.commands.handlers.knowledge import exit_status
+            return exit_status(outcome.status if outcome else 'failed')
 
         # 如果有 team 在运行，轮询等待 teammate 完成
         if not team_manager._teams:

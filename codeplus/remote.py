@@ -12,6 +12,8 @@ import json
 import logging
 import os
 import time
+from contextlib import aclosing
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -40,7 +42,7 @@ from codeplus.commands import CommandContext, CommandRegistry, CommandType
 from codeplus.commands.handlers import register_all_commands
 from codeplus.commands.parser import parse_command
 from codeplus.config import MCPServerConfig, ProviderConfig
-from codeplus.conversation import ConversationManager
+from codeplus.conversation import ConversationManager, Message
 from codeplus.hooks import HookEngine
 from codeplus.mcp import MCPManager
 from codeplus.mcp.tool_wrapper import mcp_tool_name_prefix
@@ -64,8 +66,7 @@ log = logging.getLogger(__name__)
 
 
 class RemoteServer:
-    # The shared command registry must not route knowledge commands into chat.
-    knowledge_feature_available = False
+    knowledge_feature_available = True
     """Remote Control 核心：桥接 Agent 事件和 WebSocket 客户端。"""
 
     def __init__(
@@ -97,6 +98,14 @@ class RemoteServer:
         self._command_running = False
         self._message_tasks: set[asyncio.Task] = set()
         self._ui_tasks: list[asyncio.Task] = []
+        self._active_task: asyncio.Task | None = None
+        self._active_connection: ServerConnection | None = None
+        self.knowledge_development_config = getattr(config, 'knowledge_development_config', '')
+        self.knowledge_library = None
+        self.last_knowledge_outcome = None
+        self.last_knowledge_run_id = None
+        self._knowledge_active = False
+        self._knowledge_request = None
 
         # 权限请求的 pending 队列：id -> Future
         self._pending_perms: dict[str, asyncio.Future[PermissionResponse]] = {}
@@ -142,11 +151,7 @@ class RemoteServer:
             ):
                 await asyncio.Future()
         finally:
-            if self._cancel_event is not None:
-                self._cancel_event.set()
-            for future in self._pending_perms.values():
-                if not future.done():
-                    future.set_result(PermissionResponse.DENY)
+            self._cancel_active()
             # Finish active message handlers before closing the session.
             await asyncio.gather(*self._message_tasks, return_exceptions=True)
             await self._flush_ui_messages()
@@ -214,14 +219,14 @@ class RemoteServer:
                     content = data.get("content", "").strip()
                     if content:
                         # 在后台任务中处理，不阻塞 WebSocket 读循环
-                        self.send_user_message(content)
+                        self.send_user_message(content, connection=websocket)
 
                 elif msg_type == "permission_response":
                     self._handle_permission_response(data)
 
                 elif msg_type == "cancel":
-                    if self._cancel_event is not None:
-                        self._cancel_event.set()
+                    if websocket is self._active_connection:
+                        self._cancel_active()
 
                 elif msg_type == "ping":
                     # 应用层保活
@@ -231,6 +236,8 @@ class RemoteServer:
             pass
         finally:
             self._connections.discard(websocket)
+            if websocket is self._active_connection:
+                self._cancel_active()
 
     # ------------------------------------------------------------------
     # Agent 初始化（复刻 TUI 的 _select_provider 流程）
@@ -424,20 +431,36 @@ class RemoteServer:
     # 用户消息处理
     # ------------------------------------------------------------------
 
-    async def _handle_user_message(self, content: str) -> None:
+    async def _handle_user_message(self, content: str, *, connection=None, _knowledge=False) -> None:
         """处理来自 Web UI 的用户消息或斜杠命令。"""
-        if self._streaming or self._command_running:
+        if not _knowledge and (self._streaming or self._command_running or self._knowledge_active):
             await self._broadcast({"type": "system", "data": {
                 "message": "当前回答或命令正在执行；完成后再提问、操作知识库或切换会话。"}})
             return
 
-        # 斜杠命令
-        if content.startswith("/"):
+        self._active_task, self._active_connection = asyncio.current_task(), connection
+
+        # 已选知识动作的正文直接交给 Agent，不再次解释成斜杠命令。
+        if not _knowledge and content.startswith("/"):
             self._command_running = True
+            knowledge_request = False
             try:
                 await self._handle_slash_command(content)
+                if self._knowledge_request is not None:
+                    knowledge_request = True
+                    text, policy = self._knowledge_request
+                    self._knowledge_request = None
+                    await self._run_knowledge(text, policy, connection)
             finally:
+                if self._knowledge_request is not None:
+                    knowledge_request = True
+                    self._knowledge_request = None
+                    self._knowledge_active = False
                 self._command_running = False
+                if self._active_task is asyncio.current_task():
+                    self._active_task = self._active_connection = None
+                if knowledge_request:
+                    await self._broadcast({'type': 'command_done', 'data': None})
             return
 
         # 普通消息 → 发给 Agent
@@ -450,7 +473,7 @@ class RemoteServer:
             self.session.append(self.conversation.history[-1])
 
         # 首次注入 MCP 指令
-        if self._mcp_instructions:
+        if self._mcp_instructions and not _knowledge:
             self.conversation.add_system_reminder(self._mcp_instructions)
             self._mcp_instructions = ""
 
@@ -461,138 +484,146 @@ class RemoteServer:
         history_cursor = len(self.conversation.history)
 
         try:
-            async for event in self.agent.run(self.conversation):
-                # 检查取消信号
-                if self._cancel_event.is_set():
-                    break
+            async with aclosing(self.agent.run(self.conversation)) as stream:
+                async for event in stream:
+                    # 检查取消信号
+                    if self._cancel_event.is_set():
+                        break
 
-                if isinstance(event, StreamText):
-                    stream_buf += event.text
-                    await self._broadcast({
-                        "type": "stream_text",
-                        "data": {"text": event.text},
-                    })
-
-                elif isinstance(event, ThinkingText):
-                    await self._broadcast({
-                        "type": "thinking_text",
-                        "data": {"text": event.text},
-                    })
-
-                elif isinstance(event, ToolUseEvent):
-                    await self._broadcast({
-                        "type": "tool_use",
-                        "data": {
-                            "toolId": event.tool_id,
-                            "toolName": event.tool_name,
-                            "args": event.arguments,
-                        },
-                    })
-
-                elif isinstance(event, ToolResultEvent):
-                    # 如果之前有累积的流式文本，先结束它
-                    if stream_buf:
+                    if isinstance(event, StreamText):
+                        stream_buf += event.text
                         await self._broadcast({
-                            "type": "stream_end",
-                            "data": {"text": stream_buf},
+                            "type": "stream_text",
+                            "data": {"text": event.text},
                         })
-                        stream_buf = ""
-                    await self._broadcast({
-                        "type": "tool_result",
-                        "data": {
-                            "toolId": event.tool_id,
-                            "toolName": event.tool_name,
-                            "output": event.output,
-                            "isError": event.is_error,
-                            "elapsed": event.elapsed,
-                        },
-                    })
 
-                elif isinstance(event, PermissionRequest):
-                    # 生成唯一 ID，等待 Web 端回复
-                    perm_id = f"perm_{time.time_ns()}"
-                    self._pending_perms[perm_id] = event.future
-                    await self._broadcast({
-                        "type": "permission_request",
-                        "data": {
-                            "id": perm_id,
-                            "toolName": event.tool_name,
-                            "description": event.description,
-                        },
-                    })
+                    elif isinstance(event, ThinkingText):
+                        await self._broadcast({
+                            "type": "thinking_text",
+                            "data": {"text": event.text},
+                        })
 
-                elif isinstance(event, TurnComplete):
-                    if self.session:
-                        for message in self.conversation.history[history_cursor:]:
-                            self.session.append(message)
+                    elif isinstance(event, ToolUseEvent):
+                        await self._broadcast({
+                            "type": "tool_use",
+                            "data": {
+                                "toolId": event.tool_id,
+                                "toolName": event.tool_name,
+                                "args": event.arguments,
+                            },
+                        })
+
+                    elif isinstance(event, ToolResultEvent):
+                        # 如果之前有累积的流式文本，先结束它
+                        if stream_buf:
+                            await self._broadcast({
+                                "type": "stream_end",
+                                "data": {"text": stream_buf},
+                            })
+                            stream_buf = ""
+                        await self._broadcast({
+                            "type": "tool_result",
+                            "data": {
+                                "toolId": event.tool_id,
+                                "toolName": event.tool_name,
+                                "output": event.output,
+                                "isError": event.is_error,
+                                "elapsed": event.elapsed,
+                            },
+                        })
+
+                    elif isinstance(event, PermissionRequest):
+                        # 生成唯一 ID，等待 Web 端回复
+                        perm_id = f"perm_{time.time_ns()}"
+                        self._pending_perms[perm_id] = event.future
+                        event.future.add_done_callback(lambda future, identity=perm_id: self._permission_finished(identity, future))
+                        await self._broadcast({
+                            "type": "permission_request",
+                            "data": {
+                                "id": perm_id,
+                                "toolName": event.tool_name,
+                                "description": event.description,
+                            },
+                        })
+
+                    elif isinstance(event, TurnComplete):
+                        if self.session and not _knowledge:
+                            for message in self.conversation.history[history_cursor:]:
+                                self.session.append(message)
+                            history_cursor = len(self.conversation.history)
+                        if stream_buf:
+                            await self._broadcast({
+                                "type": "stream_end",
+                                "data": {"text": stream_buf},
+                            })
+                            stream_buf = ""
+                        await self._broadcast({
+                            "type": "turn_complete",
+                            "data": {"turn": event.turn},
+                        })
+
+                    elif isinstance(event, LoopComplete):
+                        if self.session and _knowledge and stream_buf:
+                            self.session.append(Message(role='assistant', content=stream_buf))
+                        if stream_buf:
+                            await self._broadcast({
+                                "type": "stream_end",
+                                "data": {"text": stream_buf},
+                            })
+                            stream_buf = ""
+                        elapsed = time.monotonic() - start_time
+                        if _knowledge:
+                            self._knowledge_completed_turns = event.total_turns
+                            continue  # Knowledge finishes after scope cleanup below.
+                        await self._broadcast({
+                            "type": "loop_complete",
+                            "data": {
+                                "totalTurns": event.total_turns,
+                                "elapsed": elapsed,
+                            },
+                        })
+
+                    elif isinstance(event, UsageEvent):
+                        await self._broadcast({
+                            "type": "usage",
+                            "data": {
+                                "inputTokens": event.input_tokens,
+                                "outputTokens": event.output_tokens,
+                            },
+                        })
+
+                    elif isinstance(event, ErrorEvent):
+                        await self._broadcast({
+                            "type": "error",
+                            "data": {"message": event.message},
+                        })
+
+                    elif isinstance(event, CompactNotification):
+                        if not _knowledge:
+                            self._persist_compact_boundary(event)
                         history_cursor = len(self.conversation.history)
-                    if stream_buf:
                         await self._broadcast({
-                            "type": "stream_end",
-                            "data": {"text": stream_buf},
+                            "type": "compact",
+                            "data": {"message": event.message},
                         })
-                        stream_buf = ""
-                    await self._broadcast({
-                        "type": "turn_complete",
-                        "data": {"turn": event.turn},
-                    })
 
-                elif isinstance(event, LoopComplete):
-                    if stream_buf:
+                    elif isinstance(event, RetryEvent):
                         await self._broadcast({
-                            "type": "stream_end",
-                            "data": {"text": stream_buf},
+                            "type": "retry",
+                            "data": {
+                                "reason": event.reason,
+                                "waitMs": int(event.wait * 1000),
+                            },
                         })
-                        stream_buf = ""
-                    elapsed = time.monotonic() - start_time
-                    await self._broadcast({
-                        "type": "loop_complete",
-                        "data": {
-                            "totalTurns": event.total_turns,
-                            "elapsed": elapsed,
-                        },
-                    })
 
-                elif isinstance(event, UsageEvent):
-                    await self._broadcast({
-                        "type": "usage",
-                        "data": {
-                            "inputTokens": event.input_tokens,
-                            "outputTokens": event.output_tokens,
-                        },
-                    })
-
-                elif isinstance(event, ErrorEvent):
-                    await self._broadcast({
-                        "type": "error",
-                        "data": {"message": event.message},
-                    })
-
-                elif isinstance(event, CompactNotification):
-                    self._persist_compact_boundary(event)
-                    history_cursor = len(self.conversation.history)
-                    await self._broadcast({
-                        "type": "compact",
-                        "data": {"message": event.message},
-                    })
-
-                elif isinstance(event, RetryEvent):
-                    await self._broadcast({
-                        "type": "retry",
-                        "data": {
-                            "reason": event.reason,
-                            "waitMs": int(event.wait * 1000),
-                        },
-                    })
-
-                elif isinstance(event, HookEvent):
-                    status = "ok" if event.success else "error"
-                    await self._broadcast({
-                        "type": "system",
-                        "data": {
-                            "message": f"Hook [{event.hook_id}] {status}: {event.output}"
-                        },
-                    })
+                    elif isinstance(event, HookEvent):
+                        status = "ok" if event.success else "error"
+                        await self._broadcast({
+                            "type": "system",
+                            "data": {
+                                "message": f"Hook [{event.hook_id}] {status}: {event.output}"
+                            },
+                        })
 
         except asyncio.CancelledError:
             await self._broadcast({
@@ -606,13 +637,15 @@ class RemoteServer:
                 "data": {"message": str(exc)},
             })
         finally:
-            if self.session:
+            self._deny_pending_permissions()
+            if self.session and not _knowledge:
                 self.session.meta.total_tokens = self.agent.total_input_tokens + self.agent.total_output_tokens
                 for message in self.conversation.history[history_cursor:]:
                     self.session.append(message)
             self._streaming = False
             self._cancel_event = None
-            self._pending_perms.clear()
+            if self._active_task is asyncio.current_task() and not _knowledge:
+                self._active_task = self._active_connection = None
 
     # ------------------------------------------------------------------
     # 斜杠命令处理
@@ -653,7 +686,8 @@ class RemoteServer:
                     "data": {"message": f"Command error: {exc}"},
                 })
             await self._flush_ui_messages()
-            await self._broadcast({"type": "command_done", "data": None})
+            if self._knowledge_request is None:
+                await self._broadcast({"type": "command_done", "data": None})
 
         elif cmd.type == CommandType.LOCAL_UI:
             # UI 命令需要特殊处理
@@ -745,15 +779,83 @@ class RemoteServer:
         pending, self._ui_tasks = self._ui_tasks, []
         await asyncio.gather(*pending)
 
-    def send_user_message(self, text: str) -> None:
+    def send_user_message(self, text: str, *, connection=None) -> None:
         """同步接口 — 注入用户消息并触发 agent。"""
-        task = asyncio.create_task(self._handle_user_message(text))
+        task = asyncio.create_task(self._handle_user_message(text, connection=connection))
         self._message_tasks.add(task)
         task.add_done_callback(self._message_tasks.discard)
+
+    def send_knowledge_message(self, text: str, *, mode=None, task_kind='qa', report_path=None, parent_run_id=None) -> None:
+        if self._streaming or self._knowledge_active or self.agent is None:
+            self.add_system_message('An operation is still active.')
+            return
+        try:
+            from agentic_rag.adapters.codeplus.policy import load_policy
+            policy = load_policy(self.knowledge_development_config, self.knowledge_library, self.providers[0],
+                mode=mode, task_kind=task_kind, report_path=report_path, parent_run_id=parent_run_id)
+        except ImportError:
+            self.add_system_message('Install the local codeplus-agentic-rag development wheel into this host environment.')
+            return
+        except (ValueError, OSError):
+            self.add_system_message('Knowledge configuration or library is unavailable or invalid.')
+            return
+        self._knowledge_active = True
+        # Continue in the initiating message task, with the same WS owner.
+        self._knowledge_request = (text, policy)
+
+    async def _run_knowledge(self, text, policy, connection):
+        started = time.monotonic()
+        self._knowledge_completed_turns = None
+        original_agent, original_conversation = self.agent, self.conversation
+        controlled = Agent(client=original_agent.client, registry=original_agent.registry, protocol=original_agent.protocol,
+            work_dir=original_agent.work_dir, permission_checker=original_agent.permission_checker,
+            context_window=original_agent.context_window, hook_engine=original_agent.hook_engine, execution_policy=policy)
+        controlled.session_id, controlled.file_history = original_agent.session_id, original_agent.file_history
+        self.agent, self.conversation = controlled, ConversationManager()
+        try:
+            await self._handle_user_message(text, connection=connection, _knowledge=True)
+        finally:
+            self.last_knowledge_outcome = controlled.last_run_outcome
+            self.agent, self.conversation = original_agent, original_conversation
+            self._knowledge_active = False
+            self._active_task = self._active_connection = None
+            if self.last_knowledge_outcome:
+                self.last_knowledge_run_id = self.last_knowledge_outcome.run_id
+                if self.session:
+                    self.session.set_rag_selection(self.knowledge_library, self.last_knowledge_run_id)
+                await self._broadcast({'type': 'system', 'data': {'message':
+                    json.dumps({'knowledge_run': asdict(self.last_knowledge_outcome)}, ensure_ascii=False)}})
+                if self._knowledge_completed_turns is not None and self.last_knowledge_outcome.status not in {'failed', 'cancelled'}:
+                    await self._broadcast({'type': 'loop_complete', 'data': {
+                        'totalTurns': self._knowledge_completed_turns, 'elapsed': time.monotonic()-started}})
+            await self._flush_ui_messages()
+
+    def _deny_pending_permissions(self):
+        for identity, future in tuple(self._pending_perms.items()):
+            if not future.done():
+                future.set_result(PermissionResponse.DENY)
+                self._permission_finished(identity, future, reason='cancelled')
+
+    def _permission_finished(self, identity, future, *, reason=None):
+        if self._pending_perms.get(identity) is not future:
+            return
+        self._pending_perms.pop(identity, None)
+        self._ui_tasks.append(asyncio.create_task(self._broadcast({'type': 'permission_resolved',
+            'data': {'id': identity, 'reason': reason or ('cancelled' if future.cancelled() else 'answered')}})))
+
+    def _cancel_active(self):
+        if self._cancel_event is not None:
+            self._cancel_event.set()
+        self._deny_pending_permissions()
+        if self._active_task is not None and not self._active_task.done():
+            self._active_task.cancel()
 
 
     def _set_session(self, session: Session) -> None:
         self.session = session
+        self.knowledge_library = session.meta.rag_library_id
+        self.last_knowledge_run_id = session.meta.rag_last_run_id
+        self.last_knowledge_outcome = None
         self.session_id = session.session_id
         self.agent.session_id = self.session_id
 
@@ -800,7 +902,7 @@ class RemoteServer:
         perm_id = data.get("id", "")
         response_str = data.get("response", "deny")
 
-        future = self._pending_perms.pop(perm_id, None)
+        future = self._pending_perms.get(perm_id)
         if future is None or future.done():
             return
 

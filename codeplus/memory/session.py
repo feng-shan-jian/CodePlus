@@ -250,6 +250,8 @@ class SessionMeta:
     total_tokens: int = 0
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     last_active: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    rag_library_id: str | None = None
+    rag_last_run_id: str | None = None
 
     def save(self, path: Path) -> None:
         data = {
@@ -261,6 +263,10 @@ class SessionMeta:
             "created_at": self.created_at.isoformat(),
             "last_active": self.last_active.isoformat(),
         }
+        if self.rag_library_id:
+            data['rag_library_id'] = self.rag_library_id
+        if self.rag_last_run_id:
+            data['rag_last_run_id'] = self.rag_last_run_id
         path.write_text(
             json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
         )
@@ -277,6 +283,8 @@ class SessionMeta:
                 total_tokens=data.get("total_tokens", 0),
                 created_at=datetime.fromisoformat(data["created_at"]),
                 last_active=datetime.fromisoformat(data["last_active"]),
+                rag_library_id=data.get('rag_library_id'),
+                rag_last_run_id=data.get('rag_last_run_id'),
             )
         except (json.JSONDecodeError, KeyError, ValueError):
             return None
@@ -299,6 +307,11 @@ class Session:
         self._file = file
         self.meta = meta
         self._sessions_dir = sessions_dir
+
+    def set_rag_selection(self, library_id: str | None, run_id: str | None = None) -> None:
+        # IDs only. Restoring a selection never restores a policy or old evidence.
+        self.meta.rag_library_id, self.meta.rag_last_run_id = library_id, run_id
+        self.meta.save(self._sessions_dir / f'{self.session_id}.meta')
 
     def append(self, message: Message) -> None:
         records = SessionRecord.from_message(message)

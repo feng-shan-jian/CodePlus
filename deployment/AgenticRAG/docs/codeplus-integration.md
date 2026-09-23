@@ -6,7 +6,34 @@
 
 宿主配置增加可选绝对路径 `knowledge_development_config`。该 JSON 严格解析为 `DevelopmentConfig`，包含完整 `knowledge`、`worker`、`answer_tokenizer`，以及显式的 `explore_output_cap`、`finish_input_upper`、`finalize_output_cap`、`repair_output_cap`、`compact_output_cap`、`max_iterations`、`max_tool_attempts`、`cleanup_grace_ms`。完整合成验收配置与试验值见 `implementation-records/R12-trial-config-02.json`；其中 Temp 数据/运行路径应换成自己的绝对路径，不能复制该机器的缓存位置当默认值。
 
-先通过核心创建并发布可查询版本。TUI 使用 `/knowledge use <库 UUID>` 选择，`/knowledge ask <问题>` 提问，`/knowledge off` 清除选择。普通文本不会因选择库而隐式变成知识库请求。非交互使用 `codeplus -p "问题" --knowledge-library <库 UUID>`；`--output-format stream-json` 的最终 result 带真实 status/stop_reason，正文是已校验引用产物。Windows 管道建议 Python `-X utf8` 或一致的 UTF-8 环境，避免采集端和输出端编码不同。
+TUI 和已有 Remote 浏览器会话使用相同的 `/knowledge` 命令。先创建库，再导入 Markdown 或纯文本；`create` 和 `use` 会选择库，普通消息仍按普通任务执行。
+
+`ask/report/continue` 后的正文作为研究问题交给 Agent；即使正文以 `/knowledge` 或 `/session` 开头，也不会再次作为命令执行。
+
+```text
+/knowledge create 我的资料
+/knowledge import "D:\资料\手册.md" "D:\资料\记录.txt"
+/knowledge status
+/knowledge sources
+/knowledge ask --mode auto 这两份资料有哪些共同结论？
+/knowledge reimport <文档UUID> "D:\资料\修订手册.md"
+/knowledge remove <文档UUID>
+/knowledge open <历史引用UUID>
+/knowledge use <另一库UUID>
+/knowledge off
+```
+
+`status` 显示当前发布版、实际模型身份与配置差异、待恢复批次及文件处理结果；未选库时列出各库。`sources --revision <版本UUID>` 回看历史来源，`open` 读取本库已保存引用的原文，即使该文档已更新或删除。恢复已有会话时读取选中的库 ID 和最近运行 ID，新建会话的选择为空。旧库绑定元数据继续忽略；历史正文不会作为新证据注入。
+
+相同管理命令可直接用于 `-p`：先执行 `codeplus -p "/knowledge create 我的资料" --output-format stream-json`，取得库 UUID，再执行 `codeplus -p '/knowledge import "D:\资料\手册.md"' --knowledge-library <库UUID> --output-format stream-json`。非交互问题继续使用 `codeplus -p "问题" --knowledge-library <库UUID>`；`-p` 的选择只对本次调用有效。Windows 管道建议 Python `-X utf8` 或一致的 UTF-8 环境。
+
+管理与问答的最终 JSON 都带真实 `status/stop_reason`。知识任务进程退出码为：完成 `0`，部分完成或未完成 `2`，等待明确选择 `3`，失败 `1`，取消 `130`；普通任务原退出行为不变。导入部分文件失败时保留可用文件及逐文件错误。取消与发布提交同时发生时，结果同时保留 `cancelled`、实际 `operation_status` 和发布回执，应按回执读取已提交版本。
+
+失败文件使用 `/knowledge retry <批次UUID>`；原输入已变化时需明确追加 `--accept-input-changes`。中断批次先用 `/knowledge recover <批次UUID>` 查看，再选择 `/knowledge recover <批次UUID> --choice continue` 或 `/knowledge abandon <批次UUID>`。另一个进程仍持有 owner 时显示忙，结束后才能恢复。恢复与研究 `continue` 是不同操作。
+
+配置模型改变后，`/knowledge model` 显示差异、proposal ID 和可用选择。初次重建使用 `/knowledge model <proposalUUID> --choice confirm`；失败后只能明确 `--choice retry` 重试，或 `--choice keep_original` 继续使用原发布模型。初次 `retry` 不授权重建，失败后的 `confirm` 不偷偷重试；空选择、取消和无交互输入均不表示同意。普通导入、删除无需额外确认。
+
+TUI 的 Ctrl-C 与 Remote 的取消会请求停止真实后台导入/恢复/重建，线程和模型请求结束前仍显示忙。Remote 由发起连接拥有该任务；它断连会取消任务，旁观连接断开不会取消。已有权限弹窗在回答、取消或超时结束后关闭，命令完成事件在实际任务结束后发送。缺少可选包或配置时明确报错，不把知识问题退回普通聊天。
 
 回答模型复用当前 CodePlus provider，不修改用户配置。R12 硬输入预算目前只验证官方 DeepSeek 端点的 `deepseek-chat`、`deepseek-reasoner` 文本模式，实际响应身份为 `deepseek-flash`（V4.1）。固定官方 tokenizer 文件由 `answer_tokenizer` 指定并校验哈希；文件不随发行包或 Git 提交。模型、端点、模板、tokenizer 或参数不受支持时明确失败，不换模型、不猜估算值。三协议宿主适配的 cap/terminal/usage 分别有受控 SDK 测试，不能据此宣称三个服务商都具备生产计量能力。
 
@@ -38,9 +65,9 @@ codeplus -p "继续补查分歧" --knowledge-library <库UUID> --knowledge-conti
 
 所有终态的 `RunOutcome`、completion 回调 `run_status` 和 `-p` 最终 JSON 都包含 `run_id`；无有效 artifact 的预算停止也可显式继续。`research.rounds` 给出每轮父子关系、库/版本、预算、状态、停止原因、用量和保存信息，`research.total_usage` 汇总本条父链，任何未知 token 分项继续保持 null。TUI 显示运行 ID、本轮及累计 token；适配层 `research.history(catalog, run_id)` 可重新读取逐轮账本。
 
-继续使用 `Catalog.start_current_run(parent_run_id=...)` 原子绑定开始时最新发布版。公开进度写入现有 `host_runs.detail.progress`，保存目标、按序的真实用户请求/约束、覆盖/待查问题、公开发现及来源线索。模型输出可添加 `progress`，包含 `covered/pending/findings/revised/unverified` 字符串数组；旧 `{markdown,citations}` 答复仍可用，其已校验公开答案正文作为待核后备线索，不复制附加的原文脚注。中间失败轮不会清掉祖先记录。历史发现始终待核，只有本轮 search/open 正文的实际送达回执能产生新证据，即使版本相同也不继承旧 evidence ID。换库、运行仍在进行、目标或记录缺失均给出明确缺口；没有自动后台续研。完整管理命令及 Remote 接入仍属 R21。
+继续使用 `Catalog.start_current_run(parent_run_id=...)` 原子绑定开始时最新发布版。公开进度写入现有 `host_runs.detail.progress`，保存目标、按序的真实用户请求/约束、覆盖/待查问题、公开发现及来源线索。模型输出可添加 `progress`，包含 `covered/pending/findings/revised/unverified` 字符串数组；旧 `{markdown,citations}` 答复仍可用，其已校验公开答案正文作为待核后备线索，不复制附加的原文脚注。中间失败轮不会清掉祖先记录。历史发现始终待核，只有本轮 search/open 正文的实际送达回执能产生新证据，即使版本相同也不继承旧 evidence ID。换库、运行仍在进行、目标或记录缺失均给出明确缺口；没有自动后台续研。
 
-候选排名与融合/精排诊断不进入模型正文，详见 [检索调用与追踪](retrieval.md)。其他工具、MCP、子 Agent、团队、外部通知入口不可进入知识库 run。可执行或异步 hooks 不支持；同步 prompt hooks 进入同一完整计量。Remote 明确返回 feature_not_available。活跃知识库任务由自己的循环管理 compact，UI 在取消收束前仍保持 busy；普通手动 compact 不并发修改其上下文。
+候选排名与融合/精排诊断不进入模型正文，详见 [检索调用与追踪](retrieval.md)。其他工具、MCP、子 Agent、团队、外部通知入口不可进入知识库 run。可执行或异步 hooks 不支持；同步 prompt hooks 进入同一完整计量。活跃知识库任务由自己的循环管理 compact，UI 在取消收束前仍保持 busy；普通手动 compact 不并发修改其上下文。
 
 每次实际 HTTP 请求先对完整最终序列化输入留出保守上界及输出硬上限。未知用量保留预留，已知违约保留真实超限事实并停止。开始时保留 finalize 和一次原 Agent citation repair 的输入与输出预算；软探索耗尽可收尾，硬截止/取消不补发模型。source-return 成本、已受理 search/open 和实际 LLM token 分开登记，不重复计数。无依据、工具失败、截断、修正仍失败等返回明确非 completed 状态；无效答案和思考不先流式显示。
 

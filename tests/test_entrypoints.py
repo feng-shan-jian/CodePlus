@@ -127,5 +127,5 @@ async def test_remote_stream_and_replay_keep_plain_message_contract(environment,
     await server._render_restored_messages([Message(role="assistant", content="Old answer [K:old:chunk]")])
     assert broadcast.await_args.args[0] == {"type": "replay_assistant", "data": {"content": "Old answer [K:old:chunk]"}}
     assert server.command_registry.find("knowledge").handler.__module__ == 'codeplus.commands.handlers.knowledge'
-    assert server.knowledge_feature_available is False
+    assert server.knowledge_feature_available is True
     server.session.close()

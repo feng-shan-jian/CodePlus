@@ -115,6 +115,42 @@ class Catalog:
         return KnowledgeBase(kb_id=UUID(row[0]), name=row[1], current_revision_id=UUID(row[2]) if row[2] else None,
                              pending_mutation_id=UUID(row[3]) if row[3] else None)
 
+    def list_libraries(self) -> tuple[KnowledgeBase, ...]:
+        with self._db.transaction() as connection:
+            rows = connection.execute('SELECT kb_id,name,current_revision_id,pending_mutation_id FROM libraries ORDER BY name,kb_id').fetchall()
+        return tuple(KnowledgeBase(kb_id=UUID(row[0]), name=row[1],
+            current_revision_id=UUID(row[2]) if row[2] else None,
+            pending_mutation_id=UUID(row[3]) if row[3] else None) for row in rows)
+
+    def get_revision(self, kb_id: UUID, revision_id: UUID) -> KnowledgeRevision:
+        with self._db.transaction() as connection:
+            row = connection.execute('SELECT revision_id,kb_id,base_revision_id,manifest_hash,processing_snapshot_id,index_state '
+                                     'FROM revisions WHERE kb_id=? AND revision_id=?', (str(kb_id), str(revision_id))).fetchone()
+        if row is None:
+            raise failure('revision not found in selected library')
+        return KnowledgeRevision(revision_id=UUID(row[0]), kb_id=UUID(row[1]),
+            base_revision_id=UUID(row[2]) if row[2] else None, manifest_hash=row[3],
+            processing_snapshot_id=UUID(row[4]), index_state=IndexState(row[5]))
+
+    def list_sources(self, kb_id: UUID, *, revision_id: UUID | None = None) -> list[dict]:
+        """Published membership only; historical originals remain visible after GC."""
+        revision_id = revision_id or self.get_library(kb_id).current_revision_id
+        if revision_id is None:
+            return []
+        self.get_revision(kb_id, revision_id)
+        with self._db.transaction() as connection:
+            published = connection.execute('SELECT 1 FROM publications WHERE kb_id=? AND revision_id=?',
+                                           (str(kb_id), str(revision_id))).fetchone()
+            if not published:
+                raise failure('sources require a published revision')
+            rows = connection.execute('SELECT m.document_id,m.document_version_id,v.source_uri,v.source_metadata '
+                'FROM revision_members m JOIN document_versions v ON v.document_version_id=m.document_version_id '
+                'WHERE m.kb_id=? AND m.revision_id=? ORDER BY v.source_uri,m.document_id',
+                (str(kb_id), str(revision_id))).fetchall()
+        return [{'document_id': doc, 'document_version_id': version, 'source_uri': uri,
+                 'file_name': json.loads(metadata)['original_name'], 'revision_id': str(revision_id)}
+                for doc, version, uri, metadata in rows]
+
     def begin_mutation(self, kb_id: UUID, snapshot: ProcessingSnapshot, manifest_hash: str, *, batch_id: UUID | None = None) -> Mutation:
         return ownership.begin(self._db, kb_id, batch_id or uuid4(), snapshot, manifest_hash)
 

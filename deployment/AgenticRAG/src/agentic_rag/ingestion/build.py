@@ -5,7 +5,7 @@ from ..indexes.manifest import index_error
 from ..storage import publication
 from ..storage.inputs import _InputRead
 from ..storage.recovery import terminal
-from .encoding import encode_documents, outcomes, _read_encoded
+from .encoding import encode_documents, outcomes, _read_encoded, cancelled as _check_cancelled
 
 
 def build_first_revision(catalog, owner, provider, backend, *, request_seconds=120, index_timeout=180, observer=None):
@@ -25,7 +25,7 @@ def build_first_revision(catalog, owner, provider, backend, *, request_seconds=1
                                     index_timeout=index_timeout, observer=observer)
 
 
-def _build_complete_revision(catalog, owner, provider, backend, *, request_seconds=120, index_timeout=180, observer=None):
+def _build_complete_revision(catalog, owner, provider, backend, *, request_seconds=120, index_timeout=180, observer=None, cancelled=None):
     """Shared strict all-member build; an existing library requires approval."""
     batch = catalog.get_batch(owner.token.batch_id)
     old = terminal(catalog, batch.batch_id)
@@ -38,9 +38,11 @@ def _build_complete_revision(catalog, owner, provider, backend, *, request_secon
     if backend.catalog is not catalog or backend.storage != snapshot.resolved_config.storage:
         raise index_error('build backend differs from frozen catalog/endpoint')
     started = time.perf_counter()
-    calls = encode_documents(catalog,owner,provider,request_seconds=request_seconds,observer=observer)
+    _check_cancelled(cancelled)
+    calls = encode_documents(catalog,owner,provider,request_seconds=request_seconds,observer=observer,cancelled_check=cancelled)
     checkpoint_encode_seconds = time.perf_counter()-started
     prepared_start = time.perf_counter()
+    _check_cancelled(cancelled)
     candidate, artifact = publication.register(catalog, owner)
     metrics = {'prepare_seconds': time.perf_counter()-prepared_start, 'documents': len(candidate.members),
                'chunks':len(candidate.rows), 'revision_id':str(candidate.revision_id),
@@ -63,6 +65,7 @@ def _build_complete_revision(catalog, owner, provider, backend, *, request_secon
     metrics['checkpoint_seconds'] = (checkpoint_encode_seconds-metrics['encode_seconds']+
                                      time.perf_counter()-checkpoint_read_start)
     for offset in range(0,len(candidate.rows),256):
+        _check_cancelled(cancelled)
         rows = []
         for original in candidate.rows[offset:offset+256]:
             vector = vectors[original['chunk_id']]
@@ -76,12 +79,15 @@ def _build_complete_revision(catalog, owner, provider, backend, *, request_secon
     metrics['encode_and_insert_seconds'] = metrics['encode_seconds']+metrics['insert_seconds']
     publication.record_encoded(catalog, owner, candidate.revision_id, expected)
     event('inserted',revision_id=str(candidate.revision_id),rows=len(expected))
+    _check_cancelled(cancelled)
     metrics.update(backend.finalize(artifact, len(expected), owner, index_timeout=index_timeout))
     event('indexed', **{k:v for k,v in metrics.items() if k != 'model_calls'})
+    _check_cancelled(cancelled)
     t = time.perf_counter()
     proof = publication.validate(catalog, owner, candidate.revision_id, backend)
     metrics['validation_seconds'] = time.perf_counter()-t
     event('validated', rows_checked=proof['rows_checked'])
+    _check_cancelled(cancelled)
     t = time.perf_counter()
     receipt = publication.publish(catalog, owner, candidate.revision_id)
     metrics['publish_seconds'] = time.perf_counter()-t

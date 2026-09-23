@@ -1,0 +1,2391 @@
+{
+  "phase": "R21",
+  "status": "ACCEPTED_AWAITING_EXACT_LOCAL_COMMIT",
+  "time": 1790173969.3013678,
+  "base_head": "00fbbbb82509c61e43b3b01be9c68273498ab716",
+  "branch": "codex/rag",
+  "final_executor_manifest": {
+    "path": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R21-executor.json",
+    "sha256": "60d8846566d69af1a6eabc333443a3366c100e0484c5013081a634840763c9e2"
+  },
+  "final_executor_files": 23,
+  "final_executor_raw_verified": 945,
+  "packages": {
+    "host": {
+      "wheel": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\dist\\host\\codeplus-0.2.0-py3-none-any.whl",
+      "sha256": "8029589bd17f6a52b70f352b0c92428ef693d629e2ce3786d9345928831b3ccb",
+      "sdist": [
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\dist\\host\\codeplus-0.2.0.tar.gz",
+          "sha256": "be9c12c68e03482029c84c8ffc6f3587567cfb57def7858b026303b17887c935"
+        }
+      ],
+      "production_resource_count": 143
+    },
+    "rag": {
+      "wheel": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\dist\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "sha256": "e53c92bef0fe9523e22cfa93bfca7fc6f3bd4756ee12dd9eff5cb43a51ec8da2",
+      "sdist": [
+        {
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\dist\\rag\\codeplus_agentic_rag-0.1.0.tar.gz",
+          "sha256": "3b148a29aa1d3b2863ce95eec857760c28e2ef3208105def62e051414de12509"
+        }
+      ],
+      "production_resource_count": 74
+    }
+  },
+  "preparation": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\prepare.json",
+    "sha256": "141cd3bf653759d6daf113c75af5d971ce6e1527a5b5a0a623fb0c257163fcd3"
+  },
+  "production_byte_applicability": {
+    "production_changes": [
+      "codeplus/remote.py",
+      "codeplus/__main__.py"
+    ],
+    "rag_identical": true,
+    "prior_372_tests": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\acceptance.json",
+    "prior_real_chain": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\live-audit.json",
+    "boundary": "Only parsed slash-prefixed research body routing changed. Real plain-body paths and all core/worker/archive bytes unchanged; no extra paid/GPU run."
+  },
+  "direct_tests": {
+    "tests": 71,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 96.218,
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\entry-regression.xml",
+    "sha256": "477aca99016b831428d345591375ca4be2249f9ed1bf9694d6450e7c2d28f217"
+  },
+  "original_slash_ws_reproductions_now_pass": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 9.528,
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-http.xml",
+    "sha256": "8cb9113f08b3ae310abc8e7ce7febb3cb4ffdcfbd8d19f592e8d38def99363b8"
+  },
+  "original_slash_cli_reproduction_now_pass": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\validation.json",
+    "sha256": "a2892c57c307a4d3ea36fd2d6298f09c99efb7b22778fa1810465858bcfe99b6"
+  },
+  "cli_six_exit_states": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-states.json",
+    "sha256": "b16aee43c5788e0693ccad682eb6d47ec4f41a79ef3459dfe881857b359c101a"
+  },
+  "original_independent_tests": [
+    {
+      "tests": 151,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 139.185,
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\commands-host.xml",
+      "sha256": "e9e5d3fd3fc82dc6a98a76306497c43a780c0fb060c867cc037f358207a67e82"
+    },
+    {
+      "tests": 83,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 356.32,
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\core-lifecycle.xml",
+      "sha256": "7b5eb8530733ac51d2bc55d7f55c5da19fa6938be196b2b2c79ffda04ea0632a"
+    },
+    {
+      "tests": 138,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 478.813,
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\report-integration.xml",
+      "sha256": "fe2e9da0101c378fc55d1f1f33f5fe25ad1664e201e81290a1defb099657ca2e"
+    }
+  ],
+  "test_counting": "Original 372 and final direct 71 are separate candidate-tree results, not an additive total. RAG/core and other host code unchanged.",
+  "live_own": {
+    "evidence": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\live-audit.json",
+      "sha256": "5b7e1114fc79ff1a5d5c47f1e98356c1946fa47f9d7e49ba7ff8dd1e64fab62c"
+    },
+    "status": "PASS",
+    "totals": {
+      "searches": 6,
+      "opens": 0,
+      "input_tokens": 12979,
+      "output_tokens": 2120,
+      "cached_tokens": 7040,
+      "total_tokens": 15099,
+      "elapsed_ms": 104962
+    },
+    "runs": [
+      {
+        "run_id": "4bfc08ca-ea41-46a4-89e3-4fc746ab4ab0",
+        "parent_run_id": null,
+        "revision_id": "44e979f7-c29a-44ba-98c2-ef0e8b7bf875",
+        "status": "completed",
+        "stop_reason": "finished",
+        "usage": {
+          "schema_version": 1,
+          "searches": 2,
+          "opens": 0,
+          "input_tokens": 3869,
+          "output_tokens": 460,
+          "cached_tokens": 2048,
+          "total_tokens": 4329,
+          "elapsed_ms": 34305
+        },
+        "save": null,
+        "artifact_sha256": "98396ab4c2967633a3c642c8958a1f3726e920904cdc9646b7b85b4b8824e2f5"
+      },
+      {
+        "run_id": "b8e7652d-098d-42a3-a49e-9604ce129486",
+        "parent_run_id": null,
+        "revision_id": "44e979f7-c29a-44ba-98c2-ef0e8b7bf875",
+        "status": "completed",
+        "stop_reason": "finished",
+        "usage": {
+          "schema_version": 1,
+          "searches": 2,
+          "opens": 0,
+          "input_tokens": 4056,
+          "output_tokens": 914,
+          "cached_tokens": 2176,
+          "total_tokens": 4970,
+          "elapsed_ms": 36685
+        },
+        "save": {
+          "status": "saved",
+          "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\host\\vega-report.md",
+          "sha256": "6b6b344b1a00046bfc18f1e66dc190c870aa5a23fb026990f7d29f922c0d36cf",
+          "size_bytes": 2580,
+          "message": ""
+        },
+        "artifact_sha256": "f96f05782ef2d8d9c9e2a0b14be83c891b7d0e1859e738564d58534bbde1b0c1"
+      },
+      {
+        "run_id": "3c6a4b01-9978-4bdf-9b1b-66a0c5b98c5f",
+        "parent_run_id": "b8e7652d-098d-42a3-a49e-9604ce129486",
+        "revision_id": "b1327b4c-f639-4d57-8959-31a01948a493",
+        "status": "completed",
+        "stop_reason": "finished",
+        "usage": {
+          "schema_version": 1,
+          "searches": 2,
+          "opens": 0,
+          "input_tokens": 5054,
+          "output_tokens": 746,
+          "cached_tokens": 2816,
+          "total_tokens": 5800,
+          "elapsed_ms": 33972
+        },
+        "save": null,
+        "artifact_sha256": "43bfcb445bb6b37590cf62e19173f767a60c6fde3a14057813163bd5b3ebd1d9"
+      }
+    ]
+  },
+  "live_executor_readonly_audit": {
+    "evidence": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\executor-v2-audit.json",
+      "sha256": "f444507a9bd7dab027e3f45d37b607954f4c177ea89d5608ee735f582614fbc3"
+    },
+    "status": "PASS",
+    "totals": {
+      "searches": 6,
+      "opens": 0,
+      "input_tokens": 12876,
+      "output_tokens": 1871,
+      "cached_tokens": 6400,
+      "total_tokens": 14747,
+      "elapsed_ms": 92363
+    }
+  },
+  "audit_method": "Immutable readonly SQLite plus archives; exact quotes, confirmed delivery ranges, membership, file SHA/size, model charges, pins and lineage. No Catalog initialization; all DB bytes unchanged.",
+  "known_real_six_run_tokens": 29846,
+  "quality_boundary": {
+    "knowledge_open_model_calls": 0,
+    "historical_user_open_command": "real PASS",
+    "not_accepted": "R23 answer quality, instruction compliance, process wording and numerical thresholds.",
+    "samples": [
+      "Leader Remote claims both sources actually opened despite 2 search / 0 open.",
+      "Leader report expands registry checked to certificate/registry checked. Original wording retained; no tuning, forced open or retries."
+    ]
+  },
+  "preservation": {
+    "inherited_count": 6537,
+    "differences": [],
+    "baseline_sha256": "6a7560ee859a751f76e03b485b07eb91b32b0e81ec4bf8cddec45d812204fc7a",
+    "old_sql": {
+      "deployment/AgenticRAG/src/agentic_rag/storage/evidence.sql": "bec83d5381d6c771c77739cfb4e0fdc95df5b2b011341be180de10a8cc860630",
+      "deployment/AgenticRAG/src/agentic_rag/storage/host_runs.sql": "b81d115415a75bbe5e706cb04814ef5241e947051c96f407cb339226526b291d",
+      "deployment/AgenticRAG/src/agentic_rag/storage/inputs.sql": "ef2ba6f72854f6a2558c278124a51142d08773080d23d62a260fe46e895c05d8",
+      "deployment/AgenticRAG/src/agentic_rag/storage/lifetimes.sql": "dd54054037017b2fcbef5389fa989a0b13170396fb65bcfdd868f752cae1b4f4",
+      "deployment/AgenticRAG/src/agentic_rag/storage/model_switches.sql": "291c5085bc57b94bc276d9069cd16467f53ca6ad79e5aeb58cd88c92e0d4f303",
+      "deployment/AgenticRAG/src/agentic_rag/storage/mutations.sql": "37a052fc4323df2397cd61b79ce2255fd9e605e9c6b515a6eaf026e2bd3a7273",
+      "deployment/AgenticRAG/src/agentic_rag/storage/processing.sql": "c08375fb3414b1597c44ac8958f29fe1ec3738633c9a4aa3847eef89d2b83926",
+      "deployment/AgenticRAG/src/agentic_rag/storage/publication.sql": "1f024dd1ceb832e297ca5e20a7b4b1028624eacb62c3e1f18dd781d74b75ff1b",
+      "deployment/AgenticRAG/src/agentic_rag/storage/recovery.sql": "ca3edf99009fdf77847ea9e9990923dfcb3ede7256f497ea9b433cd15157b5f6",
+      "deployment/AgenticRAG/src/agentic_rag/storage/retrieval.sql": "003ce4462516f054b9a5775e4a469a2b350bba02d8e73e67cebf3a6f37160f98",
+      "deployment/AgenticRAG/src/agentic_rag/storage/schema.sql": "d2032ebe2981d22d765f6ab16d2610a7032cc37d3c7cdaf00d19b5d9cdab161e"
+    }
+  },
+  "resources": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\resources-precommit.json",
+    "sha256": "bf82b8451c529fb7bd39609ce10bd90fa3956a3e3711a4dc03441f28511abbb9"
+  },
+  "retained_failures": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\executor-audit.json",
+      "sha256": "f6cce2ff0e90b1709be7a41230e5d7cffbf3cbd5fbb87c568322e2ca3e3d9d7e"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\validation.json",
+      "sha256": "d506a405e4868228b848fa2c775ab8091306ca52042047a884fc9386f7f8b5df"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-reproduction.json",
+      "sha256": "fb7a412f3faeb01d26564bf3e65f78defe9e50c668932c8af6abad7d4fd9d3f1"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-v2-command.json",
+      "sha256": "68f59fe22ef31f41e0a27a763e34bdf18b3e3364b180baceb2a7bba6a1d5fe50"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-v3.xml",
+      "sha256": "826be9968c9759d30fee25e52d9f2ced475cde29aa118e78dbdc54b5bc88c85b"
+    }
+  ],
+  "failure_explanation": {
+    "audit_key": "Own helper used bytes instead of ArtifactSave.size_bytes; original KeyError retained; audit-v2 passed.",
+    "probe_collection": "First WS wrapper changed __file__; second used cross-drive cwd. Neither is a product result. Third from private cwd reproduced real routing failure.",
+    "product": "Parsed question was redispatched as command; CLI management success with no run and two WS timeouts. Fixed; same inputs independently pass.",
+    "executor": "Early candidate failures and 266 pass/1 skip/1 cwd failure remain in original manifest; cwd case separately passed."
+  },
+  "no_push": true,
+  "cleanup_separate": true,
+  "raw_results_index": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\accept-revision.py",
+      "sha256": "54871c3571a0cc6c58eb15a84674db5259af37833461f702bb5d753da5cefdd2",
+      "bytes": 3531
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\accept.py",
+      "sha256": "f629c218dd46e331ccb6e2cdf586c1cd0469e4621d5a948f94209e23079a8602",
+      "bytes": 4363
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\acceptance.json",
+      "sha256": "5e190c24e0e1dc3769003d967ca75dfc8f4202ff36baf509b437444ce1461b37",
+      "bytes": 18129
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\answer-tokenizer.json",
+      "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+      "bytes": 6367257
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\audit-v2.py",
+      "sha256": "9cb3855190ea6d768c7bb0c46a37b8d78dbeb087ca292b85c0f4fcd9b772e149",
+      "bytes": 8301
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\audit.py",
+      "sha256": "3bcc2d6fef7831a89075f0db0e49891a32b9590b309253209f6bc596c4563fb7",
+      "bytes": 8296
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-cancelled-invocation.json",
+      "sha256": "4854744e00f33a2660659c436ff65da526d3a3f4667ff7cafa0cfc2dc82a03f1",
+      "bytes": 782
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-cancelled.log",
+      "sha256": "a6b3797c39ea83a105d48fe88d379e602c044dd75b563ef318103f3126997417",
+      "bytes": 978
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-complete-invocation.json",
+      "sha256": "838909c244aef36b332f064331138a9c304e112fd08421255cc522e39bf8dea4",
+      "bytes": 775
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-complete.log",
+      "sha256": "a644c75ddfb6abebe989ccb44c6f2c7b62258bf313141192a6d9d99cc19a5c94",
+      "bytes": 4559
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-empty-invocation.json",
+      "sha256": "ebc82c5119aa20276329a191569ecc374f313850552f3cfe15b21dbd5c947d46",
+      "bytes": 762
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-empty.log",
+      "sha256": "4f5fd5c64481a809aeff39ca22b3592c3e23e7ab2989f820d133c7cea6eaaf57",
+      "bytes": 1093
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-failed-invocation.json",
+      "sha256": "d778ffbc411fbfbfd155e682381aefa828d61d68ce2639d7779ee292c3356ea5",
+      "bytes": 768
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-failed.log",
+      "sha256": "926cb33951d9671780485b1573a4462e686565328b6b987d6116cc88aa21a606",
+      "bytes": 970
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-invalid_config-invocation.json",
+      "sha256": "37e43f37fe7a56ce13ddcf9425a38762b48208b39b8ddfd5e4e5fd2c15f3a6c7",
+      "bytes": 800
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-invalid_config.log",
+      "sha256": "fce279401f18dd416421d0ac84b5f5c8cac0d5cefd57acbd381dfcf818fddf4d",
+      "bytes": 234
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-partial-invocation.json",
+      "sha256": "ab93c175a1d7155ffceebff794f4732fe06323dd2500e4b8c47836808b513018",
+      "bytes": 772
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-partial.log",
+      "sha256": "8f318c59d2efb4ffc34a447ee72162b13fbba0d2a684988610e45da93bdeee95",
+      "bytes": 5002
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\commands-host-command.json",
+      "sha256": "c7021a1b9ba79c75fbf830495c2ff73ce94f722c195e66ec79d78b2a640bfc76",
+      "bytes": 1184
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\commands-host-invocation.json",
+      "sha256": "21ca25af5e30305585496d66da4c0d0a7c6272df4f34cca3210d2fd169f2cf94",
+      "bytes": 1410
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\commands-host-modules.json",
+      "sha256": "e0d6a78313301d3ea02949c184358edf01973428dd5ff266b1cab1b6e3f04783",
+      "bytes": 48693
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\commands-host.log",
+      "sha256": "d3a84297601ec9ef45917fdfab25a807823e591f39b48a60f6cafa5c3499e44b",
+      "bytes": 276
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\commands-host.xml",
+      "sha256": "e9e5d3fd3fc82dc6a98a76306497c43a780c0fb060c867cc037f358207a67e82",
+      "bytes": 26438
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\core-lifecycle-command.json",
+      "sha256": "a8bf087e6af13008465f0a80533989acf4d7ca3344a9bde941bc0af3079deb2c",
+      "bytes": 1034
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\core-lifecycle-invocation.json",
+      "sha256": "f7a206ff882decb4b9058baa41b4fc2992c23194087b11f83675a337400088f3",
+      "bytes": 1264
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\core-lifecycle-modules.json",
+      "sha256": "ed3a07ade661ce717cf14eca965076e40ea9ad07bf036ff70663eda5cb1aa2ce",
+      "bytes": 25484
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\core-lifecycle.log",
+      "sha256": "061df053d876e5cc5e46247b70ba302a071f40a1f3ded72b3195f422ad725241",
+      "bytes": 194
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\core-lifecycle.xml",
+      "sha256": "7b5eb8530733ac51d2bc55d7f55c5da19fa6938be196b2b2c79ffda04ea0632a",
+      "bytes": 15204
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\executor-audit.json",
+      "sha256": "f6cce2ff0e90b1709be7a41230e5d7cffbf3cbd5fbb87c568322e2ca3e3d9d7e",
+      "bytes": 4293
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\executor-manifest.json",
+      "sha256": "0f9590c6815c4252c6cb0db37872ef5b4a066693d936ab6dae6399eefe74dfe4",
+      "bytes": 479180
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\executor-v2-audit.json",
+      "sha256": "f444507a9bd7dab027e3f45d37b607954f4c177ea89d5608ee735f582614fbc3",
+      "bytes": 12640
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\finalize-review.py",
+      "sha256": "883411cd9c5c26848bdc05628b09d8373628147e7006784483e83dd113df2269",
+      "bytes": 12134
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\live-audit.json",
+      "sha256": "5b7e1114fc79ff1a5d5c47f1e98356c1946fa47f9d7e49ba7ff8dd1e64fab62c",
+      "bytes": 15228
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\live-chain.json",
+      "sha256": "5f0369a18e407db4f717642f011d1812200084753702e79225efe03424f502b3",
+      "bytes": 6815
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\prepare-revision.py",
+      "sha256": "f3d3d375ac29e11de00bc27c0b2e482284d268e86cc9b73075e206586576eb8e",
+      "bytes": 4813
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\prepare.json",
+      "sha256": "52ed5662822bc8215a8663f0032863643a0d130fd795199dd97cbadd47c80b73",
+      "bytes": 577463
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\prepare.py",
+      "sha256": "ce65687568fd32223b3ef6c42afde44b42f3fc763f7ddeb79d79751dcadcd70f",
+      "bytes": 6534
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-delete-invocation.json",
+      "sha256": "b3b3e286a6f88b7a054e70549afb5590b895a0ba4f98d6cb94244c6ea9fd6b59",
+      "bytes": 809
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-delete.log",
+      "sha256": "5a541e380a420a28c8def37d897d401fcdbacb31d6a2b1108f1542601f498e05",
+      "bytes": 107
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-lifecycle-invocation.json",
+      "sha256": "f56fcca5d37aaf04bce231df558f9418e622401bf8a618f903283c7afe667e0e",
+      "bytes": 817
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-lifecycle.log",
+      "sha256": "1f2b698a0995d393a4834689829c2acfc26e5cfbec608eaa47bc08cef410cb3c",
+      "bytes": 302
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-prepare-invocation.json",
+      "sha256": "45f7ab191b4a03f0ae058b33739be650a6515c8aed7082bd57de6bcf9440e347",
+      "bytes": 1122
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-prepare.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-qa-invocation.json",
+      "sha256": "0a5c6bf02691a57e84567b6421b4509d4159f2555a9e30eec15cfe789a1f56fd",
+      "bytes": 797
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-qa.log",
+      "sha256": "f92997e9d5368748fa3f7c969b3fdc01b53e24fad05f02db78ce3287cb403312",
+      "bytes": 18
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-remote-invocation.json",
+      "sha256": "7bdf1883b55c74320dc82acaaddf28f838ef1662c03c352512f8b59f696ca5d1",
+      "bytes": 808
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-remote.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-report-invocation.json",
+      "sha256": "066dfed5fda69bc1483909e3f359b112e56b05e3b8a172a8d6c0ab4798646bc9",
+      "bytes": 809
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-report.log",
+      "sha256": "c73190852d91132554e5b5e5fcfc8830c2eacae2c2d8b5f88464fba6bdc25526",
+      "bytes": 22
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-update-invocation.json",
+      "sha256": "81e874a0549b1c8e88f996ee39c4cee0003f8ca451667ebc9b54b7f85b394cc1",
+      "bytes": 809
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real-update.log",
+      "sha256": "0606998e2a33c4a9629aaf9efa2e2d35c382ed767b4f0935503d795d083320a1",
+      "bytes": 176
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\report-integration-command.json",
+      "sha256": "77fe9e5c0f686c3c65b27dec7b4775624e314eeb35986bf9357149ed0490c66a",
+      "bytes": 912
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\report-integration-invocation.json",
+      "sha256": "bdddd47e8c44b35cc55f63d0f7b730f15b201660c2a124e87eb39647638bdbe5",
+      "bytes": 1148
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\report-integration-modules.json",
+      "sha256": "0e09e2b3e7ec92a40951dde930944f999cd7e4a85a21650cad476905593a7799",
+      "bytes": 47896
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\report-integration.log",
+      "sha256": "e032633a6d9a62a462dca873ea20efaaa1016d0ecef10e506e5905de60ca6c41",
+      "bytes": 195
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\report-integration.xml",
+      "sha256": "fe2e9da0101c378fc55d1f1f33f5fe25ad1664e201e81290a1defb099657ca2e",
+      "bytes": 29521
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\reproduce-slash.py",
+      "sha256": "f15d575ed3f35ba39bd8452532ab56925fc3522645787adb9d98476cd58cc603",
+      "bytes": 1373
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\resource-stop.log",
+      "sha256": "20b64635003a79e435f14220f20e8d7e2c366263201b9a6acbb7bad5d4b60d7e",
+      "bytes": 359
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\resources-ended.json",
+      "sha256": "d2345d4abb29432ea71b10cd4a0c7e2e6fd4dbf97e071f84aac579028f966c23",
+      "bytes": 12239
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\resources-precommit.json",
+      "sha256": "bf82b8451c529fb7bd39609ce10bd90fa3956a3e3711a4dc03441f28511abbb9",
+      "bytes": 712
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision-run-tests.py",
+      "sha256": "91c415dd4ed3880d7ceb37424b113caf0bc9866a5e1141e3ec6536332a86e8ce",
+      "bytes": 1489
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\run_tests.py",
+      "sha256": "917e64c036384b9c871ad7c8e8d128a6f569af50007969cbee769119c31f47e1",
+      "bytes": 1455
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli.log",
+      "sha256": "563efed8dd45313c410e4d167244762b6eee724474568782ca807a6e266111da",
+      "bytes": 6660
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli.py",
+      "sha256": "6827475af4f0b5a15b447ec12ae9e6ef4c00059d987143189ae09ecee80c4ac6",
+      "bytes": 365
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-command.json",
+      "sha256": "bdd188f8c7ba95299de0c06fd9afd12284a2206c1d601b18970860136c9540f0",
+      "bytes": 883
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-modules.json",
+      "sha256": "b15cdb2179f0134da6dfb8598aedafa58d9eacce0e0f4bc988aa8914b854ffec",
+      "bytes": 32254
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-v2-command.json",
+      "sha256": "68f59fe22ef31f41e0a27a763e34bdf18b3e3364b180baceb2a7bba6a1d5fe50",
+      "bytes": 840
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-v2-modules.json",
+      "sha256": "d37332ede3bb6488051c9dc072dde83cd85b2c4fcd6483be22cf7c240d3e9d84",
+      "bytes": 489
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-v2.xml",
+      "sha256": "3c05b965f79c1b5b7d511762c32b6e1575ce2743dbccd13b5cca6cd809e3889d",
+      "bytes": 540
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-v3-command.json",
+      "sha256": "9e8a8c23836c45fa8fe78d3179dea2fe9abcd14cfe0f1bb133e3ffe1e48b5372",
+      "bytes": 897
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-v3-modules.json",
+      "sha256": "6347371846406f421dd4cb0171a42fdd32f6f27c139152f0eccc85e441b479fa",
+      "bytes": 44133
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote-v3.xml",
+      "sha256": "826be9968c9759d30fee25e52d9f2ced475cde29aa118e78dbdc54b5bc88c85b",
+      "bytes": 3407
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote.log",
+      "sha256": "0acf84da9c97afec0d369556c74aed4f5071162fff549102612bea4f11d56383",
+      "bytes": 773
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-remote.xml",
+      "sha256": "b62a69686b2630636042c3e134957d30ec1827b22b2c65a5c02308c02a3651e1",
+      "bytes": 761
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-reproduction.json",
+      "sha256": "fb7a412f3faeb01d26564bf3e65f78defe9e50c668932c8af6abad7d4fd9d3f1",
+      "bytes": 1987
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\stop-own-resources.ps1",
+      "sha256": "c2324198f7eed12324239fb609992d8e8ac6393e874fa71453610cd3ddc9ced5",
+      "bytes": 1805
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\test_slash_remote.py",
+      "sha256": "3ec952e70c540ae3b0193bcbe7ac67989d242ea35cf659a708d736b588601d22",
+      "bytes": 382
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\test_slash_remote_v2.py",
+      "sha256": "2e03c7b0a0d4d3412511c70665fbdf4b3dc78f8685a42ae6775e7152aa328694",
+      "bytes": 491
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\probes.json",
+      "sha256": "b87160a5d4a1b6b3fd8fd37224f900a19e5f0a28db1a7c080d5f79699a0974fa",
+      "bytes": 5686
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\broken.md",
+      "sha256": "9aeb54eeba4903563010d973edb7df5a8a161de8cbe44b9e94ee7435969a3346",
+      "bytes": 50
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-0.stdout",
+      "sha256": "a2ad72dc960ff2935f3704c2972f3369cf1914488eb46ad41d17a0607edf9b86",
+      "bytes": 5579
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-1.stdout",
+      "sha256": "d75fd499a86d41792707c4be8c2387dae239f1b0269302123c1aff7df4c77f1b",
+      "bytes": 405
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-2.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-2.stdout",
+      "sha256": "bd6c4aeac3e6fd27d2cc96be835fd589e823789d16a5d28ebb49161e483b194f",
+      "bytes": 1396
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-3.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-3.stdout",
+      "sha256": "09b4fda9641ab68c6489bbc2a61fa27c004d07739165dec4da91e8126f30029d",
+      "bytes": 448
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-4.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete-4.stdout",
+      "sha256": "3b87cb2bffe84ccbaeb94d7e0e9f71c0f0a113bfbbe2271186e2695385c06249",
+      "bytes": 5560
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\delete.json",
+      "sha256": "b225f08bfe7d7204f6143bb5d5c67e6fa47e69b475a19fba8dbbf117e0b07914",
+      "bytes": 47564
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\development.json",
+      "sha256": "e8950efd7fb50905721ccdb353025be70931e73a0e7a6fb35321290b19115706",
+      "bytes": 7624
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-0.stdout",
+      "sha256": "6bad5046e0206e3e2939bb68cffc2cb34727357c20b2c5a250616fa71008f72f",
+      "bytes": 256
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-1.stdout",
+      "sha256": "fa95a2ed94948efe04544fad78e1f63b7eaac9771598213d9c3be954b5b9432a",
+      "bytes": 249
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-10.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-10.stdout",
+      "sha256": "f7451a816337c3f4cbd7341491bc95d1fa221d67c3a11da9ec63f35663e18270",
+      "bytes": 154
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-11.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-11.stdout",
+      "sha256": "4a59159dd76633088573e84bd9152d6fc32ad598336b4416c49729f59eafe676",
+      "bytes": 123
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-2.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-2.stdout",
+      "sha256": "9d4a93992b8eda3f6ccc6650e937bd11bda78b310da623e46200e119fb8f6c49",
+      "bytes": 6750
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-3.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-3.stdout",
+      "sha256": "e8ff9061c02a8a87c1000fe17bd7b29593a3ad9b9e65af40633584dd6ab9cedf",
+      "bytes": 433
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-4.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-4.stdout",
+      "sha256": "e1f3abc46b85cfe35e3cc5ffc007c1758598489fafc4c08f6f7a3bbf5c553bf8",
+      "bytes": 1425
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-5.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-5.stdout",
+      "sha256": "ff785f1065f2952018557502a5b80b61e57572a0eb7dce69a4bbeb7bb45da511",
+      "bytes": 14613
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-6.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-6.stdout",
+      "sha256": "7b6f688e3457ef839c7de799ff195c112422ebf8de67f8ed167b720ec62dba0d",
+      "bytes": 7952
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-7.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-7.stdout",
+      "sha256": "3e604f0402d2e4c4bd3538e1f112ac3da64ba8c9d42300632938a3c31e775207",
+      "bytes": 346
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-8.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-8.stdout",
+      "sha256": "7fec1ce2437ae50d1fc4b8aca92f076d2bf5f8b3a42f674614e8a2964753f3d8",
+      "bytes": 6243
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-9.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle-9.stdout",
+      "sha256": "16d58baa42b450639ab57068ec30fa9b40ecf85d0e515677b02613eb1964c2cb",
+      "bytes": 755
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\lifecycle.json",
+      "sha256": "387345ce323acd775d545158eb0f7b82b658549599667d1c2674081047770697",
+      "bytes": 98403
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\prepare.json",
+      "sha256": "0adf29fb9e6124d9239c16b1dc9e58bdf69cca3ef2c9785c9118ea95a320c218",
+      "bytes": 19841
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\qa-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\qa-0.stdout",
+      "sha256": "6efd7247b3fc3adf137ed7c81e8e7e155ba335972f44d4089c5fb4313ebbb1bd",
+      "bytes": 8012
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\qa.json",
+      "sha256": "505dbb74c531159885537101ae8a7d10dda021ddf83acc013cc04dab533eac5f",
+      "bytes": 24224
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\remote.json",
+      "sha256": "370d26ffea6b686fc8477bbe1614f4fe9237d70cdff6d15064ed36398acf7058",
+      "bytes": 68344
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\report-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\report-0.stdout",
+      "sha256": "e7a6d1701810ad3460416fa41421a7be9af11ac164cb18870e58524a98569841",
+      "bytes": 11961
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\report.json",
+      "sha256": "b4abb3cf9146159d56a90b6297a1bac2b7966f5dc504d5ffb69b9a5a7a49b4cb",
+      "bytes": 27095
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\state.json",
+      "sha256": "ef95dcee61fbcb326e4639e15db0ae04590f30834366eb364ccb1a1be36c3071",
+      "bytes": 684
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-0.stdout",
+      "sha256": "cd30e23c6ee38b7d7a8fcb8d36fab6da90b5383659a3d456fa8e8d5457a9e9aa",
+      "bytes": 6332
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-1.stdout",
+      "sha256": "e3da63208da28fcb1d6dbf7c9e3a553b547ef9a87b1288989b752b9191a07cec",
+      "bytes": 9771
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-2.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-2.stdout",
+      "sha256": "e3da63208da28fcb1d6dbf7c9e3a553b547ef9a87b1288989b752b9191a07cec",
+      "bytes": 9771
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-3.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-3.stdout",
+      "sha256": "574e0e8f5917534d952a1f244d0edae649cb43ab5094e324e9d7b1437a9a083a",
+      "bytes": 16019
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-4.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-4.stdout",
+      "sha256": "578de2335c085dbc822e7d8dbee77a6dc0c20d4f102d518d1a87ebe53155cf39",
+      "bytes": 9919
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-5.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-5.stdout",
+      "sha256": "e8ff9061c02a8a87c1000fe17bd7b29593a3ad9b9e65af40633584dd6ab9cedf",
+      "bytes": 433
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-6.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update-6.stdout",
+      "sha256": "bd6c4aeac3e6fd27d2cc96be835fd589e823789d16a5d28ebb49161e483b194f",
+      "bytes": 1396
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\update.json",
+      "sha256": "8396d3d6a2c5de6934df539dab5d47af7dbdfc7e22f4384f44072e59ba595cb2",
+      "bytes": 115440
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\中文 changed source.md",
+      "sha256": "2071492cd3d2003f7222b8ad40fa682f9dc2d4cf923d9acbf740460ae16cba00",
+      "bytes": 141
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\中文 source.md",
+      "sha256": "c1bde0752672bfa7d58b4ae3e2876f85b48a1fb930dab4f662e8ab6b74a55b56",
+      "bytes": 133
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\acceptance.json",
+      "sha256": "0a0659f6d548c2f91d54a18ee5dad23f7f5ba614db9bd83f763219f4be226097",
+      "bytes": 10657
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-cancelled-invocation.json",
+      "sha256": "5328fb2f260eceb37f9c395b309de2a9a4328b3140d45bd340bc73970e1b5705",
+      "bytes": 800
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-cancelled.log",
+      "sha256": "ed012e3f848227e0fde7fe2cc1f60a065303f2126a3f78d17840554b5c749569",
+      "bytes": 975
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-complete-invocation.json",
+      "sha256": "244ff2b2b8c4eb87bc7aa901434e54999c41163f2006d979498ce089f2bf99f6",
+      "bytes": 793
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-complete.log",
+      "sha256": "916ecb1af20bb9833e6b44c4eb00b467e0eb063ace35516b00f85a007ea9ef65",
+      "bytes": 4563
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-empty-invocation.json",
+      "sha256": "31549763114e9dd0a0fcefac186f461ee640e374dbd8799c0c1a14e7383145d0",
+      "bytes": 782
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-empty.log",
+      "sha256": "9eb279e1c1ba5f162f90381386032c9a8dd2bf6eee9b483d79dcfdb40d803dcc",
+      "bytes": 1090
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-failed-invocation.json",
+      "sha256": "99cad66bd3c7957033a484f3d41ea1e22547b99eced32572c67993b7a34164b0",
+      "bytes": 786
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-failed.log",
+      "sha256": "6d0149877c10e64a0400ffcd0bf787cc4df137cfee6cee342f9f652db39f0cfc",
+      "bytes": 969
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-invalid_config-invocation.json",
+      "sha256": "2ec94a775e9744c25a86e16efc0c3b8f74bec438960592ab04d0f79113a772fc",
+      "bytes": 818
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-invalid_config.log",
+      "sha256": "fce279401f18dd416421d0ac84b5f5c8cac0d5cefd57acbd381dfcf818fddf4d",
+      "bytes": 234
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-partial-invocation.json",
+      "sha256": "d40bdb00fc68422061b32ace30138671dd5660613f27a274b37a5827d410356d",
+      "bytes": 790
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-partial.log",
+      "sha256": "9d9216726faa7184f3c0f4179d850ee44c927a780373d444c127754a970934d8",
+      "bytes": 5005
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\cli-states.json",
+      "sha256": "b16aee43c5788e0693ccad682eb6d47ec4f41a79ef3459dfe881857b359c101a",
+      "bytes": 5830
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\entry-regression-command.json",
+      "sha256": "dcba21bbce9ebcf83ad1a39fae2baf4f0143f89817fa5f57d1c5c57fac40411a",
+      "bytes": 1120
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\entry-regression-invocation.json",
+      "sha256": "acc0ed3c550bcf618f55f64624254403b119be0f75dfc060e57210db3c288dae",
+      "bytes": 1365
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\entry-regression-modules.json",
+      "sha256": "88ac9c6c8724ee78e9bf6926f604d6b860a7b0aa2e4edd742a52895b248c2d24",
+      "bytes": 48693
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\entry-regression.log",
+      "sha256": "1e5a97a15223c8cd92281c25faf952b999695580580283402c7180069c852eeb",
+      "bytes": 112
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\entry-regression.xml",
+      "sha256": "477aca99016b831428d345591375ca4be2249f9ed1bf9694d6450e7c2d28f217",
+      "bytes": 8996
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\executor-manifest.json",
+      "sha256": "60d8846566d69af1a6eabc333443a3366c100e0484c5013081a634840763c9e2",
+      "bytes": 643176
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\prepare.json",
+      "sha256": "141cd3bf653759d6daf113c75af5d971ce6e1527a5b5a0a623fb0c257163fcd3",
+      "bytes": 35716
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-invocation.json",
+      "sha256": "0399fc6004856757e7cb4922ec84b91c7a04447055fc0a44993948ab262fda68",
+      "bytes": 801
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli.log",
+      "sha256": "be0dbeb469ac3aebfa9e9cc4236ff9f83973bda5b55bcefd018385a16cc70e42",
+      "bytes": 4563
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-http-command.json",
+      "sha256": "81d1ae62414d93fa8ea8ad2556f69106755f677a66a50dbfb48a088e46e0030b",
+      "bytes": 1137
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-http-invocation.json",
+      "sha256": "25522f6b9614b44ffcc7229b2d9ed7472043d106bf236b49186acf814cb582b7",
+      "bytes": 1368
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-http-modules.json",
+      "sha256": "6e5922887ec7c4678ed91e0b4b31211d09e857871a3c3a22b4ab981325ad4652",
+      "bytes": 44133
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-http.log",
+      "sha256": "68ba116074db8673ddf75eb46cdad140fa7f1bc49c3c857ce722263861be287d",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-http.xml",
+      "sha256": "8cb9113f08b3ae310abc8e7ce7febb3cb4ffdcfbd8d19f592e8d38def99363b8",
+      "bytes": 522
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-reproduction.json",
+      "sha256": "d282916855d5d92a16431fbea0e8cc6d25e5fcdf6c922b3c109cd6b29cea11f1",
+      "bytes": 2433
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\development.json",
+      "sha256": "c1236d2a201e69ed725d6ecb03f5f3ecc9acd7c22b90a1060b4cae5364854e23",
+      "bytes": 5582
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\modules.json",
+      "sha256": "94fba5279830fee624fc405c6f102eca030d8ba5a39bbbce4a2da4ed9f49d91b",
+      "bytes": 30229
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\requests.json",
+      "sha256": "9cc0163358ee44ff19caf5cf9f488e6d140ef728f8d7aa09a9814e02038edd38",
+      "bytes": 121
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\validation.json",
+      "sha256": "d506a405e4868228b848fa2c775ab8091306ca52042047a884fc9386f7f8b5df",
+      "bytes": 8180
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\.codeplus\\config.yaml",
+      "sha256": "b116740d62019c9a22a4fb755801503aa3881cd9de8c45d8ee0bbf6402351ed3",
+      "bytes": 259
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\.codeplus\\crash.log",
+      "sha256": "c735734f290704b20c0208fed5a1b715ee7d5cae91ca2e66100f6c4701e4ae6b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\.codeplus\\debug.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\data\\.agentic-rag.json",
+      "sha256": "bd8f4a64b236d33203d2a69ba5ff15f7e3704d8a22b199f7857edf2aef2edd3c",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\data\\catalog.sqlite",
+      "sha256": "c4c8cbca9d26845c8bea490012f128a9b731bb8539325e92faffa6e5e135c4a5",
+      "bytes": 577536
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\data\\archives\\56\\56e5c5025f67bb476eaf51d6d90ffc452605cdfd4b69f2a34292c390060c72da",
+      "sha256": "56e5c5025f67bb476eaf51d6d90ffc452605cdfd4b69f2a34292c390060c72da",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\data\\archives\\8d\\8d6137db7123f5d9c36b078e376a70e6dcd13c59a040c118705e1baa3bc33301",
+      "sha256": "8d6137db7123f5d9c36b078e376a70e6dcd13c59a040c118705e1baa3bc33301",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\slash-cli-data\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\development.json",
+      "sha256": "6ff30525f9ceb375ecf5e406a610225b549321df8c864d9f5c04b5205bba48e6",
+      "bytes": 5626
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\modules.json",
+      "sha256": "38215ed65dd483a50e613114ae084f3433d035655094abe6f6c202921be309e0",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\requests.json",
+      "sha256": "aa5ff8a93b23301650287dd128b9578771ba4c23e1d42e63fd22d9659de6bf7d",
+      "bytes": 267
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\validation.json",
+      "sha256": "a2892c57c307a4d3ea36fd2d6298f09c99efb7b22778fa1810465858bcfe99b6",
+      "bytes": 2153
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\development.json",
+      "sha256": "fbd0fd9008db4af23f4db309beb574fbfc49f615c85218143aa81e431ba78930",
+      "bytes": 5638
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\modules.json",
+      "sha256": "42961251f291ab2a4657a9c74feb6a1f622aab51c0f3a56afa2c7efbaf738930",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\requests.json",
+      "sha256": "c8241391d02a2b3601f538189e785040efb682a00bf7b987609da9af9d4aaea0",
+      "bytes": 239
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\validation.json",
+      "sha256": "646fe225fea0a1e58f9d622b54f86d66f79d2ff57e0f068e65ef0f24aa26eae4",
+      "bytes": 1801
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\development.json",
+      "sha256": "e3683dc3f346935543d8f0bdd39df73dfe6a318cd903f69d3afe6d00d2d6b43c",
+      "bytes": 5634
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\modules.json",
+      "sha256": "42961251f291ab2a4657a9c74feb6a1f622aab51c0f3a56afa2c7efbaf738930",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\requests.json",
+      "sha256": "acd63a23b207a4a751d30f0c66711ca5ceb36cd01fecb0f75dfb0b89712e98cb",
+      "bytes": 270
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\validation.json",
+      "sha256": "dc7963df3e11216ede9231ae540bef83769f1bbfad370d30ff46a37dff2d2d44",
+      "bytes": 2153
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\development.json",
+      "sha256": "162a990924ee6bdea369fdfad74bde1f823f5ee832fd7f1fa81e4148464ff846",
+      "bytes": 5622
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\modules.json",
+      "sha256": "42961251f291ab2a4657a9c74feb6a1f622aab51c0f3a56afa2c7efbaf738930",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\requests.json",
+      "sha256": "9d4b300838245242c7b44c91a58b0dcd29b86f1d0f4e356ce4a8b821a2f465cc",
+      "bytes": 235
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\validation.json",
+      "sha256": "d5bbfeb0c0c8d10fed49c91b743fe223e09548be1e7cd5168a36334c67e61c98",
+      "bytes": 1784
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\development.json",
+      "sha256": "3bd41a5da2f9be255100180821c8eadb9c0130d4cef310826d517fd723176472",
+      "bytes": 5626
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\modules.json",
+      "sha256": "42961251f291ab2a4657a9c74feb6a1f622aab51c0f3a56afa2c7efbaf738930",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\requests.json",
+      "sha256": "911cba8f0d727672bbc3028b3ec0007df3a7dbcd0abefb384e8b910e936d0f4a",
+      "bytes": 236
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\validation.json",
+      "sha256": "874a591168b78709cf11f7f12eb995e7b74348e770c35fbb2423003e5d6ddaae",
+      "bytes": 1789
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\development.json",
+      "sha256": "0b0ce87148bb1474ae5835d875cd316887201675462e51a5969a0ac0b71df6ba",
+      "bytes": 54
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\modules.json",
+      "sha256": "8eea14bd2b277eb1c9de8f1821b7c018e9c5f003103cf6fb4d79482c2f390b34",
+      "bytes": 33649
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\requests.json",
+      "sha256": "e4984023f8adaf7c8437bdb8271a7fc02183cb0b11bd24afd76be231f20c3b94",
+      "bytes": 209
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\validation.json",
+      "sha256": "0480c57709d1a8347904043dfc2bf89d177256f879cfcf06e75808c364438d5e",
+      "bytes": 378
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\development.json",
+      "sha256": "c589c5edb64c2af45065ddab21ddc6244b464493522ac82979857111a928af06",
+      "bytes": 5629
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\modules.json",
+      "sha256": "42961251f291ab2a4657a9c74feb6a1f622aab51c0f3a56afa2c7efbaf738930",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\requests.json",
+      "sha256": "20c2ec173cc18ca88de22eda218ce1057baa8514d983ff471429deac84b505d4",
+      "bytes": 512
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\validation.json",
+      "sha256": "46c7eb0963e174fedcd40845aa67c5d804ac5684542de40ca8622c6c7f3d69b8",
+      "bytes": 2246
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\.codeplus\\config.yaml",
+      "sha256": "a685941cf2971b7edfc120286c7950d155cf77849c9b5dc53d168571b278e24d",
+      "bytes": 269
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\.codeplus\\crash.log",
+      "sha256": "3517ed0e53ae6e2fe8196c126499e03cac981feeb2e8edca4d6c1a26e7f4a275",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\.codeplus\\debug.log",
+      "sha256": "b8c71638e7bd2b6b7f05cf19abb532622e1853f1f91984cfd4b29fc37ba42f73",
+      "bytes": 327
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\data\\.agentic-rag.json",
+      "sha256": "15cf550d982457d226a4f7e121230078ec880c646f812bf76d7ce6c5956dbd1e",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\data\\catalog.sqlite",
+      "sha256": "46c9fbf72766d0952ebfada97c92d50ab163ee51461dff88a5835e18f4274184",
+      "bytes": 602112
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\data\\archives\\49\\4930f325b0e96b72362256ac77abf5ff52d25fc17bb1f8afefe87531a7cedbb6",
+      "sha256": "4930f325b0e96b72362256ac77abf5ff52d25fc17bb1f8afefe87531a7cedbb6",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\data\\archives\\5e\\5eb2d5290b858971766e18a97803ac7d771eba7e99cafe72c22adc0c47cbe19e",
+      "sha256": "5eb2d5290b858971766e18a97803ac7d771eba7e99cafe72c22adc0c47cbe19e",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\partial\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\.codeplus\\config.yaml",
+      "sha256": "c26ef4932ee08c0493b2b6b6a42a96d11ddcc6e614800b41b9c6a5f439a423a9",
+      "bytes": 276
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\.codeplus\\crash.log",
+      "sha256": "4b99954eb426ce5be8567256a6b6ae2116a480ed0133b99c7b79dec35fbc3c89",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\.codeplus\\debug.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\data\\.agentic-rag.json",
+      "sha256": "f684df0bd67d693c592c168f69b5b10fafce6195014a2c4742e0c61516042850",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\data\\catalog.sqlite",
+      "sha256": "e401efd45f84fe6dbb56c0deae49117441fe6f4b8e7113fc87adc5bc02cc7a31",
+      "bytes": 577536
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\data\\archives\\35\\35512038c1f21988025f3d067348ade0b2b34cc7ddc6daf4625e850fc6717d33",
+      "sha256": "35512038c1f21988025f3d067348ade0b2b34cc7ddc6daf4625e850fc6717d33",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\data\\archives\\6f\\6f7e4890a95b9f320b22e01424c76dbb8ae34789a785d5624b2a46847c7e4536",
+      "sha256": "6f7e4890a95b9f320b22e01424c76dbb8ae34789a785d5624b2a46847c7e4536",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\invalid_config\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\.codeplus\\config.yaml",
+      "sha256": "36a6a1ea1c54673924f1c0914a96d8194c357980156df6dc55ca663220ca786e",
+      "bytes": 268
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\.codeplus\\crash.log",
+      "sha256": "83dd01f41ee0d89f608574f77575fbbb862abb003650f159cbe99c5689d0df32",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\.codeplus\\debug.log",
+      "sha256": "a73e64f652073b0108acb94da51db402ad1d919479f81133a97db7ed12aa5ef7",
+      "bytes": 118
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\data\\.agentic-rag.json",
+      "sha256": "87d00d4d80f0ab38dc43c9ffe0e882e9f297958f7509b5141515c551fde6a549",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\data\\catalog.sqlite",
+      "sha256": "952ac1dafb57fe5f3c718ef599ead1a0f1d6c0ed8767df78088ab4dca5828f5c",
+      "bytes": 589824
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\data\\archives\\29\\29e805aa769ad2ffdaceca87b32828eb305cfd4a8ca95d112ee898577deadbd7",
+      "sha256": "29e805aa769ad2ffdaceca87b32828eb305cfd4a8ca95d112ee898577deadbd7",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\data\\archives\\83\\83931b9dd82cf2fd266dfa3953c7f2e3c5a6728e8ad8c1f6362f51182a2a3077",
+      "sha256": "83931b9dd82cf2fd266dfa3953c7f2e3c5a6728e8ad8c1f6362f51182a2a3077",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\failed\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\.codeplus\\config.yaml",
+      "sha256": "c033c6411194716498cbf4078380c27ebcd31ca86c48ce0955b23ae380e7febe",
+      "bytes": 267
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\.codeplus\\crash.log",
+      "sha256": "7f434346a132ec55c97f943f09761e68a31371301205eb368207f87eb295f369",
+      "bytes": 75
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\.codeplus\\debug.log",
+      "sha256": "08e38aaf0a50570053c156f9b24d68f6182dbf5b9c8e25540ec85de5070bbd3a",
+      "bytes": 109
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\data\\.agentic-rag.json",
+      "sha256": "7e2da336fe33a3ffed170078240d1e8d3c8b5407c71649b51a56a040e1973fe9",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\data\\catalog.sqlite",
+      "sha256": "4be592a20221f025b66c165c4bd63d982ecb3ccca65e4c4c965d724059ad0f97",
+      "bytes": 589824
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\data\\archives\\98\\987fda0489ca626d50b9410a37467a5f5995a31dd27e8fd687674c0cf9c47dd8",
+      "sha256": "987fda0489ca626d50b9410a37467a5f5995a31dd27e8fd687674c0cf9c47dd8",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\empty\\data\\archives\\df\\dff32add76b0eff1adaf4ffe06a085f34bf300e1f0c8f585cd6e1ce6abe26e55",
+      "sha256": "dff32add76b0eff1adaf4ffe06a085f34bf300e1f0c8f585cd6e1ce6abe26e55",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\.codeplus\\config.yaml",
+      "sha256": "515b40da12d45de242a3b7ee4d0e4b5919bcfd44b7f1c4f8cb44b7dc4348ff19",
+      "bytes": 270
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\.codeplus\\crash.log",
+      "sha256": "69be146f0ea9edb8046d7c46a8a7ab7d6f8bd42ef3fa9353171ab0e537aad18f",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\.codeplus\\debug.log",
+      "sha256": "ed919995ca200e67a46843143e064816a005f8add4ba7b8c352a744c61564859",
+      "bytes": 218
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\data\\.agentic-rag.json",
+      "sha256": "be82579f0fe9f65cb74ff65e3f266e5f60b3c713c6f74c33ebfe13b18f012e37",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\data\\catalog.sqlite",
+      "sha256": "a5e66406feefa63a41370edd78e0959e446b254cfa581fdbc4499a4163c4a5a5",
+      "bytes": 593920
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\data\\archives\\c3\\c30d65eeff4cf4572abf476974210723a139629ba47d53e36f485170d5649952",
+      "sha256": "c30d65eeff4cf4572abf476974210723a139629ba47d53e36f485170d5649952",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\complete\\data\\archives\\e2\\e2b2c7a9303f7276e91aeed7af7fd10f32da0c667dddd88f189687a4bf9b4425",
+      "sha256": "e2b2c7a9303f7276e91aeed7af7fd10f32da0c667dddd88f189687a4bf9b4425",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\.codeplus\\config.yaml",
+      "sha256": "73b0c338946416bfcc0cf0edc86f588f1663a3669f2a84e916e79038026241f4",
+      "bytes": 271
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\.codeplus\\crash.log",
+      "sha256": "86612c1b2da5235ddceff03034ba8bdea2d0df11d3fb1b776b11461d4130df4e",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\.codeplus\\debug.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\data\\.agentic-rag.json",
+      "sha256": "fae7f14900d5e687eb22c299013d76e34c6061db5fc957ccd520c565307e8715",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\data\\catalog.sqlite",
+      "sha256": "4eb2b16dc37c153b6c74cda40c124103ac4457cdfc0276eaccc07ac398469f67",
+      "bytes": 589824
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\data\\archives\\09\\090abe8df75fb33235885a7a5fd7a601200a3c1317678d95da19b434416abfa5",
+      "sha256": "090abe8df75fb33235885a7a5fd7a601200a3c1317678d95da19b434416abfa5",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\data\\archives\\36\\363dd6d8fa9b1a49ea75d7c76e8cbe78a380b22a398cc2552c816afc3e0abdcf",
+      "sha256": "363dd6d8fa9b1a49ea75d7c76e8cbe78a380b22a398cc2552c816afc3e0abdcf",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\states\\cancelled\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\.codeplus\\config.yaml",
+      "sha256": "f8422e73fce272fea9fe192a6ee0210df6c91fb8ebe9a06d288d008b27b5a7b4",
+      "bytes": 269
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\.codeplus\\crash.log",
+      "sha256": "2da7778521756fc164e3cd94a6f7e64d441117ce51ef18e66e72bbac78d19d2a",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\.codeplus\\debug.log",
+      "sha256": "9a35ce6ab740139b8725f1c6fddd43f5a5bcdb48916846b43fb460a9494479ed",
+      "bytes": 218
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\data\\.agentic-rag.json",
+      "sha256": "59657959f0a6c885a9e195fde0313d20d339be8339edaa38b5daf9be089200ce",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\data\\catalog.sqlite",
+      "sha256": "c828b4ad02807c436985a31d123e943af4b744ae69bb17c956ca37d7c850706f",
+      "bytes": 593920
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\data\\archives\\32\\329c8603b34621fa18a07c2a08ad187e9c0721e3adc5824d1682ba74a29147b1",
+      "sha256": "329c8603b34621fa18a07c2a08ad187e9c0721e3adc5824d1682ba74a29147b1",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\data\\archives\\59\\598132ea9ca0df97f97baea6e32bf659daa88128c2e5e23cc48da9c1060726f7",
+      "sha256": "598132ea9ca0df97f97baea6e32bf659daa88128c2e5e23cc48da9c1060726f7",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\slash-cli-data\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\dist\\host\\codeplus-0.2.0-py3-none-any.whl",
+      "sha256": "8029589bd17f6a52b70f352b0c92428ef693d629e2ce3786d9345928831b3ccb",
+      "bytes": 318559
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\dist\\host\\codeplus-0.2.0.tar.gz",
+      "sha256": "be9c12c68e03482029c84c8ffc6f3587567cfb57def7858b026303b17887c935",
+      "bytes": 1324333
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\dist\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "sha256": "e53c92bef0fe9523e22cfa93bfca7fc6f3bd4756ee12dd9eff5cb43a51ec8da2",
+      "bytes": 214882
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\revision1\\dist\\rag\\codeplus_agentic_rag-0.1.0.tar.gz",
+      "sha256": "3b148a29aa1d3b2863ce95eec857760c28e2ef3208105def62e051414de12509",
+      "bytes": 317355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\.agentic-rag.json",
+      "sha256": "facbf223753c14e099a9f2d88625970ebc2d45c6479c64068f3e21adee9a6cd3",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\catalog.sqlite",
+      "sha256": "a062d3cef30dcd24ed8e1b7f8ef2da7685e59d150dbac3277f2f95f464d0ea5c",
+      "bytes": 987136
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\host\\vega-report.md",
+      "sha256": "6b6b344b1a00046bfc18f1e66dc190c870aa5a23fb026990f7d29f922c0d36cf",
+      "bytes": 2580
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\host\\.codeplus\\config.yaml",
+      "sha256": "d44809cc6a3ab04666af30cae9bddbaeaab4470883c432071b6fa05cd4ff83a4",
+      "bytes": 394
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\host\\.codeplus\\crash.log",
+      "sha256": "33c683de3c555d423b6c1a9c5e52e0f737850800ca3f452337e12caeba988933",
+      "bytes": 1996
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\host\\.codeplus\\debug.log",
+      "sha256": "d982423ac6473a87510052aa5b140f40139eed93c4c439d4fee8b8f5d870bc4f",
+      "bytes": 440
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\host\\.codeplus\\sessions\\session_20260923_220457_1ds2.jsonl",
+      "sha256": "a9cce60c05a9ed00af272c6006f2bf783ec8e3122d175c8b82c2d40b823005d2",
+      "bytes": 2511
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\host\\.codeplus\\sessions\\session_20260923_220457_1ds2.meta",
+      "sha256": "a7a020509df408d929601bd3e2864934c500b5c71d691c29e45d684862c7a7ba",
+      "bytes": 350
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\16\\16c5feeed7beb2fc31f9608fcae3a3c3e0256f3383a8345798a0e1db5a083596",
+      "sha256": "16c5feeed7beb2fc31f9608fcae3a3c3e0256f3383a8345798a0e1db5a083596",
+      "bytes": 1000
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\1f\\1fb6cdf681e09248ce13cea4e8d071a9ddc7d0a88143f8e3bb642412d7e19bb6",
+      "sha256": "1fb6cdf681e09248ce13cea4e8d071a9ddc7d0a88143f8e3bb642412d7e19bb6",
+      "bytes": 24572
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\20\\2071492cd3d2003f7222b8ad40fa682f9dc2d4cf923d9acbf740460ae16cba00",
+      "sha256": "2071492cd3d2003f7222b8ad40fa682f9dc2d4cf923d9acbf740460ae16cba00",
+      "bytes": 141
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\37\\37e294ed276a069ee4e5eb7661e541f81c817675d1c2bd216d407054dea515d8",
+      "sha256": "37e294ed276a069ee4e5eb7661e541f81c817675d1c2bd216d407054dea515d8",
+      "bytes": 24496
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\41\\41617c3bd609565c0107743104054f5e92dcf39b739042c749263396813c79c6",
+      "sha256": "41617c3bd609565c0107743104054f5e92dcf39b739042c749263396813c79c6",
+      "bytes": 2272
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\47\\47725e90f91a70e9ad67bee15c28a5493dddee81f6969720c9269e6f7721eec0",
+      "sha256": "47725e90f91a70e9ad67bee15c28a5493dddee81f6969720c9269e6f7721eec0",
+      "bytes": 1896
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\4a\\4a56063935de861cb75776d058d3257985fb545584c80a2dac981676f3f3a649",
+      "sha256": "4a56063935de861cb75776d058d3257985fb545584c80a2dac981676f3f3a649",
+      "bytes": 139
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\4f\\4f9f5272632eb43c9474ee77e655234bdd04ef52e2d86a8975986ea8be327d60",
+      "sha256": "4f9f5272632eb43c9474ee77e655234bdd04ef52e2d86a8975986ea8be327d60",
+      "bytes": 2200
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\50\\50dc26262f0cd16ddae101c84d3db88f5873d47a4f390c1cbeb64613be0cd4f8",
+      "sha256": "50dc26262f0cd16ddae101c84d3db88f5873d47a4f390c1cbeb64613be0cd4f8",
+      "bytes": 707
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\64\\646309807f13f11a01121d04491ec70f6fc42435c0f1e8f9a9d85d716cbc47dd",
+      "sha256": "646309807f13f11a01121d04491ec70f6fc42435c0f1e8f9a9d85d716cbc47dd",
+      "bytes": 906
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\6e\\6eb2a48ed6f4f9aa9e67e865ddd1cfbd055371c15decc17defdf26db76f99f03",
+      "sha256": "6eb2a48ed6f4f9aa9e67e865ddd1cfbd055371c15decc17defdf26db76f99f03",
+      "bytes": 48
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\7b\\7bcbbb727029b0b46b6c7b7b2719c2a4cdb71b433df1b01c5ef803a4d1e102db",
+      "sha256": "7bcbbb727029b0b46b6c7b7b2719c2a4cdb71b433df1b01c5ef803a4d1e102db",
+      "bytes": 24333
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\8a\\8aaf33242e5e1090d5579e2a9762aca6a1291fe1815087d72bd2ce72f3aed0bf",
+      "sha256": "8aaf33242e5e1090d5579e2a9762aca6a1291fe1815087d72bd2ce72f3aed0bf",
+      "bytes": 1786
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\93\\9381c045803348b7ce5866671dfdd69b85578e4f47374f5023514e73738e8973",
+      "sha256": "9381c045803348b7ce5866671dfdd69b85578e4f47374f5023514e73738e8973",
+      "bytes": 391
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\9a\\9aeb54eeba4903563010d973edb7df5a8a161de8cbe44b9e94ee7435969a3346",
+      "sha256": "9aeb54eeba4903563010d973edb7df5a8a161de8cbe44b9e94ee7435969a3346",
+      "bytes": 50
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\9c\\9c524db58cdd1c5f244bb32d7ef38d79c5e9089e696310ddcb4cdee6e470b846",
+      "sha256": "9c524db58cdd1c5f244bb32d7ef38d79c5e9089e696310ddcb4cdee6e470b846",
+      "bytes": 24333
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\aa\\aac009e2f0e7e432c0169e92ade26bf96fc8d33fc2f363ce8e7a06828d29ab7d",
+      "sha256": "aac009e2f0e7e432c0169e92ade26bf96fc8d33fc2f363ce8e7a06828d29ab7d",
+      "bytes": 24572
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\b2\\b2125da3ff71ccd28dec7f5f2bb3fa782eeba9284d55239404bde6d6d53c7d19",
+      "sha256": "b2125da3ff71ccd28dec7f5f2bb3fa782eeba9284d55239404bde6d6d53c7d19",
+      "bytes": 14
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\bc\\bc30a647cbb4ded76b4dced3f13aeef8a13858e8992ba1fb62f275b4c8294c04",
+      "sha256": "bc30a647cbb4ded76b4dced3f13aeef8a13858e8992ba1fb62f275b4c8294c04",
+      "bytes": 675
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\c1\\c1bde0752672bfa7d58b4ae3e2876f85b48a1fb930dab4f662e8ab6b74a55b56",
+      "sha256": "c1bde0752672bfa7d58b4ae3e2876f85b48a1fb930dab4f662e8ab6b74a55b56",
+      "bytes": 133
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\c6\\c6efec25b3af66b330a6e1ec0fadc518d568baa1f35b0e9e5135fdcf64f056f0",
+      "sha256": "c6efec25b3af66b330a6e1ec0fadc518d568baa1f35b0e9e5135fdcf64f056f0",
+      "bytes": 1912
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\cb\\cb43f725cc7646ee826cc7abdd4c1448395c3a596612e3c0cb0541da7f2dbd6e",
+      "sha256": "cb43f725cc7646ee826cc7abdd4c1448395c3a596612e3c0cb0541da7f2dbd6e",
+      "bytes": 1786
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\dc\\dc45fff1b217ebdec6c449c9d2365b0f8f7ba9ccd77b2070ebd53ebf75d39331",
+      "sha256": "dc45fff1b217ebdec6c449c9d2365b0f8f7ba9ccd77b2070ebd53ebf75d39331",
+      "bytes": 131
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\dc\\dceedf1e5fcc1029573759c06a38f7c3859de821bc24e09ee0d530d8998fed22",
+      "sha256": "dceedf1e5fcc1029573759c06a38f7c3859de821bc24e09ee0d530d8998fed22",
+      "bytes": 2272
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\real\\data\\archives\\e2\\e2a7ceb345bbd97add1c82cc45cd851c7ee69072306a80b18983e0bbf3e033bc",
+      "sha256": "e2a7ceb345bbd97add1c82cc45cd851c7ee69072306a80b18983e0bbf3e033bc",
+      "bytes": 1912
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\dist\\host\\codeplus-0.2.0-py3-none-any.whl",
+      "sha256": "916d1551dbf20147cf685ead1e7914a53ec6a11bfc1153b27612921d318be8b7",
+      "bytes": 318456
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\dist\\host\\codeplus-0.2.0.tar.gz",
+      "sha256": "250933b0a1541ebd860e11ad63fb702c69712c136d49dfe3be03859bda6f18e5",
+      "bytes": 1324250
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\dist\\rag\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+      "sha256": "e53c92bef0fe9523e22cfa93bfca7fc6f3bd4756ee12dd9eff5cb43a51ec8da2",
+      "bytes": 214882
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\dist\\rag\\codeplus_agentic_rag-0.1.0.tar.gz",
+      "sha256": "3b148a29aa1d3b2863ce95eec857760c28e2ef3208105def62e051414de12509",
+      "bytes": 317355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\development.json",
+      "sha256": "2d156cb553c780700ce01b8f2ebb3e377d82510430f62f93d5750fe30195b851",
+      "bytes": 5610
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\modules.json",
+      "sha256": "49c8608637bae2daec4d401977be5f84866aa09709e630b31fe01d86190c8d37",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\requests.json",
+      "sha256": "5b615b7fba4576b39725543b7ffc28b086c805606de3ec46cab311a5863ba799",
+      "bytes": 122
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\validation.json",
+      "sha256": "b5cb67e54875197c538be91a17130bc440ed3d66bc9a7a657e07929b677c901a",
+      "bytes": 1804
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\development.json",
+      "sha256": "e1641b73f510d0c711ad118ee65cac7dfa74bf42836525f2db94d4cbd6fa22c5",
+      "bytes": 5606
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\modules.json",
+      "sha256": "49c8608637bae2daec4d401977be5f84866aa09709e630b31fe01d86190c8d37",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\requests.json",
+      "sha256": "b266190e9a91df51de347664c53fae1b5eded2e00169d9d726a26505f9bcb2b2",
+      "bytes": 121
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\validation.json",
+      "sha256": "d34e50f37c00174bdd6f578f1b4ae9080e6b5e0cdbfa34b4580a7cf09b12abca",
+      "bytes": 2151
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\development.json",
+      "sha256": "4f8b3c456e2c578132dcbda35bafed35e149d4fc3fd1f4b7159ad0a9c560fc8c",
+      "bytes": 5594
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\modules.json",
+      "sha256": "49c8608637bae2daec4d401977be5f84866aa09709e630b31fe01d86190c8d37",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\requests.json",
+      "sha256": "3ae025a0decaf7eb8cc4e3acef3863acc930c2304d379486a65de797aa08cc3c",
+      "bytes": 118
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\validation.json",
+      "sha256": "fcf994a46bdd252f0384d7053df361fde9570ffaa8569cf78814c5357d9dd33f",
+      "bytes": 1787
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\development.json",
+      "sha256": "b0862543478aaabd0ecec7917831358ba634ad8d31263ee1238a728c22dbdf55",
+      "bytes": 5598
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\modules.json",
+      "sha256": "49c8608637bae2daec4d401977be5f84866aa09709e630b31fe01d86190c8d37",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\requests.json",
+      "sha256": "c0876f0feb62f76c9e9b9be623d3af973547aadcaf62f351e2424cb282745356",
+      "bytes": 119
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\validation.json",
+      "sha256": "a84e2e8a3087aeee7ced84fdd0f140a9dbb97fc4566a80e6587d45c08d1e065c",
+      "bytes": 1790
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\development.json",
+      "sha256": "0b0ce87148bb1474ae5835d875cd316887201675462e51a5969a0ac0b71df6ba",
+      "bytes": 54
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\modules.json",
+      "sha256": "1d38710b28b1e238aa3e6f7cb5e253320a4f563fd743ae91532d754312c19b29",
+      "bytes": 33649
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\requests.json",
+      "sha256": "0c0ecb9b608321d1cbb9ce2b5226689770df28903869a8f04b600f1285c3d3e0",
+      "bytes": 127
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\validation.json",
+      "sha256": "0480c57709d1a8347904043dfc2bf89d177256f879cfcf06e75808c364438d5e",
+      "bytes": 378
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\development.json",
+      "sha256": "a012df0dd59b00e2327774ad1b9b1bb4bc0fe331bed437fbcbd8b57ba9cb7971",
+      "bytes": 5601
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\doc.md",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\modules.json",
+      "sha256": "49c8608637bae2daec4d401977be5f84866aa09709e630b31fe01d86190c8d37",
+      "bytes": 38355
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\requests.json",
+      "sha256": "93a9a82f77a1343b8ba5147f775deffc9fc3595d1955eb76bfe1977d8ddd1007",
+      "bytes": 120
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\validation.json",
+      "sha256": "de45753b4fb9b698029804f804bdc00cff5a73d1126b22ce3d57e378fb352489",
+      "bytes": 2244
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\.codeplus\\config.yaml",
+      "sha256": "35a72babd8c336324f7ecaef2f0781cb6ae78dc673744f0ff6d21ff2e3660219",
+      "bytes": 263
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\.codeplus\\crash.log",
+      "sha256": "ea959270d7b7621575accc37f976e02af4be6dbaf22c2bfb4a7a5e868113b36d",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\.codeplus\\debug.log",
+      "sha256": "7592d8e96f4b02952fef9430108211dc9300d4a36676fde7297062b6fa34368d",
+      "bytes": 327
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\data\\.agentic-rag.json",
+      "sha256": "805798caa28dbdb7d656e8342dd8c89cf99826c3502857392c7ed3ad5b9cebbb",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\data\\catalog.sqlite",
+      "sha256": "df9c037f637954b22685ea34a1569b12517b0fbcca18aa9a57965d058911065e",
+      "bytes": 602112
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\data\\archives\\ad\\adbbcb70c8f6cf30c6d2e12bc7c9b6b3ac8af042f230e6261817d586fa875a2f",
+      "sha256": "adbbcb70c8f6cf30c6d2e12bc7c9b6b3ac8af042f230e6261817d586fa875a2f",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\partial\\data\\archives\\da\\da91fb6db2dd1fc83e7f463aa132b3a8be5b9010f79b79053adfef52cfb06fc2",
+      "sha256": "da91fb6db2dd1fc83e7f463aa132b3a8be5b9010f79b79053adfef52cfb06fc2",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\.codeplus\\config.yaml",
+      "sha256": "7989b85936af7ef646c949acf49e1bebd5bbe3ddb024d55a617472da80465bf1",
+      "bytes": 270
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\.codeplus\\crash.log",
+      "sha256": "d5fb6d42c685d37ed957cb7eb63bcc753e880bdb974222518407cc7c355493e5",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\.codeplus\\debug.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\data\\.agentic-rag.json",
+      "sha256": "a10c6ab90d099405afb7fb0072c7086df98d17b5120ff3a64ca73eeeb54188bd",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\data\\catalog.sqlite",
+      "sha256": "80442d35c630424efeeb1f4e3e110b8d5c50029b662f37ec32526b8a8e245992",
+      "bytes": 577536
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\data\\archives\\54\\5472e8deb131553d68b7fcf3e3b5202adbdb0bf6eaa72f9db3a15b883045227d",
+      "sha256": "5472e8deb131553d68b7fcf3e3b5202adbdb0bf6eaa72f9db3a15b883045227d",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\data\\archives\\66\\66723a92765fa3980769d1ea90b527441bf3eee6465fab98e4c81c5e031422c3",
+      "sha256": "66723a92765fa3980769d1ea90b527441bf3eee6465fab98e4c81c5e031422c3",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\invalid_config\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\.codeplus\\config.yaml",
+      "sha256": "b1b1882e371488b20faa76e656a9cde5c6e598a7f781d51b9b88a1a2cdbd71fb",
+      "bytes": 262
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\.codeplus\\crash.log",
+      "sha256": "0e9f61669eab20bd3a4d6211d3e0fee7f8f56eff55ce5bdb5ed0c1afb60be891",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\.codeplus\\debug.log",
+      "sha256": "41d23a1bd3c85eab484f1e374a11456a08511f8ee235ca66f2cd0ea9ab180a61",
+      "bytes": 118
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\data\\.agentic-rag.json",
+      "sha256": "2e773cd54a4fead964af8bb55e7f977719607906d53be9030da03bff6eb55512",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\data\\catalog.sqlite",
+      "sha256": "a3e8f5ce8be1b1694f333ea7b40c564456cfcda30975b8054d08a5c0a5405110",
+      "bytes": 589824
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\data\\archives\\b8\\b8181d74832106af159ec57e0e4ca282fbf3a652fd548f157b0b1156663fb85c",
+      "sha256": "b8181d74832106af159ec57e0e4ca282fbf3a652fd548f157b0b1156663fb85c",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\failed\\data\\archives\\bf\\bfe265b225fbc7fe29bb8ebe1692b578b72aecebf2719873bf349dfec3686ebf",
+      "sha256": "bfe265b225fbc7fe29bb8ebe1692b578b72aecebf2719873bf349dfec3686ebf",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\.codeplus\\config.yaml",
+      "sha256": "a2a0382b9275e14671d3367fc05da1a7f018bfee7443dd4e497958c98fde6a96",
+      "bytes": 261
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\.codeplus\\crash.log",
+      "sha256": "273765ba674069818525735b17ff38eaca13e76ca7b1f656ba800969003b76c5",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\.codeplus\\debug.log",
+      "sha256": "d28b6d67df5121c992178fcd60ac75a915544e4c896be511e8c900484bf59a1a",
+      "bytes": 109
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\data\\.agentic-rag.json",
+      "sha256": "8dc0287b0790c34ce75e2944011a5c37dd6a1541db45dd06c62d0716a1b251af",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\data\\catalog.sqlite",
+      "sha256": "babd72071bdbc841c9cbc84f2a6f51d5cd1a4a1afae65aabbcc00f1b8451282d",
+      "bytes": 589824
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\data\\archives\\0a\\0a7e9754ffd651612d64eaf61dc849a09b72351e2b602097371d79cdb2f8b95d",
+      "sha256": "0a7e9754ffd651612d64eaf61dc849a09b72351e2b602097371d79cdb2f8b95d",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\data\\archives\\20\\208420526f1c5e38747c3cff55ff60f8ef5b18c689b4c04fa6b09fc230da221f",
+      "sha256": "208420526f1c5e38747c3cff55ff60f8ef5b18c689b4c04fa6b09fc230da221f",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\empty\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\.codeplus\\config.yaml",
+      "sha256": "4aa5731f4fd45b45f85d967e1d8ccfff5a9c19389a67715021b45afabd043881",
+      "bytes": 264
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\.codeplus\\crash.log",
+      "sha256": "f8070c91ef2215487af2d6581f24104a3818c797dee83e01fa13c3e79f053055",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\.codeplus\\debug.log",
+      "sha256": "1378feefbcba8749beca515a66cb57fbf67c171b7233c67f4ca181dac460422b",
+      "bytes": 218
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\data\\.agentic-rag.json",
+      "sha256": "e0e726a408c06ca600aa9ca9ff622ddb48c6d3462df2d671a56692f1a8098a11",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\data\\catalog.sqlite",
+      "sha256": "890ba4ef0c07fba63d394c9deff9d2731f66e19d9dcabafcb66c9c8887a03963",
+      "bytes": 593920
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\data\\archives\\34\\343c640a7d6d6ebdc092a9e9e66f19783f0fbde698bcd1e73f10ed871c2e36ea",
+      "sha256": "343c640a7d6d6ebdc092a9e9e66f19783f0fbde698bcd1e73f10ed871c2e36ea",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\complete\\data\\archives\\fe\\fe3af87fc3143224dd0c1961bab18d4ea615427b817da07b1205365eefa64f53",
+      "sha256": "fe3af87fc3143224dd0c1961bab18d4ea615427b817da07b1205365eefa64f53",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\.codeplus\\config.yaml",
+      "sha256": "adf8ab63fff7f65ff4ed5a2c118272115091aed08ec7d3091b5d3a2e5d5c74da",
+      "bytes": 265
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\.codeplus\\crash.log",
+      "sha256": "c1f257f3e23c6870cdb15f786aeeb4c3bab2b8039858ab83607e55532a652f13",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\.codeplus\\debug.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\data\\.agentic-rag.json",
+      "sha256": "839413554cdca8198c55e4f53f75e2677fc046981aaae1b97a01e4d9ecfe8b09",
+      "bytes": 100
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\data\\catalog.sqlite",
+      "sha256": "467b983fbf0635d4aa10ae0528c95ae3628cd5dbcd2e62545830d6db511165b9",
+      "bytes": 589824
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\data\\archives\\45\\459eb0e4d97ef70124bf6379840cca30212b9dbc3c9feca66e125a3468104775",
+      "sha256": "459eb0e4d97ef70124bf6379840cca30212b9dbc3c9feca66e125a3468104775",
+      "bytes": 4258
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\data\\archives\\7e\\7e18d40172fe59434390b06f4b539bcb380e3d8dac34a1eb287aad6e2021fa57",
+      "sha256": "7e18d40172fe59434390b06f4b539bcb380e3d8dac34a1eb287aad6e2021fa57",
+      "bytes": 2620
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\data\\archives\\93\\93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "sha256": "93bc68778e21cc4f868ed92da2e31ff8168da6465ddccdfe90b22224d400807b",
+      "bytes": 77
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\data\\archives\\a1\\a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "sha256": "a11c46b24656732c3376822b2699b3759f7c4a0195ae7f49a146ec95cd676780",
+      "bytes": 71
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r21-leader-20260923\\cli-probes\\cancelled\\data\\archives\\ad\\adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "sha256": "adbdac5552cac412d572994839ede218d5f0d070e3b3c910a0476f92adba0fd9",
+      "bytes": 472
+    }
+  ],
+  "leader_progress_update": {
+    "original_inherited_paths": 6537,
+    "unchanged_business_and_other_inherited_paths": 6536,
+    "authorized_path": "deployment/AgenticRAG/docs/implementation-checklist.md",
+    "reason": "Existing authorization to mark accepted stages and record actual local commit SHA.",
+    "precommit_helper_error": "First stage assertion incorrectly treated authorized checklist progress as immutable; it failed before git add. Original stage.py retained, explicit one-path exception replaces the overbroad assertion."
+  }
+}

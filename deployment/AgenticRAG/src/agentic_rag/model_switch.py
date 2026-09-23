@@ -172,7 +172,7 @@ def _begin(catalog, kb_id, proposal_id):
 
 
 def apply_model_switch(catalog, kb_id, proposal_id, desired, *, choice=None, runtime_factory=None,
-                       observer=None, request_seconds=120, index_timeout=180):
+                       observer=None, request_seconds=120, index_timeout=180, cancelled=None):
     """Execute only an explicit confirm/retry/keep_original choice for this scope.
 
     A runtime factory follows R14: frozen config -> tokenizer, provider, backend,
@@ -231,7 +231,7 @@ def apply_model_switch(catalog, kb_id, proposal_id, desired, *, choice=None, run
             if token is None or str(token.batch_id) != proposal['batch_id']:
                 raise failure('approved recovery no longer owns the pending batch')
             result = continue_recovery(catalog, token, runtime_factory=runtime_factory, observer=observer,
-                                       request_seconds=request_seconds, index_timeout=index_timeout)
+                                       request_seconds=request_seconds, index_timeout=index_timeout, cancelled=cancelled)
         else:
             from .ingestion.build import _build_complete_revision
             from .ingestion.processing import process_inputs
@@ -240,9 +240,9 @@ def apply_model_switch(catalog, kb_id, proposal_id, desired, *, choice=None, run
                 if hasattr(runtime, '__enter__'):
                     runtime = stack.enter_context(runtime)
                 tokenizer, provider, backend = runtime
-                process_inputs(catalog, owner, tokenizer)
+                process_inputs(catalog, owner, tokenizer, cancelled=cancelled)
                 result = _build_complete_revision(catalog, owner, provider, backend, observer=observer,
-                    request_seconds=request_seconds, index_timeout=index_timeout)
+                    request_seconds=request_seconds, index_timeout=index_timeout, cancelled=cancelled)
         with catalog._db.transaction() as db:
             return {**_view(db, kb_id, desired, proposal_id), 'build': result}
     except Exception as exc:

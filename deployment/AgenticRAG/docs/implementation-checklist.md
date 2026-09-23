@@ -40,8 +40,8 @@
 | R17 | COMMITTED | /root/r17_retrieval | [Leader 独立验收](implementation-records/R17-leader-review.md)；191项、两路安装、真实故障/无模型BM25与schema10→11通过，600条复核/200条RRF复算一致 | `1fd01183f9ce914e022d923debc13553b0f71d27` |
 | R18 | COMMITTED | /root/r18_rerank_context | [Leader 独立验收](implementation-records/R18-leader-review.md)；217项通过/1跳过，必要补测1通过；两路安装、真实GPU/Milvus及600条/10000输入复核通过；完整窗口限制由R19承接 | `cef8821a78447e5dde418cb1d68c6ac73c81fdc7` |
 | R19 | COMMITTED | /root/r19_modes_budget | [Leader 独立验收](implementation-records/R19-leader-review.md)；318项及宿主139项通过、1条件跳过，两路安装、真实GPU/Milvus和auto/report、实际-p fixed/qa通过 | `41802ffe9061856dc8d2ea1e4ef0fdbdad1d143a` |
-| R20 | ACCEPTED | /root/r20_report_continue；Leader 独立验收 | [独立验收](implementation-records/R20-leader-review.md)；125相关通过，最终包/实际报告与续研/版本引用保全通过；删除独立轮按D14预算停止，正常整链FAIL原样保留，质量收敛留R23 | 待精确本地提交 |
-| R21 | TODO | — | — | — |
+| R20 | COMMITTED | /root/r20_report_continue；Leader 独立验收 | [独立验收](implementation-records/R20-leader-review.md)；125相关通过，最终包/实际报告与续研/版本引用保全通过；删除独立轮按D14预算停止，正常整链FAIL原样保留，质量收敛留R23 | 00fbbbb82509c61e43b3b01be9c68273498ab716 |
+| R21 | ACCEPTED | /root/r21_user_flows；Leader 独立验收 | [独立验收](implementation-records/R21-leader-review.md)；管理/恢复/模型确认/三入口/退出状态通过，正文二次分派退修后71项及原失败输入复验通过；真实链与历史引用保全通过，质量留R23 | 待精确本地提交 |
 | R22 | TODO | — | — | — |
 | R23 | TODO | — | — | — |
 | R24 | TODO | — | — | — |
@@ -276,11 +276,11 @@ R12前置独立整合：旧RAG清理 COMMITTED，`5dbe979a330a6b157adfba7ad3ea82
 <a id="r21"></a>
 ### R21：命令与使用流程
 
-- [ ] 现有基础命令形式完成建库、选库、导入、状态/来源、更新/删除、重试、继续/放弃及历史引用回看，帮助与实现一致。
-- [ ] 正常会话与 `codeplus -p` 可执行知识库问答/报告，功能启用、库、版本、模式与实际模型状态可查。
-- [ ] 单次模式覆盖不改变默认值；库管理、澄清/取消和普通任务不被强加搜索；宿主权限参数不被占用。
-- [ ] 模型重建/待恢复的交互与无交互路径都有结果；空输入、超时或无终端不被当作确认，错误码和退出状态可定位。
-- [ ] 没有新独立产品 CLI/Web/评测前端；新参数与既有调用方/测试/文档同步，不引入旧库兼容层。
+- [x] 现有基础命令形式完成建库、选库、导入、状态/来源、更新/删除、重试、继续/放弃及历史引用回看，帮助与实现一致。
+- [x] 正常会话与 `codeplus -p` 可执行知识库问答/报告，功能启用、库、版本、模式与实际模型状态可查。
+- [x] 单次模式覆盖不改变默认值；库管理、澄清/取消和普通任务不被强加搜索；宿主权限参数不被占用。
+- [x] 模型重建/待恢复的交互与无交互路径都有结果；空输入、超时或无终端不被当作确认，错误码和退出状态可定位。
+- [x] 没有新独立产品 CLI/Web/评测前端；新参数与既有调用方/测试/文档同步，不引入旧库兼容层。
 
 <a id="r22"></a>
 ### R22：调度与多进程

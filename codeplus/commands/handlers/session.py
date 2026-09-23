@@ -23,6 +23,8 @@ async def handle_session(ctx: CommandContext) -> None:
                 f"  消息: {m.message_count} 条\n"
                 f"  Token: {m.total_tokens:,}\n"
                 f"  最后活跃: {ts}"
+                + (f"\n  知识库: {m.rag_library_id}" if m.rag_library_id else '')
+                + (f"\n  最近知识运行: {m.rag_last_run_id}" if m.rag_last_run_id else '')
             )
         else:
             ctx.ui.add_system_message("当前没有活跃会话")

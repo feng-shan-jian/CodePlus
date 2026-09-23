@@ -107,7 +107,7 @@ def inspect_recovery(catalog, batch_id, *, current_config=None):
     return value
 
 
-def continue_recovery(catalog, expected, *, runtime_factory, observer=None, request_seconds=120, index_timeout=180):
+def continue_recovery(catalog, expected, *, runtime_factory, observer=None, request_seconds=120, index_timeout=180, cancelled=None):
     """Factory receives the frozen config, only after terminal/CAS validation.
 
     Return (tokenizer, provider, backend) or a context manager yielding that
@@ -127,7 +127,7 @@ def continue_recovery(catalog, expected, *, runtime_factory, observer=None, requ
         if strict and batch.base_revision_id is not None:
             from ..model_switch import require_rebuild
             require_rebuild(catalog, batch)
-        capture_inputs(catalog,owner,abort_cancelled=True)
+        capture_inputs(catalog,owner,abort_cancelled=True,cancelled=cancelled)
         input_read = input_store._InputRead(catalog, batch.batch_id)
         for raw in input_read.items:
             if raw.stage == 'captured':
@@ -146,12 +146,12 @@ def continue_recovery(catalog, expected, *, runtime_factory, observer=None, requ
             tokenizer, provider, backend = runtime
             if not strict:
                 return build_changes(catalog,owner,provider,backend,tokenizer,observer=observer,
-                                     request_seconds=request_seconds,index_timeout=index_timeout)
+                                     request_seconds=request_seconds,index_timeout=index_timeout,cancelled=cancelled)
             from .build import _build_complete_revision
-            capture_inputs(catalog,owner,abort_cancelled=True)
-            process_inputs(catalog,owner,tokenizer)
+            capture_inputs(catalog,owner,abort_cancelled=True,cancelled=cancelled)
+            process_inputs(catalog,owner,tokenizer,cancelled=cancelled)
             return _build_complete_revision(catalog,owner,provider,backend,observer=observer,
-                                            request_seconds=request_seconds,index_timeout=index_timeout)
+                                            request_seconds=request_seconds,index_timeout=index_timeout,cancelled=cancelled)
 
 
 def abandon_recovery(catalog, expected, *, backend=None):

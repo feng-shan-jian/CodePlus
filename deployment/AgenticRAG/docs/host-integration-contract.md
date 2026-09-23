@@ -169,6 +169,7 @@ R04 当时记录根 force-include 指向旧 `deployment/knowledge/compose.yaml`�
 | R12 最小 CLI/TUI，R21 完整装配 | `codeplus/__main__.py`、`codeplus/app.py`、`codeplus/config.py`、`codeplus/validator.py`、`.codeplus/config.yaml.example`、`codeplus/commands/handlers/knowledge.py`、`codeplus/commands/handlers/__init__.py` | 惰性 feature/任务配置、TUI与-p消费者 aclosing、use/ask/off薄层；R12开发限定fixed Dense，不复用权限 `--mode`，不实现全套管理 |
 | R12 限制门，R21 正式启用 | `codeplus/remote.py` | R12只允许显式拒绝新RAG请求/共享状态误装配的限制门；R21才接完整策略、流式批准正文和aclosing，启用时补取消/断连回归 |
 | R20/R21 | `codeplus/app.py`、`codeplus/commands/handlers/knowledge.py`、`codeplus/commands/handlers/__init__.py`、`codeplus/commands/completion.py`、`codeplus/commands/handlers/session.py`、`codeplus/memory/session.py` | 完善基础管理命令、报告和会话元数据；旧清理删过的命令文件按新适配薄层重建，不恢复旧实现 |
+| R21 精确补充 | `codeplus/web_content.py` 的既有事件 handler | 消费 `permission_resolved`，按现有 perm-id 关闭已回答、取消或超时结束的权限弹窗；不新增页面 |
 
 工具注册使用现有 ToolRegistry API 在适配层创建新 registry，R04 不预先批准改 `codeplus/tools/__init__.py` 或 `tools/agent_tool.py`；R12 证明无必要则不动。保存复用 `codeplus/tools/write_file.py` 与权限模块现有行为，也不预先批准改其规则。新包集成测试与已有宿主回归按实际功能风险选择执行；本阶段不迁移源码或复制两套测试。R04 的 `test_host_contract.py` 是正式保留的小实验，不能命名成端到端通过。
 

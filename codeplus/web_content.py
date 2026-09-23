@@ -364,6 +364,12 @@ function handleMessage(msg) {
       addPermissionDialog(msg.data);
       break;
 
+    case 'permission_resolved': {
+      const dialog = document.getElementById('perm-' + msg.data.id);
+      if (dialog) dialog.textContent = 'Permission request closed: ' + msg.data.reason;
+      break;
+    }
+
     case 'ask_user':
       addAskUserDialog(msg.data);
       break;

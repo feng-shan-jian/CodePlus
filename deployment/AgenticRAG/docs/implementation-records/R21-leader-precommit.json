@@ -1,0 +1,173 @@
+{
+  "status": "INDEPENDENTLY_ACCEPTED_EXACT_LOCAL_COMMIT_PREPARED",
+  "time": 1790174122.7836297,
+  "parent": "00fbbbb82509c61e43b3b01be9c68273498ab716",
+  "branch": "codex/rag",
+  "commit_message": "feat(rag): integrate knowledge commands across host entrypoints",
+  "exact_paths": [
+    "codeplus/__main__.py",
+    "codeplus/app.py",
+    "codeplus/commands/handlers/knowledge.py",
+    "codeplus/commands/handlers/session.py",
+    "codeplus/memory/session.py",
+    "codeplus/remote.py",
+    "codeplus/web_content.py",
+    "deployment/AgenticRAG/README.md",
+    "deployment/AgenticRAG/docs/codeplus-integration.md",
+    "deployment/AgenticRAG/docs/host-integration-contract.md",
+    "deployment/AgenticRAG/docs/implementation-checklist.md",
+    "deployment/AgenticRAG/docs/implementation-records/R20-leader-postcommit.json",
+    "deployment/AgenticRAG/docs/implementation-records/R21-assignment.md",
+    "deployment/AgenticRAG/docs/implementation-records/R21-executor.json",
+    "deployment/AgenticRAG/docs/implementation-records/R21-files.txt",
+    "deployment/AgenticRAG/docs/implementation-records/R21-leader-precommit.json",
+    "deployment/AgenticRAG/docs/implementation-records/R21-leader-review.md",
+    "deployment/AgenticRAG/docs/implementation-records/R21-leader-revision-request.md",
+    "deployment/AgenticRAG/docs/implementation-records/R21-leader-validation.json",
+    "deployment/AgenticRAG/docs/implementation-records/R21.md",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/management.py",
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py",
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py",
+    "deployment/AgenticRAG/src/agentic_rag/model_switch.py",
+    "deployment/AgenticRAG/src/agentic_rag/storage/catalog.py",
+    "deployment/AgenticRAG/tests/r21_cli_controlled.py",
+    "deployment/AgenticRAG/tests/r21_user_acceptance.py",
+    "deployment/AgenticRAG/tests/test_remote_knowledge.py",
+    "deployment/AgenticRAG/tests/test_tui_knowledge_commands.py",
+    "deployment/AgenticRAG/tests/test_user_commands.py",
+    "tests/test_entrypoints.py"
+  ],
+  "nonself_files": {
+    "codeplus/__main__.py": {
+      "raw_sha256": "9f0fcc240ae09f1935aeef91b6729438effc8d1644aa708a6e0602e180044e4b",
+      "git_blob": "2ab944cf25a3c99c685ddd03c74b782a7c25f034"
+    },
+    "codeplus/app.py": {
+      "raw_sha256": "d848724746d3e0106ba31a06bdd658f995ac7b1111f5bac9a923a31d1c2832d1",
+      "git_blob": "4e24694becba46c42f44f322e024e5b4260ba609"
+    },
+    "codeplus/commands/handlers/knowledge.py": {
+      "raw_sha256": "3212e88bae1c3076eb8be6b6036e21a249b21deb03df151cf061fb88ca09957e",
+      "git_blob": "339ced777d092b5af82f8eb39622d30a485af93e"
+    },
+    "codeplus/commands/handlers/session.py": {
+      "raw_sha256": "e84ad1c685821c9f50037b4d91736d734217e4c9242b6fb13b354ba4bad56242",
+      "git_blob": "47fb6714e06431934146e466e8cd9cc00f6aa301"
+    },
+    "codeplus/memory/session.py": {
+      "raw_sha256": "c60655b4da2cde6a877e04264a43027caa853f402d33e26fe2bacd72472488cd",
+      "git_blob": "4f9a633c47216050e7f3eeecd08554e35bc194f7"
+    },
+    "codeplus/remote.py": {
+      "raw_sha256": "83e3e2a2511da92a2e7e39a5ee2aa0f384e049560dd9653d5574a71de4ee765c",
+      "git_blob": "97c5379d2395d516a36c6386b393bd86fe80b832"
+    },
+    "codeplus/web_content.py": {
+      "raw_sha256": "335e0b6f0decd7230636795130789e30f8adecf9ea0e33187ea2a30d6cef6520",
+      "git_blob": "7b3fa0702956577d9df13cd866f585348dbceb61"
+    },
+    "deployment/AgenticRAG/README.md": {
+      "raw_sha256": "a7b51c5504f72d2aced9137a7fd28947df49b213b38e96f0cb5a37c2fec55419",
+      "git_blob": "918bb308111d32e7a923389dc996146c8d4600ff"
+    },
+    "deployment/AgenticRAG/docs/codeplus-integration.md": {
+      "raw_sha256": "b922c46faaa12e978e7934504cf11e5456b57da972455b1e96234a3a48edec4f",
+      "git_blob": "5dd083b63fe2f984529a76355a509c44e2190fbf"
+    },
+    "deployment/AgenticRAG/docs/host-integration-contract.md": {
+      "raw_sha256": "e71a27caba3e812877018b47a69f871a63773ad92d476d5593784d42b57f9f2a",
+      "git_blob": "175707a15731fe12b5322d9b8959ce0508386396"
+    },
+    "deployment/AgenticRAG/docs/implementation-checklist.md": {
+      "raw_sha256": "7e52cf7d5e08f34308bf3738b2f70bb07a9216fe62ca8ace3824ffe24760040a",
+      "git_blob": "99413821eb05567e7fad1b03dca92112e8ad86ff"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R20-leader-postcommit.json": {
+      "raw_sha256": "6cdeb3a5ce9605e23ed29c29f99c008535fccbf9b298c5ab119a01ac13b0692d",
+      "git_blob": "1e2219aded7e7c508763f729b192d56f9e0f1c5a"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R21-assignment.md": {
+      "raw_sha256": "1d3876c0ba9098b34ea6cc3c9e29d1ff6e22f3cdb660409b0fb90e971384ef09",
+      "git_blob": "e5b3e97adcb44107e5bd51a37fbb12e61d29ab40"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R21-executor.json": {
+      "raw_sha256": "60d8846566d69af1a6eabc333443a3366c100e0484c5013081a634840763c9e2",
+      "git_blob": "fb7a72ace279d5cdf870242082bfd9cb460fa996"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R21-files.txt": {
+      "raw_sha256": "ada05e70812d9b32c8a7e039fb32c9434eb96ffac3b8cf092d64f0bcc3a3700b",
+      "git_blob": "69c96aef45963063bc77b36d373d0053dabfd8b9"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R21-leader-review.md": {
+      "raw_sha256": "b97b7765a4b018c0c9dc4d221c91e6ced0aa37f1d12bad3c0e16bd05392da765",
+      "git_blob": "0b3e72c3c0b7a65025b8dac7fc6336a32a9c0712"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R21-leader-revision-request.md": {
+      "raw_sha256": "8eb8b3f0652a327b48254f0fc86be8c0cca19c53b45d4fed9a1be7e7b0eb327c",
+      "git_blob": "7ef45b56ff5802ba42b8793ef128105493b2f74d"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R21-leader-validation.json": {
+      "raw_sha256": "2d229219c807843f6007059d14ee6f2b77c9177a8ec093b10481ae66feaeac99",
+      "git_blob": "84e614b56d59e0f7a7e7ce4fcf443a991a1dff35"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R21.md": {
+      "raw_sha256": "6efd87267a924d6adada7ea87ef9dc090e330e5b608736d17ee41032ab7f01f5",
+      "git_blob": "363ada975b74135155415f363f065154c7205a56"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/management.py": {
+      "raw_sha256": "6a36de0078167b4c473d90fa0685a935f1f8eaae3065eca650cd3f034b989a33",
+      "git_blob": "760d2fe1c5d5bb31e1c387985b4bcfffb8fb44b4"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/build.py": {
+      "raw_sha256": "edcdf185cf394697db373d8c4f81901a38945129dff04ae6a1a763171d913153",
+      "git_blob": "5a832c1974673a70870e1cdc53e8690db4d6d398"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/ingestion/recovery.py": {
+      "raw_sha256": "fd8e099bffbbfbee4b36b95bf5cf72b250ed802f979a52a183cf5017c1033bc5",
+      "git_blob": "cdec99d858341c7f1789f6ba165cf9134fce410d"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/model_switch.py": {
+      "raw_sha256": "72015f8a28aeee1263e7a59142318b29ea94d66c7278df1905ecdadd2e98c424",
+      "git_blob": "d08c2e875b943c89b2ec3c31466793312502258a"
+    },
+    "deployment/AgenticRAG/src/agentic_rag/storage/catalog.py": {
+      "raw_sha256": "cf8603663237d13c11738418b909f23f2042a36ccee6821b07e1a2ff13a4e418",
+      "git_blob": "a418488de3ff8f4050f19f2c5632ec44f8a549e2"
+    },
+    "deployment/AgenticRAG/tests/r21_cli_controlled.py": {
+      "raw_sha256": "9f8b35267c37b2253c24bd8b82f5200690fc8de72dd016d007483eba35896e4b",
+      "git_blob": "1e4d8b258b10b732bf476bbc843923adf4873826"
+    },
+    "deployment/AgenticRAG/tests/r21_user_acceptance.py": {
+      "raw_sha256": "8c26a72d8dc3379f02a4c02fede2c00e6b603451498e70ba030353680bafe032",
+      "git_blob": "015561e858788879b51aefffe3052e0583f279bc"
+    },
+    "deployment/AgenticRAG/tests/test_remote_knowledge.py": {
+      "raw_sha256": "73215dd94d074992708b64ef009802b8d32dabd2f0b1e178f7beff83b0118167",
+      "git_blob": "0bebd5e0e5755c676bf770d1f47154deab9d1cb5"
+    },
+    "deployment/AgenticRAG/tests/test_tui_knowledge_commands.py": {
+      "raw_sha256": "f002898959d63d6cc9d5f389012f13c03f01a7972ca04df5f7d1b32bd61e017d",
+      "git_blob": "f460ad279abe801a8585a4c3dd7c8fe4c6e64496"
+    },
+    "deployment/AgenticRAG/tests/test_user_commands.py": {
+      "raw_sha256": "b4caf54f404446e5b2f82883bc2a22e59d97d42c644871d24a8a0e3945d95f50",
+      "git_blob": "601936d7a9b2ee09fe0c789d2c84b50dcaf66619"
+    },
+    "tests/test_entrypoints.py": {
+      "raw_sha256": "e7c8c3a079446a7eb6792cc8701da6d62ad47bc2ac2eb15f1c04948ea9892e91",
+      "git_blob": "0230fc9aec9b21bc0c99f4bc98ed2cf52d2058b0"
+    }
+  },
+  "self_hash": "Excluded recursively; actual staged and committed self blob verified separately.",
+  "preservation": {
+    "inherited_paths": 6537,
+    "unchanged_inherited_paths": 6536,
+    "authorized_progress_update": "deployment/AgenticRAG/docs/implementation-checklist.md",
+    "differences": [],
+    "root_readme_and_historical_11_sql_unchanged": true
+  },
+  "validation_sha256": "2d229219c807843f6007059d14ee6f2b77c9177a8ec093b10481ae66feaeac99",
+  "no_push": true,
+  "cleanup_separate": true
+}

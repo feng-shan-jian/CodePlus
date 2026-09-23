@@ -612,6 +612,7 @@ class CodePlusApp(App):
         self.knowledge_library = None
         self._knowledge_active = False
         self.last_knowledge_outcome = None
+        self.last_knowledge_run_id = None
         self._initial_permission_mode = permission_mode
         self._mcp_server_configs = mcp_servers or []
         self.hook_engine = hook_engine
@@ -1074,6 +1075,11 @@ class CodePlusApp(App):
             return
         self._knowledge_active = True
         self._agent_task = asyncio.create_task(self._send_knowledge(text, policy))
+        self._agent_task.add_done_callback(self._knowledge_task_finished)
+
+    def _knowledge_task_finished(self, task):
+        if task.cancelled() and self._agent_task is task:
+            self._knowledge_active = False
 
     async def _send_knowledge(self, text, policy):
         original_agent, original_conversation = self.agent, self.conversation
@@ -1093,6 +1099,9 @@ class CodePlusApp(App):
             self.agent, self.conversation = original_agent, original_conversation
             self._knowledge_active = False
             if self.last_knowledge_outcome:
+                self.last_knowledge_run_id = self.last_knowledge_outcome.run_id
+                if self.session:
+                    self.session.set_rag_selection(self.knowledge_library, self.last_knowledge_run_id)
                 self._show_system_message('Knowledge run '+str(self.last_knowledge_outcome.run_id)+' '+
                     self.last_knowledge_outcome.status+': '+self.last_knowledge_outcome.reason)
                 saved = self.last_knowledge_outcome.save
@@ -1152,6 +1161,9 @@ class CodePlusApp(App):
 
     def _set_session(self, session: Session) -> None:
         self.session = session
+        self.knowledge_library = session.meta.rag_library_id
+        self.last_knowledge_run_id = session.meta.rag_last_run_id
+        self.last_knowledge_outcome = None
         if self.agent:
             self.agent.session_id = session.session_id
 
@@ -1191,7 +1203,7 @@ class CodePlusApp(App):
             self.add_system_message('Knowledge operation is still active; wait for cleanup to finish.')
             return
         answer_busy = self._streaming or (self._agent_task is not None and not self._agent_task.done())
-        if answer_busy and name in {"session", "clear"}:
+        if answer_busy and name in {"session", "clear", "knowledge"}:
             self.add_system_message("回答正在执行；结束后再切换或清空会话。")
             return
 
@@ -1224,6 +1236,10 @@ class CodePlusApp(App):
             return
 
         ctx = self._build_command_context(args)
+        if name == 'knowledge':
+            # Textual dispatch must return so Ctrl-C can reach a long mutation.
+            self._agent_task = asyncio.create_task(cmd.handler(ctx))
+            return
         try:
             await cmd.handler(ctx)
         except Exception as e:
