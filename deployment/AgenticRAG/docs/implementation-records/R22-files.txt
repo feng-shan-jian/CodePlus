@@ -1,0 +1,10 @@
+deployment/AgenticRAG/tests/test_model_scheduling.py
+deployment/AgenticRAG/tests/test_model_scheduling_gpu.py
+deployment/AgenticRAG/tests/scheduling_support.py
+deployment/AgenticRAG/tests/scheduling_process_helper.py
+deployment/AgenticRAG/tests/r22_scheduling_acceptance.py
+deployment/AgenticRAG/tests/r22_product_concurrency.py
+deployment/AgenticRAG/docs/local-model-worker.md
+deployment/AgenticRAG/docs/implementation-records/R22.md
+deployment/AgenticRAG/docs/implementation-records/R22-files.txt
+deployment/AgenticRAG/docs/implementation-records/R22-executor.json

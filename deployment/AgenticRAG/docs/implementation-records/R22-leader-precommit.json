@@ -1,0 +1,88 @@
+{
+  "status": "INDEPENDENTLY_ACCEPTED_EXACT_LOCAL_COMMIT_PREPARED",
+  "time": 1790177550.8237598,
+  "parent": "f0e1538beeedfe96d6be7ed99e422d4026ffc3b7",
+  "branch": "codex/rag",
+  "commit_message": "test(rag): verify shared worker scheduling and concurrent research",
+  "exact_paths": [
+    "deployment/AgenticRAG/docs/implementation-checklist.md",
+    "deployment/AgenticRAG/docs/implementation-records/R21-leader-postcommit.json",
+    "deployment/AgenticRAG/docs/implementation-records/R22-assignment.md",
+    "deployment/AgenticRAG/docs/implementation-records/R22-executor.json",
+    "deployment/AgenticRAG/docs/implementation-records/R22-files.txt",
+    "deployment/AgenticRAG/docs/implementation-records/R22-leader-precommit.json",
+    "deployment/AgenticRAG/docs/implementation-records/R22-leader-review.md",
+    "deployment/AgenticRAG/docs/implementation-records/R22-leader-validation.json",
+    "deployment/AgenticRAG/docs/implementation-records/R22.md",
+    "deployment/AgenticRAG/docs/local-model-worker.md",
+    "deployment/AgenticRAG/tests/r22_product_concurrency.py",
+    "deployment/AgenticRAG/tests/r22_scheduling_acceptance.py",
+    "deployment/AgenticRAG/tests/scheduling_process_helper.py",
+    "deployment/AgenticRAG/tests/scheduling_support.py",
+    "deployment/AgenticRAG/tests/test_model_scheduling.py",
+    "deployment/AgenticRAG/tests/test_model_scheduling_gpu.py"
+  ],
+  "nonself_files": {
+    "deployment/AgenticRAG/docs/implementation-checklist.md": {
+      "raw_sha256": "2bade24bbee1f94d84aea02c1c95e9257108a397853989ec5164956d5b4ff26d",
+      "git_blob": "4f550ce888f081cadd058b472c8fc4958b617994"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R21-leader-postcommit.json": {
+      "raw_sha256": "9a506bc3e8ebc54dac13756cf28d4dacbfec053d4c7a43a7c7f7c55052a44cef",
+      "git_blob": "1848a911b30eba39a4aee080f0a235a3a5754e8b"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R22-assignment.md": {
+      "raw_sha256": "04a0a1d62274468eeefd40488415cf60f577a3e24d9c05da6c06bfe268c11e22",
+      "git_blob": "4138a5e360d8f925b09bf5a3636d1bd1b934eb64"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R22-executor.json": {
+      "raw_sha256": "e6a759edfe7ed4eb876061e973d5800ae4b8b21c920aef6d6a3cd34db7aa867e",
+      "git_blob": "b783816732ce35519cf8f11bbf03a0eda1b2627e"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R22-files.txt": {
+      "raw_sha256": "ecf4f73afeda616ef198fa622914c08bf9a76e1cccb0bb1e8766bd5e90e3e6f6",
+      "git_blob": "80cedfdc49698332de33f298245c8aa4cf006fd9"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R22-leader-review.md": {
+      "raw_sha256": "d80f37699328461fb9f41d7049a81397c2a3910a1e7f0aa37d89f1f3f4d03d8c",
+      "git_blob": "52b46ae29cdf0dfdbc612f66aed13d96be8027f6"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R22-leader-validation.json": {
+      "raw_sha256": "8549caf0872f3d2ec442a1ad59635cccb77db9333b7ffda9c9f982b5db496c87",
+      "git_blob": "cf71cd0a26a243282727801ef9152c050f2b970f"
+    },
+    "deployment/AgenticRAG/docs/implementation-records/R22.md": {
+      "raw_sha256": "6a5e7be939cb1d9891176a9a59dd53452c5e6d4c4c05309ab3b300c37041c974",
+      "git_blob": "6bdf63a0097da0152d5c684cb7774c7970a599e3"
+    },
+    "deployment/AgenticRAG/docs/local-model-worker.md": {
+      "raw_sha256": "2ea31738ce0b905afaeaf6705bf0cfd84d3e49baef646834059f117fdc216e0c",
+      "git_blob": "e73be2a20cbef820ac838d5b713e7bb6b5b9be31"
+    },
+    "deployment/AgenticRAG/tests/r22_product_concurrency.py": {
+      "raw_sha256": "b9f7ce7ca67ca845264f86ca2c8b704b1518bfdcccdfab078ed2531697f19870",
+      "git_blob": "5b4ad9d0a1fe77166b35788990e01e88290c2521"
+    },
+    "deployment/AgenticRAG/tests/r22_scheduling_acceptance.py": {
+      "raw_sha256": "069c452c988a263827957e6f33a643ee1e0c1211f9b8b24f47d65cd84d4b610b",
+      "git_blob": "38f1e2818364e995860e612236eefcbd2ab9937f"
+    },
+    "deployment/AgenticRAG/tests/scheduling_process_helper.py": {
+      "raw_sha256": "cbca67b7a090c126a53a276d6ab3395eeca85c2546f77a78fbe28c423d5d4053",
+      "git_blob": "a1e126f028d5802e5d6ac390a1005156b52411ed"
+    },
+    "deployment/AgenticRAG/tests/scheduling_support.py": {
+      "raw_sha256": "a816ba49f62acdb4d18e467e0bbf1a9cd303b0b0450668160ebc9088c2375117",
+      "git_blob": "9b9e370fc0dd3433af84c35a38c4264f5c31d3b9"
+    },
+    "deployment/AgenticRAG/tests/test_model_scheduling.py": {
+      "raw_sha256": "47253103e21aad9fb43d1942964af8246245ae32e4c5e5d948cdaf792cf06314",
+      "git_blob": "c5bdcab98132e61232448135162dc571add1f8b8"
+    },
+    "deployment/AgenticRAG/tests/test_model_scheduling_gpu.py": {
+      "raw_sha256": "59feeb087a364a8780c910c1c23d25675001018369711a9357d40b680515a299",
+      "git_blob": "4ff5389b42bc3be0ac9a889e452918d418a984a8"
+    }
+  },
+  "self_rule": "R22-leader-precommit.json excluded from recursive hashes; stage/postcommit verify its actual blob"
+}

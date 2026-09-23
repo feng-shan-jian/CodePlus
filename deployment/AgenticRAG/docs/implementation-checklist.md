@@ -41,8 +41,8 @@
 | R18 | COMMITTED | /root/r18_rerank_context | [Leader 独立验收](implementation-records/R18-leader-review.md)；217项通过/1跳过，必要补测1通过；两路安装、真实GPU/Milvus及600条/10000输入复核通过；完整窗口限制由R19承接 | `cef8821a78447e5dde418cb1d68c6ac73c81fdc7` |
 | R19 | COMMITTED | /root/r19_modes_budget | [Leader 独立验收](implementation-records/R19-leader-review.md)；318项及宿主139项通过、1条件跳过，两路安装、真实GPU/Milvus和auto/report、实际-p fixed/qa通过 | `41802ffe9061856dc8d2ea1e4ef0fdbdad1d143a` |
 | R20 | COMMITTED | /root/r20_report_continue；Leader 独立验收 | [独立验收](implementation-records/R20-leader-review.md)；125相关通过，最终包/实际报告与续研/版本引用保全通过；删除独立轮按D14预算停止，正常整链FAIL原样保留，质量收敛留R23 | 00fbbbb82509c61e43b3b01be9c68273498ab716 |
-| R21 | ACCEPTED | /root/r21_user_flows；Leader 独立验收 | [独立验收](implementation-records/R21-leader-review.md)；管理/恢复/模型确认/三入口/退出状态通过，正文二次分派退修后71项及原失败输入复验通过；真实链与历史引用保全通过，质量留R23 | 待精确本地提交 |
-| R22 | TODO | — | — | — |
+| R21 | COMMITTED | /root/r21_user_flows；Leader 独立验收 | [独立验收](implementation-records/R21-leader-review.md)；管理/恢复/模型确认/三入口/退出状态通过，正文二次分派退修后71项及原失败输入复验通过；真实链与历史引用保全通过，质量留R23 | f0e1538beeedfe96d6be7ed99e422d4026ffc3b7 |
+| R22 | ACCEPTED | /root/r22_scheduling；Leader 独立验收 | [独立验收](implementation-records/R22-leader-review.md)；24受控/8真实GPU、60次双宿主RPC及真实导入/Agent并发通过；生产包未变，质量留R23 | 待精确本地提交 |
 | R23 | TODO | — | — | — |
 | R24 | TODO | — | — | — |
 
@@ -285,11 +285,11 @@ R12前置独立整合：旧RAG清理 COMMITTED，`5dbe979a330a6b157adfba7ad3ea82
 <a id="r22"></a>
 ### R22：调度与多进程
 
-- [ ] 两个真实客户端复用 worker，持续前台搜索/报告与长导入并发时有可核查的前台等待、后台进度和模型实例证据。
-- [ ] 优先调度在有限批次边界生效；后台不会无限饿死，多客户端同级公平；批次与配额参数有实测依据。
-- [ ] 等待/加载/切换全部计入截止时间；过期/取消排队请求退出，运行中迟到结果不按成功回写。
-- [ ] 客户端退出、worker 死亡、协议不兼容、队列满、OOM/设备失败及闲置退出有真实或明确分层的故障验证，不能用 mock 替代正常真实路径。
-- [ ] GPU 让出不释放同库修改占用；查询不被导入长事务阻塞，不同模型 profile 不混用；没有重复宿主模型加载绕开共享协议。
+- [x] 两个真实客户端复用 worker，持续前台搜索/报告与长导入并发时有可核查的前台等待、后台进度和模型实例证据。
+- [x] 优先调度在有限批次边界生效；后台不会无限饿死，多客户端同级公平；批次与配额参数有实测依据。
+- [x] 等待/加载/切换全部计入截止时间；过期/取消排队请求退出，运行中迟到结果不按成功回写。
+- [x] 客户端退出、worker 死亡、协议不兼容、队列满、OOM/设备失败及闲置退出有真实或明确分层的故障验证，不能用 mock 替代正常真实路径。
+- [x] GPU 让出不释放同库修改占用；查询不被导入长事务阻塞，不同模型 profile 不混用；没有重复宿主模型加载绕开共享协议。
 
 <a id="r23"></a>
 ### R23：指标与阈值冻结
