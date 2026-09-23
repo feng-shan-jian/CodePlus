@@ -63,7 +63,7 @@ def main(args):
         fault = child('fault'); report['rollback'] = fault
         assert fault['schema'] == 8 and fault['row_hashes'] == before['row_hashes'] and fault['migrations'] == before['migrations']
         after = child('read'); report['after'] = after
-        assert after['schema'] == 9 and after['migrations'][:8] == before['migrations']
+        assert after['schema'] == 10 and after['migrations'][:8] == before['migrations']
         assert all(after['row_hashes'][key] == value for key,value in before['row_hashes'].items())
         assert all(after['triggers'][key] == value for key,value in before['triggers'].items())
         for key in ('citation','typed_run','archives_verified','publication_fk'):

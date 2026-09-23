@@ -224,6 +224,14 @@ class Catalog:
         from .runs import start
         return start(self._db, kb_id, config, run_id=run_id or uuid4(), parent_run_id=parent_run_id)
 
+    def start_current_run(self, kb_id: UUID, desired, task_kind, *, override=None,
+                          run_id: UUID | None = None, parent_run_id: UUID | None = None):
+        """Atomically freeze actual encoding with current version and its pin."""
+        from ..config import resolve_run
+        from .runs import start
+        return start(self._db, kb_id, resolve_run(desired, task_kind, override), run_id=run_id or uuid4(),
+                     parent_run_id=parent_run_id, _use_published_encoding=True)
+
     def release_crashed_run(self, run_id: UUID, expected_nonce: UUID) -> None:
         from .runs import release_crashed
         release_crashed(self._db, run_id, expected_nonce)

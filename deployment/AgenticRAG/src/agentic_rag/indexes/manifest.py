@@ -81,7 +81,7 @@ def rows_for_document(kb_id, revision_id, snapshot, version, result):
 
 
 def prepare(catalog, batch_id, revision_id):
-    """Full first-import only. Filesystem/hash checks finish before any SQL write."""
+    """Strict complete import/rebuild, or the existing ordinary mutation path."""
     from ..ingestion.mutations import request, prepare_changes
     from ..storage.processing import read as read_processed
     from ..storage.inputs import _InputRead
@@ -89,9 +89,16 @@ def prepare(catalog, batch_id, revision_id):
         return prepare_changes(catalog,batch_id,revision_id)
     batch = catalog.get_batch(batch_id)
     snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
+    if batch.base_revision_id is not None:
+        with catalog._db.transaction() as db:
+            base = db.execute('SELECT s.index_fingerprint FROM revisions r JOIN processing_snapshots s '
+                'ON s.snapshot_id=r.processing_snapshot_id WHERE r.revision_id=?', (str(batch.base_revision_id),)).fetchone()
+        if base != (snapshot.index_fingerprint,):
+            from ..model_switch import require_rebuild
+            require_rebuild(catalog, batch)
     members, rows, inputs, counts = [], [], [], []
     input_read = _InputRead(catalog, batch_id)
-    if not input_read.items:
+    if not input_read.items and batch.base_revision_id is None:
         raise index_error('cannot publish an empty first import')
     for raw in input_read.items:
         if raw.stage != 'captured':
@@ -105,10 +112,10 @@ def prepare(catalog, batch_id, revision_id):
                                       document_version_id=version.document_version_id, chunk_set_hash=chunks_hash))
         document_rows, document_inputs, document_counts = rows_for_document(batch.kb_id,revision_id,snapshot,version,result)
         rows.extend(document_rows); inputs.extend(document_inputs); counts.extend(document_counts)
-    if not rows or len({r['chunk_id'] for r in rows}) != len(rows):
+    if (not rows and batch.base_revision_id is None) or len({r['chunk_id'] for r in rows}) != len(rows):
         raise index_error('candidate requires nonempty unique chunks')
     ordered = sorted(zip(rows, inputs, counts), key=lambda t: t[0]['chunk_id'])
-    rows, inputs, counts = map(tuple, zip(*ordered))
+    rows, inputs, counts = map(tuple, zip(*ordered)) if ordered else ((), (), ())
     members = tuple(sorted(members, key=lambda m: str(m.document_id)))
     spec = schema_spec(snapshot)
     manifest = fingerprint('publication-manifest', {'batch_id': str(batch_id),

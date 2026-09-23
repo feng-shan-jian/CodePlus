@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 from ..domain import ErrorCode, ErrorInfo
 from ..ingestion.records import InputCheckpoint, InputManifest
 from . import ownership
+from .archives import Archive
 from .paths import failure
 
 
@@ -13,10 +14,16 @@ def _identity_error(message):
     return ErrorInfo(code=ErrorCode.IDENTITY_MISMATCH, stage='input_manifest', message=message)
 
 
-def begin_import(catalog, kb_id, snapshot, manifest, *, batch_id=None, _ordinary=None):
-    if not manifest.selections and not (_ordinary and _ordinary['deletions']):
+def begin_import(catalog, kb_id, snapshot, manifest, *, batch_id=None, _ordinary=None,
+                 _archived=None, _register=None):
+    if not manifest.selections and not (_ordinary and _ordinary['deletions']) and _archived is None:
         raise failure('import requires selections or explicit deletions')
+    if _archived is not None:
+        if set(_archived) != {e.item_id for e in manifest.entries}:
+            raise failure('archived rebuild must supply every selected original')
     def register(connection, batch):
+        if _register is not None:
+            _register(connection, batch)
         if _ordinary is not None:
             from ..ingestion.mutations import register_request
             register_request(catalog, connection, batch, snapshot, manifest, _ordinary)
@@ -56,6 +63,18 @@ def begin_import(catalog, kb_id, snapshot, manifest, *, batch_id=None, _ordinary
                                 str(doc) if doc else None, base[0] if base else None, checkpoint.model_dump_json()))
             if error:
                 _insert_result(connection, kb_id, checkpoint)
+            elif _archived is not None:
+                raw = _archived[entry.item_id]
+                # This is already registered history, not new source capture.
+                # Byte verification belongs to processing/recovery after the
+                # approved batch is durable, so IO failure remains retryable.
+                if connection.execute('SELECT size_bytes FROM archive_objects WHERE sha256=?',
+                                      (raw.sha256,)).fetchone() != (raw.size_bytes,):
+                    raise failure('rebuild original is not a registered archive')
+                change, rebuild = _compare_base(connection, batch.batch_id, doc, raw.sha256, raw.source_uri)
+                checkpoint = checkpoint.model_copy(update={'stage': 'captured', 'raw': raw,
+                    'change': change, 'requires_rebuild_confirmation': rebuild})
+                _record_result(connection, checkpoint, batch.owner_epoch, Archive(raw.sha256, raw.size_bytes))
     return ownership.begin(catalog._db, kb_id, batch_id or uuid4(), snapshot, manifest.identity, _register=register)
 
 
@@ -127,50 +146,61 @@ def record_result(catalog, owner, item, *, produced_by):
     if archive and archive.size_bytes != item.raw.size_bytes:
         raise failure('raw checkpoint archive size differs')
     with catalog._owned(owner, produced_by) as connection:
-        row = connection.execute('SELECT initial_json FROM input_items WHERE item_id=? AND batch_id=? AND kb_id=?',
-                                 (str(item.entry.item_id), str(owner.token.batch_id), str(owner.token.kb_id))).fetchone()
-        if row is None:
+        if item.batch_id != owner.token.batch_id:
             raise failure('input does not belong to this batch')
-        original = InputCheckpoint.model_validate_json(row[0])
-        fixed_fields = ('entry', 'batch_id', 'document_id', 'base_version_id', 'capture_epoch')
-        if any(getattr(original, key) != getattr(item, key) for key in fixed_fields):
-            raise failure('input result changed the immutable request or baseline')
-        if item.raw:
-            if item.capture_epoch != owner.token.owner_epoch:
-                raise failure('incomplete original input cannot be captured under a recovered owner')
-            if (item.raw.source_uri != item.entry.source_uri or item.raw.source_key != item.entry.source_key or
-                    item.raw.metadata != item.entry.metadata or item.raw.stamp != item.entry.stamp):
-                raise failure('raw source differs from frozen request')
-            previous = connection.execute('SELECT source_key FROM documents WHERE document_id=?', (str(item.document_id),)).fetchone()[0]
-            connection.execute('INSERT INTO archive_objects VALUES(?,?) ON CONFLICT DO NOTHING', (archive.sha256, archive.size_bytes))
-            if connection.execute('SELECT size_bytes FROM archive_objects WHERE sha256=?', (archive.sha256,)).fetchone() != (archive.size_bytes,):
-                raise failure('registered archive size mismatch')
-            _insert_result(connection, owner.token.kb_id, item)
-            connection.execute('INSERT INTO document_sources VALUES(?,?,?,?,?,?)',
-                               (str(item.entry.item_id), str(item.document_id), str(owner.token.kb_id), previous,
-                                item.raw.source_key, item.raw.metadata.original_name))
-            # Ordinary changes transfer path ownership only in the publication
-            # transaction. A failed moved-file update retains the published path.
-            if connection.execute('SELECT 1 FROM ordinary_mutations WHERE batch_id=?', (str(item.batch_id),)).fetchone() is None:
-                connection.execute('UPDATE documents SET source_key=?,original_name=? WHERE document_id=? AND kb_id=?',
-                                   (item.raw.source_key, item.raw.metadata.original_name, str(item.document_id), str(owner.token.kb_id)))
-        else:
-            _insert_result(connection, owner.token.kb_id, item)
+        _record_result(connection, item, owner.token.owner_epoch, archive)
+
+
+def _record_result(connection, item, owner_epoch, archive):
+    """Same raw checkpoint acceptance for source capture and archived rebuild."""
+    row = connection.execute('SELECT kb_id,initial_json FROM input_items WHERE item_id=? AND batch_id=?',
+                             (str(item.entry.item_id), str(item.batch_id))).fetchone()
+    if row is None:
+        raise failure('input does not belong to this batch')
+    kb_id, original = row[0], InputCheckpoint.model_validate_json(row[1])
+    fixed_fields = ('entry', 'batch_id', 'document_id', 'base_version_id', 'capture_epoch')
+    if any(getattr(original, key) != getattr(item, key) for key in fixed_fields):
+        raise failure('input result changed the immutable request or baseline')
+    if item.raw:
+        if item.capture_epoch != owner_epoch:
+            raise failure('incomplete original input cannot be captured under a recovered owner')
+        if (item.raw.source_uri != item.entry.source_uri or item.raw.source_key != item.entry.source_key or
+                item.raw.metadata != item.entry.metadata or item.raw.stamp != item.entry.stamp or
+                archive.size_bytes != item.raw.size_bytes):
+            raise failure('raw source differs from frozen request')
+        previous = connection.execute('SELECT source_key FROM documents WHERE document_id=?', (str(item.document_id),)).fetchone()[0]
+        connection.execute('INSERT INTO archive_objects VALUES(?,?) ON CONFLICT DO NOTHING', (archive.sha256, archive.size_bytes))
+        if connection.execute('SELECT size_bytes FROM archive_objects WHERE sha256=?', (archive.sha256,)).fetchone() != (archive.size_bytes,):
+            raise failure('registered archive size mismatch')
+        _insert_result(connection, kb_id, item)
+        connection.execute('INSERT INTO document_sources VALUES(?,?,?,?,?,?)',
+                           (str(item.entry.item_id), str(item.document_id), kb_id, previous,
+                            item.raw.source_key, item.raw.metadata.original_name))
+        # Ordinary changes transfer path ownership only at publication.
+        if connection.execute('SELECT 1 FROM ordinary_mutations WHERE batch_id=?', (str(item.batch_id),)).fetchone() is None:
+            connection.execute('UPDATE documents SET source_key=?,original_name=? WHERE document_id=? AND kb_id=?',
+                               (item.raw.source_key, item.raw.metadata.original_name, str(item.document_id), kb_id))
+    else:
+        _insert_result(connection, kb_id, item)
 
 
 def compare_base(catalog, batch_id, document_id, raw_hash, source_uri):
     """Only the batch's published base membership/config can make it unchanged."""
     with catalog._db.transaction() as connection:
-        batch = ownership.read_batch(connection, batch_id)
-        row = connection.execute('SELECT v.raw_hash,v.source_uri,s.document_encoding_fingerprint,s.index_fingerprint '
-             'FROM revision_members m JOIN document_versions v ON v.document_version_id=m.document_version_id '
-             'JOIN revisions r ON r.revision_id=m.revision_id JOIN processing_snapshots s ON s.snapshot_id=r.processing_snapshot_id '
-             'WHERE m.revision_id=? AND m.document_id=?', (str(batch.base_revision_id), str(document_id))).fetchone()
-        target = connection.execute('SELECT document_encoding_fingerprint,index_fingerprint FROM processing_snapshots WHERE snapshot_id=?',
-                                     (str(batch.processing_snapshot_id),)).fetchone()
-        base_config = connection.execute('SELECT s.document_encoding_fingerprint FROM revisions r '
-                         'JOIN processing_snapshots s ON s.snapshot_id=r.processing_snapshot_id WHERE r.revision_id=?',
-                         (str(batch.base_revision_id),)).fetchone()
+        return _compare_base(connection, batch_id, document_id, raw_hash, source_uri)
+
+
+def _compare_base(connection, batch_id, document_id, raw_hash, source_uri):
+    batch = ownership.read_batch(connection, batch_id)
+    row = connection.execute('SELECT v.raw_hash,v.source_uri,s.document_encoding_fingerprint,s.index_fingerprint '
+         'FROM revision_members m JOIN document_versions v ON v.document_version_id=m.document_version_id '
+         'JOIN revisions r ON r.revision_id=m.revision_id JOIN processing_snapshots s ON s.snapshot_id=r.processing_snapshot_id '
+         'WHERE m.revision_id=? AND m.document_id=?', (str(batch.base_revision_id), str(document_id))).fetchone()
+    target = connection.execute('SELECT document_encoding_fingerprint,index_fingerprint FROM processing_snapshots WHERE snapshot_id=?',
+                                 (str(batch.processing_snapshot_id),)).fetchone()
+    base_config = connection.execute('SELECT s.document_encoding_fingerprint FROM revisions r '
+                     'JOIN processing_snapshots s ON s.snapshot_id=r.processing_snapshot_id WHERE r.revision_id=?',
+                     (str(batch.base_revision_id),)).fetchone()
     rebuild = base_config is not None and base_config[0] != target[0]
     if row is None:
         return 'new', rebuild

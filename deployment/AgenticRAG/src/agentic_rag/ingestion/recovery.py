@@ -124,6 +124,9 @@ def continue_recovery(catalog, expected, *, runtime_factory, observer=None, requ
         catalog.get_input_manifest(batch.batch_id)
         from .mutations import request, build_changes
         strict = request(catalog,batch.batch_id) is None
+        if strict and batch.base_revision_id is not None:
+            from ..model_switch import require_rebuild
+            require_rebuild(catalog, batch)
         capture_inputs(catalog,owner,abort_cancelled=True)
         input_read = input_store._InputRead(catalog, batch.batch_id)
         for raw in input_read.items:
@@ -144,11 +147,11 @@ def continue_recovery(catalog, expected, *, runtime_factory, observer=None, requ
             if not strict:
                 return build_changes(catalog,owner,provider,backend,tokenizer,observer=observer,
                                      request_seconds=request_seconds,index_timeout=index_timeout)
-            from .build import build_first_revision
+            from .build import _build_complete_revision
             capture_inputs(catalog,owner,abort_cancelled=True)
             process_inputs(catalog,owner,tokenizer)
-            return build_first_revision(catalog,owner,provider,backend,observer=observer,
-                                        request_seconds=request_seconds,index_timeout=index_timeout)
+            return _build_complete_revision(catalog,owner,provider,backend,observer=observer,
+                                            request_seconds=request_seconds,index_timeout=index_timeout)
 
 
 def abandon_recovery(catalog, expected, *, backend=None):

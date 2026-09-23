@@ -166,10 +166,10 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
         expected_sources = {file.relative_to(package / "src").as_posix() for file in
                             (package / "src/agentic_rag").rglob("*") if file.suffix in {".py", ".sql", ".json"}}
         root_sources = {"agentic_rag/" + name for name in
-                        ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py", "source_archive.py", "sources.py", "evidence.py", "citations.py")}
+                            ("__init__.py", "_schema.py", "capabilities.py", "config.py", "domain.py", "profiles.py", "source_archive.py", "sources.py", "evidence.py", "citations.py", "model_switch.py")}
         storage_sources = {"agentic_rag/storage/" + name for name in
                            ("__init__.py", "archives.py", "catalog.py", "database.py", "locks.py",
-                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql", "publication.py", "publication.sql", "evidence.sql", "host_runs.sql", "mutations.sql", "recovery.py", "recovery.sql", "readers.py", "gc.py", "lifetimes.sql")}
+                            "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql", "publication.py", "publication.sql", "evidence.sql", "host_runs.sql", "mutations.sql", "recovery.py", "recovery.sql", "readers.py", "gc.py", "lifetimes.sql", "model_switches.sql")}
         ingestion_sources = {"agentic_rag/ingestion/" + name for name in
                              ("__init__.py", "records.py", "source.py", "selection.py", "capture.py", "parsing.py", "chunking.py", "processing.py", "build.py", "mutations.py", "encoding.py", "recovery.py")}
         model_sources = {'agentic_rag/models/' + name for name in ('__init__.py', 'tokenization.py',

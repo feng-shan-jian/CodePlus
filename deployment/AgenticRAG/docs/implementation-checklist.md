@@ -35,8 +35,8 @@
 | R12 | COMMITTED | /root/r12_agent_integration | [Leader独立验收](implementation-records/R12-leader-review.md)；1271通过/32条件skip、真实安装/Agent及独立清理完成，元数据观察保留 | `44b861a235233f7072fda267e7a75321431c4e88` |
 | R13 | COMMITTED | /root/r13_mutations | [Leader独立验收](implementation-records/R13-leader-review.md)；1302通过/32条件skip、独立清理及复核完成，元数据观察保留 | `a4fede1c3f0a09202710e53debdbac3307c0911d` |
 | R14 | COMMITTED | /root/r14_recovery | [Leader 独立验收](implementation-records/R14-leader-review.md)、[独立清理](implementation-records/R14-cleanup.md)、[清理复核](implementation-records/R14-leader-postcleanup.json)及[精确提交](implementation-records/R14-leader-postcommit.json)通过 | 175f8f54ed9e24736a232f6b989d145f7f217dca |
-| R15 | ACCEPTED | /root/r15_gc | [Leader 独立验收](implementation-records/R15-leader-review.md)；114项、两路安装、9类真实场景及schema8→9通过 | 待精确本地提交 |
-| R16 | TODO | — | — | — |
+| R15 | COMMITTED | /root/r15_gc | [Leader 独立验收](implementation-records/R15-leader-review.md)、[精确提交](implementation-records/R15-leader-postcommit.json)；114项、两路安装、9类真实场景及schema8→9通过 | `253047b4f862b7145c2ee3b445a3d9ee0f07afad` |
+| R16 | ACCEPTED | /root/r16_model_switch | [Leader 独立验收](implementation-records/R16-leader-review.md)；205项、两路安装、真实切换/恢复及schema9→10通过 | 待精确本地提交 |
 | R17 | TODO | — | — | — |
 | R18 | TODO | — | — | — |
 | R19 | TODO | — | — | — |
@@ -227,12 +227,12 @@ R12前置独立整合：旧RAG清理 COMMITTED，`5dbe979a330a6b157adfba7ad3ea82
 <a id="r16"></a>
 ### R16：模型切换
 
-- [ ] 相同向量维度或 profile 名不能绕过兼容检查；显示期望与实际启用模型，当前 query encoder 与索引匹配。
-- [ ] 必须重建时列明库范围、基准版和目标配置，未确认不构建；确认后自动执行，全部成员兼容可查询后才发布。
-- [ ] 失败提供重试/保留原版；同目标重试不反复索要开始确认，也不无限自动重试；多次失败不破坏旧版。
-- [ ] 保留原版结束意图、显示实际旧配置，重启不重复弹相同提议；原查询模型不可用明确失败，不换新模型查旧向量。
-- [ ] 待处理/重试阶段与库锁、恢复、GC 一致；范围或目标变化重新说明，无交互缺授权返回待确认。
-- [ ] Rerank 配置独立切换且不误用旧排序缓存；单改 Rerank 不无故重建向量；能力适配与业务逻辑没有复制。
+- [x] 相同向量维度或 profile 名不能绕过兼容检查；显示期望与实际启用模型，当前 query encoder 与索引匹配。
+- [x] 必须重建时列明库范围、基准版和目标配置，未确认不构建；确认后自动执行，全部成员兼容可查询后才发布。
+- [x] 失败提供重试/保留原版；同目标重试不反复索要开始确认，也不无限自动重试；多次失败不破坏旧版。
+- [x] 保留原版结束意图、显示实际旧配置，重启不重复弹相同提议；原查询模型不可用明确失败，不换新模型查旧向量。
+- [x] 待处理/重试阶段与库锁、恢复、GC 一致；范围或目标变化重新说明，无交互缺授权返回待确认。
+- [x] Rerank 配置独立切换且不误用旧排序缓存；单改 Rerank 不无故重建向量；能力适配与业务逻辑没有复制。
 
 <a id="r17"></a>
 ### R17：BM25 与 RRF

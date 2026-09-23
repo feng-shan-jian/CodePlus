@@ -26,7 +26,8 @@ from codeplus.tools import ToolRegistry
 from codeplus.tools.base import Tool, ToolResult
 
 from ...citations import CitationRegistry
-from ...config import KnowledgeConfig, WorkerExecutionConfig, resolve_run
+from ...config import KnowledgeConfig, WorkerExecutionConfig
+from ...model_switch import inspect_model_switch
 from ...domain import RagError, RunStatus, Span, StopReason
 from ...evidence import DeliveryGateway
 from ...indexes.milvus import MilvusRevisionIndex
@@ -157,7 +158,8 @@ class KnowledgePolicy:
         if conf.finish_input_upper < len(SYSTEM.encode())+256:
             raise ValueError('finish_input_bound_cannot_fit_system_and_question')
         catalog = Catalog(conf.knowledge.storage.data_dir)
-        lease = catalog.start_run(self.kb_id, resolve_run(conf.knowledge, 'qa'))
+        self.model_switch = inspect_model_switch(catalog, self.kb_id, conf.knowledge)
+        lease = catalog.start_current_run(self.kb_id, conf.knowledge, 'qa')
         try:
             scope = KnowledgeScope(conf, catalog, lease, meter, context, started)
         except BaseException:
@@ -236,7 +238,7 @@ class KnowledgeScope:
 
     async def initialize(self):
         def connect():
-            self.backend = MilvusRevisionIndex(self.config.knowledge.storage, self.catalog,
+            self.backend = MilvusRevisionIndex(self.lease.run.resolved_config.knowledge.storage, self.catalog,
                                                timeout=max(.1, min(30, self.deadline-time.monotonic())))
             self.sources.dense = DenseSearch(self.catalog, self.lease.run.run_id, self.provider, self.backend)
         async with asyncio.timeout_at(self.deadline):

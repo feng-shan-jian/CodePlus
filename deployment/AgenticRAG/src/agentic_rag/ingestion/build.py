@@ -21,6 +21,19 @@ def build_first_revision(catalog, owner, provider, backend, *, request_seconds=1
         return old
     if batch.base_revision_id is not None:
         raise index_error('first-import coordinator requires a new library; updates are not exposed', 'manifest')
+    return _build_complete_revision(catalog, owner, provider, backend, request_seconds=request_seconds,
+                                    index_timeout=index_timeout, observer=observer)
+
+
+def _build_complete_revision(catalog, owner, provider, backend, *, request_seconds=120, index_timeout=180, observer=None):
+    """Shared strict all-member build; an existing library requires approval."""
+    batch = catalog.get_batch(owner.token.batch_id)
+    old = terminal(catalog, batch.batch_id)
+    if old is not None:
+        return old
+    if batch.base_revision_id is not None:
+        from ..model_switch import require_rebuild
+        require_rebuild(catalog, batch)
     snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
     if backend.catalog is not catalog or backend.storage != snapshot.resolved_config.storage:
         raise index_error('build backend differs from frozen catalog/endpoint')

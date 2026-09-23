@@ -299,6 +299,21 @@ def resolve_run(config: KnowledgeConfig, task_kind: TaskKind, override: RunOverr
                             budget=getattr(config.budgets, task_kind))
 
 
+def with_published_encoding(desired: KnowledgeConfig, published: KnowledgeConfig) -> KnowledgeConfig:
+    """Use the published index and encoder, retaining this run's query settings.
+
+    Replace the selected profile object, not merely its mutable display name.
+    Rerank, budgets and retrieval settings continue to come from the caller.
+    """
+    data = desired.model_dump(mode='json')
+    data['storage'] = published.storage.model_dump(mode='json')
+    data['processing'] = published.processing.model_dump(mode='json')
+    embedding = published.embedding.model_copy(update={'name': desired.models.embedding})
+    data['model_profiles'] = [embedding.model_dump(mode='json') if p.name == desired.models.embedding
+                              else p.model_dump(mode='json') for p in desired.model_profiles]
+    return KnowledgeConfig.model_validate_json(json.dumps(data))
+
+
 def document_encoding_identity(config: KnowledgeConfig) -> str:
     """Conservative reuse boundary; excludes rerank, budgets, storage and routes."""
     return fingerprint("document-encoding", {

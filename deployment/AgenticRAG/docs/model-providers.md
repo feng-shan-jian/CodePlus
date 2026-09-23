@@ -81,6 +81,8 @@ knowledge:
 
 ## 4. Embedding 切换与索引兼容
 
+R16 服务入口、状态和查询接点见 [模型切换服务](model-switching.md)。以下保留配置切换的设计约束。
+
 切换配置与已有索引是否可继续使用是两件事。建议的设计规则：
 
 - 每个索引版本记录实际 Embedding 身份：模型、revision/服务版本、输出维度、文档输入模板、tokenizer/预处理、pooling 与归一化等影响编码的参数。

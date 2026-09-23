@@ -4,7 +4,8 @@ import json
 import threading
 from uuid import UUID, uuid4
 
-from ..config import RunConfiguration, document_encoding_identity
+from ..config import (KnowledgeConfig, RunConfiguration, RunOverride, document_encoding_identity,
+                      resolve_run, with_published_encoding)
 from ..domain import ErrorCode, RagError, Run, RunPin, RunStatus, RunUsage
 from .database import Database
 from .locks import ProcessLock
@@ -139,14 +140,19 @@ class RunLease:
         self.close()
 
 
-def start(database: Database, kb_id: UUID, config: RunConfiguration, *, run_id: UUID, parent_run_id: UUID | None = None) -> RunLease:
+def start(database: Database, kb_id: UUID, config: RunConfiguration, *, run_id: UUID, parent_run_id: UUID | None = None,
+          _use_published_encoding=False) -> RunLease:
     lock = lock_for(database, run_id).acquire()
     try:
         with database.transaction(write=True) as connection:
             # GC claims eligibility in this exact BEGIN IMMEDIATE boundary.
-            row = connection.execute("SELECT r.revision_id,r.index_state,s.document_encoding_fingerprint FROM libraries l JOIN revisions r ON r.kb_id=l.kb_id AND r.revision_id=l.current_revision_id JOIN processing_snapshots s ON s.snapshot_id=r.processing_snapshot_id AND s.kb_id=r.kb_id WHERE l.kb_id=?", (str(kb_id),)).fetchone()
+            row = connection.execute("SELECT r.revision_id,r.index_state,s.document_encoding_fingerprint,s.resolved_config FROM libraries l JOIN revisions r ON r.kb_id=l.kb_id AND r.revision_id=l.current_revision_id JOIN processing_snapshots s ON s.snapshot_id=r.processing_snapshot_id AND s.kb_id=r.kb_id WHERE l.kb_id=?", (str(kb_id),)).fetchone()
             if row is None or row[1] != "READY":
                 raise RagError(ErrorCode.NOT_READY, "library has no queryable current revision", stage="run")
+            if _use_published_encoding:
+                actual = KnowledgeConfig.model_validate_json(row[3])
+                config = resolve_run(with_published_encoding(config.knowledge, actual), config.task_kind,
+                                     RunOverride(mode=config.retrieval.mode))
             if row[2] != document_encoding_identity(config.knowledge):
                 raise RagError(ErrorCode.INVALID_CONFIGURATION, "run encoding differs from its revision", stage="run")
             if parent_run_id is not None and read_run(connection, parent_run_id).kb_id != kb_id:

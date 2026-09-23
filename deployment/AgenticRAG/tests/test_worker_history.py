@@ -50,7 +50,7 @@ def test_real_preceding_installed_checkpoint_and_run_reopen(tmp_path, revision):
         assert read_processed(catalog,UUID(old['batch_id']),UUID(old['item_id']))[0].model_dump(mode='json')==old['processing']
         assert RunConfiguration.model_validate_json(json.dumps(old['run_json'])).identity==old['run_identity']
         with catalog._db.transaction() as connection:
-            assert connection.pragma('user_version') == 9
+            assert connection.pragma('user_version') == 10
             assert connection.execute('SELECT count(*) FROM publications').fetchone() == (0,)
             assert connection.execute('SELECT count(*) FROM index_artifacts').fetchone() == (0,)
             assert connection.execute('PRAGMA integrity_check').fetchone() == ('ok',)

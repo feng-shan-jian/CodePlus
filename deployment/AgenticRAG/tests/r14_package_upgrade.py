@@ -49,7 +49,7 @@ def main(args):
         fault=child('fault');report['rollback_fault']=fault
         assert fault['row_hashes']==before['row_hashes'] and fault['foreign_keys']==[] and fault['integrity']==[['ok']]
         after=child('read');report['after_upgrade']=after
-        assert after['schema']==9 and after['migrations'][:7]==before['migrations']
+        assert after['schema']==10 and after['migrations'][:7]==before['migrations']
         assert all(after['row_hashes'][k]==v for k,v in before['row_hashes'].items())
         assert all(after['triggers'][k]==v for k,v in before['triggers'].items())
         assert after['publication_fk']==before['publication_fk'] and after['citation']==before['citation']

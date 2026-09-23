@@ -40,8 +40,10 @@ def process_inputs(catalog, owner, tokenizer, *, skip_unchanged=False, cancelled
             continue
         with catalog._owned(owner, token):
             pass
+        # An unavailable committed archive is a recoverable batch failure, not
+        # an immutable parser rejection of the document's contents.
+        raw = _read_input(catalog, token.batch_id, raw_item.entry.item_id, _inputs=inputs)
         try:
-            raw = _read_input(catalog, token.batch_id, raw_item.entry.item_id, _inputs=inputs)
             version_id = uuid5(raw_item.entry.item_id, snapshot.document_encoding_fingerprint)
             parsed = parse_document(raw, raw_item.raw.metadata.media_type, version_id)
             result = chunk_document(parsed, config.processing.chunker, tokenizer)
