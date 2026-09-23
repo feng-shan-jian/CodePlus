@@ -180,22 +180,30 @@ def operation(catalog, artifact, run_id):
 
 
 def query(catalog, artifact, run_id, provider, item, profile, context):
-    tracked = hasattr(provider, 'submit_query')
+    return _model(catalog, artifact, provider, 'query', (item, profile, context), context)
+
+
+def rerank(catalog, artifact, run_id, provider, query, items, profile, context):
+    return _model(catalog, artifact, provider, 'rerank', (query, items, profile, context), context)
+
+
+def _model(catalog, artifact, provider, capability, arguments, context):
+    tracked = hasattr(provider, 'submit_' + capability)
     reader = Reader(catalog, artifact, 'model' if tracked else 'model_sync',
-                    detail={'request_id': str(context.request_id)})
+                    detail={'request_id': str(context.request_id), 'capability': capability})
     # The outer operation holds run admission even if finish wins immediately
     # before this child is registered. Associate it without reopening admission.
     # A finished outer operation cannot precede this synchronous call's return.
     if not tracked:
         try:
-            result = provider.embed_query(item, profile, context)
+            result = getattr(provider, 'embed_query' if capability == 'query' else 'rerank')(*arguments)
         except BaseException:
             reader.uncertain()
             raise
         reader.finish()
         return result
     try:
-        handle = provider.submit_query(item, profile, context)
+        handle = getattr(provider, 'submit_' + capability)(*arguments)
         reader.worker(handle.worker_identity)
         reader.handle = handle
     except BaseException:
@@ -210,7 +218,7 @@ def query(catalog, artifact, run_id, provider, item, profile, context):
         if handle.wait_finished(0):
             finish()
         else:
-            threading.Thread(target=finish, name='rag-query-completion', daemon=True).start()
+            threading.Thread(target=finish, name='rag-' + capability + '-completion', daemon=True).start()
 
 
 def flush_finished(catalog):

@@ -1,4 +1,4 @@
-"""Fixed Dense development policy for the existing CodePlus Agent loops.
+"""Fixed retrieval development policy for the existing CodePlus Agent loops.
 
 No model loop lives here. The policy owns only binding, budgets, tools, exact
 citation validation, and resource lifetime for one invocation.
@@ -145,8 +145,8 @@ class KnowledgePolicy:
         if context.hook_engine and any(h.action.type != 'prompt' or h.async_exec for h in context.hook_engine.hooks):
             raise ValueError('knowledge_feature_not_available_with_executable_or_async_hooks')
         conf = self.config
-        if conf.knowledge.retrieval.mode != 'fixed' or conf.knowledge.retrieval.rerank:
-            raise ValueError('development_requires_explicit_fixed_without_rerank')
+        if conf.knowledge.retrieval.mode != 'fixed':
+            raise ValueError('development_requires_explicit_fixed')
         if context.protocol != self.provider.protocol or context.client.model != self.provider.model:
             raise ValueError('answer_provider_changed_before_run')
         meter = DeepSeekTextMeter(conf.answer_tokenizer, model=self.provider.model,

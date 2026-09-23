@@ -1,6 +1,6 @@
 # AgenticRAG 独立开发区
 
-状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、普通增删改整批发布、手动恢复与放弃、固定 Dense/BM25/Hybrid 检索、原文与引用，以及宿主开发接入。实际验收和提交状态见任务台账。更新日期：2026-09-23。后续产品能力按任务台账推进至 R24；用户已删除本阶段 R25/R26。
+状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、普通增删改整批发布、手动恢复与放弃、固定 Dense/BM25/Hybrid 检索、逐 Chunk Rerank、Context 选择、原文与引用，以及宿主开发接入。实际验收和提交状态见任务台账。更新日期：2026-09-23。后续产品能力按任务台账推进至 R24；用户已删除本阶段 R25/R26。
 
 在本目录完成 RAG 的独立实现及 Windows 功能与质量验收。本阶段保留现有 CodePlus Agent 适配接点，不迁入 CodePlus 主发行包。
 
@@ -8,7 +8,7 @@
 
 ## 当前开发包
 
-开发接入复用现有 CodePlus 两个 Agent 循环，提供 TUI 的 `/knowledge use/ask/off` 和原 `-p` 的 `--knowledge-library`。仅显式启用的 fixed QA 进入受控 run，支持 Dense/BM25/Hybrid、不启用 Rerank；普通任务保持原入口，工具仍只接收 query。安装、独立回答 tokenizer 缓存、完整显式配置及当前限制见 [宿主开发接入](docs/codeplus-integration.md)，三路调用与追踪见 [检索](docs/retrieval.md)。
+开发接入复用现有 CodePlus 两个 Agent 循环，提供 TUI 的 `/knowledge use/ask/off` 和原 `-p` 的 `--knowledge-library`。仅显式启用的 fixed QA 进入受控 run，支持 Dense/BM25/Hybrid 及可选 Rerank；普通任务保持原入口，工具仍只接收 query。安装、独立回答 tokenizer 缓存、完整显式配置及当前限制见 [宿主开发接入](docs/codeplus-integration.md)，三路调用与追踪见 [检索](docs/retrieval.md)。
 
 发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2、APSW 3.53.4.0、markdown-it-py 4.0.0 与 tokenizers 0.23.2；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。本地模型通过独立 CUDA worker 执行；R12 仅提供显式开发接点，完整产品命令与自动重建留后续任务。导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
 
@@ -30,7 +30,7 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 
 `ingestion.build.build_first_revision` 在全部捕获/处理成功后，通过 R09 provider 编码并构建每版独立 Milvus Collection。`storage.publication` 以全量真实校验凭据原子登记回执和当前指针；`retrieval.DenseSearch` 使用运行绑定版的编码、来源和 canonical body。数据库SDK通过 `milvus` extra安装（PyMilvus3.0.2 / Milvus3.0.1），与核心和CUDA环境分开。运行时token显式传入adapter，不入业务快照。正式路径、UTF-8限额、schema和复跑入口见 [首次发布与Dense](docs/first-publication.md)。
 
-`retrieval.RetrievalSearch` 共用同一固定版本与原文映射，按配置执行 Dense、Milvus 原生 BM25 或核心 RRF。纯 BM25 不连接查询模型；Hybrid 的任一路失败整次报错，不交付中间候选。两路原始排名和完整融合轨迹独立持久化，仍由既有 SourceSession/DeliveryGateway/CitationRegistry 交付及验证正文。内部 runner 的三路同条件基线及边界见 [检索](docs/retrieval.md)。
+`retrieval.RetrievalSearch` 共用同一固定版本与原文映射，按配置执行 Dense、Milvus 原生 BM25 或核心 RRF，再按开关逐 Chunk 重排。BM25 不执行查询 Embedding；Hybrid 任一路或任一重排批次失败，整次报错，不交付中间候选。原始排名、融合及重排轨迹独立持久化，SourceSession 按当前 query 选择不重复的原文区间，再由既有 DeliveryGateway/CitationRegistry 交付及验证正文。内部 runner 的同条件对照、完整请求预算限制及边界见 [检索](docs/retrieval.md)。
 
 `ingestion.begin_changes/build_changes` 将普通新增、更新与显式删除形成完整候选，一批只发布一次；未变向量经完整身份与 float32 摘要核验后复用，失败更新保留旧版，无变化/全失败正常解除占用且不发布。`retry_failed` 只处理失败项并拒绝覆盖后续更新；删除最后成员发布真实空版本。接口和当前边界见 [普通增删改](docs/ordinary-mutations.md)。
 
@@ -72,7 +72,7 @@ Agent 打开搜索来源时，默认读取命中片段所在章节，长章节�
 
 知识库问答和报告功能内部提供固定检索和自动检索两种配置模式，不全局生效：固定模式只固定单次检索流程；自动模式还允许 Agent 选择 Dense、BM25 或 Hybrid，以及是否启用 Rerank，候选数量、融合参数和返回片段数量由配置控制。两种模式都允许改写问题、多轮搜索与原文阅读，复用数据、检索与引用能力，均受该功能的运行预算约束。
 
-首版 BM25 使用 Milvus 内置全文检索，与 Dense 索引统一管理。纯 BM25 召回不调用查询 Embedding，开启模型 Rerank 时再进行精排；分词、参数及索引版本隔离需实测。Hybrid 由 RAG 核心分别取得两路结果并执行 RRF，保留原始候选、排名及融合记录。模型 Rerank 逐个 Chunk 排序，保留候选身份和引用位置，需要完整上下文时由 Agent 调用 `knowledge_open`；具体参数与输入模板仍待确定。
+首版 BM25 使用 Milvus 内置全文检索，与 Dense 索引统一管理。纯 BM25 召回不调用查询 Embedding，开启模型 Rerank 时再进行精排；分词、参数及索引版本隔离需实测。Hybrid 由 RAG 核心分别取得两路结果并执行 RRF，保留原始候选、排名及融合记录。模型 Rerank 逐个 Chunk 排序，保留候选身份和引用位置，需要完整上下文时由 Agent 调用 `knowledge_open`；当前输入模板沿冻结模型配置，质量参数仍待 R23 验收。
 
 知识库问答和报告功能首版默认自动检索，可在该功能配置中修改默认值；每次知识库问答或报告开始前可显式选择本次模式，单次选择不改写功能默认配置。运行开始后按已选模式执行，后续默认配置变化不影响当前任务。即使设置保存在 CodePlus 同一份配置文件中，也只作用于该功能，不改变普通聊天、编程任务或宿主权限模式。
 

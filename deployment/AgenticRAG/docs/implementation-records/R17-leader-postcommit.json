@@ -1,0 +1,15 @@
+{
+  "status": "COMMITTED_VERIFIED",
+  "time": 1790139822.7987292,
+  "sha": "1fd01183f9ce914e022d923debc13553b0f71d27",
+  "parent": "835b4887c21588f7e0165e1c7ff2477c3b4a1b6c",
+  "message": "feat(rag): add native BM25 and hybrid retrieval",
+  "committed_paths": 36,
+  "nonself_blobs_verified": 35,
+  "index_empty_after_commit": true,
+  "source_and_evidence_bytes_preserved": true,
+  "no_push": true,
+  "no_cleanup_gate": true,
+  "next": "Fresh R18 executor: per Chunk rerank, Context selection and same-condition off/on comparison.",
+  "postnote_persistence": "This post-commit note and real-SHA ledger update accompany the next normal stage commit."
+}

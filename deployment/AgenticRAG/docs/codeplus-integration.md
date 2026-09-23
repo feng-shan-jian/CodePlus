@@ -10,7 +10,7 @@
 
 回答模型复用当前 CodePlus provider，不修改用户配置。R12 硬输入预算目前只验证官方 DeepSeek 端点的 `deepseek-chat`、`deepseek-reasoner` 文本模式，实际响应身份为 `deepseek-flash`（V4.1）。固定官方 tokenizer 文件由 `answer_tokenizer` 指定并校验哈希；文件不随发行包或 Git 提交。模型、端点、模板、tokenizer 或参数不受支持时明确失败，不换模型、不猜估算值。三协议宿主适配的 cap/terminal/usage 分别有受控 SDK 测试，不能据此宣称三个服务商都具备生产计量能力。
 
-目前开发配置必须显式 fixed、rerank=false；R17 支持 dense、bm25、hybrid 三路，运行中固定路线，工具仍只接收 query。BM25 不连接 Embedding worker，候选排名与融合诊断不进入模型正文，详见 [检索调用与追踪](retrieval.md)。最终 auto 权限继续由 R19 实现。模型可多轮调用 `knowledge_search`/`knowledge_open`，其他工具、MCP、子 Agent、团队、外部通知入口不可进入该 run。可执行或异步 hooks 不支持；同步 prompt hooks 进入同一完整计量。Remote 明确返回 feature_not_available。活跃知识库任务由自己的循环管理 compact，UI 在取消收束前仍保持 busy；普通手动 compact 不并发修改其上下文。
+目前开发配置必须显式 fixed；支持 dense、bm25、hybrid 三路和冻结的 rerank 开关，运行中固定路线，工具仍只接收 query。BM25 不请求查询 Embedding，rerank=false 时零模型连接，rerank=true 时只调用精排模型。候选排名与融合/精排诊断不进入模型正文，详见 [检索调用与追踪](retrieval.md)。最终 auto 权限继续由 R19 实现。模型可多轮调用 `knowledge_search`/`knowledge_open`，其他工具、MCP、子 Agent、团队、外部通知入口不可进入该 run。可执行或异步 hooks 不支持；同步 prompt hooks 进入同一完整计量。Remote 明确返回 feature_not_available。活跃知识库任务由自己的循环管理 compact，UI 在取消收束前仍保持 busy；普通手动 compact 不并发修改其上下文。
 
 每次实际 HTTP 请求先对完整最终序列化输入留出保守上界及输出硬上限。未知用量保留预留，已知违约保留真实超限事实并停止。开始时保留 finalize 和一次原 Agent citation repair 的输入与输出预算；软探索耗尽可收尾，硬截止/取消不补发模型。source-return 成本、已受理 search/open 和实际 LLM token 分开登记，不重复计数。无依据、工具失败、截断、修正仍失败等返回明确非 completed 状态；无效答案和思考不先流式显示。
 

@@ -175,7 +175,7 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
         model_sources = {'agentic_rag/models/' + name for name in ('__init__.py', 'tokenization.py',
             'protocol.py', 'identity.py', '_windows.py', 'engine.py', 'worker.py', 'lifecycle.py', 'client.py', 'models.lock.json')}
         index_sources = {'agentic_rag/indexes/'+name for name in ('__init__.py','manifest.py','milvus.py')}
-        retrieval_sources = {'agentic_rag/retrieval/'+name for name in ('__init__.py','dense.py','search.py','rrf.py')}
+        retrieval_sources = {'agentic_rag/retrieval/'+name for name in ('__init__.py','dense.py','search.py','rrf.py','context.py')}
         adapter_sources = {'agentic_rag/adapters/codeplus/'+name for name in
                            ('__init__.py','meter.py','ledger.py','policy.py','_vendor/__init__.py','_vendor/deepseek_v41.py')}
         assert expected_sources == root_sources | storage_sources | ingestion_sources | model_sources | index_sources | retrieval_sources | adapter_sources

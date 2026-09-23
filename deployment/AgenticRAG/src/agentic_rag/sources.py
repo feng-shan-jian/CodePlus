@@ -14,6 +14,7 @@ from uuid import UUID, uuid4
 
 from .domain import BudgetStopReason, ErrorCode, RagError, RunStatus, SourceRef, Span
 from .source_archive import contains, digest, encode, invalid, read_ref, read_version, union
+from .retrieval.context import CONTEXT_POLICY, complementary_order, subtract
 from .storage.runs import RunLease, read_pin, read_run
 
 
@@ -356,7 +357,8 @@ class SourceSession:
     def _save_retrieval_trace(self, call_id, trace):
         if trace is not None:
             with self.catalog._db.transaction(write=True) as connection:
-                connection.execute('INSERT INTO retrieval_traces VALUES(?,?)', (str(call_id), encode(trace)))
+                connection.execute('INSERT INTO retrieval_traces VALUES(?,?) ON CONFLICT(call_id) DO UPDATE SET payload=excluded.payload',
+                                   (str(call_id), encode(trace)))
 
     def retrieval_trace(self, call_id):
         """Host diagnostics only, including failed searches; never a source tool."""
@@ -369,8 +371,6 @@ class SourceSession:
         with self._call('search') as call_id:
             if self.dense is None:
                 raise invalid('retrieval capability unavailable', 'source_search')
-            if self.retrieval.rerank:
-                raise invalid('model rerank is not implemented at this stage', 'source_search')
             if getattr(self.dense, 'route', 'dense') != self.retrieval.route:
                 raise invalid('search service route differs from the frozen run', 'source_search')
             with self.catalog._db.transaction() as connection:
@@ -386,40 +386,83 @@ class SourceSession:
                     raise RagError(ErrorCode.DEPENDENCY_UNAVAILABLE, str(exc), stage='source_search') from exc
                 raise
             self._save_retrieval_trace(call_id, result.get('trace'))
-            payload = {'schema_version':1,'call_id':str(call_id),'status':'empty','run_id':str(self.run.run_id),
-                       'revision_id':str(self.run.revision_id),'route':{'strategy':self.retrieval.route,'rerank':False},
-                       'items':[],'limited':{'by_count':False,'by_tokens':False}}
-            candidates, seen, sources = [], set(), {}
-            cap, _ = self._token_allowance()
-            for hit in result['hits']:
-                if hit['chunk_id'] in seen:
-                    continue
-                seen.add(hit['chunk_id'])
-                if len(candidates)+self.usage()['window_fragments'] >= self.retrieval.context_chunks:
+            trace = result.get('trace') or {'query':query, 'route':self.retrieval.route}
+            trace['context'] = {'policy':CONTEXT_POLICY, 'status':'selecting', 'decisions':[]}
+            try:
+                return self._select_context(call_id, result['hits'], trace['context'])
+            except Exception as exc:
+                trace['context'].update(status='error', error=str(exc))
+                raise
+            finally:
+                self._save_retrieval_trace(call_id, trace)
+
+    def _select_context(self, call_id, hits, trace):
+        payload = {'schema_version':1,'call_id':str(call_id),'status':'empty','run_id':str(self.run.run_id),
+                   'revision_id':str(self.run.revision_id),'route':{'strategy':self.retrieval.route,'rerank':self.retrieval.rerank},
+                   'items':[],'limited':{'by_count':False,'by_tokens':False}}
+        with self.catalog._db.transaction() as connection:
+            row = connection.execute('SELECT payload FROM evidence_windows WHERE run_id=?', (str(self.run.run_id),)).fetchone()
+        window = json.loads(row[0]) if row else {'request_id':None, 'mappings':[]}
+        usage = self.usage()
+        cap, _ = self._token_allowance()
+        trace.update(window_before=window, usage_before=usage, serialized_token_allowance=cap,
+                     fragment_allowance=self.retrieval.context_chunks-usage['window_fragments'], meter_identity=self.meter.identity)
+        covered = {}
+        for mapping in window['mappings']:
+            covered.setdefault(mapping['source_ref']['document_version_id'], []).append(Span.model_validate(mapping['source_span']))
+        candidates, seen, sources = [], set(), {}
+        for hit in complementary_order(hits):
+            decision = {'chunk_id':hit['chunk_id'], 'status':'considered', 'returned_spans':[]}
+            trace['decisions'].append(decision)
+            if hit['chunk_id'] in seen:
+                decision['status']='duplicate_id'
+                continue
+            seen.add(hit['chunk_id'])
+            if len(candidates)+usage['window_fragments'] >= self.retrieval.context_chunks:
+                payload['limited']['by_count']=True
+                decision['status']='count_limit'
+                continue
+            ref = SourceRef.model_validate_json(encode({key:hit[key] for key in SourceRef.model_fields if key!='schema_version'}))
+            identity = (ref.kb_id,ref.revision_id,ref.document_id,ref.document_version_id)
+            if identity not in sources:
+                sources[identity] = self._read_source(ref)
+            source = sources[identity]
+            source.section(ref.section_id)
+            archived = next((c.chunk for c in source.chunks.inputs if str(c.chunk.chunk_id)==hit['chunk_id']),None)
+            if archived is None or archived.section_id != ref.section_id or len(archived.spans)!=1:
+                raise invalid('search candidate not in archived chunk set')
+            span = archived.spans[0]
+            if hit['text'] != source.text[span.start:span.end] or digest(hit['text']) != archived.text_hash:
+                raise invalid('search body differs from canonical chunk')
+            coverage = covered.setdefault(str(ref.document_version_id), [])
+            remaining = subtract(span, coverage)
+            decision.update(original_span=span.model_dump(), eligible_spans=[s.model_dump() for s in remaining],
+                            status='overlap' if not remaining else 'token_limit')
+            token = self._issue_verified_source(ref,source,anchor_span=span)
+            for remainder in remaining:
+                if len(candidates)+usage['window_fragments'] >= self.retrieval.context_chunks:
                     payload['limited']['by_count']=True
                     break
-                ref = SourceRef.model_validate_json(encode({key:hit[key] for key in SourceRef.model_fields if key!='schema_version'}))
-                identity = (ref.kb_id,ref.revision_id,ref.document_id,ref.document_version_id)
-                if identity not in sources:
-                    sources[identity] = self._read_source(ref)
-                source = sources[identity]
-                source.section(ref.section_id)
-                archived = next((c.chunk for c in source.chunks.inputs if str(c.chunk.chunk_id)==hit['chunk_id']),None)
-                if archived is None or archived.section_id != ref.section_id or len(archived.spans)!=1:
-                    raise invalid('search candidate not in archived chunk set')
-                span = archived.spans[0]
-                token = self._issue_verified_source(ref,source,anchor_span=span)
-                if hit['text'] != source.text[span.start:span.end] or digest(hit['text']) != archived.text_hash:
-                    raise invalid('search body differs from canonical chunk')
-                candidate = self._candidate(call_id,ref,span,source)
-                item = self._body_item(candidate,token,source,chunk_id=hit['chunk_id'])
-                payload['status']='ok'
-                payload['items'].append(item)
-                if self._count(render_payload(payload)[0]) > cap:
-                    payload['items'].pop()
-                    payload['limited']['by_tokens']=True
-                    break
-                candidates.append(candidate)
-            if not candidates:
-                payload['status']='empty'
-            return self._commit_result(call_id,payload,candidates)
+                end = remainder.end
+                candidate_id, evidence_id = uuid4(), uuid4()
+                while end > remainder.start:
+                    chosen = Span(start=remainder.start, end=end)
+                    candidate = self._candidate(call_id,ref,chosen,source,candidate_id,evidence_id)
+                    item = self._body_item(candidate,token,source,chunk_id=hit['chunk_id'])
+                    payload['status']='ok'; payload['items'].append(item)
+                    if self._count(render_payload(payload)[0]) <= cap:
+                        candidates.append(candidate); coverage.append(chosen)
+                        decision['returned_spans'].append(chosen.model_dump())
+                        decision['status']='selected'
+                        break
+                    payload['items'].pop(); payload['limited']['by_tokens']=True
+                    end = remainder.start + (end-remainder.start)//2
+            decision['omitted_spans'] = [s.model_dump() for s in subtract(span,
+                [Span.model_validate(s) for s in decision['returned_spans']])]
+        if not candidates:
+            payload['status']='empty'
+        result = self._commit_result(call_id,payload,candidates)
+        trace.update(status='ok', candidate_ids=[str(i) for i in result.candidate_ids],
+                     serialized_tokens=self._count(result.text), fragments=len(candidates),
+                     canonical_codepoints=sum(len(c['text']) for c in candidates), usage_after=self.usage())
+        return result

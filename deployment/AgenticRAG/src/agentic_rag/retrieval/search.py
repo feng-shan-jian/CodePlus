@@ -8,8 +8,10 @@ from uuid import UUID, uuid4
 
 from ..capabilities import ModelInput, RequestContext, validate_response
 from ..config import document_encoding_identity
-from ..domain import ErrorCode, RagError, RunStatus
+from ..domain import ErrorCode, RagError, RunStatus, SourceRef
 from ..indexes.manifest import index_error, SCALAR_FIELDS
+from ..models.tokenization import FrozenTokenizer
+from ..source_archive import read_ref
 from ..storage import publication, readers
 from .rrf import reciprocal_rank_fusion
 
@@ -20,10 +22,11 @@ class RetrievalSearch:
     Diagnostics are separate from canonical hits and have no evidence authority.
     SourceSession persists them against the normal source call, including errors.
     """
-    def __init__(self, catalog, run_id, provider, backend):
+    def __init__(self, catalog, run_id, provider, backend, *, rerank_tokenizer=None):
         self.catalog, self.run_id, self.provider, self.backend = catalog, run_id, provider, backend
         self.run = catalog.get_run(run_id)
         self.route = self.run.resolved_config.retrieval.route
+        self.rerank_tokenizer = rerank_tokenizer
         self.artifact = publication.artifact(catalog, self.run.revision_id, published=True)
         batch = catalog.get_batch(UUID(self.artifact['batch_id']))
         self.snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
@@ -60,9 +63,11 @@ class RetrievalSearch:
             'collection_name':self.artifact['collection_name'], 'filter':'',
             'index':self.artifact['spec']['index'], 'index_schema_hash':self.artifact['schema_hash'],
             'parameters':{'branch_limits':limits, 'result_limit':limit, 'rrf_k':config.rrf_k,
-                          'nprobe':config.nprobe, 'rerank':False},
+                          'nprobe':config.nprobe, 'rerank':config.rerank,
+                          'rerank_candidates':config.rerank_candidates},
             'branches':{name:{'status':'not_started', 'candidates':[]} for name in limits},
-            'fusion':[], 'returned_ids':[], 'status':'running'}
+            'fusion':[], 'rerank':{'enabled':config.rerank, 'status':'not_started' if config.rerank else 'disabled',
+                'inputs':[], 'batches':[], 'ranking':[]}, 'returned_ids':[], 'status':'running'}
         profile, model_timings = None, None
         stage = 'binding'
         try:
@@ -102,16 +107,21 @@ class RetrievalSearch:
                     trace['fusion'] = reciprocal_rank_fusion(candidates, config.rrf_k)
                     by_id = {hit['chunk_id']:hit for hits in candidates.values() for hit in hits}
                     output = [{**by_id[item['chunk_id']], 'branch':'hybrid', 'score':item['score'],
-                               'score_type':'rrf'} for item in trace['fusion'][:limit]]
+                               'score_type':'rrf'} for item in trace['fusion']]
                 else:
                     # Preserve the backend's order for single-route retrieval.
                     seen = set(); output = []
                     for hit in candidates[self.route]:
                         if hit['chunk_id'] not in seen:
                             seen.add(hit['chunk_id']); output.append(hit)
-                    output = output[:limit]
+                if config.rerank:
+                    stage = 'rerank'
+                    output = self._rerank(query, output[:config.rerank_candidates], trace['rerank'], deadline_monotonic_ns)
+                output = output[:limit]
                 trace.update(status='ok' if output else 'empty', returned_ids=[h['chunk_id'] for h in output])
         except Exception as exc:
+            if stage == 'rerank':
+                trace['rerank']['status'] = 'error'
             trace.update(status='error', error={**self._error(exc), 'failed_stage':stage})
             exc.retrieval_trace = trace
             raise
@@ -141,6 +151,79 @@ class RetrievalSearch:
                                  item, self.snapshot.resolved_config.embedding, context)
         validate_response(response, (item,), self.snapshot.resolved_config.embedding, context)
         return response.results[0].vector, response.profile_fingerprint, response.timings.model_dump(mode='json')
+
+    def _rerank(self, query, hits, trace, deadline):
+        """Score complete original Chunks; no partial ranking escapes a failure."""
+        profile = self.run.resolved_config.knowledge.reranker
+        trace['profile_fingerprint'] = profile.identity
+        if not hits:
+            trace['status'] = 'empty'
+            return []
+        if self.provider is None:
+            raise RagError(ErrorCode.CAPABILITY_UNAVAILABLE, 'rerank provider unavailable', stage='rerank')
+        if self.rerank_tokenizer is None:
+            self.rerank_tokenizer = FrozenTokenizer(profile, self.provider.config.model_cache)
+        if self.rerank_tokenizer.profile.identity != profile.identity:
+            raise RagError(ErrorCode.IDENTITY_MISMATCH, 'rerank tokenizer differs from frozen profile', stage='rerank')
+        inputs, counts, sources = [], [], {}
+        trace['status'] = 'counting'
+        for hit in hits:
+            self._deadline(deadline)
+            ref = SourceRef.model_validate_json(json.dumps({key:hit[key] for key in SourceRef.model_fields if key!='schema_version'}))
+            key = ref.document_version_id
+            if key not in sources:
+                source = read_ref(self.catalog, ref)
+                sources[key] = {str(entry.chunk.chunk_id):entry for entry in source.chunks.inputs}
+            entry = sources[key][hit['chunk_id']]
+            if entry.chunk.section_id != ref.section_id or entry.chunk.text_hash != hit['text_hash']:
+                raise index_error('rerank candidate differs from archived Chunk', 'rerank')
+            item = ModelInput(item_id=entry.chunk.chunk_id, title=entry.index_title or None, text=hit['text'])
+            detail = {'chunk_id':hit['chunk_id'], 'title':item.title, 'body_sha256':hit['text_hash'],
+                      'input_sha256':hashlib.sha256(item.model_dump_json().encode()).hexdigest()}
+            trace['inputs'].append(detail)
+            sequence = self.rerank_tokenizer.rerank(query, item.text, item.title or '')
+            count = sequence.token_count
+            detail['input_tokens'] = count
+            detail['complete_input_sha256'] = hashlib.sha256(json.dumps(sequence.pieces, ensure_ascii=False).encode()).hexdigest()
+            inputs.append(item); counts.append(count)
+        offset, scores = 0, {}
+        trace['status'] = 'scoring'
+        while offset < len(inputs):
+            self._deadline(deadline)
+            stop = min(len(inputs), offset + profile.limits.max_batch_size)
+            while stop > offset and (stop-offset)*max(counts[offset:stop]) > profile.limits.max_padded_tokens:
+                stop -= 1
+            if stop == offset:
+                raise RagError(ErrorCode.INPUT_TOO_LONG, 'rerank input exceeds frozen batch capacity', stage='rerank')
+            items = tuple(inputs[offset:stop])
+            context = RequestContext(request_id=uuid4(), owner_id=self.provider.owner_id,
+                purpose=self.run.resolved_config.task_kind, deadline_monotonic_ns=deadline or time.monotonic_ns()+120_000_000_000)
+            batch = {'request_id':str(context.request_id), 'chunk_ids':[str(i.item_id) for i in items],
+                     'input_tokens':counts[offset:stop], 'total_tokens':sum(counts[offset:stop]),
+                     'padded_tokens':len(items)*max(counts[offset:stop]), 'status':'running'}
+            trace['batches'].append(batch)
+            begin = time.perf_counter()
+            try:
+                response = readers.rerank(self.catalog, self.artifact, self.run_id, self.provider, query, items, profile, context)
+                validate_response(response, items, profile, context)
+                actual = {row.item_id:row.input_tokens for row in response.results}
+                if any(actual[item.item_id] != count for item,count in zip(items,counts[offset:stop],strict=True)):
+                    raise RagError(ErrorCode.INVALID_RESPONSE, 'rerank response token counts differ from complete inputs', stage='rerank')
+                batch.update(status='ok', scores=[row.model_dump(mode='json') for row in response.results],
+                             model_timings=response.timings.model_dump(mode='json'))
+                scores.update({str(row.item_id):row.score for row in response.results})
+            except Exception as exc:
+                batch.update(status='error', error=self._error(exc)); trace['status']='error'
+                raise
+            finally:
+                batch['elapsed_ms'] = (time.perf_counter()-begin)*1000
+            offset = stop
+        self._deadline(deadline)
+        output = sorted(({**hit, 'score':scores[hit['chunk_id']], 'score_type':profile.score_type} for hit in hits),
+                        key=lambda hit:(-hit['score'], hit['chunk_id']))
+        trace.update(status='ok', ranking=[{'chunk_id':hit['chunk_id'], 'score':hit['score'], 'rank':rank}
+            for rank,hit in enumerate(output,1)])
+        return output
 
     def _source(self, hit, branch):
         identity, row = str(hit['id']), hit['entity']

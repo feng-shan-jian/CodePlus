@@ -13,6 +13,7 @@ from uuid import UUID, uuid4
 
 from .domain import Evidence, SourceRef, Span
 from .source_archive import contains, digest, encode, invalid, read_ref, union
+from .retrieval.context import window_removed
 
 
 @dataclass(frozen=True)
@@ -210,9 +211,13 @@ class DeliveryGateway:
                 'body_span':mapping.body_span.model_dump(),'tool_call_id_path':list(mapping.tool_call_id_path),
                 'tool_call_id':actual_call})
         body_hash=hashlib.sha256(raw_body).hexdigest()
+        previous = self.window()
         payload={'request_id':str(request_id),'run_id':str(self.session.run.run_id),
                  'kb_id':str(self.session.run.kb_id),'revision_id':str(self.session.run.revision_id),
-                 'body_sha256':body_hash,'purpose':purpose,'protocol':protocol,'mappings':checked}
+                 'body_sha256':body_hash,'purpose':purpose,'protocol':protocol,'mappings':checked,
+                 'window_transition':{'previous_request_id':previous['request_id'],
+                    'removed_from_request':window_removed(previous['mappings'],checked),
+                    'on_confirmed_compact_removed':checked if purpose=='compact' else []}}
         with self.session.catalog._db.transaction(write=True) as connection:
             self.session._active(connection)
             generation,=connection.execute('SELECT window_generation FROM source_usage WHERE run_id=?',(str(self.session.run.run_id),)).fetchone()

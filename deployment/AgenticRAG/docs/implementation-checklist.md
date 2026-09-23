@@ -37,8 +37,8 @@
 | R14 | COMMITTED | /root/r14_recovery | [Leader 独立验收](implementation-records/R14-leader-review.md)、[独立清理](implementation-records/R14-cleanup.md)、[清理复核](implementation-records/R14-leader-postcleanup.json)及[精确提交](implementation-records/R14-leader-postcommit.json)通过 | 175f8f54ed9e24736a232f6b989d145f7f217dca |
 | R15 | COMMITTED | /root/r15_gc | [Leader 独立验收](implementation-records/R15-leader-review.md)、[精确提交](implementation-records/R15-leader-postcommit.json)；114项、两路安装、9类真实场景及schema8→9通过 | `253047b4f862b7145c2ee3b445a3d9ee0f07afad` |
 | R16 | COMMITTED | /root/r16_model_switch | [Leader 独立验收](implementation-records/R16-leader-review.md)；205项、两路安装、真实切换/恢复及schema9→10通过 | `835b4887c21588f7e0165e1c7ff2477c3b4a1b6c` |
-| R17 | ACCEPTED | /root/r17_retrieval | [Leader 独立验收](implementation-records/R17-leader-review.md)；191项、两路安装、真实故障/无模型BM25与schema10→11通过，600条复核/200条RRF复算一致 | 待精确本地提交 |
-| R18 | TODO | — | — | — |
+| R17 | COMMITTED | /root/r17_retrieval | [Leader 独立验收](implementation-records/R17-leader-review.md)；191项、两路安装、真实故障/无模型BM25与schema10→11通过，600条复核/200条RRF复算一致 | `1fd01183f9ce914e022d923debc13553b0f71d27` |
+| R18 | ACCEPTED | /root/r18_rerank_context | [Leader 独立验收](implementation-records/R18-leader-review.md)；217项通过/1跳过，必要补测1通过；两路安装、真实GPU/Milvus及600条/10000输入复核通过；完整窗口限制由R19承接 | 待精确本地提交 |
 | R19 | TODO | — | — | — |
 | R20 | TODO | — | — | — |
 | R21 | TODO | — | — | — |
@@ -246,12 +246,12 @@ R12前置独立整合：旧RAG清理 COMMITTED，`5dbe979a330a6b157adfba7ad3ea82
 <a id="r18"></a>
 ### R18：Rerank 与 Context
 
-- [ ] 每个 Chunk 独立评分，重复候选按身份处理；精排前不拼邻块，批次结果与候选 ID 完整对齐。
-- [ ] query、模板、特殊 token 和正文全部按实际 reranker 检查；超限明确失败，不静默截断成另一个输入。
-- [ ] 任一评分批次失败整次报错；没有偷用未精排结果，关闭精排必须是有记录的允许调用。
-- [ ] 相关性优先，去重并保留必要的同文档/冲突证据；片段/token 双限、实际宿主窗口及多轮累计约束生效，不强凑来源数。
-- [ ] 送达、裁剪/压缩和移出窗口可追踪；不同 query 原分数不直接比较；评分候选与可引用正文分离。
-- [ ] 在同条件下报告开/关精排的质量、Context 与成本差异，不以接口成功代替排序有效性。
+- [x] 每个 Chunk 独立评分，重复候选按身份处理；精排前不拼邻块，批次结果与候选 ID 完整对齐。
+- [x] query、模板、特殊 token 和正文全部按实际 reranker 检查；超限明确失败，不静默截断成另一个输入。
+- [x] 任一评分批次失败整次报错；没有偷用未精排结果，关闭精排必须是有记录的允许调用。
+- [x] 相关性优先，去重并保留必要的同文档/冲突证据；片段/token 双限、实际宿主窗口及多轮累计约束生效，不强凑来源数。
+- [x] 送达、裁剪/压缩和移出窗口可追踪；不同 query 原分数不直接比较；评分候选与可引用正文分离。
+- [x] 在同条件下报告开/关精排的质量、Context 与成本差异，不以接口成功代替排序有效性。
 
 <a id="r19"></a>
 ### R19：模式、预算与错误

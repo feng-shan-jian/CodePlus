@@ -29,7 +29,7 @@ from agentic_rag.retrieval import RetrievalSearch
 from agentic_rag.storage import Catalog, publication
 
 
-def experiment_config(data_dir, endpoint, route='dense'):
+def experiment_config(data_dir, endpoint, route='dense', *, rerank=False):
     # Exact IVF traversal is an explicit development baseline, not an ANN optimum.
     return KnowledgeConfig.model_validate_json(json.dumps({
         'storage':{'data_dir':str(data_dir), 'milvus_uri':endpoint, 'namespace':'r10_acceptance'},
@@ -37,7 +37,7 @@ def experiment_config(data_dir, endpoint, route='dense'):
             'index':{'schema_version_name':LAYOUT, 'nlist':64, 'bm25_k1':1.2, 'bm25_b':0.75}},
         'models':{'embedding':'embed', 'reranker':'rank'},
         'model_profiles':[{'name':'embed','capability':'embedding'}, {'name':'rank','capability':'rerank'}],
-        'retrieval':{'mode':'fixed','route':route,'rerank':False,'dense_candidates':50,'bm25_candidates':50,
+        'retrieval':{'mode':'fixed','route':route,'rerank':rerank,'dense_candidates':50,'bm25_candidates':50,
             'rerank_candidates':50,'rrf_k':60,'nprobe':64,'context_chunks':8,'context_tokens':8000},
         'budgets':{'qa':{'searches':4,'opens':4,'total_tokens':16000,'duration_ms':180000,'finish_reserve_tokens':3000,'finish_reserve_ms':20000},
                    'report':{'searches':12,'opens':12,'total_tokens':48000,'duration_ms':600000,'finish_reserve_tokens':6000,'finish_reserve_ms':40000}}}))
@@ -76,6 +76,82 @@ def observed_version(name):
     except importlib.metadata.PackageNotFoundError:return None
 
 
+def completion_status(report):
+    if report.get('errors'):
+        return 'COMPLETE_WITH_REQUEST_ERRORS'
+    if report.get('context_errors'):
+        return 'COMPLETE_WITH_CONTEXT_ERRORS'
+    warm=report.get('warm_repeat',{})
+    if warm.get('status')=='error' or warm.get('context',{}).get('status')=='error':
+        return 'COMPLETE_WITH_AUXILIARY_ERROR'
+    return 'PASS'
+
+
+def query_context(catalog, kb_id, revision_id, config, provider, backend, meter, query):
+    """One real retrieval, plus production selection and exact unsent request.
+
+    This query-only measurement never runs an answer model or confirms delivery.
+    The empty request reserves the same fixed wrapper before source selection.
+    """
+    from agentic_rag.adapters.codeplus.policy import SYSTEM
+    from agentic_rag.domain import Span
+    from agentic_rag.evidence import DeliveryGateway, MappedSpan
+    from agentic_rag.sources import SourceSession
+    observed = {}
+    class RecordedSearch(RetrievalSearch):
+        def search(self, *args, **kwargs):
+            result = super().search(*args, **kwargs)
+            observed.update(result)
+            return result
+    started = time.perf_counter()
+    with catalog.start_run(kb_id, resolve_run(config,'qa')) as lease:
+        if str(lease.run.revision_id) != revision_id:
+            raise ValueError('context run publication differs')
+        search=RecordedSearch(catalog,lease.run.run_id,provider,backend)
+        session=SourceSession(catalog,lease,meter,dense=search)
+        gateway=DeliveryGateway(session)
+        call='measurement-search'
+        body={'model':meter.model,'messages':[{'role':'system','content':SYSTEM},
+            {'role':'user','content':query}, {'role':'assistant','content':None,
+             'tool_calls':[{'id':call,'type':'function','function':{'name':'knowledge_search','arguments':json.dumps({'query':query})}}]},
+            {'role':'tool','tool_call_id':call,'content':''}],
+            'max_tokens':1000,'stream':True,'stream_options':{'include_usage':True}}
+        raw=json.dumps(body,ensure_ascii=False,separators=(',',':')).encode()
+        initial=gateway.prepare(raw,(),purpose='finalize',protocol='compat')
+        gateway.retain_prepared_window(initial);gateway.settle(initial,'not_sent')
+        context={'status':'running','delivery':'not_sent','answer_model_executed':False,'meter_identity':meter.identity,
+                 'fixed_request_bytes':len(raw),'selected':[],'prepared':[]}
+        try:
+            result=session.search(query)
+            context.update(selected=result.payload['items'],selection=session.retrieval_trace(result.payload['call_id'])['context'],
+                tool_text=result.text,tool_upper=meter.count(result.text))
+            gateway.bind_tool_result(result,call)
+            body['messages'][-1]['content']=result.text
+            raw=json.dumps(body,ensure_ascii=False,separators=(',',':')).encode()
+            mappings=tuple(MappedSpan(m.candidate_id,m.source_span,('messages',3,'content'),m.body_span,
+                ('messages',3,'tool_call_id')) for m in result.body_mappings)
+            permit=gateway.prepare(raw,mappings,purpose='finalize',protocol='compat')
+            try:
+                context.update(delivery='prepared',request_body=body,request_sha256=hashlib.sha256(raw).hexdigest(),
+                    request_utf8_upper=meter.count(raw.decode()),host_input_upper=meter.input_upper_bound(raw,output_cap=1000))
+                gateway.retain_prepared_window(permit)
+                context.update(status='ok',prepared=result.payload['items'])
+            finally:
+                gateway.settle(permit,'not_sent')
+            with catalog._db.transaction() as db:
+                context['confirmed_evidence']=db.execute('SELECT count(*) FROM delivered_evidence WHERE run_id=?',
+                    (str(lease.run.run_id),)).fetchone()[0]
+        except Exception as exc:
+            context.update(status='error',error=error_record(exc))
+            if not observed:raise
+        context['elapsed_ms']=(time.perf_counter()-started)*1000
+        observed['hits']=observed['hits'][:10]
+        observed['context']=context
+        lease.finish(RunStatus.FAILED if context['status']=='error' else RunStatus.COMPLETED,
+            'explicit_error' if context['status']=='error' else 'finished')
+    return observed
+
+
 def run(args):
     denied=protect_runtime_reads()
     boundary=runpy.run_path(str(Path(__file__).with_name('runtime_inputs.py')))
@@ -83,7 +159,7 @@ def run(args):
     runtime=boundary['load_runtime_inputs'](question_ids=selected)
     root=Path(args.root).resolve(); root.mkdir(exist_ok=True,parents=True)
     data=root/'data'
-    config=experiment_config(data,args.endpoint,'dense' if args.action=='build' else args.action)
+    config=experiment_config(data,args.endpoint,'dense' if args.action=='build' else args.action,rerank=getattr(args,'rerank',False))
     catalog=backend=provider=None
     report={'action':args.action,'pid':os.getpid(),'python':sys.executable,'cwd':str(Path.cwd()),
         'argv':sys.argv,'runtime_input_sha256':boundary['INPUT_SHA256'],
@@ -91,15 +167,15 @@ def run(args):
         'dependencies':{n:observed_version(n) for n in ('codeplus-agentic-rag','pydantic','apsw','tokenizers','pymilvus')},
         'forbidden_runtime_reads':denied,'result':'RUNNING'}
     if args.action!='build':
-        report.update(dataset_sha256=args.dataset_hash,protocol={'top_k':10,'route':args.action,'rerank':False,
-            'product_context_chunks':8,'evaluation_uses_candidate_top_k':True},
+        report.update(dataset_sha256=args.dataset_hash,protocol={'top_k':10,'route':args.action,'rerank':config.retrieval.rerank,
+            'product_context_chunks':8,'evaluation_uses_candidate_top_k':True,'context_measurement':bool(getattr(args,'answer_tokenizer',None))},
             records=[{**q,'status':'error','hits':[],'elapsed_ms':0.0,
                 'error':{'phase':'not_started','type':'NotStarted','message':'request did not start'}} for q in runtime['questions']])
     started=time.perf_counter()
     try:
         catalog=Catalog(data)
         backend=MilvusRevisionIndex(config.storage,catalog)
-        if args.action!='bm25':
+        if args.action!='bm25' or config.retrieval.rerank:
             worker=WorkerExecutionConfig(executable=args.cuda_python, model_cache=args.model_cache,
                 runtime_dir=str(root/'worker'), idle_timeout_ms=1000)
             report['worker_config']=worker.model_dump(mode='json')
@@ -128,6 +204,10 @@ def run(args):
         else:
             state=json.loads((root/'state.json').read_text(encoding='utf-8'))
             kb_id=UUID(state['kb_id'])
+            meter=None
+            if getattr(args,'answer_tokenizer',None):
+                from agentic_rag.adapters.codeplus.meter import DeepSeekTextMeter
+                meter=DeepSeekTextMeter(args.answer_tokenizer,model='deepseek-chat',protocol='openai-compat',base_url='https://api.deepseek.com')
             with catalog.start_run(kb_id,resolve_run(config,'qa')) as lease:
                 if str(lease.run.revision_id)!=state['revision_id']:
                     raise ValueError('current revision differs from the frozen build state')
@@ -138,7 +218,8 @@ def run(args):
                 for number,q in enumerate(runtime['questions']):
                     begin=time.perf_counter()
                     try:
-                        result=search.search(q['query'],limit=10)
+                        result=(query_context(catalog,kb_id,state['revision_id'],config,provider,backend,meter,q['query'])
+                                if meter else search.search(q['query'],limit=10))
                         for h in result['hits']: h['source_id']=sources[h['source_name']]
                         record={**q,**result,'status':'ok'}
                     except Exception as exc:
@@ -148,18 +229,19 @@ def run(args):
                     if number%25==0: print(json.dumps({'query':number+1,'total':len(runtime['questions']),'status':record['status']}),flush=True)
                 first=runtime['questions'][0]
                 try:
-                    report['warm_repeat']=search.search(first['query'],limit=10)
+                    report['warm_repeat']=(query_context(catalog,kb_id,state['revision_id'],config,provider,backend,meter,first['query'])
+                                           if meter else search.search(first['query'],limit=10))
                 except Exception as exc:
                     report['warm_repeat']={'status':'error','error':error_record(exc)}
                 report['errors']=sum(r['status']=='error' for r in report['records'])
+                report['context_errors']=sum(r.get('context',{}).get('status')=='error' for r in report['records'])
                 lease.finish(RunStatus.FAILED if report['errors'] else RunStatus.COMPLETED,'explicit_error' if report['errors'] else 'finished')
         if provider is not None:
             report['worker_status']=provider.status()
             report['worker_identity']={k:v for k,v in provider.metadata.items() if k not in ('auth_token','token')}
         else:
             report['worker_status']={'used':False,'reason':'bm25_has_no_query_embedding'}
-        report['result']=('COMPLETE_WITH_REQUEST_ERRORS' if report.get('errors') else
-                          'COMPLETE_WITH_AUXILIARY_ERROR' if report.get('warm_repeat',{}).get('status')=='error' else 'PASS')
+        report['result']=completion_status(report)
     except BaseException as exc:
         failure=error_record(exc)
         report.update(result='FAIL',error=failure)
@@ -188,4 +270,6 @@ if __name__=='__main__':
     for name in ('root','endpoint','report'):parser.add_argument('--'+name,required=True)
     for name in ('cuda-python','model-cache'):parser.add_argument('--'+name)
     parser.add_argument('--ids');parser.add_argument('--dataset-hash')
+    parser.add_argument('--rerank',action='store_true',help='enable the frozen reranker; all other retrieval settings stay fixed')
+    parser.add_argument('--answer-tokenizer',help='measure selected/prepared unsent Context using the pinned host upper-bound meter')
     sys.exit(0 if run(parser.parse_args())['result']=='PASS' else 1)
