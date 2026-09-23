@@ -3,6 +3,8 @@
 from contextlib import contextmanager
 import json
 from pathlib import Path
+import threading
+import weakref
 from uuid import UUID, uuid4
 
 from ..config import KnowledgeConfig, ProcessingSnapshot
@@ -20,6 +22,80 @@ class Catalog:
         self._directory = DataDirectory(data_dir)
         self._db = Database(self._directory, busy_timeout_ms=busy_timeout_ms)
         self.archives = ArchiveStore(self._directory)
+        self._db._catalog = weakref.ref(self)
+        self._db._run_leases = {}
+        self._readers = {}
+        self._index_backends = weakref.WeakSet()
+        self._retiring_backends = {}
+        self._maintenance_lock = threading.Lock()
+        self._maintenance_guard = threading.Lock()
+        self._maintenance_wake = threading.Event()
+        self._maintenance_thread = None
+        # Metadata/death reconciliation works in a core-only installation.
+        # A service adapter drains physical work when it becomes available.
+        self._maintain_indexes()
+
+    def maintain_indexes(self, *, limit=2, backend=None, batch_id=None, observer=None, retry_failed=True):
+        """Bounded explicit retry, also invoked automatically at lifecycle edges."""
+        from .gc import maintain
+        return maintain(self, limit=limit, backend=backend, batch_id=batch_id, observer=observer, retry_failed=retry_failed)
+
+    def _maintain_indexes(self):
+        # Maintenance cannot turn an already committed publication/run result
+        # into a business failure. Its per-artifact failures remain durable.
+        try:
+            if not self._index_backends:
+                return self.maintain_indexes(retry_failed=False)
+            self._maintenance_wake.set()
+            with self._maintenance_guard:
+                if self._maintenance_thread is None:
+                    self._maintenance_thread = threading.Thread(target=self._maintenance_loop,
+                        name='rag-index-maintenance', daemon=True)
+                    self._maintenance_thread.start()
+            return []
+        except Exception:
+            return []
+
+    def _maintenance_loop(self):
+        # At most two physical attempts per pass, rotating metadata windows and
+        # a two-second idle/retry interval. Backlog continues without more user IO.
+        try:
+            while self._index_backends:
+                self._maintenance_wake.clear()
+                try:
+                    self.maintain_indexes(retry_failed=False)
+                    from .gc import retire_pass
+                    with self._maintenance_guard:
+                        retiring = tuple(self._retiring_backends.items())
+                    for backend, position in retiring:
+                        after, done = retire_pass(self, backend, *position)
+                        with self._maintenance_guard:
+                            if done:
+                                self._retiring_backends.pop(backend, None)
+                            else:
+                                self._retiring_backends[backend] = (after, position[1])
+                        if done:
+                            backend._close_transport()
+                except Exception:
+                    pass  # Individual physical failures are durably recorded.
+                self._maintenance_wake.wait(2)
+        finally:
+            with self._maintenance_guard:
+                self._maintenance_thread = None
+            # Registration can race the previous worker's empty-set exit.
+            # Recheck after publishing the vacancy; the guard deduplicates a
+            # concurrently starting replacement.
+            if self._index_backends:
+                self._maintain_indexes()
+
+    def _retire_backend(self, backend):
+        # Bound the retirement to objects existing at this close edge; another
+        # publisher cannot extend the transport's lifetime indefinitely.
+        with self._db.transaction() as db:
+            cutoff = db.execute('SELECT COALESCE(max(rowid),0) FROM index_artifacts').fetchone()[0]
+        with self._maintenance_guard:
+            self._retiring_backends.setdefault(backend, (0, cutoff))
+        self._maintain_indexes()
 
     @property
     def store_id(self) -> UUID:

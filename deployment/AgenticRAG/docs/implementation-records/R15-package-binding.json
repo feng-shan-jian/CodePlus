@@ -1,0 +1,32 @@
+{
+  "final_wheel": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\dist-final\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+    "sha256": "8f60afb2f20d12084ab04d8a4aa935db47b356049d181d70d9ca9f3745d94168"
+  },
+  "real_validated_v2_wheel": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\dist-v2\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+    "sha256": "4f57793284ff7b5e1a88ef94acd2179abacee382318dc34d843c90dbe65db969"
+  },
+  "wheel_entry_changes": [
+    "agentic_rag/storage/recovery.py",
+    "codeplus_agentic_rag-0.1.0.dist-info/RECORD"
+  ],
+  "changed_production_functions": [
+    [
+      "agentic_rag/storage/recovery.py",
+      "cleanup_candidates"
+    ]
+  ],
+  "source_changes": [
+    "deployment\\AgenticRAG\\src\\agentic_rag\\storage\\recovery.py"
+  ],
+  "v2_built_before_external_document_commit": true,
+  "final_packaging_inputs": {
+    "deployment\\AgenticRAG\\README.md": "01561fb65d7be4d3844c65b03b04a3f57c50b90150e699d091f4f5d0f2acce6c",
+    "deployment\\AgenticRAG\\pyproject.toml": "6e7be1e279371a910521fb55cc02d2828aadeb67008797a4e64595fa59e02f3c",
+    "deployment\\AgenticRAG\\LICENSE": "8ad8a4c1341585ab6e2db44dc254b5c17603933647a55e21ebe899fbabc9323e",
+    "deployment\\AgenticRAG\\uv.lock": "1ceed1c7681cd727440d4fafd907dd9db2ed69c568729d2a6f3a94c2c692418a"
+  },
+  "evidence_reuse": "Real GPU/Milvus/claim/run/migration paths unchanged; final recovery returned pending_io compatibility field and its formal regressions revalidated. Current README metadata rebuilt and both install routes executed.",
+  "limits": "This is code-path identity plus affected retest coverage, not a claim that the entire real suite was rerun on the final wheel."
+}

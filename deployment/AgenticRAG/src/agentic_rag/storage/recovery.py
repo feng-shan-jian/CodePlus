@@ -80,6 +80,8 @@ def abandon_owned(owner):
                        (str(owner.token.kb_id),str(owner.token.batch_id)))
             db.execute('DELETE FROM revision_dependencies WHERE batch_id=?',(str(owner.token.batch_id),))
     owner._lock.close()
+    from .runs import maintain
+    maintain(owner._database)
     return result
 
 
@@ -132,51 +134,38 @@ def unresolved_io(catalog, batch_id):
 
 
 def cleanup_candidates(catalog, batch_id, backend):
-    """Explicit retry for abandoned candidates only; general history GC is R15."""
+    """Bounded explicit abandoned-candidate retry through the shared GC owner."""
+    from .gc import collect
     from .ownership import lock_for
     from .publication import artifact
+    from ..indexes.milvus import MilvusRevisionIndex
     batch = catalog.get_batch(batch_id)
     results = []
-    with lock_for(catalog._db,batch.kb_id):
-        result = terminal(catalog,batch_id)
+    with catalog._maintenance_lock, lock_for(catalog._db, batch.kb_id):
+        result = terminal(catalog, batch_id)
         if result is None or result['state'] != 'ABANDONED':
-            return []  # Published/no-change replay cannot delete old history.
+            return []
         snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
-        from ..indexes.milvus import MilvusRevisionIndex
         if type(backend) is not MilvusRevisionIndex or backend.catalog is not catalog or backend.storage != snapshot.resolved_config.storage:
             raise failure('candidate cleanup backend differs from frozen catalog/endpoint')
         with catalog._db.transaction() as db:
-            ids = [UUID(r[0]) for r in db.execute('SELECT revision_id FROM index_artifacts WHERE batch_id=? ORDER BY owner_epoch',(str(batch_id),))]
-        pending = unresolved_io(catalog,batch_id)
+            ids = [UUID(r[0]) for r in db.execute('SELECT a.revision_id FROM index_artifacts a WHERE a.batch_id=? '
+                "ORDER BY a.state='RECLAIMED',COALESCE((SELECT max(c.attempted_at) FROM candidate_cleanup_attempts c "
+                "WHERE c.artifact_id=a.artifact_id),''),a.owner_epoch LIMIT 32", (str(batch_id),))]
+        pending = unresolved_io(catalog, batch_id)
         for revision_id in ids:
-            stored = artifact(catalog,revision_id)
-            value = {'artifact_id':stored['artifact_id'],'revision_id':str(revision_id),'collection_name':stored['collection_name']}
-            affected = [io for io in pending if io['artifact_id'] in (None,stored['artifact_id'])]
-            try:
-                with catalog._db.transaction(write=True) as db:
-                    dependent = db.execute('SELECT 1 FROM revision_dependencies WHERE revision_id=? UNION ALL '
-                        "SELECT 1 FROM run_pins WHERE revision_id=? AND state='active' UNION ALL "
-                        'SELECT 1 FROM libraries WHERE current_revision_id=? UNION ALL SELECT 1 FROM publications WHERE revision_id=?',
-                        (str(revision_id),)*4).fetchone()
-                    if dependent or affected:
-                        value.update(state='retained',reason='active or uncertain dependency',pending_io=affected)
-                    elif stored['state'] == 'RECLAIMED':
-                        value.update(state='reclaimed',reason='prior successful cleanup')
-                    elif not backend.has_ownership(stored):
-                        value.update(state='retained',reason='no reliable persisted physical ownership')
-                    else:
-                        db.execute("UPDATE index_artifacts SET state='RECLAIMING' WHERE artifact_id=?",(stored['artifact_id'],))
-                        db.execute("UPDATE revisions SET index_state='RECLAIMING' WHERE revision_id=?",(str(revision_id),))
-                if 'state' not in value:
-                    backend.drop_owned(stored)
-                    with catalog._db.transaction(write=True) as db:
-                        db.execute("UPDATE index_artifacts SET state='RECLAIMED' WHERE artifact_id=?",(stored['artifact_id'],))
-                        db.execute("UPDATE revisions SET index_state='RECLAIMED' WHERE revision_id=?",(str(revision_id),))
-                    value.update(state='reclaimed',reason='matching physical ownership; drop acknowledged')
-            except Exception as exc:
-                value.update(state='retained',reason=f'{type(exc).__name__}: {exc}')
+            stored = artifact(catalog, revision_id)
+            if stored['state'] == 'RECLAIMED':
+                value = {k: stored[k] for k in ('artifact_id', 'revision_id', 'collection_name')}
+                value.update(state='reclaimed', reason='prior successful cleanup')
+            else:
+                value = collect(catalog, backend, stored)
+            if value['state'] == 'retained':
+                # Preserve the R14 recovery result's concrete IO facts while
+                # the shared collector remains authoritative for eligibility.
+                value['pending_io'] = [io for io in pending if io['artifact_id'] in (None, stored['artifact_id'])]
             with catalog._db.transaction(write=True) as db:
                 db.execute('INSERT INTO candidate_cleanup_attempts VALUES(?,?,?,?)',
-                           (str(uuid4()),stored['artifact_id'],canonical_json(value),now()))
+                           (str(uuid4()), stored['artifact_id'], canonical_json(value), now()))
             results.append(value)
     return results

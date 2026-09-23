@@ -1,0 +1,190 @@
+{
+  "agentic_rag": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\agentic_rag\\__init__.py",
+    "sha256": "9cf325be264c02568ef08d12eb594eccda599d67b66ba6d8d77b3b4186b302c7"
+  },
+  "codeplus": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "codeplus.run_policy": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\run_policy.py",
+    "sha256": "745fe9d5f5e315c1e5dc7136be3eaca8b83f1790971d38cdfc67935df90be57e"
+  },
+  "codeplus.validator": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\validator.py",
+    "sha256": "cd134c81adc37147797d57aa568a85478c4906ba7e30cb2393742dfc48af73d9"
+  },
+  "codeplus.config": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\config.py",
+    "sha256": "877fb1f399eafdc435e2f673b29ecf3d7d2aa6d4063456a99b44b4f019826760"
+  },
+  "codeplus.conversation": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\conversation.py",
+    "sha256": "0894aac14b1f8ffd0120da948cc46ab72464e8338610c1b8e5cead5b19d3e08a"
+  },
+  "codeplus.mcp.client": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\client.py",
+    "sha256": "552661019d082a5d3b9ee0948ed93172bd638e7b0f7835866e8997d576010f4e"
+  },
+  "codeplus.tools.base": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\tools\\base.py",
+    "sha256": "7969d2845d147bfc0f7c108590f70584925ff403dd41674ecf3758c4b709f37e"
+  },
+  "codeplus.tools": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\tools\\__init__.py",
+    "sha256": "d4e1916a195dab084edf238b5ab8b8db8d7640522f36c5e00a2e66376cee037c"
+  },
+  "codeplus.mcp.tool_wrapper": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\tool_wrapper.py",
+    "sha256": "c00e85668f59b5a6dde17a131387b05244a1b7b1b9bab7f76cd6715c47eef9fb"
+  },
+  "codeplus.mcp.manager": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\manager.py",
+    "sha256": "58998e8740176df7022357d041bbf543c3c00a55fad78f4b9055c88f4f29d677"
+  },
+  "codeplus.mcp": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\__init__.py",
+    "sha256": "77b30f2b0f80acc5ef660f95621126d312c06981d0c7eaddb9997f595e383c7f"
+  },
+  "codeplus.mcp.loading_strategy": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\mcp\\loading_strategy.py",
+    "sha256": "090513fd03a6254b04aa8d568fa2e04d0013cc0d444e6a0a525b287be186689d"
+  },
+  "codeplus.conversation_pairing": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\conversation_pairing.py",
+    "sha256": "f41e85350f68599e284052db70bfe9a977c84dc430a6c89bc59e317ab02f7b2a"
+  },
+  "codeplus.serialization": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\serialization.py",
+    "sha256": "b72bf2792125bb3504623577196fb456d0870b2b02a7d06919cc69c2437528bc"
+  },
+  "codeplus.client": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\client.py",
+    "sha256": "3d6b064fe67078932868901259fb14b2e7c4e819c2e0b679208c692294dc999a"
+  },
+  "codeplus.context.manager": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\context\\manager.py",
+    "sha256": "50f371e741de987e86b8ee43c4ed91d5de4e30190effe78ad228248294251999"
+  },
+  "codeplus.context": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\context\\__init__.py",
+    "sha256": "a7a5cd9ea3ecf9362d4b3c5a1f458668c211647e6b35572ca90a36683df4c370"
+  },
+  "codeplus.memory.auto_memory": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\auto_memory.py",
+    "sha256": "1ab1cd882cd3d57d06d47114eef2e0d233dbfc2fa87ff5fe6377c1fa5d3eff87"
+  },
+  "codeplus.memory.instructions": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\instructions.py",
+    "sha256": "288ca8176aa8af625a691f58e2fe39d7563088448eb679017f8301e9966955aa"
+  },
+  "codeplus.memory.recall": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\recall.py",
+    "sha256": "e846ff86bfc85931e1ca0878a7f165526eb2587185bb80faa7285c4409cdf177"
+  },
+  "codeplus.memory.session": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\session.py",
+    "sha256": "cecbd856899349d4097c71a5ba5640dc01cb990dfae22f4fa153a1419df2404b"
+  },
+  "codeplus.memory": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\memory\\__init__.py",
+    "sha256": "38d2f2ba68be9c2688f75c755f0affee31bc7873e515588f2bc8d3a98adef0c8"
+  },
+  "codeplus.permissions.dangerous": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\dangerous.py",
+    "sha256": "005caed24b1e72cfbac9197c060714a27de91d46526dc541aa77aead3ca7882a"
+  },
+  "codeplus.permissions.modes": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\modes.py",
+    "sha256": "c786f1b4cf0b6b972e8af21fb461c2754197ac799f48547c0d024fe83d4b59f7"
+  },
+  "codeplus.permissions.rules": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\rules.py",
+    "sha256": "338b76c1db9c6a423a7bb01274a4c1670998c40b1cc3cd48353e88acd538c086"
+  },
+  "codeplus.permissions.sandbox": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\sandbox.py",
+    "sha256": "adbca02a7b233c9038c2fd254a5dc18c469fc6468353d831257fa52c4559035e"
+  },
+  "codeplus.permissions.checker": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\checker.py",
+    "sha256": "43efbd82c203c9ab503ed7a7013db78be52cf388e05be8764e3153a022aabe1c"
+  },
+  "codeplus.permissions": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\permissions\\__init__.py",
+    "sha256": "1d55b53c7f17157d7625180c73a6d6f1f11455100032511b5230b21903429638"
+  },
+  "codeplus.hooks.conditions": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\conditions.py",
+    "sha256": "bc6be9db20cd4a6c3db0508b6169603f8c304346da155fc63e019115aa89801a"
+  },
+  "codeplus.hooks.models": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\models.py",
+    "sha256": "ad953da646e2ea5b2440594513ce62dfa12cf48f22242d1a9825af64a6252320"
+  },
+  "codeplus.hooks.executors": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\executors.py",
+    "sha256": "a55281b42b3eb8ff32a9d6aa637e65d1de394d397413d087510adb4a78948933"
+  },
+  "codeplus.hooks.engine": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\engine.py",
+    "sha256": "a9cde32a416a7081824bcb880ca9e3c6fe36d9e6fa7be327ba5cf9e764584859"
+  },
+  "codeplus.hooks.events": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\events.py",
+    "sha256": "dd64ca8c45343d91ac7a0b34721b70473f7e5210f3aecd29846c77926c73ffba"
+  },
+  "codeplus.hooks.loader": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\loader.py",
+    "sha256": "76222f1a66fcd03d20af4d4405b0be5dc3a0ca778b76a22b3e3c09734a573279"
+  },
+  "codeplus.hooks": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\hooks\\__init__.py",
+    "sha256": "ff564b8a31b7933c3bedcbce4125b80fa8753e1719d610fe01bb2a27bb65d4e6"
+  },
+  "codeplus.prompts": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\prompts.py",
+    "sha256": "822ebb78b0a9eb936988c6f15d01a9e094e0ea61ee8b12fd65f339ab628195b6"
+  },
+  "codeplus.agent": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\agent.py",
+    "sha256": "1b5188119ae64d8cdb24ab844dc4fda8f7aefba43fe6d1ae5d79fa71a2608882"
+  },
+  "codeplus.agents.parser": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\agents\\parser.py",
+    "sha256": "9f76f35731748a3fecafb7f1d4e30416544947e52e496a26284ad3f8f8c6e57a"
+  },
+  "codeplus.agents.loader": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\agents\\loader.py",
+    "sha256": "7de26228741b2b07bcffbdf01e9ddbaf06a482c008aefa022eccba06e2f6fa15"
+  },
+  "codeplus.agents.tool_filter": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\agents\\tool_filter.py",
+    "sha256": "ea415adefc1d5669a792fba0e47321876018608cd59bb05663ccb1bffaa4d3bb"
+  },
+  "codeplus.agents.fork": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\agents\\fork.py",
+    "sha256": "f8d93c829cb7b5149466e2de4c7fbd1186883741d1d4b66830aa265a4eec9e6d"
+  },
+  "codeplus.agents.trace": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\agents\\trace.py",
+    "sha256": "37910ea12bc36935a61a95199d46b0192d94b8eb90b377790e7cd5208f160db8"
+  },
+  "codeplus.agents.task_manager": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\agents\\task_manager.py",
+    "sha256": "562879524f503e7be10f9e8edc4cea791f2ee6bd44101e136434e728354c197a"
+  },
+  "codeplus.agents.notification": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\agents\\notification.py",
+    "sha256": "8116146e86fe94df164cbba94b3eff4a3d492141a69433542225980ccefb7545"
+  },
+  "codeplus.agents": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\agents\\__init__.py",
+    "sha256": "f8bb66e7101bd335f9af073193622500e0c43304282bc043d4204022669923f6"
+  },
+  "codeplus.tools.agent_tool": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\codeplus\\tools\\agent_tool.py",
+    "sha256": "6a549cf9bdf05422ab86955fd0f71604beb194e44465491e3be13a4df6e30fc6"
+  }
+}

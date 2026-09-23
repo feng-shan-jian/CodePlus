@@ -1,0 +1,47 @@
+
+=================================== ERRORS ====================================
+_____________ ERROR collecting tests/test_codeplus_integration.py _____________
+ImportError while importing test module 'D:\CodePlus\deployment\AgenticRAG\tests\test_codeplus_integration.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+deployment\AgenticRAG\tests\test_codeplus_integration.py:15: in <module>
+    from codeplus.agent import Agent, StreamText, ThinkingText, LoopComplete
+C:\Users\18221\AppData\Local\Temp\codeplus-r15-executor-20260923\core\Lib\site-packages\codeplus\agent.py:16: in <module>
+    from codeplus.client import LLMClient
+C:\Users\18221\AppData\Local\Temp\codeplus-r15-executor-20260923\core\Lib\site-packages\codeplus\client.py:12: in <module>
+    from anthropic import AsyncAnthropic
+E   ModuleNotFoundError: No module named 'anthropic'
+________________ ERROR collecting tests/test_host_contract.py _________________
+ImportError while importing test module 'D:\CodePlus\deployment\AgenticRAG\tests\test_host_contract.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+deployment\AgenticRAG\tests\test_host_contract.py:15: in <module>
+    from anthropic import AsyncAnthropic
+E   ModuleNotFoundError: No module named 'anthropic'
+_______________ ERROR collecting tests/test_request_delivery.py _______________
+ImportError while importing test module 'D:\CodePlus\deployment\AgenticRAG\tests\test_request_delivery.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+deployment\AgenticRAG\tests\test_request_delivery.py:12: in <module>
+    from codeplus.client import create_client, scoped_client
+C:\Users\18221\AppData\Local\Temp\codeplus-r15-executor-20260923\core\Lib\site-packages\codeplus\client.py:12: in <module>
+    from anthropic import AsyncAnthropic
+E   ModuleNotFoundError: No module named 'anthropic'
+__________________ ERROR collecting tests/test_run_budget.py __________________
+ImportError while importing test module 'D:\CodePlus\deployment\AgenticRAG\tests\test_run_budget.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+deployment\AgenticRAG\tests\test_run_budget.py:13: in <module>
+    from codeplus.agent import Agent
+C:\Users\18221\AppData\Local\Temp\codeplus-r15-executor-20260923\core\Lib\site-packages\codeplus\agent.py:16: in <module>
+    from codeplus.client import LLMClient
+C:\Users\18221\AppData\Local\Temp\codeplus-r15-executor-20260923\core\Lib\site-packages\codeplus\client.py:12: in <module>
+    from anthropic import AsyncAnthropic
+E   ModuleNotFoundError: No module named 'anthropic'
+=========================== short test summary info ===========================
+ERROR deployment\AgenticRAG\tests\test_codeplus_integration.py
+ERROR deployment\AgenticRAG\tests\test_host_contract.py
+ERROR deployment\AgenticRAG\tests\test_request_delivery.py
+ERROR deployment\AgenticRAG\tests\test_run_budget.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!
+4 errors in 4.06s

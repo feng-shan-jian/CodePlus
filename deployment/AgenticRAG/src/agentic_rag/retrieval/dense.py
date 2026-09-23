@@ -11,6 +11,7 @@ from ..config import document_encoding_identity
 from ..domain import RunStatus
 from ..indexes.manifest import index_error, SCALAR_FIELDS
 from ..storage import publication
+from ..storage import readers
 
 
 class DenseSearch:
@@ -29,6 +30,10 @@ class DenseSearch:
     def search(self, query, *, limit=10, deadline_monotonic_ns=None):
         if not isinstance(query, str) or not query.strip() or type(limit) is not int or not 1 <= limit <= 16384:
             raise ValueError('nonempty query and positive bounded candidate limit required')
+        with readers.operation(self.catalog, self.artifact, self.run_id):
+            return self._search(query, limit=limit, deadline_monotonic_ns=deadline_monotonic_ns)
+
+    def _search(self, query, *, limit, deadline_monotonic_ns):
         run, pin = self.catalog.get_run(self.run_id), self.catalog.get_pin(self.run_id)
         if ((run.run_id,run.kb_id,run.revision_id,run.resolved_config_hash) !=
                 (self.run.run_id,self.run.kb_id,self.run.revision_id,self.run.resolved_config_hash) or
@@ -38,7 +43,8 @@ class DenseSearch:
         item = ModelInput(item_id=uuid4(), text=query)
         context = RequestContext(request_id=uuid4(), owner_id=self.provider.owner_id, purpose=run.resolved_config.task_kind,
             deadline_monotonic_ns=deadline_monotonic_ns or time.monotonic_ns()+120_000_000_000)
-        response = self.provider.embed_query(item, self.snapshot.resolved_config.embedding, context)
+        response = readers.query(self.catalog, self.artifact, self.run_id, self.provider,
+                                 item, self.snapshot.resolved_config.embedding, context)
         validate_response(response, (item,), self.snapshot.resolved_config.embedding, context)
         hits = self.backend.search(self.artifact, response.results[0].vector, limit=limit,
                                    nprobe=run.resolved_config.knowledge.retrieval.nprobe)

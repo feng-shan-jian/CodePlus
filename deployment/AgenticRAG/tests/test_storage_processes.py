@@ -165,7 +165,8 @@ def test_real_run_death_and_nonce_checked_cleanup(tmp_path):
     reopened = Catalog(catalog._directory.root)
     with pytest.raises(RagError, match="nonce"):
         reopened.release_crashed_run(run_id, uuid4())
-    assert reopened.get_pin(run_id).state == "active"
+    # R15 startup now performs this exact death/nonce/lock proof automatically.
+    assert reopened.get_pin(run_id).state == "released"
     reopened.release_crashed_run(run_id, nonce)
     assert reopened.get_pin(run_id).state == "released"
     assert reopened.get_run(run_id).status == RunStatus.FAILED

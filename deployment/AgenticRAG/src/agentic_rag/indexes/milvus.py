@@ -3,9 +3,10 @@
 import importlib.metadata
 import json
 import math
+import threading
 import time
 from contextlib import contextmanager
-from functools import partial
+from functools import partial, wraps
 from uuid import UUID
 
 from .manifest import (UUID_FIELDS, HASH_FIELDS, SCALAR_FIELDS, TEXT_MAX_BYTES, LAYOUT,
@@ -13,6 +14,7 @@ from .manifest import (UUID_FIELDS, HASH_FIELDS, SCALAR_FIELDS, TEXT_MAX_BYTES, 
 from .._schema import fingerprint
 from ..storage.locks import ProcessLock
 from ..storage import recovery as recovery_store
+from ..storage.readers import Reader, sdk_read
 from ..storage.paths import failure
 
 
@@ -23,6 +25,22 @@ def publication_validator(catalog, storage, backend):
         raise failure('validation requires the explicitly bound production Milvus adapter')
     # Dispatch the one production algorithm, never a caller/subclass pass flag.
     return partial(MilvusRevisionIndex.validate, backend)
+
+
+def _tracked_read(method):
+    @wraps(method)
+    def invoke(self, artifact, *args, **kwargs):
+        # This covers direct adapter callers as well as run-bound DenseSearch,
+        # validation and base-vector reuse. Admission precedes every SDK read.
+        with self._admission_guard:
+            if self._closing:
+                raise index_error('index adapter is closing; new readers are not admitted')
+            reader = Reader(self.catalog, artifact, 'operation')
+        try:
+            return method(self, artifact, *args, **kwargs)
+        finally:
+            reader.finish()
+    return invoke
 
 
 class MilvusRevisionIndex:
@@ -37,15 +55,40 @@ class MilvusRevisionIndex:
             raise ValueError('Milvus timeout must be 0..300 seconds')
         self.storage, self.store_id, self.timeout = storage, catalog.store_id, timeout
         self.catalog = catalog
+        self._closing = False
+        self._closed = threading.Event()
+        self._admission_guard = threading.Lock()
         self.database_name = 'default'  # Existing StorageConfig always used this database.
         self.client = MilvusClient(uri=storage.milvus_uri, token=token or '', db_name=self.database_name, timeout=timeout)
         self.server_version = self.client.get_server_version(timeout=timeout)
         if self.server_version.lstrip('v') != '3.0.1':
             self.client.close()
             raise index_error('unsupported Milvus server version: ' + self.server_version, 'dependencies')
+        catalog._index_backends.add(self)
+        catalog._maintain_indexes()
 
     def close(self):
-        self.client.close()
+        with self._admission_guard:
+            if self._closing:
+                return
+            self._closing = True
+        try:
+            self.catalog._retire_backend(self)
+        except Exception:
+            self._close_transport()
+
+    def wait_closed(self, timeout=None):
+        return self._closed.wait(timeout)
+
+    def _close_transport(self):
+        # Serialize against the actual collector, then make closure observable.
+        with self.catalog._maintenance_lock:
+            self.catalog._index_backends.discard(self)
+            try:
+                self.client.close()
+            finally:
+                self._closed.set()
+        self.catalog._maintenance_wake.set()
 
     def _name(self, artifact):
         expected = collection_name(self.storage.namespace, self.store_id, UUID(artifact['kb_id']),
@@ -57,6 +100,8 @@ class MilvusRevisionIndex:
         return expected
 
     def _writable(self, artifact, owner):
+        if self._closing:
+            raise index_error('index adapter is closing; new writes are not admitted')
         from ..storage.publication import owned_artifact
         stored = owned_artifact(self.catalog, owner, UUID(artifact['revision_id']))
         if any(stored[k] != artifact[k] for k in ('artifact_id','collection_name','schema_hash','spec','kb_id','batch_id','owner_epoch')) or stored['state'] != 'PREPARING':
@@ -79,13 +124,18 @@ class MilvusRevisionIndex:
         row = self._ownership(artifact)
         return row is not None and row[3] is not None
 
-    def _verify_physical(self, artifact, *, required=True):
+    def _read_call(self, artifact, method, *args, **kwargs):
+        with sdk_read(self.catalog, artifact, method.__name__):
+            return method(*args, **kwargs)
+
+    def _verify_physical(self, artifact, *, required=True, reading=False):
         row = self._ownership(artifact)
         if row is None or row[3] is None:
             if required:
                 raise index_error('no persisted create/describe physical ownership; preserve uncertain collection')
             return None  # Genuine old published indexes remain readable.
-        observed = self.client.describe_collection(self._name(artifact),timeout=self.timeout)
+        observed = (self._read_call(artifact, self.client.describe_collection, self._name(artifact), timeout=self.timeout)
+                    if reading else self.client.describe_collection(self._name(artifact),timeout=self.timeout))
         actual = tuple(str(observed.get(k,'')) for k in ('collection_id','created_timestamp','description'))
         if actual != row[3:] or row[5] != row[2]:
             raise index_error('physical collection ID/timestamp/description changed; preserve replacement')
@@ -103,36 +153,28 @@ class MilvusRevisionIndex:
             yield name
             recovery_store.observe_io(self.catalog,identity,finished=True)
 
-    def drop_owned(self, artifact):
-        """Only abandoned candidate cleanup calls this while holding library lock.
+    def drop_owned(self, artifact, *, _claim=None):
+        """Drop only an idle artifact claimed by the durable GC coordinator.
 
         PyMilvus drop has no expected collection-ID condition. We never reuse a
         name and serialize our own lifecycle. An external administrator replacing
         it between describe/drop (or SDK retry) remains an explicit limitation.
         """
-        with self._lifecycle(artifact):
-            from ..storage.publication import artifact as stored_artifact
-            stored = stored_artifact(self.catalog,UUID(artifact['revision_id']))
-            if any(stored[k]!=artifact[k] for k in ('artifact_id','kb_id','revision_id','batch_id','collection_name','schema_hash','owner_epoch','spec')):
-                raise index_error('drop target differs from the registered immutable identity')
-            with self.catalog._db.transaction() as db:
-                claim = db.execute('SELECT a.state,r.index_state,b.state FROM index_artifacts a '
-                    'JOIN revisions r ON r.revision_id=a.revision_id JOIN mutation_batches b ON b.batch_id=a.batch_id '
-                    'WHERE a.artifact_id=?',(artifact['artifact_id'],)).fetchone()
-                dependency = db.execute('SELECT 1 FROM publications WHERE revision_id=? UNION ALL '
-                    'SELECT 1 FROM libraries WHERE current_revision_id=? UNION ALL '
-                    'SELECT 1 FROM revision_dependencies WHERE revision_id=? UNION ALL '
-                    "SELECT 1 FROM run_pins WHERE revision_id=? AND state='active'",(artifact['revision_id'],)*4).fetchone()
-            pending = [io for io in recovery_store.unresolved_io(self.catalog,UUID(artifact['batch_id']))
-                       if io['artifact_id'] in (None,artifact['artifact_id'])]
-            if claim != ('RECLAIMING','RECLAIMING','ABANDONED') or dependency or pending:
-                raise index_error('physical drop requires an abandoned, claimed candidate without dependencies')
-            if not self.has_ownership(artifact):
-                raise index_error('cannot delete collection without physical ownership proof')
-            if not self.client.has_collection(self._name(artifact),timeout=self.timeout):
-                return
-            self._verify_physical(artifact)
-            self.client.drop_collection(self._name(artifact),timeout=self.timeout)
+        from ..storage.gc import _Claim
+        from ..storage.publication import artifact as stored_artifact
+        if type(_claim) is not _Claim or _claim.catalog is not self.catalog:
+            raise index_error('physical drop requires the actual durable GC owner')
+        stored = stored_artifact(self.catalog,UUID(artifact['revision_id']))
+        if any(stored[k]!=artifact[k] for k in ('artifact_id','kb_id','revision_id','batch_id','collection_name','schema_hash','owner_epoch','spec')):
+            raise index_error('drop target differs from the registered immutable identity')
+        with self.catalog._db.transaction() as db:
+            _claim.require(db, artifact)
+        if not self.has_ownership(artifact):
+            raise index_error('cannot delete collection without physical ownership proof')
+        if not self.client.has_collection(self._name(artifact),timeout=self.timeout):
+            return
+        self._verify_physical(artifact)
+        self.client.drop_collection(self._name(artifact),timeout=self.timeout)
 
     def create(self, artifact, owner):
         from pymilvus import DataType, Function, FunctionType
@@ -222,15 +264,17 @@ class MilvusRevisionIndex:
         timings['load_sealed_reload_seconds'] = time.perf_counter() - start
         return timings
 
-    def _indexes(self, name):
-        return {index: self.client.describe_index(name, index, timeout=self.timeout)
+    def _indexes(self, name, artifact=None):
+        call = self.client.describe_index if artifact is None else partial(self._read_call, artifact, self.client.describe_index)
+        return {index: call(name, index, timeout=self.timeout)
                 for index in ('dense_cosine', 'sparse_bm25')}
 
+    @_tracked_read
     def inspect(self, artifact, count):
         name = self._name(artifact)
-        self._verify_physical(artifact,required=False)
+        self._verify_physical(artifact,required=False,reading=True)
         c = self.client
-        schema = c.describe_collection(name, timeout=self.timeout)
+        schema = self._read_call(artifact, c.describe_collection, name, timeout=self.timeout)
         fields = {f['name']: f for f in schema['fields']}
         if (schema['auto_id'] or schema['enable_dynamic_field'] or schema['aliases'] or
                 schema['consistency_level_name'] != 'Strong' or
@@ -253,25 +297,26 @@ class MilvusRevisionIndex:
                 functions[0]['type'] != 1 or list(functions[0]['input_field_names']) != ['text'] or
                 list(functions[0]['output_field_names']) != ['sparse']):
             raise index_error('actual Milvus analyzer/BM25 function differs')
-        indexes = self._indexes(name)
+        indexes = self._indexes(name, artifact)
         dense, sparse = indexes['dense_cosine'], indexes['sparse_bm25']
         if (dense['index_type'] != 'IVF_FLAT' or dense['metric_type'] != 'COSINE' or int(dense['nlist']) != config['nlist'] or
                 sparse['index_type'] != 'SPARSE_INVERTED_INDEX' or sparse['metric_type'] != 'BM25' or
                 sparse['inverted_index_algo'] != 'DAAT_MAXSCORE' or float(sparse['bm25_k1']) != config['bm25_k1'] or float(sparse['bm25_b']) != config['bm25_b'] or
                 any(i['state'] != 'Finished' or i['total_rows'] != count or i['indexed_rows'] != count or i['pending_index_rows'] != 0 for i in indexes.values())):
             raise index_error('actual Milvus index parameters or complete row counts differ')
-        state = str(c.get_load_state(name, timeout=self.timeout)['state'])
+        state = str(self._read_call(artifact, c.get_load_state, name, timeout=self.timeout)['state'])
         if state != 'Loaded':
             raise index_error('actual Milvus index is not loaded')
         segments = [dict(segment_id=s.segment_id, num_rows=s.num_rows, state=s.state_name,
                          index_name=s.index_name, index_id=s.index_id, mem_size=s.mem_size)
-                    for s in c.list_loaded_segments(name, timeout=self.timeout)]
+                    for s in self._read_call(artifact, c.list_loaded_segments, name, timeout=self.timeout)]
         unique = {s['segment_id']:s for s in segments}
         if ((count > 0 and not unique) or sum(s['num_rows'] for s in unique.values()) != count or
                 any(s['state'] != 'Sealed' or s['index_name'] not in ('IVF_FLAT','SPARSE_INVERTED_INDEX') or s['index_id'] <= 0 for s in segments)):
             raise index_error('loaded sealed segments do not cover all indexed rows')
         return {'schema': schema, 'indexes': indexes, 'load_state': state, 'segments': segments}
 
+    @_tracked_read
     def search(self, artifact, value, *, field='dense', limit=10, nprobe=1, filter=''):
         name = self._name(artifact)
         if field not in ('dense', 'sparse') or not 1 <= limit <= 16384:
@@ -283,7 +328,7 @@ class MilvusRevisionIndex:
             # ModelResult vectors are immutable tuples; PyMilvus 3.0.2's public
             # search validator accepts list/ndarray vectors on its wire boundary.
             value = list(value)
-        hits = self.client.search(name, data=[value], anns_field=field, limit=limit, filter=filter,
+        hits = self._read_call(artifact, self.client.search, name, data=[value], anns_field=field, limit=limit, filter=filter,
             output_fields=list(SCALAR_FIELDS), search_params={'metric_type': 'COSINE' if field == 'dense' else 'BM25',
             'params': {'nprobe': nprobe} if field == 'dense' else {}}, consistency_level='Strong', timeout=self.timeout)[0]
         result = []
@@ -294,6 +339,7 @@ class MilvusRevisionIndex:
             result.append({'id':str(hit['chunk_id']), 'distance':float(hit['distance']), 'entity':row})
         return result
 
+    @_tracked_read
     def read_vectors(self, artifact, expected):
         """Authenticate every source scalar and float32 value before reuse."""
         self.inspect(artifact,len(expected))
@@ -301,10 +347,10 @@ class MilvusRevisionIndex:
         if len(by_id) != len(expected):
             raise index_error('base encoded manifest has duplicate IDs')
         vectors = {}
-        iterator = self.client.query_iterator(self._name(artifact),filter='',output_fields=[*SCALAR_FIELDS,'dense'],
+        iterator = self._read_call(artifact, self.client.query_iterator, self._name(artifact),filter='',output_fields=[*SCALAR_FIELDS,'dense'],
             batch_size=256,consistency_level='Strong',timeout=self.timeout)
         try:
-            while batch := iterator.next():
+            while batch := self._read_call(artifact, iterator.next):
                 for row in batch:
                     identity = row['chunk_id']
                     if (identity in vectors or identity not in by_id or
@@ -313,20 +359,21 @@ class MilvusRevisionIndex:
                         raise index_error('base vector reuse identity/source/config/float32 digest differs')
                     vectors[identity] = {'chunk_id':identity,'dense':list(row['dense']),'vector_hash':row['vector_hash']}
         finally:
-            iterator.close()
+            self._read_call(artifact, iterator.close)
         if set(vectors) != set(by_id):
             raise index_error('base vector reuse member set is incomplete')
         return vectors
 
+    @_tracked_read
     def validate(self, artifact, expected):
         name = self._name(artifact)
         proof = self.inspect(artifact, len(expected))
         by_id = {r['chunk_id']: r for r in expected}
         seen, first, max_norm_error = set(), None, 0.0
-        iterator = self.client.query_iterator(name, filter='', output_fields=[*SCALAR_FIELDS, 'dense'],
+        iterator = self._read_call(artifact, self.client.query_iterator, name, filter='', output_fields=[*SCALAR_FIELDS, 'dense'],
                     batch_size=256, consistency_level='Strong', timeout=self.timeout)
         try:
-            while batch := iterator.next():
+            while batch := self._read_call(artifact, iterator.next):
                 for row in batch:
                     identity = row['chunk_id']
                     if identity in seen or identity not in by_id:
@@ -338,7 +385,7 @@ class MilvusRevisionIndex:
                     max_norm_error = max(max_norm_error, abs(math.sqrt(sum(v*v for v in row['dense']))-1))
                     first = first or row
         finally:
-            iterator.close()
+            self._read_call(artifact, iterator.close)
         if seen != set(by_id):
             raise index_error('Milvus full iterator ID set incomplete')
         # Empty published revisions are valid after explicit last-document
@@ -357,7 +404,7 @@ class MilvusRevisionIndex:
         dense = self.search(artifact, first['dense'], limit=min(10, len(expected)), nprobe=artifact['spec']['index']['nlist'])
         # Query text is an existing complete index input, never a fabricated constant.
         config = artifact['spec']['index']
-        analysis = self.client.run_analyzer(texts=[first['text']],
+        analysis = self._read_call(artifact, self.client.run_analyzer, texts=[first['text']],
             analyzer_params={'tokenizer':config['tokenizer'],'filter':config['filters']},timeout=self.timeout)
         tokens = list(analysis[0].tokens)
         sparse = self.search(artifact, first['text'], field='sparse', limit=min(10, len(expected)))

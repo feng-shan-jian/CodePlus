@@ -202,6 +202,7 @@ def publish(catalog, owner, revision_id):
             connection.execute('INSERT INTO mutation_completions VALUES(?,?,?)',
                                (str(owner.token.batch_id),str(owner.token.kb_id),canonical_json(completion)))
         connection.execute('DELETE FROM revision_dependencies WHERE batch_id=?', (str(owner.token.batch_id),))
+    catalog._maintain_indexes()
     return receipt(catalog, owner.token.batch_id, revision_id)
 
 
@@ -237,4 +238,5 @@ def _complete_no_change(catalog, owner, *, _operation=None):
         connection.execute("UPDATE mutation_batches SET state='COMPLETED_NO_CHANGE',recovery_stage=NULL WHERE batch_id=?",(str(batch.batch_id),))
         connection.execute('UPDATE libraries SET pending_mutation_id=NULL WHERE kb_id=?',(str(batch.kb_id),))
         connection.execute('DELETE FROM revision_dependencies WHERE batch_id=?',(str(batch.batch_id),))
+    catalog._maintain_indexes()
     return summary

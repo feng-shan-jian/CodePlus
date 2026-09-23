@@ -1,0 +1,144 @@
+{
+  "status": "PASS",
+  "identity": {
+    "pid": 64348,
+    "birth": "134346021216360585",
+    "python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Scripts\\python.exe",
+    "package": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-executor-20260923\\core\\Lib\\site-packages\\agentic_rag\\__init__.py",
+    "time": 1790128522.0831397,
+    "argv": [
+      "deployment/AgenticRAG/tests/r15_gc_process.py",
+      "history",
+      "--root",
+      "C:/Users/18221/AppData/Local/Temp/codeplus-r15-executor-20260923/real-v2/history-readers",
+      "--name",
+      "history-traced"
+    ]
+  },
+  "drop_calls": [],
+  "citation": {
+    "citation": {
+      "schema_version": 1,
+      "citation_id": "e6eee3b5-a4a2-458e-98ba-4f8d6de47d8b",
+      "run_id": "b68f9d2d-08ce-4b85-9127-4d529a0d4c47",
+      "evidence_id": "a7c11e75-cde4-4d34-9946-9b7644fafb18",
+      "spans": [
+        {
+          "schema_version": 1,
+          "start": 0,
+          "end": 51
+        }
+      ],
+      "quote_hash": "c71e4fabd351487bee94b91b494efbeda1fe938100bf5701268f77d8562e9bf5"
+    },
+    "source_ref": {
+      "schema_version": 1,
+      "kb_id": "22711486-23cd-4dad-9c9d-5dab7bad1c07",
+      "revision_id": "15a9b490-78bd-467c-b50b-423a07408a2a",
+      "document_id": "7837bcb4-5a15-46f8-be57-6d4e649c9d28",
+      "document_version_id": "4b5602c6-016e-54b7-9132-669ce2ef06e3",
+      "section_id": "fb82eccb-ffd4-535b-a402-9dcb0e4361e8"
+    },
+    "file_name": "update.md",
+    "source_uri": "file:///C:/Users/18221/AppData/Local/Temp/codeplus-r15-executor-20260923/real-v2/history-readers/update.md",
+    "raw_hash": "8540138b684a712f0582120a3712268df5e1ba755326f05d99eb26c6d6fde939",
+    "parsed_hash": "a262c4e0dcf9e63db75cb9e363fb8d411fffae9ad56818fd58e502aacc5d6937",
+    "section_path": [
+      "Telescope"
+    ],
+    "quotes": [
+      "# Telescope\nThe telescope certificate was oldblue.\n"
+    ],
+    "lines": [
+      [
+        1,
+        2
+      ]
+    ],
+    "evidence_marker": "[^a7c11e75-cde4-4d34-9946-9b7644fafb18]",
+    "citation_marker": "[^e6eee3b5-a4a2-458e-98ba-4f8d6de47d8b]"
+  },
+  "versions": [
+    {
+      "identity": {
+        "kb_id": "22711486-23cd-4dad-9c9d-5dab7bad1c07",
+        "revision_id": "15a9b490-78bd-467c-b50b-423a07408a2a",
+        "document_id": "330d8c02-5df6-4b7a-9dc1-0642debd4fd3",
+        "version_id": "8673a666-1f6c-5b71-978e-1f30ad53083a",
+        "text": "# Retired\nUnseen retiredquasar approval was legacygreen.\n"
+      },
+      "text": "# Retired\nUnseen retiredquasar approval was legacygreen.\n",
+      "sections": [
+        {
+          "schema_version": 1,
+          "section_id": "e63c91f7-35f0-52dd-b15e-b7563b88da66",
+          "document_version_id": "8673a666-1f6c-5b71-978e-1f30ad53083a",
+          "heading_path": [
+            "Retired"
+          ],
+          "span": {
+            "schema_version": 1,
+            "start": 0,
+            "end": 57
+          }
+        }
+      ],
+      "raw_hash": "d60f399723592edfc04671c9e5eea9801d66eca988c36b3fb729d60c28de8339"
+    },
+    {
+      "identity": {
+        "kb_id": "22711486-23cd-4dad-9c9d-5dab7bad1c07",
+        "revision_id": "15a9b490-78bd-467c-b50b-423a07408a2a",
+        "document_id": "7837bcb4-5a15-46f8-be57-6d4e649c9d28",
+        "version_id": "4b5602c6-016e-54b7-9132-669ce2ef06e3",
+        "text": "# Telescope\nThe telescope certificate was oldblue.\n"
+      },
+      "text": "# Telescope\nThe telescope certificate was oldblue.\n",
+      "sections": [
+        {
+          "schema_version": 1,
+          "section_id": "fb82eccb-ffd4-535b-a402-9dcb0e4361e8",
+          "document_version_id": "4b5602c6-016e-54b7-9132-669ce2ef06e3",
+          "heading_path": [
+            "Telescope"
+          ],
+          "span": {
+            "schema_version": 1,
+            "start": 0,
+            "end": 51
+          }
+        }
+      ],
+      "raw_hash": "8540138b684a712f0582120a3712268df5e1ba755326f05d99eb26c6d6fde939"
+    },
+    {
+      "identity": {
+        "kb_id": "22711486-23cd-4dad-9c9d-5dab7bad1c07",
+        "revision_id": "15a9b490-78bd-467c-b50b-423a07408a2a",
+        "document_id": "fc02084d-f019-4166-8f3c-49aa73143227",
+        "version_id": "ba9f912c-b0b3-5631-8e58-1643799bc446",
+        "text": "# Archive\nUncited mountain archive remains violet.\n"
+      },
+      "text": "# Archive\nUncited mountain archive remains violet.\n",
+      "sections": [
+        {
+          "schema_version": 1,
+          "section_id": "0bd17d0f-1a18-5ea3-9da1-dda092b495fc",
+          "document_version_id": "ba9f912c-b0b3-5631-8e58-1643799bc446",
+          "heading_path": [
+            "Archive"
+          ],
+          "span": {
+            "schema_version": 1,
+            "start": 0,
+            "end": 51
+          }
+        }
+      ],
+      "raw_hash": "fa6ec779b8122f3994c62d0b65137dd99b406fd34d17c00a6a50938f9cd138c3"
+    }
+  ],
+  "parser_calls": [],
+  "external_service_or_gpu_imports": [],
+  "finished": 1790128522.2646244
+}

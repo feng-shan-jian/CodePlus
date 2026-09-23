@@ -116,3 +116,21 @@ def test_old_sdk_pending_does_not_protect_a_different_generation(s):
     assert dropped==[fresh['collection_name']] and old['collection_name'] in collections
     recovery.observe_io(s.catalog,io,finished=True)
     assert recovery.cleanup_candidates(s.catalog,batch,backend)[0]['state']=='reclaimed'
+
+
+def test_explicit_cleanup_advances_beyond_thirty_two_reclaimed_generations(s):
+    # Disable only automatic dispatch to isolate the existing explicit retry.
+    s.catalog._maintain_indexes=lambda: []
+    owner,prepared,artifact=candidate(s)
+    backend,collections,dropped=physical(s);backend.create(artifact,owner)
+    batch=owner.token.batch_id;owner.close()
+    for _ in range(34):
+        with s.catalog.resume_mutation(H['expected'](s,batch)) as generation:
+            _,candidate_artifact=publication.register(s.catalog,generation)
+            backend.create(candidate_artifact,generation)
+    abandon_recovery(s.catalog,H['expected'](s,batch))
+    first=recovery.cleanup_candidates(s.catalog,batch,backend)
+    assert len(first)==32 and len(dropped)==32
+    second=recovery.cleanup_candidates(s.catalog,batch,backend)
+    assert len(second)==32 and len(dropped)==35 and len(set(dropped))==35
+    assert not collections

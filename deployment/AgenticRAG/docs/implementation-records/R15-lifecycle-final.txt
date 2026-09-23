@@ -1,0 +1,22 @@
+................E...........                                             [100%]
+=================================== ERRORS ====================================
+_ ERROR at teardown of test_adapter_registration_at_maintenance_thread_exit_restarts_dispatch _
+
+tmp_path = WindowsPath('C:/Users/18221/AppData/Local/Temp/codeplus-r15-executor-20260923/lifecycle-final/test_adapter_registration_at_m0')
+
+    @pytest.fixture
+    def s(tmp_path):
+        value = H['setup'](tmp_path)
+        yield value
+        value.catalog._maintain_indexes = value.automatic_callback
+        value.backend.close()
+>       assert value.backend.wait_closed(20)
+E       assert False
+E        +  where False = wait_closed(20)
+E        +    where wait_closed = <agentic_rag.indexes.milvus.MilvusRevisionIndex object at 0x000002034DB80890>.wait_closed
+E        +      where <agentic_rag.indexes.milvus.MilvusRevisionIndex object at 0x000002034DB80890> = namespace(catalog=<agentic_rag.storage.catalog.Catalog object at 0x000002034DB1DB50>, config=KnowledgeConfig(schema_ve...allback=<bound method Catalog._maintain_indexes of <agentic_rag.storage.catalog.Catalog object at 0x000002034DB1DB50>>).backend
+
+deployment\AgenticRAG\tests\test_index_gc.py:29: AssertionError
+=========================== short test summary info ===========================
+ERROR deployment\AgenticRAG\tests\test_index_gc.py::test_adapter_registration_at_maintenance_thread_exit_restarts_dispatch
+27 passed, 1 error in 129.73s (0:02:09)

@@ -108,7 +108,7 @@ def model_request(catalog, owner, provider, items, profile, context):
         recovery_store.observe_io(catalog,identity,finished=True)
         return response
     handle = provider.submit_documents(items,profile,context)
-    recovery_store.observe_io(catalog,identity,worker=provider.metadata)
+    recovery_store.observe_io(catalog,identity,worker=handle.worker_identity)
     try:
         return handle.result()
     finally:

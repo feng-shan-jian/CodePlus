@@ -1,0 +1,438 @@
+{
+  "status": "EXACT_STAGE_VERIFIED",
+  "base": "b7b4647598c24734df497dd6f40950dcdb9817a5",
+  "paths": 72,
+  "approved_entries": [
+    {
+      "path": "deployment/AgenticRAG/docs/convergence.md",
+      "bytes": 21533,
+      "sha256": "4d3de1c934f0b5d75518cfeb77722365d336a5df3ed880bf95ba401e342dc8d1",
+      "git_blob": "17de3037d3062910f113dc13bc9a180b43d6ff3b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-checklist.md",
+      "bytes": 33471,
+      "sha256": "15563fae9a84ae574e06a376e95a6961939f926d75ca50dc0adba84403efee4d",
+      "git_blob": "2b26978fa2725a48d0265326e29f649de51f6742"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-batch2-leader-postcommit.json",
+      "bytes": 613,
+      "sha256": "54c8e075e5c4ccbdda8ef31520b50deafff919d7b03a672adf765e53d645d1c2",
+      "git_blob": "17aca3d7d136b2843cd871d7d32c8343be35c670"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-batch2-leader-stage-execution.json",
+      "bytes": 25604,
+      "sha256": "ec2e9add51d20f893a6afbe1dd03059d1520ccd8836695ba58cd2021c9549ee4",
+      "git_blob": "3f7a75f6b804e080e0793dd6b3d7698d4ae6d087"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-convergence-resource-status-v5.json",
+      "bytes": 11446,
+      "sha256": "06d83b7855f1f3326c866d9942377a7c189f167d2e1ae8999f05ceb284b93ab8",
+      "git_blob": "b231ade722b15df41c05b54038e0242a6f497bba"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-executor-files.json",
+      "bytes": 3470,
+      "sha256": "c7b027e57d58b1523bb0cd1ed6e2fb5b05aeefdd8c20e24874a3f03087d5d498",
+      "git_blob": "d1213af8df6c01623891ea3caf473d83a5e7b178"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-before.json",
+      "bytes": 6915,
+      "sha256": "02f213f9e8b03a1949e1ae56d53d3b88decf60dd27344cb1d0ad40fb2e92b251",
+      "git_blob": "0ef2092d08a8341ed7098391743965d46c16c189"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-drift-review.json",
+      "bytes": 2515,
+      "sha256": "822249b62bdd44bf4b3878f7b8244c080cab1d6a51be3deb1c6008b17ea22124",
+      "git_blob": "f517015068ea3d7d17eebb317c6ad4b0f767d462"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-git-diagnosis.json",
+      "bytes": 1792,
+      "sha256": "c30ddb8cee2387c845ac855895140d4340df2d19514ec59bc13ba0814a3fdab7",
+      "git_blob": "5b720a92e78ded1b8fb3f6d5faa2bed073826e34"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-protected-before.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+      "git_blob": "e3ca4a6962d7354af90bdc710dc71567d1dbb867"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-user-stop-handoff.json",
+      "bytes": 8764,
+      "sha256": "8b14c270363527f64d836eba9e209ec542b5e1c4d1836a3a4bbc0ca85e1e4cb0",
+      "git_blob": "21b7ee3274fc8b81dad9d298e8f7d17fdf391fde"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-before.json",
+      "bytes": 46431,
+      "sha256": "9a48e89dd63d7d7384a73ad6044ac6b10d50c30ca2120b8b3c7cdccbcaf6b1a6",
+      "git_blob": "7ba98578d3e4411822251b5aaabd803d412f3638"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-link-check.json",
+      "bytes": 330,
+      "sha256": "2f6469f71aac8c1684d05b5858e4fc847b8717be8c07f16cd46000d61c0c0084",
+      "git_blob": "6cfa68ce487828c52af94156fce2c689fbf7dbfe"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-owned-before-to-predelete-delta.jsonl.gz",
+      "bytes": 1085,
+      "sha256": "5fc539236c2d50d04ef02b8759da4f9bcc4723903bf6481ea61d2ca109e01b8a",
+      "git_blob": "b338714f9af15e3efe7e59c2290ccb83aab9d9ef"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-owned-before.jsonl.gz",
+      "bytes": 1479123,
+      "sha256": "ff774ef660d597be9d25c3bfa26b6089448892cae40c41126e4f081bc1bf54dd",
+      "git_blob": "4bdaa8a103a7ecfbc464ef1c2a8346188315c4c9"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-owned-predelete.jsonl.gz",
+      "bytes": 1479081,
+      "sha256": "58a7b0dc8c0c591f982c06193e475e74a65c109d53806752531e64b13e99df3f",
+      "git_blob": "4daf60323b54339550d61fe9592b79a89efbc951"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-predelete.json",
+      "bytes": 47360,
+      "sha256": "cc6f08ce64d067178d5bcab5334fcb68101c191cdbb0be8192d48ca497570da3",
+      "git_blob": "e0a31d01355d6c15982fe1881e954504fbbf56a3"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-protected-before.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+      "git_blob": "e3ca4a6962d7354af90bdc710dc71567d1dbb867"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-protected-predelete.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+      "git_blob": "e3ca4a6962d7354af90bdc710dc71567d1dbb867"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-shared-before-to-predelete-delta.jsonl.gz",
+      "bytes": 278082,
+      "sha256": "a44feeac90005ff3d7fc096091629aa05deced3a2bc50277b14f3dad5273d7d7",
+      "git_blob": "3a3fee21f8fbadac46724fb16fa48895022af43a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-shared-before.jsonl.gz",
+      "bytes": 4541527,
+      "sha256": "9762f0338f845447ea7e301d4ca5cb41f920ebe6b209bfe4ffb448e71dd3436c",
+      "git_blob": "1220cd7cab94c6001b48bcf10b3e4efc63132bce"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v2-shared-predelete.jsonl.gz",
+      "bytes": 4546412,
+      "sha256": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476",
+      "git_blob": "0423ba4f258947a388cdfc5df6c93ed26805f4e4"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-after.json",
+      "bytes": 59806,
+      "sha256": "32451b9523faf7ff0a3387a6f05d240649e7bce51c606f3d268dbf1796892741",
+      "git_blob": "ae9f41604a8d11c7bdc05b2c0e5254d396975847"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-delete.json",
+      "bytes": 669,
+      "sha256": "dbc4f94fcb4aa925189142fc8eb2563257486ce1145bceb7acac4cda12cce551",
+      "git_blob": "036774307f774f5374a0cc8b8467d1ba0b8a8ef6"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-docker-down.json",
+      "bytes": 1629,
+      "sha256": "e26e2fc7c236203f7a1fe0eff05bdd436df43de6b50370baeb8e0a33b1e83d96",
+      "git_blob": "b8dbedce3cdddc12676756668296b0cbd65fa0ff"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-owned-predelete.jsonl.gz",
+      "bytes": 1479161,
+      "sha256": "d055eb3de035ca19d86d6a6b001914dc2a8cb28ca06ba20cee7b0ab1d7535b00",
+      "git_blob": "13ab3f1b0ed9f3e209872c9e1862ae02649bca13"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-owned-preparation-delta.jsonl.gz",
+      "bytes": 452,
+      "sha256": "10e0e5d7f77e8c06a0848a2c67d8e830a142cb4f9771623924e8e30358c04bfb",
+      "git_blob": "37c24b2f7455e957a7b958563cf630346e9498c2"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-owned-preparation-to-predelete-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "git_blob": "86e43ea3218b5890302b754bbf8927f94e79f7ee"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-owned-preparation.jsonl.gz",
+      "bytes": 1479161,
+      "sha256": "d055eb3de035ca19d86d6a6b001914dc2a8cb28ca06ba20cee7b0ab1d7535b00",
+      "git_blob": "13ab3f1b0ed9f3e209872c9e1862ae02649bca13"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-owned-v2-predelete-to-predelete-delta.jsonl.gz",
+      "bytes": 452,
+      "sha256": "10e0e5d7f77e8c06a0848a2c67d8e830a142cb4f9771623924e8e30358c04bfb",
+      "git_blob": "37c24b2f7455e957a7b958563cf630346e9498c2"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-predelete.json",
+      "bytes": 50928,
+      "sha256": "014765b4a44c258888fd37dd8e00589bfc69dc46c0b9b556a8f2b32033ea705f",
+      "git_blob": "5d157e1b0b6d0b60e06f9ebc63d0645e9f2c648c"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-preparation.json",
+      "bytes": 18132,
+      "sha256": "b1b55c2139b5c55a08fab0b8064f92b95e3199b65d718671076d5eda54928b1e",
+      "git_blob": "10a1cef56b9cdd44b4f0054ef625a44808675018"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-protected-after.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+      "git_blob": "e3ca4a6962d7354af90bdc710dc71567d1dbb867"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-protected-predelete.jsonl.gz",
+      "bytes": 135597,
+      "sha256": "89a5ec8fbf903033259c948b2066a7c2d92b80076a92eef0d3ac28cf000705f8",
+      "git_blob": "e3ca4a6962d7354af90bdc710dc71567d1dbb867"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-shared-after.jsonl.gz",
+      "bytes": 4546412,
+      "sha256": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476",
+      "git_blob": "0423ba4f258947a388cdfc5df6c93ed26805f4e4"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-shared-predelete.jsonl.gz",
+      "bytes": 4546412,
+      "sha256": "134ac8d6ec9b2e1e204205b060f7f35aecd1a3a056fbc3d6b53f01b008c8d476",
+      "git_blob": "0423ba4f258947a388cdfc5df6c93ed26805f4e4"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-shared-v2-predelete-to-after-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "git_blob": "86e43ea3218b5890302b754bbf8927f94e79f7ee"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-shared-v2-predelete-to-predelete-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "git_blob": "86e43ea3218b5890302b754bbf8927f94e79f7ee"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-independent-cleanup-v3-shared-v3-predelete-to-after-delta.jsonl.gz",
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "git_blob": "86e43ea3218b5890302b754bbf8927f94e79f7ee"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-apply.json",
+      "bytes": 7366,
+      "sha256": "42cf076a34044af59a1ce5fdb3993da271b91750c4bd613e22fdcc39d70d5cd9",
+      "git_blob": "bfa3b338e375ea8f2ed925a1f9db2bbac2573241"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-baseline.json",
+      "bytes": 641340,
+      "sha256": "c261300938d91c8373d0951de31c73779b7dc3ad68f495c20c3e7491314d34ca",
+      "git_blob": "beafa7c2519d16cdf1115f00f26c6f12ccd322aa"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-compose.json",
+      "bytes": 20084,
+      "sha256": "1956abb566da25e895624572c22bfc646153f632a0a12352284a9a903f4d4b6b",
+      "git_blob": "2790f5a72d0fce2903ee9c2d46d6a392615c4b63"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-crosscheck.json",
+      "bytes": 182125,
+      "sha256": "11165d778a3ac70356a739d7cb680137a410df4d00c4e4e8644488cf30a4bada",
+      "git_blob": "9739f6ff8680e40f7a03af5b1d2e2808a990195b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-envprep.json",
+      "bytes": 5494,
+      "sha256": "7e9c20fa48e8c15e1dde5c3706a935e8fdeaf5abeaae04de8e911938acbdd852",
+      "git_blob": "c4f29d5c104c366cb3c9fed34ccf9e8ba62236a1"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-focused-command.json",
+      "bytes": 1903,
+      "sha256": "92896035fb42474b96374ac7b443fd030d5640353d865afe02a64b563d78dcde",
+      "git_blob": "30bb3ba72343fc93b1328737dd7f73deeccf95ad"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-focused-modules.json",
+      "bytes": 13289,
+      "sha256": "4b5737ea9ec690a9a1057941fda538a193f2c95f395bb84afac5670bafcb61dc",
+      "git_blob": "9cd37041d13cfb69a0cdf03f2cc91897b4dd60e5"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-focused.txt",
+      "bytes": 194,
+      "sha256": "4d3965e8d954541cfe8dbd9fff720eddcae0e59892aa39cd9d01d5c83e4fec35",
+      "git_blob": "961dee519d58be646218bc712c8b25bd6dd18f19"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-focused.xml",
+      "bytes": 12867,
+      "sha256": "6c4fb502e65112a472907ed307f89bbf237c9d4a6e981ccaae67fddcf55941a3",
+      "git_blob": "476a57d66e96526b49196fb2bef549e248973793"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-freeze.json",
+      "bytes": 39801,
+      "sha256": "f3772385fa8dbcce44f1f02402505ddcee9581e6b66e2a199f871c23ad236724",
+      "git_blob": "5030328fa067dbfabd18b967da78fb8f0d72da00"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-installation-command.json",
+      "bytes": 1704,
+      "sha256": "4c75c61756b4235a423d48ffff617b596aa4fca8deda0354775a3600ec796d95",
+      "git_blob": "a6e3d6a4c641e0f8fef903ecf491c02c9d219f53"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-installation-installations.json",
+      "bytes": 78197,
+      "sha256": "b110e43703c4743d121503113642779ba3bd20b68e4295ff8a7e289500b6c8c6",
+      "git_blob": "e85ef63492fae8f8a711578e09ae27b7db3b1757"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-installation-modules.json",
+      "bytes": 11675,
+      "sha256": "f4fab8d8f49b8c0cb92e6b34ca30fb99455c6f822fcd74b992ef0fdb365fa1a0",
+      "git_blob": "099208fbb91011ae1c2e150d9ce3a4b3670d0b62"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-installation.txt",
+      "bytes": 100,
+      "sha256": "1a03c1eb1a5276d0a64505b62dc8dcbf76b90e9d065e4fef1469aa6fa9fee433",
+      "git_blob": "e48b19d5655be7fd6bf09e365c77080a244523c9"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-installation.xml",
+      "bytes": 373,
+      "sha256": "1644e101bdf30980398b7725a9100633ac542dc3017630824a045aa542eb51bb",
+      "git_blob": "0a09e684b2664980782a18d18e67088455d83d34"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-precleanup.json",
+      "bytes": 1140950,
+      "sha256": "294d51c0e5e33fefa3b3cd8aeacb9e80a66e99dac5fb2fee53a74837999b02f9",
+      "git_blob": "9cc985e7cbf2d89325d44b6b8ead109fa00d25e1"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-real-command.json",
+      "bytes": 2160,
+      "sha256": "27cd55bd6495da91ae788911450b8079634117b7d6bf0a6e52e749f8bf22d4c2",
+      "git_blob": "d7a1101562b95de49c51e5ab530591d1fa2bf6fa"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-real-worker-exit.json",
+      "bytes": 1330,
+      "sha256": "1421ba6ae6c9af371b87fef7c3eed0a148cc409b6cf3a066c651639c6173965b",
+      "git_blob": "ec5df3d16a33751a7be7f126d2cc0f587fc431f0"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-real.json",
+      "bytes": 788804,
+      "sha256": "47ce67fb48a8b4cf8e9f403a6ec8e6991c3d6b6b3aa8a1fa34d6c88305abc297",
+      "git_blob": "9f7ff036cabf7172b4ae017ecf97316f7b187d4d"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-real.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-resources.json",
+      "bytes": 61258,
+      "sha256": "4182e8be8145d66ae6040adb875ad9c0d8d628aa46f64c822999319d87fa9de9",
+      "git_blob": "2342d0a6db2202e437a24f251fd3102e8e0641bd"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-review.md",
+      "bytes": 5665,
+      "sha256": "61abf148db85c9870698673ee43b4a708af945a0cf869ee461a3c6cb519bb288",
+      "git_blob": "83f799cf89e9229a10ad41e467a2e3860fc56790"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-setup.json",
+      "bytes": 78752,
+      "sha256": "d6b3e123edb6c74e3cc38c3ad37ee207f67cf32b333138cb5ed7204f07b35712",
+      "git_blob": "3eab812b6c3dfbda5f4dc89973ebf1a2f4a9489d"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-smoke-command.json",
+      "bytes": 2177,
+      "sha256": "659eda22bce8ab25e9d2a7be228a5a012e6c76df2a4f694758f507b41b06968e",
+      "git_blob": "fc44ac24e9de40456e81a20f0927255a42d50291"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-smoke-worker-exit.json",
+      "bytes": 592,
+      "sha256": "f753db51f7b7c875b205b13ae346689a2f658d2f48577e73f7d7be74a556aa26",
+      "git_blob": "23762d7cf8f7468e38f4cf561af027ca7b639def"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-smoke.json",
+      "bytes": 177285,
+      "sha256": "85394e90748c769c24a5e6d5faaf9c1644bf2c97769e21e5086462a58387b92a",
+      "git_blob": "1311e4c06daf62d7fda36dcfdc110603f1e808df"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-smoke.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-validation.json",
+      "bytes": 1692,
+      "sha256": "5e4cf35770fd92300fc41b1a885a838e66c499267f441fb832614a80a7d2056e",
+      "git_blob": "c6b5c1dda6c8023c56b49a8e935808500d90bb79"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-task-plan.md",
+      "bytes": 28893,
+      "sha256": "dcb230c4d5349640cc948d5a184375ad9738b265c07c89f0507ffd71f55135b0",
+      "git_blob": "08d89bde44cabf1d2a2ea86ea016c7e18b318078"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/ordinary-mutations.md",
+      "bytes": 6531,
+      "sha256": "d3a719ef128566b0d465197628105665c8d0ced7b86e2048296abdf7311ad500",
+      "git_blob": "550507a046f6a47a51ebf67b1440aefd78a3f2ad"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/ingestion/mutations.py",
+      "bytes": 25123,
+      "sha256": "53b00092d6425257b72e37cdf03c16d9d08eeeed69443e06d3e04d45029af5cc",
+      "git_blob": "9d0b20ef4e1b15dd83ae6b2c5598748894545a1b"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_build_preparation.py",
+      "bytes": 10576,
+      "sha256": "b390488bb0a0ec780900a1bcaf032db5dfb39a8a13c78a8a09a490b6def7fe8b",
+      "git_blob": "1aa260f909f1036b8cf1fcb62ca2c4b9bcddf7fd"
+    }
+  ],
+  "stage_plan_path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-stage.json",
+  "stage_plan_sha256": "81fa120688fc433c566ca10babf1372a804c0d5e3dc5896241295e93be1874c8",
+  "stage_plan_git_blob": "8758cc12ed0d6001bd01e4dc3d04d248da5b69ce",
+  "whitespace": "PASS",
+  "no_push": true
+}

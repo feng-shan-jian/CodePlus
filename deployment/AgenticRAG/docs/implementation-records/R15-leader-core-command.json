@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "C:/Users/18221/AppData/Local/Temp/codeplus-r15-leader-20260923/run_tests.py",
+    "D:/CodePlus/deployment/AgenticRAG/docs/implementation-records/R15-leader-core",
+    "deployment/AgenticRAG/tests/test_index_gc.py",
+    "deployment/AgenticRAG/tests/test_recovery.py",
+    "deployment/AgenticRAG/tests/test_recovery_ownership.py",
+    "deployment/AgenticRAG/tests/test_model_worker.py",
+    "deployment/AgenticRAG/tests/test_storage_processes.py",
+    "deployment/AgenticRAG/tests/test_host_contract.py",
+    "deployment/AgenticRAG/tests/test_package_install.py",
+    "-q",
+    "--import-mode=importlib",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=C:/Users/18221/AppData/Local/Temp/codeplus-r15-leader-20260923/core-tests",
+    "--junitxml=deployment/AgenticRAG/docs/implementation-records/R15-leader-core.xml"
+  ],
+  "python": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\core\\Scripts\\python.exe",
+  "isolated": true,
+  "cwd": "D:\\CodePlus",
+  "started": 1790129846.5924766,
+  "finished": 1790130038.9609473,
+  "exit_code": 0
+}

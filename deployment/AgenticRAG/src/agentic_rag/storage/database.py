@@ -13,7 +13,7 @@ from .locks import ProcessLock
 from .paths import DataDirectory, failure
 
 APPLICATION_ID = 0x41524147
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 9
 
 
 def runtime_fingerprint() -> dict:
@@ -123,6 +123,12 @@ class Database:
                     finally:
                         connection.pragma('foreign_keys', True)
                 if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=8').fetchone() != (recovery_hash,):
+                    raise failure('schema migration fingerprint mismatch')
+                lifetimes = files(__package__).joinpath('lifetimes.sql').read_text(encoding='utf-8')
+                lifetimes_hash = hashlib.sha256(lifetimes.encode()).hexdigest()
+                if connection.pragma('user_version') == 8:
+                    _apply_migration(connection, 9, lifetimes, lifetimes_hash)
+                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=9').fetchone() != (lifetimes_hash,):
                     raise failure('schema migration fingerprint mismatch')
                 self._verify(connection)
             finally:

@@ -1,0 +1,92 @@
+deployment/AgenticRAG/docs/implementation-records/R15-core-v2.txt:103: trailing whitespace.
++    
+deployment/AgenticRAG/docs/implementation-records/R15-core-v2.txt:112: trailing whitespace.
++    
+deployment/AgenticRAG/docs/implementation-records/R15-core-v2.txt:139: trailing whitespace.
++E             
+deployment/AgenticRAG/docs/implementation-records/R15-core-v2.xml:71: trailing whitespace.
++    
+deployment/AgenticRAG/docs/implementation-records/R15-core-v2.xml:80: trailing whitespace.
++    
+deployment/AgenticRAG/docs/implementation-records/R15-core-v2.xml:107: trailing whitespace.
++E             
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:1: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_milvus Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:2: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_milvus Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:3: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_etcd Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:4: trailing whitespace.
++ Network codeplus-r15-executor-20260923_default Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:5: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_etcd Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:6: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_minio Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:7: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_minio Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:8: trailing whitespace.
++ Network codeplus-r15-executor-20260923_default Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:9: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_minio Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:10: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_minio Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:11: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_etcd Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:12: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_etcd Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:13: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_milvus Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:14: trailing whitespace.
++ Volume codeplus-r15-executor-20260923_milvus Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:15: trailing whitespace.
++ Network codeplus-r15-executor-20260923_default Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:16: trailing whitespace.
++ Network codeplus-r15-executor-20260923_default Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:17: trailing whitespace.
++ Container codeplus-r15-executor-20260923-minio-1 Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:18: trailing whitespace.
++ Container codeplus-r15-executor-20260923-etcd-1 Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:19: trailing whitespace.
++ Container codeplus-r15-executor-20260923-etcd-1 Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:20: trailing whitespace.
++ Container codeplus-r15-executor-20260923-minio-1 Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:21: trailing whitespace.
++ Container codeplus-r15-executor-20260923-standalone-1 Creating 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:22: trailing whitespace.
++ Container codeplus-r15-executor-20260923-standalone-1 Created 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:23: trailing whitespace.
++ Container codeplus-r15-executor-20260923-etcd-1 Starting 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:24: trailing whitespace.
++ Container codeplus-r15-executor-20260923-minio-1 Starting 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:25: trailing whitespace.
++ Container codeplus-r15-executor-20260923-minio-1 Started 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:26: trailing whitespace.
++ Container codeplus-r15-executor-20260923-etcd-1 Started 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:27: trailing whitespace.
++ Container codeplus-r15-executor-20260923-minio-1 Waiting 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:28: trailing whitespace.
++ Container codeplus-r15-executor-20260923-etcd-1 Waiting 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:29: trailing whitespace.
++ Container codeplus-r15-executor-20260923-etcd-1 Healthy 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:30: trailing whitespace.
++ Container codeplus-r15-executor-20260923-minio-1 Healthy 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:31: trailing whitespace.
++ Container codeplus-r15-executor-20260923-standalone-1 Starting 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:32: trailing whitespace.
++ Container codeplus-r15-executor-20260923-standalone-1 Started 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:33: trailing whitespace.
++ Container codeplus-r15-executor-20260923-standalone-1 Waiting 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:34: trailing whitespace.
++ Container codeplus-r15-executor-20260923-etcd-1 Waiting 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:35: trailing whitespace.
++ Container codeplus-r15-executor-20260923-minio-1 Waiting 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:36: trailing whitespace.
++ Container codeplus-r15-executor-20260923-minio-1 Healthy 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:37: trailing whitespace.
++ Container codeplus-r15-executor-20260923-etcd-1 Healthy 
+deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt:38: trailing whitespace.
++ Container codeplus-r15-executor-20260923-standalone-1 Healthy 
+deployment/AgenticRAG/docs/implementation-records/R15-unit-first.txt:18: trailing whitespace.
++E         
+deployment/AgenticRAG/docs/implementation-records/R15-unit-first.xml:13: trailing whitespace.
++E         

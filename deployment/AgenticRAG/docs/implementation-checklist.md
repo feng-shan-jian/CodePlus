@@ -35,7 +35,7 @@
 | R12 | COMMITTED | /root/r12_agent_integration | [Leader独立验收](implementation-records/R12-leader-review.md)；1271通过/32条件skip、真实安装/Agent及独立清理完成，元数据观察保留 | `44b861a235233f7072fda267e7a75321431c4e88` |
 | R13 | COMMITTED | /root/r13_mutations | [Leader独立验收](implementation-records/R13-leader-review.md)；1302通过/32条件skip、独立清理及复核完成，元数据观察保留 | `a4fede1c3f0a09202710e53debdbac3307c0911d` |
 | R14 | COMMITTED | /root/r14_recovery | [Leader 独立验收](implementation-records/R14-leader-review.md)、[独立清理](implementation-records/R14-cleanup.md)、[清理复核](implementation-records/R14-leader-postcleanup.json)及[精确提交](implementation-records/R14-leader-postcommit.json)通过 | 175f8f54ed9e24736a232f6b989d145f7f217dca |
-| R15 | TODO | — | — | — |
+| R15 | ACCEPTED | /root/r15_gc | [Leader 独立验收](implementation-records/R15-leader-review.md)；114项、两路安装、9类真实场景及schema8→9通过 | 待精确本地提交 |
 | R16 | TODO | — | — | — |
 | R17 | TODO | — | — | — |
 | R18 | TODO | — | — | — |
@@ -218,11 +218,11 @@ R12前置独立整合：旧RAG清理 COMMITTED，`5dbe979a330a6b157adfba7ad3ea82
 <a id="r15"></a>
 ### R15：pin、GC 与历史
 
-- [ ] 运行绑定与回收资格在同一协调协议中，真实并发竞争不会删掉刚绑定或仍在查询的版本。
-- [ ] 当前版、运行中任务、构建/重试/恢复与向量复用依赖都受到保护；不只保护已命中 Chunk。
-- [ ] 正常结束释放 pin，崩溃占用只在确认生命周期拥有者失效后清理；状态不明则保留，心跳超时/PID 本身不足以回收。
-- [ ] 确认闲置索引可自动回收；回收中/删除失败/重启重试状态准确，只操作本模块所属资源。
-- [ ] 回收后历史引用、源文件更新/删除前的原文和定位均仍可读取；全部已归档历史不会被 GC 清除。
+- [x] 运行绑定与回收资格在同一协调协议中，真实并发竞争不会删掉刚绑定或仍在查询的版本。
+- [x] 当前版、运行中任务、构建/重试/恢复与向量复用依赖都受到保护；不只保护已命中 Chunk。
+- [x] 正常结束释放 pin，崩溃占用只在确认生命周期拥有者失效后清理；状态不明则保留，心跳超时/PID 本身不足以回收。
+- [x] 确认闲置索引可自动回收；回收中/删除失败/重启重试状态准确，只操作本模块所属资源。
+- [x] 回收后历史引用、源文件更新/删除前的原文和定位均仍可读取；全部已归档历史不会被 GC 清除。
 
 <a id="r16"></a>
 ### R16：模型切换

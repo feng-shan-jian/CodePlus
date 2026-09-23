@@ -473,10 +473,10 @@ class KnowledgeScope:
             if not future.cancelled():
                 future.exception()
         self.provider.close(drain_timeout=0)
+        self.lease.release_cleanup()
         if self.backend is not None:
             self.backend.close()
         self.owner._executor.shutdown(wait=False, cancel_futures=True)
-        self.lease.release_cleanup()
         self._pending_cleanup = False
 
     async def aclose(self):

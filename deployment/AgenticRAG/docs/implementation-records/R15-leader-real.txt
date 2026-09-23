@@ -1,0 +1,51 @@
+2026-09-23 10:22:36,513 [ERROR][_log_rpc_error]: grpc RpcError: [has_collection], <_InactiveRpcError: StatusCode.DEADLINE_EXCEEDED, Deadline Exceeded>, <elapsed:504.8ms>
+Traceback:
+Traceback (most recent call last):
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\pymilvus\decorators.py", line 518, in handler
+    return func(*args, **kwargs)
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\pymilvus\decorators.py", line 565, in handler
+    return func(self, *args, **kwargs)
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\pymilvus\decorators.py", line 422, in handler
+    raise e from e
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\pymilvus\decorators.py", line 419, in handler
+    return func(*args, **kwargs)
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\pymilvus\client\grpc_handler.py", line 789, in has_collection
+    reply = self._stub.DescribeCollection(
+        request, timeout=timeout, metadata=_api_level_md(context)
+    )
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\grpc\_interceptor.py", line 276, in __call__
+    response, ignored_call = self._with_call(
+                             ~~~~~~~~~~~~~~~^
+        request,
+        ^^^^^^^^
+    ...<4 lines>...
+        compression=compression,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\grpc\_interceptor.py", line 331, in _with_call
+    return call.result(), call
+           ~~~~~~~~~~~^^
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\grpc\_channel.py", line 447, in result
+    raise self
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\grpc\_interceptor.py", line 314, in continuation
+    response, call = self._thunk(new_method).with_call(
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        request,
+        ^^^^^^^^
+    ...<4 lines>...
+        compression=new_compression,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\grpc\_channel.py", line 1182, in with_call
+    return _end_unary_response_blocking(state, call, True, None)
+  File "C:\Users\18221\AppData\Local\Temp\codeplus-r15-leader-20260923\core\Lib\site-packages\grpc\_channel.py", line 999, in _end_unary_response_blocking
+    raise _InactiveRpcError(state)  # pytype: disable=not-instantiable
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.DEADLINE_EXCEEDED
+	details = "Deadline Exceeded"
+	debug_error_string = "DEADLINE_EXCEEDED:Deadline Exceeded"
+>
+ (decorators.py:472)

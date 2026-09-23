@@ -1,0 +1,576 @@
+{
+  "status": "STOP_WRITE_HANDOFF",
+  "time": "2026-09-23T02:13:47.765575+00:00",
+  "baseline": "e39de66e638b9bd2f7e6e597d355309bc9518e19",
+  "head": "10d283852460c6afc2199cb16757db6160a7fb9b",
+  "files": [
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-baseline.json",
+      "state": "new",
+      "size_bytes": 1401930,
+      "sha256": "01d1529cf27800817a893a07745728ba826d3dce088ba22daa903204661e18ed"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-build-final.json",
+      "state": "new",
+      "size_bytes": 13679,
+      "sha256": "8efbec41f6213386d237c39ed8e330e2d3789e6e1871262f3a3e8ebbb3437339"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-build-v1.txt",
+      "state": "new",
+      "size_bytes": 341,
+      "sha256": "48453e61a134e8a14f290dca9c18a04036055073e363e4e8ab24d5b0ea8c94a9"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-build-v2.json",
+      "state": "new",
+      "size_bytes": 13180,
+      "sha256": "91e7d9ace25e1f3f4f51787ca78759d345acc281c49ac03f5ae131305839b3c7"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-core-v1-command.json",
+      "state": "new",
+      "size_bytes": 737,
+      "sha256": "114dd5480519ad3eb944655281caba0d283795cdc926a925f19776a2aa220146"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-core-v1-modules.json",
+      "state": "new",
+      "size_bytes": 13116,
+      "sha256": "e874c3ce65b7bd082e060347c0b57bc59835cc2ebed078d678c64dfd23394ef8"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-core-v1.txt",
+      "state": "new",
+      "size_bytes": 3119,
+      "sha256": "4f44eb69693d9b66df4594b45fe9b29eb7253218a01502f01db4501ba60ef81b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-core-v1.xml",
+      "state": "new",
+      "size_bytes": 3089,
+      "sha256": "8035507c571cf7665081036b5c51ba2dcf28d31cf7da7bfe117246591e5648c2"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-core-v2-command.json",
+      "state": "new",
+      "size_bytes": 737,
+      "sha256": "de53f13777b1c355a82d8923c3d96c375ef2d8ad1c1199257bb8e318a31eac3d"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-core-v2-modules.json",
+      "state": "new",
+      "size_bytes": 47438,
+      "sha256": "9ac54c1a1b32a0f5f6b64831aa5ee568aff3f994d32a33041cb9303bba6e6b8d"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-core-v2.txt",
+      "state": "new",
+      "size_bytes": 12982,
+      "sha256": "a5fc9169cc7ac193c844ced4610853713a33978010ff1852bd37f499f4dd4e78"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-core-v2.xml",
+      "state": "new",
+      "size_bytes": 154919,
+      "sha256": "76a7b3740fb6939943ec8f2dd5338fdd1d71c846664e64158bbb9704784c7ae3"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-environment.json",
+      "state": "new",
+      "size_bytes": 644,
+      "sha256": "d261ce29ebc77cd70130a4dd3d9946ccced7644ba2df2854ad837b5bb6cd69f5"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-final-targeted-command.json",
+      "state": "new",
+      "size_bytes": 946,
+      "sha256": "09b17e32c2827df72e2620f1fb7a34581b9083804ffc1b230a8b61d8227948db"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-final-targeted-modules.json",
+      "state": "new",
+      "size_bytes": 19049,
+      "sha256": "66c05940441723700f788cf910f3f4a7acf48d127d7932de3f7d09abdfb99d9a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-final-targeted.txt",
+      "state": "new",
+      "size_bytes": 113,
+      "sha256": "057973fda07392857c00bca964d595b76cfec8e9061bcff80c8d848a61dd0cc2"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-final-targeted.xml",
+      "state": "new",
+      "size_bytes": 7690,
+      "sha256": "fdce2cb6a51d05854e9e1754476c8a86eeea41e6741f41819558c3351673e7ff"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-history-traced.json",
+      "state": "new",
+      "size_bytes": 5110,
+      "sha256": "1be08f87d45b6c6c4ac191308f8e84e629f5bac8da1320aa077c8f3f772d0f3d"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-history-traced.txt",
+      "state": "new",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-contract-retest-command.json",
+      "state": "new",
+      "size_bytes": 791,
+      "sha256": "a5ecdb7e6c780f850d45088dd817e539af7408916a77f72105ae5f178b027b2f"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-contract-retest-modules.json",
+      "state": "new",
+      "size_bytes": 12262,
+      "sha256": "73977aa499f5c7422ff6f20aa6f55034c5ad79c581d07fbf54cd028d5773b080"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-contract-retest.txt",
+      "state": "new",
+      "size_bytes": 101,
+      "sha256": "5f4a3e3cc75bfbd2213d12eb388da3d94a24de5a77c230d883085bdd900eb09e"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-contract-retest.xml",
+      "state": "new",
+      "size_bytes": 4695,
+      "sha256": "a1d10af852b45c127cf60dac2b2996e3ee90ad4eabcddb285855579945634985"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-dependencies.txt",
+      "state": "new",
+      "size_bytes": 1151,
+      "sha256": "ead3174a6b74e7759dc96325da375e702f9c70962208ee991619d0d30fc313aa"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-plugin-install.json",
+      "state": "new",
+      "size_bytes": 747,
+      "sha256": "7b585a77ca719c9c0b1a8b066445cf1e5930bc206936fa03c10fbd65bde66b3c"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-v2-command.json",
+      "state": "new",
+      "size_bytes": 820,
+      "sha256": "51a7d9fd5bfcb727babdd5306162d6d8fec1248a9ff312d125d8683017db4f2a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-v2-modules.json",
+      "state": "new",
+      "size_bytes": 16202,
+      "sha256": "d2bc47a0dacc7442bfb9626a66208e2615bd95a88abc6e34b63ff01853d986aa"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-v2.txt",
+      "state": "new",
+      "size_bytes": 24607,
+      "sha256": "d14c7cc4a263567ba03ee188ec395d97edb3f41d55343369ef25087b3f37f28f"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-v2.xml",
+      "state": "new",
+      "size_bytes": 39479,
+      "sha256": "0a42c6fbd1d7cec800fead18d4f76a5efc1b44661d2fab095185086f6eed3b61"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-v3-command.json",
+      "state": "new",
+      "size_bytes": 822,
+      "sha256": "e8525f7c2636c8a64fdeb9976be337f58fc1001fd3f52a70d32d5a658e4cb257"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-v3-modules.json",
+      "state": "new",
+      "size_bytes": 16202,
+      "sha256": "d2bc47a0dacc7442bfb9626a66208e2615bd95a88abc6e34b63ff01853d986aa"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-v3.txt",
+      "state": "new",
+      "size_bytes": 264,
+      "sha256": "e98d9aa761023e04fcf71e542c6f4297aeb2fed31a87f4633e68f916a21ffb75"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-host-v3.xml",
+      "state": "new",
+      "size_bytes": 19678,
+      "sha256": "a279fc62db72ddbca4b9d50b2141afd8251d31892471f74981e20692e273067a"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-infra-start.txt",
+      "state": "new",
+      "size_bytes": 2248,
+      "sha256": "b63aa144845fcf3eadc5e5c74acf1879a4d4645a3fec568bc2d2e3c82e047463"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-install-final.json",
+      "state": "new",
+      "size_bytes": 78057,
+      "sha256": "1ec68540c3da1ef2ce4b68b23499d3b7efc1a8f3227f012c5faee057897ef47c"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-lifecycle-final-command.json",
+      "state": "new",
+      "size_bytes": 836,
+      "sha256": "2107e1cd0d1578814ecf4c1fa3f3ac7d81986c6308ae3f72ae083b3e708fdf1b"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-lifecycle-final-modules.json",
+      "state": "new",
+      "size_bytes": 19049,
+      "sha256": "55fd8560a83e86141bea325d88ebbf0cb0266a4f3aa16ca4e0f4eba72f6a1a64"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-lifecycle-final.txt",
+      "state": "new",
+      "size_bytes": 1505,
+      "sha256": "2637dee922171929ae50796684d48bc27dd7a4ecb8656e1958d2721f71f194bf"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-lifecycle-final.xml",
+      "state": "new",
+      "size_bytes": 5458,
+      "sha256": "6894aac08b0e185ab4651f72aad85e4040243cc543048a7f19af1e0d7e2a73ad"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-package-binding.json",
+      "state": "new",
+      "size_bytes": 1780,
+      "sha256": "33b1fccb03f68f3b6738262de258be1959b2ef56c306d50724241dd86e8af828"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-preservation-and-package.json",
+      "state": "new",
+      "size_bytes": 7378,
+      "sha256": "732887a920745903fa2957a2805280cfaf4f753051edd70b5bd75dfb372a23c1"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-real-service-v3.json",
+      "state": "new",
+      "size_bytes": 14217,
+      "sha256": "5b95c67b686bc1f1a895d5fb402fcb8d1a4150980bf11be3e613e89408828907"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-real-service-v3.txt",
+      "state": "new",
+      "size_bytes": 3044,
+      "sha256": "621fa7bd45b7b89fdf255a263b08094e28494132d14b480fb5ffcb91f5f27576"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-real-v2.json",
+      "state": "new",
+      "size_bytes": 232797,
+      "sha256": "41afb245bad754890eb702023e6c7772d554a9bb0e82089daa4818cf5974c6bb"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-real-v2.txt",
+      "state": "new",
+      "size_bytes": 5717,
+      "sha256": "f7ae4e065134919ed5d2c13717c9b5e3cea80976d2c6ccfbc80a17e954541817"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-registration-retest-command.json",
+      "state": "new",
+      "size_bytes": 824,
+      "sha256": "d72c0696654dc873d749b7c314590efc5ae81fd5a2e50c433c895b2800169458"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-registration-retest-modules.json",
+      "state": "new",
+      "size_bytes": 11051,
+      "sha256": "edd58f30eff6a829cb14965069f4a682cb3d10cf6054ba7a8cd02ce71f0b7e3f"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-registration-retest.txt",
+      "state": "new",
+      "size_bytes": 100,
+      "sha256": "e63ab9e603a6dd1e080617922abca6effe57917865434e1c4b2e1a83ffcbe9a5"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-registration-retest.xml",
+      "state": "new",
+      "size_bytes": 383,
+      "sha256": "1dcf60eb3bdb19117119c0b5a55b024cd3c0fe875e9d8f3100b2475a142e34d1"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-resources.json",
+      "state": "new",
+      "size_bytes": 25606,
+      "sha256": "a68034428b363038684038aff4fa518e7aa8c624d6698af73a0319d67f20e587"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-unit-first.txt",
+      "state": "new",
+      "size_bytes": 1767,
+      "sha256": "4e7cd93469bba094b9c3a9f98427d95d2fbff9751bb3badf80617465c6bcf433"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-unit-first.xml",
+      "state": "new",
+      "size_bytes": 13083,
+      "sha256": "9c29ed2559eaf95edef654b58ff99d3e23edcda875e4b43bdd717712dfaf8adf"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-unit-gc-first.txt",
+      "state": "new",
+      "size_bytes": 102,
+      "sha256": "fa18a546025ed7ec52cd722a3d50efa59e2df569047c73126b06bd0285488f84"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-unit-gc-first.xml",
+      "state": "new",
+      "size_bytes": 3032,
+      "sha256": "2c95d9f777022c3864fd18b57bfd69bc92111e4c1a7a3db3f47778867f6c4916"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-unit-gc-v2.txt",
+      "state": "new",
+      "size_bytes": 195,
+      "sha256": "7d09df2e546d90b1bf7512a6276b1b8fbd9b5df22db3c898e4c7668392646ea1"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-unit-gc-v2.xml",
+      "state": "new",
+      "size_bytes": 21320,
+      "sha256": "9baa39a399688405b1396c551a34f001c00f2695f5b064ceac306746f2a10529"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-unit-gc-v3.txt",
+      "state": "new",
+      "size_bytes": 102,
+      "sha256": "399ae8c0dca47deca44313e893fa182f52158e09cecb691e85ff812034199558"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-unit-gc-v3.xml",
+      "state": "new",
+      "size_bytes": 2262,
+      "sha256": "63378b95a66395dab32dccf50f8d35f117349b781c871cb93204a7a4b2734709"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-upgrade-v2-identity.json",
+      "state": "new",
+      "size_bytes": 29433,
+      "sha256": "c1f70b028c23537b44d3a45bfed737680a8df9b5ceaccd322cc4350f81243cb3"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-upgrade-v2.json",
+      "state": "new",
+      "size_bytes": 254282,
+      "sha256": "e95625514b8b3c8b40f9a54d253666cdb11c0a30f9304276f6e6e9bb2a367452"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-upgrade-v2.txt",
+      "state": "new",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15-validation.json",
+      "state": "new",
+      "size_bytes": 17047,
+      "sha256": "e4c8999d410196a452c64a0ac03143a5330d3b33c00f3c8589f5558450b4df48"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/R15.md",
+      "state": "new",
+      "size_bytes": 8373,
+      "sha256": "fb19058f2160ac25786348c9b2c488e72a8148ee90a4db3362ccf984be4d8f51"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/index-lifetimes.md",
+      "state": "new",
+      "size_bytes": 4497,
+      "sha256": "20025d405e70649f0fb3a6a52d4e955e8b3e3967a7c69907e06cf4c3a8fd8537"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py",
+      "state": "modified",
+      "size_bytes": 27085,
+      "sha256": "ee23bdc808fc57dfeb20a246ba5b1bed747293e3cd3e9a51865181f7a8007706"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/indexes/milvus.py",
+      "state": "modified",
+      "size_bytes": 25838,
+      "sha256": "80b0138fbab627736d03fe7c8108b5bd2d34c3b36ecd8ba9ae917c6023230175"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/ingestion/encoding.py",
+      "state": "modified",
+      "size_bytes": 11575,
+      "sha256": "758b806b4fe84fb6f30dfc54ec10c36a22ccbc8f0c056c06cc9afe968c30f6dd"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/models/client.py",
+      "state": "modified",
+      "size_bytes": 17766,
+      "sha256": "2169cb58bac6464d86f56afba4c791f37d232e97fd66d37cff13909ff3f18dd9"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/retrieval/dense.py",
+      "state": "modified",
+      "size_bytes": 5098,
+      "sha256": "8a6c6143c0ed31ec83fe9642535e60037c637ce5a07df99fa80d1ffb962e9ec6"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/catalog.py",
+      "state": "modified",
+      "size_bytes": 14752,
+      "sha256": "fdb56d5462ed91cc05ae11ea94f709852f6f147cf9f665a42854a3f6882d5471"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/database.py",
+      "state": "modified",
+      "size_bytes": 9822,
+      "sha256": "c13ca73ff27a36a827b3237e02e3c651339c60833a772bd67b93e05348886f16"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/gc.py",
+      "state": "new",
+      "size_bytes": 13768,
+      "sha256": "b58e52ad6e3b79d16d5c2eec9f9522c48741cd8472ef10f81c2ea61f7c9765dc"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/lifetimes.sql",
+      "state": "new",
+      "size_bytes": 2971,
+      "sha256": "dd54054037017b2fcbef5389fa989a0b13170396fb65bcfdd868f752cae1b4f4"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/publication.py",
+      "state": "modified",
+      "size_bytes": 18158,
+      "sha256": "fe56fa79b577d3be3d3b4d564b1ed80242d66bfd5ea701a7e1bb13d4079aee98"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/readers.py",
+      "state": "new",
+      "size_bytes": 11732,
+      "sha256": "64cffdbb18327d585f5f15a829ed9ccf3ffe056018552bd62b6a6081d8909f4c"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/recovery.py",
+      "state": "modified",
+      "size_bytes": 9529,
+      "sha256": "8a435adcb730e367891e4d2a9ca2543e607bab95b59c2b2379f31298debc28ae"
+    },
+    {
+      "path": "deployment/AgenticRAG/src/agentic_rag/storage/runs.py",
+      "state": "modified",
+      "size_bytes": 11821,
+      "sha256": "da084c04e180883c8d7525bda45dd83ab6fc764ac363efa6ca0cd9ef9b8c39fb"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/gc_support.py",
+      "state": "new",
+      "size_bytes": 4589,
+      "sha256": "53f868b06bc41282640a95efe8f4402e9087b6d76c15b79a0122b384b11f9895"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/r14_package_upgrade.py",
+      "state": "modified",
+      "size_bytes": 5404,
+      "sha256": "44f7fbae570acafb43828e696e18d5ada97fbb96ac48faf9598580e5161b10e3"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/r15_gc_process.py",
+      "state": "new",
+      "size_bytes": 7503,
+      "sha256": "de6abfb1562386e87ca077c29e49e087f26cb9455860058c9570f2e78c8a6be8"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/r15_package_upgrade.py",
+      "state": "new",
+      "size_bytes": 5651,
+      "sha256": "c0f519955da42d990295753e416308b65edf0b442bcf088dfbf02f49bf54c65c"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/r15_real_acceptance.py",
+      "state": "new",
+      "size_bytes": 25611,
+      "sha256": "b655c65f0fc2e78f354e1df26e8424efc8b5e675fb5d4d5fcf17efc6eb40e23e"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/r15_upgrade_process.py",
+      "state": "new",
+      "size_bytes": 9680,
+      "sha256": "f5a4c88237614c40216474480aa2b02737fa3c8089d17dad36f0ca7979eeb574"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_index_gc.py",
+      "state": "new",
+      "size_bytes": 16819,
+      "sha256": "55438e9987fd923347cbdb61d23334101855ffac4678a53750768baf4338bffd"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_input_migration.py",
+      "state": "modified",
+      "size_bytes": 8938,
+      "sha256": "9158208dc3e279b8b6c65b7f1a3d501c789bccb9b0495b4827be648a0f40403a"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_package_install.py",
+      "state": "modified",
+      "size_bytes": 16565,
+      "sha256": "51300e73d406aabb0fc988ac86b33d2896cedc0208ab90ddb7fd96e3ab843b5e"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_processing_checkpoints.py",
+      "state": "modified",
+      "size_bytes": 12922,
+      "sha256": "7ddf75964f3476836c63afe317fbfeef597723d0ebcc03bd73521c3553cfcda5"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_recovery_ownership.py",
+      "state": "modified",
+      "size_bytes": 7065,
+      "sha256": "71940dd563fc9bc32e89845fa863887e49af8a8919cd1c1d7a9ab05836535a39"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_storage.py",
+      "state": "modified",
+      "size_bytes": 19358,
+      "sha256": "63fb5c1c8817948f46ec47760b7c3348e11c7f9ffa414b3309a6c805eff5f29c"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_storage_processes.py",
+      "state": "modified",
+      "size_bytes": 9802,
+      "sha256": "fd1e68c7d3994f993d2920bee00d8097cff495a78f5dbc1813ce3f6391157dc3"
+    },
+    {
+      "path": "deployment/AgenticRAG/tests/test_worker_history.py",
+      "state": "modified",
+      "size_bytes": 4663,
+      "sha256": "bc77107d98a9d09736a51fb089e828ddd0a7027dee9778ef2b4994ec13b55a3f"
+    }
+  ],
+  "already_in_external_commit": [
+    "deployment/AgenticRAG/docs/storage-and-concurrency.md: R15 introduction only"
+  ],
+  "inherited_required_postnotes_preserved": [
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-stage-execution.json",
+      "size": 21289,
+      "sha256": "4ccd156c7fd07fee8caac342aa3b530588cdedcdb845f3d3710c8faccbab854e"
+    },
+    {
+      "path": "deployment/AgenticRAG/docs/implementation-records/W1-bs02-leader-postcommit.json",
+      "size": 10950,
+      "sha256": "0fe0683bd71eb51a16d86f05cb70b19e70efbaea3a4145d0a8acbb6895149b30"
+    }
+  ],
+  "not_executor_changes": [
+    "deployment/AgenticRAG/docs/implementation-checklist.md",
+    "other external 10d2838 documentation"
+  ],
+  "self_excluded": "R15-files.json does not recursively hash itself; every listed file hash is raw bytes.",
+  "no_stage_commit_push": true,
+  "resource_manifest": "R15-resources.json"
+}

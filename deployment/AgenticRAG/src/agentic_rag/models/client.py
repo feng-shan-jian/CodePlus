@@ -33,6 +33,22 @@ class RequestHandle:
         self.cancel_ack, self.completion_source = False, None
         self.cancel_requested = False
         self.model_status = None
+        # Snapshot the authenticated hello, before this request is sent. Return
+        # copies so neither later metadata mutation nor callers can change it.
+        self._worker_identity = tuple((client._request_identity or {}).items())
+
+    @property
+    def worker_identity(self):
+        return dict(self._worker_identity)
+
+    def _worker_dead(self):
+        identity = self.worker_identity
+        if not identity:
+            return False
+        try:
+            return process_birth(identity['pid']) != identity['process_birth']
+        except OSError:
+            return False
 
     def result(self, timeout=None):
         local_end = float('inf') if timeout is None else time.monotonic() + timeout
@@ -73,7 +89,7 @@ class RequestHandle:
         end = float('inf') if timeout is None else time.monotonic() + timeout
         with self.condition:
             while not self.execution_finished:
-                if self.client._worker_dead():
+                if self._worker_dead():
                     self.execution_finished, self.completion_source = True, 'worker_process_death'
                     break
                 if time.monotonic() >= end:
@@ -90,6 +106,7 @@ class LocalModelClient:
         self.sock, self.reader, self.metadata = None, None, None
         self.closing, self.broken = False, False
         self._status_event, self._status = threading.Event(), None
+        self._request_identity = None
 
     @contextmanager
     def _locked(self, deadline):
@@ -127,6 +144,7 @@ class LocalModelClient:
             sock.close()
             raise protocol_error('worker handshake response mismatch')
         UUID(ack['session_id'])
+        self._request_identity = {key: ack[key] for key in ('pid','process_birth','instance_id','session_id')}
         self.reader = threading.Thread(target=self._read_loop, name='rag-worker-client', daemon=True)
         self.reader.start()
 

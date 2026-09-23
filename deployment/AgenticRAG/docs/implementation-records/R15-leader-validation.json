@@ -1,0 +1,109 @@
+{
+  "status": "ACCEPTED",
+  "time": 1790130438.9676096,
+  "head_before_commit": "10d283852460c6afc2199cb16757db6160a7fb9b",
+  "scope": "R15; current user-authorized roadmap ends at Windows R24",
+  "writer": "/root after executor STOP_WRITE",
+  "executor_manifest_sha256": "8e1a75c3f2c6692fd14b270c52c3ea4879ef494540ac5f6be3d83ef3a4219347",
+  "frozen_executor_files_verified": 91,
+  "final_wheel": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\dist\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+    "sha256": "8f60afb2f20d12084ab04d8a4aa935db47b356049d181d70d9ca9f3745d94168"
+  },
+  "independent_core": {
+    "passed": 114,
+    "failed": 0,
+    "skipped": 0,
+    "xml": "R15-leader-core.xml",
+    "installed_modules": 102
+  },
+  "independent_install": {
+    "result": "PASS",
+    "routes": [
+      "wheel",
+      "sdist-wheel"
+    ],
+    "report": "R15-leader-install.json"
+  },
+  "independent_real": {
+    "result": "PASS",
+    "cases": [
+      "history-readers",
+      "bind-first",
+      "claim-first",
+      "crash-before_drop",
+      "crash-after_drop",
+      "crash-after_receipt",
+      "two-collectors",
+      "physical-replacement",
+      "service-retry"
+    ],
+    "report": "R15-leader-real.json"
+  },
+  "independent_upgrade": {
+    "result": "PASS",
+    "schema": [
+      8,
+      9
+    ],
+    "rollback_schema": 8,
+    "model_requests_on_resume": 0,
+    "report": "R15-leader-upgrade.json"
+  },
+  "history": {
+    "all_old_versions": 3,
+    "saved_citation": true,
+    "collection_absent": true,
+    "parser_calls": [],
+    "gpu_or_service_imports": []
+  },
+  "checklist": [
+    {
+      "item": "bind-vs-GC atomic admission",
+      "status": "PASS"
+    },
+    {
+      "item": "complete current/run/mutation dependency protection",
+      "status": "PASS"
+    },
+    {
+      "item": "actual completion and crash identity release",
+      "status": "PASS"
+    },
+    {
+      "item": "bounded automatic reclamation and durable retries",
+      "status": "PASS"
+    },
+    {
+      "item": "all historical archives and citations retained",
+      "status": "PASS"
+    }
+  ],
+  "executor_regression": {
+    "source": "R15-validation.json",
+    "original_core": {
+      "passed": 709,
+      "failed": 11,
+      "skipped": 30
+    },
+    "all_11_failures_have_passing_retests": true,
+    "distinct_core_passes": 723,
+    "host_targeted_passed": 174,
+    "note": "Original failures retained; this is combined coverage, not a fabricated new full-suite PASS."
+  },
+  "preservation": {
+    "inherited": 6538,
+    "old_sql": 8,
+    "differences": [
+      "deployment/AgenticRAG/docs/implementation-checklist.md"
+    ],
+    "explanation": "Checklist includes user-authorized R24 roadmap and R15 IN_PROGRESS; all other inherited bytes/presence preserved."
+  },
+  "resources": "R15-leader-resources.json",
+  "limits": [
+    "Synthetic documents establish lifecycle correctness, not LLM answer quality.",
+    "SDK has no expected-collection-ID atomic delete against concurrent external administrator replacement.",
+    "Windows execution only; R25/R26 removed from current scope by the user."
+  ],
+  "no_push": true
+}

@@ -1,0 +1,76 @@
+{
+  "argv": [
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\core\\Scripts\\python.exe",
+    "-I",
+    "-B",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\r15_package_upgrade.py",
+    "--root",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\upgrade",
+    "--repo",
+    "D:\\CodePlus",
+    "--baseline",
+    "e39de66e638b9bd2f7e6e597d355309bc9518e19",
+    "--wheel",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\dist\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+    "--cuda-python",
+    "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\cuda\\Scripts\\python.exe",
+    "--model-cache",
+    "C:/Users/18221/.cache/codeplus-agenticrag/models",
+    "--endpoint",
+    "http://127.0.0.1:19541",
+    "--report",
+    "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\R15-leader-upgrade.json"
+  ],
+  "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923",
+  "started": 1790130181.3667877,
+  "finished": 1790130269.1282754,
+  "exit_code": 0,
+  "prior_actual_worker": {
+    "instance_id": "343c131d-0ee8-44a2-b8ed-4faeffbb3346",
+    "pid": 72556,
+    "process_birth": "134346034797752058",
+    "port": 64349,
+    "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\real\\worker",
+    "identity": {
+      "executable": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\cuda\\Scripts\\python.exe",
+      "module_path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\cuda\\Lib\\site-packages\\agentic_rag\\models\\identity.py",
+      "python": "3.14.3",
+      "packages": {
+        "torch": "2.14.0+cu130",
+        "transformers": "5.17.0",
+        "tokenizers": "0.23.2"
+      },
+      "device": "cuda:0",
+      "clock_domain": "1e1523c9d9951e4d9427bd3a80f64b378b4b874582701f9e7423f58e14a20952",
+      "device_environment": {
+        "CUDA_VISIBLE_DEVICES": null,
+        "NVIDIA_VISIBLE_DEVICES": null,
+        "CUDA_DEVICE_ORDER": null
+      },
+      "implementation_digest": "20c0760ebe82370fc304bc6cbdffb5b1e80ec18cd780c272403493d8fe7a2a4d",
+      "runtime_fingerprint": "a3a4f1bf363f419e18c9179184456ec3d28f15c8e99c76d838384bac25428d2d"
+    },
+    "actual_device": {
+      "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "index": 0,
+      "uuid": "23fe456d-2e40-7bdb-8d94-e00d1f6e1dd6",
+      "total_memory_bytes": 8585216000
+    },
+    "config": {
+      "schema_version": 1,
+      "executable": "C:/Users/18221/AppData/Local/Temp/codeplus-r15-leader-20260923/cuda/Scripts/python.exe",
+      "model_cache": "C:/Users/18221/.cache/codeplus-agenticrag/models",
+      "runtime_dir": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r15-leader-20260923\\real\\worker",
+      "startup_timeout_ms": 60000,
+      "handshake_timeout_ms": 3000,
+      "io_timeout_ms": 5000,
+      "idle_timeout_ms": 10000,
+      "max_frame_bytes": 1048576,
+      "max_connections": 16,
+      "max_queue_items": 16,
+      "max_queue_bytes": 4194304,
+      "max_session_requests": 4096
+    }
+  },
+  "prior_worker_observed_dead": true
+}
