@@ -69,9 +69,9 @@ def test_real_schema1_upgrade_preserves_history_and_never_fabricates_manifest(tm
     assert catalog.archives.read(old['raw'])==b'real archived original in schema1'
     assert catalog.get_snapshot(old['snapshot'].snapshot_id)==old['snapshot']
     with catalog._db.transaction() as connection:
-        assert connection.pragma('user_version')==10
+        assert connection.pragma('user_version')==11
         assert connection.execute('SELECT sha256 FROM schema_migrations WHERE version=1').fetchone()==(old['migration_hash'],)
-        assert connection.execute('SELECT count(*) FROM schema_migrations').fetchone()==(10,)
+        assert connection.execute('SELECT count(*) FROM schema_migrations').fetchone()==(11,)
         assert connection.execute('PRAGMA foreign_key_check').fetchall()==[]
         assert connection.execute('PRAGMA integrity_check').fetchone()==('ok',)
     with pytest.raises(RagError,match='no persisted input manifest'):
@@ -126,13 +126,13 @@ def test_interrupted_middle_migration_rolls_back_only_that_step_then_resumes(tmp
     assert catalog.get_version(old['version']).raw_hash == old['raw']
     assert catalog.archives.read(old['raw']) == b'real archived original in schema1'
     with catalog._db.transaction() as connection:
-        assert connection.pragma('user_version') == 10
-        assert connection.execute('SELECT count(*) FROM schema_migrations').fetchone() == (10,)
+        assert connection.pragma('user_version') == 11
+        assert connection.execute('SELECT count(*) FROM schema_migrations').fetchone() == (11,)
         assert connection.execute('PRAGMA foreign_key_check').fetchall() == []
         assert connection.execute('PRAGMA integrity_check').fetchone() == ('ok',)
 
 
-@pytest.mark.parametrize('version', range(2, 11))
+@pytest.mark.parametrize('version', range(2, 12))
 def test_every_applied_additive_migration_is_authenticated_on_reopen(tmp_path, version):
     path = tmp_path / 'authenticated-upgrades'
     Catalog(path)
@@ -146,7 +146,7 @@ def test_every_applied_additive_migration_is_authenticated_on_reopen(tmp_path, v
         Catalog(path)
     connection = apsw.Connection(str(path / 'catalog.sqlite'))
     try:
-        assert connection.pragma('user_version') == 10
+        assert connection.pragma('user_version') == 11
         assert list(connection.execute('SELECT * FROM schema_migrations ORDER BY version')) == before
     finally:
         connection.close()

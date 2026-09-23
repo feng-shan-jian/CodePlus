@@ -36,8 +36,8 @@
 | R13 | COMMITTED | /root/r13_mutations | [Leader独立验收](implementation-records/R13-leader-review.md)；1302通过/32条件skip、独立清理及复核完成，元数据观察保留 | `a4fede1c3f0a09202710e53debdbac3307c0911d` |
 | R14 | COMMITTED | /root/r14_recovery | [Leader 独立验收](implementation-records/R14-leader-review.md)、[独立清理](implementation-records/R14-cleanup.md)、[清理复核](implementation-records/R14-leader-postcleanup.json)及[精确提交](implementation-records/R14-leader-postcommit.json)通过 | 175f8f54ed9e24736a232f6b989d145f7f217dca |
 | R15 | COMMITTED | /root/r15_gc | [Leader 独立验收](implementation-records/R15-leader-review.md)、[精确提交](implementation-records/R15-leader-postcommit.json)；114项、两路安装、9类真实场景及schema8→9通过 | `253047b4f862b7145c2ee3b445a3d9ee0f07afad` |
-| R16 | ACCEPTED | /root/r16_model_switch | [Leader 独立验收](implementation-records/R16-leader-review.md)；205项、两路安装、真实切换/恢复及schema9→10通过 | 待精确本地提交 |
-| R17 | TODO | — | — | — |
+| R16 | COMMITTED | /root/r16_model_switch | [Leader 独立验收](implementation-records/R16-leader-review.md)；205项、两路安装、真实切换/恢复及schema9→10通过 | `835b4887c21588f7e0165e1c7ff2477c3b4a1b6c` |
+| R17 | ACCEPTED | /root/r17_retrieval | [Leader 独立验收](implementation-records/R17-leader-review.md)；191项、两路安装、真实故障/无模型BM25与schema10→11通过，600条复核/200条RRF复算一致 | 待精确本地提交 |
 | R18 | TODO | — | — | — |
 | R19 | TODO | — | — | — |
 | R20 | TODO | — | — | — |

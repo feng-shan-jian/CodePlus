@@ -1,0 +1,612 @@
+{
+  "stage": "R17",
+  "status": "ACCEPTED",
+  "time": 1790139783.3134203,
+  "baseline": "835b4887c21588f7e0165e1c7ff2477c3b4a1b6c",
+  "branch": "codex/rag",
+  "wheel": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\dist\\codeplus_agentic_rag-0.1.0-py3-none-any.whl",
+    "sha256": "20319d8040fa24b2eaeb2a9f858ac0d03b9f82d1a975c116d46b90d857e0684a"
+  },
+  "sdist": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\dist\\codeplus_agentic_rag-0.1.0.tar.gz",
+      "sha256": "16d9133098c6b6882867e1bed92035cee09f0ff600798b096f64dd9fce39dd93"
+    }
+  ],
+  "authored_files": {
+    "deployment/AgenticRAG/README.md": "4a0fe36b4ab5d6c32b69421cac885dcf3a8066a4af3fbb54a95637a4cba7f3b4",
+    "deployment/AgenticRAG/docs/codeplus-integration.md": "07202293e3a646805224b0a29c0a3ab6f8930e97503422609ad79066c81aff64",
+    "deployment/AgenticRAG/docs/implementation-records/R17-executor.json": "15e1bbe88790d92996394e8e3f3c7f870648fee4af53eb9e43e0b32c76a42038",
+    "deployment/AgenticRAG/docs/implementation-records/R17-files.txt": "c2873d597edca8a8081bf9ad6f46dde20526c3328e7d1a9e0eb9bf156278a379",
+    "deployment/AgenticRAG/docs/implementation-records/R17.md": "565bfc94f82b78932bae7029aaa9174848e58202e1849af36f5376cf1903f123",
+    "deployment/AgenticRAG/docs/retrieval.md": "0781956ec49bf1b22bd29b0475c90a399a0812b009aae7649a3a4e74e5abc2eb",
+    "deployment/AgenticRAG/eval/dense_runner.py": "d748577dafc32d4f0c049794224aef05ffd1d7fab601b88a30bba558eaee1ef1",
+    "deployment/AgenticRAG/src/agentic_rag/adapters/codeplus/policy.py": "b44a735998300da2b0d70f53f30559361e7749d032b9627275f98b465e696dfb",
+    "deployment/AgenticRAG/src/agentic_rag/retrieval/__init__.py": "d275cf115458775819742485e8e05146280588b8ca4fda8e2f9ffb9aeaf46300",
+    "deployment/AgenticRAG/src/agentic_rag/retrieval/dense.py": "657a9eec977b1a751dc6dc916911d2d842f339dd10d32a3c3f46c8f2bbcf21a2",
+    "deployment/AgenticRAG/src/agentic_rag/retrieval/rrf.py": "c0d69bb7ac9f5ea25669727412f5328d21f32f6b5dfbe0bfad2a23a3774a69c9",
+    "deployment/AgenticRAG/src/agentic_rag/retrieval/search.py": "98a5d3a852f7304684d9e79811f04f2c4272a3e54f6bc78cd6f89cef132e0c2f",
+    "deployment/AgenticRAG/src/agentic_rag/sources.py": "0a12c000a8b02e0a4bd3e14a20c69ee1ed3a05829d36f8dcb66b8f47eac85913",
+    "deployment/AgenticRAG/src/agentic_rag/storage/database.py": "e1766d6ac244a46f832b3d656cae2c32e210a39da193b56b9d47b45417bdf4c4",
+    "deployment/AgenticRAG/src/agentic_rag/storage/retrieval.sql": "003ce4462516f054b9a5775e4a469a2b350bba02d8e73e67cebf3a6f37160f98",
+    "deployment/AgenticRAG/tests/r14_package_upgrade.py": "beda956ee7253d68b9cd0a801890e8cb7a4b53d7eb43253203f47d5a0d26015d",
+    "deployment/AgenticRAG/tests/r15_package_upgrade.py": "317aa61fb1861c61b349265e2b228728d65265aa7104376d28291c0b200ece6d",
+    "deployment/AgenticRAG/tests/r16_package_upgrade.py": "31c8e063652fc3f86f275f36f39ad68b760c1c49b56999d912f67f9bfeeb5569",
+    "deployment/AgenticRAG/tests/r17_package_upgrade.py": "1e031de83ba27c8c49b2324d3b02219c005e172b6f1d0366ef29d4722974b66c",
+    "deployment/AgenticRAG/tests/r17_real_acceptance.py": "95d5b33dd4beec114ada6cbcb2066584e58b74b5794a10b87fc8321a22db7618",
+    "deployment/AgenticRAG/tests/r17_upgrade_process.py": "7f9c5341df9477c170f3fe002906509e88af0fd835b28b4245328b30906e28b1",
+    "deployment/AgenticRAG/tests/runner_fault_helper.py": "08bb775cdfa96286291a8f2a7b6356df16aa8df4149ba3513aab998c28f6def3",
+    "deployment/AgenticRAG/tests/test_dense_runner.py": "ecceb93d81bf6bd6f1e3eb93aff37a23ca1869f26bdab1631bcd55e2f6efb0a0",
+    "deployment/AgenticRAG/tests/test_input_migration.py": "662195ddbae1233603efe01300dfdc54f3091b4089fc3c82492b2dd3906c677e",
+    "deployment/AgenticRAG/tests/test_package_install.py": "f23cd059830aacc9ddc3f2b308269c7778c6b39b292ae9b8e21515aeb557b4fe",
+    "deployment/AgenticRAG/tests/test_processing_checkpoints.py": "67e71b185c3718d92d7e6f1aedd81aeee2c8813debe1ae4c7cc47bf36180d803",
+    "deployment/AgenticRAG/tests/test_retrieval.py": "1c70fb671c6b481862b2083bf6a2a9e53ea972f4f2fcb8d59cb44becbfb0f3ba",
+    "deployment/AgenticRAG/tests/test_retrieval_host.py": "34485da9f125ab5b5e7f86c5a51ae094cea03249c63c64ff2da3b1d8165a7da3",
+    "deployment/AgenticRAG/tests/test_storage.py": "4fd6abffb141dfea537d4dc5be0445dd6b20525d2673e0e9a15838e56d7274c6",
+    "deployment/AgenticRAG/tests/test_worker_history.py": "c860aeb49d56940b5733f4effe8cb134de87a78abc91dfee550c67b14c67febf"
+  },
+  "preservation": {
+    "inherited": 6537,
+    "old_sql": 10,
+    "readme": [
+      {
+        "path": "README.md",
+        "exists": true,
+        "sha256": "e538593e822e61d8cb5492396678aae9772c12f8f13fae332101b139d5de5a40"
+      },
+      {
+        "path": "README_EN.md",
+        "exists": true,
+        "sha256": "7decf290dd1206889448dcd58e56aaa69d28ccde6e30a781f21012e3ec257857"
+      }
+    ],
+    "differences": [],
+    "baseline_path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-executor-20260923\\baseline.json",
+    "baseline_sha256": "a1f141c2300fb0f4fbd2710d303888bb9d98c938ed6386b596a4c4cda1f19041"
+  },
+  "package_resources_verified": 71,
+  "installed_environments_verified": [
+    "core",
+    "cuda",
+    "upgrade/env"
+  ],
+  "tests": {
+    "related": {
+      "tests": 191,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 409.242,
+      "installed_modules_verified": 96,
+      "command": {
+        "argv": [
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\core\\Scripts\\python.exe",
+          "-I",
+          "-B",
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\run_tests.py",
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\related",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_retrieval.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_retrieval_host.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_dense_runner.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_sources.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_source_read_reuse.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_publication.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_storage.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_input_migration.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_worker_history.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_index_gc.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_model_switch.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_package_install.py",
+          "D:\\CodePlus\\deployment\\AgenticRAG\\tests\\test_codeplus_integration.py::test_source_limit_finalizes_only_valid_evidence_and_persists_terminal",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--basetemp",
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\related-data",
+          "--junitxml",
+          "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\related.xml"
+        ],
+        "cwd": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923",
+        "started": 1790139357.6200817,
+        "finished": 1790139769.2541287,
+        "exit_code": 0
+      },
+      "log": {
+        "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\related.log",
+        "bytes": 276,
+        "sha256": "42b9da54fe658f97bac55152c1f121dfbfba3160c9a6506cd718b1497729524d"
+      }
+    }
+  },
+  "core_only_wheel_and_sdist": {
+    "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\install.json",
+    "bytes": 78840,
+    "sha256": "40d0f4d102bda3feb26b8f9918afa87ba99dc477b561319bef33145981a3fcdc"
+  },
+  "real": {
+    "status": "PASS",
+    "seconds": 58.73116183280945,
+    "package": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\core\\Lib\\site-packages\\agentic_rag\\__init__.py",
+    "scenarios": [
+      "actual release_collection makes BM25 fail after successful Dense; no new evidence",
+      "old confirmed evidence remains citable",
+      "actual new publication between branches keeps old pin",
+      "real native BM25 succeeds with missing worker/model cache; no handles or connection",
+      "native analyzer zero-token query is legally empty",
+      "actual Dense with unavailable worker fails explicitly"
+    ],
+    "report": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\real.json",
+      "bytes": 54235,
+      "sha256": "cf26212c5177666913d3f681dfa82c176267908097833e386d335fa6c14847b1"
+    },
+    "boundary": "Own small real GPU/Milvus fixtures; no live answer-model quality claim."
+  },
+  "upgrade": {
+    "status": "PASS",
+    "from": 10,
+    "to": 11,
+    "rollback_schema": 10,
+    "old_table_hashes_preserved": 49,
+    "old_migrations_preserved": 10,
+    "old_wheel_sha256": "5638a14be4020909e819ddf23004f0622cc3af15e314f698bdd63f93a8d4b0d5",
+    "new_wheel_sha256": "20319d8040fa24b2eaeb2a9f858ac0d03b9f82d1a975c116d46b90d857e0684a",
+    "archives_preserved": 6,
+    "integrity": [
+      [
+        "ok"
+      ]
+    ],
+    "foreign_keys": [],
+    "normal_bm25_trace_after_upgrade": true,
+    "report": {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\upgrade.json",
+      "bytes": 165032,
+      "sha256": "1ae834c6289bf4b8eac9e5024a3249884e0f1ad7d390a44e7febdb7fe19c09da"
+    }
+  },
+  "medium": {
+    "status": "PASS",
+    "frozen_identity": [
+      "9a17f7bf-17fc-485c-a9a8-c1655accd4be",
+      "2c79ef10-792f-486d-966d-95cf1f6281a2",
+      "8db278a920b290ea9d6f63d5bea473960fb20c26fcb41c5078dececa421d4d0d",
+      "f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898"
+    ],
+    "records_verified": 600,
+    "rrf_queries": 200,
+    "method": "exact rational arithmetic from each branch first-occurrence original rank; stable ID ties",
+    "metrics": {
+      "dense": {
+        "official": {
+          "Hits@10": 0.8870056497175142,
+          "Hits@4": 0.7457627118644068,
+          "MAP@10": 0.27070386064030133,
+          "MRR@10": 0.5629427854004125
+        },
+        "native": {
+          "input_sha256": "73e5eba49bf7da39285752662db163f631cedaa19a2adb4cc0dd27f574edc6df",
+          "official_score_sha256": "cfd211f273879bb0e81c437578b2d3690a0c4d17c9aae27c3c651eccbe298abe",
+          "dataset_sha256": "f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898",
+          "selected_questions": 200,
+          "scored_questions": 177,
+          "excluded_null_queries": 23,
+          "request_errors": 0,
+          "fully_covered": 38,
+          "evidence_ranges": 484,
+          "covered_ranges": 246,
+          "evidence_recall": 0.5082644628099173,
+          "latency_all_successes": {
+            "samples": 200,
+            "p50_ms": 913.3807000034722,
+            "p95_ms": 1056.3806100035436
+          },
+          "cold_first_ms": 15905.537200000254,
+          "warm_repeat_ms": 849.3096000020159,
+          "answer_correctness": "not_evaluated",
+          "refusal_correctness": "not_evaluated"
+        },
+        "input_sha256": "73e5eba49bf7da39285752662db163f631cedaa19a2adb4cc0dd27f574edc6df",
+        "official_output_sha256": "cfd211f273879bb0e81c437578b2d3690a0c4d17c9aae27c3c651eccbe298abe",
+        "native_output_sha256": "62080819b5864e1156ea95592e85cc53003a55708cf4993ce1b35874928a1e6d"
+      },
+      "bm25": {
+        "official": {
+          "Hits@10": 0.8870056497175142,
+          "Hits@4": 0.7570621468926554,
+          "MAP@10": 0.32048994111141005,
+          "MRR@10": 0.6184310824141332
+        },
+        "native": {
+          "input_sha256": "743850cc1e959f3d7596f7c1069c2b881dbd9fbd418328a48b4fafc6b9d1a67a",
+          "official_score_sha256": "6ee345e231ab5ae92041353413e7ef5184282d11ebccf2d1f4b9504e43c3d4ed",
+          "dataset_sha256": "f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898",
+          "selected_questions": 200,
+          "scored_questions": 177,
+          "excluded_null_queries": 23,
+          "request_errors": 0,
+          "fully_covered": 55,
+          "evidence_ranges": 484,
+          "covered_ranges": 276,
+          "evidence_recall": 0.5702479338842975,
+          "latency_all_successes": {
+            "samples": 200,
+            "p50_ms": 778.8191999934497,
+            "p95_ms": 891.8983149938866
+          },
+          "cold_first_ms": 806.4442999893799,
+          "warm_repeat_ms": 785.3266000020085,
+          "answer_correctness": "not_evaluated",
+          "refusal_correctness": "not_evaluated"
+        },
+        "input_sha256": "743850cc1e959f3d7596f7c1069c2b881dbd9fbd418328a48b4fafc6b9d1a67a",
+        "official_output_sha256": "6ee345e231ab5ae92041353413e7ef5184282d11ebccf2d1f4b9504e43c3d4ed",
+        "native_output_sha256": "48fc8ebb7c41ab052741438b2f06fcdf91dff87f0594fca13ce02c4713669830"
+      },
+      "hybrid": {
+        "official": {
+          "Hits@10": 0.9378531073446328,
+          "Hits@4": 0.8022598870056498,
+          "MAP@10": 0.314997533853466,
+          "MRR@10": 0.620664066003049
+        },
+        "native": {
+          "input_sha256": "e4110ee94cc63135658fc32849c251346740b6158c25d18dbca63e697514dde5",
+          "official_score_sha256": "50945615b6b0ddbd4180708e1dff49c1c45fdd3136bb7bfd8f13daf4d1893480",
+          "dataset_sha256": "f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898",
+          "selected_questions": 200,
+          "scored_questions": 177,
+          "excluded_null_queries": 23,
+          "request_errors": 0,
+          "fully_covered": 55,
+          "evidence_ranges": 484,
+          "covered_ranges": 288,
+          "evidence_recall": 0.5950413223140496,
+          "latency_all_successes": {
+            "samples": 200,
+            "p50_ms": 1674.1948499911814,
+            "p95_ms": 1893.3412300022608
+          },
+          "cold_first_ms": 15420.021500001894,
+          "warm_repeat_ms": 1662.848000007216,
+          "answer_correctness": "not_evaluated",
+          "refusal_correctness": "not_evaluated"
+        },
+        "input_sha256": "e4110ee94cc63135658fc32849c251346740b6158c25d18dbca63e697514dde5",
+        "official_output_sha256": "50945615b6b0ddbd4180708e1dff49c1c45fdd3136bb7bfd8f13daf4d1893480",
+        "native_output_sha256": "e4da491fdbc8404b6b841107f889274d32aa29c24472e465643383520f8171ec"
+      }
+    },
+    "score_outputs_equal_executor": true,
+    "boundary": "Actual600 requests belong to executor; this independent process only rechecks/rescores. Leader real GPU/Milvus scenarios are separate."
+  },
+  "failures_and_followups": {
+    "executor_host": "43pass/1cwd fixture failure; correctcwd targeted recheck1pass, original retained",
+    "executor_finalization": "Private CRLF/UTF8 helper failure retained; no production change",
+    "leader_medium": "Initial private checker incorrectly required optional BM25 worker_identity key; six scoring calls had already passed. Followup accepts missing identity, verifies all600 records and200RRF again and reuses those exact successful scoring invocations. Original failure retained; no production or score change.",
+    "followup_invocation": {
+      "argv": [
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\core\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\medium_verify_followup.py"
+      ],
+      "cwd": "D:/CodePlus",
+      "exit_code": 0,
+      "started": 1790139442.1830204,
+      "finished": 1790139442.5444818,
+      "source": "Leader exec_command observation; verifier report timestamps"
+    }
+  },
+  "executor_results": {
+    "core": "769passed/30skipped/0failed",
+    "focused": "72passed",
+    "new_host_paths": "4passed",
+    "final_install": "1passed",
+    "medium": "actual609documents/4041chunks; three routes200each/0errors; scored177 each"
+  },
+  "resources": {
+    "observed_at": 1790139783.312196,
+    "root": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923",
+    "compose_project": "codeplus-r17-leader-20260923",
+    "ports": [
+      19545,
+      9106
+    ],
+    "runtime_processes_excluding_finalizer": [],
+    "excluded_finalizer_and_venv_launcher_pids": [
+      65876,
+      64064
+    ],
+    "containers": [
+      {
+        "Command": "\"/tini -- milvus run…\"",
+        "CreatedAt": "2026-09-23 12:53:46 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "1faf70f93b40",
+        "Image": "milvusdb/milvus:v3.0.1",
+        "Labels": "com.docker.compose.config-hash=d48f16756572136aa43bc4d42b26fa56e12a00cb6897ab8a2bf0d363535e8771,com.docker.compose.container-number=1,com.docker.compose.depends_on=etcd:service_healthy:false,minio:service_healthy:false,com.docker.compose.image=sha256:2b2fc2cf499ad897c93d4b90ee251646f718522845261a342d74d7c0c66bb274,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r17-leader-20260923,com.docker.compose.service=standalone,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/19530/tcp=127.0.0.1:19545,desktop.docker.io/ports/9091/tcp=127.0.0.1:9106,org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r17-l…",
+        "Names": "codeplus-r17-leader-20260923-standalone-1",
+        "Networks": "codeplus-r17-leader-20260923_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "127.0.0.1:9106->9091/tcp, 127.0.0.1:19545->19530/tcp",
+        "RunningFor": "9 minutes ago",
+        "Size": "94.2kB (virtual 3GB)",
+        "State": "running",
+        "Status": "Up 9 minutes (healthy)"
+      },
+      {
+        "Command": "\"/usr/bin/docker-ent…\"",
+        "CreatedAt": "2026-09-23 12:53:45 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "ceb7ec1074d3",
+        "Image": "quay.io/minio/minio:RELEASE.2024-12-18T13-15-44Z",
+        "Labels": "architecture=x86_64,build-date=2024-12-18T09:14:16Z,com.docker.compose.config-hash=299ba2002edc0135f3c1612c1f96087e177e1df359da4eaaeed2305a1be46af7,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:34c8e2f52a5984492555427fee07254c80036bdb7079bb91679232abd7a4fa20,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r17-leader-20260923,com.docker.compose.service=minio,com.docker.compose.version=5.4.0,com.redhat.component=ubi9-micro-container,com.redhat.license_terms=https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI,description=MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads.,desktop.docker.io/ports.scheme=v2,distribution-scope=public,io.buildah.version=1.38.0-dev,io.k8s.description=Very small image which doesn't install the package manager.,io.k8s.display-name=Red Hat Universal Base Image 9 Micro,io.openshift.expose-services=,maintainer=MinIO Inc <dev@min.io>,name=MinIO,release=RELEASE.2024-12-18T13-15-44Z,summary=MinIO is a High Performance Object Storage, API compatible with Amazon S3 cloud storage service.,url=https://www.redhat.com,vcs-ref=10988923ed65297b3e5a5c9cf1c59f779fd76274,vcs-type=git,vendor=MinIO Inc <dev@min.io>,version=RELEASE.2024-12-18T13-15-44Z",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r17-l…",
+        "Names": "codeplus-r17-leader-20260923-minio-1",
+        "Networks": "codeplus-r17-leader-20260923_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "9000/tcp",
+        "RunningFor": "9 minutes ago",
+        "Size": "24.6kB (virtual 182MB)",
+        "State": "running",
+        "Status": "Up 9 minutes (healthy)"
+      },
+      {
+        "Command": "\"etcd -advertise-cli…\"",
+        "CreatedAt": "2026-09-23 12:53:45 +0800 CST",
+        "HealthStatus": "healthy",
+        "ID": "df5940c00aba",
+        "Image": "quay.io/coreos/etcd:v3.5.25",
+        "Labels": "com.docker.compose.config-hash=f2f4fffef40f58b3af325d21bb88e91daeff34707dedc61f497e5a0dcf7293bb,com.docker.compose.container-number=1,com.docker.compose.depends_on=,com.docker.compose.image=sha256:dc2bdc588d2adc5272204a1fff7f1d89f31e8caacea78fdf509fd409d7162a9d,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources\\r14-compose.yaml,com.docker.compose.project.working_dir=D:\\CodePlus\\deployment\\AgenticRAG\\tests\\resources,com.docker.compose.project=codeplus-r17-leader-20260923,com.docker.compose.service=etcd,com.docker.compose.version=5.4.0,desktop.docker.io/ports.scheme=v2,io.buildah.version=1.41.5",
+        "LocalVolumes": "1",
+        "Mounts": "codeplus-r17-l…",
+        "Names": "codeplus-r17-leader-20260923-etcd-1",
+        "Networks": "codeplus-r17-leader-20260923_default",
+        "Platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        },
+        "Ports": "2379-2380/tcp",
+        "RunningFor": "9 minutes ago",
+        "Size": "24.6kB (virtual 69.5MB)",
+        "State": "running",
+        "Status": "Up 9 minutes (healthy)"
+      }
+    ],
+    "private_environments": [
+      "core",
+      "cuda",
+      "upgrade/env"
+    ],
+    "retained": "Owned environments, wheels/sdist, original failure logs, helper scripts, tests, real/upgrade data, volumes and network for separately assigned cleanup.",
+    "shared_models_read_only": "C:/Users/18221/.cache/codeplus-agenticrag/models",
+    "no_cleanup_gate": true
+  },
+  "raw_evidence": [
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\accept.json",
+      "bytes": 4665,
+      "sha256": "23f2ebb65e153eb1502d5d27398948476aa5956d617643fbe7a82cdaba0deadc"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\accept.py",
+      "bytes": 3763,
+      "sha256": "aa17843298da158471dfeb9a6aa29b5e33221192e20d91f79c0b880dcce805d8"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\bm25-native.json",
+      "bytes": 50323,
+      "sha256": "48fc8ebb7c41ab052741438b2f06fcdf91dff87f0594fca13ce02c4713669830"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\bm25-native.log",
+      "bytes": 727,
+      "sha256": "963ba18e0faf6bfe4f7e30e71ccfe17b0b1adaa52e96360bc7b0d9548dc4d879"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\bm25-official.json",
+      "bytes": 1425,
+      "sha256": "6ee345e231ab5ae92041353413e7ef5184282d11ebccf2d1f4b9504e43c3d4ed"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\bm25-official.log",
+      "bytes": 1477,
+      "sha256": "b956116d962091170d65b99bb18c7b152496f4f9cef285e470f87c9104202881"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\dense-native.json",
+      "bytes": 50363,
+      "sha256": "62080819b5864e1156ea95592e85cc53003a55708cf4993ce1b35874928a1e6d"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\dense-native.log",
+      "bytes": 729,
+      "sha256": "13fc1c9f90caddf555b086d849b39172a569b09876360e8ea6244031d3204ac5"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\dense-official.json",
+      "bytes": 1426,
+      "sha256": "cfd211f273879bb0e81c437578b2d3690a0c4d17c9aae27c3c651eccbe298abe"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\dense-official.log",
+      "bytes": 1478,
+      "sha256": "70aaabd4271c472815deb900f3a7fc977bf49ee252de802edd86151ef88dcdb8"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\finalize.py",
+      "bytes": 11982,
+      "sha256": "e792f8cb02b10bceda70dfb4b6f10de9cbc7b88d122174c2916e5e0b77362ad6"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\hybrid-native.json",
+      "bytes": 50370,
+      "sha256": "e4da491fdbc8404b6b841107f889274d32aa29c24472e465643383520f8171ec"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\hybrid-native.log",
+      "bytes": 730,
+      "sha256": "b0a0c85b3a42bfe77d8cf8f88b714c925f1de6c31e59727c983ec70cbf91c170"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\hybrid-official.json",
+      "bytes": 1423,
+      "sha256": "50945615b6b0ddbd4180708e1dff49c1c45fdd3136bb7bfd8f13daf4d1893480"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\hybrid-official.log",
+      "bytes": 1475,
+      "sha256": "e763d93a26dde16e7712d7ba4040a773c1c9448150266886115ddcae18561c71"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\install.json",
+      "bytes": 78840,
+      "sha256": "40d0f4d102bda3feb26b8f9918afa87ba99dc477b561319bef33145981a3fcdc"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\medium-verification-first.json",
+      "bytes": 4811,
+      "sha256": "bcdee4fe8acc6fb04a8aa9e7d50b956b13ca6ef3e19e7740c5fb7d3aaf4c8034"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\medium-verification-followup.json",
+      "bytes": 10971,
+      "sha256": "4e1bdb36ada17870bf956c4a4fe37b83af31e6e2868f2fa595705adf727675fe"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\medium-verification-invocation.json",
+      "bytes": 413,
+      "sha256": "f9edc6f3f46c2263eefc77a1face64fc2f105b81702e95b51180db6c656dc68f"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\medium-verification.json",
+      "bytes": 4811,
+      "sha256": "bcdee4fe8acc6fb04a8aa9e7d50b956b13ca6ef3e19e7740c5fb7d3aaf4c8034"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\medium-verification.log",
+      "bytes": 358,
+      "sha256": "6f51c90c1da9209c64ed728c4e90a651fff002c146e174fdf000cdc476d18b0a"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\medium_verify.py",
+      "bytes": 6395,
+      "sha256": "5dc071c6dd321618596371d6ff73b063a09223f82d91ed2df74b66a0a2aa1979"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\medium_verify_followup.py",
+      "bytes": 6428,
+      "sha256": "988f74bdb75e0cb184e6964aae2d3cf9526c97c57561fe074801d54e089891f3"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\postcommit.py",
+      "bytes": 2472,
+      "sha256": "ff4ff5db0e0cafa60bd25141c0dd2113113d783ee4ab4880708dc6989602fa81"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\prepare.json",
+      "bytes": 39637,
+      "sha256": "d365df09684105f973a8a14ee6d511843347e6e62e20124777732c301fc6a41d"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\prepare.py",
+      "bytes": 5428,
+      "sha256": "280b89bafa575418cfc4dd5b9aeb9de4d10ea790e13b7b045afef4bcdd04a00b"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\real-invocation.json",
+      "bytes": 853,
+      "sha256": "213701d9f5a23067e42cbfb0f77c3332ed8ee0055d000fd639f5d4488a3f3441"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\real.json",
+      "bytes": 54235,
+      "sha256": "cf26212c5177666913d3f681dfa82c176267908097833e386d335fa6c14847b1"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\real.log",
+      "bytes": 1927,
+      "sha256": "69fd561c5c87a5d7b78ff1732b8efaca83fde052a8926df02dea2cf7c716374f"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\related-command.json",
+      "bytes": 1805,
+      "sha256": "4bebd6447145f3e90f1a6ecd238619a3d8a70b0102b2427b6feb30355f98dff6"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\related-invocation.json",
+      "bytes": 1800,
+      "sha256": "32529efe45952f967170f89da4529cb2df555bc1f1c6fca4c347455d4f62077b"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\related-modules.json",
+      "bytes": 25449,
+      "sha256": "e0e5412c420c77837deb5a43c7dea6739cbf055eab1e4c9fad9bf19ec71d4199"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\related.log",
+      "bytes": 276,
+      "sha256": "42b9da54fe658f97bac55152c1f121dfbfba3160c9a6506cd718b1497729524d"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\related.xml",
+      "bytes": 26672,
+      "sha256": "58cc4b08acef7852566e25901cc5bc0d607894fe9d01bc79aed80bdca3c04935"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\resources-final.json",
+      "bytes": 6158,
+      "sha256": "39f5ca1b03e03197c01a667adcebd00d78872d9cc10ffc19994fe8b6e878cb22"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\run_tests.py",
+      "bytes": 1240,
+      "sha256": "d4b060ae7f2d10d60c8fb7094de8f61886caf52eae6a40bb0239e924ebe7d20a"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\stage.py",
+      "bytes": 3729,
+      "sha256": "dade8e456a9d1cdd2bac8ee908847412203920e91a096f9e50067da118678e63"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\upgrade-invocation.json",
+      "bytes": 1157,
+      "sha256": "08efa35202e9854986d53b6aa41bebff46b987c2fdd00c4fc35c9dd3f0cd5c3e"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\upgrade.json",
+      "bytes": 165032,
+      "sha256": "1ae834c6289bf4b8eac9e5024a3249884e0f1ad7d390a44e7febdb7fe19c09da"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\upgrade.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-r17-leader-20260923\\worker-boundary.json",
+      "bytes": 2108,
+      "sha256": "a285459bfff4e7272af756068e9f6aac83edebe12e204c3b01fe4731abf714cd"
+    }
+  ],
+  "no_cleanup_gate": true,
+  "no_push": true,
+  "not_implemented": [
+    "R18 rerank and complete Context selection",
+    "R19 full auto/fixed permissions",
+    "R21 management CLI",
+    "R23 calibrated thresholds and R24 final acceptance",
+    "Linux support"
+  ]
+}

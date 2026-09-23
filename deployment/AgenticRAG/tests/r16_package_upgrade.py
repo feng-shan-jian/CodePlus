@@ -48,7 +48,7 @@ def main(args):
         fault = child('fault'); report['rollback'] = fault
         assert fault['schema'] == 9 and fault['row_hashes'] == before['row_hashes'] and fault['migrations'] == before['migrations']
         after = child('read'); report['after'] = after
-        assert after['schema'] == 10 and after['migrations'][:9] == before['migrations']
+        assert after['schema'] == 11 and after['migrations'][:9] == before['migrations']
         assert all(after['row_hashes'][key] == digest for key,digest in before['row_hashes'].items())
         assert after['triggers'] == before['triggers']
         for key in ('citation','typed_run','archives_verified'):

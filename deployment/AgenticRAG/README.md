@@ -1,6 +1,6 @@
 # AgenticRAG 独立开发区
 
-状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、普通增删改整批发布、手动恢复与放弃、固定 Dense 检索、原文与引用，以及 R12 宿主开发接入候选。实际验收和提交状态见任务台账。更新日期：2026-09-23。后续回收与产品能力按 R15–R24 完成；用户已删除本阶段 R25/R26。
+状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、普通增删改整批发布、手动恢复与放弃、固定 Dense/BM25/Hybrid 检索、原文与引用，以及宿主开发接入。实际验收和提交状态见任务台账。更新日期：2026-09-23。后续产品能力按任务台账推进至 R24；用户已删除本阶段 R25/R26。
 
 在本目录完成 RAG 的独立实现及 Windows 功能与质量验收。本阶段保留现有 CodePlus Agent 适配接点，不迁入 CodePlus 主发行包。
 
@@ -8,7 +8,7 @@
 
 ## 当前开发包
 
-R12 开发接入复用现有 CodePlus 两个 Agent 循环，提供 TUI 的 `/knowledge use/ask/off` 和原 `-p` 的 `--knowledge-library`。仅显式启用的 fixed Dense QA 进入受控 run，普通任务保持原入口；未实现能力不加入工具 schema。安装、独立回答 tokenizer 缓存、完整显式配置及当前限制见 [宿主开发接入](docs/codeplus-integration.md)。
+开发接入复用现有 CodePlus 两个 Agent 循环，提供 TUI 的 `/knowledge use/ask/off` 和原 `-p` 的 `--knowledge-library`。仅显式启用的 fixed QA 进入受控 run，支持 Dense/BM25/Hybrid、不启用 Rerank；普通任务保持原入口，工具仍只接收 query。安装、独立回答 tokenizer 缓存、完整显式配置及当前限制见 [宿主开发接入](docs/codeplus-integration.md)，三路调用与追踪见 [检索](docs/retrieval.md)。
 
 发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2、APSW 3.53.4.0、markdown-it-py 4.0.0 与 tokenizers 0.23.2；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。本地模型通过独立 CUDA worker 执行；R12 仅提供显式开发接点，完整产品命令与自动重建留后续任务。导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
 
@@ -29,6 +29,8 @@ uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
 `agentic_rag.ingestion` 处理明确选择的本机 Markdown/TXT 文件或目录。`select_inputs` 固定清单，`Catalog.begin_import` 登记基准版和完整配置，`capture_inputs` 保存完整原件，`process_inputs` 从归档解析并原子接纳完整处理检查点，`read_processed` 核验重开结果。相同路径延续文档身份，显式更新支持改名，缺失文件不自动删除；没有 watcher。见 [输入快照](docs/input-snapshots.md)、[解析与来源映射](docs/parsing-and-source-maps.md)。
 
 `ingestion.build.build_first_revision` 在全部捕获/处理成功后，通过 R09 provider 编码并构建每版独立 Milvus Collection。`storage.publication` 以全量真实校验凭据原子登记回执和当前指针；`retrieval.DenseSearch` 使用运行绑定版的编码、来源和 canonical body。数据库SDK通过 `milvus` extra安装（PyMilvus3.0.2 / Milvus3.0.1），与核心和CUDA环境分开。运行时token显式传入adapter，不入业务快照。正式路径、UTF-8限额、schema和复跑入口见 [首次发布与Dense](docs/first-publication.md)。
+
+`retrieval.RetrievalSearch` 共用同一固定版本与原文映射，按配置执行 Dense、Milvus 原生 BM25 或核心 RRF。纯 BM25 不连接查询模型；Hybrid 的任一路失败整次报错，不交付中间候选。两路原始排名和完整融合轨迹独立持久化，仍由既有 SourceSession/DeliveryGateway/CitationRegistry 交付及验证正文。内部 runner 的三路同条件基线及边界见 [检索](docs/retrieval.md)。
 
 `ingestion.begin_changes/build_changes` 将普通新增、更新与显式删除形成完整候选，一批只发布一次；未变向量经完整身份与 float32 摘要核验后复用，失败更新保留旧版，无变化/全失败正常解除占用且不发布。`retry_failed` 只处理失败项并拒绝覆盖后续更新；删除最后成员发布真实空版本。接口和当前边界见 [普通增删改](docs/ordinary-mutations.md)。
 

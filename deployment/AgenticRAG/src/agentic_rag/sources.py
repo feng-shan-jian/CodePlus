@@ -353,18 +353,41 @@ class SourceSession:
                             (token,str(self.run.run_id),'cursor',encode({'source_token':source_ref,'ref':ref.model_dump(mode='json'),'next_cp':position,'range_end':stop})))
             return self._commit_result(call_id,base,(candidate,))
 
+    def _save_retrieval_trace(self, call_id, trace):
+        if trace is not None:
+            with self.catalog._db.transaction(write=True) as connection:
+                connection.execute('INSERT INTO retrieval_traces VALUES(?,?)', (str(call_id), encode(trace)))
+
+    def retrieval_trace(self, call_id):
+        """Host diagnostics only, including failed searches; never a source tool."""
+        with self.catalog._db.transaction() as connection:
+            row = connection.execute('SELECT t.payload FROM retrieval_traces t JOIN source_calls c ON c.call_id=t.call_id '
+                'WHERE t.call_id=? AND c.run_id=?', (str(call_id), str(self.run.run_id))).fetchone()
+        return json.loads(row[0]) if row else None
+
     def search(self, query):
         with self._call('search') as call_id:
             if self.dense is None:
-                raise invalid('Dense capability unavailable', 'source_search')
-            if self.retrieval.route != 'dense' or self.retrieval.rerank:
-                raise invalid('only explicit Dense without rerank is implemented at this stage', 'source_search')
+                raise invalid('retrieval capability unavailable', 'source_search')
+            if self.retrieval.rerank:
+                raise invalid('model rerank is not implemented at this stage', 'source_search')
+            if getattr(self.dense, 'route', 'dense') != self.retrieval.route:
+                raise invalid('search service route differs from the frozen run', 'source_search')
             with self.catalog._db.transaction() as connection:
                 started, = connection.execute('SELECT started_ns FROM source_usage WHERE run_id=?',(str(self.run.run_id),)).fetchone()
-            result = self.dense.search(query,limit=self.retrieval.dense_candidates,
-                deadline_monotonic_ns=started+(self.budget.duration_ms-self.budget.finish_reserve_ms)*1_000_000)
+            limit = {'dense':self.retrieval.dense_candidates, 'bm25':self.retrieval.bm25_candidates,
+                     'hybrid':self.retrieval.dense_candidates+self.retrieval.bm25_candidates}[self.retrieval.route]
+            try:
+                result = self.dense.search(query,limit=limit,
+                    deadline_monotonic_ns=started+(self.budget.duration_ms-self.budget.finish_reserve_ms)*1_000_000)
+            except Exception as exc:
+                self._save_retrieval_trace(call_id, getattr(exc, 'retrieval_trace', None))
+                if not isinstance(exc, (RagError, ValueError, TypeError, ConnectionError, TimeoutError)):
+                    raise RagError(ErrorCode.DEPENDENCY_UNAVAILABLE, str(exc), stage='source_search') from exc
+                raise
+            self._save_retrieval_trace(call_id, result.get('trace'))
             payload = {'schema_version':1,'call_id':str(call_id),'status':'empty','run_id':str(self.run.run_id),
-                       'revision_id':str(self.run.revision_id),'route':{'strategy':'dense','rerank':False},
+                       'revision_id':str(self.run.revision_id),'route':{'strategy':self.retrieval.route,'rerank':False},
                        'items':[],'limited':{'by_count':False,'by_tokens':False}}
             candidates, seen, sources = [], set(), {}
             cap, _ = self._token_allowance()

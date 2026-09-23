@@ -32,7 +32,7 @@ from ...domain import RagError, RunStatus, Span, StopReason
 from ...evidence import DeliveryGateway
 from ...indexes.milvus import MilvusRevisionIndex
 from ...models.client import LocalModelClient
-from ...retrieval.dense import DenseSearch
+from ...retrieval import RetrievalSearch
 from ...sources import SourceBudgetExceeded, SourceSession
 from ...storage import Catalog
 from .ledger import ModelControl, aggregate_usage, encode
@@ -145,8 +145,8 @@ class KnowledgePolicy:
         if context.hook_engine and any(h.action.type != 'prompt' or h.async_exec for h in context.hook_engine.hooks):
             raise ValueError('knowledge_feature_not_available_with_executable_or_async_hooks')
         conf = self.config
-        if conf.knowledge.retrieval.mode != 'fixed' or conf.knowledge.retrieval.route != 'dense' or conf.knowledge.retrieval.rerank:
-            raise ValueError('R12_development_requires_explicit_fixed_dense_without_rerank')
+        if conf.knowledge.retrieval.mode != 'fixed' or conf.knowledge.retrieval.rerank:
+            raise ValueError('development_requires_explicit_fixed_without_rerank')
         if context.protocol != self.provider.protocol or context.client.model != self.provider.model:
             raise ValueError('answer_provider_changed_before_run')
         meter = DeepSeekTextMeter(conf.answer_tokenizer, model=self.provider.model,
@@ -240,7 +240,7 @@ class KnowledgeScope:
         def connect():
             self.backend = MilvusRevisionIndex(self.lease.run.resolved_config.knowledge.storage, self.catalog,
                                                timeout=max(.1, min(30, self.deadline-time.monotonic())))
-            self.sources.dense = DenseSearch(self.catalog, self.lease.run.run_id, self.provider, self.backend)
+            self.sources.dense = RetrievalSearch(self.catalog, self.lease.run.run_id, self.provider, self.backend)
         async with asyncio.timeout_at(self.deadline):
             await self.owner.run_sync(connect)
         self.check()

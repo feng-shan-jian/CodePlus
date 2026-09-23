@@ -1,0 +1,15 @@
+{
+  "status": "COMMITTED_VERIFIED",
+  "time": 1790135388.9510345,
+  "sha": "835b4887c21588f7e0165e1c7ff2477c3b4a1b6c",
+  "parent": "253047b4f862b7145c2ee3b445a3d9ee0f07afad",
+  "message": "feat(rag): rebuild published indexes for approved model switches",
+  "committed_paths": 34,
+  "nonself_blobs_verified": 33,
+  "index_empty_after_commit": true,
+  "source_and_evidence_bytes_preserved": true,
+  "no_push": true,
+  "no_cleanup_gate": true,
+  "next": "Fresh R17 executor: native BM25, RRF and same-condition medium comparison.",
+  "postnote_persistence": "This post-commit note and real-SHA ledger update accompany the next normal stage commit."
+}
