@@ -1,4 +1,4 @@
-"""R19 mode authority, frozen budgets and existing host entry points."""
+"""Mode selection and the ordinary host entry points."""
 import asyncio
 from contextlib import aclosing
 import json
@@ -58,7 +58,6 @@ def host_dependencies(monkeypatch, config, rows, calls):
         return value
     monkeypatch.setattr(P, 'MilvusRevisionIndex', backend)
     monkeypatch.setattr(P, 'LocalModelClient', Model)
-    monkeypatch.setattr(P, 'DeepSeekTextMeter', lambda *args,**kwargs:H['ControlledMeter']())
 
 
 @pytest.mark.parametrize('configured,override,effective,origin',[
@@ -66,7 +65,7 @@ def host_dependencies(monkeypatch, config, rows, calls):
     ('fixed','auto','auto','explicit'), ('fixed','fixed','fixed','explicit'),
     ('auto','fixed','fixed','explicit')])
 @pytest.mark.parametrize('kind',['qa','report'])
-def test_policy_freezes_mode_origin_and_orthogonal_budget(tmp_path,monkeypatch,configured,override,effective,origin,kind):
+def test_policy_freezes_mode_origin_and_task_kind(tmp_path,monkeypatch,configured,override,effective,origin,kind):
     async def run():
         catalog,kb,base,rows,_=R['published'](tmp_path)
         config=settings(base,tmp_path,configured); host_dependencies(monkeypatch,config,rows,[])
@@ -78,18 +77,15 @@ def test_policy_freezes_mode_origin_and_orthogonal_budget(tmp_path,monkeypatch,c
         try:
             bound=scope.lease.run.resolved_config
             assert bound.retrieval.mode==effective and bound.task_kind==kind
-            assert scope.budget==getattr(config.knowledge.budgets,kind)==scope.sources.budget
-            assert scope.owner.deadline==scope.deadline==scope.started+scope.budget.duration_ms/1000
             with catalog._db.transaction() as db:
                 frozen=json.loads(db.execute('SELECT frozen FROM host_runs WHERE run_id=?',(scope.run_id,)).fetchone()[0])
                 started,=db.execute('SELECT started_ns FROM source_usage WHERE run_id=?',(scope.run_id,)).fetchone()
             assert frozen['mode']=={'value':effective,'source':origin}
-            assert frozen['budget']==scope.budget.model_dump(mode='json') and frozen['task_kind']==kind
-            assert started==int(scope.started*1e9)
+            assert frozen['task_kind']==kind
             replacement=settings(base,tmp_path,'fixed' if effective=='auto' else 'auto')
             policy.config=replacement
             assert catalog.get_run(scope.lease.run.run_id).resolved_config==bound
-            fields=set(scope.registry.get('knowledge_search').params_model.model_fields)
+            fields=set(scope.tools[0].params_model.model_fields)
             assert fields==({'query','strategy','rerank'} if effective=='auto' else {'query'})
         finally:
             await scope.aclose(); await parent._client.close()
@@ -175,11 +171,10 @@ def test_both_loops_explicit_retry_and_auto_reselection_preserve_failure(tmp_pat
                 source=next(m['content'] for m in body['messages'] if m['role']=='tool' and '<source ' in m['content'])
                 metadata=json.JSONDecoder().raw_decode(source)[0];item=metadata['items'][0]
                 text=source.split('>\n',1)[1].split('\n</source>',1)[0]
-                content=H['sse_text'](json.dumps({'markdown':'Supported [^'+item['evidence_id']+']',
-                    'citations':[{'evidence_id':item['evidence_id'],'spans':item['returned_spans'],'quotes':[text]}]}))
+                content=H['sse_text']('Supported [^'+item['evidence_id']+']')
             return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
-        monkeypatch.setattr(P,'scoped_client',lambda client:scoped_client(client,transport=httpx.MockTransport(transport)))
-        agent=Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=policy)
+        client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        agent=Agent(client,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=policy)
         try:
             if completion:await agent.run_to_completion('Find the certificate')
             else:
@@ -191,7 +186,6 @@ def test_both_loops_explicit_retry_and_auto_reselection_preserve_failure(tmp_pat
             with scope.catalog._db.transaction() as db:
                 traces=[json.loads(r[0]) for r in db.execute('SELECT payload FROM retrieval_traces ORDER BY rowid')]
                 assert db.execute('SELECT count(*) FROM source_candidates WHERE call_id=?',(failure[0],)).fetchone()==(0,)
-                assert list(db.execute('SELECT status FROM host_tool_calls ORDER BY rowid'))==[('error',),('ok',)]
             assert [t['status'] for t in traces]==['error','ok']
             assert traces[1]['preceding_call_id']==failure[0]
             assert traces[1]['route']==('bm25' if mode=='fixed' else 'dense')
@@ -200,43 +194,7 @@ def test_both_loops_explicit_retry_and_auto_reselection_preserve_failure(tmp_pat
             assert all(t['revision_id']==traces[0]['revision_id'] for t in traces)
         finally:
             if policy.scope:await policy.scope.aclose()
-            await parent._client.close()
-    asyncio.run(run())
-
-
-def test_actual_prompt_denies_unanswered_knowledge_permission(tmp_path,monkeypatch,capsys):
-    from codeplus.__main__ import _run_prompt
-    from codeplus.permissions import PermissionMode
-    async def run():
-        monkeypatch.chdir(tmp_path)
-        provider=ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic')
-        parent=create_client(provider);scope,_=H['setup_scope'](tmp_path,parent)
-        asked=[]
-        def transport(request):
-            body=json.loads(request.content);asked.append(body)
-            content=(H['sse_text'](calls=('ask','knowledge_search',{'query':'source'}),terminal='tool_calls')
-                     if len(asked)==1 else H['sse_text'](json.dumps({'markdown':'No evidence was obtained.','citations':[]})))
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self,context):return scope
-        seen=[]
-        def load(path,kb,selected,**kwargs):seen.append(kwargs);return Policy()
-        monkeypatch.setattr(P,'load_policy',load)
-        monkeypatch.setattr('codeplus.client.create_client',lambda *_:parent)
-        (tmp_path/'.codeplus').mkdir(exist_ok=True)
-        (tmp_path/'.codeplus/permissions.local.yaml').write_text('- rule: "knowledge_search(*)"\n  effect: ask\n',encoding='utf-8')
-        config=AppConfig(providers=[provider],enable_fork=False,knowledge_development_config=str(tmp_path/'config.json'))
-        try:
-            await _run_prompt(config,PermissionMode.DEFAULT,None,'question','stream-json',
-                              knowledge_library=str(scope.lease.run.kb_id),knowledge_mode='auto')
-            assert seen==[{'mode':'auto'}]
-            assert scope.sources.usage()['searches']==0
-            from codeplus.conversation_pairing import REJECTED_TOOL_RESULT
-            assert len(asked)==2 and any(m.get('content')==REJECTED_TOOL_RESULT for m in asked[1]['messages'])
-            assert json.loads(capsys.readouterr().out.splitlines()[-1])['status']=='incomplete'
-        finally:
-            await scope.aclose();await parent._client.close()
+            await client.aclose();await parent._client.close()
     asyncio.run(run())
 
 

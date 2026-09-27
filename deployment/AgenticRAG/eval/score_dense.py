@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import runpy
 import sys
 
 
@@ -22,24 +23,20 @@ def main():
     from replay import score,latency
     report=json.loads(args.input.read_text(encoding='utf-8'))
     official=json.loads(args.official_score.read_text(encoding='utf-8'))
-    assert report['dataset_sha256']==official['dataset_sha256']
-    assert report['protocol']['top_k']==10
-    _,all_questions,_=load_dataset(suite)
-    ids={r['id'] for r in report['records']}
-    questions=[q for q in all_questions if q['id'] in ids]
-    assert len(questions)==len(report['records'])==official['selected_questions']==200
-    assert sum(bool(q['gold']) for q in questions)==official['scored_questions']==177
-    assert all(r['hits']==[] for r in report['records'] if r['status']=='error')
+    _,all_questions,source_hash=load_dataset(suite)
+    binding=runpy.run_path(str(Path(__file__).with_name('retrieval_binding.py')))
+    questions=binding['bind'](report,official,args.input.read_bytes(),all_questions,source_hash)
+    scored=sum(bool(q['gold']) for q in questions)
     summary=score(questions,report['records'],10)
     applicable=[r for r in report['records'] if r['evidence']['total']]
     total=sum(r['evidence']['total'] for r in applicable)
     covered=sum(r['evidence']['covered'] for r in applicable)
     result={'input_sha256':hashlib.sha256(args.input.read_bytes()).hexdigest(),
         'official_score_sha256':hashlib.sha256(args.official_score.read_bytes()).hexdigest(),
-        'dataset_sha256':report['dataset_sha256'],'selected_questions':200,'scored_questions':177,
-        'excluded_null_queries':23,'request_errors':sum(r['status']=='error' for r in report['records']),
+        'dataset_sha256':report['dataset_sha256'],'selected_questions':len(questions),'scored_questions':scored,
+        'excluded_null_queries':len(questions)-scored,'request_errors':sum(r['status']=='error' for r in report['records']),
         'fully_covered':sum(r['evidence']['recall']==1 for r in applicable),
-        'evidence_ranges':total,'covered_ranges':covered,'evidence_recall':covered/total,
+        'evidence_ranges':total,'covered_ranges':covered,'evidence_recall':covered/total if total else None,
         'latency_all_successes':latency([r['elapsed_ms'] for r in report['records'] if r['status']=='ok']),
         'cold_first_ms':report['records'][0]['elapsed_ms'],
         'warm_repeat_ms':report.get('warm_repeat',{}).get('elapsed_ms'),

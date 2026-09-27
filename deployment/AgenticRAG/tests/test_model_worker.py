@@ -81,7 +81,7 @@ def test_closed_schema_profiles_ids_and_no_code_or_paths():
 
 
 def test_prechange_r08_snapshot_and_run_identity_survive_worker_configuration():
-    path = Path(__file__).parents[1] / 'docs/implementation-records/R09-prechange-snapshot.json'
+    path = Path(__file__).parent / 'fixtures/legacy-worker-snapshot.json'
     before = json.loads(path.read_text(encoding='utf-8'))
     assert before['source_head'] == '97224b0414c9b67bc99ed59799fa2f2286ab5460'
     snapshot = ProcessingSnapshot.model_validate_json(json.dumps(before['snapshot']))

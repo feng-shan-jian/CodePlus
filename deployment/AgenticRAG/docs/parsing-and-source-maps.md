@@ -1,6 +1,6 @@
 # R08 解析、精确位置与完整处理检查点
 
-2026-09-22；开发包 0.1.0、SQLite schema 3。正式实现为 `markdown-it-py==4.0.0`、`tokenizers==0.23.2`，只使用冻结 Qwen tokenizer 资产，不加载模型或调用 GPU。此文描述实现契约；Leader 验收与真实报告见 [R08](implementation-records/R08.md)。
+2026-09-22；开发包 0.1.0、SQLite schema 3。正式实现为 `markdown-it-py==4.0.0`、`tokenizers==0.23.2`，只使用冻结 Qwen tokenizer 资产，不加载模型或调用 GPU。此文描述实现契约。
 
 ## 规范文本和原件
 
@@ -22,7 +22,7 @@ Markdown 使用 CommonMark + table 规则；每个 token 的行 map 经自己构
 
 执行顺序为章节范围 → 顶层结构块末端 → 句子边界 → tokenizer 候选边界。结构边界不单独把标题变为检索块。句子规则版本为 `canonical-offsets-v1`：中文 `。！？` 后可直接切分；英文 `.?!` 后需空白；连续空行也可作边界。它是确定性的轻量边界规则，不声称完整语言学断句。超长 fence/table/list 会拆分，`split_structures` 仅标记未完整结构，不插入正文或模板。
 
-R08 试验起点 `max_tokens=512/overlap_tokens=64`。max 是完整 Embedding 输入（标题、正文、特殊 token）的上限，同时不能超过冻结模型 profile 2048；64 是重叠正文重新编码后的 token 上限。这些是 R08 试验参数，不是 R23 质量冻结结果。实际片段每次重新完整编码、无截断；标题占满预算或单码点仍超限时返回 `INPUT_TOO_LONG`。
+当前选定 `max_tokens=512/overlap_tokens=64`。max 是完整 Embedding 输入（标题、正文、特殊 token）的上限，同时不能超过冻结模型 profile 2048；64 是重叠正文重新编码后的 token 上限。选定参数见[执行方案](production-simplification-plan-20260927.md)。实际片段每次重新完整编码、无截断；标题占满预算或单码点仍超限时返回 `INPUT_TOO_LONG`。
 
 Qwen 的 NFC normalizer 会让分解重音 offset 留空隙，ByteLevel 对部分 emoji 会产生多个重叠 offset。offset 只作为切点候选，canonical 游标连续向前；去重的是候选切点，不是原文字符。不 decode token 再搜索原文。候选二分仅是装箱启发式，不假定 BPE 计数严格单调；每个接纳片段独立完整重编码验证。不能容纳完整 offset/grapheme 时可退到原码点边界，原文映射仍精确。重叠也单独重编码；若阻止新增正文进展则减少到零。
 

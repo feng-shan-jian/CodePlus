@@ -1,4 +1,4 @@
-"""R11 exact source navigation/scope and shared tool budgets, no network/GPU."""
+"""Exact source navigation, scope and per-call limits, no network/GPU."""
 import json
 from pathlib import Path
 import runpy
@@ -9,7 +9,7 @@ import pytest
 from agentic_rag.config import resolve_run
 from agentic_rag.domain import ErrorCode, RagError, RunStatus, Span
 from agentic_rag.source_archive import read_ref
-from agentic_rag.sources import SourceBudgetExceeded, SourceSession
+from agentic_rag.sources import SourceSession
 
 H=runpy.run_path(str(Path(__file__).with_name('source_support.py')))
 
@@ -22,7 +22,6 @@ def test_nested_own_sections_navigation_and_full_coverage(tmp_path):
         sections=chunks.parsed.sections
         parts=[]
         for section in sections:
-            H['discard_window'](session)
             result=session.open(token,section_id=section.section_id)
             item,=result.payload['items']
             assert item['text']==chunks.parsed.text[section.span.start:section.span.end]
@@ -60,7 +59,6 @@ def test_long_unicode_paging_exact_progress_lines_and_other_section_cursor(tmp_p
     try:
         token=session.issue_source(ref)
         for section in chunks.parsed.sections:
-            H['discard_window'](session)
             result=session.open(token,section_id=section.section_id)
             text='';previous=section.span.start;pages=0
             while True:
@@ -75,7 +73,6 @@ def test_long_unicode_paging_exact_progress_lines_and_other_section_cursor(tmp_p
                     assert result.payload['next_cursor'] is None and result.payload['unread_spans']==[]
                     break
                 assert result.payload['unread_spans']==[{'start':span.end,'end':section.span.end}]
-                H['discard_window'](session)
                 result=session.open(token,cursor=result.payload['next_cursor'])
             assert pages>1 and text==chunks.parsed.text[section.span.start:section.span.end]
     finally:lease.close()
@@ -119,7 +116,7 @@ def test_archive_source_deleted_and_current_revision_changes(tmp_path):
     finally:lease.close()
 
 
-def test_shared_search_open_usage_failure_retry_and_session_recreation(tmp_path):
+def test_repeated_search_open_and_session_recreation_ignore_legacy_quotas(tmp_path):
     catalog,lease,session,_,version,chunks,ref=H['fixture'](tmp_path,opens=2,searches=2)
     try:
         H['dense_fixture'](session,chunks,version,ref)
@@ -127,20 +124,20 @@ def test_shared_search_open_usage_failure_retry_and_session_recreation(tmp_path)
         opened=session.open(token);assert opened.payload['items']
         with pytest.raises(RagError):session.open('forged')
         recreated=SourceSession(catalog,lease,H['ControlledMeter'](),dense=session.dense)
-        with pytest.raises(SourceBudgetExceeded) as quota:recreated.open(token)
-        assert quota.value.reason=='open_limit'
+        repeated_open=recreated.open(token)
+        assert repeated_open.payload['items'][0]['text']==opened.payload['items'][0]['text']
         with pytest.raises(RagError) as invalid_query:recreated.search('')
         assert invalid_query.value.error.code.value=='INVALID_INPUT' and invalid_query.value.error.call_id
-        with pytest.raises(SourceBudgetExceeded) as quota:recreated.search('source')
-        assert quota.value.reason=='search_limit'
+        repeated_search=recreated.search('source')
+        assert repeated_search.payload['items'][0]['text']==search.payload['items'][0]['text']
         usage=recreated.usage()
-        assert usage['opens']==2 and usage['searches']==2 and usage['rejected']==2
-        assert usage['returned_tokens']==len(search.text.encode())+len(opened.text.encode())
+        assert usage['opens']==3 and usage['searches']==3 and usage['rejected']==0
+        assert usage['returned_tokens']==sum(len(result.text.encode()) for result in (search,opened,repeated_open,repeated_search))
         with catalog._db.transaction() as connection:
             statuses=dict(connection.execute('SELECT status,count(*) FROM source_calls GROUP BY status'))
-        assert statuses=={'ok':2,'error':2,'rejected':2}
+        assert statuses=={'ok':4,'error':2}
         finished=lease.finish(RunStatus.COMPLETED,'finished')
-        assert finished.usage.opens==2 and finished.usage.searches==2
+        assert finished.usage.opens==3 and finished.usage.searches==3
     finally:lease.close()
 
 
@@ -175,19 +172,17 @@ def test_source_failures_preserve_classification_cause_and_audit(tmp_path,monkey
     finally:lease.close()
 
 
-def test_full_metadata_wrapper_tokens_and_cross_call_remaining(tmp_path):
+def test_full_metadata_wrapper_tokens_are_recorded_without_cumulative_cap(tmp_path):
     catalog,lease,session,_,_,_,ref=H['fixture'](tmp_path,total_tokens=3000)
     try:
         token=session.issue_source(ref)
         first=session.open(token)
         assert session.usage()['returned_tokens']==len(first.text.encode())>len(first.payload['items'][0]['text'].encode())
-        before=session.usage()['returned_tokens']
-        # Repeat consumes more source-return budget even when it is the same text.
-        try:session.open(token)
-        except RagError:pass
-        assert session.usage()['returned_tokens']>=before
-        with pytest.raises(RagError):session.open(token)
-        assert session.usage()['returned_tokens']<=2900
+        for _ in range(4):
+            repeated=session.open(token)
+            assert repeated.payload['items'][0]['text']==first.payload['items'][0]['text']
+            assert len(repeated.text.encode())<=session.retrieval.context_tokens
+        assert session.usage()['returned_tokens']>3000
     finally:lease.close()
 
 
@@ -218,7 +213,7 @@ def test_actual_dense_search_object_survives_usage_and_open(tmp_path):
         assert session.dense is dense and catalog.get_run(lease.run.run_id).usage.searches==2
 
 
-def test_scope_cursor_budget_and_archive_errors_have_distinct_codes_and_call_ids(tmp_path):
+def test_scope_cursor_and_archive_errors_have_distinct_codes_and_call_ids(tmp_path):
     from agentic_rag.domain import ErrorCode
     catalog,lease,session,_,version,_,ref=H['fixture'](tmp_path,opens=4)
     try:
@@ -232,7 +227,7 @@ def test_scope_cursor_budget_and_archive_errors_have_distinct_codes_and_call_ids
         assert caught.value.error.code==ErrorCode.CHECKPOINT_INVALID and caught.value.error.call_id
         with pytest.raises(RagError):session.open(token)
         with pytest.raises(RagError) as caught:session.open(token)
-        assert caught.value.error.code==ErrorCode.BUDGET_EXHAUSTED and caught.value.error.call_id
+        assert caught.value.error.code==ErrorCode.CHECKPOINT_INVALID and caught.value.error.call_id
     finally:lease.close()
 
 
@@ -257,7 +252,6 @@ def test_hundreds_of_sections_have_bounded_navigation_and_complete_traversal(tmp
     try:
         token=session.issue_source(ref);section_id=None;parts=[];seen=set()
         while True:
-            H['discard_window'](session)
             result=session.open(token,section_id=section_id)
             state=result.payload['navigation_status']
             assert len(result.payload['navigation'])==1 and len(result.text.encode())<=2100
@@ -291,7 +285,6 @@ def test_hit_anchored_first_window_then_before_and_after_cover_exactly(tmp_path,
         # from the first anchored window; subsequent continuation stays in-range.
         for cursor in work:
             while cursor:
-                H['discard_window'](session)
                 page=session.open(token,cursor=cursor)
                 spans.append(Span.model_validate(page.payload['returned_spans'][0]))
                 cursor=page.payload['next_cursor']
@@ -303,7 +296,6 @@ def test_hit_anchored_first_window_then_before_and_after_cover_exactly(tmp_path,
         other=chunks.inputs[0].chunk.spans[0]
         other_token=session.issue_source(ref,anchor_span=other)
         with pytest.raises(RagError):session.open(other_token,cursor=first.payload['previous_cursor'])
-        H['discard_window'](session)
         explicit=session.open(token,section_id=ref.section_id)
         assert explicit.payload['returned_spans'][0]['start']==section.span.start
     finally:lease.close()

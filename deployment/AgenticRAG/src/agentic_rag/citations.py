@@ -1,116 +1,31 @@
-"""Exact archived quote validation and stable historical footnotes; no LLM IO."""
+"""Read confirmed source history and legacy saved citations from archives."""
 
 import json
-import re
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from .domain import Citation, Span
+from .domain import Citation
 from .evidence import read_evidence
 from .source_archive import contains, digest, encode, invalid
 
 
-class CitationRegistry:
-    def __init__(self, session):
-        self.session=session
-
-    def validate(self, evidence_id: UUID, spans: tuple[Span,...], quotes: tuple[str,...]):
-        with self.session.catalog._db.transaction() as connection:
-            self.session._active(connection)
-        evidence,source,_=read_evidence(self.session.catalog,self.session.run.run_id,evidence_id)
-        if (not spans or len(spans)!=len(quotes) or
-                any(not isinstance(s,Span) for s in spans) or
-                any(a.end>b.start for a,b in zip(spans,spans[1:]))):
-            raise invalid('quotes require ordered, non-overlapping exact source spans', 'citation')
-        errors=[]
-        for span,quote in zip(spans,quotes):
-            location=f'evidence={evidence_id} span=[{span.start},{span.end})'
-            if not contains(evidence.spans,span):
-                errors.append('citation_range_unconfirmed '+location)
-                continue
-            expected = source.text[span.start:span.end]
-            if expected!=quote:
-                detail = ' quote_must_be_text'
-                if isinstance(quote,str):
-                    offset = next((i for i,(left,right) in enumerate(zip(expected,quote)) if left!=right), min(len(expected),len(quote)))
-                    codepoint = lambda text: ('U+'+format(ord(text[offset]),'04X')) if offset<len(text) else 'END'
-                    detail = (f' quote_offset={offset} expected={codepoint(expected)} received={codepoint(quote)}'
-                              f' expected_length={len(expected)} received_length={len(quote)}')
-                errors.append('citation_quote_mismatch '+location+detail)
-        if errors:
-            raise invalid('; '.join(errors), 'citation')
-        return evidence,source
-
-    def save(self, evidence_id: UUID, spans: tuple[Span,...], quotes: tuple[str,...]):
-        evidence,source=self.validate(evidence_id,spans,quotes)
-        # Hash the structured sequence: neither an omitted gap nor a separator is
-        # represented as continuous source. Individual exact excerpts are saved.
-        quote_hash=digest(encode(list(quotes)))
-        with self.session.catalog._db.transaction(write=True) as connection:
-            self.session._active(connection)
-            rows=connection.execute('SELECT payload FROM saved_citations WHERE run_id=? AND evidence_id=?',
-                                    (str(self.session.run.run_id),str(evidence_id)))
-            for row in rows:
-                old=json.loads(row[0]);record=Citation.model_validate_json(encode(old['citation']))
-                if record.spans==spans and record.quote_hash==quote_hash:
-                    return old
-            record=Citation(citation_id=uuid4(),run_id=self.session.run.run_id,evidence_id=evidence_id,
-                            spans=spans,quote_hash=quote_hash)
-            value={'citation':record.model_dump(mode='json'),'source_ref':evidence.source_ref.model_dump(mode='json'),
-                   'file_name':source.version.source_metadata.original_name,'source_uri':source.version.source_uri,
-                   'raw_hash':source.version.raw_hash,'parsed_hash':source.version.parsed_hash,
-                   'section_path':list(source.section(evidence.source_ref.section_id).heading_path),
-                   'quotes':list(quotes),'lines':[list(source.chunks.parsed.source_map.lines(s)) for s in spans],
-                   'evidence_marker':'[^'+str(evidence_id)+']','citation_marker':'[^'+str(record.citation_id)+']'}
-            connection.execute('INSERT INTO saved_citations VALUES(?,?,?,?)',
-                (str(record.citation_id),str(record.run_id),str(record.evidence_id),encode(value)))
-        return value
-
-    @staticmethod
-    def validate_markers(draft: str, evidence_ids: tuple[UUID,...]):
-        """Check the draft/claim relationship before any citation is saved."""
-        if not isinstance(draft,str) or not draft.strip():
-            raise invalid('nonempty citation draft required','citation')
-        if re.search(r'^\s*\[\^[^\]\r\n]+\]:',draft,re.MULTILINE):
-            raise invalid('draft cannot supply its own source footnote definitions','citation')
-        aliases=['[^'+str(identity)+']' for identity in evidence_ids]
-        if len(set(aliases))!=len(aliases):
-            raise invalid('one draft evidence marker cannot refer to different citation claims','citation')
-        markers=re.findall(r'\[\^[^\]\r\n]+\]',draft)
-        if not markers or set(markers)!=set(aliases):
-            raise invalid('unknown, missing or unused citation marker','citation')
-        return markers
-
-    def render_markdown(self, draft: str, saved: tuple[dict,...]):
-        """Resolve every reserved draft evidence marker to a saved citation.
-
-        Draft footnotes are structured claims saved by this registry first. The
-        adapter does not concatenate the provisional tool marker with a different
-        footnote ID. All [^...] syntax is reserved for citations in this core
-        renderer, including within code examples; no heuristic semantic checking.
-        """
-        with self.session.catalog._db.transaction() as connection:
-            self.session._active(connection)
-        markers=self.validate_markers(draft,tuple(Citation.model_validate_json(encode(value['citation'])).evidence_id for value in saved))
-        aliases={}
-        for value in saved:
-            record=Citation.model_validate_json(encode(value['citation']))
-            actual=open_citation(self.session.catalog,record.citation_id)
-            if actual!=value or record.run_id!=self.session.run.run_id:
-                raise invalid('saved citation belongs to another run or was modified','citation')
-            aliases[value['evidence_marker']]=value
-        body=re.sub(r'\[\^[^\]\r\n]+\]',lambda m:aliases[m.group()]['citation_marker'],draft)
-        ordered=list(dict.fromkeys(markers))
-        rendered=body+'\n\n'+'\n\n'.join(footnote(aliases[marker]) for marker in ordered)
-        return {'markdown':rendered,'sha256':digest(rendered),
-                'citation_ids':[aliases[marker]['citation']['citation_id'] for marker in ordered]}
-
-
 def open_citation(catalog, citation_id: UUID):
-    """User history read, not an active-run source capability or evidence grant."""
+    """Read a saved citation or delivered evidence marker from source history."""
     with catalog._db.transaction() as connection:
         row=connection.execute('SELECT payload,run_id,evidence_id FROM saved_citations WHERE citation_id=?',(str(citation_id),)).fetchone()
     if row is None:
-        raise invalid('historical citation not found', 'citation_history')
+        with catalog._db.transaction() as connection:
+            delivered=connection.execute('SELECT run_id FROM delivered_evidence WHERE evidence_id=?',
+                                         (str(citation_id),)).fetchone()
+        if delivered is None:
+            raise invalid('historical citation not found', 'citation_history')
+        evidence,source,_=read_evidence(catalog,UUID(delivered[0]),citation_id)
+        return {'evidence':evidence.model_dump(mode='json'),'source_ref':evidence.source_ref.model_dump(mode='json'),
+                'file_name':source.version.source_metadata.original_name,'source_uri':source.version.source_uri,
+                'raw_hash':source.version.raw_hash,'parsed_hash':source.version.parsed_hash,
+                'section_path':list(source.section(evidence.source_ref.section_id).heading_path),
+                'quotes':[source.text[s.start:s.end] for s in evidence.spans],
+                'lines':[list(source.chunks.parsed.source_map.lines(s)) for s in evidence.spans],
+                'evidence_marker':'[^'+str(evidence.evidence_id)+']'}
     value=json.loads(row[0])
     record=Citation.model_validate_json(encode(value['citation']))
     if record.citation_id!=citation_id or (str(record.run_id),str(record.evidence_id))!=(row[1],row[2]):
@@ -130,15 +45,3 @@ def open_citation(catalog, citation_id: UUID):
         if not contains(evidence.spans,span) or source.text[span.start:span.end]!=quote:
             raise invalid('historical quote is not exact archived evidence', 'citation_history')
     return value
-
-
-def footnote(value):
-    """Stable Markdown metadata. Quote pieces are visibly separate excerpts."""
-    record=Citation.model_validate_json(encode(value['citation']))
-    name=value['file_name'].replace('\n',' ').replace('\r',' ').replace('[','\\[').replace(']','\\]')
-    header=f"[^{record.citation_id}]: {name}; version {value['source_ref']['document_version_id']}; citation {record.citation_id}"
-    pieces=[]
-    for span,quote,lines in zip(record.spans,value['quotes'],value['lines']):
-        pieces.append(f"    Excerpt [{span.start},{span.end}), lines {lines[0]}–{lines[1]}:\n"+
-                      '\n'.join('    > '+line for line in quote.split('\n')))
-    return header+'\n'+'\n\n'.join(pieces)

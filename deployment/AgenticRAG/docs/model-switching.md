@@ -43,7 +43,7 @@ result = apply_model_switch(
 
 ## 正常查询接点
 
-`KnowledgePolicy.start()` 检查配置并将结果暴露为 `policy.model_switch`，随后使用 `Catalog.start_current_run(kb_id, desired_config, task_kind)`。该入口在同一事务中读取实际发布配置、冻结运行并建立版本 pin。选中的 Embedding profile 对象、解析分块和索引存储配置来自当前版本；本次预算、检索设置和 Rerank 选择来自期望配置。
+`KnowledgePolicy.start()` 检查配置并将结果暴露为 `policy.model_switch`，随后使用 `Catalog.start_current_run(kb_id, desired_config, task_kind)`。该入口在同一事务中读取实际发布配置、冻结运行并建立版本 pin。选中的 Embedding profile 对象、解析分块和索引存储配置来自当前版本；本次检索设置和 Rerank 选择来自期望配置。
 
 旧 `Catalog.start_run(kb_id, resolved_config)` 接口及其严格兼容检查不变。`DenseSearch` 始终使用已绑定版本的快照；旧运行即使首次读取发生在发布之后，也使用旧编码。旧模型环境不可用时返回原依赖错误，不改用新模型。
 

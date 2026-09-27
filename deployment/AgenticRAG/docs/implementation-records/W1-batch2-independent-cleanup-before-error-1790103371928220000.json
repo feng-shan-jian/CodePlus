@@ -1,7 +1,0 @@
-{
-  "status": "FAIL",
-  "mode": "before",
-  "time": 1790103371.9282217,
-  "exception": "AssertionError({'protected_group': 'spec_files', 'path': 'acceptance-and-implementation.md', 'expected': '5e726283ce77e12a1c21f00c8ef35f87329ff7a62f278dbabc1e56c79c5ca254', 'actual': None})",
-  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\audit.py\", line 265, in <module>\n    try:snapshot(mode)\n        ~~~~~~~~^^^^^^\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\audit.py\", line 229, in snapshot\n    data[\"git\"]=git_state();data[\"protected\"]=protected(pre);data[\"blocked\"]=blocked(resources)\n                                              ~~~~~~~~~^^^^^\n  File \"C:\\Users\\18221\\AppData\\Local\\Temp\\codeplus-w1-batch2-cleanup-20260923\\audit.py\", line 168, in protected\n    assert memo[rel]==expected,{\"protected_group\":group,\"path\":rel,\"expected\":expected,\"actual\":memo[rel]}\n           ^^^^^^^^^^^^^^^^^^^\nAssertionError: {'protected_group': 'spec_files', 'path': 'acceptance-and-implementation.md', 'expected': '5e726283ce77e12a1c21f00c8ef35f87329ff7a62f278dbabc1e56c79c5ca254', 'actual': None}\n"
-}

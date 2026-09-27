@@ -74,7 +74,7 @@ assert verify_inputs(reopened, item.batch_id) == (snapshot, (raw_item,))
 assert read_processed(reopened, item.batch_id, raw_item.entry.item_id)[0] == processed
 from agentic_rag.sources import SourceSession
 from agentic_rag.evidence import DeliveryGateway,MappedSpan
-from agentic_rag.citations import CitationRegistry,open_citation
+from agentic_rag.citations import open_citation
 class ControlledMeter:
     identity='installed-controlled-utf8-byte-fixture'
     def count(self,text):return len(text.encode())
@@ -88,9 +88,9 @@ with reopened.start_run(library.kb_id,resolve_run(config,'qa')) as lease:
     mappings=tuple(MappedSpan(m.candidate_id,m.source_span,('messages',0,'content'),m.body_span,('messages',0,'tool_call_id')) for m in result.body_mappings)
     permit=gateway.prepare(body,mappings,purpose='explore',protocol='compat')
     evidence_id,=gateway.settle(permit,'confirmed')
-    saved=CitationRegistry(session).save(evidence_id,(Span(start=0,end=9),),('installed',))
-from uuid import UUID
-assert open_citation(reopened,UUID(saved['citation']['citation_id']))==saved
+    delivered=open_citation(reopened,evidence_id)
+assert open_citation(Catalog(catalog._directory.root),evidence_id)==delivered
+assert delivered['quotes']==['installed immutable original']
 sqlite = runtime_fingerprint()
 assert sqlite['apsw'] == '3.53.4.0' and sqlite['sqlite'] == '3.53.4'
 for action, code in ((lambda: require_optional_dependencies('embedding'), ErrorCode.DEPENDENCY_UNAVAILABLE),
@@ -177,7 +177,7 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
         index_sources = {'agentic_rag/indexes/'+name for name in ('__init__.py','manifest.py','milvus.py')}
         retrieval_sources = {'agentic_rag/retrieval/'+name for name in ('__init__.py','dense.py','search.py','rrf.py','context.py')}
         adapter_sources = {'agentic_rag/adapters/codeplus/'+name for name in
-                           ('__init__.py','meter.py','ledger.py','policy.py','_vendor/__init__.py','_vendor/deepseek_v41.py')}
+                           ('__init__.py','ledger.py','policy.py','research.py','management.py')}
         assert expected_sources == root_sources | storage_sources | ingestion_sources | model_sources | index_sources | retrieval_sources | adapter_sources
         for artifact in (direct_wheel, sdist, rebuilt_wheel):
             if artifact.suffix == ".whl":

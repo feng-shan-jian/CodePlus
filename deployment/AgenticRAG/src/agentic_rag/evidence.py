@@ -220,50 +220,13 @@ class DeliveryGateway:
                     'on_confirmed_compact_removed':checked if purpose=='compact' else []}}
         with self.session.catalog._db.transaction(write=True) as connection:
             self.session._active(connection)
-            generation,=connection.execute('SELECT window_generation FROM source_usage WHERE run_id=?',(str(self.session.run.run_id),)).fetchone()
             if connection.execute('SELECT 1 FROM delivery_receipts WHERE request_id=?',(str(request_id),)).fetchone():
                 raise invalid('request ID cannot be reused', 'delivery')
             connection.execute('INSERT INTO delivery_receipts VALUES(?,?,?,?,?,?,?)',
                 (str(request_id),str(self.session.run.run_id),'prepared',purpose,protocol,body_hash,encode(payload)))
         permit=_Prepared(request_id,body_hash)
-        self._permits[permit]={'payload':payload,'status':'prepared','evidence_ids':(),
-                               'window_tokens':self.session._count(raw_body.decode('utf-8')),
-                               'window_generation':generation,'retained_generation':None}
+        self._permits[permit]={'payload':payload,'status':'prepared','evidence_ids':()}
         return permit
-
-    def retain_prepared_window(self, permit):
-        """Trusted adapter synchronizes an explicitly transformed current window.
-
-        The exact prepared JSON was checked with propagated sidecars. This only
-        releases/replaces source window reservations: it never grants evidence,
-        resets cumulative source-return cost or asserts HTTP delivery. Whole JSON
-        (including wrappers/navigation) is metered conservatively by the host's
-        answer meter. R12 owns when current messages actually change.
-        """
-        with self._lock:
-            return self._retain_prepared_window(permit)
-
-    def _retain_prepared_window(self, permit):
-        if not isinstance(permit,_Prepared) or permit not in self._permits:
-            raise invalid('unknown trusted window permit','delivery')
-        entry=self._permits[permit]
-        tokens=entry['window_tokens'];mappings=entry['payload']['mappings']
-        if tokens>self.session.retrieval.context_tokens or len(mappings)>self.session.retrieval.context_chunks:
-            raise invalid('retained source window exceeds configured limits','source_budget')
-        with self.session.catalog._db.transaction(write=True) as connection:
-            self.session._active(connection)
-            generation,=connection.execute('SELECT window_generation FROM source_usage WHERE run_id=?',(str(self.session.run.run_id),)).fetchone()
-            if entry['retained_generation'] is not None:
-                if generation==entry['retained_generation']:
-                    return
-                raise invalid('old retained window cannot reset later source reservations','delivery')
-            if generation!=entry['window_generation']:
-                raise invalid('stale prepared window cannot discard newer source reservations','delivery')
-            connection.execute('UPDATE source_usage SET window_tokens=?,window_fragments=?,window_generation=window_generation+1 WHERE run_id=?',
-                (tokens,len(mappings),str(self.session.run.run_id)))
-            connection.execute('INSERT INTO evidence_windows VALUES(?,?) ON CONFLICT(run_id) DO UPDATE SET payload=excluded.payload',
-                (str(self.session.run.run_id),encode({'request_id':str(permit.request_id),'mappings':mappings})))
-        entry['retained_generation']=generation+1
 
     def settle(self, permit, status: str):
         with self._lock:
@@ -319,8 +282,7 @@ class DeliveryGateway:
                 connection.execute('INSERT INTO delivered_evidence VALUES(?,?,?) ON CONFLICT(evidence_id) DO UPDATE SET payload=excluded.payload',
                     (identity,str(self.session.run.run_id),encode(value)))
             connection.execute('UPDATE delivery_receipts SET status=? WHERE request_id=?',(status,str(permit.request_id)))
-            generation,=connection.execute('SELECT window_generation FROM source_usage WHERE run_id=?',(str(self.session.run.run_id),)).fetchone()
-            if status=='confirmed' and generation in (entry['window_generation'],entry['retained_generation']):
+            if status=='confirmed':
                 # Window state is only what this actual request retained; historic
                 # evidence remains independently available after compact/cropping.
                 retained=[] if payload['purpose']=='compact' else payload['mappings']

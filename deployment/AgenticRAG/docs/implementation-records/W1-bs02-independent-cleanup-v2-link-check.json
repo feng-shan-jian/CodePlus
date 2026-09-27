@@ -1,9 +1,0 @@
-{
-  "status": "PASS",
-  "links": 56,
-  "tag": "IO_REPARSE_TAG_SYMLINK",
-  "all_targets_lexically_within_owned_root": true,
-  "external_targets": 0,
-  "target_following": false,
-  "method": "Inspect stored lstat/readlink values and strip Windows extended path prefix for lexical containment; no target reads or writes."
-}

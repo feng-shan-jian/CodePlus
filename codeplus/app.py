@@ -1082,21 +1082,16 @@ class CodePlusApp(App):
             self._knowledge_active = False
 
     async def _send_knowledge(self, text, policy):
-        original_agent, original_conversation = self.agent, self.conversation
-        controlled = Agent(client=original_agent.client, registry=original_agent.registry, protocol=original_agent.protocol,
-            work_dir=original_agent.work_dir, permission_checker=original_agent.permission_checker,
-            context_window=original_agent.context_window, hook_engine=original_agent.hook_engine,
-            execution_policy=policy)
-        controlled.session_id = original_agent.session_id
-        controlled.file_history = original_agent.file_history
-        self.agent, self.conversation = controlled, ConversationManager()
+        agent = self.agent
+        previous_policy = agent.execution_policy
+        agent.execution_policy = policy
         try:
             await self._send_message(text)
         except Exception as error:
             self._show_error('Knowledge run failed: '+(str(error) if isinstance(error, ValueError) else type(error).__name__))
         finally:
-            self.last_knowledge_outcome = controlled.last_run_outcome
-            self.agent, self.conversation = original_agent, original_conversation
+            self.last_knowledge_outcome = agent.last_run_outcome
+            agent.execution_policy = previous_policy
             self._knowledge_active = False
             if self.last_knowledge_outcome:
                 self.last_knowledge_run_id = self.last_knowledge_outcome.run_id
@@ -1182,7 +1177,7 @@ class CodePlusApp(App):
         就能重建压缩后的状态。之前已写入磁盘的原始前缀不会被重放。
         没有活跃 session 或 compact 未产出 boundary 时直接跳过。
         """
-        if self._knowledge_active or not self.session or notification.boundary is None:
+        if not self.session or notification.boundary is None:
             return
         record = make_compact_boundary(
             notification.boundary.summary,
@@ -1452,11 +1447,9 @@ class CodePlusApp(App):
 
     async def _send_message(self, text: str, is_notification: bool = False) -> None:
         assert self.agent is not None
-        knowledge = self.agent.execution_policy is not None
-        if not knowledge:
-            self._refresh_skills_if_needed()
+        self._refresh_skills_if_needed()
 
-        if not knowledge and self._mcp_init_task and not self._mcp_init_task.done():
+        if self._mcp_init_task and not self._mcp_init_task.done():
             self._show_system_message("Waiting for MCP servers to connect...")
             await self._mcp_init_task
 
@@ -1464,13 +1457,13 @@ class CodePlusApp(App):
         chat = self.query_one("#chat-area", VerticalScroll)
         input_widget = self.query_one("#chat-input", ChatInput)
 
-        if not knowledge and text and "@" in text:
+        if text and "@" in text:
             text = expand_at_refs(text, self.agent.work_dir)
 
         # Start memory recall prefetch before UI work.
         prefetch_task = asyncio.create_task(
             self._prefetch_relevant_memories(text)
-        ) if text and not knowledge else None
+        ) if text else None
 
         if text:
             user_row = Vertical(classes="user-row")
@@ -1487,7 +1480,7 @@ class CodePlusApp(App):
             if self.session:
                 self.session.append(Message(role="user", content=text))
 
-        if not knowledge and self._mcp_instructions and not self._mcp_instructions_ok:
+        if self._mcp_instructions and not self._mcp_instructions_ok:
             self.conversation.add_system_reminder(self._mcp_instructions)
             self._mcp_instructions_ok = True
 
@@ -1521,8 +1514,7 @@ class CodePlusApp(App):
         self._teammate_tree = TeammateTree(id="teammate-tree")
         self._teammate_tree.display = False
         await chat.mount(self._teammate_tree)
-        if not knowledge:
-            self._start_teammate_polling()
+        self._start_teammate_polling()
 
         self.call_after_refresh(chat.scroll_end, animate=False)
         self._start_spinner()
@@ -1597,7 +1589,7 @@ class CodePlusApp(App):
                             await self._handle_askuser(ask_tool._pending_event)
 
                     elif isinstance(event, TurnComplete):
-                        if self.session and not knowledge:
+                        if self.session:
                             for msg in self.conversation.history[history_cursor:]:
                                 self.session.append(msg)
                             history_cursor = len(self.conversation.history)
@@ -1642,8 +1634,7 @@ class CodePlusApp(App):
                         # 将游标推进到重建后的历史末尾，这样 TurnComplete/LoopComplete
                         # 刷盘时只追加 boundary 之后的新消息，不会把已压缩的
                         # 前缀作为普通记录重复写入。
-                        if not knowledge:
-                            self._persist_compact_boundary(event)
+                        self._persist_compact_boundary(event)
                         history_cursor = len(self.conversation.history)
 
                     elif isinstance(event, ErrorEvent):
@@ -1657,15 +1648,13 @@ class CodePlusApp(App):
                         self._show_error(event.message)
 
                     elif isinstance(event, LoopComplete):
-                        if knowledge and self.session and accumulated_text:
-                            self.session.append(Message(role='assistant', content=accumulated_text))
                         total_time = _time.monotonic() - self._thinking_start
                         done_label = Static(
                             f"✻ {_to_past_tense(self._thinking_verb)} for {total_time:.1f}s",
                             classes="message thinking-done",
                         )
                         await ai_row.mount(done_label)
-                        if self.session and not knowledge:
+                        if self.session:
                             for msg in self.conversation.history[history_cursor:]:
                                 self.session.append(msg)
                             history_cursor = len(self.conversation.history)
@@ -1676,7 +1665,7 @@ class CodePlusApp(App):
                             asyncio.ensure_future(
                                 self._update_session_summary()
                             )
-                        if self.agent.plan_mode and not knowledge:
+                        if self.agent.plan_mode:
                             asyncio.ensure_future(
                                 self._show_plan_approval()
                             )
@@ -1705,8 +1694,7 @@ class CodePlusApp(App):
             self._finish_streaming()
             input_widget.focus()
 
-            if not knowledge:
-                await self._process_task_notifications()
+            await self._process_task_notifications()
 
     async def _process_task_notifications(self) -> None:
         if self._knowledge_active:
@@ -2042,7 +2030,7 @@ class CodePlusApp(App):
     # -----------------------------------------------------------------
 
     async def _update_session_summary(self) -> None:
-        if self._knowledge_active or not self.session or not self.client or not self.agent:
+        if not self.session or not self.client or not self.agent:
             return
         session, conversation, client, protocol = self.session, self.conversation, self.client, self.agent.protocol
         try:

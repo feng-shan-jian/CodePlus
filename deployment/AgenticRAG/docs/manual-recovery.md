@@ -66,4 +66,4 @@ attempts = cleanup_candidates(catalog, abandoned_batch_id, frozen_backend)
 
 SQLite schema 8 只追加 `recovery.sql`，SQL 1–7 不变。迁移在事务外关闭 FK，在事务内创建新表、复制、删除原表、将新表改回原名，并恢复 artifact 触发器；不将原表改名成备份。提交前执行 `foreign_key_check`，失败回滚并恢复 FK；既有 publication 外键和不可变触发器必须保持原定义。现有 `StorageConfig` 序列化和逻辑 schema 指纹不增加默认字段。
 
-正式验证入口为 `test_recovery.py`、`test_recovery_ownership.py`、`r14_real_acceptance.py`、`r14_lifecycle_acceptance.py` 和 `r14_package_upgrade.py`。受控单测、真实进程终止、实际 GPU/Milvus 请求、已安装 v7 升级的结果分别记录。GPU 迟到门禁延迟真实 worker 的完成帧交付，换代时句柄尚未确认完成；这不宣称 GPU 在完成帧产生之后还在计算。实际命令和结果见 [R14 实施记录](implementation-records/R14.md)，Leader 独立验收与资源清理由后续会话执行。
+正式验证入口为 `test_recovery.py`、`test_recovery_ownership.py` 和正式安装测试。取消仅请求停止，换代和回收须等待真实 worker 完成或进程死亡证据；受控测试与真实服务执行分别记录。

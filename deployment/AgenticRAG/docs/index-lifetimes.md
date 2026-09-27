@@ -18,4 +18,4 @@ GC 复用 artifact 生命周期锁和 R14 的创建凭证：在删除前比较 e
 
 当前 Milvus SDK 没有按 expected collection ID 条件删除的接口。因此本模块锁能够排除本模块自身的竞争；外部管理员若在 describe 与 drop 之间替换同名集合，无法由该 SDK 提供跨系统原子条件。已发生且可观察的同名替换会保留资源并记录失败，不虚称能排除外部管理员的瞬间替换。
 
-正式已发布查询仍要求 READY。历史引用和 `source_archive.read_version` 读取归档，不需要索引、原始文件、GPU、Milvus 或重新解析；GC 不删除历史。真实执行状态、已运行失败和已通过证据见 [R15 实施记录](implementation-records/R15.md)。
+正式已发布查询仍要求 READY。历史引用和 `source_archive.read_version` 读取归档，不需要索引、原始文件、GPU、Milvus 或重新解析；GC 不删除历史。正式回归入口为 `tests/test_index_gc.py`。

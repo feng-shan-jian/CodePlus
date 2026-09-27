@@ -4,9 +4,9 @@
 
 ## 冻结输入与可复现范围
 
-基线为 R00 本地提交 `7ef7ee6c26e5a104da212a6b7788d9b884ef04fa` **加上** [R00 输入清单](implementation-records/R00-input-fingerprints.json) 与 [继承保护清单](implementation-records/R00-protected-inputs.json) 标识的工作区文件。整套 MultiHop 替换是继承未提交输入，R01 不取得其所有权；仅从 Git HEAD 检出不能宣称复现完整评测数据。
+冻结输入以现有 dataset、questions、tiers、source-lock 为准。本轮受保护输入的逐文件哈希核对见[验收记录](production-simplification-acceptance-20260927.md#验证边界)。
 
-官方数据保持 609 篇文档、2,556 题、6,084 条证据。corpus、dataset.json、questions.json（含答案、gold 与顺序）、tiers.json、source-lock.json、prepare.py、upstream 和 validation.json 不改。逐文件 SHA-256 对照、路径集合与三档检查见 [R01 证据](implementation-records/R01-evidence.json)。
+官方数据保持 609 篇文档、2,556 题、6,084 条证据。corpus、dataset.json、questions.json（含答案、gold 与顺序）、tiers.json、source-lock.json、prepare.py、upstream 和 validation.json 不改。
 
 | 档位 | 问题数 | 检索分母 | 数据/题集 SHA-256 |
 | --- | ---: | ---: | --- |
@@ -42,7 +42,7 @@
 
 运行侧不是先调用全量 `load_dataset` 再删 gold。实验准备/评分进程才能读取参考答案、gold、supporting_context、answerable、题型标签；它把固定 ID 列表交给运行加载器。Agent 与 query 生成只取当前问题的 query（ID 供结果关联）；导入器只取 corpus_paths。类型标签、答案和 gold 不进入运行 payload。语料完整性检查由独立准备阶段完成，不把校验报告整包当成模型提示。
 
-此处建立的是输入边界，尚未装配真实 runner。正式子进程测试禁止所有 `codeplus` 导入，并在加载运行输入前用 Python audit hook 禁止打开整个 `eval/RAG-eval/` 下的文件，证明运行加载器不会偷读评分输入。此测试不是对尚未实现的 Agent 权限隔离的证明。
+正式 runner 见[评测入口](../eval/README.md)。正式子进程测试禁止所有 `codeplus` 导入，并在加载运行输入前用 Python audit hook 禁止打开整个 `eval/RAG-eval/` 下的文件，证明运行加载器不会偷读评分输入。此测试不是对尚未实现的 Agent 权限隔离的证明。
 
 ## 原命令、评分语义与限制
 
@@ -61,7 +61,7 @@ pwsh -NoProfile -File eval/RAG-eval/run.ps1 -Tier lite -Answers <answers.json>
 
 官方检索仍强制 Top-K=10、精确 ID/query/题序和数据指纹。失败请求计零并保留在对应分母；null_query 仅从检索分母排除，在答案评分仍保留。官方答案指标是小写空白分词的任一词重合 `upstream_word_overlap_accuracy`，不能称为语义正确率、引用正确率或拒答正确率。合成报告只验证这些协议，不是模型质量结果。
 
-`run.ps1 -KbId` 仍调用旧 `codeplus.knowledge benchmark`；新核心和真实 Agent 未连接，后续由 R10/R17 接管。直接旧产品 CLI 的 `python -m codeplus.knowledge ...` 不在本次解耦范围。未运行旧在线检索来替代新核心验收。
+在线运行使用生产 retrieval_runner/run_agent；`run.ps1` 保留离线检查、重放与答案评分。
 
 ## 正式验证与后续修改边界
 
@@ -72,4 +72,4 @@ $env:PYTHONDONTWRITEBYTECODE = '1'
 
 正式测试覆盖原三档指纹、全部证据、ID 嵌套与顺序、严格字段/路径白名单、无评分文件读取的运行子进程、禁旧模块的原命令、错误/空答案分母，以及 Replay 原生报告兼容。子进程均设 60 秒上限。测试使用合成输入，成功/失败报告都保留计分语义，生成的 runs 报告在测试结束后清理。
 
-R00 的文档与脚本字节对照也是 R01 的继承归属检查；后续 R10/R17 若获授权更改 README、benchmark.md、执行器等路径，应按新的任务白名单更新归属测试和证据。不得借此修改 corpus、原题/答案/gold、tiers、upstream 的冻结口径。当前的来源映射、分母与评分器变化必须另行明确批准和版本化。
+corpus、原题/答案/Gold、tiers 与 upstream 计分算法保持冻结。运行结果和旧实验脚本按清理清单处理，不删除评测输入。

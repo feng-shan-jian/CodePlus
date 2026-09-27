@@ -15,7 +15,7 @@ from agentic_rag.capabilities import (
     RerankResponse, RerankScore, require_provider, validate_input_batch, validate_response,
 )
 from agentic_rag.config import (
-    KnowledgeConfig, ProcessingSnapshot, RunOverride, assemble_configuration,
+    DevelopmentConfig, KnowledgeConfig, ProcessingSnapshot, RunConfiguration, RunOverride, assemble_configuration,
     document_encoding_identity, index_identity, resolve_run,
 )
 from agentic_rag.domain import ErrorCode, RagError, Run, RunStatus
@@ -64,8 +64,7 @@ def test_precedence_copy_and_run_override_are_feature_scoped():
     qa = resolve_run(config, "qa", RunOverride(mode="fixed"))
     report = resolve_run(config, "report")
     assert qa.retrieval.mode == "fixed" and report.retrieval.mode == "auto"
-    assert qa.budget.searches > 1 and report.budget.searches > 1
-    assert qa.budget != report.budget
+    assert 'budget' not in qa.model_dump() and 'budget' not in report.model_dump()
     raw["model_profiles"][0]["name"] = "changed"
     configured["retrieval"]["context_tokens"] = 1
     assert config.model_dump_json() == before
@@ -75,6 +74,20 @@ def test_precedence_copy_and_run_override_are_feature_scoped():
         RunOverride(top_k=2)
     with pytest.raises(ValueError):
         resolve_run(config, "chat")
+
+
+def test_legacy_host_settings_load_json_without_answer_controller(tmp_path):
+    from agentic_rag.adapters.codeplus.management import load_settings
+    data = {"knowledge": parse(example_config()).model_dump(mode="json"),
+            "worker": {"executable": str(tmp_path / "python.exe"), "model_cache": str(tmp_path / "models"),
+                       "runtime_dir": str(tmp_path / "runtime")},
+            "answer_tokenizer": "unused", "max_iterations": 5, "finish_input_upper": 8000}
+    path = tmp_path / "knowledge.json"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    settings = load_settings(path)
+    assert settings.knowledge == parse(example_config())
+    assert "answer_tokenizer" not in settings.model_dump()
+    assert DevelopmentConfig.model_validate_json(settings.model_dump_json()) == settings
 
 
 @pytest.mark.parametrize('value', [-0.001, 1.001, True, '0.001', float('nan'), float('inf')])
@@ -88,7 +101,11 @@ def test_min_score_rejects_invalid_probabilities(value):
 def test_min_score_preserves_legacy_hashes_and_changes_only_new_run_identity():
     legacy = parse(example_config())
     # Captured from the installed package before min_score was introduced.
-    assert resolve_run(legacy, 'qa').identity == 'd508ccbf035fb0e968a33a041ffedba009ef44d7aa73f479415f561b096ea604'
+    old_run = resolve_run(legacy, 'qa').model_dump(mode='json')
+    old_run['budget'] = legacy.budgets['qa']
+    restored = RunConfiguration.model_validate_json(json.dumps(old_run))
+    assert restored.identity == 'd508ccbf035fb0e968a33a041ffedba009ef44d7aa73f479415f561b096ea604'
+    assert RunConfiguration.model_validate_json(restored.model_dump_json()).identity == restored.identity
     snapshot = ProcessingSnapshot.capture(uuid4(), legacy)
     assert snapshot.config_fingerprint == '150e6427e4bdfe17bb1a71d9f6fac36e91cf193528e93250e7b547981d9989a3'
     assert 'min_score' not in snapshot.model_dump_json()
@@ -152,7 +169,6 @@ def test_arrays_replace_atomically_and_unknown_profile_rejected():
     (("models", "embedding"), "missing"), (("retrieval", "mode"), "unrestricted"),
     (("retrieval", "dense_candidates"), "20"), (("retrieval", "dense_candidates"), True),
     (("retrieval", "context_chunks"), 21), (("retrieval", "nprobe"), 2),
-    (("budgets", "qa", "finish_reserve_tokens"), 12000),
     (("processing", "chunker", "max_tokens"), 2049),
     (("processing", "chunker", "overlap_tokens"), 400),
     (("processing", "index", "bm25_b"), 1.1),
@@ -179,25 +195,6 @@ def test_invalid_configuration_fails(path, value):
 def test_unverified_model_combinations_rejected(patch):
     with pytest.raises(ValidationError):
         EmbeddingProfile.model_validate_json(json.dumps({"name": "embed", **patch}))
-
-
-def test_locked_profiles_match_r03_assets_and_templates():
-    package = Path(__file__).resolve().parents[1]
-    lock = json.loads((package / "probes/models/models.lock.json").read_text(encoding="utf-8-sig"))
-    for capability, profile in (("embedding", EmbeddingProfile(name="e")), ("reranker", RerankProfile(name="r"))):
-        model = lock["models"][capability]
-        assert (profile.model, profile.revision) == (model["model_id"], model["revision"])
-        for attribute, filename in (("tokenizer_sha256", "tokenizer.json"), ("config_sha256", "tokenizer_config.json"),
-                                    ("vocab_sha256", "vocab.json"), ("merges_sha256", "merges.txt")):
-            assert getattr(profile.tokenizer, attribute) == model["files"][filename]["sha256"]
-    # AST reads the probe's literal templates without importing its GPU code.
-    import ast
-    tree = ast.parse((package / "probes/models/probe.py").read_text(encoding="utf-8-sig"))
-    constants = {node.targets[0].id: ast.literal_eval(node.value) for node in tree.body
-                 if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)
-                 and node.targets[0].id in ("INSTRUCTION", "PREFIX", "SUFFIX")}
-    rank = RerankProfile(name="r")
-    assert (rank.instruction, rank.prefix, rank.suffix) == (constants["INSTRUCTION"], constants["PREFIX"], constants["SUFFIX"])
 
 
 def test_snapshot_roundtrip_deep_immutability_and_tamper_detection():

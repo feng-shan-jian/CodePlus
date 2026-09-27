@@ -38,9 +38,7 @@ def experiment_config(data_dir, endpoint, route='dense', *, rerank=False):
         'models':{'embedding':'embed', 'reranker':'rank'},
         'model_profiles':[{'name':'embed','capability':'embedding'}, {'name':'rank','capability':'rerank'}],
         'retrieval':{'mode':'fixed','route':route,'rerank':rerank,'dense_candidates':50,'bm25_candidates':50,
-            'rerank_candidates':50,'rrf_k':60,'nprobe':64,'context_chunks':8,'context_tokens':8000},
-        'budgets':{'qa':{'searches':4,'opens':4,'total_tokens':16000,'duration_ms':180000,'finish_reserve_tokens':3000,'finish_reserve_ms':20000},
-                   'report':{'searches':12,'opens':12,'total_tokens':48000,'duration_ms':600000,'finish_reserve_tokens':6000,'finish_reserve_ms':40000}}}))
+            'rerank_candidates':50,'rrf_k':60,'nprobe':64,'context_chunks':8,'context_tokens':8000}}))
 
 
 def protect_runtime_reads():
@@ -88,13 +86,11 @@ def completion_status(report):
 
 
 def query_context(catalog, kb_id, revision_id, config, provider, backend, meter, query):
-    """One real retrieval, plus production selection and exact unsent request.
+    """One real retrieval, production source selection and an unsent request.
 
     This query-only measurement never runs an answer model or confirms delivery.
-    The empty request reserves the same fixed wrapper before source selection.
     """
     from agentic_rag.adapters.codeplus.policy import SYSTEM
-    from agentic_rag.domain import Span
     from agentic_rag.evidence import DeliveryGateway, MappedSpan
     from agentic_rag.sources import SourceSession
     observed = {}
@@ -111,14 +107,12 @@ def query_context(catalog, kb_id, revision_id, config, provider, backend, meter,
         session=SourceSession(catalog,lease,meter,dense=search)
         gateway=DeliveryGateway(session)
         call='measurement-search'
-        body={'model':meter.model,'messages':[{'role':'system','content':SYSTEM},
+        body={'model':'evaluation','messages':[{'role':'system','content':SYSTEM},
             {'role':'user','content':query}, {'role':'assistant','content':None,
              'tool_calls':[{'id':call,'type':'function','function':{'name':'knowledge_search','arguments':json.dumps({'query':query})}}]},
             {'role':'tool','tool_call_id':call,'content':''}],
             'max_tokens':1000,'stream':True,'stream_options':{'include_usage':True}}
         raw=json.dumps(body,ensure_ascii=False,separators=(',',':')).encode()
-        initial=gateway.prepare(raw,(),purpose='finalize',protocol='compat')
-        gateway.retain_prepared_window(initial);gateway.settle(initial,'not_sent')
         context={'status':'running','delivery':'not_sent','answer_model_executed':False,'meter_identity':meter.identity,
                  'fixed_request_bytes':len(raw),'selected':[],'prepared':[]}
         try:
@@ -130,11 +124,10 @@ def query_context(catalog, kb_id, revision_id, config, provider, backend, meter,
             raw=json.dumps(body,ensure_ascii=False,separators=(',',':')).encode()
             mappings=tuple(MappedSpan(m.candidate_id,m.source_span,('messages',3,'content'),m.body_span,
                 ('messages',3,'tool_call_id')) for m in result.body_mappings)
-            permit=gateway.prepare(raw,mappings,purpose='finalize',protocol='compat')
+            permit=gateway.prepare(raw,mappings,purpose='explore',protocol='compat')
             try:
                 context.update(delivery='prepared',request_body=body,request_sha256=hashlib.sha256(raw).hexdigest(),
-                    request_utf8_upper=meter.count(raw.decode()),host_input_upper=meter.input_upper_bound(raw,output_cap=1000))
-                gateway.retain_prepared_window(permit)
+                    request_utf8_upper=len(raw))
                 context.update(status='ok',prepared=result.payload['items'])
             finally:
                 gateway.settle(permit,'not_sent')
@@ -168,7 +161,7 @@ def run(args):
         'forbidden_runtime_reads':denied,'result':'RUNNING'}
     if args.action!='build':
         report.update(dataset_sha256=args.dataset_hash,protocol={'top_k':10,'route':args.action,'rerank':config.retrieval.rerank,
-            'product_context_chunks':8,'evaluation_uses_candidate_top_k':True,'context_measurement':bool(getattr(args,'answer_tokenizer',None))},
+            'product_context_chunks':8,'evaluation_uses_candidate_top_k':True,'context_measurement':bool(getattr(args,'context',False))},
             records=[{**q,'status':'error','hits':[],'elapsed_ms':0.0,
                 'error':{'phase':'not_started','type':'NotStarted','message':'request did not start'}} for q in runtime['questions']])
     started=time.perf_counter()
@@ -205,9 +198,9 @@ def run(args):
             state=json.loads((root/'state.json').read_text(encoding='utf-8'))
             kb_id=UUID(state['kb_id'])
             meter=None
-            if getattr(args,'answer_tokenizer',None):
-                from agentic_rag.adapters.codeplus.meter import DeepSeekTextMeter
-                meter=DeepSeekTextMeter(args.answer_tokenizer,model='deepseek-chat',protocol='openai-compat',base_url='https://api.deepseek.com')
+            if getattr(args,'context',False):
+                from agentic_rag.adapters.codeplus.policy import SourceTextMeter
+                meter=SourceTextMeter()
             with catalog.start_run(kb_id,resolve_run(config,'qa')) as lease:
                 if str(lease.run.revision_id)!=state['revision_id']:
                     raise ValueError('current revision differs from the frozen build state')
@@ -271,5 +264,5 @@ if __name__=='__main__':
     for name in ('cuda-python','model-cache'):parser.add_argument('--'+name)
     parser.add_argument('--ids');parser.add_argument('--dataset-hash')
     parser.add_argument('--rerank',action='store_true',help='enable the frozen reranker; all other retrieval settings stay fixed')
-    parser.add_argument('--answer-tokenizer',help='measure selected/prepared unsent Context using the pinned host upper-bound meter')
+    parser.add_argument('--context',action='store_true',help='measure actual source selection without calling an answer model')
     sys.exit(0 if run(parser.parse_args())['result']=='PASS' else 1)

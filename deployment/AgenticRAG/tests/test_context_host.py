@@ -1,4 +1,4 @@
-"""R18 selection through both existing Agent loops and real SDK serialization."""
+"""Repeated search can return a tail omitted from the previous tool delivery."""
 import asyncio
 from contextlib import aclosing
 import json
@@ -19,7 +19,7 @@ H=runpy.run_path(str(Path(__file__).with_name('test_codeplus_integration.py')))
 
 
 @pytest.mark.parametrize('completion',[False,True])
-def test_both_agent_loops_retrieve_cropped_unseen_tail_and_cite_actual_wire(tmp_path,monkeypatch,completion):
+def test_both_agent_loops_retrieve_cropped_unseen_tail(tmp_path,monkeypatch,completion):
     async def run():
         parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
         scope,canonical=H['setup_scope'](tmp_path,parent,raw=('# Heading\n'+'registry telescope '*200).encode())
@@ -44,14 +44,13 @@ def test_both_agent_loops_retrieve_cropped_unseen_tail_and_cite_actual_wire(tmp_
                 else:
                     assert span.start==wire[0]['source_span']['end']
                     assert mapped['candidate_id']!=wire[0]['candidate_id']
-                    content=H['sse_text'](json.dumps({'markdown':'Recovered original [^'+mapped['evidence_id']+']',
-                        'citations':[{'evidence_id':mapped['evidence_id'],'spans':[span.model_dump()],'quotes':[quote]}]}))
+                    content=H['sse_text']('Recovered the original source tail.')
             return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        client=scoped_client(parent,transport=httpx.MockTransport(transport))
         class Policy:
             async def start(self,context):return scope
         monkeypatch.setattr('codeplus.agent.MAX_OUTPUT_CHARS',2500)
-        agent=Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy())
+        agent=Agent(client,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy())
         agent.session_dir.mkdir(parents=True,exist_ok=True)
         try:
             if completion:await agent.run_to_completion('Read the registry')
@@ -61,11 +60,11 @@ def test_both_agent_loops_retrieve_cropped_unseen_tail_and_cite_actual_wire(tmp_
                     async for _ in stream:pass
             assert len(seen)==3 and agent.last_run_outcome.status=='completed'
             with scope.catalog._db.transaction() as db:
-                assert db.execute('SELECT count(*) FROM saved_citations').fetchone()==(1,)
+                assert db.execute('SELECT count(*) FROM delivered_evidence').fetchone()[0] > 0
                 traces=[json.loads(r[0]) for r in db.execute('SELECT payload FROM retrieval_traces ORDER BY rowid')]
             assert len(traces)==2
             assert traces[1]['context']['window_before']['mappings'][0]['source_span']==wire[0]['source_span']
             assert traces[1]['context']['decisions'][0]['eligible_spans'][0]['start']==wire[0]['source_span']['end']
         finally:
-            await scope.aclose();await parent._client.close()
+            await scope.aclose();await client.aclose();await parent._client.close()
     asyncio.run(run())

@@ -6,7 +6,7 @@ from typing import Annotated, Any, Literal, Mapping
 from urllib.parse import urlsplit
 from uuid import UUID
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from ._schema import NonNegativeInt, PositiveInt, Record, Sha256, Text, fingerprint
 from .profiles import EmbeddingProfile, ModelProfile, RerankProfile
@@ -122,26 +122,6 @@ class RetrievalConfig(Record):
         return self
 
 
-class RunBudget(Record):
-    searches: PositiveInt
-    opens: PositiveInt
-    total_tokens: PositiveInt
-    duration_ms: PositiveInt
-    finish_reserve_tokens: PositiveInt
-    finish_reserve_ms: PositiveInt
-
-    @model_validator(mode="after")
-    def reserve_inside_total(self):
-        if self.finish_reserve_tokens >= self.total_tokens or self.finish_reserve_ms >= self.duration_ms:
-            raise ValueError("finish reserves must be smaller than the corresponding hard totals")
-        return self
-
-
-class Budgets(Record):
-    qa: RunBudget
-    report: RunBudget
-
-
 class KnowledgeConfig(Record):
     """Only the knowledge feature. No permission mode or implicit environment IO."""
 
@@ -151,7 +131,16 @@ class KnowledgeConfig(Record):
     models: ModelSelection
     model_profiles: tuple[ModelProfile, ...]
     retrieval: RetrievalConfig
-    budgets: Budgets
+    # Historical wire data remains hash-stable; new runs do not execute it.
+    budgets: dict[str, Any] | None = Field(default=None, exclude_if=lambda value: value is None)
+
+    @field_validator("budgets", mode="before")
+    @classmethod
+    def legacy_budget_record(cls, value):
+        if isinstance(value, dict):
+            return {"schema_version": 1, **{key: {"schema_version": 1, **item}
+                    if isinstance(item, dict) else item for key, item in value.items()}}
+        return value
 
     def profile(self, name: str) -> ModelProfile:
         for profile in self.model_profiles:
@@ -223,6 +212,30 @@ class AssembledConfig(Record):
     worker: WorkerExecutionConfig | None = None
 
 
+class DevelopmentConfig(BaseModel):
+    """Local knowledge binding settings, independent of the host answer loop."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    knowledge: KnowledgeConfig
+    worker: WorkerExecutionConfig
+    cleanup_grace_ms: int = Field(default=1000, ge=0, le=5000)
+    search_result_chunks: int | None = Field(default=None, gt=0, strict=True)
+    search_result_upper: int | None = Field(default=None, gt=0, strict=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def read_legacy_host_settings(cls, value):
+        if isinstance(value, dict):
+            value = dict(value)
+            for key in ("answer_tokenizer", "explore_output_cap", "finish_input_upper",
+                        "finalize_output_cap", "repair_output_cap", "compact_output_cap",
+                        "max_iterations", "max_tool_attempts"):
+                value.pop(key, None)
+            if isinstance(value.get("knowledge"), dict):
+                value["knowledge"] = KnowledgeConfig.model_validate_json(json.dumps(value["knowledge"]))
+        return value
+
+
 def assemble_configuration(
     *, defaults: Mapping[str, Any], configured: Mapping[str, Any] | None = None,
     explicit: Mapping[str, Any] | None = None,
@@ -279,12 +292,12 @@ class RunConfiguration(Record):
     task_kind: TaskKind
     knowledge: KnowledgeConfig
     retrieval: RetrievalConfig
-    budget: RunBudget
+    budget: dict[str, Any] | None = Field(default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def consistent_resolution(self):
         expected = self.knowledge.retrieval.model_copy(update={"mode": self.retrieval.mode})
-        if self.retrieval != expected or self.budget != getattr(self.knowledge.budgets, self.task_kind):
+        if self.retrieval != expected:
             raise ValueError("run configuration must resolve from its frozen knowledge config")
         return self
 
@@ -298,15 +311,14 @@ def resolve_run(config: KnowledgeConfig, task_kind: TaskKind, override: RunOverr
         raise ValueError("unknown knowledge task_kind")
     mode = override.mode if override and override.mode else config.retrieval.mode
     return RunConfiguration(task_kind=task_kind, knowledge=config,
-                            retrieval=config.retrieval.model_copy(update={"mode": mode}),
-                            budget=getattr(config.budgets, task_kind))
+                            retrieval=config.retrieval.model_copy(update={"mode": mode}))
 
 
 def with_published_encoding(desired: KnowledgeConfig, published: KnowledgeConfig) -> KnowledgeConfig:
     """Use the published index and encoder, retaining this run's query settings.
 
     Replace the selected profile object, not merely its mutable display name.
-    Rerank, budgets and retrieval settings continue to come from the caller.
+    Rerank and retrieval settings continue to come from the caller.
     """
     data = desired.model_dump(mode='json')
     data['storage'] = published.storage.model_dump(mode='json')

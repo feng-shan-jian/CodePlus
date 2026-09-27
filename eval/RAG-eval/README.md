@@ -1,6 +1,6 @@
 # 历史 RAG 分场景评测说明
 
-以下为旧分场景题库的历史说明，保留已有数据叙述；不再作为当前引擎运行指南。旧 RAG 实现及宿主入口已移除，新核心状态见 [AgenticRAG](../../deployment/AgenticRAG/README.md)，评测接缝见 [R01](../../deployment/AgenticRAG/docs/implementation-records/R01.md)。
+以下为旧分场景题库的历史说明，保留已有数据叙述；不再作为当前引擎运行指南。旧 RAG 实现及宿主入口已移除，新核心状态见 [AgenticRAG](../../deployment/AgenticRAG/README.md)，评测接缝见 [正式评测入口](../../deployment/AgenticRAG/eval/README.md)。
 
 原题库：**300 道静态题＋20 组三轮会话＋20 组状态流程**。其中 260 道静态题来自公开数据集，40 道为有针对性的原创虚构题。32 题 smoke 是其中的开发子集，不额外累计题量。完整设计见 [评测设计](design.md)。
 
@@ -20,7 +20,7 @@
 
 ## 引擎清理后的入口
 
-旧 `/knowledge`、`codeplus.knowledge benchmark/evaluate` 和 `knowledge` extra 已移除。原在线参数会准确报错；离线数据校验及原生报告回放的当前契约见 [R01](../../deployment/AgenticRAG/docs/implementation-records/R01.md)。新核心已完成 R00–R11 验收，宿主接入仍待后续任务，不把离线校验当作联网 Agent 验收。
+旧 `/knowledge`、`codeplus.knowledge benchmark/evaluate` 和 `knowledge` extra 已移除。原在线参数会准确报错；离线数据校验及原生报告回放的当前契约见 [正式评测入口](../../deployment/AgenticRAG/eval/README.md)。普通 Agent 与知识工具的接入及验证边界见[验收记录](../../deployment/AgenticRAG/docs/production-simplification-acceptance-20260927.md)。
 
 ## 质量与判分
 

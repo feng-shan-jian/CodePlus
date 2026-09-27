@@ -1,6 +1,6 @@
-# R05 领域对象与配置契约
+# 领域对象与配置契约
 
-2026-09-22；记录 schema_version=1，开发发行 codeplus-agentic-rag 0.1.0。本文记录 R05 数据类型、装配、指纹和模型能力协议；R06 增加 [存储与并发基础](storage-and-concurrency.md)，R07 增加 [输入快照](input-snapshots.md)，R08 增加 [解析与来源映射](parsing-and-source-maps.md) 与 SQLite schema 3。原领域／配置类型接口保持不变。worker、检索和宿主接入仍待后续任务；R05 类型本身不做索引重建或文件系统写入。
+本文记录领域类型、配置装配、快照指纹和模型协议。存储、输入归档及解析契约分别见[存储与并发](storage-and-concurrency.md)、[输入快照](input-snapshots.md)、[来源映射](parsing-and-source-maps.md)。
 
 ## 记录和身份
 
@@ -10,9 +10,9 @@
 
 Span 使用解析文本的 Unicode codepoint 半开区间 `[start,end)`；多个区间须有序且不重叠，不是原始字节 offset。R08 已提供原件字节映射与文档内范围核验；空文档没有非空证据区间。DocumentVersion 要求带时区的采集时间与结构化来源元数据。批次发布状态必须有 published_revision_id，待恢复必须有原阶段；类型检查本身不替代存储事务和后续发布流程。
 
-Run 保存完整解析后的 RunConfiguration 与其 hash，任务只绑定一个 kb_id/revision_id；completed、partial、incomplete、failed、cancelled 与 stop_reason 校验一致。无可交付内容的 incomplete 同样保留 token_budget 等具体预算原因；未知 token 用量为 null，不伪装成 0。Evidence 表示可信交付回执登记的正文，必须含 delivery_id；单纯构造该对象不授予引用权限，R11/R12 的存储与回执路径仍是权威。Citation 的跨对象/原文摘录核验尚未实现。
+Run 保存完整解析后的 RunConfiguration 与其 hash，任务只绑定一个 kb_id/revision_id；completed、partial、incomplete、failed、cancelled 与 stop_reason 校验一致。旧运行保留 token_budget 等历史停止原因；未知 token 用量为 null，不伪装成 0。Evidence 表示可信交付回执登记的正文，必须含 delivery_id；单纯构造该对象不授予引用权限，R11/R12 的存储与回执路径仍是权威。历史 Citation 与新 evidence 标记均通过归档读取。
 
-预算停止原因由 `BudgetStopReason` 统一定义，`StopReason` 与 partial/incomplete 的合法集合共用它；新增 `context_limit` 区分材料窗口（片段数/Token）与累计 `token_budget`。`budget` 仍仅用于 incomplete，completed 仍仅接受 finished。`Record.model_copy` 已执行完整验证，`RunLease.finish` 在 SQL 更新前拒绝非法组合。此次不改变记录字段、ErrorInfo 线格式或 SQLite schema，旧合法记录继续可读；新增原因会被旧开发版本的严格 Run schema 拒绝，不承诺将新运行记录降级给旧包读取。
+`BudgetStopReason` 保留旧记录的停止原因读取；当前仅单次返回上限使用 `context_limit`，没有跨调用预算执行。`budget` 仍仅用于 incomplete，completed 仍仅接受 finished。`Record.model_copy` 已执行完整验证，`RunLease.finish` 在 SQL 更新前拒绝非法组合。此次不改变记录字段、ErrorInfo 线格式或 SQLite schema，旧合法记录继续可读；新增原因会被旧开发版本的严格 Run schema 拒绝，不承诺将新运行记录降级给旧包读取。
 
 统一 ErrorInfo 包含 code、stage、message、retryable、可选模型 request_id 与宿主 call_id；RagError 携带此记录。空结果不作为错误替代品。错误不得携带密钥；适配器应在生成 message 前脱敏。
 
@@ -22,9 +22,9 @@ Run 保存完整解析后的 RunConfiguration 与其 hash，任务只绑定一�
 
 核心不读文件、环境变量、CodePlus 全局配置或当前目录，不解析用户默认路径。适配层选取知识库功能配置后传入单一 Schema。StorageConfig 拒绝相对路径、上级路径段、UNC 与 URI 中的认证/query；credential_ref 仅为名字，不是密钥。它是跨平台字符串 Schema：例如 `/tmp/data` 可表示 Linux 绝对路径，不能因此推断在 Windows 已解析成正确本机绝对路径。R06 打开目录前必须按实际 OS/文件系统重新确认绝对本地路径、权限、符号链接/挂载与数据归属；R05 不创建它。
 
-`resolve_run(config, 'qa'|'report', RunOverride(mode='fixed'|'auto'))` 冻结本次 retrieval 与相应预算。单次用户覆盖只接受 mode；不改默认配置，不接受宿主权限模式、top_k、模型或库。fixed 固定路线并保留多轮搜索/阅读，auto 允许的工具选项由后续 R19 决定；R05 只提供配置，不声称检索路线已可执行。
+`resolve_run(config, 'qa'|'report', RunOverride(mode='fixed'|'auto'))` 冻结本次 retrieval 与任务类型。单次用户覆盖只接受 mode；不改默认配置，不接受宿主权限模式、top_k、模型或库。fixed 固定路线并保留多轮搜索/阅读，auto 允许选择 strategy 和 rerank；两者都不改变配置中的候选及单次返回上限。
 
-数值预算、候选/context、RRF、parser/chunker/index 参数均要求显式试验配置，parameter_status 目前只允许 experiment。R03 已测模型输入边界与这些质量参数分开；R23 才冻结质量与生产预算。parser/chunker 的实现与版本是快照身份，R05 没有对应执行器，不能因字段被接受就声称解析实现可用。
+候选/context、RRF、parser/chunker/index 参数由功能配置提供。选定参数见 [retrieval-selected.json](retrieval-selected.json)，通过现有 assemble_configuration 合并。旧 budgets/run budget 字段只在兼容读取边界保留其原始数据，不生成活动执行配额；旧快照与运行身份保持可读。
 
 下面为可运行的 Schema 示例，数值仅展示装配，不是推荐或冻结参数：
 
@@ -43,12 +43,7 @@ data = {
     "model_profiles": [{"name": "local_embed", "capability": "embedding"}, {"name": "local_rank", "capability": "rerank"}],
     "retrieval": {"route": "dense", "rerank": False, "dense_candidates": 20, "bm25_candidates": 20,
                   "rerank_candidates": 20, "rrf_k": 40, "nprobe": 1, "context_chunks": 5, "context_tokens": 3000},
-    "budgets": {
-        "qa": {"searches": 3, "opens": 3, "total_tokens": 12000, "duration_ms": 120000,
-               "finish_reserve_tokens": 3000, "finish_reserve_ms": 20000},
-        "report": {"searches": 7, "opens": 9, "total_tokens": 36000, "duration_ms": 360000,
-                   "finish_reserve_tokens": 6000, "finish_reserve_ms": 40000},
-    },
+
 }
 config = assemble_configuration(defaults=data).knowledge
 snapshot = ProcessingSnapshot.capture(uuid4(), config)
@@ -67,18 +62,18 @@ R03 保守输入上限为完整 2048 token，batch<=4，`batch_size * max(comple
 
 | 指纹 | 包含 | 排除 / 意义 |
 | --- | --- | --- |
-| config_fingerprint | 完整已解析配置，含实际 profile 与预算 | 不只保存可变名称；用于恢复和审计 |
+| config_fingerprint | 完整已解析配置，含实际 profile 及旧快照兼容字段 | 不只保存可变名称；用于恢复和审计 |
 | document_encoding_fingerprint | parser、chunker、实际 embedding/tokenizer/模板/runtime/输入限制 | 排除 profile 显示名、Rerank、预算、存储、检索路线 |
 | index_fingerprint | 文档编码指纹与索引/analyzer 配置 | 只变 BM25 参数改变索引身份、不改文档编码身份 |
 | profile.identity | 当前完整实际模型 profile，含运行实现/设备与输入限制 | 排除显示名称；作为 worker 实例/请求身份 |
 
-同名 profile 更改实际配置会改变身份；只改名称不改变编码身份。拒绝未支持的 tokenizer/template/revision 比误认兼容更早失败。保守地把 query instruction、设备/运行限制纳入 embedding 身份，未声明它们跨配置可兼容；未来若放宽需版本化兼容证据。单改 QA/报告预算或 Rerank 不改变文档编码/索引身份。R16 再用这些边界提示重建并执行确认流程，R05 不自行重建。
+同名 profile 更改实际配置会改变身份；只改名称不改变编码身份。拒绝未支持的 tokenizer/template/revision 比误认兼容更早失败。保守地把 query instruction、设备/运行限制纳入 embedding 身份，未声明它们跨配置可兼容；未来若放宽需版本化兼容证据。旧预算字段或 Rerank 的变化不改变文档编码/索引身份。模型切换使用这些边界决定是否需要重建确认。
 
 R07 InputManifest 仅标识本批固定请求；InputCheckpoint/RawSnapshot 另存逐文件完整原件与错误，不替代要求 parsed/source_map 的 DocumentVersion。批次仍直接关联此处完整 ProcessingSnapshot，重开/接管不读取新默认配置。变化对照使用基准发布成员与该版配置，编码不兼容给 requires_rebuild_confirmation；不存在“原件 hash 一样就一定不用重建”的简化。R08 真实执行仅接受 PARSER 常量与 canonical-offsets-v1 chunker 身份，其他实验名被 Schema 接受也不能据此运行。真实处理复用既有 ImportItem/CheckpointArtifact 语义，stage 不在其他表重复维护。
 
 ## 能力协议与安装边界
 
-EmbeddingProvider 的 embed_documents/embed_query、RerankProvider 的 rerank 接收显式 profile 和 RequestContext；候选和响应使用 UUID，不按排序位置猜来源。响应校验请求/模型身份、ID 集合、embedding 顺序、1024 维有限归一化向量、Rerank `[0,1]` 分数及稳定排序，记录 queue/load/inference 用量。错误明确 stage。当前没有实现者；`require_provider` 返回 CAPABILITY_UNAVAILABLE；`require_optional_dependencies` 只用 find_spec 检查依赖，不加载 GPU，缺依赖返回 DEPENDENCY_UNAVAILABLE，依赖存在也不证明设备或模型可用。
+EmbeddingProvider 的 embed_documents/embed_query、RerankProvider 的 rerank 接收显式 profile 和 RequestContext；候选和响应使用 UUID，不按排序位置猜来源。响应校验请求/模型身份、ID 集合、embedding 顺序、1024 维有限归一化向量、Rerank `[0,1]` 分数及稳定排序，记录 queue/load/inference 用量。错误明确 stage。缺少提供方时 `require_provider` 返回 CAPABILITY_UNAVAILABLE；`require_optional_dependencies` 只用 find_spec 检查依赖，不加载 GPU，缺依赖返回 DEPENDENCY_UNAVAILABLE，依赖存在也不证明设备或模型可用。
 
 RequestContext 使用 `time.monotonic_ns()` 域的绝对 deadline_monotonic_ns 作为同机临时硬时限，可选 deadline_at 仅作带时区审计。不能跨重启复用单调值，R09 握手必须确认同机/同启动时钟域，排队/加载/推理共用同一截止点；R05 不实现调度或取消。
 

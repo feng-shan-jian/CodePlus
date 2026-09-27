@@ -1,9 +1,8 @@
 """Real host loops, SQLite/archive and SDK; synthetic model/index transport.
 
-Network/GPU/Milvus acceptance is separate in the R12 live helper.
+Network/GPU/Milvus acceptance is separate from these controlled transports.
 """
 import asyncio
-from dataclasses import replace
 import json
 from pathlib import Path
 import runpy
@@ -12,7 +11,7 @@ import time
 import httpx
 import pytest
 
-from codeplus.agent import Agent, StreamText, ThinkingText, LoopComplete
+from codeplus.agent import Agent, StreamText
 from codeplus.client import create_client, scoped_client
 from codeplus.config import ProviderConfig
 from codeplus.conversation import ConversationManager
@@ -21,7 +20,8 @@ from codeplus.tools import ToolRegistry
 
 from agentic_rag.config import KnowledgeConfig, WorkerExecutionConfig, resolve_run
 from agentic_rag.domain import ErrorCode, RagError, RunStatus
-from agentic_rag.adapters.codeplus.policy import DevelopmentConfig, KnowledgeScope
+from agentic_rag.adapters.codeplus.policy import DevelopmentConfig, KnowledgeScope, SourceTextMeter
+from codeplus.tools.base import ToolCallComplete
 
 H = runpy.run_path(str(Path(__file__).with_name('source_support.py')))
 
@@ -41,25 +41,12 @@ def protocol_response(protocol, text='ok'):
 
 async def source_tool(scope, call_id, kind='open'):
     from codeplus.tools.base import ToolCallComplete
-    tool=scope.registry.get('knowledge_'+kind)
+    tool=next(tool for tool in scope.tools if tool.name=='knowledge_'+kind)
     params={'source_ref':scope.sources.issue_source(scope._fixture_ref)} if kind=='open' else {'query':'source'}
-    scope.rejected_tool(call_id,tool.name,'not_admitted')
-    permit=await scope.admit_tool(call_id,tool.name,params)
     result=await tool.execute(tool.params_model.model_validate(params))
-    await scope.tool_finished(permit,result)
+    scope.tool_finished(ToolCallComplete(call_id,tool.name,params),result)
     assert not result.is_error
     return result,params
-
-
-class ControlledMeter:
-    """Test-only body byte unit. Never selected by the production policy."""
-    identity = 'controlled-test-http-bytes'
-    model = 'fixture'
-    response_model = 'fixture-response'
-    context_window = 1000000
-    def count(self, text): return len(text.encode())
-    def input_upper_bound(self, raw_body, *, output_cap): return len(raw_body)
-    def frozen_identity(self): return {'meter':self.identity}
 
 
 def sse_text(content='', *, calls=None, terminal='stop', reasoning=None):
@@ -81,405 +68,183 @@ def setup_scope(tmp_path, parent, raw=None, *, context_tokens=50000, protocol='o
     catalog, old, source_session, source, version, chunks, ref = H['fixture'](tmp_path, context_tokens=context_tokens, opens=opens, **kwargs)
     base = old.run.resolved_config.knowledge.model_dump(mode='json')
     old.close()
-    base['budgets']['qa'].update(finish_reserve_tokens=20000)
     conf = KnowledgeConfig.model_validate_json(json.dumps(base))
     lease = catalog.start_run(ref.kb_id, resolve_run(conf, 'qa'))
     settings = DevelopmentConfig(knowledge=conf, worker=WorkerExecutionConfig(executable=str(tmp_path/'python'),
-        model_cache=str(tmp_path/'models'), runtime_dir=str(tmp_path/'runtime')), answer_tokenizer=str(tmp_path/'tokenizer'),
-        explore_output_cap=1000,finish_input_upper=8000,finalize_output_cap=1000,repair_output_cap=1000,
-        compact_output_cap=1000,max_iterations=12,max_tool_attempts=20,cleanup_grace_ms=100)
+        model_cache=str(tmp_path/'models'), runtime_dir=str(tmp_path/'runtime')), cleanup_grace_ms=100)
     context = HostRunContext('test','session',str(tmp_path),protocol,parent,None,None)
-    scope = KnowledgeScope(settings,catalog,lease,ControlledMeter(),context,time.monotonic())
+    scope = KnowledgeScope(settings,catalog,lease,SourceTextMeter(),context,time.monotonic())
     H['dense_fixture'](scope.sources,chunks,version,ref)
     scope._fixture_ref=ref
     return scope, chunks.parsed.text
 
 
-@pytest.mark.parametrize('completion', [False, True])
-@pytest.mark.parametrize('evidence', [False, True])
-@pytest.mark.parametrize('limit', ['fragments', 'metadata', 'tokens', 'meter', 'unknown_budget'])
-def test_source_limit_finalizes_only_valid_evidence_and_persists_terminal(tmp_path, completion, evidence, limit):
-    """Actual tools/Agent/archives/SQLite; only the model and index are synthetic."""
-    async def run():
-        parent = create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scope, canonical = setup_scope(tmp_path, parent)
-        handle = scope.sources.issue_source(scope._fixture_ref)
-        seen = []
+class BoundPolicy:
+    def __init__(self, scope):
+        self.scope = scope
 
-        def transport(request):
-            body = json.loads(request.content)
-            seen.append(body)
-            if evidence and len(seen) == 1:
-                content = sse_text(calls=('search','knowledge_search',{'query':'source'}), terminal='tool_calls')
-            elif len(seen) == (2 if evidence else 1):
-                # Exhaust the actual source allowance at the next admitted call.
-                with scope.catalog._db.transaction(write=True) as db:
-                    if limit == 'fragments':
-                        db.execute('UPDATE source_usage SET window_fragments=? WHERE run_id=?',
-                                   (scope.sources.retrieval.context_chunks, scope.run_id))
-                    elif limit == 'metadata':
-                        db.execute('UPDATE source_usage SET window_tokens=? WHERE run_id=?',
-                                   (scope.sources.retrieval.context_tokens-1, scope.run_id))
-                    elif limit == 'tokens':
-                        db.execute('UPDATE source_usage SET returned_tokens=? WHERE run_id=?',
-                                   (scope.sources.budget.total_tokens-scope.sources.budget.finish_reserve_tokens-1, scope.run_id))
-                    elif limit == 'meter':
-                        scope.sources.meter.count = lambda text: -1
-                    else:
-                        def unknown_budget(text):
-                            # The text exactly matches a quota diagnostic, but
-                            # an untyped error must never grant a soft stop.
-                            raise RagError(ErrorCode.BUDGET_EXHAUSTED, 'source fragment count exhausted', stage='source_budget')
-                        scope.sources.meter.count = unknown_budget
-                content = sse_text(calls=('limited','knowledge_open',{'source_ref':handle}), terminal='tool_calls')
-            else:
-                assert not body.get('tools')
-                if evidence:
-                    source = next(m['content'] for m in body['messages'] if m['role']=='tool' and '<source ' in m['content'])
-                    item = json.loads(source.split('\n\n<source ',1)[0])['items'][0]
-                    draft = {'markdown':'Verified partial answer [^'+item['evidence_id']+']',
-                             'citations':[{'evidence_id':item['evidence_id'],'spans':item['returned_spans'],'quotes':[canonical]}]}
-                else:
-                    draft = {'markdown':'No evidence is available.', 'citations':[]}
-                content = sse_text(json.dumps(draft))
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
-
-        await scope.client.aclose()
-        scope.client = scoped_client(parent, transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self, context): return scope
-        agent = Agent(parent, ToolRegistry(), 'openai-compat', work_dir=str(tmp_path), execution_policy=Policy())
-        callbacks = []
-        try:
-            if completion:
-                displayed = await agent.run_to_completion('source question', event_callback=callbacks.append)
-            else:
-                from contextlib import aclosing
-                conversation = ConversationManager(); conversation.add_user_message('source question')
-                async with aclosing(agent.run(conversation)) as stream:
-                    events = [event async for event in stream]
-                displayed = ' '.join(getattr(event, 'message', '') for event in events)
-            actual = scope.catalog.get_run(scope.lease.run.run_id)
-            hard_failure = limit in {'meter', 'unknown_budget'}
-            expected = (('failed','explicit_error') if hard_failure else
-                        ('partial', 'token_budget' if limit == 'tokens' else 'context_limit') if evidence else
-                        ('incomplete','no_evidence'))
-            assert (actual.status.value, actual.stop_reason) == expected
-            assert (agent.last_run_outcome.status, agent.last_run_outcome.reason) == expected
-            if completion:
-                assert [e for e in callbacks if e['type']=='run_status'] == [
-                    {'type':'run_status','status':expected[0],'reason':expected[1],
-                     'run_id':scope.run_id,'save':None,'research':agent.last_run_outcome.research}]
-            assert bool(agent.last_run_outcome.artifact) == (evidence and not hard_failure)
-            if hard_failure:
-                assert 'Knowledge run failed: explicit_error' in displayed
-            assert len(seen) == int(evidence) + (1 if hard_failure else 2)
-            assert actual.usage.searches == int(evidence) and actual.usage.opens == 1
-            assert actual.usage.total_tokens == 20 * len(seen)
-            assert scope._finished and scope._closed and not scope._pending_cleanup
-            assert scope.catalog.get_pin(actual.run_id).state == 'released'
-            with scope.catalog._db.transaction() as db:
-                assert db.execute('SELECT cleanup_state FROM host_runs WHERE run_id=?', (scope.run_id,)).fetchone() == ('released',)
-                statuses = dict(db.execute('SELECT status,count(*) FROM source_calls WHERE run_id=? GROUP BY status', (scope.run_id,)))
-                assert statuses == ({'ok':1,'error':1} if evidence else {'error':1})
-                saved, = db.execute('SELECT count(*) FROM saved_citations WHERE run_id=?', (scope.run_id,)).fetchone()
-                assert bool(saved) == (evidence and not hard_failure)
-        finally:
-            await scope.aclose(); await parent._client.close()
-    asyncio.run(run())
+    async def start(self, context):
+        return self.scope
 
 
 @pytest.mark.parametrize('completion', [False, True])
-@pytest.mark.parametrize('evidence', [False, True])
-def test_hard_request_window_stops_both_agent_entries_without_finalization(tmp_path, completion, evidence):
+def test_knowledge_tools_coexist_restore_and_return_plain_text(tmp_path, completion):
+    from codeplus.tools import create_default_registry
     async def run():
         parent = create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
         scope, _ = setup_scope(tmp_path, parent)
-        if not evidence: scope.meter.context_window = 1
-        seen = []
+        observed = []
+        destination = tmp_path/'normal-tool-output.txt'
         def transport(request):
-            seen.append(json.loads(request.content))
-            if len(seen) == 2: scope.meter.context_window = 1
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=sse_text(
-                calls=('search'+str(len(seen)), 'knowledge_search', {'query':'source'}), terminal='tool_calls'))
-        await scope.client.aclose()
-        scope.client = scoped_client(parent, transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self, context): return scope
-        agent = Agent(parent, ToolRegistry(), 'openai-compat', work_dir=str(tmp_path), execution_policy=Policy())
-        callbacks = []
+            body = json.loads(request.content)
+            observed.append(body)
+            names = {tool['function']['name'] for tool in body['tools']}
+            assert {'knowledge_search','knowledge_open','WriteFile','ReadFile'} <= names
+            assert 'project instructions remain' in str(body['messages'])
+            if len(observed) <= 3:
+                content = sse_text(calls=(str(len(observed)), 'knowledge_search', {'query':'source'}),terminal='tool_calls')
+            elif len(observed) == 4:
+                content = sse_text(calls=('write','WriteFile',{'file_path':str(destination),'content':'ordinary file output'}),terminal='tool_calls')
+            else:
+                content = sse_text('Plain answer with ordinary tools.')
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
+        client = scoped_client(parent,transport=httpx.MockTransport(transport))
+        registry = create_default_registry()
+        old = scope.tools[0]
+        registry.register(old)
+        registry.disable(old.name)
+        registry.mark_discovered(old.name)
+        agent = Agent(client,registry,'openai-compat',work_dir=str(tmp_path),execution_policy=BoundPolicy(scope),
+                      instructions_content='project instructions remain')
         try:
             if completion:
-                displayed = await agent.run_to_completion('question', event_callback=callbacks.append)
+                text = await agent.run_to_completion('Find the source and save a file.')
             else:
-                from contextlib import aclosing
-                conversation = ConversationManager(); conversation.add_user_message('question')
-                async with aclosing(agent.run(conversation)) as stream:
-                    events = [event async for event in stream]
-                displayed = ' '.join(getattr(event, 'message', '') for event in events)
-            actual = scope.catalog.get_run(scope.lease.run.run_id)
-            assert (actual.status.value, actual.stop_reason) == ('incomplete', 'context_limit')
-            assert 'Knowledge run incomplete: context_limit' in displayed
-            if completion:
-                assert [e for e in callbacks if e['type']=='run_status'] == [
-                    {'type':'run_status','status':'incomplete','reason':'context_limit',
-                     'run_id':scope.run_id,'save':None,'research':agent.last_run_outcome.research}]
-            assert scope.finish_reason is None and scope.purpose == 'agent'
-            assert agent.last_run_outcome.artifact is None
-            assert len(seen) == (2 if evidence else 0)
-            with scope.catalog._db.transaction() as db:
-                assert db.execute('SELECT count(*) FROM model_requests WHERE run_id=?', (scope.run_id,)).fetchone() == (len(seen),)
-                assert db.execute("SELECT count(*) FROM model_requests WHERE run_id=? AND purpose IN ('finalize','citation_repair')", (scope.run_id,)).fetchone() == (0,)
-                delivered, = db.execute('SELECT count(*) FROM delivered_evidence WHERE run_id=?', (scope.run_id,)).fetchone()
-                assert bool(delivered) == evidence
-            assert scope.catalog.get_pin(actual.run_id).state == 'released'
+                conv = ConversationManager();conv.add_user_message('Find the source and save a file.')
+                events = [event async for event in agent.run(conv)]
+                text = ''.join(event.text for event in events if isinstance(event,StreamText))
+            assert text == 'Plain answer with ordinary tools.'
+            assert destination.read_text() == 'ordinary file output'
+            assert scope.sources.usage()['searches'] == 3
+            assert registry.get(old.name) is old and not registry.is_enabled(old.name)
+            assert registry.is_discovered(old.name) and registry.get('knowledge_open') is None
+            assert agent.client is client and agent.registry is registry
+            assert agent.last_run_outcome.status == 'completed'
+            assert scope.catalog.get_pin(scope.lease.run.run_id).state == 'released'
         finally:
-            await scope.aclose(); await parent._client.close()
+            await scope.aclose();await client.aclose();await parent._client.close()
     asyncio.run(run())
 
 
 @pytest.mark.parametrize('completion', [False, True])
-@pytest.mark.parametrize('repair', [False, True])
-@pytest.mark.parametrize('parallel', [False, True])
-def test_real_host_loops_gate_answer_and_same_loop_single_repair(tmp_path, completion, repair,parallel):
+def test_cancel_waits_for_real_source_reader_before_releasing_pin(tmp_path, completion):
+    import threading
     async def run():
         parent = create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scope, canonical = setup_scope(tmp_path, parent)
-        if parallel:scope.registry.get('knowledge_search').is_concurrency_safe=True
-        seen = []
-        def transport(request):
-            body = json.loads(request.content)
-            seen.append(body)
-            if len(seen) == 1:
-                calls=[('s1','knowledge_search',{'query':'source'})]
-                if parallel:calls.append(('s2','knowledge_search',{'query':'second source query'}))
-                content = sse_text('UNVALIDATED DRAFT',calls=calls, terminal='tool_calls',reasoning='PRIVATE THOUGHT')
-            else:
-                tool_text = next(m['content'] for m in body['messages'] if m['role']=='tool' and '<source ' in m['content'])
-                metadata = json.loads(tool_text.split('\n\n<source ',1)[0])
-                item = metadata['items'][0]
-                answer = {'markdown':'Grounded answer [^'+item['evidence_id']+']',
-                    'citations':[{'evidence_id':item['evidence_id'],'spans':item['returned_spans'],
-                                  'quotes':[canonical if not repair or len(seen)>2 else 'wrong quote']} ]}
-                content = sse_text(json.dumps(answer))
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
-        await scope.client.aclose()
-        scope.client = scoped_client(parent,transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self, context): return scope
+        scope, _ = setup_scope(tmp_path, parent)
+        reached, release = threading.Event(), threading.Event()
+        search = scope.sources.search
+        def blocked(*args, **kwargs):
+            reached.set();release.wait(5)
+            return search(*args, **kwargs)
+        scope.sources.search = blocked
+        client = scoped_client(parent,transport=httpx.MockTransport(lambda request:httpx.Response(200,
+            headers={'content-type':'text/event-stream'},content=sse_text(calls=('call','knowledge_search',{'query':'source'}),terminal='tool_calls'))))
         registry = ToolRegistry()
-        agent = Agent(parent,registry,'openai-compat',work_dir=str(tmp_path),execution_policy=Policy())
-        events = []
-        try:
+        agent = Agent(client,registry,'openai-compat',work_dir=str(tmp_path),execution_policy=BoundPolicy(scope))
+        async def consume():
             if completion:
-                answer = await agent.run_to_completion('source question',event_callback=events.append)
-                displayed = ''.join(event.get('text','') for event in events)
-            else:
-                conv = ConversationManager();conv.add_user_message('source question')
-                from contextlib import aclosing
-                async with aclosing(agent.run(conv)) as stream:
-                    events.extend([event async for event in stream])
-                displayed = ''.join(event.text for event in events if isinstance(event,(StreamText,ThinkingText)))
-                answer = displayed
-            assert 'UNVALIDATED' not in displayed and 'PRIVATE' not in displayed
-            assert 'Grounded answer' in answer
-            assert agent.last_run_outcome.status == 'completed'
+                return await agent.run_to_completion('question')
+            conv=ConversationManager();conv.add_user_message('question')
+            return [event async for event in agent.run(conv)]
+        task=asyncio.create_task(consume())
+        try:
+            assert await asyncio.to_thread(reached.wait,5)
+            task.cancel()
+            with pytest.raises(asyncio.CancelledError):await task
+            assert registry.get('knowledge_search') is None
+            assert agent.last_run_outcome.status == 'cancelled'
+            assert scope.catalog.get_pin(scope.lease.run.run_id).state == 'active'
+            release.set()
+            for _ in range(100):
+                if scope.catalog.get_pin(scope.lease.run.run_id).state == 'released':break
+                await asyncio.sleep(.02)
             assert scope.catalog.get_pin(scope.lease.run.run_id).state == 'released'
-            assert scope.catalog.get_run(scope.lease.run.run_id).usage.searches == (2 if parallel else 1)
-            assert len(seen) == (3 if repair else 2)
-            if repair:
-                assert not seen[-1].get('tools')
-            assert agent.client is parent and agent.registry is registry
         finally:
-            await scope.aclose()
-            await parent._client.close()
+            release.set();await client.aclose();await parent._client.close()
     asyncio.run(run())
 
 
-def test_two_live_agent_scopes_overlap_without_client_budget_or_source_leak(tmp_path):
+def test_library_switch_keeps_conversation_and_restores_tools_after_failure(tmp_path):
     async def run():
         parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scopes=[];agents=[];arrived=0;both=asyncio.Event()
-        for label in ('alpha','beta'):
-            folder=tmp_path/label;folder.mkdir()
-            scope,canonical=setup_scope(folder,parent,raw=(label+' isolated source\n').encode())
-            await scope.client.aclose()
-            def bind(current,text,name):
-                calls=0
-                async def transport(request):
-                    nonlocal calls,arrived
-                    calls+=1
-                    body=json.loads(request.content)
-                    if calls==1:
-                        arrived+=1
-                        if arrived==2:both.set()
-                        await asyncio.wait_for(both.wait(),2)
-                        response=sse_text(calls=('search-'+name,'knowledge_search',{'query':name}),terminal='tool_calls')
-                    else:
-                        source=next(m['content'] for m in body['messages'] if m['role']=='tool')
-                        item=json.loads(source.split('\n\n<source ',1)[0])['items'][0]
-                        assert name+' isolated source' in source
-                        assert ('beta' if name=='alpha' else 'alpha')+' isolated source' not in source
-                        response=sse_text(json.dumps({'markdown':name+' [^'+item['evidence_id']+']',
-                            'citations':[{'evidence_id':item['evidence_id'],'spans':item['returned_spans'],'quotes':[text]}]}))
-                    return httpx.Response(200,headers={'content-type':'text/event-stream'},content=response)
-                class Policy:
-                    async def start(self,context):return current
-                return transport,Policy()
-            transport,policy=bind(scope,canonical,label)
-            scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
-            scopes.append(scope);agents.append(Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(folder),execution_policy=policy))
+        scopes=[setup_scope(tmp_path/str(index),parent)[0] for index in range(2)]
+        calls=[]
+        def transport(request):
+            body=json.loads(request.content);calls.append(body)
+            index=len(calls)
+            if index>=4:
+                return httpx.Response(500,json={'error':{'message':'failure'}})
+            content=(sse_text(calls=('call'+str(index),'knowledge_search',{'query':'source'}),terminal='tool_calls')
+                     if index in (1,3) else sse_text('first answer'))
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
+        client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        registry=ToolRegistry();agent=Agent(client,registry,'openai-compat',work_dir=str(tmp_path))
+        conv=ConversationManager()
         try:
-            answers=await asyncio.gather(*(agent.run_to_completion(label) for agent,label in zip(agents,('alpha','beta'))))
-            assert arrived==2 and all(name in answer for name,answer in zip(('alpha','beta'),answers))
-            assert parent._client.max_retries==2
-            for scope,agent in zip(scopes,agents):
-                assert agent.client is parent and not agent._executing and agent.last_run_outcome.status=='completed'
-                assert scope.catalog.get_run(scope.lease.run.run_id).usage.searches==1
-                assert scope.catalog.get_pin(scope.lease.run.run_id).state=='released'
-                with scope.catalog._db.transaction() as db:
-                    assert db.execute('SELECT COUNT(*) FROM model_requests WHERE run_id=?',(scope.run_id,)).fetchone()==(2,)
+            agent.execution_policy=BoundPolicy(scopes[0])
+            assert await agent.run_to_completion('first library',conv)=='first answer'
+            agent.execution_policy=BoundPolicy(scopes[1])
+            with pytest.raises(Exception):await agent.run_to_completion('second library',conv)
+            assert any(m.content=='first answer' for m in conv.history)
+            assert agent.last_run_outcome.status=='failed'
+            assert not registry.list_tools()
+            assert all(scope.catalog.get_pin(scope.lease.run.run_id).state=='released' for scope in scopes)
+            with scopes[1].catalog._db.transaction() as db:
+                assert db.execute('SELECT count(*) FROM delivered_evidence').fetchone()==(0,)
         finally:
             for scope in scopes:await scope.aclose()
-            await parent._client.close()
+            await client.aclose();await parent._client.close()
     asyncio.run(run())
 
 
-@pytest.mark.parametrize('completion',[False,True])
-@pytest.mark.parametrize('still_invalid',[False,True])
-def test_one_repair_receives_all_mixed_citation_errors_without_partial_publication(tmp_path,still_invalid,completion):
+@pytest.mark.parametrize('status', [503, 307])
+def test_retry_or_redirect_confirms_only_successful_source_delivery(tmp_path, status):
+    from codeplus.conversation import ToolResultBlock,ToolUseBlock
+    from agentic_rag.evidence import read_evidence
+    from uuid import UUID
     async def run():
         parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scope,canonical=setup_scope(tmp_path,parent)
-        seen=[]
+        scope,_=setup_scope(tmp_path,parent)
+        result,params=await source_tool(scope,'source')
+        evidence_id=json.JSONDecoder().raw_decode(result.output)[0]['items'][0]['evidence_id']
+        conv=ConversationManager();conv.add_user_message('question')
+        conv.add_assistant_message('',[ToolUseBlock('source','knowledge_open',params)])
+        conv.add_tool_results_message([ToolResultBlock('source',result.output,source_spans=result.source_spans)])
+        calls=[]
         def transport(request):
-            body=json.loads(request.content);seen.append(body)
-            if len(seen)==1:
-                return httpx.Response(200,headers={'content-type':'text/event-stream'},content=sse_text(
-                    calls=[('s'+str(i),'knowledge_search',{'query':str(i)}) for i in range(3)],terminal='tool_calls'))
-            items=[json.loads(m['content'].split('\n\n<source ',1)[0])['items'][0]
-                   for m in body['messages'] if m['role']=='tool' and '<source ' in m['content']]
-            ids=[v['evidence_id'] for v in items]
-            if len(seen)==3:
-                feedback=body['messages'][-1]['content']
-                assert feedback.count('citation_quote_mismatch evidence='+ids[1])==2
-                assert 'citation_range_unconfirmed evidence='+ids[2] in feedback
-                assert 'unknown, missing or unused citation marker' in feedback
-                assert not body.get('tools')
-                with scope.catalog._db.transaction() as db:
-                    assert db.execute('SELECT COUNT(*) FROM saved_citations WHERE run_id=?',(scope.run_id,)).fetchone()==(0,)
-            citations=[{'evidence_id':v['evidence_id'],'spans':v['returned_spans'],'quotes':[canonical]} for v in items]
-            if len(seen)==2 or still_invalid:
-                citations[1]['spans']=[{'start':0,'end':3},{'start':len(canonical)-3,'end':len(canonical)}]
-                citations[1]['quotes']=['wrong prefix','wrong suffix']
-                citations[2]['spans']=[{'start':0,'end':len(canonical)+1}]
-            answer={'markdown':'MIXED DRAFT '+''.join('[^'+v+']' for v in ids),'citations':citations}
-            if len(seen)==2 or still_invalid:answer['markdown']+='[^unknown-marker]'
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=sse_text(json.dumps(answer)))
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self,context):return scope
-        agent=Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy())
-        events=[]
-        try:
-            if completion:
-                answer=await agent.run_to_completion('compare sources',event_callback=events.append)
-            else:
-                conv=ConversationManager();conv.add_user_message('compare sources')
-                from contextlib import aclosing
-                async with aclosing(agent.run(conv)) as stream:
-                    events.extend([event async for event in stream])
-                answer=''.join(e.text for e in events if isinstance(e,(StreamText,ThinkingText)))
-            assert len(seen)==3
-            assert agent.last_run_outcome.status==('incomplete' if still_invalid else 'completed')
-            assert ('MIXED DRAFT' in answer) is (not still_invalid)
-            if still_invalid:
-                assert not any('MIXED DRAFT' in str(e) for e in events)
-                assert agent.last_run_outcome.artifact is None
-                with scope.catalog._db.transaction() as db:
-                    assert db.execute('SELECT COUNT(*) FROM saved_citations WHERE run_id=?',(scope.run_id,)).fetchone()==(0,)
-        finally:
-            await scope.aclose();await parent._client.close()
-    asyncio.run(run())
-
-
-@pytest.mark.parametrize('field,value',[
-    ('evidence_id',123),('evidence_id',{}),('evidence_id',None),
-    ('quotes','AB'),('quotes',{'A':0,'B':0}),('quotes',[0]),
-    ('spans','AB'),('spans',{}),('spans',[None]),
-    ('spans',[{'start':True,'end':2}]),('markdown',None),('markdown',{}),
-])
-def test_malformed_json_citation_shape_is_repairable_but_never_published(tmp_path,field,value):
-    from codeplus.conversation import Message,ToolResultBlock,ToolUseBlock
-    async def run():
-        parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scope,canonical=setup_scope(tmp_path,parent,raw=b'AB')
-        result,params=await source_tool(scope,'shape-source')
-        item=json.loads(result.output.split('\n\n<source ',1)[0])['items'][0]
-        conv=ConversationManager(history=[Message('assistant','',tool_uses=[ToolUseBlock('shape-source','knowledge_open',params)]),
-            Message('user','',tool_results=[ToolResultBlock('shape-source',result.output,source_spans=result.source_spans)])])
-        await scope.client.aclose()
-        scope.client=scoped_client(parent,transport=httpx.MockTransport(lambda request:httpx.Response(
-            200,headers={'content-type':'text/event-stream'},content=sse_text('not displayed'))))
-        try:
-            async for _ in scope.client.stream(conv,control=scope.model_control('agent')):pass
-            citation={'evidence_id':item['evidence_id'],'spans':[{'start':0,'end':1},{'start':1,'end':2}],'quotes':['A','B']}
-            draft={'markdown':'SHAPE DRAFT [^'+item['evidence_id']+']','citations':[citation]}
-            if field=='markdown':draft[field]=value
-            else:citation[field]=value
-            first=await scope.assess_output(json.dumps(draft),'end_turn')
-            assert first.action=='repair'
-            second=await scope.assess_output(json.dumps(draft),'end_turn')
-            assert second.action=='stop' and second.message=='citation_invalid'
-            assert scope.outcome is None
+            calls.append(request)
+            if len(calls)==1:
+                return httpx.Response(status,headers={'retry-after-ms':'1','location':'https://fixture.invalid/redirected'},
+                    json={'error':{'message':'retry or redirect'}})
             with scope.catalog._db.transaction() as db:
-                assert db.execute('SELECT COUNT(*) FROM saved_citations WHERE run_id=?',(scope.run_id,)).fetchone()==(0,)
-        finally:
-            await scope.aclose();await parent._client.close()
-    asyncio.run(run())
-
-
-@pytest.mark.parametrize('completion',[False,True])
-@pytest.mark.parametrize('defect',['null_markdown','unknown_marker','duplicate_claim','integer_id'])
-def test_both_agent_entries_validate_all_draft_relations_before_saving(tmp_path,completion,defect):
-    async def run():
-        parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scope,canonical=setup_scope(tmp_path,parent);seen=[]
-        def transport(request):
-            body=json.loads(request.content);seen.append(body)
-            if len(seen)==1:content=sse_text(calls=('s','knowledge_search',{'query':'source'}),terminal='tool_calls')
-            else:
-                source=next(m['content'] for m in body['messages'] if m['role']=='tool' and '<source ' in m['content'])
-                item=json.loads(source.split('\n\n<source ',1)[0])['items'][0]
-                claim={'evidence_id':item['evidence_id'],'spans':item['returned_spans'],'quotes':[canonical]}
-                draft={'markdown':('BAD DRAFT' if len(seen)==2 else 'VALID ANSWER')+' [^'+item['evidence_id']+']','citations':[claim]}
-                if len(seen)==2:
-                    if defect=='null_markdown':draft['markdown']=None
-                    elif defect=='unknown_marker':draft['markdown']+='[^unconfirmed]'
-                    elif defect=='duplicate_claim':draft['citations'].append(dict(claim))
-                    else:claim['evidence_id']=123
-                else:
-                    assert not body.get('tools')
-                    with scope.catalog._db.transaction() as db:
-                        assert db.execute('SELECT COUNT(*) FROM saved_citations WHERE run_id=?',(scope.run_id,)).fetchone()==(0,)
-                content=sse_text(json.dumps(draft))
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self,context):return scope
-        agent=Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy());events=[]
+                assert db.execute('SELECT count(*) FROM delivered_evidence').fetchone()==(0,)
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=sse_text('source answer'))
+        client=scoped_client(parent,transport=httpx.MockTransport(transport))
         try:
-            if completion:
-                answer=await agent.run_to_completion('source question',event_callback=events.append)
-            else:
-                from contextlib import aclosing
-                conv=ConversationManager();conv.add_user_message('source question')
-                async with aclosing(agent.run(conv)) as stream:events.extend([event async for event in stream])
-                answer=''.join(e.text for e in events if isinstance(e,(StreamText,ThinkingText)))
-            assert len(seen)==3 and 'VALID ANSWER' in answer
-            assert 'BAD DRAFT' not in str(events) and agent.last_run_outcome.status=='completed'
+            _=[event async for event in client.stream(conv,control=scope.model_control('agent'))]
+            assert len(calls)==2
+            if status==307:
+                assert calls[-1].url.path=='/redirected'
+                assert calls[-1].content==calls[0].content
+            with scope.catalog._db.transaction() as db:
+                receipts=list(db.execute('SELECT request_id,status FROM delivery_receipts ORDER BY rowid'))
+            assert [state for _,state in receipts]==['rejected','confirmed']
+            assert len({identity for identity,_ in receipts})==2
+            _,_,stored=read_evidence(scope.catalog,scope.lease.run.run_id,UUID(evidence_id))
+            assert stored['deliveries']==[receipts[-1][0]]
         finally:
-            await scope.aclose();await parent._client.close()
+            await scope.aclose();await client.aclose();await parent._client.close()
     asyncio.run(run())
 
 
@@ -500,7 +265,7 @@ def test_actual_source_spill_pairing_sdk_and_gateway_authorize_exact_intersectio
         def transport(request):
             seen.append(bytes(request.content))
             return httpx.Response(200,headers={'content-type':'text/event-stream'},content=protocol_response(protocol))
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        client=scoped_client(parent,transport=httpx.MockTransport(transport))
         try:
             result,params=await source_tool(scope,'actual')
             meta=json.loads(result.output.split('\n\n<source ',1)[0])['items'][0]
@@ -526,7 +291,7 @@ def test_actual_source_spill_pairing_sdk_and_gateway_authorize_exact_intersectio
                 Message('user','',tool_results=[ToolResultBlock('orphan',result.output,source_spans=result.source_spans)]),
                 Message('assistant','prefix',tool_uses=[ToolUseBlock('missing','knowledge_open',{}),ToolUseBlock('actual','knowledge_open',params)]),
                 Message('user','',tool_results=[block])])
-            output=[e async for e in scope.client.stream(conv,system='metered system',control=scope.model_control('agent'))]
+            output=[e async for e in client.stream(conv,system='metered system',control=scope.model_control('agent'))]
             assert len(seen)==1
             with scope.catalog._db.transaction() as db:
                 receipt=json.loads(db.execute("SELECT payload FROM delivery_receipts WHERE run_id=? AND status='confirmed'",(scope.run_id,)).fetchone()[0])
@@ -536,16 +301,16 @@ def test_actual_source_spill_pairing_sdk_and_gateway_authorize_exact_intersectio
             source_span=Span.model_validate(mapped['source_span']);wire_span=mapped['body_span']
             quote=canonical[source_span.start:source_span.end]
             assert node[wire_span['start']:wire_span['end']]==quote
-            scope.citations.validate(UUID(meta['evidence_id']),(source_span,),(quote,))
+            record,_,_=read_evidence(scope.catalog,scope.lease.run.run_id,UUID(meta['evidence_id']))
+            assert source_span in record.spans
             if transform!='blocks':
                 assert source_span.end<len(canonical)
-                with pytest.raises(RagError):
-                    scope.citations.validate(UUID(meta['evidence_id']),(Span(start=len(canonical)-2,end=len(canonical)),),(canonical[-2:],))
+
             else:
                 assert mapped['json_path'][-2:]==[0,'text']
                 assert source_span.end==len(canonical)
         finally:
-            await scope.aclose();await parent._client.close()
+            await scope.aclose();await client.aclose();await parent._client.close()
     asyncio.run(run())
 
 
@@ -559,73 +324,27 @@ def test_actual_compact_never_grants_pending_prefix_and_only_real_tail_later_gra
         def pair(call,result,params):
             return [Message('assistant','',tool_uses=[ToolUseBlock(call,'knowledge_open',params)]),
                 Message('user','',tool_results=[ToolResultBlock(call,result.output,source_spans=result.source_spans)])]
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(lambda request:
+        client=scoped_client(parent,transport=httpx.MockTransport(lambda request:
             httpx.Response(200,headers={'content-type':'text/event-stream'},content=sse_text('<summary>compressed, no original source body</summary>'))))
         try:
             old,op=await source_tool(scope,'old');pending,pp=await source_tool(scope,'prefix');tail,tp=await source_tool(scope,'tail')
             # Confirm old evidence first; it survives later history compaction.
             conv=ConversationManager(history=[Message('user','question')]+pair('old',old,op))
-            _=[e async for e in scope.client.stream(conv,control=scope.model_control('agent'))]
+            _=[e async for e in client.stream(conv,control=scope.model_control('agent'))]
             conv=ConversationManager(history=[Message('user','ordinary prefix '*750)]+pair('old',old,op)+pair('prefix',pending,pp)+
                 [Message('user','recent1'),Message('assistant','recent2'),Message('user','recent3')]+pair('tail',tail,tp))
-            result=await auto_compact(conv,scope.client,1000000,tmp_path/'spill',protocol='openai-compat',manual=True,
+            result=await auto_compact(conv,client,1000000,tmp_path/'spill',protocol='openai-compat',manual=True,
                 control_factory=scope.model_control)
             assert result is not None and not isinstance(result,str)
             def evidence_ids():
                 with scope.catalog._db.transaction() as db:return {row[0] for row in db.execute('SELECT evidence_id FROM delivered_evidence WHERE run_id=?',(scope.run_id,))}
             eid=lambda r:json.loads(r.output.split('\n\n<source ',1)[0])['items'][0]['evidence_id']
             assert evidence_ids()=={eid(old)}
-            _=[e async for e in scope.client.stream(conv,control=scope.model_control('agent'))]
+            _=[e async for e in client.stream(conv,control=scope.model_control('agent'))]
             assert evidence_ids()=={eid(old),eid(tail)}
             assert eid(pending) not in evidence_ids()
         finally:
-            await scope.aclose();await parent._client.close()
-    asyncio.run(run())
-
-
-@pytest.mark.parametrize('completion',[False,True])
-@pytest.mark.parametrize('scenario',['no_hits','tool_failure','denied','unknown','invalid'])
-def test_host_loops_never_release_ungrounded_output_or_count_rejected_tool(tmp_path,completion,scenario):
-    from codeplus.permissions import DangerousCommandDetector,PathSandbox,PermissionChecker,RuleEngine
-    from codeplus.conversation import ConversationManager
-    async def run():
-        parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scope,_=setup_scope(tmp_path,parent)
-        calls=[]
-        if scenario in {'no_hits','tool_failure'}:
-            def search(query,**kwargs):
-                if scenario=='tool_failure':raise ConnectionError('synthetic dependency failure')
-                return {'hits':[]}
-            scope.sources.dense.search=search
-        name='Bash' if scenario=='unknown' else 'knowledge_search'
-        args={'query':'' if scenario=='invalid' else 'source'}
-        def transport(request):
-            calls.append(json.loads(request.content))
-            body=sse_text('PRIVATE DRAFT',calls=('attempt',name,args),terminal='tool_calls') if len(calls)==1 else sse_text('UNSUPPORTED FINAL')
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=body)
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
-        checker=None
-        if scenario=='denied':
-            rules=tmp_path/'rules.yaml';rules.write_text('- rule: "knowledge_search(*)"\n  effect: deny\n')
-            checker=PermissionChecker(DangerousCommandDetector(),PathSandbox(str(tmp_path)),RuleEngine(local_rules_path=rules))
-        class Policy:
-            async def start(self,context):return scope
-        agent=Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy(),permission_checker=checker)
-        try:
-            if completion:text=await agent.run_to_completion('question')
-            else:
-                conv=ConversationManager();conv.add_user_message('question')
-                events=[event async for event in agent.run(conv)]
-                text=''.join(event.text for event in events if isinstance(event,(StreamText,ThinkingText)))
-            assert 'PRIVATE' not in text and 'UNSUPPORTED' not in text
-            assert agent.last_run_outcome.status=='incomplete'
-            assert agent.last_run_outcome.reason=='no_evidence'
-            usage=scope.catalog.get_run(scope.lease.run.run_id).usage
-            assert usage.searches==(1 if scenario in {'no_hits','tool_failure'} else 0)
-            assert scope.catalog.get_pin(scope.lease.run.run_id).state=='released'
-            assert len(calls)==2
-        finally:
-            await scope.aclose();await parent._client.close()
+            await scope.aclose();await client.aclose();await parent._client.close()
     asyncio.run(run())
 
 
@@ -638,12 +357,12 @@ def test_actual_agent_permission_event_closed_before_resume_revokes_future(tmp_p
         def transport(request):
             calls.append(request)
             return httpx.Response(200,headers={'content-type':'text/event-stream'},content=sse_text(calls=('ask','knowledge_search',{'query':'source'}),terminal='tool_calls'))
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        client=scoped_client(parent,transport=httpx.MockTransport(transport))
         rules=tmp_path/'rules.yaml';rules.write_text('- rule: "knowledge_search(*)"\n  effect: ask\n')
         checker=PermissionChecker(DangerousCommandDetector(),PathSandbox(str(tmp_path)),RuleEngine(local_rules_path=rules))
         class Policy:
             async def start(self,context):return scope
-        agent=Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy(),permission_checker=checker)
+        agent=Agent(client,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy(),permission_checker=checker)
         conv=ConversationManager();conv.add_user_message('question');stream=agent.run(conv)
         try:
             async for event in stream:
@@ -655,7 +374,7 @@ def test_actual_agent_permission_event_closed_before_resume_revokes_future(tmp_p
             assert scope.catalog.get_pin(scope.lease.run.run_id).state=='released'
             assert len(calls)==1
         finally:
-            await stream.aclose();await parent._client.close()
+            await stream.aclose();await client.aclose();await parent._client.close()
     asyncio.run(run())
 
 
@@ -693,226 +412,4 @@ def test_actual_tui_permission_identity_and_busy_during_cleanup(tmp_path,monkeyp
         finally:
             if app.session:app.session.close()
             if app.client:await app.client._client.close()
-    asyncio.run(run())
-
-
-@pytest.mark.parametrize('completion',[False,True])
-def test_both_actual_loops_compact_without_host_environment_or_recovery(tmp_path,completion):
-    from codeplus.conversation import Message
-    async def run():
-        parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scope,_=setup_scope(tmp_path,parent);seen=[]
-        def transport(request):
-            seen.append(json.loads(request.content))
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=sse_text(
-                '<summary>short retained research</summary>' if len(seen)==1 else 'UNVALIDATED'))
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self,context):return scope
-        agent=Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy())
-        agent.context_window=34000;agent.instructions_content='HOST_PRIVATE_INSTRUCTIONS'
-        old_recovery=agent.recovery_state;old_recovery.record_file_read('host-private.txt','HOST_PRIVATE_RECOVERY')
-        conv=ConversationManager(history=[Message('user','research history '*800)]+[Message('user','recent '+str(i)) for i in range(5)])
-        try:
-            if completion:await agent.run_to_completion('',conv)
-            else:_=[event async for event in agent.run(conv)]
-            assert len(seen)==2
-            text=json.dumps(seen,ensure_ascii=False)
-            assert 'HOST_PRIVATE_' not in text and str(tmp_path).replace('\\','\\\\') not in text
-            assert agent.instructions_content=='HOST_PRIVATE_INSTRUCTIONS' and agent.recovery_state is old_recovery
-            with scope.catalog._db.transaction() as db:
-                assert list(db.execute('SELECT purpose FROM model_requests WHERE run_id=? ORDER BY rowid',(scope.run_id,)))==[('compact',),('agent',)]
-        finally:
-            await scope.aclose();await parent._client.close()
-    asyncio.run(run())
-
-
-@pytest.mark.parametrize('protocol,terminal,reason,receipt',[
-    ('openai-compat','length',None,'confirmed'),
-    ('openai-compat','content_filter',None,'rejected'),
-    ('openai-compat','invented',None,'unknown'),
-    ('anthropic','max_tokens',None,'confirmed'),
-    ('anthropic','refusal',None,'rejected'),
-    ('anthropic','invented',None,'unknown'),
-    ('openai','incomplete','max_output_tokens','confirmed'),
-    ('openai','incomplete','content_filter','rejected'),
-    ('openai','incomplete',None,'unknown'),
-    ('openai','failed','server_error','rejected'),
-    ('openai','completed','missing_model','unknown'),
-    ('openai','completed','changed_model','unknown'),
-    ('openai-compat','tail_error',None,'unknown'),
-])
-@pytest.mark.parametrize('completion',[False,True])
-def test_sdk_terminal_transport_and_evidence_are_independent(tmp_path,protocol,terminal,reason,receipt,completion):
-    from codeplus.conversation import Message,ToolResultBlock,ToolUseBlock
-    async def run():
-        parent=create_client(ProviderConfig('fixture',protocol,'https://fixture.invalid','fixture','synthetic'))
-        scope,_=setup_scope(tmp_path,parent,protocol=protocol)
-        result,params=await source_tool(scope,'terminal-source')
-        conv=ConversationManager(history=[Message('assistant','',tool_uses=[ToolUseBlock('terminal-source','knowledge_open',params)]),
-            Message('user','',tool_results=[ToolResultBlock('terminal-source',result.output,source_spans=result.source_spans)])])
-        if protocol=='openai-compat':wire=sse_text('PRIVATE TERMINAL DRAFT',terminal='stop' if terminal=='tail_error' else terminal)
-        else:
-            if protocol=='anthropic':
-                events=[{'type':'message_start','message':{'id':'m','type':'message','role':'assistant','content':[],
-                    'model':'fixture-response','usage':{'input_tokens':10,'output_tokens':0,'cache_read_input_tokens':0,'cache_creation_input_tokens':0}}},
-                    {'type':'message_delta','delta':{'stop_reason':terminal},'usage':{'output_tokens':1}},{'type':'message_stop'}]
-            else:
-                response={'id':'r','object':'response','created_at':1,'model':'fixture-response','status':terminal,'output':[],
-                    'usage':{'input_tokens':10,'output_tokens':1,'total_tokens':11},
-                    'incomplete_details':{'reason':reason} if terminal=='incomplete' and reason else None,
-                    'error':{'code':reason,'message':'not copied into reports'} if terminal=='failed' else None}
-                if terminal=='failed' or reason=='missing_model':response['model']=None
-                if reason=='changed_model':response['model']='different-model'
-                events=[{'type':'response.'+terminal,'sequence_number':0,'response':response}]
-            wire=''.join('event: '+e['type']+'\ndata: '+json.dumps(e)+'\n\n' for e in events).encode()
-        requests=[]
-        def transport(request):
-            requests.append(request)
-            if terminal=='tail_error':
-                class Broken(httpx.AsyncByteStream):
-                    async def __aiter__(self):
-                        yield wire.removesuffix(b'data: [DONE]\n\n')
-                        raise httpx.ReadError('controlled disconnected tail')
-                    async def aclose(self):pass
-                return httpx.Response(200,headers={'content-type':'text/event-stream'},stream=Broken())
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=wire)
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self,context):return scope
-        agent=Agent(parent,ToolRegistry(),protocol,work_dir=str(tmp_path),execution_policy=Policy());output=[]
-        async def invoke():
-            if completion:return await agent.run_to_completion('',conv,event_callback=output.append)
-            from contextlib import aclosing
-            async with aclosing(agent.run(conv)) as stream:output.extend([e async for e in stream])
-        try:
-            if receipt=='rejected':
-                with pytest.raises(RuntimeError,match='answer_provider_failed'):await invoke()
-            elif terminal=='tail_error':
-                with pytest.raises(httpx.ReadError):await invoke()
-            else:await invoke()
-            assert len(requests)==1 and 'PRIVATE TERMINAL DRAFT' not in str(output)
-            assert agent.last_run_outcome.artifact is None
-            run=scope.catalog.get_run(scope.lease.run.run_id)
-            failed=receipt=='rejected' or reason in {'missing_model','changed_model'} or terminal=='tail_error'
-            assert (run.status.value,run.stop_reason)==(('failed','explicit_error') if failed else ('incomplete','provider_truncated'))
-            with scope.catalog._db.transaction() as db:
-                saved=db.execute('SELECT status FROM delivery_receipts WHERE run_id=?',(scope.run_id,)).fetchone()[0]
-                assert saved==receipt
-                count=db.execute('SELECT COUNT(*) FROM delivered_evidence WHERE run_id=?',(scope.run_id,)).fetchone()[0]
-                assert (count>0)==(receipt=='confirmed')
-                state,raw,outcome=db.execute('SELECT state,raw_usage,outcome FROM model_requests WHERE run_id=?',(scope.run_id,)).fetchone()
-                assert json.loads(raw) and json.loads(outcome)['terminal']==('stop' if terminal=='tail_error' else terminal)
-                assert state==('unknown' if terminal in {'invented','tail_error'} else 'confirmed')
-                violation=db.execute('SELECT violation FROM model_requests WHERE run_id=?',(scope.run_id,)).fetchone()[0]
-                if reason in {'missing_model','changed_model'}:
-                    assert violation=='provider_model_identity_'+('missing' if reason=='missing_model' else 'changed')
-                else:assert violation is None
-                assert db.execute('SELECT COUNT(*) FROM saved_citations WHERE run_id=?',(scope.run_id,)).fetchone()==(0,)
-            assert scope.catalog.get_pin(scope.lease.run.run_id).state=='released'
-        finally:
-            await scope.aclose();await parent._client.close()
-    asyncio.run(run())
-
-
-@pytest.mark.parametrize('completion',[False,True])
-@pytest.mark.parametrize('can_fit',[False,True])
-def test_finish_crops_individual_tool_pairs_and_logs_actual_wire_sources(tmp_path,completion,can_fit):
-    async def run():
-        parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scope,canonical=setup_scope(tmp_path,parent,raw=('source exact text '*100+'\n').encode())
-        # Keep the source allowance fixed as feature instructions evolve.
-        # The real HTTP gate still measures the complete request.
-        scope.finish_input_upper=len(scope.system_prompt.encode())+(4200 if can_fit else 450)
-        handle=scope.sources.issue_source(scope._fixture_ref)
-        seen=[]
-        def transport(request):
-            body=json.loads(request.content);seen.append(body)
-            if len(seen)==1:
-                calls=[('old'+str(i),'knowledge_search',{'query':str(i)}) for i in range(3)]
-                calls.append(('latest-open','knowledge_open',{'source_ref':handle}))
-                content=sse_text(calls=calls,terminal='tool_calls')
-            elif len(seen)==2:
-                assert len([m for m in body['messages'] if m['role']=='tool'])==4
-                content=sse_text('{}')
-            else:
-                tools=[m for m in body['messages'] if m['role']=='tool']
-                assert 1<=len(tools)<4 and any(m['tool_call_id']=='latest-open' for m in tools)
-                assert not body.get('tools')
-                source=next(m['content'] for m in tools if m['tool_call_id']=='latest-open')
-                item=json.loads(source.split('\n\n<source ',1)[0])['items'][0]
-                content=sse_text(json.dumps({'markdown':'kept open [^'+item['evidence_id']+']',
-                    'citations':[{'evidence_id':item['evidence_id'],'spans':item['returned_spans'],'quotes':[canonical]}]}))
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self,context):return scope
-        agent=Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy());events=[]
-        try:
-            if completion:answer=await agent.run_to_completion('read sources',event_callback=events.append)
-            else:
-                from contextlib import aclosing
-                conv=ConversationManager();conv.add_user_message('read sources')
-                async with aclosing(agent.run(conv)) as stream:events.extend([e async for e in stream])
-                answer=''.join(e.text for e in events if isinstance(e,(StreamText,ThinkingText)))
-            assert len(seen)==(3 if can_fit else 2)
-            transform=scope.window_transforms[-1]
-            if can_fit:
-                assert agent.last_run_outcome.status=='completed' and 'kept open' in answer
-                with scope.catalog._db.transaction() as db:
-                    payload=json.loads(db.execute("SELECT payload FROM delivery_receipts WHERE run_id=? AND json_extract(payload,'$.purpose')='citation_repair'",(scope.run_id,)).fetchone()[0])
-                assert transform['after_candidates']==[v['candidate_id'] for v in payload['mappings']]
-                assert transform['after_candidates'] and len(transform['after_candidates'])<len(transform['before_candidates'])
-            else:
-                assert agent.last_run_outcome.artifact is None and transform['rejected']=='no_source_pair_fits'
-                assert transform['after_candidates']==[]
-                with scope.catalog._db.transaction() as db:
-                    assert db.execute("SELECT COUNT(*) FROM model_requests WHERE run_id=? AND purpose='citation_repair'",(scope.run_id,)).fetchone()==(0,)
-        finally:
-            await scope.aclose();await parent._client.close()
-    asyncio.run(run())
-
-
-@pytest.mark.parametrize('completion',[False,True])
-@pytest.mark.parametrize('phase',['validate','render_markdown'])
-def test_both_entries_recheck_deadline_after_synchronous_citation_work(tmp_path,completion,phase):
-    async def run():
-        parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        scope,canonical=setup_scope(tmp_path,parent);requests=[]
-        original=getattr(scope.citations,phase)
-        def slow(*args):
-            result=original(*args)
-            scope.deadline=scope.owner.deadline=time.monotonic()+.005
-            time.sleep(.02)
-            return result
-        setattr(scope.citations,phase,slow)
-        def transport(request):
-            body=json.loads(request.content);requests.append(body)
-            if len(requests)==1:content=sse_text(calls=('s','knowledge_search',{'query':'source'}),terminal='tool_calls')
-            else:
-                source=next(m['content'] for m in body['messages'] if m['role']=='tool')
-                item=json.loads(source.split('\n\n<source ',1)[0])['items'][0]
-                content=sse_text(json.dumps({'markdown':'LATE BODY [^'+item['evidence_id']+']',
-                    'citations':[{'evidence_id':item['evidence_id'],'spans':item['returned_spans'],'quotes':[canonical]}]}))
-            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
-        await scope.client.aclose();scope.client=scoped_client(parent,transport=httpx.MockTransport(transport))
-        class Policy:
-            async def start(self,context):return scope
-        agent=Agent(parent,ToolRegistry(),'openai-compat',work_dir=str(tmp_path),execution_policy=Policy());events=[]
-        try:
-            if completion:answer=await agent.run_to_completion('question',event_callback=events.append)
-            else:
-                from contextlib import aclosing
-                conv=ConversationManager();conv.add_user_message('question')
-                async with aclosing(agent.run(conv)) as stream:events.extend([e async for e in stream])
-                answer=''.join(e.text for e in events if isinstance(e,(StreamText,ThinkingText)))
-            assert 'LATE BODY' not in answer and 'LATE BODY' not in str(events)
-            assert len(requests)==2 and agent.last_run_outcome.artifact is None
-            actual=scope.catalog.get_run(scope.lease.run.run_id)
-            assert actual.status.value=='incomplete' and actual.stop_reason=='time_budget'
-            with scope.catalog._db.transaction() as db:
-                assert db.execute('SELECT artifact FROM host_runs WHERE run_id=?',(scope.run_id,)).fetchone()==(None,)
-                if phase=='validate':assert db.execute('SELECT COUNT(*) FROM saved_citations WHERE run_id=?',(scope.run_id,)).fetchone()==(0,)
-        finally:
-            await scope.aclose();await parent._client.close()
     asyncio.run(run())

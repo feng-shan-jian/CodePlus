@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import runpy
 import statistics
 import sys
 
@@ -80,12 +81,9 @@ if __name__=='__main__':
     from replay import evidence_recall,latency
     report=json.loads(args.input.read_text(encoding='utf-8'))
     official=json.loads(args.official_score.read_text(encoding='utf-8'))
-    assert report['dataset_sha256']==official['dataset_sha256']
-    assert official['input_sha256']==hashlib.sha256(args.input.read_bytes()).hexdigest()
-    _,questions,_=load_dataset(suite);ids={r['id'] for r in report['records']}
-    questions=[q for q in questions if q['id'] in ids]
-    assert len(questions)==official['selected_questions']==200
-    assert sum(bool(q['gold']) for q in questions)==official['scored_questions']==177
+    _,all_questions,source_hash=load_dataset(suite)
+    binding=runpy.run_path(str(Path(__file__).with_name('retrieval_binding.py')))
+    questions=binding['bind'](report,official,args.input.read_bytes(),all_questions,source_hash)
     result=score_context(report,questions,evidence_recall,latency)
     result.update(input_sha256=official['input_sha256'],dataset_sha256=report['dataset_sha256'])
     with args.output.open('x',encoding='utf-8') as stream:stream.write(json.dumps(result,ensure_ascii=False,indent=2)+'\n')

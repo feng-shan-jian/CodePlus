@@ -1,6 +1,6 @@
 # 旧知识库回归评测的历史说明
 
-旧 `codeplus.knowledge` 引擎、`benchmark/evaluate` 产品入口及可选依赖已移除。此文件保留旧数据结构和评分边界的历史叙述，不再提供旧引擎运行命令。当前离线评测接缝见 [R01](../../deployment/AgenticRAG/docs/implementation-records/R01.md)，独立核心进度见 [AgenticRAG](../../deployment/AgenticRAG/README.md)；宿主 Agent 接入尚未完成。
+旧 `codeplus.knowledge` 引擎、`benchmark/evaluate` 产品入口及可选依赖已移除。此文件保留旧数据结构和评分边界的历史叙述，不再提供旧引擎运行命令。当前离线评测接缝见 [正式评测入口](../../deployment/AgenticRAG/eval/README.md)，独立核心进度见 [AgenticRAG](../../deployment/AgenticRAG/README.md)；普通 Agent 接入与验证边界见[验收记录](../../deployment/AgenticRAG/docs/production-simplification-acceptance-20260927.md)。
 
 ## 历史题库
 

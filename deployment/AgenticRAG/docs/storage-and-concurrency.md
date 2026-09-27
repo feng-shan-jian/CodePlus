@@ -52,4 +52,4 @@ Mutation.close/context exit 对未完成批次登记 WAITING_RECOVERY，再释�
 
 `release_crashed_run(run_id, expected_nonce)` 先取得运行锁并持有至事务提交，在事务内复核 nonce、active 状态和 run，再标 failed／released。运行仍持锁或身份不符就保留 pin。未来 GC 必须在同一 SQLite 写事务资格边界检查 current、active pins、revision_dependencies 后才能 claim 回收；R06 没有自动扫描或物理删除入口，R15 实现该完整协议。
 
-正式验证命令与进程、依赖、安装、失败及清理记录见 [R06](implementation-records/R06.md)。
+正式回归入口见 `tests/test_storage.py` 和 `tests/test_package_install.py`。

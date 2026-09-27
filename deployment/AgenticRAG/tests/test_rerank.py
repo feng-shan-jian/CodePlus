@@ -12,9 +12,9 @@ import pytest
 
 from agentic_rag.capabilities import RerankResponse, RerankScore, ModelTimings
 from agentic_rag.config import KnowledgeConfig, resolve_run
-from agentic_rag.domain import ErrorCode, RagError, RunStatus, Span
+from agentic_rag.domain import ErrorCode, RagError, RunStatus
 from agentic_rag.evidence import DeliveryGateway
-from agentic_rag.citations import CitationRegistry
+from agentic_rag.citations import open_citation
 from agentic_rag.models import FrozenTokenizer
 from agentic_rag.models.identity import process_birth
 from agentic_rag.retrieval import RetrievalSearch
@@ -202,7 +202,7 @@ def test_later_batch_failure_keeps_old_confirmed_evidence_and_creates_no_candida
         assert trace['returned_ids']==[] and trace['rerank']['ranking']==[]
         with catalog._db.transaction() as db:assert db.execute('SELECT count(*) FROM source_candidates').fetchone()==before
         item=first.payload['items'][0]
-        assert CitationRegistry(session).save(evidence,(Span.model_validate(item['returned_spans'][0]),),(item['text'],))
+        assert open_citation(catalog,evidence)['quotes']==[item['text']]
 
 
 @pytest.mark.parametrize('error',[ErrorCode.CANCELLED,ErrorCode.WORKER_UNAVAILABLE])

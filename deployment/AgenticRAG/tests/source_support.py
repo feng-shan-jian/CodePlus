@@ -95,9 +95,8 @@ def prepared(gateway,result,spans=None,*,purpose='explore',protocol='compat',req
 
 
 def discard_window(session):
-    """Controlled trusted-host crop fixture, never a model-facing operation."""
+    """Confirm the host's empty source window after a compact/crop."""
     from agentic_rag.evidence import DeliveryGateway
     gateway=DeliveryGateway(session)
     permit=gateway.prepare(b'{"messages":[]}',(),purpose='explore',protocol='compat')
-    gateway.retain_prepared_window(permit)
-    gateway.settle(permit,'not_sent')
+    gateway.settle(permit,'confirmed')

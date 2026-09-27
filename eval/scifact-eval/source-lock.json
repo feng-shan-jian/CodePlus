@@ -1,0 +1,14 @@
+{
+  "dataset_id": "beir-scifact-v1",
+  "archive_url": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
+  "archive_md5": "5f7d1de60b170fc8027bb7898e2efca1",
+  "archive_sha256": "536e14446a0ba56ed1398ab1055f39fe852686ecad24a6306c80c490fa8e0165",
+  "beir_reference_revision": "ef83d29307061c65d04b035b4f4e7c18bd8374af",
+  "license": "CC-BY-SA-4.0",
+  "files": {
+    "corpus.jsonl": "dec31c8182f3d744c7d2c09423756fd1d17cbef75808db13ba01cc0aab4d1ac6",
+    "queries.jsonl": "8ff84a7c903f722981cd8d595c022660140c51867b27608a6d4910db86080313",
+    "qrels/train.tsv": "a53f2114831916c096b6c37d9e54da68cef4efdcdbd5ed46533601af972acf1d",
+    "qrels/test.tsv": "0864bb985e0ca2367ba217977e72004d549054b2b06666ed9d4825ac7c21284c"
+  }
+}

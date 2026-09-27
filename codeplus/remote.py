@@ -473,7 +473,7 @@ class RemoteServer:
             self.session.append(self.conversation.history[-1])
 
         # 首次注入 MCP 指令
-        if self._mcp_instructions and not _knowledge:
+        if self._mcp_instructions:
             self.conversation.add_system_reminder(self._mcp_instructions)
             self._mcp_instructions = ""
 
@@ -547,7 +547,7 @@ class RemoteServer:
                         })
 
                     elif isinstance(event, TurnComplete):
-                        if self.session and not _knowledge:
+                        if self.session:
                             for message in self.conversation.history[history_cursor:]:
                                 self.session.append(message)
                             history_cursor = len(self.conversation.history)
@@ -563,8 +563,6 @@ class RemoteServer:
                         })
 
                     elif isinstance(event, LoopComplete):
-                        if self.session and _knowledge and stream_buf:
-                            self.session.append(Message(role='assistant', content=stream_buf))
                         if stream_buf:
                             await self._broadcast({
                                 "type": "stream_end",
@@ -599,8 +597,7 @@ class RemoteServer:
                         })
 
                     elif isinstance(event, CompactNotification):
-                        if not _knowledge:
-                            self._persist_compact_boundary(event)
+                        self._persist_compact_boundary(event)
                         history_cursor = len(self.conversation.history)
                         await self._broadcast({
                             "type": "compact",
@@ -638,7 +635,7 @@ class RemoteServer:
             })
         finally:
             self._deny_pending_permissions()
-            if self.session and not _knowledge:
+            if self.session:
                 self.session.meta.total_tokens = self.agent.total_input_tokens + self.agent.total_output_tokens
                 for message in self.conversation.history[history_cursor:]:
                     self.session.append(message)
@@ -806,17 +803,14 @@ class RemoteServer:
     async def _run_knowledge(self, text, policy, connection):
         started = time.monotonic()
         self._knowledge_completed_turns = None
-        original_agent, original_conversation = self.agent, self.conversation
-        controlled = Agent(client=original_agent.client, registry=original_agent.registry, protocol=original_agent.protocol,
-            work_dir=original_agent.work_dir, permission_checker=original_agent.permission_checker,
-            context_window=original_agent.context_window, hook_engine=original_agent.hook_engine, execution_policy=policy)
-        controlled.session_id, controlled.file_history = original_agent.session_id, original_agent.file_history
-        self.agent, self.conversation = controlled, ConversationManager()
+        agent = self.agent
+        previous_policy = agent.execution_policy
+        agent.execution_policy = policy
         try:
             await self._handle_user_message(text, connection=connection, _knowledge=True)
         finally:
-            self.last_knowledge_outcome = controlled.last_run_outcome
-            self.agent, self.conversation = original_agent, original_conversation
+            self.last_knowledge_outcome = agent.last_run_outcome
+            agent.execution_policy = previous_policy
             self._knowledge_active = False
             self._active_task = self._active_connection = None
             if self.last_knowledge_outcome:

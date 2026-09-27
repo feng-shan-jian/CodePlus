@@ -253,8 +253,7 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
     client = create_client(provider)
     # 第 2 层：尽力从 provider 自动拉取模型的 context window（缓存在 provider 上）。
     # 不会抛异常或阻塞启动；失败则退化到映射表。
-    if policy is None:
-        await resolve_context_window(provider)
+    await resolve_context_window(provider)
     work_dir = os.getcwd()
     home = Path.home()
 
@@ -269,14 +268,10 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
         mode=permission_mode,
     )
 
-    instructions = load_instructions(work_dir) if policy is None else ''
-    if policy is None:
-        registry = create_default_registry()
-        registry.register(ToolSearchTool(registry, protocol=provider.protocol))
-        registry.register(McpCallTool(registry))
-    else:
-        from codeplus.tools import ToolRegistry
-        registry = ToolRegistry()
+    instructions = load_instructions(work_dir)
+    registry = create_default_registry()
+    registry.register(ToolSearchTool(registry, protocol=provider.protocol))
+    registry.register(McpCallTool(registry))
 
     agent = Agent(
         client=client,
@@ -292,88 +287,87 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
 
     mcp_manager = None
     team_manager = None
-    if policy is None:
-        wt_cfg = config.worktree or WorktreeConfig()
-        wt_manager = WorktreeManager(
-            repo_root=work_dir,
-            symlink_directories=wt_cfg.symlink_directories,
+    wt_cfg = config.worktree or WorktreeConfig()
+    wt_manager = WorktreeManager(
+        repo_root=work_dir,
+        symlink_directories=wt_cfg.symlink_directories,
+    )
+    trace_manager = TraceManager()
+    task_manager = TaskManager()
+    agent_loader = AgentLoader(work_dir, enable_verification=config.enable_verification_agent)
+    agent_loader.load_all()
+    team_manager = TeamManager(worktree_manager=wt_manager, trace_manager=trace_manager)
+
+    agent_tool = AgentTool(
+        agent_loader=agent_loader,
+        task_manager=task_manager,
+        trace_manager=trace_manager,
+        parent_agent=agent,
+        enable_fork=config.enable_fork,
+        provider_config=provider,
+        worktree_manager=wt_manager,
+        team_manager=team_manager,
+    )
+    registry.register(agent_tool)
+    registry.register(TeamCreateTool(
+        team_manager=team_manager,
+        parent_agent=agent,
+        teammate_mode="in-process",
+        is_interactive=False,
+        enable_coordinator_mode=config.enable_coordinator_mode,
+    ))
+    registry.register(TeamDeleteTool(team_manager=team_manager, parent_agent=agent))
+
+    from codeplus.tools.send_message import SendMessageTool
+    from codeplus.tools.synthetic_output import SyntheticOutputTool
+    from codeplus.tools.task_stop import TaskStopTool
+
+    registry.register(SyntheticOutputTool())
+    registry.register(TaskStopTool(team_manager=team_manager))
+    # Lead 给队员派活、续写都走这个工具，团队要等 TeamCreate 才存在，
+    # 所以这里不绑定团队，发信时再取当前团队
+    registry.register(SendMessageTool(team_manager=team_manager))
+
+    # 连 MCP。放在所有内建工具注册完之后：MCP 工具的加载模式要按 schema 总量
+    # 跟上下文窗口比，得等工具都在位才算得准。
+    mcp_manager = None
+    if config.mcp_servers:
+        from codeplus.mcp import MCPManager
+        from codeplus.mcp.loading_strategy import decide_and_apply
+
+        mcp_manager = MCPManager()
+        mcp_manager.load_configs(config.mcp_servers)
+        connect_result = await mcp_manager.register_all_tools(registry)
+        for err in connect_result.errors:
+            print(f"MCP warning: {err}", file=sys.stderr)
+        decide_and_apply(
+            registry,
+            base_url=provider.base_url,
+            context_window=provider.get_context_window(),
         )
-        trace_manager = TraceManager()
-        task_manager = TaskManager()
-        agent_loader = AgentLoader(work_dir, enable_verification=config.enable_verification_agent)
-        agent_loader.load_all()
-        team_manager = TeamManager(worktree_manager=wt_manager, trace_manager=trace_manager)
 
-        agent_tool = AgentTool(
-            agent_loader=agent_loader,
-            task_manager=task_manager,
-            trace_manager=trace_manager,
-            parent_agent=agent,
-            enable_fork=config.enable_fork,
-            provider_config=provider,
-            worktree_manager=wt_manager,
-            team_manager=team_manager,
-        )
-        registry.register(agent_tool)
-        registry.register(TeamCreateTool(
-            team_manager=team_manager,
-            parent_agent=agent,
-            teammate_mode="in-process",
-            is_interactive=False,
-            enable_coordinator_mode=config.enable_coordinator_mode,
-        ))
-        registry.register(TeamDeleteTool(team_manager=team_manager, parent_agent=agent))
+    # coordinator 模式由配置决定，开了就从第一轮起收窄工具集
+    if config.enable_coordinator_mode:
+        from codeplus.agents.tool_filter import apply_coordinator_filter
 
-        from codeplus.tools.send_message import SendMessageTool
-        from codeplus.tools.synthetic_output import SyntheticOutputTool
-        from codeplus.tools.task_stop import TaskStopTool
+        agent.enable_coordinator_mode = True
+        agent.registry = apply_coordinator_filter(agent.registry)
 
-        registry.register(SyntheticOutputTool())
-        registry.register(TaskStopTool(team_manager=team_manager))
-        # Lead 给队员派活、续写都走这个工具，团队要等 TeamCreate 才存在，
-        # 所以这里不绑定团队，发信时再取当前团队
-        registry.register(SendMessageTool(team_manager=team_manager))
-
-        # 连 MCP。放在所有内建工具注册完之后：MCP 工具的加载模式要按 schema 总量
-        # 跟上下文窗口比，得等工具都在位才算得准。
-        mcp_manager = None
-        if config.mcp_servers:
-            from codeplus.mcp import MCPManager
-            from codeplus.mcp.loading_strategy import decide_and_apply
-
-            mcp_manager = MCPManager()
-            mcp_manager.load_configs(config.mcp_servers)
-            connect_result = await mcp_manager.register_all_tools(registry)
-            for err in connect_result.errors:
-                print(f"MCP warning: {err}", file=sys.stderr)
-            decide_and_apply(
-                registry,
-                base_url=provider.base_url,
-                context_window=provider.get_context_window(),
+    def drain_notifications() -> list[str]:
+        notes: list[str] = []
+        for t in task_manager.poll_completed():
+            notes.append(
+                f"<task-notification>\n<task_id>{t.id}</task_id>\n"
+                f"<status>{t.status}</status>\n<result>{t.result}</result>\n"
+                f"</task-notification>"
             )
+        notes.extend(team_manager.drain_lead_mailbox())
+        return notes
 
-        # coordinator 模式由配置决定，开了就从第一轮起收窄工具集
-        if config.enable_coordinator_mode:
-            from codeplus.agents.tool_filter import apply_coordinator_filter
+    def drain_mailbox_only() -> list[str]:
+        return team_manager.drain_lead_mailbox()
 
-            agent.enable_coordinator_mode = True
-            agent.registry = apply_coordinator_filter(agent.registry)
-
-        def drain_notifications() -> list[str]:
-            notes: list[str] = []
-            for t in task_manager.poll_completed():
-                notes.append(
-                    f"<task-notification>\n<task_id>{t.id}</task_id>\n"
-                    f"<status>{t.status}</status>\n<result>{t.result}</result>\n"
-                    f"</task-notification>"
-                )
-            notes.extend(team_manager.drain_lead_mailbox())
-            return notes
-
-        def drain_mailbox_only() -> list[str]:
-            return team_manager.drain_lead_mailbox()
-
-        agent.notification_fn = drain_mailbox_only
+    agent.notification_fn = drain_mailbox_only
 
 
     # 使用事件驱动的 agent.run()，支持 text 和 stream-json 两种输出格式
@@ -475,7 +469,7 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
 
                     elif isinstance(event, PermissionRequest):
                         if not event.future.done():
-                            event.future.set_result(PermissionResponse.DENY if policy is not None else PermissionResponse.ALLOW)
+                            event.future.set_result(PermissionResponse.ALLOW)
         except asyncio.CancelledError:
             if policy is None or agent.last_run_outcome is None:
                 raise
@@ -487,6 +481,7 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
             # persisted a failed run. Report that outcome, not a startup error.
 
 
+        knowledge_exit = None
         if policy is not None:
             outcome = agent.last_run_outcome
             if is_json:
@@ -505,11 +500,11 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
                     if outcome.save:
                         print('Report '+outcome.save.status+': '+outcome.save.path, file=output, flush=True)
             from codeplus.commands.handlers.knowledge import exit_status
-            return exit_status(outcome.status if outcome else 'failed')
+            knowledge_exit = exit_status(outcome.status if outcome else 'failed')
 
         # 如果有 team 在运行，轮询等待 teammate 完成
         if not team_manager._teams:
-            return
+            return knowledge_exit
 
         for i in range(90):
             await asyncio.sleep(2)
@@ -533,6 +528,7 @@ async def _run_prompt(config, permission_mode, hook_engine, prompt: str, output_
                 emit_json({"type": "assistant", "text": last_result})
             else:
                 print(last_result, flush=True)
+        return knowledge_exit
     finally:
         if policy is not None:
             await client._client.close()

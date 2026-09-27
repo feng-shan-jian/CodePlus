@@ -58,7 +58,7 @@ Schema试验默认：帧1MiB、连接16、等待16项/4MiB、session4096请求�
 
 所有GPU异常出口在同线程同步后才返回可确认完成；同步失败进程退出，不伪造finished。OOM有阶段并清理单槽，不跨空闲期保留Torch traceback；无CPU/API/别模型替代或自动重放。无客户且无在途后idle退出。认证失败而设备锁仍持有只报错，不杀PID/另起worker。
 
-证据见[R09](implementation-records/R09.md)：协议替身、受控真实CUDA异常、正常GPU、多解释器和两次干净核心安装分别标明。
+正式入口为 `tests/test_model_worker.py`、`tests/test_model_worker_gpu.py` 和 `tests/test_package_install.py`；受控测试与实际 GPU 执行分别记录。
 
 ## 前后台调度与已测边界
 
@@ -66,4 +66,4 @@ Schema试验默认：帧1MiB、连接16、等待16项/4MiB、session4096请求�
 
 R22 在同一 RTX4070 Laptop 上用两个真实宿主持续提交 48 次前台查询和 12 次后台批次。后台返回的完整输入为每批 2×2048 tokens；两宿主各参与两类负载，共用一个 worker、一个实际 profile 和一次加载的模型实例。观测前台 queued→validation 等待 P95 为 901 ms、最大 926 ms；后台两次完成的间隔最大 500 ms，24 个文档约 4.37 个/秒，最大 allocated 峰值约 1250 MiB。此结果支持保留当前 4:1 配额、每批最多 4 项及 4096 padded-token 上限，没有调整配置或模型身份。
 
-上述是热模型、有界持续积压的短负载实测，不是全负载等待 SLA。接收阶段时间戳包含 IPC 观测误差；现有 response.queue_ms 还包含输入校验，不作为纯排队时间。单槽模型切换需要重新校验资源、卸载和加载，load_ms 与排队、推理都计入原绝对截止时间，不能从上述热模型数据推断切换也低于一秒。详细正常负载、加载超时、真实故障分层与同库长导入/实际 Agent 证据见 [R22](implementation-records/R22.md)。
+上述是热模型、有界持续积压的短负载实测，不是全负载等待 SLA。接收阶段时间戳包含 IPC 观测误差；现有 response.queue_ms 还包含输入校验，不作为纯排队时间。单槽模型切换需要重新校验资源、卸载和加载，load_ms 与排队、推理都计入原绝对截止时间，不能从上述热模型数据推断切换也低于一秒。正式调度场景见 `tests/test_model_scheduling.py` 和 `tests/test_model_scheduling_gpu.py`。

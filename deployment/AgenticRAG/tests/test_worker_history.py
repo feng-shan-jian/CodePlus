@@ -41,7 +41,7 @@ def test_real_preceding_installed_checkpoint_and_run_reopen(tmp_path, revision):
         command([uv,'venv',tmp_path/'old-env','--python',sys.executable])
         python=tmp_path/'old-env'/('Scripts/python.exe' if os.name=='nt' else 'bin/python')
         command([uv,'pip','install','--python',python,wheel])
-        fixture=package/'docs/implementation-records/R09-prechange-snapshot.json'
+        fixture=package/'tests/fixtures/legacy-worker-snapshot.json'
         cache=Path(os.environ.get('R09_MODEL_CACHE',str(Path.home()/'.cache/codeplus-agenticrag/models')))
         command([python,'-I','-B',package/'tests/worker_history_helper.py',tmp_path,fixture,cache])
         old=json.loads((tmp_path/'old-state.json').read_text(encoding='utf-8'))

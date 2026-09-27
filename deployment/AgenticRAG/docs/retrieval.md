@@ -26,13 +26,13 @@ RRF 只用稳定 Chunk ID 和每路从 1 开始的原始排名：`sum(1 / (rrf_k
 
 Rerank 使用运行冻结的 profile、归档 `ChunkInput.index_title` 及 canonical 正文；精排前不拼邻块，不用文件名代替标题。正式本地 client 的 `config.model_cache` 提供冻结 tokenizer 资产；自定义 provider 可显式传 `RetrievalSearch(..., rerank_tokenizer=...)`，其 profile 必须一致。`FrozenTokenizer.rerank` 完整计入 query、标题、模板和特殊 token；按实际条数及 padded-token 上限拆批，不截断。所有 ID、实际 token 数及完整响应通过校验后，才按分数降序、ID 升序合并。任一批失败整次失败，无未精排回退。每条输入 hash/实际 token、每批 request ID、评分、排队/加载/推理及墙钟耗时写入同次 `trace.rerank`。
 
-可选的 `retrieval.min_score` 在完整精排成功后、返回数量截断前保留分数大于等于阈值的结果；接受0到1的有限数值，缺省/null不滤。全部低于阈值时返回空结果，不补齐；关闭rerank时不将此阈值套到Dense、BM25或RRF分数。`trace.rerank.ranking`保留完整评分，启用过滤时另记`trace.rerank.filter.min_score`及`removed_ids`。未配置阈值的旧快照和运行指纹保持原样，无需迁移。可通过既有 `assemble_configuration` 合并[显式检索配置预设](retrieval-selected.json)；该预设不自动修改已有知识库配置。
+可选的 `retrieval.min_score` 在完整精排成功后、返回数量截断前保留分数大于等于阈值的结果；接受0到1的有限数值，缺省/null不滤。全部低于阈值时返回空结果，不补齐；关闭rerank时不将此阈值套到Dense、BM25或RRF分数。`trace.rerank.ranking`保留完整评分，启用过滤时另记`trace.rerank.filter.min_score`及`removed_ids`。未配置阈值的旧快照和运行指纹保持原样，无需迁移。当前选定的RRF10、50/24、0.001配置及质量边界见[执行方案](production-simplification-plan-20260927.md)。
 
 整个召回、原文读取、计数与精排仍共用外层 reader；子 Rerank 请求使用原模型 reader 和真实 handle 的 `wait_finished`。取消、结果报错或 client 关闭不是 GPU 完成回执，未完成读者继续保护旧版本。
 
-Context 的 `query-relative-v1` 是可复核的试验规则：在当前 query 排名中，以组首分数的绝对值乘 2% 划分相关性近似组，组内先选尚未选过的文档，内部保持原排名；不设置文档配额，不比较不同 query 的分数。同文档不同位置及冲突正文保留；只扣除同文档版本在当前 `evidence_windows` 和本次已选结果中的重叠 Unicode 区间。已返回而未进入当前窗口的正文不受历史 `source_candidates` 抑制，仍累计原 source-return/片段 reservations。
+Context 的 `query-relative-v1` 是可复核的试验规则：在当前 query 排名中，以组首分数的绝对值乘 2% 划分相关性近似组，组内先选尚未选过的文档，内部保持原排名；不设置文档配额，不比较不同 query 的分数。同文档不同位置及冲突正文保留；只扣除同文档版本在当前 `evidence_windows` 和本次已选结果中的重叠 Unicode 区间。已返回而未进入当前窗口的正文不受历史 `source_candidates` 抑制，被动记录原 source-return/片段用量，不限制后续调用。
 
-片段数和最终工具完整序列化上界沿 `SourceSession` 计量；不能整段放入时按 canonical 区间折半到完整序列化可放入，再校验后提交。`trace.context` 记录规则、计量身份、选择前窗口与用量、每条原始/可选/返回/省略区间及限制原因。宿主完整 JSON 上界、窗口累计与送达资格仍由既有 `DeliveryGateway`/ModelControl 控制。receipt 的 `window_transition.removed_from_request` 只描述位置移出；`on_confirmed_compact_removed` 必须结合 `confirmed` 且 `purpose=compact` 解读，失败 compact 不宣称已清空。旧确认资格与当前保留窗口分开。
+片段数和最终工具完整序列化上界沿 `SourceSession` 计量；不能整段放入时按 canonical 区间折半到完整序列化可放入，再校验后提交。`trace.context` 记录规则、计量身份、选择前窗口与用量、每条原始/可选/返回/省略区间及限制原因。宿主通过原 compact 管理完整对话，DeliveryGateway 只保存来源映射与交付。receipt 的 `window_transition.removed_from_request` 只描述位置移出；`on_confirmed_compact_removed` 必须结合 `confirmed` 且 `purpose=compact` 解读，失败 compact 不宣称已清空。旧确认资格与当前保留窗口分开。
 
 这里的 `evidence_windows` 是宿主当前保留的原文窗口，可在 HTTP 发送前由 `retain_prepared_window` 同步；not_sent/unknown 不自动回滚该窗口。连续工具调用中尚未 retain 的 pending 正文可再次选取；已在宿主保留窗口中的位置按该窗口去重。两者都不绕过 `delivered_evidence` 的确认交付要求。
 
@@ -42,8 +42,6 @@ Context 的 `query-relative-v1` 是可复核的试验规则：在当前 query �
 <installed-python> -I -B deployment/AgenticRAG/eval/dense_runner.py bm25 --root <build-root> --endpoint <milvus-uri> --ids deployment/AgenticRAG/eval/development-ids.json --dataset-hash f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898 --report <new-report.json>
 ```
 
-Dense/Hybrid 或 `--rerank` 另传两项模型参数。R18 的固定 Hybrid 开关对照增加 `--answer-tokenizer <固定资产绝对路径>`，同一次检索同时取得 TopK10 排名和 SourceSession Context。每题独立运行绑定同一个发布版本，使用固定工具结果请求模板、实际完整 JSON 和生产上界 meter；仅 prepare，随后记为 not_sent，不运行回答模型或伪造 confirmed。工具选择和最终请求窗口失败分别保留，`COMPLETE_WITH_CONTEXT_ERRORS` 不伪装 PASS；排序指标与 Context 覆盖分别评分。
+Dense/Hybrid 或 `--rerank` 另传模型参数。`--context` 同时取得 Top10 排名与 SourceSession 的实际单次正文；使用普通工具结果请求，prepare 后记为 not_sent，不运行回答模型或生成 confirmed。
 
-工具结果插入宿主 JSON 后会新增转义字符，SourceSession 的工具正文可放入不保证完整请求仍可放入。最终窗口 gate 拒绝时，已成功的排名与所选正文继续作为诊断保留，`prepared` 正文为空，并以零覆盖纳入原 177 题分母；未测得的上界以未知和样本数报告。R18 不增加固定余量或调大单组预算；完整预算策略及参数冻结分别留 R19/R23。
-
-运行只读 query/corpus；原官方与 source-span 评分在独立进程执行。每档固定 200 个 medium ID、TopK10，官方检索分母为 177；初始化/单题/Context/附加查询/关闭失败均保留记录，不能删除失败题。开关是唯一组间配置差异；真实模型评分不代表答案正确率，试验参数未完成 R23 冻结。此前三路结果见 [R17 执行记录](implementation-records/R17.md)。
+正式运行与评分见[评测入口](../eval/README.md)。数据、题序与分母保持原协议；实际 CLI/TUI/Remote 和答案质量验收分别执行。

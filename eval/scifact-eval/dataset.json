@@ -1,0 +1,35 @@
+{
+  "dataset_id": "beir-scifact-v1",
+  "dataset_fingerprint": "98f3c573b8f153679f838d7fac07221519c258437124f2c5ef5b00fa87b3ca10",
+  "namespace": "beir_scifact_v1",
+  "corpus_fingerprint": "b31c479f4edf81b808ce397d98a43422fde51d27510119d9dba3ded18264d48c",
+  "documents": 5183,
+  "queries": 1109,
+  "splits": {
+    "train": {
+      "queries": 809,
+      "qrels": 919
+    },
+    "test": {
+      "queries": 300,
+      "qrels": 339
+    },
+    "development": {
+      "queries": 807,
+      "qrels": 917
+    }
+  },
+  "development_policy": {
+    "source": "official train minus normalized text overlap with test",
+    "normalization": "NFKC, casefold, collapse whitespace",
+    "excluded_train_query_ids": [
+      "1291",
+      "871"
+    ]
+  },
+  "relevance_unit": "document",
+  "answer_evaluation": "not_applicable",
+  "source_lock": "source-lock.json",
+  "state_directory": ".state",
+  "results_directory": "runs"
+}

@@ -1,20 +1,18 @@
 from __future__ import annotations
 
 import asyncio
-import hashlib
 import logging
-import os
 import time
 import uuid
 from contextlib import aclosing, asynccontextmanager
-from dataclasses import asdict, dataclass, field, replace
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Any, AsyncIterator, Callable
 
 from pydantic import ValidationError
 
-from codeplus.run_policy import ArtifactSave, BudgetStop, HostRunContext, RunExecutionPolicy, RunOutcome
+from codeplus.run_policy import HostRunContext, RunExecutionPolicy, RunOutcome
 from codeplus.client import LLMClient
 from codeplus.context import (
     CompactBoundary,
@@ -187,9 +185,8 @@ class LLMResponse:
 
 
 class StreamCollector:
-    def __init__(self, *, buffer_output: bool = False) -> None:
+    def __init__(self) -> None:
         self.response = LLMResponse()
-        self.buffer_output = buffer_output
 
     async def consume(
         self, stream: AsyncIterator[StreamEvent]
@@ -197,11 +194,9 @@ class StreamCollector:
         async for event in stream:
             if isinstance(event, TextDelta):
                 self.response.text += event.text
-                if not self.buffer_output:
-                    yield StreamText(text=event.text)
+                yield StreamText(text=event.text)
             elif isinstance(event, ThinkingDelta):
-                if not self.buffer_output:
-                    yield ThinkingText(text=event.text)
+                yield ThinkingText(text=event.text)
             elif isinstance(event, ThinkingComplete):
                 self.response.thinking_blocks.append(
                     ThinkingBlock(thinking=event.thinking, signature=event.signature)
@@ -298,8 +293,6 @@ class Agent:
         self._scope = None
         self._executing = False
         self.last_run_outcome = None
-        self._artifact_call = None
-        self._artifact_writer = None
         self.client = client
         self.registry = registry
         self.protocol = protocol
@@ -365,48 +358,31 @@ class Agent:
             yield None
             return
         if self._executing:
-            raise RuntimeError('Agent already has an active controlled run')
+            raise RuntimeError('Agent already has an active knowledge run')
         self._executing = True
         self.last_run_outcome = None
         scope = None
         primary = None
-        saved = {name: getattr(self, name) for name in (
-            'client', 'registry', 'memory_manager', '_consolidator', 'memory_recall_task',
-            'notification_fn', 'enable_coordinator_mode', 'team_name', 'instructions_content',
-            'file_history', 'recovery_state', 'compact_breaker')}
+        bindings = []
+        registry = self.registry
         try:
             scope = await self.execution_policy.start(HostRunContext(
                 entrypoint, self.session_id, self.work_dir, self.protocol, self.client,
                 self.hook_engine, self.permission_checker, request))
             self._scope = scope
-            if getattr(scope, 'report_path', None):
-                from codeplus.tools.write_file import WriteFile
-                from codeplus.tools.file_state_cache import FileStateCache
-                self._artifact_writer = self.registry.get('WriteFile')
-                if self._artifact_writer is None:
-                    self._artifact_writer = WriteFile(file_history=self.file_history, file_state_cache=FileStateCache())
-            self.client, self.registry = scope.client, scope.registry
-            self.memory_manager = self._consolidator = self.memory_recall_task = None
-            self.notification_fn = self.file_history = None
-            self.enable_coordinator_mode = False
-            self.team_name = self.instructions_content = ''
-            self.recovery_state = RecoveryState()
-            self.compact_breaker = CompactCircuitBreaker()
-            async with asyncio.timeout_at(scope.deadline):
-                yield scope
+            for tool in scope.tools:
+                bindings.append((tool, registry.get(tool.name),
+                                 registry.is_enabled(tool.name), registry.is_discovered(tool.name)))
+                registry.register(tool)
+                registry.enable(tool.name)
+            yield scope
         except BaseException as error:
             primary = error
             if scope:
-                previous = scope.outcome or RunOutcome('incomplete', 'iteration_limit')
-                if previous.save and previous.save.status == 'pending':
-                    previous = replace(previous, save=replace(previous.save, status='interrupted', message=type(error).__name__))
-                if isinstance(error, (asyncio.CancelledError, GeneratorExit)):
-                    scope.outcome = replace(previous, status='cancelled', reason='consumer_closed' if isinstance(error, GeneratorExit) else 'user_cancelled')
-                elif isinstance(error, (BudgetStop, TimeoutError)):
-                    reason = error.reason if isinstance(error, BudgetStop) else 'time_budget'
-                    scope.outcome = replace(previous, status='incomplete', reason=reason)
-                else:
-                    scope.outcome = replace(previous, status='failed', reason='explicit_error')
+                cancelled = isinstance(error, (asyncio.CancelledError, GeneratorExit))
+                scope.outcome = RunOutcome('cancelled' if cancelled else 'failed',
+                    ('consumer_closed' if isinstance(error, GeneratorExit) else 'user_cancelled')
+                    if cancelled else 'explicit_error')
             raise
         finally:
             late_cancel = False
@@ -417,146 +393,57 @@ class Agent:
                             await scope.finish(scope.outcome or RunOutcome('incomplete', 'iteration_limit'))
                         finally:
                             await scope.aclose()
-                    task = asyncio.create_task(cleanup())
-                    # Scope cleanup has a bounded drain and persists real pending
-                    # readers. A second cancellation cannot skip that transaction.
-                    while not task.done():
+                    cleanup_task = asyncio.create_task(cleanup())
+                    while not cleanup_task.done():
                         try:
-                            await asyncio.wait({task})
+                            await asyncio.wait({cleanup_task})
                         except asyncio.CancelledError:
-                            if primary is None:
-                                primary = asyncio.CancelledError()
-                                late_cancel = True
-                                if not getattr(scope, '_finished', False):
-                                    scope.outcome = replace(scope.outcome or RunOutcome('cancelled', 'user_cancelled'), status='cancelled', reason='user_cancelled')
-                            continue
-                        except BaseException:
-                            break
+                            late_cancel = primary is None
                     try:
-                        task.result()
+                        cleanup_task.result()
                     except BaseException:
                         if primary is None:
                             raise
-                        log.exception('Secondary controlled-run cleanup failure')
+                        log.exception('Secondary knowledge cleanup failure')
                     self.last_run_outcome = scope.outcome
             finally:
-                for name, value in saved.items():
-                    setattr(self, name, value)
+                for tool, previous, enabled, discovered in reversed(bindings):
+                    name = tool.name
+                    registry.unregister(name)
+                    if self.registry is not registry and self.registry.get(name) is tool:
+                        self.registry.unregister(name)
+                    if previous is not None:
+                        registry.register(previous)
+                        if not enabled:
+                            registry.disable(name)
+                        if discovered:
+                            registry.mark_discovered(name)
                 self._scope = None
-                self._artifact_call = self._artifact_writer = None
                 self._executing = False
             if late_cancel:
-                raise primary
+                raise asyncio.CancelledError()
 
     async def run(self, conversation: ConversationManager) -> AsyncIterator[AgentEvent]:
-        try:
-            request = next((m.content for m in reversed(conversation.history) if m.role == 'user' and m.content), '')
-            async with self._execution_scope('stream', request):
-                async with aclosing(self._run_loop(conversation)) as loop:
-                    async for event in loop:
-                        yield event
-        except (BudgetStop, TimeoutError) as stop:
-            if self.execution_policy is None:
-                raise
-            outcome = self.last_run_outcome or RunOutcome('incomplete', stop.reason if isinstance(stop,BudgetStop) else 'time_budget')
-            yield ErrorEvent(message=f'Knowledge run {outcome.status}: {outcome.reason}')
+        request = next((m.content for m in reversed(conversation.history) if m.role == 'user' and m.content), '')
+        async with self._execution_scope('stream', request):
+            async with aclosing(self._run_loop(conversation)) as loop:
+                async for event in loop:
+                    yield event
 
     async def run_to_completion(
         self, task: str, conversation: ConversationManager | None = None,
         event_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> str:
-        try:
-            async with self._execution_scope('completion', task):
-                text = await self._completion_loop(task, conversation, event_callback)
-        except (BudgetStop, TimeoutError) as stop:
-            if self.execution_policy is None:
-                raise
-            outcome = self.last_run_outcome or RunOutcome('incomplete', stop.reason if isinstance(stop,BudgetStop) else 'time_budget')
-            text = f'Knowledge run {outcome.status}: {outcome.reason}'
+        async with self._execution_scope('completion', task):
+            text = await self._completion_loop(task, conversation, event_callback)
         if self.execution_policy is not None and event_callback and self.last_run_outcome:
-            event_callback({'type': 'run_status', 'status': self.last_run_outcome.status,
-                            'reason': self.last_run_outcome.reason, 'run_id': self.last_run_outcome.run_id,
-                            'save': asdict(self.last_run_outcome.save) if self.last_run_outcome.save else None,
-                            'research': self.last_run_outcome.research})
+            event_callback({'type': 'run_status', **asdict(self.last_run_outcome)})
         return text
 
-    async def _save_artifact(self, artifact, *, interactive):
-        """One host-created call, never registered or exposed to the model."""
-        scope = self._scope
-        path = getattr(scope, 'report_path', None)
-        if not path:
-            return
-        if scope.outcome is None or scope.outcome.artifact is not artifact:
-            raise RuntimeError('report requires the accepted artifact')
-        scope.outcome = replace(scope.outcome, save=ArtifactSave('pending', path))
-        tc = ToolCallComplete(uuid.uuid4().hex, 'WriteFile', {'file_path':path, 'content':artifact.markdown})
-        self._artifact_call = tc
-        try:
-            if interactive:
-                async with aclosing(self._execute_tool(tc)) as execution:
-                    async for item in execution:
-                        if isinstance(item, PermissionRequest):
-                            yield item
-                        else:
-                            result, _ = item
-            else:
-                result = await self._execute_tool_noninteractive(tc)
-            if result.is_error:
-                scope.outcome = replace(scope.outcome, status='incomplete', reason='report_save_failed',
-                    save=ArtifactSave('failed', path, message=result.output))
-        finally:
-            self._artifact_call = None
-
-    async def _write_artifact(self, tool, params):
-        # Record the observed side effect inside the owned task, before the
-        # caller's deadline check or cancellation can replace the run outcome.
-        result = await tool.execute(params)
-        if not result.is_error:
-            try:
-                raw = Path(params.file_path).read_bytes()
-                expected = params.content.replace('\n', os.linesep).encode('utf-8')
-                if raw != expected:
-                    raise ValueError('report_readback_mismatch')
-                self._scope.outcome = replace(self._scope.outcome, save=ArtifactSave(
-                    'saved', params.file_path, hashlib.sha256(raw).hexdigest(), len(raw)))
-            except (OSError, ValueError) as error:
-                result = ToolResult(output='Report readback failed: '+str(error), is_error=True)
-        return result
-
-    def _artifact_notice(self):
-        saved = self._scope.outcome.save
-        if saved is None:
-            return ''
-        if saved.status == 'saved':
-            return f'\n\nReport saved: {saved.path}\nSHA256 (file bytes): {saved.sha256}'
-        return f'\n\nReport was not saved: {saved.path}\n{saved.message}'
-
     async def _execute_admitted(self, tc, tool, params):
-        if self._scope is None:
-            return await tool.execute(params)
-        scope = self._scope
-        if tc is self._artifact_call:
-            scope.check()
-            result = await scope.owner.task(self._write_artifact(tool, params))
-            scope.check()
-            return result
-        permit = None
-        try:
-            permit = await scope.admit_tool(tc.tool_id, tc.tool_name, params)
-            result = await scope.owner.task(tool.execute(params))
-            scope.check()
-        except BudgetStop as stop:
-            if permit is not None:
-                await scope.tool_finished(permit, None)
-            if stop.hard:
-                raise
-            scope.defer_finalize_reason = stop.reason
-            return ToolResult(output='Knowledge exploration stopped: '+stop.reason, is_error=True)
-        except BaseException:
-            if permit is not None:
-                await scope.tool_finished(permit, None)
-            raise
-        await scope.tool_finished(permit, result)
+        result = await tool.execute(params)
+        if self._scope:
+            self._scope.tool_finished(tc, result)
         return result
 
     def _result_spans(self, tool_id, result, content):
@@ -566,22 +453,14 @@ class Agent:
         return persisted_preview_spans(result.output, self.session_dir / f'{tool_id}.txt', result.source_spans)
 
     async def _compact_for_run(self, conversation):
-        if self._scope and self._scope.purpose != 'agent':
-            return None
-        try:
-            return await auto_compact(
-                conversation, self.client, self.context_window, self.session_dir,
-                protocol=self.protocol, breaker=self.compact_breaker,
-                recovery=None if self._scope else self.recovery_state,
-                tool_schemas=self.registry.get_all_schemas(self.protocol),
-                transcript_path='' if self._scope else self._transcript_path,
-                control_factory=self._scope.model_control if self._scope else None,
-            )
-        except BudgetStop as stop:
-            if self._scope and not stop.hard and self._scope.begin_finalize(conversation,stop.reason):
-                return None
-            raise
-
+        return await auto_compact(
+            conversation, self.client, self.context_window, self.session_dir,
+            protocol=self.protocol, breaker=self.compact_breaker,
+            recovery=self.recovery_state,
+            tool_schemas=self.registry.get_all_schemas(self.protocol),
+            transcript_path=self._transcript_path,
+            control_factory=self._scope.model_control if self._scope else None,
+        )
 
     def _announce_deferred_tools(self, conversation: ConversationManager) -> None:
         """把延迟工具名清单告诉模型，只在需要的时候发。
@@ -718,12 +597,10 @@ class Agent:
         env_context = build_environment_context(
             self.work_dir, self.active_skills, self._skill_catalog, self._agent_catalog
         )
-        if not self._scope:
-            conversation.inject_environment(env_context)
+        conversation.inject_environment(env_context)
 
         memory_content = self.memory_manager.load() if self.memory_manager else ""
-        if not self._scope:
-            conversation.inject_long_term_memory(self.instructions_content, memory_content)
+        conversation.inject_long_term_memory(self.instructions_content, memory_content)
 
         if self.hook_engine:
             ctx = self._build_hook_context("session_start")
@@ -737,11 +614,7 @@ class Agent:
 
         while True:
             iteration += 1
-            if self._scope:
-                self._scope.check()
 
-            if self._scope and iteration > self._scope.max_iterations:
-                raise BudgetStop('iteration_limit', hard=True)
             if self.max_iterations > 0 and iteration > self.max_iterations:
                 yield ErrorEvent(
                     message=f"Agent reached maximum iterations ({self.max_iterations})"
@@ -754,8 +627,7 @@ class Agent:
                 for he in self._drain_hook_events():
                     yield he
 
-            if not self._scope:
-                self._consume_mailbox(conversation)
+            self._consume_mailbox(conversation)
             if self.notification_fn:
                 for note in self.notification_fn():
                     conversation.add_system_reminder(note)
@@ -769,10 +641,11 @@ class Agent:
             hook_prompts = (
                 self.hook_engine.get_prompt_messages() if self.hook_engine else None
             )
-            system = (self._scope.system_prompt_with_hooks(hook_prompts) if self._scope else
-                      build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir))
+            system = build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir)
+            if self._scope:
+                system += '\n\n' + self._scope.system_prompt
 
-            if self.plan_mode and not self._scope:
+            if self.plan_mode:
                 plan_path = str(self._get_plan_path())
                 if self.permission_checker:
                     self.permission_checker.plan_file_path = plan_path
@@ -785,7 +658,7 @@ class Agent:
             # Coordinator 模式：工具集被收窄的同时注入调度指引。
             # 走 system-reminder 而不是替换系统提示词：长会话里开头那份约束会被淹没，
             # 每轮追加一次才拉得回来，而且 Lead 仍然需要身份、环境、项目指令和记忆这些基础段落。
-            if self.coordinator_mode and not self._scope:
+            if self.coordinator_mode:
                 from codeplus.teams.coordinator import get_coordinator_reminder
 
                 conversation.add_system_reminder(
@@ -801,8 +674,7 @@ class Agent:
                         f"Hook [{note.hook_id}] {note.event}: {note.output}"
                     )
 
-            if not self._scope:
-                self._announce_deferred_tools(conversation)
+            self._announce_deferred_tools(conversation)
 
             tools = self.registry.get_all_schemas(self.protocol)
 
@@ -816,32 +688,19 @@ class Agent:
                     message=f"上下文已压缩（压缩前 {compact_result.before_tokens:,} tokens）",
                     boundary=compact_result.boundary,
                 )
-                if not self._scope:
-                    conversation.inject_environment(env_context)
-                    mem = self.memory_manager.load() if self.memory_manager else ""
-                    conversation.inject_long_term_memory(self.instructions_content, mem)
+                conversation.inject_environment(env_context)
+                mem = self.memory_manager.load() if self.memory_manager else ""
+                conversation.inject_long_term_memory(self.instructions_content, mem)
             elif isinstance(compact_result, str):
                 yield ErrorEvent(message=compact_result)
 
-            collector = StreamCollector(buffer_output=self._scope is not None)
-            if self._scope:
-                self._scope.prepare_turn(conversation)
-                tools = self.registry.get_all_schemas(self.protocol) if self._scope.purpose == 'agent' else []
-            options = {'control': self._scope.model_control(self._scope.purpose)} if self._scope else {}
-            try:
-                async with aclosing(self.client.stream(conversation, system=system, tools=tools, **options)) as llm_stream:
-                    async for event in collector.consume(llm_stream):
-                        yield event
-            except BudgetStop as stop:
-                if self._scope and not stop.hard and self._scope.begin_finalize(conversation, stop.reason):
-                    continue
-                raise
+            collector = StreamCollector()
+            options = {'control': self._scope.model_control('agent')} if self._scope else {}
+            async with aclosing(self.client.stream(conversation, system=system, tools=tools, **options)) as llm_stream:
+                async for event in collector.consume(llm_stream):
+                    yield event
 
             response = collector.response
-            if self._scope and response.tool_calls and self._scope.purpose != 'agent':
-                raise BudgetStop('citation_invalid', hard=True)
-            if self._scope and response.stop_reason not in {'end_turn', 'tool_calls', 'tool_use'}:
-                raise BudgetStop('provider_truncated', hard=True)
 
             if self.hook_engine:
                 ctx = self._build_hook_context("post_receive", message=response.text)
@@ -861,7 +720,7 @@ class Agent:
                 for tb in response.thinking_blocks
             ]
 
-            if response.stop_reason == "max_tokens" and not self._scope:
+            if response.stop_reason == "max_tokens":
                 if not max_tokens_escalated:
                     self.client.set_max_output_tokens(MAX_TOKENS_CEILING)
                     max_tokens_escalated = True
@@ -891,22 +750,10 @@ class Agent:
             else:
                 output_recoveries = 0
 
-            if not response.tool_calls and self._scope:
-                decision = await self._scope.assess_output(response.text, response.stop_reason)
-                if decision.action == 'repair':
-                    conversation.add_assistant_message(response.text)
-                    conversation.add_user_message(decision.message)
-                    continue
-                if decision.action == 'stop':
-                    raise BudgetStop(decision.message or 'citation_invalid', hard=True)
-                async with aclosing(self._save_artifact(decision.artifact, interactive=True)) as saving:
-                    async for event in saving:
-                        yield event
-                response.text = decision.artifact.markdown + self._artifact_notice()
-                conv_thinking = []
-                yield StreamText(response.text)
-
             if not response.tool_calls:
+                if self._scope:
+                    self._scope.outcome = RunOutcome('completed', 'finished')
+                    self._scope.public_answer = response.text
                 conversation.add_assistant_message(
                     response.text, thinking_blocks=conv_thinking
                 )
@@ -964,29 +811,30 @@ class Agent:
 
             # 收齐调用后按相邻只读批次执行；写入、命令和权限确认不能被后续读取越过。
             tool_results: list[ToolResultBlock] = []
-            async for br in self._execute_ordered_tools(response.tool_calls):
-                if isinstance(br, PermissionRequest):
-                    yield br
-                    continue
-                content = self._maybe_persist_or_truncate(
-                    br.tool_id, br.result.output, exempt_ids
-                )
-                tool_results.append(
-                    ToolResultBlock(
-                        tool_use_id=br.tool_id,
-                        content=content,
-                        is_error=br.result.is_error,
-                        content_blocks=br.result.content_blocks,
-                        source_spans=self._result_spans(br.tool_id, br.result, content),
+            async with aclosing(self._execute_ordered_tools(response.tool_calls)) as execution:
+                async for br in execution:
+                    if isinstance(br, PermissionRequest):
+                        yield br
+                        continue
+                    content = self._maybe_persist_or_truncate(
+                        br.tool_id, br.result.output, exempt_ids
                     )
-                )
-                yield ToolResultEvent(
-                    tool_id=br.tool_id,
-                    tool_name=br.tool_name,
-                    output=br.result.output,
-                    is_error=br.result.is_error,
-                    elapsed=br.elapsed,
-                )
+                    tool_results.append(
+                        ToolResultBlock(
+                            tool_use_id=br.tool_id,
+                            content=content,
+                            is_error=br.result.is_error,
+                            content_blocks=br.result.content_blocks,
+                            source_spans=self._result_spans(br.tool_id, br.result, content),
+                        )
+                    )
+                    yield ToolResultEvent(
+                        tool_id=br.tool_id,
+                        tool_name=br.tool_name,
+                        output=br.result.output,
+                        is_error=br.result.is_error,
+                        elapsed=br.elapsed,
+                    )
 
             exit_plan_called = any(
                 tc.tool_name == "ExitPlanMode" for tc in response.tool_calls
@@ -1021,8 +869,6 @@ class Agent:
 
 
     def _consume_mailbox(self, conversation: ConversationManager) -> None:
-        if self.execution_policy is not None:
-            return
         if not self.team_name or not self._team_manager:
             return
         try:
@@ -1058,18 +904,17 @@ class Agent:
                     yield result
             else:
                 for tc in batch.calls:
-                    async for item in self._execute_tool(tc):
-                        if isinstance(item, PermissionRequest):
-                            yield item
-                        else:
-                            result, elapsed = item
-                            yield _ToolExecResult(tc.tool_id, tc.tool_name, result, elapsed)
+                    async with aclosing(self._execute_tool(tc)) as execution:
+                        async for item in execution:
+                            if isinstance(item, PermissionRequest):
+                                yield item
+                            else:
+                                result, elapsed = item
+                                yield _ToolExecResult(tc.tool_id, tc.tool_name, result, elapsed)
 
     async def _execute_single_tool_direct(
         self, tc: ToolCallComplete
     ) -> _ToolExecResult:
-        if self._scope:
-            self._scope.rejected_tool(tc.tool_id, tc.tool_name, 'not_admitted')
         tool = self.registry.get(tc.tool_name)
         start = time.monotonic()
 
@@ -1103,8 +948,6 @@ class Agent:
         try:
             params = tool.params_model.model_validate(tc.arguments)
             result = await self._execute_admitted(tc, tool, params)
-        except BudgetStop:
-            raise
         except ValidationError as e:
             result = ToolResult(output=f"Parameter validation error: {e}", is_error=True)
         except Exception as e:
@@ -1125,15 +968,12 @@ class Agent:
         self, calls: list[ToolCallComplete]
     ) -> list[_ToolExecResult]:
         tasks = [self._execute_single_tool_direct(tc) for tc in calls]
-        return list(await self._scope.owner.gather(tasks) if self._scope else await asyncio.gather(*tasks))
+        return list(await asyncio.gather(*tasks))
 
     async def _execute_tool(
         self, tc: ToolCallComplete
     ) -> AsyncIterator[tuple[ToolResult, float] | PermissionRequest]:
-        internal = tc is self._artifact_call
-        if self._scope and not internal:
-            self._scope.rejected_tool(tc.tool_id, tc.tool_name, 'not_admitted')
-        tool = self._artifact_writer if internal else self.registry.get(tc.tool_name)
+        tool = self.registry.get(tc.tool_name)
         start = time.monotonic()
 
         if tool is None:
@@ -1145,7 +985,7 @@ class Agent:
             yield result, elapsed
             return
 
-        if not internal and not self.registry.is_enabled(tc.tool_name):
+        if not self.registry.is_enabled(tc.tool_name):
             result = ToolResult(
                 output=f"Error: tool '{tc.tool_name}' is disabled in current mode",
                 is_error=True,
@@ -1172,20 +1012,14 @@ class Agent:
                 future: asyncio.Future[PermissionResponse] = loop.create_future()
                 desc = self._build_permission_description(tc)
                 # 向调用方 yield 权限请求事件，由调用方处理
-                if self._scope:
-                    self._scope.owner.permissions.add(future)
                 try:
-                    if self._scope:
-                        self._scope.check()
                     yield PermissionRequest(
                         tool_name=tc.tool_name,
                         description=desc,
                         future=future,
                     )
-                    response = (await self._scope.owner.wait_permission(future) if self._scope else await future)
+                    response = await future
                 finally:
-                    if self._scope:
-                        self._scope.owner.permissions.discard(future)
                     if not future.done():
                         future.cancel()
 
@@ -1209,8 +1043,6 @@ class Agent:
         try:
             params = tool.params_model.model_validate(tc.arguments)
             result = await self._execute_admitted(tc, tool, params)
-        except BudgetStop:
-            raise
         except ValidationError as e:
             result = ToolResult(
                 output=f"Parameter validation error: {e}", is_error=True
@@ -1268,7 +1100,7 @@ class Agent:
         当前提取完成后检查该标志，如果有 pending 则立即执行一次尾随提取，
         防止多个触发器同时执行导致重复提取。
         """
-        if self.execution_policy is not None or not self.memory_manager:
+        if not self.memory_manager:
             return
 
         # 合并策略：正在提取时暂存新请求，等当前提取完成后尾随执行
@@ -1296,8 +1128,6 @@ class Agent:
     async def manual_compact(
         self, conversation: ConversationManager
     ) -> CompactNotification | ErrorEvent:
-        if self.execution_policy is not None:
-            return ErrorEvent(message='Knowledge runs manage compaction within their active loop')
         # auto_compact 会用摘要替换 conversation.history，所有 tool-result 内容
         # （原始或已替换的）都将被丢弃。这里跳过 apply_tool_result_budget —
         # 它在主循环中的唯一目的是为 LLM 调用生成 api_conv，而本路径不需要
@@ -1340,8 +1170,7 @@ class Agent:
         )
         if conversation is None:
             conversation = ConversationManager()
-            if not self._scope:
-                conversation.inject_environment(env_context)
+            conversation.inject_environment(env_context)
 
             if self.instructions_content:
                 memory_content = self.memory_manager.load() if self.memory_manager else ""
@@ -1355,8 +1184,9 @@ class Agent:
         hook_prompts = (
             self.hook_engine.get_prompt_messages() if self.hook_engine else None
         )
-        system = (self._scope.system_prompt_with_hooks(hook_prompts) if self._scope else
-                  build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir))
+        system = build_system_prompt(hook_prompts=hook_prompts, work_dir=self.work_dir)
+        if self._scope:
+            system += '\n\n' + self._scope.system_prompt
 
         tools = self.registry.get_all_schemas(self.protocol)
 
@@ -1373,48 +1203,30 @@ class Agent:
         iteration = 0
         while True:
             iteration += 1
-            if self._scope:
-                self._scope.check()
-            if self._scope and iteration > self._scope.max_iterations:
-                raise BudgetStop('iteration_limit', hard=True)
             if self.max_iterations > 0 and iteration > self.max_iterations:
                 break
             if self.hook_engine:
                 ctx = self._build_hook_context("turn_start")
                 await self.hook_engine.run_hooks("turn_start", ctx)
 
-            if not self._scope:
-                self._consume_mailbox(conversation)
+            self._consume_mailbox(conversation)
             if self.notification_fn:
                 for note in self.notification_fn():
                     conversation.add_system_reminder(note)
 
             compact_result = await self._compact_for_run(conversation)
-            if isinstance(compact_result, CompactEvent) and not self._scope:
+            if isinstance(compact_result, CompactEvent):
                 conversation.inject_environment(env_context)
 
-            if not self._scope:
-                self._announce_deferred_tools(conversation)
+            self._announce_deferred_tools(conversation)
 
-            collector = StreamCollector(buffer_output=self._scope is not None)
-            if self._scope:
-                self._scope.prepare_turn(conversation)
-                tools = self.registry.get_all_schemas(self.protocol) if self._scope.purpose == 'agent' else []
-            options = {'control': self._scope.model_control(self._scope.purpose)} if self._scope else {}
-            try:
-                async with aclosing(self.client.stream(conversation, system=system, tools=tools, **options)) as llm_stream:
-                    async for _event in collector.consume(llm_stream):
-                        pass
-            except BudgetStop as stop:
-                if self._scope and not stop.hard and self._scope.begin_finalize(conversation, stop.reason):
-                    continue
-                raise
+            collector = StreamCollector()
+            options = {'control': self._scope.model_control('agent')} if self._scope else {}
+            async with aclosing(self.client.stream(conversation, system=system, tools=tools, **options)) as llm_stream:
+                async for _event in collector.consume(llm_stream):
+                    pass
 
             response = collector.response
-            if self._scope and response.tool_calls and self._scope.purpose != 'agent':
-                raise BudgetStop('citation_invalid', hard=True)
-            if self._scope and response.stop_reason not in {'end_turn', 'tool_calls', 'tool_use'}:
-                raise BudgetStop('provider_truncated', hard=True)
             self.total_input_tokens += response.input_tokens
             self.total_output_tokens += response.output_tokens
 
@@ -1427,7 +1239,7 @@ class Agent:
                     },
                 })
 
-            if response.text and not self._scope:
+            if response.text:
                 last_text = response.text
                 if event_callback:
                     event_callback({
@@ -1441,23 +1253,10 @@ class Agent:
                 len(response.text), response.stop_reason,
             )
 
-            if not response.tool_calls and self._scope:
-                decision = await self._scope.assess_output(response.text, response.stop_reason)
-                if decision.action == 'repair':
-                    conversation.add_assistant_message(response.text)
-                    conversation.add_user_message(decision.message)
-                    continue
-                if decision.action == 'stop':
-                    raise BudgetStop(decision.message or 'citation_invalid', hard=True)
-                async with aclosing(self._save_artifact(decision.artifact, interactive=False)) as saving:
-                    async for _ in saving:
-                        pass
-                response.text = decision.artifact.markdown + self._artifact_notice()
-                last_text = response.text
-                if event_callback:
-                    event_callback({'type': 'stream_text', 'text': response.text})
-
             if not response.tool_calls:
+                if self._scope:
+                    self._scope.outcome = RunOutcome('completed', 'finished')
+                    self._scope.public_answer = response.text
                 conversation.add_assistant_message(response.text)
                 if self.file_history is not None:
                     summary = response.text[:60] + "..." if len(response.text) > 60 else response.text
@@ -1473,7 +1272,7 @@ class Agent:
                 for tc in response.tool_calls
             ]
             conv_thinking = ([ConvThinkingBlock(thinking=tb.thinking, signature=tb.signature)
-                              for tb in response.thinking_blocks] if self._scope else None)
+                              for tb in response.thinking_blocks])
             conversation.add_assistant_message(response.text, tool_uses, thinking_blocks=conv_thinking)
             # assistant 回复已在历史中，锚定实际用量；下一轮迭代只需对
             # 下方追加的 tool results 做字符估算。
@@ -1503,7 +1302,7 @@ class Agent:
                         })
                 if batch.concurrent:
                     coroutines = [self._execute_tool_noninteractive(tc) for tc in batch.calls]
-                    results = (await self._scope.owner.gather(coroutines) if self._scope else await asyncio.gather(*coroutines))
+                    results = await asyncio.gather(*coroutines)
                 else:
                     results = [await self._execute_tool_noninteractive(batch.calls[0])]
                 for tc, result in zip(batch.calls, results):
@@ -1534,17 +1333,14 @@ class Agent:
     async def _execute_tool_noninteractive(
         self, tc: ToolCallComplete
     ) -> ToolResult:
-        internal = tc is self._artifact_call
-        if self._scope and not internal:
-            self._scope.rejected_tool(tc.tool_id, tc.tool_name, 'not_admitted')
-        tool = self._artifact_writer if internal else self.registry.get(tc.tool_name)
+        tool = self.registry.get(tc.tool_name)
 
         if tool is None:
             return ToolResult(
                 output=f"Error: unknown tool '{tc.tool_name}'", is_error=True
             )
 
-        if not internal and not self.registry.is_enabled(tc.tool_name):
+        if not self.registry.is_enabled(tc.tool_name):
             return ToolResult(
                 output=f"Error: tool '{tc.tool_name}' is disabled",
                 is_error=True,
@@ -1584,8 +1380,6 @@ class Agent:
         try:
             params = tool.params_model.model_validate(tc.arguments)
             result = await self._execute_admitted(tc, tool, params)
-        except BudgetStop:
-            raise
         except ValidationError as e:
             result = ToolResult(
                 output=f"Parameter validation error: {e}", is_error=True

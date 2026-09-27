@@ -2,25 +2,13 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 from uuid import UUID
-
-from pydantic import BaseModel, ConfigDict, Field
 
 from ...domain import RagError
 
 
-class ProgressNotes(BaseModel):
-    model_config = ConfigDict(extra='forbid')
-    covered: list[str] = Field(default_factory=list, max_length=30)
-    pending: list[str] = Field(default_factory=list, max_length=30)
-    findings: list[str] = Field(default_factory=list, max_length=30)
-    revised: list[str] = Field(default_factory=list, max_length=30)
-    unverified: list[str] = Field(default_factory=list, max_length=30)
-
-
 def history(catalog, run_id):
-    """Each ancestor retains its own binding, budget and nullable usage."""
+    """Each ancestor retains its own binding and nullable usage."""
     rounds = []
     while run_id is not None:
         run = catalog.get_run(UUID(str(run_id)))
@@ -30,7 +18,8 @@ def history(catalog, run_id):
         rounds.append({'run_id':str(run.run_id), 'parent_run_id':str(run.parent_run_id) if run.parent_run_id else None,
             'kb_id':str(run.kb_id), 'revision_id':str(run.revision_id), 'status':run.status.value,
             'stop_reason':run.stop_reason, 'task_kind':run.resolved_config.task_kind,
-            'budget':run.resolved_config.budget.model_dump(mode='json'), 'usage':run.usage.model_dump(),
+            'budget':run.resolved_config.budget,
+            'usage':run.usage.model_dump(),
             'save':detail.get('save')})
         run_id = run.parent_run_id
     rounds.reverse()
@@ -39,7 +28,7 @@ def history(catalog, run_id):
     return {'rounds':rounds, 'total_usage':total}
 
 
-def continuation(catalog, kb_id, parent_run_id, report_path):
+def continuation(catalog, kb_id, parent_run_id):
     try:
         parent = catalog.get_run(parent_run_id)
     except RagError as error:
@@ -55,11 +44,6 @@ def continuation(catalog, kb_id, parent_run_id, report_path):
     if not progress or not progress.get('goal'):
         raise ValueError('Research progress is missing. Start a new task with the original goal, constraints and gaps.')
     rounds = history(catalog, parent_run_id)['rounds']
-    if report_path:
-        for item in rounds:
-            saved = item['save']
-            if saved and Path(saved['path']).resolve() == Path(report_path).resolve():
-                raise ValueError('Continue research with a new report path; historical reports are preserved.')
     # These public notes are context only. No old source bodies, source handles
     # or evidence IDs enter the new registry or authorize citations.
     public_rounds = []

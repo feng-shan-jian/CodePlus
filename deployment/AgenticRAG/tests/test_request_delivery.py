@@ -4,7 +4,6 @@ These are protocol boundary tests, not network-model acceptance evidence.
 """
 import asyncio
 import json
-import time
 
 import httpx
 import pytest
@@ -12,48 +11,23 @@ import pytest
 from codeplus.client import create_client, scoped_client
 from codeplus.config import ProviderConfig
 from codeplus.conversation import ConversationManager, ToolResultBlock, ToolUseBlock
-from codeplus.run_policy import BudgetStop, SourceSpan
+from codeplus.run_policy import SourceSpan
 from codeplus.tools.base import StreamEnd
 
 
 class Control:
-    output_cap = 17
-    purpose = 'agent'
-
     def __init__(self, refuse=False):
-        self.deadline = time.monotonic()+10
         self.refuse = refuse
         self.requests, self.outcomes = [], []
 
     async def before_send(self, request):
         self.requests.append(request)
         if self.refuse:
-            raise BudgetStop('fixture_refusal', hard=True)
+            raise ValueError('fixture_refusal')
         return 'permit'
 
     async def settled(self, permit, result):
         self.outcomes.append((permit, result))
-
-
-def test_final_http_hook_refuses_when_synchronous_admission_crosses_deadline():
-    async def run():
-        parent=create_client(ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic'))
-        sent=[]
-        client=scoped_client(parent,transport=httpx.MockTransport(lambda request:sent.append(request)))
-        class Slow(Control):
-            async def before_send(self,request):
-                permit=await super().before_send(request)
-                self.deadline=time.monotonic()-.001
-                return permit
-        control=Slow()
-        try:
-            with pytest.raises(BudgetStop,match='time_budget'):
-                _=[event async for event in client.stream(conversation(),control=control)]
-            assert not sent
-            assert control.outcomes[0][0]=='permit' and control.outcomes[0][1].delivery=='not_sent'
-        finally:
-            await client.aclose();await parent._client.close()
-    asyncio.run(run())
 
 
 def test_repeated_cancel_during_local_settlement_cannot_abandon_receipt():
@@ -101,7 +75,7 @@ def conversation():
 
 
 @pytest.mark.parametrize('protocol', ['anthropic', 'openai', 'openai-compat'])
-def test_sdk_gate_restores_refusal_without_transport_or_retry(protocol):
+def test_sdk_gate_restores_refusal_without_transport(protocol):
     async def run():
         calls = []
         async def transport(request):
@@ -111,14 +85,16 @@ def test_sdk_gate_restores_refusal_without_transport_or_retry(protocol):
         client = scoped_client(parent, transport=httpx.MockTransport(transport))
         control = Control(refuse=True)
         try:
-            with pytest.raises(BudgetStop, match='fixture_refusal'):
+            with pytest.raises(ValueError, match='fixture_refusal'):
                 async for _ in client.stream(conversation(), system='system', control=control):
                     pass
             assert calls == []
-            assert len(control.requests) == len(control.outcomes) == 1
-            assert control.outcomes[0][1].delivery == 'not_sent'
+            assert len(control.requests) == len(control.outcomes) == parent._client.max_retries + 1
+            assert len({request.request_id for request in control.requests}) == len(control.requests)
+            assert all(outcome.delivery == 'not_sent' for _,outcome in control.outcomes)
             body = json.loads(control.requests[0].raw_body)
-            assert body['max_output_tokens' if protocol == 'openai' else 'max_tokens'] == 17
+            if protocol != 'openai':
+                assert body['max_tokens'] == parent.max_output_tokens
             mapping = control.requests[0].mappings[0]
             node = body
             for part in mapping.path:
@@ -128,6 +104,45 @@ def test_sdk_gate_restores_refusal_without_transport_or_retry(protocol):
         finally:
             await client.aclose()
             await parent._client.close()
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize('protocol', ['anthropic', 'openai', 'openai-compat'])
+def test_sdk_retries_503_with_separate_attempt_receipts(protocol):
+    async def run():
+        parent=create_client(ProviderConfig('fixture',protocol,'https://fixture.invalid','fixture','synthetic'))
+        parent._client=parent._client.with_options(max_retries=1,default_headers={'x-fixture':'preserved'})
+        calls=[]
+        def transport(request):
+            calls.append(request)
+            assert request.headers['x-fixture']=='preserved'
+            if len(calls)==1:
+                return httpx.Response(503,headers={'retry-after-ms':'1'},json={'error':{'message':'temporarily unavailable'}})
+            if protocol=='anthropic':
+                events=[{'type':'message_start','message':{'id':'m','type':'message','role':'assistant','content':[],
+                    'model':'fixture','usage':{'input_tokens':10,'output_tokens':0}}},
+                    {'type':'message_delta','delta':{'stop_reason':'end_turn'},'usage':{'output_tokens':1}},
+                    {'type':'message_stop'}]
+            elif protocol=='openai':
+                events=[{'type':'response.completed','sequence_number':0,'response':{'id':'r','object':'response',
+                    'created_at':1,'model':'fixture','status':'completed','output':[],
+                    'usage':{'input_tokens':10,'output_tokens':1,'total_tokens':11}}}]
+            else:
+                events=compat_events('stop')
+            content=sse(events,named=protocol!='openai-compat')+(b'data: [DONE]\n\n' if protocol=='openai-compat' else b'')
+            return httpx.Response(200,headers={'content-type':'text/event-stream'},content=content)
+        client=scoped_client(parent,transport=httpx.MockTransport(transport))
+        control=Control()
+        try:
+            events=[event async for event in client.stream(conversation(),control=control)]
+            assert len(calls)==len(control.requests)==len(control.outcomes)==2
+            assert len({request.request_id for request in control.requests})==2
+            assert [outcome.delivery for _,outcome in control.outcomes]==['rejected','confirmed']
+            assert control.outcomes[0][1].raw_usage is None
+            assert any(isinstance(event,StreamEnd) for event in events)
+            assert parent._client.max_retries==client._client.max_retries==1
+        finally:
+            await client.aclose();await parent._client.close()
     asyncio.run(run())
 
 

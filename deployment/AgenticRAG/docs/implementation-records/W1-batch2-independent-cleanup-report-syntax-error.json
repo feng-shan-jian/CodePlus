@@ -1,9 +1,0 @@
-{
-  "status": "FAIL",
-  "kind": "auxiliary_report_python_syntax",
-  "at": "2026-09-22T19:08:37.9346935Z",
-  "script": "C:/Users/18221/AppData/Local/Temp/codeplus-w1-batch2-cleanup-20260923/report.py",
-  "error": "SyntaxError: closing parenthesis '}' does not match opening parenthesis '(' on line 40; reported at line 41",
-  "execution": "Python failed before running the helper; no report generation or filesystem/Docker mutation ran in this invocation.",
-  "prior_cleanup": "Owned root and exact Docker resources already removed successfully; after audit PASS_WITH_EXPLICIT_METADATA_OBSERVATIONS remains unchanged."
-}

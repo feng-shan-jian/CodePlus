@@ -1,3 +1,0 @@
-{"status": "ok", "generated_files": 612, "questions": 2556, "documents": 609}
-
---- STDERR ---

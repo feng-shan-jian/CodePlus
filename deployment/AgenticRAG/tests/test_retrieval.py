@@ -9,9 +9,9 @@ import pytest
 
 from agentic_rag.capabilities import EmbeddingResponse, EmbeddingResult, ModelTimings
 from agentic_rag.config import KnowledgeConfig, resolve_run
-from agentic_rag.domain import RagError, Span
+from agentic_rag.domain import RagError
 from agentic_rag.evidence import DeliveryGateway
-from agentic_rag.citations import CitationRegistry
+from agentic_rag.citations import open_citation
 from agentic_rag.retrieval import DenseSearch, RetrievalSearch, reciprocal_rank_fusion
 from agentic_rag.sources import SourceSession
 from agentic_rag.storage import Catalog, publication
@@ -138,7 +138,7 @@ def test_partial_branch_failure_persists_diagnostics_without_new_evidence(tmp_pa
             assert [db.execute('SELECT count(*) FROM '+table).fetchone()[0] for table in ('source_candidates','delivered_evidence')]==previous
             assert db.execute('SELECT status FROM source_calls WHERE call_id=?',(call_id,)).fetchone()==('error',)
         item=first.payload['items'][0]
-        assert CitationRegistry(session).save(evidence,(Span.model_validate(item['returned_spans'][0]),),(item['text'],))
+        assert open_citation(catalog,evidence)['quotes']==[item['text']]
 
 
 def test_both_branches_hold_old_pin_when_current_publishes_between_them(tmp_path):

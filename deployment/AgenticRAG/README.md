@@ -1,142 +1,49 @@
-# AgenticRAG 独立开发区
+# AgenticRAG
 
-状态：当前提供独立核心、处理归档、本地模型 worker、首次发布、普通增删改整批发布、手动恢复与放弃、固定 Dense/BM25/Hybrid 检索、逐 Chunk Rerank、Context 选择、原文与引用，以及宿主开发接入。实际验收和提交状态见任务台账。更新日期：2026-09-23。后续产品能力按任务台账推进至 R24；用户已删除本阶段 R25/R26。
+AgenticRAG 为 CodePlus 提供知识库管理、`knowledge_search`、`knowledge_open` 和来源信息。回答、工具循环、compact、文件输出和会话继续由现有 Agent 处理。知识工具加入当前 registry，运行结束后恢复原工具及启用状态。
 
-在本目录完成 RAG 的独立实现及 Windows 功能与质量验收。本阶段保留现有 CodePlus Agent 适配接点，不迁入 CodePlus 主发行包。
+当前使用独立核心包及 CodePlus 适配层，Windows 宿主与 GPU worker 可以使用不同 Python 环境。知识库管理支持创建、导入、更新、删除、重建、恢复、版本读取和索引回收。解析范围为 Markdown 与纯文本。
 
-已确认：独立 RAG 核心，通过适配层复用现有 CodePlus Agent；不另造一套 Agent 执行引擎。以下保留完整产品目标，当前实现范围见下一节和任务台账。
+## 使用
 
-## 当前开发包
-
-开发接入复用现有 CodePlus 两个 Agent 循环，在 TUI、原 `-p` 和已有 Remote 中提供 `/knowledge` 创建、选择、导入、更新、删除、状态、来源、失败重试、恢复/放弃、模型选择及历史引用回看。问答与报告继续使用 `ask/report/continue` 和 `--knowledge-library`。显式知识库任务默认 auto，可通过 `--knowledge-mode` 或 `/knowledge ask --mode` 选择 fixed；fixed 搜索只接收 query，auto 只增加三路检索及 Rerank 开关。QA/report 使用各自冻结预算，报告校验后沿宿主权限写文件，继续研究以新运行承接公开线索并重新取证。普通任务保持原入口。安装、日常命令、退出码和当前限制见 [宿主开发接入](docs/codeplus-integration.md)，调用与追踪见 [检索](docs/retrieval.md)。
-
-发行名 `codeplus-agentic-rag`，导入名 `agentic_rag`，Python >=3.11，核心依赖 Pydantic 2、APSW 3.53.4.0、markdown-it-py 4.0.0 与 tokenizers 0.23.2；当前验证环境为 Windows/Python 3.14.3，APSW 实际嵌入 SQLite 3.53.4。本地模型通过独立 CUDA worker 执行；模型变化需要用户明确确认重建。导入核心不加载 CodePlus、Milvus、Torch 或 Transformers。
-
-独立安装与开发（Windows/pwsh，显式设置独立环境，避免改根 `.venv`）：
-
-```powershell
-$env:UV_PROJECT_ENVIRONMENT = Join-Path $env:LOCALAPPDATA 'CodePlus/agentic-rag-core-venv'
-uv sync --project deployment/AgenticRAG --locked
-uv build deployment/AgenticRAG --out-dir C:/Temp/agentic-rag-artifacts
-```
-
-安装发行 wheel 可使用 `uv pip install --python <独立环境解释器> <wheel绝对路径>`。这不安装宿主或 GPU 依赖。开发锁含正式测试/构建工具及 PyMilvus 3.0.2：上述默认 `uv sync --locked` 会安装 SDK，供发布、来源和恢复等正式测试通过实际适配器构造器注入受控 SDK 传输；这些 CPU 测试不需要连接 Milvus 服务。核心发行 wheel 的四项运行依赖保持不变，SDK 仍只属于可选 `milvus` extra；真实 Milvus、CUDA 和宿主验收另按各自入口显式准备。运行依赖及传递依赖由锁固定，tokenizer 资产使用显式外部缓存。必须使用带 WAL 修复的 SQLite，存储层拒绝低于 3.51.3 的实际运行版本，不使用当前标准库的 SQLite 3.50.4。本阶段不以 Linux 或最终主发行安装为验收门槛。
-
-配置只接收调用方显式传入的 `knowledge` 对象，优先级为 `explicit > configured > defaults > Schema 默认`。默认检索模式为 `auto`；候选数量、分块参数、QA/报告预算必须显式提供试验值，尚未冻结质量参数。字段、可运行示例、身份与协议边界见 [领域与配置](docs/domain-and-configuration.md)，R05 的两条真实发行安装证据见 [R05](docs/implementation-records/R05.md)。分发包不包含该文档目录，源码开发区可查阅。
-
-`agentic_rag.storage.Catalog` 接收宿主已解析的本机绝对目录，创建或打开明确属于本应用的数据目录。当前提供关系约束、短事务、归档、批次手动接管、完整版本 pin 和索引验证/发布；产品恢复命令和自动 GC 仍在后续任务。接口、路径限制、持久化边界和 R06 证据见 [存储与并发](docs/storage-and-concurrency.md)。
-
-`agentic_rag.ingestion` 处理明确选择的本机 Markdown/TXT 文件或目录。`select_inputs` 固定清单，`Catalog.begin_import` 登记基准版和完整配置，`capture_inputs` 保存完整原件，`process_inputs` 从归档解析并原子接纳完整处理检查点，`read_processed` 核验重开结果。相同路径延续文档身份，显式更新支持改名，缺失文件不自动删除；没有 watcher。见 [输入快照](docs/input-snapshots.md)、[解析与来源映射](docs/parsing-and-source-maps.md)。
-
-`ingestion.build.build_first_revision` 在全部捕获/处理成功后，通过 R09 provider 编码并构建每版独立 Milvus Collection。`storage.publication` 以全量真实校验凭据原子登记回执和当前指针；`retrieval.DenseSearch` 使用运行绑定版的编码、来源和 canonical body。数据库SDK通过 `milvus` extra安装（PyMilvus3.0.2 / Milvus3.0.1），与核心和CUDA环境分开。运行时token显式传入adapter，不入业务快照。正式路径、UTF-8限额、schema和复跑入口见 [首次发布与Dense](docs/first-publication.md)。
-
-`retrieval.RetrievalSearch` 共用同一固定版本与原文映射，按配置执行 Dense、Milvus 原生 BM25 或核心 RRF，再按开关逐 Chunk 重排。BM25 不执行查询 Embedding；Hybrid 任一路或任一重排批次失败，整次报错，不交付中间候选。原始排名、融合及重排轨迹独立持久化，SourceSession 按当前 query 选择不重复的原文区间，再由既有 DeliveryGateway/CitationRegistry 交付及验证正文。内部 runner 的同条件对照、完整请求预算限制及边界见 [检索](docs/retrieval.md)。
-
-`ingestion.begin_changes/build_changes` 将普通新增、更新与显式删除形成完整候选，一批只发布一次；未变向量经完整身份与 float32 摘要核验后复用，失败更新保留旧版，无变化/全失败正常解除占用且不发布。`retry_failed` 只处理失败项并拒绝覆盖后续更新；删除最后成员发布真实空版本。接口和当前边界见 [普通增删改](docs/ordinary-mutations.md)。
-
-`inspect_recovery/continue_recovery/abandon_recovery` 先核对 SQL 终态，显式选择后沿原批次、输入与配置继续。普通和严格首次建库共用完整文档编码检查点，恢复建立新物理候选隔离迟到请求；只清理已放弃、无依赖且有可靠物理归属的候选。SQLite schema 8 保留旧 SQL 和历史引用。运行环境检查、原件修复、清理重试及物理删除限制见 [手动恢复与放弃](docs/manual-recovery.md)。
-
-`SourceSession` 复用实际 RunLease，以不透明来源/游标读取固定版本归档；工具公开文本保留 canonical 码点并附构建时来源边车。`DeliveryGateway` 核对最终协议正文后，仅凭可信 confirmed 回执激活实际子区间；`CitationRegistry` 核验精确摘录并生成稳定脚注，历史引用独立于当前源文件和 Milvus。search/open 共用次数与累计窗口限制，回答模型计量由宿主显式注入。核心受控回执测试不代表真实 HTTP 交付；后者由 R12 验收。接口与边界见 [原文、证据与引用](docs/sources-and-evidence.md)。
-
-`agentic_rag.models.create_local_provider(assembled)` 从统一装配结果的 `worker` 操作配置取得解释器、缓存和私有运行目录。同步 Embedding/Rerank 与 `submit_*` 跟踪句柄共用实际 worker。名称不同但 profile 身份相同复用 GPU 实例；不同身份在单槽卸载后重载，不下载模型、不自动切 CPU/API。安装、显式配置、取消与真实完成区别见 [本地模型 worker](docs/local-model-worker.md)，Windows 实测见 [R09](docs/implementation-records/R09.md)。`local-models` extra 与核心依赖分离，实际 Windows/Python3.14 CUDA 依赖和 hashes 另存 `requirements-local-models-win-py314.lock`；本阶段不验收 Linux。
-
-## 完整产品目标
-
-完整产品沿用 CodePlus 现有基础命令形式管理、查询知识库与生成报告，并保留非交互调用。当前 R12 仅提供上面的显式 use/ask/off 与 QA 开发接点，其余命令及报告继续按任务规划实现；不另建本地 Web 界面或独立产品命令体系。
-
-评测只是开发验收中的批量运行与评分，复用现有 `eval/RAG-eval/` 数据和评分口径，不要求用户使用单独的“评测入口”。R01 已解耦检查/离线评分入口，R10内部runner已调用同一生产Dense核心；真实CodePlus Agent评测仍随宿主接入实现。
-
-开源分发仍是后续方向，本阶段目标为 Windows 上可用的独立 RAG 包及 CodePlus 适配层，不建设带账号和权限管理的多人共享服务。Milvus 保持独立依赖，模型提供方可配置。Linux 正式支持与发行安装另行规划，不能根据本阶段 Windows 功能验收宣称已经完成。
-
-首版本地 Embedding 和 Rerank 要求 NVIDIA GPU，CPU 支持后续补齐；具体显存、驱动和推理依赖要求通过实测确定。模型能力仍按可替换接口设计，后续 API 适配器需单独实现及验收。回答模型继续沿用 CodePlus 配置。
-
-Milvus 保留 Docker Compose 配置和连接已有实例的能力方向；本阶段以真实 Milvus 功能验收为准，不要求发行包内 Compose 资源和两种部署路径的正式安装验收。
-
-原文及必要解析归档保存在可配置的本地数据目录，SQLite 保存文档身份、版本、引用与任务状态，Milvus 负责检索索引。R10首次发布先准备不可变归档与候选索引，再原子切换 SQLite 发布指针；每个发布版本使用独立 Collection。完整增删改、恢复和回收继续R13–R15，未来更换存储后端仍需配套数据迁移及引用完整性验证。
-
-同机多个 CodePlus 进程可以同时查询同一知识库；同一库的导入、更新、删除及重建等修改任务同时只执行一个，冲突时提示忙、稍后重试。已有问答保持原版本，修改成功后供新任务使用。R06 已在独立核心中实际验证库锁互斥、其他库和 pin 登记可进展、进程死亡后的占用核验；CodePlus 宿主接入、完整发布与索引回收仍待后续任务。
-
-本地 Embedding/Rerank 由按需启动并复用的模型工作进程承担，相同配置共享已加载实例，统一安排推理请求。RAG 核心和 Agent 仍在各自宿主进程内运行。R09 已提供单 GPU 有界批次、4 个前台批次后让一个后台批次的试验调度、IPC 取消和闲置退出；复杂负载公平性仍由 R22 验收，CodePlus 生命周期接入仍在 R12。
-
-首版解析范围为 Markdown／纯文本，PDF、DOCX、OCR 留待后续扩展。
-
-Chunk 已按文档结构、句子边界与实际 tokenizer 分块，正文位置与标题模板分开，完整输入包含特殊 token。R08 使用 512/64 试验参数并保持冻结模型 2048 完整输入上限，最终质量参数由 R23 验证；语义切分留待后续评测。
-
-主要使用场景为知识库问答和研究报告：跨文档查证、比较、推断，输出带引用的答案。首版报告由 Agent 自主检索和补查后组织为结构化 Markdown，可保存为文件；不纳入分阶段研究计划、逐章节撰写与复核工作流。
-
-任务使用知识库问答或报告功能时，Agent 调用知识库搜索取得材料，再按需要补查和打开原文；没有使用该功能的普通聊天或其他任务，不自动附加知识库检索。固定/自动模式控制使用知识库后的检索方式，不是给所有对话开启搜索。具体调用顺序与检查机制由接入设计明确，不另设“强制首轮搜索”的用户选项。
-
-首版支持中文提问英文知识库并用中文组织答案，直接引用的原文保持英文。英文检索 query 由现有 CodePlus Agent 生成和改写，再调用 `knowledge_search`；检索核心执行收到的查询。官方英文评测基线保持不变，跨语言能力使用现有语料另设验收，分别报告质量与开销。
-
-Agent 打开搜索来源时，默认读取命中片段所在章节，长章节分页返回；可在预算内继续读取其他章节或逐步读取全文。读取始终绑定本次运行的文档版本，并保留准确的原文位置与未读状态。
-
-知识库问答和报告功能内部提供固定检索和自动检索两种配置模式，不全局生效：固定模式只固定单次检索流程；自动模式还允许 Agent 选择 Dense、BM25 或 Hybrid，以及是否启用 Rerank，候选数量、融合参数和返回片段数量由配置控制。两种模式都允许改写问题、多轮搜索与原文阅读，复用数据、检索与引用能力，均受该功能的运行预算约束。
-
-首版 BM25 使用 Milvus 内置全文检索，与 Dense 索引统一管理。纯 BM25 召回不调用查询 Embedding，开启模型 Rerank 时再进行精排；分词、参数及索引版本隔离需实测。Hybrid 由 RAG 核心分别取得两路结果并执行 RRF，保留原始候选、排名及融合记录。模型 Rerank 逐个 Chunk 排序，保留候选身份和引用位置，需要完整上下文时由 Agent 调用 `knowledge_open`；当前输入模板沿冻结模型配置，质量参数仍待 R23 验收。
-
-知识库问答和报告功能首版默认自动检索，可在该功能配置中修改默认值；每次知识库问答或报告开始前可显式选择本次模式，单次选择不改写功能默认配置。运行开始后按已选模式执行，后续默认配置变化不影响当前任务。即使设置保存在 CodePlus 同一份配置文件中，也只作用于该功能，不改变普通聊天、编程任务或宿主权限模式。
-
-检索或 Rerank 失败时返回明确错误，由 Agent 在预算内处理：自动模式可重试、换检索方式或关闭 Rerank 再试，固定模式按原检索配置重试。程序不自动降级；失败、正常无命中与预算停止分别记录。
-
-进入 Context 的检索证据以相关性为先，去重后兼顾不同文档的互补信息，不强行凑多篇来源；片段数量与 Token 上限同时生效，裁剪后仍保留准确的来源和引用。
-
-正式输出前由程序校验引用是否来自本次取得的证据、版本与位置是否正确、直接原文摘录是否匹配。首版不为每次输出额外调用模型做语义复核；结论支持与引用覆盖通过评测及人工抽检检查，程序校验通过不等于答案正确。
-
-引用程序校验失败时，允许原 Agent 在剩余预算内修正一次并完整重校；仍失败或预算不足时，返回未完成状态与可用证据，不交付未经校验通过的正式答案或报告。
-
-首版支持文档导入、更新、删除，以及新模块今后产生的历史报告引用所对应原文的读取。采用新库重建，不接续旧 RAG 的存储格式与报告引用；原有不完整实现另开独立任务清理删除。
-
-首版保留新模块产生的全部历史原文及引用定位信息，不自动清理。历史检索索引确认不再使用后自动回收；当前版本、运行中任务及重建/恢复流程所需索引继续保留，使用状态不明确时暂不清理。索引回收不影响历史原文与引用定位。
-
-导入与更新由用户手动选择文件或目录后触发，系统识别新增、变化和未变化的文档；首版不自动监控目录。
-
-普通批量导入在整批文件处理结束后，将成功变更统一发布一次，列出失败文件及原因并支持重试；更新失败的文档保留旧版本，失败新增文档不参与检索。处理期间继续查询原已发布版本；新库首次发布前明确提示尚无可查询版本。候选版本须通过完整性校验才可发布，全部失败或无变化时不创建新版本；正式评测另行校验冻结语料是否齐备。
-
-导入中断后保留进度，重新执行相关命令时提示未完成任务，由用户手动选择继续。恢复前核对实际发布状态、输入与配置及已保存结果，复用有效的已完成部分，再处理剩余工作；不会仅因重启程序就自动续跑。同一知识库有待恢复导入时，先继续完成或主动放弃，再执行新的导入、删除或重建；已发布内容仍可查询，其他库不受此修改限制。主动放弃不发布候选内容，不删除已发布版本或历史原文。
-
-续跑使用本批次导入时保存的文件快照，源文件后来的修改留到下一次导入。未保存完整或无法验证的原件明确列为失败，不在续跑时静默换成最新文件；成功部分仍按整批统一发布规则处理。模型、分块等处理配置也沿用本批次记录的原配置；新配置用于后续操作，必要的 Embedding 重建仍先提示确认。原模型或配置无法恢复时明确报错，保留进度与旧版，不静默替换。
-
-同一知识库内，同一路径的内容修改视为更新；改名或移动后默认新增，也可以手动选择“更新已有文档”来延续身份和历史。不同路径不会仅凭内容相同而自动合并。
-
-支持创建多个知识库，每次问答或报告明确选择一个库；Agent 在该库内跨文档检索，不自动合并其他库。
-
-一次问答或报告固定使用开始时已发布的知识库版本；期间发生的文档增删改供后续新任务使用，当前任务的搜索、原文读取和引用保持版本一致。
-
-事实结论只依据知识库证据。允许有依据的跨文档比较、计算与推断；资料不足时回答可确认的部分并说明缺口，不以模型自身知识补齐事实。
-
-知识库问答和研究报告分别配置搜索次数、原文阅读次数、Token 与耗时预算：问答倾向较快完成，报告允许更充分的查证和整理；仍复用同一套 Agent 与检索实现。预算仅作用于知识库功能，独立于固定/自动检索模式。达到上限后结束本次补查，返回有依据的结果、未解决的问题和停止原因，不在运行中询问追加预算。具体数值由基线评测提出并验证，不预先保证报告一定更慢或用尽全部预算。
-
-同一会话中用户明确要求继续研究时，承接上一轮目标、已有发现和未解决问题，优先补查缺口。新一轮有独立预算，绑定开始时最新发布的知识库版本；历史发现只作为线索，引用证据在本轮重新取得并核验。保留各轮用量、停止原因和报告，不自动后台续研，也不静默覆盖旧报告。
-
-首版优先保证证据与答案质量，允许在预算内多花时间查证；时延和成本作为明确约束，仍按上限停止。量化目标通过基线实验提出并在最终验收前冻结，不通过减少证据支持要求来换取表面速度。
-
-Embedding 与 Rerank 首次试用先本地运行，同时按可替换的模型能力设计；已接入的提供方通过配置选择。更换 Embedding 需要重建时先提示，确认后自动构建，成功后切换；失败时说明原因并提供“重试／保留原版”，连续失败也不破坏原版本。
-
-## 规划入口
-
-- **给新 Leader 会话的交接材料**：[任务拆分与执行流程](docs/implementation-task-plan.md)、[逐任务 checklist](docs/implementation-checklist.md)、[可复制提示词](docs/leader-prompt.md)。本阶段目标是完成 R00–R24 共 25 项任务，逐项验收并本地提交，最后通过总体验收；R12 只是中间节点。实际进度以台账和独立验收记录为准。
-- [主规划与已确认需求](docs/plan.md)：D01–D56、功能边界和需求追溯。技术草案、用户确认与实现证据分别记录。
-- [架构与接口契约](docs/architecture-and-contracts.md)：模块依赖、对象/存储、发布恢复、版本隔离、搜索/原文工具、引用与预算、模型工作进程及宿主接点。
-- [验收与分阶段实施计划](docs/acceptance-and-implementation.md)：G0 技术验证、数据隔离、指标口径、功能/故障矩阵及 P0–P7。已确认预算内质量优先；数值目标按冻结程序形成，不冒充已实测。
-- [模型提供方与配置设计](docs/model-providers.md)：本地优先、能力接口、配置选择与模型切换的索引边界。
-- [开源、部署与迁移设计](docs/deployment-and-packaging.md)：同进程包与独立服务的取舍、开源安装、当前打包边界和未来服务化工作。
-- 数据集沿用仓库的 [MultiHop-RAG](../../eval/RAG-eval/README.md)，本目录不复制或修改题目、答案、gold 证据。
-- 原有 `compose.yaml` 保留。目录位置变化不代表已经完成运行时或打包迁移。
-
-## 建议的后续目录
-
-以下为草案；按实施需要创建，不提前生成空模块。
+宿主设置中的 `knowledge_development_config` 指向绝对路径 JSON，包含 `knowledge` 与 `worker`。在 CLI、TUI、Remote 使用相同知识命令：
 
 ```text
-AgenticRAG/
-  README.md
-  docs/                 需求、架构、技术决策、任务与验收说明
-  src/agentic_rag/       独立核心及 CodePlus 适配层
-  tests/                正式测试
-  eval/                 按需放置内部批量验证脚本与配置，复用现有数据和评分工具
-  compose.yaml          部署描述
+/knowledge create 我的资料
+/knowledge import "D:\资料\手册.md"
+/knowledge ask --mode auto 这份资料给出了哪些条件？
+/knowledge report --output "D:\Reports\报告.md" 比较资料中的方案并保存报告
+/knowledge continue 补查尚未解决的问题
+/knowledge sources
+/knowledge off
 ```
 
-核心代码不依赖 CodePlus 的界面、会话或全局配置；这些依赖由适配层承接。运行数据采用配置指定的本地存储，具体默认目录、模型缓存和评测产物位置仍待细化，不把大文件和临时产物默认加入 Git。
+CLI 也可使用 `codeplus -p "问题" --knowledge-library <库UUID>`。报告通过普通文件工具保存，遵循宿主权限和覆盖规则。命令、切库及恢复说明见[宿主接入](docs/codeplus-integration.md)。
 
-迁移目标是由 CodePlus 调用同一套已验收实现，完成新的工具、配置与界面接入，并验证通用 Agent 等非 RAG 能力不受影响。旧 RAG 由独立任务退役，不长期维护两份业务实现，也不为旧库或旧报告建设兼容层。
+## 检索与来源
+
+选定配置为 512/64 分块、Dense/BM25 各最多 50、RRF `k=10`、融合后最多 24 块进入 Qwen3-Reranker-0.6B。完整精排及响应检查后保留 `score >= 0.001`，再执行单次输出上限与正文构造；不补齐，允许空结果。关闭精排时不将阈值应用到召回分数。配置见[retrieval-selected.json](docs/retrieval-selected.json)，通过 `assemble_configuration` 合并到知识库配置，不重建索引。
+
+fixed 固定单次检索路线，auto 允许 Agent 选择 Dense、BM25、Hybrid 与精排开关。两者均可多次搜索和分页阅读。`context_chunks/context_tokens` 只限制单次返回；没有 RAG 累计搜索/阅读次数、回答预算或收尾预留。
+
+每轮固定已发布版本；归档保留原文坐标、章节和分页信息。真实交付记录与历史引用读取继续保留。worker、租约及版本 pin 在正常、失败和取消路径释放。详细行为见[检索](docs/retrieval.md)、[来源与交付](docs/sources-and-evidence.md)。
+
+## 开发与验证
+
+```powershell
+uv sync --project deployment/AgenticRAG --locked
+uv build deployment/AgenticRAG --out-dir <绝对产物目录>
+```
+
+核心依赖与 CUDA、Milvus、CodePlus 宿主依赖分离。`local-models` 依赖使用本模块 Windows 锁；模型从显式缓存读取。安装与正式测试命令见[环境与命令](docs/environment-command-matrix.md)。
+
+正式评测保留 MultiHop 原题、答案、Gold 与评分规则，以及 SciFact development/test 划分和句子标注。检索评分、实际 Agent 运行和答案评分分别报告，入口见[开发评测](eval/README.md)与[SciFact](../../eval/scifact-eval/README.md)。
+
+## 文档
+
+- [本轮执行方案](docs/production-simplification-plan-20260927.md)
+- [配置与兼容](docs/domain-and-configuration.md)
+- [存储与并发](docs/storage-and-concurrency.md)、[输入快照](docs/input-snapshots.md)、[解析与来源映射](docs/parsing-and-source-maps.md)
+- [首次发布](docs/first-publication.md)、[普通增删改](docs/ordinary-mutations.md)、[恢复](docs/manual-recovery.md)、[索引生命周期](docs/index-lifetimes.md)
+- [模型 worker](docs/local-model-worker.md)、[模型切换](docs/model-switching.md)
+- [验收与清理结果](docs/production-simplification-acceptance-20260927.md)

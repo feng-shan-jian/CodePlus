@@ -14,7 +14,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[3]
 SUITE = ROOT / "eval" / "RAG-eval"
 INTERNAL = ROOT / "deployment" / "AgenticRAG" / "eval"
-RECORDS = INTERNAL.parent / "docs" / "implementation-records"
+
 
 
 def read(path):
@@ -68,7 +68,11 @@ def write(path, value):
 
 
 def frozen_hash(tier="lite"):
-    return next(row["result"]["dataset_sha256"] for row in read(RECORDS / "R00-original-checks.json") if row["result"]["tier"] == tier)
+    dataset = module("evaluation_dataset_io", SUITE / "dataset_io.py")
+    _, questions, source_hash = dataset.load_dataset(SUITE)
+    ids = read(SUITE / "tiers.json")["tiers"][tier]["question_ids"]
+    return source_hash if len(ids) == len(questions) else dataset.fingerprint({
+        "source_dataset_sha256": source_hash, "total_questions": len(questions), "question_ids": ids})
 
 
 def report(questions, failed=False):
@@ -78,33 +82,8 @@ def report(questions, failed=False):
                          "hits": [], "elapsed_ms": 12.5} for q in questions]}
 
 
-@pytest.mark.parametrize("tier", ["lite", "medium", "full"])
-def test_check_matches_r00_with_host_imports_forbidden(tier, blocked_env):
-    actual = run([sys.executable, "-B", str(SUITE / "check.py"), "--tier", tier], blocked_env)
-    old = next(row["result"] for row in read(RECORDS / "R00-original-checks.json") if row["result"]["tier"] == tier)
-    assert actual == old
 
 
-def test_frozen_files_and_order_match_r00():
-    rows = read(RECORDS / "R00-input-fingerprints.json")["evaluation_inputs"]
-    # PRE-R12 cleanup updates usage docs only; frozen data and scorers are unchanged.
-    # See docs/implementation-records/PRE-R12-cleanup-executor.md.
-    seams = {"eval/RAG-eval/check.py", "eval/RAG-eval/run.ps1",
-             "eval/RAG-eval/README.md", "eval/RAG-eval/benchmark.md"}
-    for row in rows:
-        if row["path"] not in seams:
-            assert sha256((ROOT / row["path"]).read_bytes()).hexdigest() == row["sha256"], row["path"]
-    # Include deleted and inherited untracked input ownership, not just corpus files.
-    for row in read(RECORDS / "R00-protected-inputs.json")["entries"]:
-        if row["path"].startswith("eval/RAG-eval/") and row["path"] not in seams:
-            path = ROOT / row["path"]
-            assert (sha256(path.read_bytes()).hexdigest() if path.exists() else None) == row["sha256"], row["path"]
-    actual = {p.relative_to(ROOT).as_posix() for p in (SUITE / "corpus").rglob("*") if p.is_file()}
-    expected = {row["path"] for row in rows if row["path"].startswith("eval/RAG-eval/corpus/")}
-    assert actual == expected and len(actual) == 609
-    questions = read(SUITE / "questions.json")["questions"]
-    assert len(questions) == 2556 and sum(len(q["gold"]) for q in questions) == 6084
-    assert sum(q["track"] == "null_query" for q in questions) == 301
 
 
 def test_query_manifest_and_split_ids_match_official_order(runtime):

@@ -1,7 +1,0 @@
-{
-  "scope": "actual Milvus production schema; synthetic normalized 1024D vectors",
-  "fault": "index_timeout",
-  "chunks": 1100,
-  "expected_error": "actual Milvus index rows incomplete: {'dense_cosine': {'nlist': '1', 'metric_type': 'COSINE', 'index_type': 'IVF_FLAT', 'field_name': 'dense', 'index_name': 'dense_cosine', 'total_rows': 1100, 'indexed_rows': 1100, 'pending_index_rows': 0, 'state': 'Finished'}, 'sparse_bm25': {'inverted_index_algo': 'DAAT_MAXSCORE', 'bm25_k1': '1.2', 'bm25_b': '0.75', 'metric_type': 'BM25', 'index_type': 'SPARSE_INVERTED_INDEX', 'field_name': 'sparse', 'index_name': 'sparse_bm25', 'total_rows': 1100, 'indexed_rows': 1100, 'pending_index_rows': 0, 'state': 'Finished'}}",
-  "result": "PASS"
-}

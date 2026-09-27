@@ -1,6 +1,6 @@
 # R11 原文、交付与引用核心接口
 
-本文件描述独立核心，不表示 R12 的真实 Agent/HTTP 适配已经完成。实现状态和运行证据见 `implementation-records/R11.md`。没有新的产品命令或第二套 Agent。
+本文件描述独立核心，不表示 R12 的真实 Agent/HTTP 适配已经完成。没有新的产品命令或第二套 Agent。
 
 ## 固定版本与读取
 
@@ -20,24 +20,18 @@ Dense 已核验 Chunk 的 anchor_span 仅由可信宿主写入 opaque source han
 
 `DeliveryGateway` 是宿主内部能力，不装入模型工具。适配层先 `bind_tool_result(result, actual_tool_call_id)`，再对最终 raw HTTP bytes 和 `MappedSpan` 调用 `prepare`。它独立验证三种协议的合法 tool-result 节点与同一结果的 ID：Compat role=tool，Responses function_call_output，Anthropic user/tool_result 且不是 is_error，仅字符串或 text 子块。user/system/assistant、metadata、跨节点借用 ID、未知候选、失效范围、正文不同和映射重叠拒绝。
 
-prepare 返回进程内对象能力，传回 request UUID/JSON 不能自签回执。实际适配层观察协议完整合法终止后才可 `settle(permit, 'confirmed')`；prepared/not_sent/rejected/unknown 无新增资格，confirmed compact 也无新增答复证据。同一次终态调用幂等，不扩大范围或重复计量；request ID 不可重用。R11 正式测试中的 confirmed 是受控可信适配层 fixture，绝不表示网络或模型已经收到资料。R12 负责真实协议终态、超时、不透明 SDK 包装及实际发送行为。
+prepare 返回进程内对象能力，传回 request UUID/JSON 不能自签回执。实际适配层观察协议完整合法终止后才可 `settle(permit, 'confirmed')`；prepared/not_sent/rejected/unknown 无新增资格，confirmed compact 也无新增答复证据。同一次终态调用幂等，不扩大范围或重复计量；request ID 不可重用。R11 正式测试中的 confirmed 是受控可信适配层 fixture，绝不表示网络或模型已经收到资料。真实协议终态与交付由宿主适配层记录。
 
-## 三份独立账本
+## 单次返回与被动记录
 
-SQLite migration 5 新增 source capabilities/calls/usage/candidates、sealed delivery receipts、derived Evidence、当前 retained window 和 saved Citation。SQL1–4 字节保持不变。源调用事务短小；归档读取、完整文本计量和 HTTP JSON 检查在事务外。
+`context_tokens/context_chunks` 限制每次 source 返回；可选 search 上限进一步限制单次搜索。次数、已返回正文总量和片段数仍可记录，但不控制后续 search/open，也不预留收尾配额。正文裁切与去重保留精确原文坐标。
 
-1. searches/opens 按已受理尝试累计，失败和重试仍计数；超限拒绝另计 rejected。RunUsage 同步更新；RunLease.finish 使用持久最新 usage，避免旧 lease 内存覆盖计数。
-2. returned_tokens/returned_fragments 保存所有已返回工具文本的累计成本；探索 token 上限与时间从同一 run 起点扣减，保留 finish reserve。它不是完整 LLM 累计用量，R12/R19 仍需记录所有实际 HTTP 请求。
-3. window_tokens/window_fragments 由 search/open 共同扣减 context_tokens/context_chunks，不能每次重置。只有可信宿主已经执行明确 history 裁剪/保留后，才可用 `retain_prepared_window` 同步一个已校验最终 payload；完整 JSON（含 wrapper）按同一回答模型 meter 保守计量。该方法不能由模型调用，也不宣称交付；不改变历史成本或已 confirmed 资格。generation 防止旧 permit 回滚后来的窗口预留。
-
-Token meter 由宿主注入，必须是回答模型的真实计数或有依据上界，并固定 identity；核心不使用 embedding tokenizer、字符除四或默认猜测。正式测试的 UTF-8 byte unit 明确是受控算法 fixture。完整 LLM messages/tools/overhead、输出与收尾/修正预留的硬门属于 R12/R19。
+宿主计量接口只有 `identity/count(text)`；当前使用 UTF-8 字节保守上界，与回答模型、协议和 tokenizer 解耦。来源窗口只描述实际保留的原文映射，供位置去重和交付追踪使用，不是累计正文额度。
 
 ## 精确引用和历史回看
 
 候选会展示 provisional evidence UUID/marker，但尚不能引用。confirmed 只激活实际映射的子区间；同 evidence 多次送达取有序 union，gap 不被补齐。`read_evidence` 重新核对 payload 与数据库 row/run 绑定，并从同 run、confirmed、非 compact 的 sealed receipts 重算来源区间，拒绝派生元数据损坏后扩大范围。这不是防御同用户重写整个数据库的承诺。
 
-`CitationRegistry.validate/save(evidence_id, spans, quotes)` 核对本 run、版本、成员、章节 own-span、送达区间和逐码点摘录。直接摘录不允许 NFC 替换；多段必须有序不重叠，跨未交付空隙的连续摘录拒绝。多段 quote_hash 对精确 quotes 数组编码计算，连接符/省略号不是原文。
+`open_citation(catalog, citation_id)` 接受答案里的 evidence UUID 或旧 saved citation UUID。读取核对原版本、已交付区间和归档正文；旧引用继续核对原保存的摘录。普通 Agent 自行生成文本与引用标记，适配层不审批、改写或修复答案。
 
-save 返回稳定 Citation 及 evidence_marker→citation_marker 映射。`render_markdown(draft, saved)` 核对真实已保存记录，替换 provisional 标记并生成配对脚注；拒绝未知、缺失、未使用标记以及模型自写来源脚注定义。该核心 renderer 将全部 `[^...]` 语法保留为引用标记，包括代码例子。正式正文在宿主缓冲后调用；R12 的一次原 Agent 修正尚未由本项实现。程序核验不证明语义支持。
-
-`open_citation(catalog, citation_id)` 是历史只读路径，允许终态 run，依赖保存版本归档和元数据，不依赖 source 文件、当前 revision 或 Milvus；不会给另一 run 新证据资格。返回 file/version/section/ranges/lines/quotes 和 hash；归档缺失/损坏明确失败。已确认原文资格与当前窗口保留独立，compact 后仍可复查历史已送达片段。R15 的真实索引 GC 竞争另行验收。
+历史只读路径允许终态 run，依赖保存版本归档和元数据，不依赖源文件、当前 revision 或 Milvus；不会给另一 run 新证据资格。返回文件、版本、章节、原文区间、行号、摘录和 hash。已确认原文与当前窗口独立，compact 后仍可复查。

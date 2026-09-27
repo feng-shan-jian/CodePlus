@@ -10,7 +10,7 @@ import httpx
 import pytest
 import websockets
 
-from codeplus.client import create_client, scoped_client
+from codeplus.client import scoped_client
 from codeplus.config import AppConfig, ProviderConfig
 from codeplus.remote import RemoteServer
 from codeplus.tools.base import StreamEnd, TextDelta
@@ -50,14 +50,16 @@ def test_websocket_owner_cancels_during_http_and_permissions(tmp_path, monkeypat
                     http_closed.set()
             if len(calls) == 1:
                 response = H['sse_text'](calls=('search', 'knowledge_search', {'query': 'telescope certificate'}), terminal='tool_calls')
-            else:
+            elif len(calls) == 2:
                 source = next(m['content'] for m in body['messages'] if m['role'] == 'tool' and '<source ' in m['content'])
                 item = json.JSONDecoder().raw_decode(source)[0]['items'][0]
                 text = source.split('>\n', 1)[1].split('\n</source>', 1)[0]
-                response = H['sse_text'](json.dumps({'markdown': '# Report\nVerified [^'+item['evidence_id']+']',
-                    'citations': [{'evidence_id': item['evidence_id'], 'spans': item['returned_spans'], 'quotes': [text]}]}))
+                response = H['sse_text'](calls=('write','WriteFile',{'file_path':str(tmp_path/'report.md'),
+                    'content':'# Report\nVerified [^'+item['evidence_id']+']'}),terminal='tool_calls')
+            else:
+                response = H['sse_text']('Report saved.')
             return httpx.Response(200, headers={'content-type': 'text/event-stream'}, content=response)
-        monkeypatch.setattr(P, 'scoped_client', lambda parent: scoped_client(parent, transport=httpx.MockTransport(transport)))
+        monkeypatch.setattr('codeplus.client.scoped_client', lambda parent: scoped_client(parent, transport=httpx.MockTransport(transport)))
         config = AppConfig(providers=[provider], enable_fork=False, knowledge_development_config=str(config_path))
         server = RemoteServer([provider], config=config)
         server._init_agent()
@@ -121,7 +123,7 @@ def test_websocket_owner_cancels_during_http_and_permissions(tmp_path, monkeypat
                         assert not any(m['type'] == 'stream_text' for m in seen)
                     else:
                         complete = [m for m in seen[begin:] if m['type'] == 'loop_complete']
-                        assert len(complete) == 1 and complete[0]['data']['totalTurns'] == 2
+                        assert len(complete) == 1 and complete[0]['data']['totalTurns'] == 3
                     assert len([m for m in seen[begin:] if m['type'] == 'command_done']) == 1
                     assert busy_at_done[-1] is False
                 monkeypatch.setattr(original_agent.client, 'stream', ordinary_stream)
@@ -186,10 +188,13 @@ def test_websocket_knowledge_body_is_not_redispatched(tmp_path, monkeypatch, act
             else:
                 item = json.JSONDecoder().raw_decode(source)[0]['items'][0]
                 text = source.split('>\n', 1)[1].split('\n</source>', 1)[0]
-                response = H['sse_text'](json.dumps({'markdown': 'Verified [^'+item['evidence_id']+']',
-                    'citations': [{'evidence_id': item['evidence_id'], 'spans': item['returned_spans'], 'quotes': [text]}]}))
+                if action == 'report' and not any(m.get('tool_call_id') == 'write' for m in value['messages']):
+                    response = H['sse_text'](calls=('write','WriteFile',{'file_path':str(tmp_path/'slash-report.md'),
+                        'content':'Verified [^'+item['evidence_id']+']'}),terminal='tool_calls')
+                else:
+                    response = H['sse_text']('Verified [^'+item['evidence_id']+']')
             return httpx.Response(200, headers={'content-type': 'text/event-stream'}, content=response)
-        monkeypatch.setattr(P, 'scoped_client', lambda parent: scoped_client(parent, transport=httpx.MockTransport(transport)))
+        monkeypatch.setattr('codeplus.client.scoped_client', lambda parent: scoped_client(parent, transport=httpx.MockTransport(transport)))
         server = RemoteServer([provider], config=AppConfig(providers=[provider], enable_fork=False,
             knowledge_development_config=str(config_path)))
         server._init_agent()

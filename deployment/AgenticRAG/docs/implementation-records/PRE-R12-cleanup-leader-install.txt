@@ -1,3 +1,0 @@
-{"status": "passed", "report": "D:\\CodePlus\\deployment\\AgenticRAG\\docs\\implementation-records\\PRE-R12-cleanup-leader-installations.json", "installations": 2}
-
---- STDERR ---

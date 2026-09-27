@@ -4,8 +4,6 @@ from contextlib import contextmanager
 import json
 from pathlib import Path
 import runpy
-import subprocess
-import sys
 import threading
 from types import SimpleNamespace
 from uuid import UUID, uuid4
@@ -237,13 +235,28 @@ def test_cancel_strict_rebuild_and_recovery_retains_original(user, monkeypatch, 
 
 @pytest.mark.parametrize('action', ['ask', 'report', 'continue'])
 @pytest.mark.parametrize('body', ['/knowledge status', '/session new'])
-def test_prompt_body_is_data_in_actual_main(tmp_path, action, body):
-    argv = [sys.executable, '-I', '-B', '-X', 'utf8', str(Path(__file__).with_name('r21_cli_controlled.py')),
-            '--root', str(tmp_path/'cli'), '--scenario', 'complete', '--command', action, '--body', body]
-    done = subprocess.run(argv, cwd=tmp_path, capture_output=True, text=True, encoding='utf-8', timeout=90)
-    (tmp_path/'stdout.log').write_text(done.stdout, encoding='utf-8')
-    (tmp_path/'stderr.log').write_text(done.stderr, encoding='utf-8')
-    (tmp_path/'command.json').write_text(json.dumps({'argv': argv, 'cwd': str(tmp_path), 'exit_code': done.returncode}, indent=2), encoding='utf-8')
-    assert done.returncode == 0, done.stdout+done.stderr
-    validation = json.loads((tmp_path/'cli/validation.json').read_text(encoding='utf-8'))
-    assert validation['status'] == 'PASS' and validation['body_preserved']
+def test_prompt_body_is_data_in_actual_main(tmp_path, monkeypatch, capsys, action, body):
+    from codeplus.__main__ import _run_prompt
+    from codeplus.config import AppConfig, ProviderConfig
+    from codeplus.permissions import PermissionMode
+    from codeplus.agent import StreamText, LoopComplete
+    from codeplus.run_policy import RunOutcome
+    from agentic_rag.adapters.codeplus import policy as P
+    observed=[]
+    async def run(self, conversation):
+        observed.append(conversation.history[-1].content)
+        self.last_run_outcome=RunOutcome('completed','finished',run_id=str(uuid4()))
+        yield StreamText('plain answer')
+        yield LoopComplete(1)
+    monkeypatch.setattr('codeplus.agent.Agent.run',run)
+    monkeypatch.setattr(P,'load_policy',lambda *args,**kwargs:object())
+    monkeypatch.chdir(tmp_path)
+    provider=ProviderConfig('fixture','openai-compat','https://fixture.invalid','fixture','synthetic')
+    provider.context_window=100000
+    config=AppConfig(providers=[provider],enable_fork=False,knowledge_development_config=str(tmp_path/'config.json'))
+    options = ('--output report.md ' if action=='report' else
+               '--run '+str(uuid4())+' ' if action=='continue' else '')
+    command=action+' '+options+body
+    code=asyncio.run(_run_prompt(config,PermissionMode.BYPASS,None,'/knowledge '+command,
+                                knowledge_library=str(uuid4())))
+    assert code==0 and observed==[body]

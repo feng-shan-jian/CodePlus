@@ -1,8 +1,0 @@
-{
-  "path": "R08-boundaries-round1.txt",
-  "original_sha256": "5c66814fcb8fb4be6129e429259bbd5e47581e145309076bc000a4b3dd101eff",
-  "archived_sha256": "bbd90b6be68c05fa524675218227a9913b4f356062d92455b0fed41f5c2fbb8c",
-  "environment_repr_lines_redacted": 4,
-  "repetitive_lines_compressed": 8,
-  "rule": "replace entire environment repr; hash and abbreviate >1000-character repetitive parameter IDs; normalize trailing whitespace/newlines; preserve errors/counts"
-}

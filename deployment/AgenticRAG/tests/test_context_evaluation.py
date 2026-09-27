@@ -9,22 +9,19 @@ R=runpy.run_path(str(Path(__file__).with_name('test_retrieval.py')))
 E=runpy.run_path(str(Path(__file__).parents[1]/'eval/dense_runner.py'))
 
 
-def test_query_only_runner_keeps_ranking_and_explicit_context_failure(tmp_path):
+def test_query_only_runner_prepares_selected_sources_without_confirming_delivery(tmp_path):
     catalog,kb,base,rows,backend=R['published'](tmp_path)
     calls=[];backend.search=R['transport'](rows,calls)
     data=R['configured'](base,'bm25').model_dump(mode='json')
-    data['retrieval']['context_tokens']=3000
     config=KnowledgeConfig.model_validate_json(json.dumps(data))
     class Meter(R['S']['ControlledMeter']):
-        model='deepseek-chat'
-        def input_upper_bound(self,raw_body,*,output_cap):
-            raise ValueError('controlled final request meter failure')
+        pass
     result=E['query_context'](catalog,kb,str(catalog.get_library(kb).current_revision_id),config,None,backend,Meter(),'query')
     assert len(calls)==1 and len(result['hits'])==3
-    assert result['context']['status']=='error' and result['context']['prepared']==[]
+    assert result['context']['status']=='ok' and result['context']['prepared']
     assert result['context']['answer_model_executed'] is False
     assert E['completion_status']({'errors':0,'context_errors':1})=='COMPLETE_WITH_CONTEXT_ERRORS'
-    assert E['completion_status']({'warm_repeat':result})=='COMPLETE_WITH_AUXILIARY_ERROR'
+    assert E['completion_status']({'warm_repeat':result})=='PASS'
     with catalog._db.transaction() as db:
         assert db.execute('SELECT count(*) FROM delivered_evidence').fetchone()==(0,)
         assert db.execute("SELECT count(*) FROM delivery_receipts WHERE status='prepared'").fetchone()==(0,)

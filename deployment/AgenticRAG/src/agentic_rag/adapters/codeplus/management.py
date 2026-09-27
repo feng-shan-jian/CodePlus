@@ -11,13 +11,12 @@ from pathlib import Path
 import threading
 from uuid import UUID, uuid4
 
-from ...config import ProcessingSnapshot
+from ...config import DevelopmentConfig, ProcessingSnapshot
 from ...domain import ErrorCode, RagError
 from ...ingestion import (InputSelection, begin_changes, build_changes, retry_failed,
     mutation_summary, inspect_recovery, continue_recovery, abandon_recovery)
 from ...model_switch import inspect_model_switch, apply_model_switch
 from ...storage import Catalog, OwnerToken
-from .policy import DevelopmentConfig
 
 
 def load_settings(path):

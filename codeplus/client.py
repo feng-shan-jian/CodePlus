@@ -13,7 +13,7 @@ from anthropic import AsyncAnthropic
 from openai import AsyncOpenAI
 
 from codeplus.config import ProviderConfig
-from codeplus.run_policy import (BudgetStop, ModelCallControl, PreSendGate,
+from codeplus.run_policy import (ModelCallControl, PreSendGate,
                                  PreparedRequest, RequestOutcome)
 from codeplus.conversation import ConversationManager
 from codeplus.mcp.loading_strategy import NATIVE_TOOL_SEARCH_BETA
@@ -152,33 +152,50 @@ def scoped_client(parent: LLMClient, *, transport=None) -> LLMClient:
     async def before_send(request):
         call = _active_control.get()
         if call is None:
-            raise RuntimeError('controlled client requires a per-request control')
-        call.gate.observed = True
+            return
+        if call.gate is not None:
+            previous, call.gate = call.gate, None
+            await call.control.settled(previous.permit, RequestOutcome(
+                'not_sent' if previous.refusal is not None else
+                'rejected' if call.http_status is not None and call.http_status >= 300 else 'unknown',
+                None, None, int((time.monotonic()-call.started)*1000),
+                error_type=type(previous.refusal).__name__ if previous.refusal else None,
+                terminal_details={'http_status':call.http_status} if call.http_status is not None else None))
+        call.gate = PreSendGate()
+        call.http_status = None
+        call.started = time.monotonic()
         try:
             call.gate.permit = await call.control.before_send(PreparedRequest(
-                call.gate.request_id, bytes(request.content), call.protocol,
-                tuple(call.mappings), call.control.output_cap))
-            # Synchronous metering/SQLite work can cross the deadline before
-            # asyncio gets a chance to dispatch its timeout callback.
-            if time.monotonic() >= call.control.deadline:
-                raise BudgetStop('time_budget', hard=True)
+                call.gate.request_id, await request.aread(), call.protocol,
+                tuple(call.mappings)))
         except BaseException as error:
             call.gate.refusal = error
             raise
 
+    async def received_headers(response):
+        call = _active_control.get()
+        if call is not None:
+            call.http_status = response.status_code
+
     result = copy.copy(parent)
-    owned = httpx.AsyncClient(follow_redirects=False,
-        transport=transport if transport is not None else httpx.AsyncHTTPTransport(retries=0),
-        event_hooks={'request': [before_send]})
+    parent_http = parent._client._client
+    owned = httpx.AsyncClient(
+        headers=parent_http.headers, cookies=parent_http.cookies, params=parent_http.params,
+        auth=parent_http.auth, timeout=parent_http.timeout,
+        follow_redirects=parent_http.follow_redirects, max_redirects=parent_http.max_redirects,
+        trust_env=parent_http.trust_env, transport=transport,
+        event_hooks={'request': [*parent_http.event_hooks['request'], before_send],
+                     'response': [received_headers, *parent_http.event_hooks['response']]})
     result._owned_http = owned
-    result._client = parent._client.with_options(http_client=owned, max_retries=0)
+    result._client = parent._client.with_options(http_client=owned)
     return result
 
 
 class _ControlledRequest:
     def __init__(self, control, protocol, mappings):
         self.control, self.protocol, self.mappings = control, protocol, mappings
-        self.gate = PreSendGate()
+        self.gate = None
+        self.http_status = None
         self.raw_usage = None
         self.terminal = None
         self.terminal_details = None
@@ -196,44 +213,43 @@ class _ControlledRequest:
 @asynccontextmanager
 async def _request(client, control, protocol, mappings):
     if control is None:
-        if getattr(client, '_owned_http', None) is not None:
-            raise RuntimeError('scoped client cannot make an uncontrolled request')
         yield client._client, None
         return
+    owned = None
     if getattr(client, '_owned_http', None) is None:
-        raise RuntimeError('ModelCallControl requires an owned scoped client')
-    if type(control.output_cap) is not int or control.output_cap < 1:
-        raise BudgetStop('invalid_output_cap', hard=True)
-    remaining = control.deadline-time.monotonic()
-    if remaining <= 0:
-        raise BudgetStop('time_budget', hard=True)
+        owned = scoped_client(client)
+        client = owned
     call = _ControlledRequest(control, protocol, mappings)
     token = _active_control.set(call)
     primary = None
     try:
-        async with asyncio.timeout_at(control.deadline):
-            yield client._client.with_options(timeout=remaining, max_retries=0), call
+        yield client._client, call
     except BaseException as error:
-        primary = call.gate.refusal or error
-        if call.gate.refusal is not None:
+        primary = call.gate.refusal if call.gate and call.gate.refusal is not None else error
+        if call.gate and call.gate.refusal is not None:
             if call.gate.refusal is error:
                 raise
             raise call.gate.refusal from error
-        if isinstance(error, TimeoutError):
-            primary = BudgetStop('time_budget', hard=True)
-            raise primary from error
         raise
     finally:
         _active_control.reset(token)
-        delivery = ('not_sent' if call.gate.refusal is not None else
+        delivery = ('not_sent' if call.gate and call.gate.refusal is not None else
                     'confirmed' if call.confirmed else
-                    'rejected' if getattr(primary, 'status_code', None) is not None else 'unknown')
+                    'rejected' if (call.http_status is not None and call.http_status >= 300)
+                                  or getattr(primary, 'status_code', None) is not None else 'unknown')
         outcome = RequestOutcome(delivery, call.raw_usage, call.terminal,
             int((time.monotonic()-call.started)*1000), call.response_model,
             type(primary).__name__ if primary else None, call.terminal_details)
         # Settlement is a local durable write, and must complete before the run
         # can terminalize. Repeated consumer cancellation cannot abandon it.
-        settlement = asyncio.create_task(control.settled(call.gate.permit, outcome))
+        async def settle_and_close():
+            try:
+                if call.gate is not None:
+                    await control.settled(call.gate.permit, outcome)
+            finally:
+                if owned is not None:
+                    await owned.aclose()
+        settlement = asyncio.create_task(settle_and_close())
         cancelled = False
         try:
             while not settlement.done():
@@ -339,7 +355,7 @@ class AnthropicClient(LLMClient):
 
         kwargs: dict[str, Any] = {
             "model": self.model,
-            "max_tokens": control.output_cap if control else self.max_output_tokens,
+            "max_tokens": self.max_output_tokens,
             "messages": messages,
         }
         if system:
@@ -359,14 +375,12 @@ class AnthropicClient(LLMClient):
                 }
 
         if self.thinking:
-            if control and control.output_cap <= 1024:
-                raise BudgetStop('thinking_output_cap_too_small', hard=True)
             if _supports_adaptive_thinking(self.model):
                 kwargs["thinking"] = {"type": "enabled", "budget_tokens": 0}
             else:
                 kwargs["thinking"] = {
                     "type": "enabled",
-                    "budget_tokens": (control.output_cap - 1) if control else max(self.max_output_tokens - 1, 1024),
+                    "budget_tokens": max(self.max_output_tokens - 1, 1024),
                 }
 
         current_tool_name = ""
@@ -543,8 +557,6 @@ class OpenAIClient(LLMClient):
             "input": input_messages,
             "stream": True,
         }
-        if control:
-            kwargs['max_output_tokens'] = control.output_cap
         if system:
             kwargs["instructions"] = system
         if tools:
@@ -733,14 +745,12 @@ class OpenAICompatClient(LLMClient):
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
-            "max_tokens": control.output_cap if control else self.max_output_tokens,
+            "max_tokens": self.max_output_tokens,
             "stream": True,
             "stream_options": {"include_usage": True},
         }
         if tools:
             kwargs["tools"] = self._convert_tools(tools)
-        if getattr(control, 'json_output', False):
-            kwargs['response_format'] = {'type': 'json_object'}
 
         # 用于累积 streaming tool call 的状态。Chat Completions 流按
         # tool_calls 列表中的位置索引下发 delta，我们按索引跟踪每个进行中的调用。

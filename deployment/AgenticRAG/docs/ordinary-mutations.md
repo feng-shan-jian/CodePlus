@@ -42,4 +42,4 @@ with retry_failed(catalog, completed_batch_id) as owner:
 
 普通导入若改变文档编码指纹，在登记持久批次前拒绝并说明需要 D16 重建。这里没有实现模型更换确认，也不能把 Git 本地提交授权当作产品内模型切换确认。
 
-SQLite 升至 schema 7，仅新增 `mutations.sql`，v1–v6 SQL 字节不变。新增请求、文件编码结果与完成记录均不可变；原 owner epoch 和 artifact 写入代次没有混同。正式验证包括受控故障测试、两路干净发行安装、真实已提交 v6 包数据升级，以及 `tests/r13_real_acceptance.py` 的安装包 GPU/Milvus 双进程路径。它使用带身份的合成资料验证版本/发布正确性，不提供答案质量或性能门槛结论。实际自测记录见 [R13](implementation-records/R13.md)，最终验收由 Leader 独立执行。
+SQLite 升至 schema 7，仅新增 `mutations.sql`，v1–v6 SQL 字节不变。新增请求、文件编码结果与完成记录均不可变；原 owner epoch 和 artifact 写入代次没有混同。正式回归由现有 mutation、recovery 和 package install 测试覆盖版本、发布与恢复；检索及答案质量另用正式语料评测。

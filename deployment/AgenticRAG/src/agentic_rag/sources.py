@@ -1,32 +1,18 @@
-"""Run-bound search/open surfaces and durable pending source provenance.
-
-The host supplies a verified answer-model token meter. This is a source-return
-budget, not the complete HTTP/LLM budget gate implemented by the host adapter.
-"""
+"""Run-bound search/open with per-result limits and durable source provenance."""
 
 from contextlib import contextmanager
 from dataclasses import dataclass
 import json
 import secrets
 import time
-from typing import Protocol, get_args
+from typing import Protocol
 from uuid import UUID, uuid4
 
-from .domain import BudgetStopReason, ErrorCode, RagError, RunStatus, SourceRef, Span
+from .domain import ErrorCode, RagError, RunStatus, SourceRef, Span
 from .source_archive import contains, digest, encode, invalid, read_ref, read_version, union
 from .retrieval.context import CONTEXT_POLICY, complementary_order, subtract
 from .retrieval.search import select_retrieval
 from .storage.runs import RunLease, read_pin, read_run
-
-
-class SourceBudgetExceeded(RagError):
-    """A known source allowance ended; diagnostics are not a reason protocol."""
-
-    def __init__(self, reason: BudgetStopReason, message: str):
-        if reason not in get_args(BudgetStopReason):
-            raise ValueError('unknown source budget reason')
-        self.reason = reason
-        super().__init__(ErrorCode.BUDGET_EXHAUSTED, message, stage='source_budget')
 
 
 class AnswerTokenMeter(Protocol):
@@ -75,15 +61,19 @@ class ToolSourceResult:
 
 
 class SourceSession:
-    def __init__(self, catalog, lease: RunLease, meter: AnswerTokenMeter, *, dense=None):
+    def __init__(self, catalog, lease: RunLease, meter: AnswerTokenMeter, *, dense=None,
+                 search_result_chunks=None, search_result_upper=None):
         if not isinstance(lease, RunLease) or lease._database is not catalog._db:
             raise invalid('source session requires the actual owning RunLease')
         if not isinstance(meter.identity, str) or not meter.identity.strip():
             raise invalid('an explicit answer token meter identity is required', 'source_budget')
         self.catalog, self.lease, self.meter, self.dense = catalog, lease, meter, dense
         self.run = lease.run
-        self.budget = self.run.resolved_config.budget
         self.retrieval = self.run.resolved_config.retrieval
+        for value in (search_result_chunks,search_result_upper):
+            if value is not None and (type(value) is not int or value<=0):
+                raise ValueError('per-search result limits must be positive integers or None')
+        self.search_result_chunks,self.search_result_upper=search_result_chunks,search_result_upper
         if dense is not None and (dense.catalog is not catalog or dense.run_id != self.run.run_id):
             raise invalid('search service belongs to another run')
         with catalog._db.transaction(write=True) as connection:
@@ -117,32 +107,14 @@ class SourceSession:
     @contextmanager
     def _call(self, kind):
         call_id = uuid4()
-        denied = None
         with self.catalog._db.transaction(write=True) as connection:
             current = self._active(connection)
-            searches, opens, tokens, started = connection.execute('SELECT searches,opens,returned_tokens,started_ns FROM source_usage WHERE run_id=?',
-                (str(self.run.run_id),)).fetchone()
-            count = searches if kind == 'search' else opens
-            maximum = self.budget.searches if kind == 'search' else self.budget.opens
-            if count >= maximum:
-                denied = SourceBudgetExceeded(kind + '_limit', kind + ' call limit exhausted')
-            elif (time.monotonic_ns() - started) // 1_000_000 >= self.budget.duration_ms - self.budget.finish_reserve_ms:
-                denied = SourceBudgetExceeded('time_budget', 'source exploration deadline exhausted')
-            elif tokens >= self.budget.total_tokens - self.budget.finish_reserve_tokens:
-                denied = SourceBudgetExceeded('token_budget', 'source exploration token budget exhausted')
-            if denied:
-                connection.execute('UPDATE source_usage SET rejected=rejected+1 WHERE run_id=?', (str(self.run.run_id),))
-            else:
-                column = 'searches' if kind == 'search' else 'opens'
-                connection.execute(f'UPDATE source_usage SET {column}={column}+1 WHERE run_id=?', (str(self.run.run_id),))
-                usage = current.usage.model_copy(update={column:getattr(current.usage, column)+1})
-                connection.execute('UPDATE runs SET usage=? WHERE run_id=?', (usage.model_dump_json(), str(self.run.run_id)))
+            column = 'searches' if kind == 'search' else 'opens'
+            connection.execute(f'UPDATE source_usage SET {column}={column}+1 WHERE run_id=?', (str(self.run.run_id),))
+            usage = current.usage.model_copy(update={column:getattr(current.usage, column)+1})
+            connection.execute('UPDATE runs SET usage=? WHERE run_id=?', (usage.model_dump_json(), str(self.run.run_id)))
             connection.execute('INSERT INTO source_calls(call_id,run_id,kind,status,error) VALUES(?,?,?,?,?)',
-                (str(call_id), str(self.run.run_id), kind, 'rejected' if denied else 'admitted',
-                 denied.error.message if denied else None))
-        if denied:
-            denied.error=denied.error.model_copy(update={'call_id':str(call_id)})
-            raise denied
+                (str(call_id), str(self.run.run_id), kind, 'admitted', None))
         try:
             yield call_id
         except Exception as exc:
@@ -158,12 +130,6 @@ class SourceSession:
             if error is exc:
                 raise
             raise error from exc
-
-    def _token_allowance(self):
-        usage=self.usage()
-        return min((self.retrieval.context_tokens-usage['window_tokens'], 'context_limit'),
-                   (self.budget.total_tokens - self.budget.finish_reserve_tokens - usage['returned_tokens'], 'token_budget'),
-                   key=lambda allowance: allowance[0])
 
     def _handle(self, connection, kind, payload):
         token = ('src_' if kind == 'source' else 'cur_') + secrets.token_urlsafe(32)
@@ -240,22 +206,15 @@ class SourceSession:
         tokens = self._count(render_payload(payload)[0])
         with self.catalog._db.transaction(write=True) as connection:
             self._active(connection)
-            spent,window,fragments,started = connection.execute('SELECT returned_tokens,window_tokens,window_fragments,started_ns FROM source_usage WHERE run_id=?', (str(self.run.run_id),)).fetchone()
-            if (time.monotonic_ns()-started)//1_000_000 >= self.budget.duration_ms-self.budget.finish_reserve_ms:
-                raise SourceBudgetExceeded('time_budget', 'source exploration deadline exhausted')
-            if tokens+window > self.retrieval.context_tokens:
-                raise SourceBudgetExceeded('context_limit', 'shared source token budget exhausted')
-            if spent + tokens > self.budget.total_tokens - self.budget.finish_reserve_tokens:
-                raise SourceBudgetExceeded('token_budget', 'shared source token budget exhausted')
-            if len(candidates)+fragments > self.retrieval.context_chunks:
-                raise SourceBudgetExceeded('context_limit', 'source fragment count exhausted')
+            if tokens > self.retrieval.context_tokens:
+                raise RagError(ErrorCode.BUDGET_EXHAUSTED, 'source result exceeds the per-call token limit', stage='source_budget')
             for candidate in candidates:
                 connection.execute('INSERT INTO source_candidates VALUES(?,?,?,?,?)',
                     (candidate['candidate_id'],str(self.run.run_id),str(call_id),candidate['evidence_id'],encode(candidate)))
             connection.execute("UPDATE source_calls SET status='ok',tokens=?,fragments=? WHERE call_id=? AND status='admitted'",
                                (tokens,len(candidates),str(call_id)))
-            connection.execute('UPDATE source_usage SET returned_tokens=returned_tokens+?,returned_fragments=returned_fragments+?,window_tokens=window_tokens+?,window_fragments=window_fragments+?,window_generation=window_generation+1 WHERE run_id=?',
-                               (tokens,len(candidates),tokens,len(candidates),str(self.run.run_id)))
+            connection.execute('UPDATE source_usage SET returned_tokens=returned_tokens+?,returned_fragments=returned_fragments+? WHERE run_id=?',
+                               (tokens,len(candidates),str(self.run.run_id)))
         return ToolSourceResult(payload,tuple(UUID(c['candidate_id']) for c in candidates))
 
     def _unreturned(self, ref, section, additional):
@@ -278,7 +237,7 @@ class SourceSession:
             unseen.append(Span(start=position,end=section.span.end))
         return [{'start':span.start,'end':span.end} for span in unseen]
 
-    def open(self, source_ref, *, section_id=None, cursor=None, before_read=None):
+    def open(self, source_ref, *, section_id=None, cursor=None):
         with self._call('open') as call_id:
             if section_id is not None and cursor is not None:
                 raise invalid('section_id and cursor are mutually exclusive', 'source_cursor')
@@ -306,10 +265,6 @@ class SourceSession:
                 if (type(start) is not int or type(range_end) is not int or
                         not section.span.start <= start < range_end <= section.span.end):
                     raise invalid('cursor is out of bounds or already at EOF', 'source_cursor')
-            # A trusted host may replace the preceding page in its actual
-            # message window, but only after this call and cursor were admitted.
-            if before_read is not None:
-                before_read()
             # A full table of contents grows without bound and can prevent even
             # a one-character chapter from fitting. Expose the selected node and
             # constant-size previous/next section links instead. Each link opens
@@ -334,7 +289,7 @@ class SourceSession:
             candidate_id, evidence_id = uuid4(), uuid4()
             next_token = 'cur_' + secrets.token_urlsafe(32)
             previous_token = 'cur_' + secrets.token_urlsafe(32)
-            cap, limit_reason = self._token_allowance()
+            cap = self.retrieval.context_tokens
             while end > start:
                 span = Span(start=start,end=end)
                 candidate = self._candidate(call_id,ref,span,source,candidate_id,evidence_id)
@@ -348,7 +303,7 @@ class SourceSession:
                     break
                 end = start + (end-start)//2
             if end <= start:
-                raise SourceBudgetExceeded(limit_reason, 'source metadata and one codepoint do not fit token budget')
+                raise RagError(ErrorCode.BUDGET_EXHAUSTED, 'source metadata and one codepoint do not fit token limit', stage='source_budget')
             if base['next_cursor'] or base['previous_cursor']:
                 with self.catalog._db.transaction(write=True) as connection:
                     self._active(connection)
@@ -393,15 +348,11 @@ class SourceSession:
                 raise error
             if getattr(self.dense, 'route', 'dense') != self.retrieval.route:
                 raise invalid('search service route differs from the frozen run', 'source_search')
-            with self.catalog._db.transaction() as connection:
-                started, = connection.execute('SELECT started_ns FROM source_usage WHERE run_id=?',(str(self.run.run_id),)).fetchone()
             limit = {'dense':selected.dense_candidates, 'bm25':selected.bm25_candidates,
                      'hybrid':selected.dense_candidates+selected.bm25_candidates}[selected.route]
             try:
                 choices = {key:value for key,value in {'strategy':strategy,'rerank':rerank}.items() if value is not None}
-                result = self.dense.search(query,limit=limit,
-                    deadline_monotonic_ns=started+(self.budget.duration_ms-self.budget.finish_reserve_ms)*1_000_000,
-                    **choices)
+                result = self.dense.search(query,limit=limit,**choices)
             except Exception as exc:
                 trace.update(getattr(exc, 'retrieval_trace', None) or {'status':'error', 'error':str(exc)})
                 self._save_retrieval_trace(call_id, trace)
@@ -427,9 +378,11 @@ class SourceSession:
             row = connection.execute('SELECT payload FROM evidence_windows WHERE run_id=?', (str(self.run.run_id),)).fetchone()
         window = json.loads(row[0]) if row else {'request_id':None, 'mappings':[]}
         usage = self.usage()
-        cap, _ = self._token_allowance()
+        cap=min(self.retrieval.context_tokens,self.search_result_upper) if self.search_result_upper is not None else self.retrieval.context_tokens
+        fragment_cap=min(self.retrieval.context_chunks,self.search_result_chunks) if self.search_result_chunks is not None else self.retrieval.context_chunks
         trace.update(window_before=window, usage_before=usage, serialized_token_allowance=cap,
-                     fragment_allowance=self.retrieval.context_chunks-usage['window_fragments'], meter_identity=self.meter.identity)
+                     fragment_allowance=fragment_cap,meter_identity=self.meter.identity,
+                     search_result_limits={'chunks':self.search_result_chunks,'meter_upper':self.search_result_upper})
         covered = {}
         for mapping in window['mappings']:
             covered.setdefault(mapping['source_ref']['document_version_id'], []).append(Span.model_validate(mapping['source_span']))
@@ -441,7 +394,7 @@ class SourceSession:
                 decision['status']='duplicate_id'
                 continue
             seen.add(hit['chunk_id'])
-            if len(candidates)+usage['window_fragments'] >= self.retrieval.context_chunks:
+            if len(candidates) >= fragment_cap:
                 payload['limited']['by_count']=True
                 decision['status']='count_limit'
                 continue
@@ -463,7 +416,7 @@ class SourceSession:
                             status='overlap' if not remaining else 'token_limit')
             token = self._issue_verified_source(ref,source,anchor_span=span)
             for remainder in remaining:
-                if len(candidates)+usage['window_fragments'] >= self.retrieval.context_chunks:
+                if len(candidates) >= fragment_cap:
                     payload['limited']['by_count']=True
                     break
                 end = remainder.end
@@ -484,6 +437,8 @@ class SourceSession:
                 [Span.model_validate(s) for s in decision['returned_spans']])]
         if not candidates:
             payload['status']='empty'
+        if self.search_result_upper is not None and self._count(render_payload(payload)[0])>self.search_result_upper:
+            raise RagError(ErrorCode.BUDGET_EXHAUSTED,'per-search result cap cannot fit response metadata',stage='search_result_limit')
         result = self._commit_result(call_id,payload,candidates)
         trace.update(status='ok', candidate_ids=[str(i) for i in result.candidate_ids],
                      serialized_tokens=self._count(result.text), fragments=len(candidates),

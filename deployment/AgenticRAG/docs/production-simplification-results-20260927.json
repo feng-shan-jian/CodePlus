@@ -1,0 +1,2705 @@
+{
+  "scope": "Retrieval and actual per-call SourceSession output; no model answers or semantic answer grading",
+  "selected_configuration": {
+    "retrieval": {
+      "route": "hybrid",
+      "rerank": true,
+      "dense_candidates": 50,
+      "bm25_candidates": 50,
+      "rerank_candidates": 24,
+      "rrf_k": 10,
+      "min_score": 0.001
+    }
+  },
+  "production_source_sha256": "c5bfc4f0bd9c191b90769b532f481f8d284f9e6f04df5b2fc69bd41c8bccb960",
+  "development": {
+    "dataset_id": "beir-scifact-v1",
+    "split": "development",
+    "questions": 807,
+    "dataset_fingerprint": "98f3c573b8f153679f838d7fac07221519c258437124f2c5ef5b00fa87b3ca10",
+    "corpus_fingerprint": "b31c479f4edf81b808ce397d98a43422fde51d27510119d9dba3ded18264d48c",
+    "namespace": "beir_scifact_v1",
+    "metric_library": {
+      "ir-measures": "0.4.3",
+      "pytrec-eval-terrier": "0.5.10"
+    },
+    "scorer_sha256": "f1004107924185b06debf590ddc7203e19dc429124ba27bc7a6a3142a0a47aa2",
+    "documents": 5183,
+    "indexed_chunks": 5844,
+    "answer_model_executed": false,
+    "completion": {
+      "status": "complete",
+      "answer_model_executed": false,
+      "collection_name": "ar_beir_scifact_v1_71094ba9447246679d77eb2d6b962efd_48d7fc078276489e85d4b0f90dc71cb0_9dee12943716420fa57545b59d9f909e_e1",
+      "retrieval_seconds": 1067.765288900002,
+      "rerank_seconds": 1172.0078600000124,
+      "retrieval_errors": 0,
+      "rerank_errors": 0,
+      "recovery": "recovery.json",
+      "context_errors": 0,
+      "context_seconds": 590.9394585999544,
+      "production_control_matched": true,
+      "recovery_elapsed_seconds": 618.6964925999637,
+      "retired_sessions": [],
+      "source_unchanged": true,
+      "recovery_runner_unchanged": true,
+      "original_attempt_unchanged": true,
+      "copied_inputs_identical": true
+    },
+    "source": "D:\\CodePlus\\eval\\scifact-eval\\.state\\baseline-20260927\\retrieval\\production-20260927-recovered",
+    "source_sha256": {
+      "chunk-documents.json": "9ab27558dcd9089a57a23dc6283fedd19bbf2773a712c2b23517bb4bffaea306",
+      "chunk-spans.json": "b192d3ce72ec170f0fdb2b52a228f01054e93f10a04df8f959a7db726be57e73",
+      "completion.json": "f209a923698b8204db95b477c9b34547192a72490ae102c8722f2245993ca49d",
+      "context.jsonl": "d4b7f5ce22d9d01207f05aa8530e71184a283a939da3cd06c69079669f1b10cc",
+      "production-control.json": "8d70c0819af329abd8343a000a2ba9c87a4b9212d405249a4a7a59b935414f2c",
+      "protocol.json": "1478ea0e13c27f2442398071a115c02bf96d6fdb2e71a9cd9b31ecf614e22a86",
+      "recovery.json": "8a58b8596360439601a627be80495310a01740c88b9cf9ed70f2fa76bfabf5e5",
+      "rerank.jsonl": "71124f9fb540cdae3a07e31029a429cc04411fef2dfe2aeb8bac2d3cd0de630b",
+      "retrieval.jsonl": "230c0e541e7b03cfc1c12f705ae8eafacc0cc2633e71db9f02724cebac22b688",
+      "source-completion.json": "f395787017265b89538228d3d4cbeca5c97dae4f168a7ca039e26f97e64eec88"
+    },
+    "stages": {
+      "dense50": {
+        "errors": 0,
+        "duplicate_chunk_hits": 3360,
+        "document_metrics": {
+          "Success@5": 0.8091697645600991,
+          "Success@10": 0.8525402726146221,
+          "R@5": 0.7902932672449401,
+          "R@10": 0.8407889301941346,
+          "RR@10": 0.7146090275888234,
+          "nDCG@10": 0.7351556520291143,
+          "P@5": 0.176456009913259,
+          "P@10": 0.0952912019826518
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 807,
+            "hit": 0.8017348203221809,
+            "macro_recall": 0.7822387443205286,
+            "covered_qrels": 702,
+            "total_qrels": 917,
+            "micro_recall": 0.7655398037077427,
+            "fully_covered_questions": 614,
+            "returned_chunks": 4035,
+            "duplicate_document_slots": 327
+          },
+          "10": {
+            "questions": 807,
+            "hit": 0.8488228004956629,
+            "macro_recall": 0.8370714580751754,
+            "covered_qrels": 766,
+            "total_qrels": 917,
+            "micro_recall": 0.8353326063249727,
+            "fully_covered_questions": 663,
+            "returned_chunks": 8070,
+            "duplicate_document_slots": 681
+          },
+          "50": {
+            "questions": 807,
+            "hit": 0.9405204460966543,
+            "macro_recall": 0.9370095002065263,
+            "covered_qrels": 863,
+            "total_qrels": 917,
+            "micro_recall": 0.9411123227917121,
+            "fully_covered_questions": 753,
+            "returned_chunks": 40350,
+            "duplicate_document_slots": 3360
+          }
+        }
+      },
+      "bm2550": {
+        "errors": 0,
+        "duplicate_chunk_hits": 2114,
+        "document_metrics": {
+          "Success@5": 0.7434944237918215,
+          "Success@10": 0.8042131350681536,
+          "R@5": 0.7212308963238331,
+          "R@10": 0.78849648905411,
+          "RR@10": 0.6438112408321229,
+          "nDCG@10": 0.6707466578270666,
+          "P@5": 0.1593556381660471,
+          "P@10": 0.08847583643122678
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 807,
+            "hit": 0.7385377942998761,
+            "macro_recall": 0.7168938455183808,
+            "covered_qrels": 638,
+            "total_qrels": 917,
+            "micro_recall": 0.6957470010905126,
+            "fully_covered_questions": 562,
+            "returned_chunks": 4035,
+            "duplicate_document_slots": 234
+          },
+          "10": {
+            "questions": 807,
+            "hit": 0.8029739776951673,
+            "macro_recall": 0.7863279636513838,
+            "covered_qrels": 711,
+            "total_qrels": 917,
+            "micro_recall": 0.7753544165757906,
+            "fully_covered_questions": 621,
+            "returned_chunks": 8070,
+            "duplicate_document_slots": 432
+          },
+          "50": {
+            "questions": 807,
+            "hit": 0.8785625774473358,
+            "macro_recall": 0.8699504337050805,
+            "covered_qrels": 794,
+            "total_qrels": 917,
+            "micro_recall": 0.8658669574700109,
+            "fully_covered_questions": 692,
+            "returned_chunks": 40350,
+            "duplicate_document_slots": 2114
+          }
+        }
+      },
+      "union100": {
+        "errors": 0,
+        "duplicate_chunk_hits": 4589,
+        "document_metrics": null,
+        "original_chunk_windows": {
+          "100": {
+            "questions": 807,
+            "hit": 0.966542750929368,
+            "macro_recall": 0.9636513837257332,
+            "covered_qrels": 885,
+            "total_qrels": 917,
+            "micro_recall": 0.965103598691385,
+            "fully_covered_questions": 775,
+            "returned_chunks": 68003,
+            "duplicate_document_slots": 4589
+          }
+        }
+      },
+      "rrf24": {
+        "errors": 0,
+        "duplicate_chunk_hits": 1320,
+        "document_metrics": {
+          "Success@5": 0.8203221809169765,
+          "Success@10": 0.8785625774473358,
+          "R@5": 0.8026848409748037,
+          "R@10": 0.8672242874845105,
+          "RR@10": 0.7070888250495284,
+          "nDCG@10": 0.7391392724147647,
+          "P@5": 0.17893432465923173,
+          "P@10": 0.09789343246592318
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 807,
+            "hit": 0.8128872366790583,
+            "macro_recall": 0.7946303180503924,
+            "covered_qrels": 713,
+            "total_qrels": 917,
+            "micro_recall": 0.777535441657579,
+            "fully_covered_questions": 623,
+            "returned_chunks": 4035,
+            "duplicate_document_slots": 284
+          },
+          "10": {
+            "questions": 807,
+            "hit": 0.8760842627013631,
+            "macro_recall": 0.8635068153655516,
+            "covered_qrels": 786,
+            "total_qrels": 917,
+            "micro_recall": 0.8571428571428571,
+            "fully_covered_questions": 685,
+            "returned_chunks": 8070,
+            "duplicate_document_slots": 550
+          },
+          "24": {
+            "questions": 807,
+            "hit": 0.9182156133828996,
+            "macro_recall": 0.9111524163568773,
+            "covered_qrels": 834,
+            "total_qrels": 917,
+            "micro_recall": 0.9094874591057798,
+            "fully_covered_questions": 727,
+            "returned_chunks": 19368,
+            "duplicate_document_slots": 1320
+          }
+        }
+      },
+      "rerank10": {
+        "errors": 0,
+        "duplicate_chunk_hits": 611,
+        "document_metrics": {
+          "Success@5": 0.8513011152416357,
+          "Success@10": 0.9045848822800495,
+          "R@5": 0.8351094589012804,
+          "R@10": 0.8937629078893019,
+          "RR@10": 0.7604374422218289,
+          "nDCG@10": 0.7865273622476037,
+          "P@5": 0.18636926889714994,
+          "P@10": 0.10086741016109046
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 807,
+            "hit": 0.8500619578686494,
+            "macro_recall": 0.8313919867823214,
+            "covered_qrels": 745,
+            "total_qrels": 917,
+            "micro_recall": 0.8124318429661941,
+            "fully_covered_questions": 655,
+            "returned_chunks": 4020,
+            "duplicate_document_slots": 314
+          },
+          "10": {
+            "questions": 807,
+            "hit": 0.9045848822800495,
+            "macro_recall": 0.8937629078893019,
+            "covered_qrels": 814,
+            "total_qrels": 917,
+            "micro_recall": 0.8876772082878953,
+            "fully_covered_questions": 710,
+            "returned_chunks": 7930,
+            "duplicate_document_slots": 611
+          }
+        }
+      },
+      "context": {
+        "errors": 0,
+        "duplicate_chunk_hits": 217,
+        "document_metrics": {
+          "Success@5": 0.8252788104089219,
+          "Success@10": 0.8252788104089219,
+          "R@5": 0.8022717885171416,
+          "R@10": 0.8022717885171416,
+          "RR@10": 0.747459727385378,
+          "nDCG@10": 0.7517385154458798,
+          "P@5": 0.1771995043370508,
+          "P@10": 0.0885997521685254
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 807,
+            "hit": 0.8252788104089219,
+            "macro_recall": 0.8022717885171416,
+            "covered_qrels": 715,
+            "total_qrels": 917,
+            "micro_recall": 0.7797164667393675,
+            "fully_covered_questions": 629,
+            "returned_chunks": 3088,
+            "duplicate_document_slots": 217
+          },
+          "10": {
+            "questions": 807,
+            "hit": 0.8252788104089219,
+            "macro_recall": 0.8022717885171416,
+            "covered_qrels": 715,
+            "total_qrels": 917,
+            "micro_recall": 0.7797164667393675,
+            "fully_covered_questions": 629,
+            "returned_chunks": 3088,
+            "duplicate_document_slots": 217
+          }
+        }
+      }
+    },
+    "rerank_change_at_5": {
+      "gained_qrels": 62,
+      "lost_qrels": 30,
+      "improved_queries": 57,
+      "regressed_queries": 25
+    },
+    "rerank_change_at_10": {
+      "gained_qrels": 36,
+      "lost_qrels": 8,
+      "improved_queries": 33,
+      "regressed_queries": 8
+    },
+    "two_pass_query_ms": {
+      "median": 2680.2626000717282,
+      "p95": 3107.972299971152,
+      "note": "sum of retrieval and rerank in separate passes; excludes build; not Agent answer latency"
+    }
+  },
+  "development_evidence_505": {
+    "questions": 505,
+    "full_development_questions": 807,
+    "alignment": {
+      "status": "aligned",
+      "questions": 807,
+      "documents": 5183,
+      "questions_with_rationales": 505,
+      "questions_without_rationales": [
+        "0",
+        "4",
+        "6",
+        "10",
+        "11",
+        "14",
+        "15",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "24",
+        "25",
+        "26",
+        "27",
+        "35",
+        "37",
+        "43",
+        "45",
+        "62",
+        "63",
+        "64",
+        "66",
+        "73",
+        "74",
+        "80",
+        "81",
+        "82",
+        "89",
+        "90",
+        "91",
+        "92",
+        "95",
+        "96",
+        "126",
+        "134",
+        "139",
+        "153",
+        "154",
+        "161",
+        "173",
+        "174",
+        "175",
+        "176",
+        "182",
+        "186",
+        "187",
+        "199",
+        "204",
+        "205",
+        "209",
+        "211",
+        "214",
+        "224",
+        "225",
+        "226",
+        "229",
+        "244",
+        "247",
+        "253",
+        "254",
+        "255",
+        "259",
+        "262",
+        "281",
+        "285",
+        "293",
+        "301",
+        "304",
+        "310",
+        "313",
+        "315",
+        "316",
+        "323",
+        "325",
+        "326",
+        "336",
+        "337",
+        "345",
+        "351",
+        "352",
+        "357",
+        "358",
+        "361",
+        "363",
+        "364",
+        "365",
+        "376",
+        "377",
+        "383",
+        "389",
+        "390",
+        "391",
+        "392",
+        "393",
+        "398",
+        "401",
+        "403",
+        "404",
+        "406",
+        "407",
+        "418",
+        "422",
+        "423",
+        "425",
+        "429",
+        "434",
+        "435",
+        "449",
+        "456",
+        "472",
+        "473",
+        "474",
+        "481",
+        "484",
+        "485",
+        "486",
+        "487",
+        "489",
+        "490",
+        "492",
+        "493",
+        "494",
+        "509",
+        "526",
+        "545",
+        "550",
+        "555",
+        "557",
+        "572",
+        "573",
+        "574",
+        "582",
+        "585",
+        "588",
+        "602",
+        "606",
+        "609",
+        "610",
+        "611",
+        "616",
+        "617",
+        "618",
+        "620",
+        "622",
+        "638",
+        "642",
+        "650",
+        "651",
+        "652",
+        "654",
+        "655",
+        "658",
+        "672",
+        "676",
+        "677",
+        "679",
+        "685",
+        "686",
+        "687",
+        "688",
+        "689",
+        "696",
+        "698",
+        "703",
+        "704",
+        "705",
+        "710",
+        "713",
+        "714",
+        "730",
+        "732",
+        "733",
+        "739",
+        "753",
+        "755",
+        "757",
+        "758",
+        "761",
+        "762",
+        "774",
+        "776",
+        "777",
+        "799",
+        "813",
+        "817",
+        "826",
+        "828",
+        "838",
+        "848",
+        "866",
+        "876",
+        "877",
+        "890",
+        "891",
+        "894",
+        "895",
+        "896",
+        "897",
+        "898",
+        "899",
+        "900",
+        "908",
+        "916",
+        "934",
+        "938",
+        "939",
+        "945",
+        "946",
+        "949",
+        "969",
+        "970",
+        "976",
+        "978",
+        "988",
+        "989",
+        "1001",
+        "1002",
+        "1008",
+        "1016",
+        "1025",
+        "1026",
+        "1027",
+        "1032",
+        "1033",
+        "1037",
+        "1038",
+        "1046",
+        "1047",
+        "1052",
+        "1053",
+        "1058",
+        "1067",
+        "1068",
+        "1070",
+        "1074",
+        "1075",
+        "1085",
+        "1091",
+        "1096",
+        "1098",
+        "1111",
+        "1112",
+        "1118",
+        "1161",
+        "1164",
+        "1165",
+        "1166",
+        "1168",
+        "1174",
+        "1178",
+        "1183",
+        "1186",
+        "1188",
+        "1190",
+        "1193",
+        "1195",
+        "1206",
+        "1208",
+        "1212",
+        "1214",
+        "1215",
+        "1218",
+        "1219",
+        "1235",
+        "1236",
+        "1244",
+        "1247",
+        "1253",
+        "1257",
+        "1275",
+        "1300",
+        "1302",
+        "1304",
+        "1306",
+        "1307",
+        "1308",
+        "1309",
+        "1310",
+        "1314",
+        "1315",
+        "1325",
+        "1330",
+        "1331",
+        "1342",
+        "1345",
+        "1349",
+        "1350",
+        "1353",
+        "1364",
+        "1374",
+        "1375",
+        "1387",
+        "1394",
+        "1397",
+        "1398",
+        "1400",
+        "1401",
+        "1402",
+        "1405",
+        "1407"
+      ],
+      "beir_qrels_equal_cited_documents_questions": 807,
+      "beir_document_relations": 917,
+      "gold_document_relations_with_rationales": 564,
+      "chunks_verified": 16694,
+      "whitespace_formatted_abstracts": 1055,
+      "alignment_method": "exact whitespace-delimited token equality in original order; offsets from the actual indexed BEIR text; no fuzzy matching or dropped words",
+      "archive_sha256": "11c621288d41ac144d29b13b0f8503b3820b7d6e8b1f6ff24dff335c196d76be",
+      "train_sha256": "f4c8fa82d8bd0653a9cc8d61a6ea48c25eacea64e90af5dbf390ebb1b74372f0",
+      "corpus_sha256": "b8d6c89624cb2ed74dee8938effc4f5d8bd2086887880af8110d64be4ceade62",
+      "archive_url": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
+      "schema_url": "https://github.com/allenai/scifact/blob/master/doc/data.md",
+      "runtime_sha256": "d19b5bd745588410cf9592149155479e095c5979ee2a430edbc32beb8d854de9",
+      "inventory_sha256": {
+        "inventory.json": "96361f72bbce8026e4f2a2960f50dd93c5be1dcdc4fb7ca8ebdcaa0fc5b1445d",
+        "small-inventory.json": "deca1a660cce88fcf38e91f6b16692dad0f6ea576079b93a059c8e79e7652c84"
+      },
+      "held_out_claim_files_read": false,
+      "retriever_access": "denied by existing runs/ read guard",
+      "metric_boundary": "additional offline diagnostic; exact non-leading/trailing-whitespace sentence intervals; one complete alternative per gold document; no stance prediction or official three-sentence cutoff",
+      "evidence_map_sha256": "18c8ea129baf3f6da63d2c2ed5ac757cebf042d375cb4ce0250cbc3db3b6a3ac"
+    },
+    "answer_generated": false,
+    "main_summary_sha256": "ec4cc7cc6ab393d726fb1ecb78647a85e24e26be8b2cfb74693822b190894d89",
+    "scorer_sha256": "1453c9d4f2b745ebed2d56913073716b45dddeda36b5bf6ab2467675c0fe4179",
+    "arms": {
+      "rrf24": {
+        "label": "rrf24",
+        "windows": {
+          "5": {
+            "macro_complete_rationale_recall": 0.9367986798679868,
+            "document_recall_same_annotated_stratum": 0.9397689768976898,
+            "complete_rationale_relations": 519,
+            "any_complete_rationale_hit": 0.9465346534653465,
+            "fully_covered_questions": 466,
+            "retrieved_gold_documents_missing_complete_rationale": 3
+          },
+          "10": {
+            "macro_complete_rationale_recall": 0.9745874587458746,
+            "document_recall_same_annotated_stratum": 0.9775577557755775,
+            "complete_rationale_relations": 544,
+            "any_complete_rationale_hit": 0.9782178217821782,
+            "fully_covered_questions": 488,
+            "retrieved_gold_documents_missing_complete_rationale": 3
+          }
+        },
+        "versus_selected_rrf10": {
+          "5": {
+            "macro_recall_delta": -0.029867986798679864,
+            "cluster_bootstrap_95": [
+              -0.05101035868893012,
+              -0.0103744290706425
+            ],
+            "gained_qrels": 6,
+            "lost_qrels": 21,
+            "improved_questions": 5,
+            "regressed_questions": 20
+          },
+          "10": {
+            "macro_recall_delta": -0.00891089108910891,
+            "cluster_bootstrap_95": [
+              -0.02154308617234469,
+              0.0010020543094220562
+            ],
+            "gained_qrels": 2,
+            "lost_qrels": 9,
+            "improved_questions": 2,
+            "regressed_questions": 7
+          }
+        }
+      },
+      "rerank10": {
+        "label": "rerank10",
+        "windows": {
+          "5": {
+            "macro_complete_rationale_recall": 0.9666666666666667,
+            "document_recall_same_annotated_stratum": 0.9686468646864687,
+            "complete_rationale_relations": 534,
+            "any_complete_rationale_hit": 0.9762376237623762,
+            "fully_covered_questions": 481,
+            "retrieved_gold_documents_missing_complete_rationale": 1
+          },
+          "10": {
+            "macro_complete_rationale_recall": 0.9834983498349835,
+            "document_recall_same_annotated_stratum": 0.9864686468646864,
+            "complete_rationale_relations": 551,
+            "any_complete_rationale_hit": 0.9861386138613861,
+            "fully_covered_questions": 494,
+            "retrieved_gold_documents_missing_complete_rationale": 3
+          }
+        },
+        "versus_selected_rrf10": {
+          "5": {
+            "macro_recall_delta": 0.0,
+            "cluster_bootstrap_95": [
+              0.0,
+              0.0
+            ],
+            "gained_qrels": 0,
+            "lost_qrels": 0,
+            "improved_questions": 0,
+            "regressed_questions": 0
+          },
+          "10": {
+            "macro_recall_delta": 0.0,
+            "cluster_bootstrap_95": [
+              0.0,
+              0.0
+            ],
+            "gained_qrels": 0,
+            "lost_qrels": 0,
+            "improved_questions": 0,
+            "regressed_questions": 0
+          }
+        }
+      },
+      "context": {
+        "label": "context",
+        "windows": {
+          "5": {
+            "macro_complete_rationale_recall": 0.943069306930693,
+            "document_recall_same_annotated_stratum": 0.9607260726072608,
+            "complete_rationale_relations": 515,
+            "any_complete_rationale_hit": 0.9603960396039604,
+            "fully_covered_questions": 468,
+            "retrieved_gold_documents_missing_complete_rationale": 12
+          },
+          "10": {
+            "macro_complete_rationale_recall": 0.943069306930693,
+            "document_recall_same_annotated_stratum": 0.9607260726072608,
+            "complete_rationale_relations": 515,
+            "any_complete_rationale_hit": 0.9603960396039604,
+            "fully_covered_questions": 468,
+            "retrieved_gold_documents_missing_complete_rationale": 12
+          }
+        },
+        "versus_selected_rrf10": {
+          "5": {
+            "macro_recall_delta": -0.023597359735973596,
+            "cluster_bootstrap_95": [
+              -0.03655307248018857,
+              -0.012025582395247033
+            ],
+            "gained_qrels": 0,
+            "lost_qrels": 19,
+            "improved_questions": 0,
+            "regressed_questions": 19
+          },
+          "10": {
+            "macro_recall_delta": -0.04042904290429043,
+            "cluster_bootstrap_95": [
+              -0.0595021249886663,
+              -0.023584753303105655
+            ],
+            "gained_qrels": 0,
+            "lost_qrels": 36,
+            "improved_questions": 0,
+            "regressed_questions": 28
+          }
+        }
+      }
+    },
+    "baseline_sha256": "1c925b9d1d4bbed5aea31b6a32a21b70bff4897a841ae03d0bb822cda04e7e98"
+  },
+  "development_document_comparison": {
+    "baseline_sha256": "779aa53ec6d3dea691fa4e3bc7ecaaecea11f2f79dd72db3896d8be126a3b3f0",
+    "current_sha256": "0395e07842b694f4033432bcdaaf25b6023583c1266f2aa52ab6bc33561496fb",
+    "questions": 807,
+    "comparisons": {
+      "rrf24@5": {
+        "baseline_recall": 0.8313919867823213,
+        "current_recall": 0.7946303180503924,
+        "gained_qrels": 30,
+        "lost_qrels": 62,
+        "improved_questions": 25,
+        "regressed_questions": 57,
+        "per_query": {
+          "4": {
+            "gained": [
+              "22942787"
+            ],
+            "lost": []
+          },
+          "18": {
+            "gained": [
+              "22942787"
+            ],
+            "lost": []
+          },
+          "60": {
+            "gained": [],
+            "lost": [
+              "13901073"
+            ]
+          },
+          "61": {
+            "gained": [],
+            "lost": [
+              "13901073"
+            ]
+          },
+          "66": {
+            "gained": [],
+            "lost": [
+              "14806256"
+            ]
+          },
+          "69": {
+            "gained": [],
+            "lost": [
+              "5956380"
+            ]
+          },
+          "73": {
+            "gained": [],
+            "lost": [
+              "6076903"
+            ]
+          },
+          "89": {
+            "gained": [],
+            "lost": [
+              "7521113"
+            ]
+          },
+          "169": {
+            "gained": [
+              "5824985"
+            ],
+            "lost": []
+          },
+          "174": {
+            "gained": [],
+            "lost": [
+              "1710116"
+            ]
+          },
+          "175": {
+            "gained": [
+              "1710116"
+            ],
+            "lost": []
+          },
+          "176": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "178": {
+            "gained": [],
+            "lost": [
+              "27123743"
+            ]
+          },
+          "186": {
+            "gained": [],
+            "lost": [
+              "16855829"
+            ]
+          },
+          "187": {
+            "gained": [],
+            "lost": [
+              "16855829"
+            ]
+          },
+          "214": {
+            "gained": [
+              "13625993"
+            ],
+            "lost": []
+          },
+          "241": {
+            "gained": [],
+            "lost": [
+              "10608822",
+              "2212067"
+            ]
+          },
+          "242": {
+            "gained": [],
+            "lost": [
+              "10608822",
+              "2212067"
+            ]
+          },
+          "293": {
+            "gained": [
+              "10874408"
+            ],
+            "lost": []
+          },
+          "301": {
+            "gained": [],
+            "lost": [
+              "3553087"
+            ]
+          },
+          "310": {
+            "gained": [],
+            "lost": [
+              "6173523"
+            ]
+          },
+          "313": {
+            "gained": [],
+            "lost": [
+              "6173523"
+            ]
+          },
+          "316": {
+            "gained": [],
+            "lost": [
+              "712078"
+            ]
+          },
+          "323": {
+            "gained": [],
+            "lost": [
+              "2014909"
+            ]
+          },
+          "336": {
+            "gained": [],
+            "lost": [
+              "2097256"
+            ]
+          },
+          "337": {
+            "gained": [],
+            "lost": [
+              "2097256"
+            ]
+          },
+          "342": {
+            "gained": [
+              "7873737"
+            ],
+            "lost": [
+              "5884524"
+            ]
+          },
+          "376": {
+            "gained": [],
+            "lost": [
+              "22401061"
+            ]
+          },
+          "382": {
+            "gained": [],
+            "lost": [
+              "11659421"
+            ]
+          },
+          "403": {
+            "gained": [],
+            "lost": [
+              "1921218"
+            ]
+          },
+          "414": {
+            "gained": [],
+            "lost": [
+              "6309659"
+            ]
+          },
+          "434": {
+            "gained": [],
+            "lost": [
+              "9500590"
+            ]
+          },
+          "449": {
+            "gained": [],
+            "lost": [
+              "3430789"
+            ]
+          },
+          "455": {
+            "gained": [],
+            "lost": [
+              "12643937"
+            ]
+          },
+          "489": {
+            "gained": [],
+            "lost": [
+              "6625693"
+            ]
+          },
+          "493": {
+            "gained": [
+              "19583924"
+            ],
+            "lost": []
+          },
+          "530": {
+            "gained": [
+              "10546779"
+            ],
+            "lost": []
+          },
+          "531": {
+            "gained": [
+              "25413327"
+            ],
+            "lost": []
+          },
+          "548": {
+            "gained": [],
+            "lost": [
+              "18199839"
+            ]
+          },
+          "555": {
+            "gained": [
+              "1049501"
+            ],
+            "lost": []
+          },
+          "606": {
+            "gained": [],
+            "lost": [
+              "712078"
+            ]
+          },
+          "618": {
+            "gained": [
+              "6836086"
+            ],
+            "lost": []
+          },
+          "726": {
+            "gained": [
+              "7521113"
+            ],
+            "lost": []
+          },
+          "749": {
+            "gained": [],
+            "lost": [
+              "13868795"
+            ]
+          },
+          "758": {
+            "gained": [],
+            "lost": [
+              "14195528"
+            ]
+          },
+          "762": {
+            "gained": [],
+            "lost": [
+              "4695046"
+            ]
+          },
+          "810": {
+            "gained": [],
+            "lost": [
+              "13513790"
+            ]
+          },
+          "838": {
+            "gained": [],
+            "lost": [
+              "15928989"
+            ]
+          },
+          "856": {
+            "gained": [],
+            "lost": [
+              "43334921"
+            ]
+          },
+          "857": {
+            "gained": [],
+            "lost": [
+              "43334921"
+            ]
+          },
+          "890": {
+            "gained": [],
+            "lost": [
+              "2097256"
+            ]
+          },
+          "891": {
+            "gained": [],
+            "lost": [
+              "2097256"
+            ]
+          },
+          "895": {
+            "gained": [],
+            "lost": [
+              "18750453"
+            ]
+          },
+          "916": {
+            "gained": [],
+            "lost": [
+              "18037805"
+            ]
+          },
+          "945": {
+            "gained": [
+              "13083189",
+              "8428935"
+            ],
+            "lost": []
+          },
+          "946": {
+            "gained": [
+              "13083189",
+              "8428935"
+            ],
+            "lost": []
+          },
+          "949": {
+            "gained": [],
+            "lost": [
+              "13578199"
+            ]
+          },
+          "963": {
+            "gained": [],
+            "lost": [
+              "29828242"
+            ]
+          },
+          "964": {
+            "gained": [],
+            "lost": [
+              "29828242"
+            ]
+          },
+          "969": {
+            "gained": [],
+            "lost": [
+              "19356271"
+            ]
+          },
+          "970": {
+            "gained": [],
+            "lost": [
+              "19356271"
+            ]
+          },
+          "972": {
+            "gained": [
+              "9764256"
+            ],
+            "lost": []
+          },
+          "973": {
+            "gained": [
+              "9764256"
+            ],
+            "lost": []
+          },
+          "988": {
+            "gained": [
+              "3033830"
+            ],
+            "lost": []
+          },
+          "1040": {
+            "gained": [
+              "25254425"
+            ],
+            "lost": [
+              "16626264"
+            ]
+          },
+          "1048": {
+            "gained": [],
+            "lost": [
+              "12486491"
+            ]
+          },
+          "1070": {
+            "gained": [],
+            "lost": [
+              "25649714"
+            ]
+          },
+          "1091": {
+            "gained": [
+              "2603304"
+            ],
+            "lost": []
+          },
+          "1111": {
+            "gained": [
+              "1686881"
+            ],
+            "lost": []
+          },
+          "1112": {
+            "gained": [
+              "1686881"
+            ],
+            "lost": []
+          },
+          "1127": {
+            "gained": [],
+            "lost": [
+              "27466734"
+            ]
+          },
+          "1128": {
+            "gained": [],
+            "lost": [
+              "33499189"
+            ]
+          },
+          "1164": {
+            "gained": [
+              "4455466"
+            ],
+            "lost": []
+          },
+          "1165": {
+            "gained": [
+              "4455466"
+            ],
+            "lost": []
+          },
+          "1186": {
+            "gained": [],
+            "lost": [
+              "7485455"
+            ]
+          },
+          "1218": {
+            "gained": [],
+            "lost": [
+              "15635366"
+            ]
+          },
+          "1219": {
+            "gained": [
+              "14864285"
+            ],
+            "lost": []
+          },
+          "1239": {
+            "gained": [],
+            "lost": [
+              "4427392"
+            ]
+          },
+          "1247": {
+            "gained": [],
+            "lost": [
+              "5114282"
+            ]
+          },
+          "1258": {
+            "gained": [],
+            "lost": [
+              "12040627"
+            ]
+          },
+          "1306": {
+            "gained": [],
+            "lost": [
+              "6000423"
+            ]
+          },
+          "1342": {
+            "gained": [
+              "8148122"
+            ],
+            "lost": []
+          },
+          "1380": {
+            "gained": [
+              "17450673"
+            ],
+            "lost": [
+              "23557241"
+            ]
+          },
+          "1387": {
+            "gained": [
+              "9669099"
+            ],
+            "lost": []
+          },
+          "1393": {
+            "gained": [],
+            "lost": [
+              "12440953"
+            ]
+          }
+        }
+      },
+      "rrf24@10": {
+        "baseline_recall": 0.8937629078893019,
+        "current_recall": 0.8635068153655514,
+        "gained_qrels": 8,
+        "lost_qrels": 36,
+        "improved_questions": 8,
+        "regressed_questions": 33,
+        "per_query": {
+          "10": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "11": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "14": {
+            "gained": [],
+            "lost": [
+              "641786"
+            ]
+          },
+          "27": {
+            "gained": [],
+            "lost": [
+              "32390525"
+            ]
+          },
+          "60": {
+            "gained": [],
+            "lost": [
+              "13901073"
+            ]
+          },
+          "62": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "176": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "178": {
+            "gained": [],
+            "lost": [
+              "27123743"
+            ]
+          },
+          "182": {
+            "gained": [
+              "11369420"
+            ],
+            "lost": []
+          },
+          "209": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "315": {
+            "gained": [],
+            "lost": [
+              "3701541"
+            ]
+          },
+          "323": {
+            "gained": [],
+            "lost": [
+              "2014909"
+            ]
+          },
+          "376": {
+            "gained": [],
+            "lost": [
+              "22401061"
+            ]
+          },
+          "403": {
+            "gained": [],
+            "lost": [
+              "1921218"
+            ]
+          },
+          "414": {
+            "gained": [],
+            "lost": [
+              "6309659"
+            ]
+          },
+          "434": {
+            "gained": [],
+            "lost": [
+              "9500590"
+            ]
+          },
+          "435": {
+            "gained": [],
+            "lost": [
+              "9500590"
+            ]
+          },
+          "545": {
+            "gained": [
+              "24221369"
+            ],
+            "lost": []
+          },
+          "713": {
+            "gained": [],
+            "lost": [
+              "18421962"
+            ]
+          },
+          "714": {
+            "gained": [],
+            "lost": [
+              "18421962"
+            ]
+          },
+          "739": {
+            "gained": [],
+            "lost": [
+              "4446814"
+            ]
+          },
+          "762": {
+            "gained": [],
+            "lost": [
+              "4695046"
+            ]
+          },
+          "838": {
+            "gained": [],
+            "lost": [
+              "15928989"
+            ]
+          },
+          "894": {
+            "gained": [],
+            "lost": [
+              "14724693"
+            ]
+          },
+          "916": {
+            "gained": [],
+            "lost": [
+              "18037805"
+            ]
+          },
+          "938": {
+            "gained": [
+              "26231129"
+            ],
+            "lost": []
+          },
+          "939": {
+            "gained": [],
+            "lost": [
+              "26231129"
+            ]
+          },
+          "946": {
+            "gained": [
+              "8428935"
+            ],
+            "lost": []
+          },
+          "955": {
+            "gained": [],
+            "lost": [
+              "2078658",
+              "30507607"
+            ]
+          },
+          "972": {
+            "gained": [
+              "28617573"
+            ],
+            "lost": []
+          },
+          "1046": {
+            "gained": [],
+            "lost": [
+              "16712164"
+            ]
+          },
+          "1070": {
+            "gained": [],
+            "lost": [
+              "25649714"
+            ]
+          },
+          "1212": {
+            "gained": [
+              "44724517"
+            ],
+            "lost": []
+          },
+          "1236": {
+            "gained": [
+              "17973161"
+            ],
+            "lost": []
+          },
+          "1239": {
+            "gained": [],
+            "lost": [
+              "21387297",
+              "4427392"
+            ]
+          },
+          "1247": {
+            "gained": [],
+            "lost": [
+              "5114282"
+            ]
+          },
+          "1257": {
+            "gained": [],
+            "lost": [
+              "581832"
+            ]
+          },
+          "1294": {
+            "gained": [],
+            "lost": [
+              "2078658",
+              "30507607"
+            ]
+          },
+          "1334": {
+            "gained": [],
+            "lost": [
+              "13940200"
+            ]
+          },
+          "1342": {
+            "gained": [
+              "8148122"
+            ],
+            "lost": []
+          },
+          "1394": {
+            "gained": [],
+            "lost": [
+              "2251426"
+            ]
+          }
+        }
+      },
+      "rerank10@5": {
+        "baseline_recall": 0.8313919867823213,
+        "current_recall": 0.8313919867823213,
+        "gained_qrels": 0,
+        "lost_qrels": 0,
+        "improved_questions": 0,
+        "regressed_questions": 0,
+        "per_query": {}
+      },
+      "rerank10@10": {
+        "baseline_recall": 0.8937629078893019,
+        "current_recall": 0.8937629078893019,
+        "gained_qrels": 0,
+        "lost_qrels": 0,
+        "improved_questions": 0,
+        "regressed_questions": 0,
+        "per_query": {}
+      },
+      "context@5": {
+        "baseline_recall": 0.8313919867823213,
+        "current_recall": 0.8022717885171416,
+        "gained_qrels": 0,
+        "lost_qrels": 30,
+        "improved_questions": 0,
+        "regressed_questions": 30,
+        "per_query": {
+          "60": {
+            "gained": [],
+            "lost": [
+              "13901073"
+            ]
+          },
+          "61": {
+            "gained": [],
+            "lost": [
+              "13901073"
+            ]
+          },
+          "165": {
+            "gained": [],
+            "lost": [
+              "5824985"
+            ]
+          },
+          "174": {
+            "gained": [],
+            "lost": [
+              "1710116"
+            ]
+          },
+          "176": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "253": {
+            "gained": [],
+            "lost": [
+              "37424881"
+            ]
+          },
+          "254": {
+            "gained": [],
+            "lost": [
+              "37424881"
+            ]
+          },
+          "326": {
+            "gained": [],
+            "lost": [
+              "40349336"
+            ]
+          },
+          "352": {
+            "gained": [],
+            "lost": [
+              "14658685"
+            ]
+          },
+          "363": {
+            "gained": [],
+            "lost": [
+              "5386514"
+            ]
+          },
+          "389": {
+            "gained": [],
+            "lost": [
+              "1148122"
+            ]
+          },
+          "391": {
+            "gained": [],
+            "lost": [
+              "1148122"
+            ]
+          },
+          "392": {
+            "gained": [],
+            "lost": [
+              "1148122"
+            ]
+          },
+          "393": {
+            "gained": [],
+            "lost": [
+              "1148122"
+            ]
+          },
+          "434": {
+            "gained": [],
+            "lost": [
+              "9500590"
+            ]
+          },
+          "449": {
+            "gained": [],
+            "lost": [
+              "3430789"
+            ]
+          },
+          "529": {
+            "gained": [],
+            "lost": [
+              "10546779"
+            ]
+          },
+          "531": {
+            "gained": [],
+            "lost": [
+              "10546779"
+            ]
+          },
+          "622": {
+            "gained": [],
+            "lost": [
+              "17000834"
+            ]
+          },
+          "668": {
+            "gained": [],
+            "lost": [
+              "6493422"
+            ]
+          },
+          "669": {
+            "gained": [],
+            "lost": [
+              "6493422"
+            ]
+          },
+          "749": {
+            "gained": [],
+            "lost": [
+              "13868795"
+            ]
+          },
+          "826": {
+            "gained": [],
+            "lost": [
+              "4678846"
+            ]
+          },
+          "891": {
+            "gained": [],
+            "lost": [
+              "2097256"
+            ]
+          },
+          "962": {
+            "gained": [],
+            "lost": [
+              "4306711"
+            ]
+          },
+          "1003": {
+            "gained": [],
+            "lost": [
+              "4899981"
+            ]
+          },
+          "1032": {
+            "gained": [],
+            "lost": [
+              "6836086"
+            ]
+          },
+          "1119": {
+            "gained": [],
+            "lost": [
+              "13907928"
+            ]
+          },
+          "1120": {
+            "gained": [],
+            "lost": [
+              "5323845"
+            ]
+          },
+          "1168": {
+            "gained": [],
+            "lost": [
+              "8563659"
+            ]
+          }
+        }
+      },
+      "context@10": {
+        "baseline_recall": 0.8937629078893019,
+        "current_recall": 0.8022717885171416,
+        "gained_qrels": 0,
+        "lost_qrels": 99,
+        "improved_questions": 0,
+        "regressed_questions": 89,
+        "per_query": {
+          "4": {
+            "gained": [],
+            "lost": [
+              "22942787"
+            ]
+          },
+          "10": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "11": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "14": {
+            "gained": [],
+            "lost": [
+              "641786"
+            ]
+          },
+          "18": {
+            "gained": [],
+            "lost": [
+              "22942787"
+            ]
+          },
+          "27": {
+            "gained": [],
+            "lost": [
+              "32390525"
+            ]
+          },
+          "35": {
+            "gained": [],
+            "lost": [
+              "11705328"
+            ]
+          },
+          "37": {
+            "gained": [],
+            "lost": [
+              "11705328"
+            ]
+          },
+          "60": {
+            "gained": [],
+            "lost": [
+              "13901073"
+            ]
+          },
+          "61": {
+            "gained": [],
+            "lost": [
+              "13901073"
+            ]
+          },
+          "62": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "93": {
+            "gained": [],
+            "lost": [
+              "2692522"
+            ]
+          },
+          "165": {
+            "gained": [],
+            "lost": [
+              "5824985"
+            ]
+          },
+          "169": {
+            "gained": [],
+            "lost": [
+              "5824985"
+            ]
+          },
+          "174": {
+            "gained": [],
+            "lost": [
+              "1710116"
+            ]
+          },
+          "175": {
+            "gained": [],
+            "lost": [
+              "1710116"
+            ]
+          },
+          "176": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "178": {
+            "gained": [],
+            "lost": [
+              "23557241"
+            ]
+          },
+          "199": {
+            "gained": [],
+            "lost": [
+              "2177022"
+            ]
+          },
+          "209": {
+            "gained": [],
+            "lost": [
+              "32587939"
+            ]
+          },
+          "214": {
+            "gained": [],
+            "lost": [
+              "13625993"
+            ]
+          },
+          "253": {
+            "gained": [],
+            "lost": [
+              "37424881"
+            ]
+          },
+          "254": {
+            "gained": [],
+            "lost": [
+              "37424881"
+            ]
+          },
+          "267": {
+            "gained": [],
+            "lost": [
+              "31554917"
+            ]
+          },
+          "293": {
+            "gained": [],
+            "lost": [
+              "10874408"
+            ]
+          },
+          "315": {
+            "gained": [],
+            "lost": [
+              "3701541"
+            ]
+          },
+          "326": {
+            "gained": [],
+            "lost": [
+              "40349336"
+            ]
+          },
+          "342": {
+            "gained": [],
+            "lost": [
+              "7873737"
+            ]
+          },
+          "352": {
+            "gained": [],
+            "lost": [
+              "14658685"
+            ]
+          },
+          "363": {
+            "gained": [],
+            "lost": [
+              "5386514"
+            ]
+          },
+          "383": {
+            "gained": [],
+            "lost": [
+              "13770184"
+            ]
+          },
+          "389": {
+            "gained": [],
+            "lost": [
+              "1148122"
+            ]
+          },
+          "391": {
+            "gained": [],
+            "lost": [
+              "1148122"
+            ]
+          },
+          "392": {
+            "gained": [],
+            "lost": [
+              "1148122"
+            ]
+          },
+          "393": {
+            "gained": [],
+            "lost": [
+              "1148122"
+            ]
+          },
+          "423": {
+            "gained": [],
+            "lost": [
+              "8595678"
+            ]
+          },
+          "434": {
+            "gained": [],
+            "lost": [
+              "9500590"
+            ]
+          },
+          "435": {
+            "gained": [],
+            "lost": [
+              "9500590"
+            ]
+          },
+          "449": {
+            "gained": [],
+            "lost": [
+              "3430789"
+            ]
+          },
+          "493": {
+            "gained": [],
+            "lost": [
+              "19583924"
+            ]
+          },
+          "529": {
+            "gained": [],
+            "lost": [
+              "10546779",
+              "25413327"
+            ]
+          },
+          "530": {
+            "gained": [],
+            "lost": [
+              "10546779",
+              "25413327",
+              "87610599"
+            ]
+          },
+          "531": {
+            "gained": [],
+            "lost": [
+              "10546779",
+              "25413327"
+            ]
+          },
+          "555": {
+            "gained": [],
+            "lost": [
+              "1049501"
+            ]
+          },
+          "602": {
+            "gained": [],
+            "lost": [
+              "3701541"
+            ]
+          },
+          "618": {
+            "gained": [],
+            "lost": [
+              "6836086"
+            ]
+          },
+          "622": {
+            "gained": [],
+            "lost": [
+              "17000834"
+            ]
+          },
+          "668": {
+            "gained": [],
+            "lost": [
+              "6493422"
+            ]
+          },
+          "669": {
+            "gained": [],
+            "lost": [
+              "6493422"
+            ]
+          },
+          "713": {
+            "gained": [],
+            "lost": [
+              "18421962"
+            ]
+          },
+          "714": {
+            "gained": [],
+            "lost": [
+              "18421962"
+            ]
+          },
+          "726": {
+            "gained": [],
+            "lost": [
+              "7521113"
+            ]
+          },
+          "739": {
+            "gained": [],
+            "lost": [
+              "4446814"
+            ]
+          },
+          "749": {
+            "gained": [],
+            "lost": [
+              "13868795"
+            ]
+          },
+          "826": {
+            "gained": [],
+            "lost": [
+              "4678846"
+            ]
+          },
+          "876": {
+            "gained": [],
+            "lost": [
+              "195689316"
+            ]
+          },
+          "891": {
+            "gained": [],
+            "lost": [
+              "2097256"
+            ]
+          },
+          "894": {
+            "gained": [],
+            "lost": [
+              "14724693"
+            ]
+          },
+          "939": {
+            "gained": [],
+            "lost": [
+              "26231129"
+            ]
+          },
+          "945": {
+            "gained": [],
+            "lost": [
+              "13083189",
+              "8428935"
+            ]
+          },
+          "946": {
+            "gained": [],
+            "lost": [
+              "13083189"
+            ]
+          },
+          "955": {
+            "gained": [],
+            "lost": [
+              "2078658",
+              "30507607"
+            ]
+          },
+          "962": {
+            "gained": [],
+            "lost": [
+              "4306711"
+            ]
+          },
+          "972": {
+            "gained": [],
+            "lost": [
+              "9764256"
+            ]
+          },
+          "973": {
+            "gained": [],
+            "lost": [
+              "28617573",
+              "9764256"
+            ]
+          },
+          "988": {
+            "gained": [],
+            "lost": [
+              "3033830"
+            ]
+          },
+          "1003": {
+            "gained": [],
+            "lost": [
+              "4319844",
+              "4899981"
+            ]
+          },
+          "1032": {
+            "gained": [],
+            "lost": [
+              "6836086"
+            ]
+          },
+          "1033": {
+            "gained": [],
+            "lost": [
+              "6836086"
+            ]
+          },
+          "1040": {
+            "gained": [],
+            "lost": [
+              "25254425"
+            ]
+          },
+          "1046": {
+            "gained": [],
+            "lost": [
+              "16712164",
+              "418246"
+            ]
+          },
+          "1091": {
+            "gained": [],
+            "lost": [
+              "2603304"
+            ]
+          },
+          "1111": {
+            "gained": [],
+            "lost": [
+              "1686881"
+            ]
+          },
+          "1112": {
+            "gained": [],
+            "lost": [
+              "1686881"
+            ]
+          },
+          "1119": {
+            "gained": [],
+            "lost": [
+              "13907928"
+            ]
+          },
+          "1120": {
+            "gained": [],
+            "lost": [
+              "5323845"
+            ]
+          },
+          "1164": {
+            "gained": [],
+            "lost": [
+              "4455466"
+            ]
+          },
+          "1165": {
+            "gained": [],
+            "lost": [
+              "4455466"
+            ]
+          },
+          "1168": {
+            "gained": [],
+            "lost": [
+              "8563659"
+            ]
+          },
+          "1219": {
+            "gained": [],
+            "lost": [
+              "14864285"
+            ]
+          },
+          "1224": {
+            "gained": [],
+            "lost": [
+              "34016987"
+            ]
+          },
+          "1235": {
+            "gained": [],
+            "lost": [
+              "17973161"
+            ]
+          },
+          "1239": {
+            "gained": [],
+            "lost": [
+              "21387297"
+            ]
+          },
+          "1257": {
+            "gained": [],
+            "lost": [
+              "581832"
+            ]
+          },
+          "1294": {
+            "gained": [],
+            "lost": [
+              "2078658",
+              "30507607"
+            ]
+          },
+          "1334": {
+            "gained": [],
+            "lost": [
+              "13940200"
+            ]
+          },
+          "1380": {
+            "gained": [],
+            "lost": [
+              "17450673"
+            ]
+          },
+          "1387": {
+            "gained": [],
+            "lost": [
+              "9669099"
+            ]
+          },
+          "1394": {
+            "gained": [],
+            "lost": [
+              "2251426"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "development_recovery": {
+    "source_attempt": "D:\\CodePlus\\eval\\scifact-eval\\.state\\baseline-20260927\\retrieval\\production-20260927",
+    "source_completion": {
+      "status": "failed",
+      "answer_model_executed": false,
+      "collection_name": "ar_beir_scifact_v1_71094ba9447246679d77eb2d6b962efd_48d7fc078276489e85d4b0f90dc71cb0_9dee12943716420fa57545b59d9f909e_e1",
+      "retrieval_seconds": 1067.765288900002,
+      "rerank_seconds": 1172.0078600000124,
+      "retrieval_errors": 0,
+      "rerank_errors": 0,
+      "error": {
+        "type": "ImportError",
+        "message": "The knowledge adapter requires the locally built CodePlus host with RunExecutionPolicy support. Install its wheel into this environment; do not install an unrelated same-name package from an index.",
+        "trace": null
+      },
+      "elapsed_seconds": 2239.8307674999814,
+      "retired_sessions": [
+        {
+          "owner_id": "c4427431-939f-4680-b184-144a94374883",
+          "requests": 4064
+        }
+      ],
+      "source_unchanged": true
+    },
+    "source_input_sha256": {
+      "protocol.json": "1478ea0e13c27f2442398071a115c02bf96d6fdb2e71a9cd9b31ecf614e22a86",
+      "retrieval.jsonl": "230c0e541e7b03cfc1c12f705ae8eafacc0cc2633e71db9f02724cebac22b688",
+      "rerank.jsonl": "71124f9fb540cdae3a07e31029a429cc04411fef2dfe2aeb8bac2d3cd0de630b",
+      "chunk-documents.json": "9ab27558dcd9089a57a23dc6283fedd19bbf2773a712c2b23517bb4bffaea306",
+      "chunk-spans.json": "b192d3ce72ec170f0fdb2b52a228f01054e93f10a04df8f959a7db726be57e73",
+      "completion.json": "f395787017265b89538228d3d4cbeca5c97dae4f168a7ca039e26f97e64eec88"
+    },
+    "runtime_input_sha256": "d19b5bd745588410cf9592149155479e095c5979ee2a430edbc32beb8d854de9",
+    "original_runner_sha256": "c161c5aa71030322c3b3b3a0bb07dde71cf2cdcfb689af7681d7c17d6675d315",
+    "recovery_runner_sha256": "17baf413a9b628cb3f1e616d2396a21b6396012569e5bc3e45a90b9e1057b7e0",
+    "recovery_script_sha256": "f345ebf9a72611fb8aaac0739fd86fe5f56db9bae76273b536122b1e5908d47d",
+    "production_source_sha256": "c5bfc4f0bd9c191b90769b532f481f8d284f9e6f04df5b2fc69bd41c8bccb960",
+    "reused_stages": {
+      "retrieval": 807,
+      "rerank": 807
+    },
+    "remaining_stages": [
+      "SourceSession on complete frozen context_candidates",
+      "live production search for first query"
+    ],
+    "runner_correction": "Bind RankedSearch.catalog and run_id to the actual context lease",
+    "environment_correction": "New interpreter loads the installed same-revision CodePlus host path"
+  },
+  "test": {
+    "dataset_id": "beir-scifact-v1",
+    "split": "test",
+    "questions": 300,
+    "dataset_fingerprint": "98f3c573b8f153679f838d7fac07221519c258437124f2c5ef5b00fa87b3ca10",
+    "corpus_fingerprint": "b31c479f4edf81b808ce397d98a43422fde51d27510119d9dba3ded18264d48c",
+    "namespace": "beir_scifact_v1",
+    "metric_library": {
+      "ir-measures": "0.4.3",
+      "pytrec-eval-terrier": "0.5.10"
+    },
+    "scorer_sha256": "f1004107924185b06debf590ddc7203e19dc429124ba27bc7a6a3142a0a47aa2",
+    "documents": 5183,
+    "indexed_chunks": 5844,
+    "answer_model_executed": false,
+    "completion": {
+      "status": "complete",
+      "answer_model_executed": false,
+      "collection_name": "ar_beir_scifact_v1_71094ba9447246679d77eb2d6b962efd_48d7fc078276489e85d4b0f90dc71cb0_9dee12943716420fa57545b59d9f909e_e1",
+      "retrieval_seconds": 418.26747419999447,
+      "rerank_seconds": 414.6965245999745,
+      "retrieval_errors": 0,
+      "rerank_errors": 0,
+      "context_errors": 0,
+      "production_control_matched": true,
+      "elapsed_seconds": 1005.2827216000296,
+      "retired_sessions": [],
+      "source_unchanged": true
+    },
+    "source": "D:\\CodePlus\\eval\\scifact-eval\\.state\\baseline-20260927\\retrieval\\production-test-20260927",
+    "source_sha256": {
+      "chunk-documents.json": "9ab27558dcd9089a57a23dc6283fedd19bbf2773a712c2b23517bb4bffaea306",
+      "chunk-spans.json": "b192d3ce72ec170f0fdb2b52a228f01054e93f10a04df8f959a7db726be57e73",
+      "completion.json": "1f25c0484a96c7f10a397cd9a34f4451c38965238108009c36c4fa44ebbcd171",
+      "context.jsonl": "3032b195f23bac1f84d78e8daba62e2f009b4a3a9b08981036d0df13ab131467",
+      "production-control.json": "9ebbb98d72f755410df81259c03a86b45e432b95b2a86dc4aa81c72502c92cc2",
+      "protocol.json": "a5104005d36bc4e94df1e0d26660696634798bc133fa6f77cc85b45d472bad94",
+      "rerank.jsonl": "e28e1e13b7f59b62e69e8a390a2a929b477d96b0415bf4d21cbd8c58f4a7d94a",
+      "retrieval.jsonl": "8289794df9b9b96e9924fc3769db1f47998166ef9f7466f4b86e313ea65d266d"
+    },
+    "stages": {
+      "dense50": {
+        "errors": 0,
+        "duplicate_chunk_hits": 1239,
+        "document_metrics": {
+          "Success@5": 0.7966666666666666,
+          "Success@10": 0.8433333333333334,
+          "R@5": 0.7824444444444444,
+          "R@10": 0.8338888888888889,
+          "RR@10": 0.6784589845916683,
+          "nDCG@10": 0.7085607303818762,
+          "P@5": 0.1746666666666667,
+          "P@10": 0.095
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 300,
+            "hit": 0.7866666666666666,
+            "macro_recall": 0.7707777777777778,
+            "covered_qrels": 258,
+            "total_qrels": 339,
+            "micro_recall": 0.7610619469026548,
+            "fully_covered_questions": 224,
+            "returned_chunks": 1500,
+            "duplicate_document_slots": 117
+          },
+          "10": {
+            "questions": 300,
+            "hit": 0.8433333333333334,
+            "macro_recall": 0.8338888888888889,
+            "covered_qrels": 285,
+            "total_qrels": 339,
+            "micro_recall": 0.8407079646017699,
+            "fully_covered_questions": 247,
+            "returned_chunks": 3000,
+            "duplicate_document_slots": 240
+          },
+          "50": {
+            "questions": 300,
+            "hit": 0.9266666666666666,
+            "macro_recall": 0.9266666666666666,
+            "covered_qrels": 317,
+            "total_qrels": 339,
+            "micro_recall": 0.9351032448377581,
+            "fully_covered_questions": 278,
+            "returned_chunks": 15000,
+            "duplicate_document_slots": 1239
+          }
+        }
+      },
+      "bm2550": {
+        "errors": 0,
+        "duplicate_chunk_hits": 795,
+        "document_metrics": {
+          "Success@5": 0.7533333333333333,
+          "Success@10": 0.8133333333333334,
+          "R@5": 0.7276111111111111,
+          "R@10": 0.7941111111111111,
+          "RR@10": 0.6477840024784234,
+          "nDCG@10": 0.6757987479708504,
+          "P@5": 0.15733333333333335,
+          "P@10": 0.08766666666666667
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 300,
+            "hit": 0.75,
+            "macro_recall": 0.7242777777777777,
+            "covered_qrels": 235,
+            "total_qrels": 339,
+            "micro_recall": 0.6932153392330384,
+            "fully_covered_questions": 209,
+            "returned_chunks": 1500,
+            "duplicate_document_slots": 75
+          },
+          "10": {
+            "questions": 300,
+            "hit": 0.8133333333333334,
+            "macro_recall": 0.7941111111111112,
+            "covered_qrels": 263,
+            "total_qrels": 339,
+            "micro_recall": 0.775811209439528,
+            "fully_covered_questions": 233,
+            "returned_chunks": 3000,
+            "duplicate_document_slots": 155
+          },
+          "50": {
+            "questions": 300,
+            "hit": 0.88,
+            "macro_recall": 0.8670555555555556,
+            "covered_qrels": 292,
+            "total_qrels": 339,
+            "micro_recall": 0.8613569321533924,
+            "fully_covered_questions": 255,
+            "returned_chunks": 15000,
+            "duplicate_document_slots": 795
+          }
+        }
+      },
+      "union100": {
+        "errors": 0,
+        "duplicate_chunk_hits": 1689,
+        "document_metrics": null,
+        "original_chunk_windows": {
+          "100": {
+            "questions": 300,
+            "hit": 0.9566666666666667,
+            "macro_recall": 0.9566666666666667,
+            "covered_qrels": 326,
+            "total_qrels": 339,
+            "micro_recall": 0.9616519174041298,
+            "fully_covered_questions": 287,
+            "returned_chunks": 25365,
+            "duplicate_document_slots": 1689
+          }
+        }
+      },
+      "rrf24": {
+        "errors": 0,
+        "duplicate_chunk_hits": 498,
+        "document_metrics": {
+          "Success@5": 0.81,
+          "Success@10": 0.88,
+          "R@5": 0.7887777777777778,
+          "R@10": 0.8685555555555555,
+          "RR@10": 0.6963817473849443,
+          "nDCG@10": 0.7333378145015623,
+          "P@5": 0.1746666666666667,
+          "P@10": 0.098
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 300,
+            "hit": 0.81,
+            "macro_recall": 0.786,
+            "covered_qrels": 260,
+            "total_qrels": 339,
+            "micro_recall": 0.7669616519174042,
+            "fully_covered_questions": 229,
+            "returned_chunks": 1500,
+            "duplicate_document_slots": 103
+          },
+          "10": {
+            "questions": 300,
+            "hit": 0.8766666666666667,
+            "macro_recall": 0.8643888888888889,
+            "covered_qrels": 292,
+            "total_qrels": 339,
+            "micro_recall": 0.8613569321533924,
+            "fully_covered_questions": 254,
+            "returned_chunks": 3000,
+            "duplicate_document_slots": 202
+          },
+          "24": {
+            "questions": 300,
+            "hit": 0.9166666666666666,
+            "macro_recall": 0.9105555555555555,
+            "covered_qrels": 310,
+            "total_qrels": 339,
+            "micro_recall": 0.9144542772861357,
+            "fully_covered_questions": 271,
+            "returned_chunks": 7200,
+            "duplicate_document_slots": 498
+          }
+        }
+      },
+      "rerank10": {
+        "errors": 0,
+        "duplicate_chunk_hits": 221,
+        "document_metrics": {
+          "Success@5": 0.8566666666666667,
+          "Success@10": 0.9033333333333333,
+          "R@5": 0.8377777777777778,
+          "R@10": 0.8948888888888888,
+          "RR@10": 0.7418769841269841,
+          "nDCG@10": 0.7740585757645662,
+          "P@5": 0.18533333333333335,
+          "P@10": 0.10133333333333334
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 300,
+            "hit": 0.8533333333333334,
+            "macro_recall": 0.8294444444444444,
+            "covered_qrels": 273,
+            "total_qrels": 339,
+            "micro_recall": 0.8053097345132744,
+            "fully_covered_questions": 241,
+            "returned_chunks": 1481,
+            "duplicate_document_slots": 114
+          },
+          "10": {
+            "questions": 300,
+            "hit": 0.9033333333333333,
+            "macro_recall": 0.894888888888889,
+            "covered_qrels": 304,
+            "total_qrels": 339,
+            "micro_recall": 0.8967551622418879,
+            "fully_covered_questions": 265,
+            "returned_chunks": 2897,
+            "duplicate_document_slots": 221
+          }
+        }
+      },
+      "context": {
+        "errors": 0,
+        "duplicate_chunk_hits": 67,
+        "document_metrics": {
+          "Success@5": 0.8266666666666667,
+          "Success@10": 0.8266666666666667,
+          "R@5": 0.7982222222222223,
+          "R@10": 0.7982222222222223,
+          "RR@10": 0.7287222222222223,
+          "nDCG@10": 0.7357211837260662,
+          "P@5": 0.17400000000000002,
+          "P@10": 0.08700000000000001
+        },
+        "original_chunk_windows": {
+          "5": {
+            "questions": 300,
+            "hit": 0.8266666666666667,
+            "macro_recall": 0.7982222222222222,
+            "covered_qrels": 261,
+            "total_qrels": 339,
+            "micro_recall": 0.7699115044247787,
+            "fully_covered_questions": 230,
+            "returned_chunks": 1151,
+            "duplicate_document_slots": 67
+          },
+          "10": {
+            "questions": 300,
+            "hit": 0.8266666666666667,
+            "macro_recall": 0.7982222222222222,
+            "covered_qrels": 261,
+            "total_qrels": 339,
+            "micro_recall": 0.7699115044247787,
+            "fully_covered_questions": 230,
+            "returned_chunks": 1151,
+            "duplicate_document_slots": 67
+          }
+        }
+      }
+    },
+    "rerank_change_at_5": {
+      "gained_qrels": 29,
+      "lost_qrels": 16,
+      "improved_queries": 25,
+      "regressed_queries": 11
+    },
+    "rerank_change_at_10": {
+      "gained_qrels": 15,
+      "lost_qrels": 3,
+      "improved_queries": 15,
+      "regressed_queries": 3
+    },
+    "two_pass_query_ms": {
+      "median": 2707.050899975002,
+      "p95": 3149.137199972756,
+      "note": "sum of retrieval and rerank in separate passes; excludes build; not Agent answer latency"
+    }
+  }
+}

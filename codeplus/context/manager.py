@@ -728,24 +728,15 @@ async def auto_compact(
             from codeplus.tools.base import StreamEnd, StreamEvent, TextDelta
 
             from contextlib import aclosing
-            from codeplus.run_policy import BudgetStop
             collected_text = ""
-            terminal = None
             options = {'control': control_factory('compact')} if control_factory else {}
             async with aclosing(client.stream(summary_conv, system=SUMMARY_PROMPT, tools=tool_schemas, **options)) as stream:
                 async for event in stream:
                     if isinstance(event, TextDelta):
                         collected_text += event.text
-                    elif isinstance(event, StreamEnd):
-                        terminal = event
-            if control_factory and (terminal is None or terminal.delivery != 'confirmed'
-                                    or terminal.stop_reason != 'end_turn'):
-                raise BudgetStop('provider_truncated', hard=True)
             llm_output = collected_text
             break
 
-        except BudgetStop:
-            raise
         except Exception as e:
             err_msg = str(e).lower()
             if "prompt" in err_msg and "long" in err_msg or "too many" in err_msg:

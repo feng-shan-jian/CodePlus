@@ -276,15 +276,15 @@ def test_rerank_alone_changes_new_run_identity_without_rebuild(s):
     assert not s.runtime_calls
 
 
-def test_new_query_freezes_actual_encoder_but_latest_rerank_and_budget(s):
+def test_new_query_freezes_actual_encoder_but_latest_rerank_and_return_limits(s):
     data = changed(s.config, rerank=True).model_dump(mode='json')
-    data['budgets']['qa']['searches'] += 1
+    data['retrieval']['context_tokens'] += 100
     desired = KnowledgeConfig.model_validate_json(json.dumps(data))
     with s.catalog.start_current_run(s.kb, desired, 'qa') as lease:
         actual = lease.run.resolved_config
         assert actual.knowledge.embedding.identity == s.config.embedding.identity
         assert actual.knowledge.reranker.identity == desired.reranker.identity
-        assert actual.budget == desired.budgets.qa
+        assert actual.retrieval.context_tokens == desired.retrieval.context_tokens
         def unavailable(item, profile, context):
             assert profile.identity == s.config.embedding.identity
             raise RagError(ErrorCode.DEPENDENCY_UNAVAILABLE, 'old encoder unavailable', stage='query')
@@ -315,16 +315,9 @@ def test_normal_knowledge_policy_uses_current_encoding_and_exposes_proposal(s, m
     from codeplus.run_policy import HostRunContext, RunOutcome
     from agentic_rag.adapters.codeplus import policy
     from agentic_rag.config import WorkerExecutionConfig
-    host = runpy.run_path(str(Path(__file__).with_name('test_codeplus_integration.py')))
-    data = s.target.model_dump(mode='json')
-    data['budgets']['qa'].update(total_tokens=40000, finish_reserve_tokens=20000)
-    desired = KnowledgeConfig.model_validate_json(json.dumps(data))
-    conf = policy.DevelopmentConfig(knowledge=desired,
+    conf = policy.DevelopmentConfig(knowledge=s.target,
         worker=WorkerExecutionConfig(executable=str(s.root/'python'), model_cache=str(s.root/'cache'), runtime_dir=str(s.root/'worker')),
-        answer_tokenizer=str(s.root/'tokenizer'), explore_output_cap=1000, finish_input_upper=8000,
-        finalize_output_cap=1000, repair_output_cap=1000, compact_output_cap=1000,
-        max_iterations=10, max_tool_attempts=10, cleanup_grace_ms=0)
-    monkeypatch.setattr(policy, 'DeepSeekTextMeter', lambda *a, **kw: host['ControlledMeter']())
+        cleanup_grace_ms=0)
     async def initialize(self):
         assert self.lease.run.resolved_config.knowledge.embedding.identity == s.config.embedding.identity
     monkeypatch.setattr(policy.KnowledgeScope, 'initialize', initialize)

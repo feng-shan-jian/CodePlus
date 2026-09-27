@@ -390,7 +390,7 @@ uv sync --locked --dev
 uv run pytest
 ```
 
-RAG 数据校验与离线评分见 [评测说明](eval/RAG-eval/README.md)；独立核心的真实 Dense 检索验证见 [R10 记录](deployment/AgenticRAG/docs/implementation-records/R10.md)，宿主 Agent 回答评测仍待后续接入。
+RAG 数据校验与离线评分见 [评测说明](eval/RAG-eval/README.md)；普通 Agent 与知识工具的接入、检索实测及验证边界见 [AgenticRAG 验收记录](deployment/AgenticRAG/docs/production-simplification-acceptance-20260927.md)。
 
 ---
 

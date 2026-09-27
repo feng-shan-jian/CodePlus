@@ -400,7 +400,7 @@ uv sync --locked --dev
 uv run pytest
 ```
 
-RAG data validation and offline scoring are described in the [evaluation guide](eval/RAG-eval/README.md). Real Dense retrieval checks for the independent core are recorded in [R10](deployment/AgenticRAG/docs/implementation-records/R10.md); host Agent answer evaluation awaits integration.
+RAG data validation and offline scoring are described in the [evaluation guide](eval/RAG-eval/README.md). Ordinary Agent integration, retrieval measurements, and validation limits are recorded in the [AgenticRAG acceptance report](deployment/AgenticRAG/docs/production-simplification-acceptance-20260927.md).
 
 ---
 

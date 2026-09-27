@@ -37,16 +37,6 @@ def test_retired_retrieval_rejects_before_environment_or_report_access(tmp_path,
     assert sorted(path.name for path in tmp_path.iterdir()) == ["run.ps1"]
 
 
-def test_usage_docs_describe_current_host_boundary_and_native_replay():
-    guide = (SUITE / "README.md").read_text(encoding="utf-8")
-    benchmark = (SUITE / "benchmark.md").read_text(encoding="utf-8")
-    assert "uv sync --locked --extra knowledge" not in guide
-    assert "尚未接入" in guide and "R00–R11" in guide
-    assert "report.json" in guide and "evidence_recall" in guide
-    assert "R01" in benchmark and "evidence_recall" in benchmark
-    assert "产品入口仍是" not in benchmark
-
-
 def test_powershell_caller_relative_answers_and_replay(tmp_path):
     selected = set(json.loads((SUITE / "tiers.json").read_text(encoding="utf-8"))["tiers"]["lite"]["question_ids"])
     questions = [q for q in json.loads((SUITE / "questions.json").read_text(encoding="utf-8"))["questions"] if q["id"] in selected]
