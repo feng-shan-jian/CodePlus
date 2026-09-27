@@ -1,0 +1,11 @@
+{
+  "retrieval": {
+    "route": "hybrid",
+    "rerank": true,
+    "dense_candidates": 50,
+    "bm25_candidates": 50,
+    "rerank_candidates": 24,
+    "rrf_k": 10,
+    "min_score": 0.001
+  }
+}

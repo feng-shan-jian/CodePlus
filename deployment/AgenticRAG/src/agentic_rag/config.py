@@ -103,6 +103,9 @@ class RetrievalConfig(Record):
     bm25_candidates: PositiveInt
     rerank_candidates: PositiveInt
     rrf_k: PositiveInt
+    # Omit the disabled field on the wire to preserve existing snapshot/run hashes.
+    min_score: Annotated[float, Field(ge=0, le=1)] | None = Field(
+        default=None, exclude_if=lambda value: value is None)
     nprobe: PositiveInt
     context_chunks: PositiveInt
     context_tokens: PositiveInt

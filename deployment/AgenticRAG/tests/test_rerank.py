@@ -90,6 +90,66 @@ def test_unique_input_cap_precedes_rerank_and_response_limit(tmp_path):
         assert len({str(items[0].item_id) for _,items,_,_ in model.rank_calls})==2
 
 
+class ThresholdProvider(Provider):
+    def rerank(self,query,items,profile,context):
+        response=super().rerank(query,items,profile,context)
+        scores={item.item_id:{'One':0.0009,'Two':0.001,'Three':0.9}[item.title] for item in items}
+        values=tuple(sorted((value.model_copy(update={'score':scores[value.item_id]})
+                             for value in response.results), key=lambda v:(-v.score,str(v.item_id))))
+        return response.model_copy(update={'results':values})
+
+
+@pytest.mark.parametrize('route',['dense','bm25','hybrid'])
+@pytest.mark.parametrize('threshold,expected',[(None,3),(0.0,3),(0.001,2),(1.0,0)])
+def test_min_score_filters_complete_reranking_inclusively_without_backfill(tmp_path,route,threshold,expected):
+    catalog,kb,base,rows,backend=R['published'](tmp_path)
+    backend.search=R['transport'](rows,[]);model=ThresholdProvider()
+    base=configured(base,route,batch_size=2)
+    config=base.model_copy(update={'retrieval':base.retrieval.model_copy(update={'min_score':threshold})})
+    with catalog.start_run(kb,resolve_run(config,'qa')) as lease:
+        search=RetrievalSearch(catalog,lease.run.run_id,model,backend)
+        found=search.search('certificate',limit=3)
+        assert len(found['hits'])==expected
+        assert len(model.rank_calls)==2 and sum(len(items) for _,items,_,_ in model.rank_calls)==3
+        assert [h['score'] for h in found['hits']]==[0.9,0.001,0.0009][:expected]
+        trace=found['trace']
+        assert len(trace['rerank']['ranking'])==3
+        assert trace['status']==('ok' if expected else 'empty')
+        if threshold is not None:
+            removed=trace['rerank']['filter']['removed_ids']
+            assert len(removed)==3-expected and trace['rerank']['filter']['min_score']==threshold
+            assert set(removed).isdisjoint(trace['returned_ids'])
+        else:
+            assert 'filter' not in trace['rerank']
+        assert len(search.search('certificate',limit=1)['hits'])==min(1,expected)
+
+
+@pytest.mark.parametrize('route',['dense','bm25','hybrid'])
+def test_auto_override_without_rerank_does_not_threshold_raw_scores(tmp_path,route):
+    catalog,kb,base,rows,backend=R['published'](tmp_path)
+    backend.search=R['transport'](rows,[]);model=Provider()
+    base=configured(base)
+    config=base.model_copy(update={'retrieval':base.retrieval.model_copy(update={'mode':'auto','min_score':1.0})})
+    with catalog.start_run(kb,resolve_run(config,'qa')) as lease:
+        result=RetrievalSearch(catalog,lease.run.run_id,model,backend).search('q',strategy=route,rerank=False)
+        assert len(result['hits'])==3 and model.rank_calls==[]
+        assert 'filter' not in result['trace']['rerank']
+        assert catalog.get_run(lease.run.run_id).resolved_config.retrieval.min_score==1.0
+
+
+def test_all_filtered_source_search_creates_no_deliverable_candidates(tmp_path):
+    catalog,kb,base,rows,backend=R['published'](tmp_path)
+    backend.search=R['transport'](rows,[]);model=ThresholdProvider()
+    base=configured(base)
+    config=base.model_copy(update={'retrieval':base.retrieval.model_copy(update={'min_score':1.0})})
+    with catalog.start_run(kb,resolve_run(config,'qa')) as lease:
+        session=SourceSession(catalog,lease,S['ControlledMeter'](),dense=RetrievalSearch(catalog,lease.run.run_id,model,backend))
+        result=session.search('certificate')
+        assert result.payload['items']==[]
+        with catalog._db.transaction() as db:
+            assert db.execute('SELECT count(*) FROM source_candidates').fetchone()[0]==0
+
+
 def test_actual_padded_token_bound_can_make_smaller_batches_than_item_limit(tmp_path):
     catalog,kb,base,rows,backend=R['published'](tmp_path)
     backend.search=R['transport'](rows,[]);model=Provider()

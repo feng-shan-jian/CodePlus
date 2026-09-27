@@ -133,6 +133,11 @@ class RetrievalSearch:
                 if config.rerank:
                     stage = 'rerank'
                     output = self._rerank(query, output[:config.rerank_candidates], trace['rerank'], deadline_monotonic_ns)
+                    if config.min_score is not None:
+                        trace['rerank']['filter'] = {
+                            'min_score':config.min_score,
+                            'removed_ids':[h['chunk_id'] for h in output if h['score'] < config.min_score]}
+                        output = [h for h in output if h['score'] >= config.min_score]
                 output = output[:limit]
                 trace.update(status='ok' if output else 'empty', returned_ids=[h['chunk_id'] for h in output])
         except Exception as exc:

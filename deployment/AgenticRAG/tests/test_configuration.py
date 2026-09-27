@@ -77,6 +77,53 @@ def test_precedence_copy_and_run_override_are_feature_scoped():
         resolve_run(config, "chat")
 
 
+@pytest.mark.parametrize('value', [-0.001, 1.001, True, '0.001', float('nan'), float('inf')])
+def test_min_score_rejects_invalid_probabilities(value):
+    raw = example_config()
+    raw['retrieval']['min_score'] = value
+    with pytest.raises(ValidationError):
+        parse(raw)
+
+
+def test_min_score_preserves_legacy_hashes_and_changes_only_new_run_identity():
+    legacy = parse(example_config())
+    # Captured from the installed package before min_score was introduced.
+    assert resolve_run(legacy, 'qa').identity == 'd508ccbf035fb0e968a33a041ffedba009ef44d7aa73f479415f561b096ea604'
+    snapshot = ProcessingSnapshot.capture(uuid4(), legacy)
+    assert snapshot.config_fingerprint == '150e6427e4bdfe17bb1a71d9f6fac36e91cf193528e93250e7b547981d9989a3'
+    assert 'min_score' not in snapshot.model_dump_json()
+    assert ProcessingSnapshot.model_validate_json(snapshot.model_dump_json()) == snapshot
+    for value in (None, 0.0, 0.001, 1.0):
+        configured = {'retrieval': {'min_score': value}}
+        selected = assemble_configuration(defaults=example_config(), configured=configured).knowledge
+        run = resolve_run(selected, 'qa')
+        assert run.retrieval.min_score == value
+        assert (run.identity == resolve_run(legacy, 'qa').identity) == (value is None)
+        assert document_encoding_identity(selected) == document_encoding_identity(legacy)
+        assert index_identity(selected) == index_identity(legacy)
+        record = Run(run_id=uuid4(), kb_id=uuid4(), revision_id=uuid4(),
+                     resolved_config=run, resolved_config_hash=run.identity)
+        assert Run.model_validate_json(record.model_dump_json()) == record
+    reset = assemble_configuration(defaults=example_config(), configured={'retrieval': {'min_score': 0.001}},
+                                   explicit={'retrieval': {'min_score': None}}).knowledge
+    assert reset == legacy
+
+
+def test_selected_retrieval_preset_uses_existing_configuration_assembly():
+    preset = json.loads((Path(__file__).resolve().parents[1] / 'docs/retrieval-selected.json').read_text(encoding='utf-8'))
+    raw = example_config()
+    config = assemble_configuration(defaults=raw, configured=preset).knowledge
+    assert (config.retrieval.route, config.retrieval.rerank) == ('hybrid', True)
+    assert (config.retrieval.dense_candidates, config.retrieval.bm25_candidates,
+            config.retrieval.rerank_candidates, config.retrieval.rrf_k, config.retrieval.min_score) == (50, 50, 24, 10, 0.001)
+    before = parse(raw)
+    assert config.retrieval.mode == before.retrieval.mode
+    assert config.retrieval.context_chunks == before.retrieval.context_chunks
+    assert config.retrieval.context_tokens == before.retrieval.context_tokens
+    assert config.processing == before.processing and config.model_profiles == before.model_profiles
+    assert config.storage == before.storage and config.budgets == before.budgets
+
+
 def test_origin_scalar_to_mapping_and_schema_default_distinction():
     raw = example_config()
     storage = raw.pop("storage")

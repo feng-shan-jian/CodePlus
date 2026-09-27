@@ -26,6 +26,8 @@ RRF 只用稳定 Chunk ID 和每路从 1 开始的原始排名：`sum(1 / (rrf_k
 
 Rerank 使用运行冻结的 profile、归档 `ChunkInput.index_title` 及 canonical 正文；精排前不拼邻块，不用文件名代替标题。正式本地 client 的 `config.model_cache` 提供冻结 tokenizer 资产；自定义 provider 可显式传 `RetrievalSearch(..., rerank_tokenizer=...)`，其 profile 必须一致。`FrozenTokenizer.rerank` 完整计入 query、标题、模板和特殊 token；按实际条数及 padded-token 上限拆批，不截断。所有 ID、实际 token 数及完整响应通过校验后，才按分数降序、ID 升序合并。任一批失败整次失败，无未精排回退。每条输入 hash/实际 token、每批 request ID、评分、排队/加载/推理及墙钟耗时写入同次 `trace.rerank`。
 
+可选的 `retrieval.min_score` 在完整精排成功后、返回数量截断前保留分数大于等于阈值的结果；接受0到1的有限数值，缺省/null不滤。全部低于阈值时返回空结果，不补齐；关闭rerank时不将此阈值套到Dense、BM25或RRF分数。`trace.rerank.ranking`保留完整评分，启用过滤时另记`trace.rerank.filter.min_score`及`removed_ids`。未配置阈值的旧快照和运行指纹保持原样，无需迁移。可通过既有 `assemble_configuration` 合并[显式检索配置预设](retrieval-selected.json)；该预设不自动修改已有知识库配置。
+
 整个召回、原文读取、计数与精排仍共用外层 reader；子 Rerank 请求使用原模型 reader 和真实 handle 的 `wait_finished`。取消、结果报错或 client 关闭不是 GPU 完成回执，未完成读者继续保护旧版本。
 
 Context 的 `query-relative-v1` 是可复核的试验规则：在当前 query 排名中，以组首分数的绝对值乘 2% 划分相关性近似组，组内先选尚未选过的文档，内部保持原排名；不设置文档配额，不比较不同 query 的分数。同文档不同位置及冲突正文保留；只扣除同文档版本在当前 `evidence_windows` 和本次已选结果中的重叠 Unicode 区间。已返回而未进入当前窗口的正文不受历史 `source_candidates` 抑制，仍累计原 source-return/片段 reservations。
