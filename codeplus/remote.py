@@ -481,7 +481,19 @@ class RemoteServer:
         self._cancel_event = asyncio.Event()
         start_time = time.monotonic()
         stream_buf = ""
-        history_cursor = len(self.conversation.history)
+        history_anchor = self.conversation.history[-1]
+
+        def persist_new_messages() -> None:
+            nonlocal history_anchor
+            if self.session is None:
+                return
+            history = self.conversation.history
+            # Agent may insert prefixes before saved messages; follow identity,
+            # so repeated text is preserved without writing old messages again.
+            start = next(i for i, message in enumerate(history) if message is history_anchor) + 1
+            for message in history[start:]:
+                self.session.append(message)
+                history_anchor = message
 
         try:
             async with aclosing(self.agent.run(self.conversation)) as stream:
@@ -547,10 +559,7 @@ class RemoteServer:
                         })
 
                     elif isinstance(event, TurnComplete):
-                        if self.session:
-                            for message in self.conversation.history[history_cursor:]:
-                                self.session.append(message)
-                            history_cursor = len(self.conversation.history)
+                        persist_new_messages()
                         if stream_buf:
                             await self._broadcast({
                                 "type": "stream_end",
@@ -598,7 +607,7 @@ class RemoteServer:
 
                     elif isinstance(event, CompactNotification):
                         self._persist_compact_boundary(event)
-                        history_cursor = len(self.conversation.history)
+                        history_anchor = self.conversation.history[-1]
                         await self._broadcast({
                             "type": "compact",
                             "data": {"message": event.message},
@@ -637,8 +646,7 @@ class RemoteServer:
             self._deny_pending_permissions()
             if self.session:
                 self.session.meta.total_tokens = self.agent.total_input_tokens + self.agent.total_output_tokens
-                for message in self.conversation.history[history_cursor:]:
-                    self.session.append(message)
+                persist_new_messages()
             self._streaming = False
             self._cancel_event = None
             if self._active_task is asyncio.current_task() and not _knowledge:

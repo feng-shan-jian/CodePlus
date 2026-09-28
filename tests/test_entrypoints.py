@@ -10,7 +10,9 @@ from textual.widgets import Markdown
 from codeplus.__main__ import _run_prompt
 from codeplus.app import ChatInput, CodePlusApp
 from codeplus.config import AppConfig, ProviderConfig, load_config
-from codeplus.conversation import Message
+from codeplus.agent import Agent, CompactNotification, LoopComplete, StreamText, TurnComplete
+from codeplus.context import CompactBoundary
+from codeplus.conversation import ConversationManager, Message, ToolResultBlock, ToolUseBlock
 from codeplus.memory.session import SessionManager
 from codeplus.permissions import PermissionMode
 from codeplus.remote import RemoteServer
@@ -129,3 +131,57 @@ async def test_remote_stream_and_replay_keep_plain_message_contract(environment,
     assert server.command_registry.find("knowledge").handler.__module__ == 'codeplus.commands.handlers.knowledge'
     assert server.knowledge_feature_available is True
     server.session.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("phase", ["first", "compact", "compact_empty", "resume"])
+@pytest.mark.parametrize("knowledge", [False, True])
+async def test_remote_persists_each_message_once_after_prefix_injection(
+    environment, tmp_path, monkeypatch, phase, knowledge,
+):
+    async def run(self, conversation):
+        if not phase.startswith("compact"):
+            conversation.inject_environment("environment prefix")
+            conversation.inject_long_term_memory("project instructions", "memory prefix")
+        call = Message("assistant", "before", tool_uses=[ToolUseBlock("call-one", "ReadFile", {})])
+        result = Message("user", "", tool_results=[ToolResultBlock("call-one", "original tool body")])
+        conversation.history.extend([call, result])
+        yield TurnComplete(1)
+        if phase.startswith("compact"):
+            keep = [] if phase == "compact_empty" else [call, result]
+            conversation.replace_history([Message("user", "summary"), *keep])
+            yield CompactNotification(100, "compacted", CompactBoundary("summary", keep))
+            # Agent reinjects its prefixes after delivering the compact boundary.
+            conversation.inject_environment("new environment prefix")
+            conversation.inject_long_term_memory("project instructions", "new memory prefix")
+        conversation.history.append(Message("assistant", "identical genuine answer"))
+        yield TurnComplete(2)
+        conversation.history.append(Message("assistant", "identical genuine answer"))
+        yield StreamText("identical genuine answer")
+        yield LoopComplete(3)
+
+    monkeypatch.setattr(Agent, "run", run)
+    server = RemoteServer(environment.providers, config=environment)
+    server._init_agent()
+    monkeypatch.setattr(server, "_broadcast", AsyncMock())
+    if phase == "resume":
+        old = server.session
+        old.append(Message("user", "archived question"))
+        old.append(Message("assistant", "archived answer"))
+        old.close()
+        resumed = server.session_manager.resume(old.session_id)
+        server._set_session(resumed.session)
+        conversation = ConversationManager()
+        conversation.history.extend(resumed.messages)
+        server._set_conversation(conversation)
+
+    await server._handle_user_message("new question", _knowledge=knowledge)
+    identity = server.session.session_id
+    server.session.close()
+    records = [json.loads(line) for line in
+               (tmp_path / ".codeplus/sessions" / (identity + ".jsonl")).read_text(encoding="utf-8").splitlines()]
+    assert sum(record.get("content") == "new question" for record in records) == 1
+    assert sum(record.get("content") == "identical genuine answer" for record in records) == 2
+    assert sum(len(record.get("tool_results", [])) for record in records) == 1
+    assert sum(record.get("content") == "archived answer" for record in records) == int(phase == "resume")
+    assert sum(record.get("type") == "compact_boundary" for record in records) == int(phase.startswith("compact"))
