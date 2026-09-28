@@ -29,7 +29,7 @@ from agentic_rag.retrieval import RetrievalSearch
 from agentic_rag.storage import Catalog, publication
 
 
-def experiment_config(data_dir, endpoint, route='dense', *, rerank=False):
+def experiment_config(data_dir, endpoint, route='dense', *, rerank=False, rerank_candidates=50):
     # Exact IVF traversal is an explicit development baseline, not an ANN optimum.
     return KnowledgeConfig.model_validate_json(json.dumps({
         'storage':{'data_dir':str(data_dir), 'milvus_uri':endpoint, 'namespace':'r10_acceptance'},
@@ -38,7 +38,7 @@ def experiment_config(data_dir, endpoint, route='dense', *, rerank=False):
         'models':{'embedding':'embed', 'reranker':'rank'},
         'model_profiles':[{'name':'embed','capability':'embedding'}, {'name':'rank','capability':'rerank'}],
         'retrieval':{'mode':'fixed','route':route,'rerank':rerank,'dense_candidates':50,'bm25_candidates':50,
-            'rerank_candidates':50,'rrf_k':60,'nprobe':64,'context_chunks':8,'context_tokens':8000}}))
+            'rerank_candidates':rerank_candidates,'rrf_k':60,'nprobe':64,'context_chunks':8,'context_tokens':8000}}))
 
 
 def protect_runtime_reads():
@@ -47,7 +47,7 @@ def protect_runtime_reads():
     def audit(event, args):
         if event != 'open' or not isinstance(args[0], (str, bytes, os.PathLike)):
             return
-        path=Path(os.fsdecode(args[0])).absolute()
+        path=Path(os.fsdecode(args[0])).resolve()
         if path.is_relative_to(suite) and not path.is_relative_to(suite/'corpus'):
             denied.append(str(path))
             raise PermissionError('runtime cannot read evaluation scoring inputs: '+str(path))
@@ -83,6 +83,32 @@ def completion_status(report):
     if warm.get('status')=='error' or warm.get('context',{}).get('status')=='error':
         return 'COMPLETE_WITH_AUXILIARY_ERROR'
     return 'PASS'
+
+
+def client_at_query_boundary(provider, worker, config, report):
+    """Swap owner only between queries, before the finite session can fill.
+
+    One query has at most one embedding request and one rerank request per
+    candidate (actual batching uses fewer). No retry or request-count reset is
+    performed on the old owner; all its real work must finish before goodbye.
+    """
+    if provider is None:return None
+    reserve=(1 if config.retrieval.route in {'dense','hybrid'} else 0)
+    reserve+=config.retrieval.rerank_candidates if config.retrieval.rerank else 0
+    if reserve>worker.max_session_requests:raise ValueError('one query can exceed worker session request limit')
+    with provider.lock:handles=tuple(provider.handles.values())
+    if len(handles)+reserve<=worker.max_session_requests:return provider
+    for handle in handles:
+        if not handle.execution_finished:
+            handle.cancel()
+            if not handle.wait_finished(worker.startup_timeout_ms/1000):
+                raise RuntimeError('cannot rotate model owner before prior work has finished')
+    snapshot={'owner_id':str(provider.owner_id),'request_count':len(handles),'status':provider.status(),
+        'worker_identity':{k:v for k,v in (provider.metadata or {}).items() if k not in ('auth_token','token')},
+        'reason':'next_query_worst_case_would_exceed_session_limit'}
+    provider.close()
+    report.setdefault('retired_worker_sessions',[]).append(snapshot)
+    return LocalModelClient(worker)
 
 
 def query_context(catalog, kb_id, revision_id, config, provider, backend, meter, query):
@@ -152,7 +178,8 @@ def run(args):
     runtime=boundary['load_runtime_inputs'](question_ids=selected)
     root=Path(args.root).resolve(); root.mkdir(exist_ok=True,parents=True)
     data=root/'data'
-    config=experiment_config(data,args.endpoint,'dense' if args.action=='build' else args.action,rerank=getattr(args,'rerank',False))
+    config=experiment_config(data,args.endpoint,'dense' if args.action=='build' else args.action,
+        rerank=getattr(args,'rerank',False),rerank_candidates=getattr(args,'rerank_candidates',50))
     catalog=backend=provider=None
     report={'action':args.action,'pid':os.getpid(),'python':sys.executable,'cwd':str(Path.cwd()),
         'argv':sys.argv,'runtime_input_sha256':boundary['INPUT_SHA256'],
@@ -170,7 +197,7 @@ def run(args):
         backend=MilvusRevisionIndex(config.storage,catalog)
         if args.action!='bm25' or config.retrieval.rerank:
             worker=WorkerExecutionConfig(executable=args.cuda_python, model_cache=args.model_cache,
-                runtime_dir=str(root/'worker'), idle_timeout_ms=1000)
+                runtime_dir=str(root/'worker'), idle_timeout_ms=getattr(args,'worker_idle_timeout_ms',1000))
             report['worker_config']=worker.model_dump(mode='json')
             provider=LocalModelClient(worker)
         if args.action=='build':
@@ -209,6 +236,10 @@ def run(args):
                     revision_id=str(lease.run.revision_id),artifact=publication.artifact(catalog,lease.run.revision_id,published=True))
                 sources={Path(p).name:Path(p).stem for p in runtime['corpus_paths']}
                 for number,q in enumerate(runtime['questions']):
+                    replacement=client_at_query_boundary(provider,worker if provider is not None else None,config,report)
+                    if replacement is not provider:
+                        provider=replacement
+                        search=RetrievalSearch(catalog,lease.run.run_id,provider,backend)
                     begin=time.perf_counter()
                     try:
                         result=(query_context(catalog,kb_id,state['revision_id'],config,provider,backend,meter,q['query'])
@@ -219,9 +250,14 @@ def run(args):
                         record={**q,'status':'error','hits':[],'elapsed_ms':(time.perf_counter()-begin)*1000,
                             'error':error_record(exc)}
                     report['records'][number]=record
+                    record['model_owner_id']=str(provider.owner_id) if provider is not None else None
                     if number%25==0: print(json.dumps({'query':number+1,'total':len(runtime['questions']),'status':record['status']}),flush=True)
                 first=runtime['questions'][0]
                 try:
+                    replacement=client_at_query_boundary(provider,worker if provider is not None else None,config,report)
+                    if replacement is not provider:
+                        provider=replacement
+                        search=RetrievalSearch(catalog,lease.run.run_id,provider,backend)
                     report['warm_repeat']=(query_context(catalog,kb_id,state['revision_id'],config,provider,backend,meter,first['query'])
                                            if meter else search.search(first['query'],limit=10))
                 except Exception as exc:
@@ -264,5 +300,7 @@ if __name__=='__main__':
     for name in ('cuda-python','model-cache'):parser.add_argument('--'+name)
     parser.add_argument('--ids');parser.add_argument('--dataset-hash')
     parser.add_argument('--rerank',action='store_true',help='enable the frozen reranker; all other retrieval settings stay fixed')
+    parser.add_argument('--rerank-candidates',type=int,default=50,help='explicit candidate bound; legacy default 50')
+    parser.add_argument('--worker-idle-timeout-ms',type=int,default=1000,help='explicit local-worker environment; legacy default 1000')
     parser.add_argument('--context',action='store_true',help='measure actual source selection without calling an answer model')
     sys.exit(0 if run(parser.parse_args())['result']=='PASS' else 1)

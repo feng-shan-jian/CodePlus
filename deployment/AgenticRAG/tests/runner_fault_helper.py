@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import runpy
 import sys
+import threading
 from types import SimpleNamespace
 from uuid import UUID, uuid4
 
@@ -36,6 +37,7 @@ class Provider:
     metadata={}
     def __init__(self,*args):
         assert route!='bm25','pure BM25 must not construct a model client'
+        self.handles={};self.lock=threading.RLock();self.owner_id=uuid4()
     def close(self):
         if mode=='close':raise RuntimeError('injected close failure')
     def status(self):return {'synthetic_transport':True}
