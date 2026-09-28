@@ -32,3 +32,5 @@ config.local.*
 
 # Content isolated from the public source tree.
 /tests/test_packaging.py
+/.task/
+/需删除/

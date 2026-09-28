@@ -241,7 +241,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 
 > **面对当前问题，依据究竟在哪里。**
 
-这也是下一步正在实现的 **[Agentic RAG（Work）模式](#接下来想做的事)** 想专门处理的事情。
+这也是 **[Agentic RAG](deployment/AgenticRAG/README.md)** 专门处理的事情。
 
 它不会取代 Memory，也不负责代码检索。
 
@@ -251,7 +251,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 | --- | --- |
 | **当前代码仓库** | [Glob](codeplus/tools/glob.py) / [Grep](codeplus/tools/grep.py) / [ReadFile](codeplus/tools/read_file.py) 直接读取真实工作区 |
 | **跨会话经验** | [Memory](codeplus/memory/recall.py) |
-| **外部非结构化资料** | [Agentic RAG（Work）模式](#接下来想做的事) |
+| **外部非结构化资料** | [Agentic RAG 知识工具](deployment/AgenticRAG/README.md) |
 
 面对几百份文档时，有时连答案藏在哪一份资料、应该搜索什么关键词都不知道。语义检索可以先找到一个阅读起点，Agent 再带着当前问题回到原文，继续查找、补充证据，最后整理成回答或报告。
 
@@ -321,7 +321,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 
 ## 接下来想做的事
 
-接下来，在 `deployment/AgenticRAG` 独立重建 **Agentic RAG（Work）模式**，首版按已确认规划推进，包括 Rerank 精排。扫描件 OCR 与复杂版面解析保留为后续扩展方向，让更多类型的资料能够参与查证与引用报告生成。
+接下来，继续完善 **[Agentic RAG](deployment/AgenticRAG/README.md)** 的资料查证与引用报告能力。扫描件 OCR 与复杂版面解析保留为后续扩展方向，让更多类型的资料能够参与查证与引用报告生成。
 
 ---
 
@@ -338,7 +338,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 | **扩展** | 多模型协议 · Skill · MCP · Hooks |
 | **执行控制** | 权限规则 · 路径边界 · 可选沙箱 · Git worktree |
 
-旧 RAG 实现及其 TUI、CLI、Remote 入口已移除。新核心已在 [deployment/AgenticRAG](deployment/AgenticRAG/README.md) 完成 R00–R11 验收，宿主问答入口仍待 R12 接入；完整重建尚未完成。官方 MultiHop-RAG 的 609 篇语料、50 / 200 / 2,556 题三个档位及离线评分保留，见 [评测说明](eval/RAG-eval/README.md)。
+知识库能力由 [AgenticRAG](deployment/AgenticRAG/README.md) 提供，已接入 TUI、CLI 和 Remote。知识搜索与来源阅读作为普通工具运行，问答、报告输出和会话继续沿用现有 Agent。当前支持 Markdown 与纯文本资料。官方 MultiHop-RAG 的 609 篇语料、50 / 200 / 2,556 题三个档位及离线评分保留，见 [评测说明](eval/RAG-eval/README.md)。
 
 ---
 
@@ -346,7 +346,7 @@ Memory 解决的是过去形成的经验，下一次是否还应该继续生效�
 
 ![CodePlus 架构：引擎、工具、交互、安全和记忆](docs/assets/codeplus-architecture-five-regions-zh.png)
 
-回头看，前面的问题逐渐落在了不同的职责上：Agent Loop 组织行动，权限约束执行，Session、Memory 与 Context 保留不同生命周期的信息。图中展示这些逻辑区域；外部证据能力后续由 [AgenticRAG](#接下来想做的事) 独立重建。
+回头看，前面的问题逐渐落在了不同的职责上：Agent Loop 组织行动，权限约束执行，Session、Memory 与 Context 保留不同生命周期的信息。图中展示这些逻辑区域；外部资料的检索与来源读取由 [AgenticRAG](deployment/AgenticRAG/README.md) 提供。
 
 ---
 
@@ -390,7 +390,7 @@ uv sync --locked --dev
 uv run pytest
 ```
 
-RAG 数据校验与离线评分见 [评测说明](eval/RAG-eval/README.md)；普通 Agent 与知识工具的接入、检索实测及验证边界见 [AgenticRAG 验收记录](deployment/AgenticRAG/docs/production-simplification-acceptance-20260927.md)。
+RAG 数据校验与离线评分见 [评测说明](eval/RAG-eval/README.md)；普通 Agent 与知识工具的接入见 [AgenticRAG](deployment/AgenticRAG/README.md)，测试入口见 [环境与验证命令](deployment/AgenticRAG/docs/environment-command-matrix.md)。
 
 ---
 

@@ -241,7 +241,7 @@ The question here is not whether the model remembers what happened before. It is
 
 > **Where is the evidence for the current question?**
 
-This is what the **[Agentic RAG (Work) mode](#what-comes-next)** being implemented next is intended to address.
+This is what **[Agentic RAG](deployment/AgenticRAG/README.md)** is designed to address.
 
 It will not replace Memory and does not handle code retrieval.
 
@@ -251,7 +251,7 @@ The three kinds of information retain their own boundaries:
 | --- | --- |
 | **Current code repository** | [Glob](codeplus/tools/glob.py) / [Grep](codeplus/tools/grep.py) / [ReadFile](codeplus/tools/read_file.py) read the actual workspace directly |
 | **Experience across sessions** | [Memory](codeplus/memory/recall.py) |
-| **External unstructured material** | [Agentic RAG (Work) mode](#what-comes-next) |
+| **External unstructured material** | [Agentic RAG knowledge tools](deployment/AgenticRAG/README.md) |
 
 With hundreds of documents, it may be unclear which source contains the answer or which keywords to search for. Semantic retrieval can provide a reading entry point. The Agent then returns to original sources with the current question, continues searching and gathering evidence, and finally assembles an answer or report.
 
@@ -321,7 +321,7 @@ What CodePlus wants to keep exploring is how to connect those judgments to a rea
 
 ## What Comes Next
 
-The next step is to rebuild **Agentic RAG (Work) mode** independently in `deployment/AgenticRAG`, following the confirmed first-release plan, including BM25 + vector hybrid retrieval and reranking. OCR for scanned documents and complex layout parsing remain later extensions so more types of material can support evidence checking and cited reports.
+The next step is to improve evidence checking and cited reports with **[Agentic RAG](deployment/AgenticRAG/README.md)**. OCR for scanned documents and complex layout parsing remain later extensions so more types of material can support this work.
 
 ---
 
@@ -338,7 +338,7 @@ Current capabilities at a glance:
 | **Extensions** | Multiple model protocols · Skills · MCP · Hooks |
 | **Execution controls** | Permission rules · Path boundaries · Optional sandbox · Git worktrees |
 
-The legacy RAG implementation and its TUI, CLI, and Remote entry points have been removed. The independent core in [deployment/AgenticRAG](deployment/AgenticRAG/README.md) has passed R00–R11 acceptance; host question answering awaits R12 integration, and the full rebuild is still in progress. The official MultiHop-RAG corpus of 609 documents, fixed tiers of 50 / 200 / 2,556 questions, and offline scoring remain available; see the [evaluation guide](eval/RAG-eval/README.md).
+Knowledge capabilities are provided by [AgenticRAG](deployment/AgenticRAG/README.md) through the TUI, CLI, and Remote interfaces. Knowledge search and source reading run as ordinary tools; questions, report output, and continued conversations use the existing Agent. Markdown and plain text documents are currently supported. The official MultiHop-RAG corpus of 609 documents, fixed tiers of 50 / 200 / 2,556 questions, and offline scoring remain available; see the [evaluation guide](eval/RAG-eval/README.md).
 
 ---
 
@@ -356,7 +356,7 @@ flowchart LR
     Tools --> Extension[Skills / MCP]
 ```
 
-Looking back, the earlier questions have settled into distinct responsibilities. The Agent Loop organizes actions, permissions constrain execution, Session, Memory, and Context retain information with different lifetimes. The diagram shows these relationships; external evidence support will be rebuilt independently in [AgenticRAG](#what-comes-next).
+Looking back, the earlier questions have settled into distinct responsibilities. The Agent Loop organizes actions, permissions constrain execution, Session, Memory, and Context retain information with different lifetimes. The diagram shows these relationships; retrieval and source reading for external material are provided by [AgenticRAG](deployment/AgenticRAG/README.md).
 
 ---
 
@@ -400,7 +400,7 @@ uv sync --locked --dev
 uv run pytest
 ```
 
-RAG data validation and offline scoring are described in the [evaluation guide](eval/RAG-eval/README.md). Ordinary Agent integration, retrieval measurements, and validation limits are recorded in the [AgenticRAG acceptance report](deployment/AgenticRAG/docs/production-simplification-acceptance-20260927.md).
+RAG data validation and offline scoring are described in the [evaluation guide](eval/RAG-eval/README.md). See [AgenticRAG](deployment/AgenticRAG/README.md) for ordinary Agent and knowledge tool integration, and [environment and verification commands](deployment/AgenticRAG/docs/environment-command-matrix.md) for test entry points.
 
 ---
 

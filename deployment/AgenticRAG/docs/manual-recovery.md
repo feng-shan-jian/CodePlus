@@ -1,6 +1,6 @@
 # 手动恢复与放弃
 
-R14 提供独立核心的 `inspect_recovery`、`continue_recovery`、`abandon_recovery`，普通增删改和严格首次建库共用检查点与发布协议。打开 `Catalog` 不运行恢复，也不加载模型。产品中的命令选择和提示由 R21 接入；本页描述调用方契约。
+独立核心通过 `inspect_recovery`、`continue_recovery`、`abandon_recovery` 提供手动恢复，普通增删改和严格首次建库共用检查点与发布协议。打开 `Catalog` 不运行恢复，也不加载模型。产品命令见[宿主接入](codeplus-integration.md)；本页描述调用方契约。
 
 ```python
 from uuid import UUID
@@ -60,7 +60,7 @@ attempts = cleanup_candidates(catalog, abandoned_batch_id, frozen_backend)
 
 创建前登记冻结 endpoint、实际默认数据库 `default` 和随机描述标记，真实 create/describe 返回一致的 collection ID、创建时间和描述后才保存物理归属证据。名称碰撞、成功响应不确定、凭据提交前进程死亡以及同名物理替换均不允许推断归属。v7 没有这类证据的 Collection 仍可查询和复用向量，但不能仅凭名字清理。
 
-删除适配器还验证实际 SQL 认领状态、已放弃批次和无依赖，直接调用 `drop_owned` 不能绕过清理约束。物理服务 IO 在 SQLite 写事务外，库级生命周期锁和不复用名称阻止本应用内部重建竞态。PyMilvus 的 drop 不支持 expected collection ID 条件，describe→drop 不是原子操作；外部管理员在两者之间重建、以及 SDK 自身重试造成的竞态仍属能力边界，不能保证任意外部并发替换下的条件删除。无可靠证据时保留资源。历史已发布索引的通用 GC 留 R15。
+删除适配器还验证实际 SQL 认领状态、已放弃批次和无依赖，直接调用 `drop_owned` 不能绕过清理约束。物理服务 IO 在 SQLite 写事务外，库级生命周期锁和不复用名称阻止本应用内部重建竞态。PyMilvus 的 drop 不支持 expected collection ID 条件，describe→drop 不是原子操作；外部管理员在两者之间重建、以及 SDK 自身重试造成的竞态仍属能力边界，不能保证任意外部并发替换下的条件删除。无可靠证据时保留资源。历史已发布索引的通用 GC 见[索引生命周期](index-lifetimes.md)。
 
 ## 迁移与验证
 

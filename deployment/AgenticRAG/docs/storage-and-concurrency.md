@@ -40,7 +40,7 @@ R07 `begin_import(kb_id,snapshot,manifest)` 复用同一 owner 协议，在批�
 
 每个拥有者敏感写入都在短写事务内检查仍持有的锁句柄、锁路径身份、同一 Catalog、store/kb/batch、nonce/epoch、库高水位代次、pending pointer 和执行中状态。释放后的旧 lease 即使无人接管也不能写；异步产物调用方须把生成时的 token 通过 `produced_by=` 传入，不能用新 owner token 替换旧结果身份。不同库有独立业务锁；运行登记不取得库修改锁。
 
-Mutation.close/context exit 对未完成批次登记 WAITING_RECOVERY，再释放锁；强杀无法写状态时，原批次仍 pending 并阻止新修改。`identify_interrupted(kb_id)` 只有取得同一 OS 锁后才能将执行中批次标为 WAITING_RECOVERY 并返回原 token。它不凭 PID／超时判断，更不自动继续。`resume_mutation(expected_token)` 再取锁，在事务内重验身份／状态，增加 epoch、换 nonce 并恢复原阶段。调用方需先取得明确继续意图并验证检查点；完整产品交互与检查点复用留 R14。
+Mutation.close/context exit 对未完成批次登记 WAITING_RECOVERY，再释放锁；强杀无法写状态时，原批次仍 pending 并阻止新修改。`identify_interrupted(kb_id)` 只有取得同一 OS 锁后才能将执行中批次标为 WAITING_RECOVERY 并返回原 token。它不凭 PID／超时判断，更不自动继续。`resume_mutation(expected_token)` 再取锁，在事务内重验身份／状态，增加 epoch、换 nonce 并恢复原阶段。调用方需先取得明确继续意图并验证检查点；完整产品交互与检查点复用见[手动恢复](manual-recovery.md)。
 
 `Mutation.abandon()` 是手动原语：仍要活跃拥有者，事务内标 ABANDONED、清 pending、移除该批次索引依赖，再释放锁；不删档案、不删物理索引。持有 lease 的结果调用方使用 context/finally 关闭；不能期待 Python 析构器释放业务状态。schema／同 hash 完成锁有 1500ms 内有界等待，业务库锁和 run 锁立即返回忙。
 
@@ -50,6 +50,6 @@ Mutation.close/context exit 对未完成批次登记 WAITING_RECOVERY，再释�
 
 `start_run(kb_id, resolved_config)` 先取得唯一 run OS 生命周期锁，再用同一个短写事务读取同库 current revision，核对 READY、编码身份、parent 同库，写 run 与 active pin。run 的 binding/config 不可改；pin 指向完整 revision，和是否已有命中 Chunk 无关。索引进入 RECLAIMING 后不能新绑定。正常 finish 必须是合法终态，run 结束与 pin release 在同事务中，提交后释放锁；未显式 finish 的 close 记录 consumer_closed。
 
-`release_crashed_run(run_id, expected_nonce)` 先取得运行锁并持有至事务提交，在事务内复核 nonce、active 状态和 run，再标 failed／released。运行仍持锁或身份不符就保留 pin。未来 GC 必须在同一 SQLite 写事务资格边界检查 current、active pins、revision_dependencies 后才能 claim 回收；R06 没有自动扫描或物理删除入口，R15 实现该完整协议。
+`release_crashed_run(run_id, expected_nonce)` 先取得运行锁并持有至事务提交，在事务内复核 nonce、active 状态和 run，再标 failed／released。运行仍持锁或身份不符就保留 pin。GC 在同一 SQLite 写事务资格边界检查 current、active pins、revision_dependencies 后才能 claim 回收；完整流程见[索引生命周期](index-lifetimes.md)。
 
 正式回归入口见 `tests/test_storage.py` 和 `tests/test_package_install.py`。

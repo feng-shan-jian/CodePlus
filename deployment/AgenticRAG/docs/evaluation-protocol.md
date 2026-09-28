@@ -1,12 +1,12 @@
-# R01 评测数据与离线评分协议
+# 评测数据与离线评分协议
 
-本协议冻结现有 MultiHop-RAG 评测输入，解耦离线加载和评分，并定义未来运行侧的输入边界。它不证明新核心、检索质量、真实 Agent、GPU 或 Milvus 已通过验收。日常产品命令仍按 D29 复用 CodePlus；以下均为内部评测材料。
+本协议定义 MultiHop-RAG 的冻结输入、运行侧加载边界和离线评分口径。实际检索与普通 Agent 运行入口见[开发评测](../eval/README.md)。
 
 ## 冻结输入与可复现范围
 
-冻结输入以现有 dataset、questions、tiers、source-lock 为准。本轮受保护输入的逐文件哈希核对见[验收记录](production-simplification-acceptance-20260927.md#验证边界)。
+冻结输入以现有 dataset、questions、tiers、source-lock 为准；`eval/RAG-eval/check.py` 校验数据身份、语料与完整证据。
 
-官方数据保持 609 篇文档、2,556 题、6,084 条证据。corpus、dataset.json、questions.json（含答案、gold 与顺序）、tiers.json、source-lock.json、prepare.py、upstream 和 validation.json 不改。
+官方数据保持 609 篇文档、2,556 题、6,084 条证据。corpus、dataset.json、questions.json（含答案、gold 与顺序）、tiers.json、source-lock.json 和 upstream 按冻结版本维护。`prepare.py --check` 校验适配文件的字节一致性，validation.json 记录实际执行的离线校验。
 
 | 档位 | 问题数 | 检索分母 | 数据/题集 SHA-256 |
 | --- | ---: | ---: | --- |
@@ -14,9 +14,9 @@
 | medium | 200 | 177 | `f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898` |
 | full | 2,556 | 2,255 | `c9cf1a90f31d7944cfa24e3ff14db2ae3fa8b875a1a1c9397f6f6f2221bc73d9` |
 
-`eval/RAG-eval/dataset_io.py` 的 `load_dataset` 与 `fingerprint` 取自原标准库逻辑，返回结构、字节校验、证据范围校验、JSON 的 Unicode/排序/紧凑编码及异常语义不变。check.py 保留原函数/CLI，只替换两个 import；score.py 与冻结 upstream 保持原字节。
+`eval/RAG-eval/dataset_io.py` 的 `load_dataset` 与 `fingerprint` 使用标准库完成数据加载、字节与证据范围校验，并以统一的 Unicode、排序和紧凑 JSON 编码计算指纹。check.py 校验冻结来源、适配文件和三档题号；score.py 校验输入身份后调用冻结的 upstream 评分函数。
 
-内部固定 JSON 的字节指纹由 [eval/.gitattributes](../eval/.gitattributes) 中的 `*.json -text` 保证：Git 不对这些文件执行换行转换，即使 Windows 配置 `core.autocrlf=true`，也不能将 LF 转成 CRLF 后破坏运行清单的 raw SHA-256。R01 首次交付漏设该规则，Leader 独立验收发现后补齐；未修改 JSON 数据本身。真实 Git checkout 的字节一致性由 Leader 独立复验。
+固定 JSON 的字节指纹由[eval/.gitattributes](../eval/.gitattributes) 中的 `*.json -text` 保证：Git 不对这些文件执行换行转换，避免 Windows 的 `core.autocrlf=true` 破坏运行清单的原始 SHA-256。
 
 ## 开发、验收与历史暴露
 
@@ -42,7 +42,7 @@
 
 运行侧不是先调用全量 `load_dataset` 再删 gold。实验准备/评分进程才能读取参考答案、gold、supporting_context、answerable、题型标签；它把固定 ID 列表交给运行加载器。Agent 与 query 生成只取当前问题的 query（ID 供结果关联）；导入器只取 corpus_paths。类型标签、答案和 gold 不进入运行 payload。语料完整性检查由独立准备阶段完成，不把校验报告整包当成模型提示。
 
-正式 runner 见[评测入口](../eval/README.md)。正式子进程测试禁止所有 `codeplus` 导入，并在加载运行输入前用 Python audit hook 禁止打开整个 `eval/RAG-eval/` 下的文件，证明运行加载器不会偷读评分输入。此测试不是对尚未实现的 Agent 权限隔离的证明。
+正式 runner 见[评测入口](../eval/README.md)。正式子进程测试禁止所有 `codeplus` 导入，并在加载运行输入前用 Python audit hook 禁止打开整个 `eval/RAG-eval/` 下的文件，证明运行加载器不会偷读评分输入。该测试覆盖输入加载器的读取范围；宿主权限由普通 Agent 执行。
 
 ## 原命令、评分语义与限制
 
@@ -72,4 +72,4 @@ $env:PYTHONDONTWRITEBYTECODE = '1'
 
 正式测试覆盖原三档指纹、全部证据、ID 嵌套与顺序、严格字段/路径白名单、无评分文件读取的运行子进程、禁旧模块的原命令、错误/空答案分母，以及 Replay 原生报告兼容。子进程均设 60 秒上限。测试使用合成输入，成功/失败报告都保留计分语义，生成的 runs 报告在测试结束后清理。
 
-corpus、原题/答案/Gold、tiers 与 upstream 计分算法保持冻结。运行结果和旧实验脚本按清理清单处理，不删除评测输入。
+corpus、原题/答案/Gold、tiers 与 upstream 计分算法保持冻结。运行结果写入独立输出目录，不混入评测输入。

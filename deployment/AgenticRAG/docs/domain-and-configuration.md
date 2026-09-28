@@ -18,7 +18,7 @@ Run 保存完整解析后的 RunConfiguration 与其 hash，任务只绑定一�
 
 ## 显式装配和作用域
 
-`assemble_configuration(defaults=..., configured=..., explicit=...)` 仅接收 `knowledge` 内的映射。优先级由低到高是调用方默认、持久功能配置、本次显式装配值；未出现的字段使用 Schema 默认。递归合并对象，数组整体替换，null 是显式值；profile 数组整体替换防止跨来源拼出混合模型。`origins` 只记录调用方提供的字段叶节点和数组，不伪造 Schema 默认来源；省略的 `retrieval.mode` 是 Schema 的 auto。对象替换标量/null 后删除旧父节点来源。
+`assemble_configuration(defaults=..., configured=..., explicit=...)` 接收知识配置映射及可选的同级 `worker` 设置。优先级由低到高是调用方默认、持久功能配置、本次显式装配值；未出现的字段使用 Schema 默认。递归合并对象，数组整体替换，null 是显式值；profile 数组整体替换防止跨来源拼出混合模型。`origins` 只记录调用方提供的字段叶节点和数组，不伪造 Schema 默认来源；省略的 `retrieval.mode` 是 Schema 的 auto。对象替换标量/null 后删除旧父节点来源。
 
 核心不读文件、环境变量、CodePlus 全局配置或当前目录，不解析用户默认路径。适配层选取知识库功能配置后传入单一 Schema。StorageConfig 拒绝相对路径、上级路径段、UNC 与 URI 中的认证/query；credential_ref 仅为名字，不是密钥。它是跨平台字符串 Schema：例如 `/tmp/data` 可表示 Linux 绝对路径，不能因此推断在 Windows 已解析成正确本机绝对路径。R06 打开目录前必须按实际 OS/文件系统重新确认绝对本地路径、权限、符号链接/挂载与数据归属；R05 不创建它。
 
@@ -77,4 +77,4 @@ EmbeddingProvider 的 embed_documents/embed_query、RerankProvider 的 rerank �
 
 RequestContext 使用 `time.monotonic_ns()` 域的绝对 deadline_monotonic_ns 作为同机临时硬时限，可选 deadline_at 仅作带时区审计。不能跨重启复用单调值，R09 握手必须确认同机/同启动时钟域，排队/加载/推理共用同一截止点；R05 不实现调度或取消。
 
-发行包含领域／配置、storage、ingestion 和轻量 models 源码，schema.sql/inputs.sql/processing.sql 三份迁移、MIT 许可证和 metadata；sdist 另含 pyproject/README/uv.lock，以及 Hatch 的包级 .gitignore。tests、probes、eval、docs、Compose、缓存、权重及用户资料不发布。正式安装测试逐文件核验源码/SQL集合，构建直接 wheel 与 sdist→wheel，在两套仓库外 Unicode/空格 cwd 的干净环境清空 PYTHONPATH，以 `python -I -B` 运行 site-packages 导入、配置/存储/实际原件捕获、删源解析和处理检查点重开。安装锁中 Pydantic/APSW/markdown-it-py/tokenizers 及传递依赖，不强制 Torch、CUDA、Milvus 或宿主；tokenizer 从显式外部冻结缓存加载。GPU、Milvus、Linux/宿主联装及最终同一实现迁移尚未验收。
+发行包含 `src/agentic_rag` 的 Python 源码、模型资产锁和全部 SQL 迁移，以及 MIT 许可证和 metadata；sdist 另含 pyproject、README、uv.lock 与 Windows CUDA 依赖锁。tests、eval、docs、Compose、缓存、权重及用户资料不发布。`tests/test_package_install.py` 核验 wheel、sdist→wheel 的源码和资源集合，并在仓库外干净环境检查安装与核心行为。核心包不强制安装 Torch、CUDA、Milvus 或 CodePlus 宿主。

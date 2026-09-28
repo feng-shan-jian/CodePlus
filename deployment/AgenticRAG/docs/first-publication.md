@@ -1,6 +1,6 @@
-# 首次索引发布与 Dense 开发基线
+# 首次索引发布
 
-R10 使用已有捕获、处理检查点、共享模型 worker 和库级 Mutation。独立核心提供首次完整建库及固定运行版 Dense 候选；没有另建 Agent、产品 CLI、旧库兼容层或第二套生命周期。原生 BM25 已用于底层发布验证，产品 BM25/Hybrid 路线仍由 R17 实现。R13 的更新和部分成功复用本协议，见[普通增删改](ordinary-mutations.md)。R14 为严格首次建库加入与普通导入共用的完整文档编码检查点，保持全部成功要求，见[手动恢复与放弃](manual-recovery.md)；历史索引回收留 R15。
+首次建库复用捕获、处理检查点、共享模型 worker 和库级 Mutation。每个发布版本同时提供 Dense 与原生 BM25 索引；检索路线见[检索](retrieval.md)。后续[增删改](ordinary-mutations.md)、[恢复](manual-recovery.md)与[索引回收](index-lifetimes.md)共用同一发布和生命周期协议。
 
 ## 编码和物理索引
 
@@ -38,4 +38,4 @@ R13 删除最后成员时允许真实零行 Collection 和零 sealed segment；�
 - `eval/RAG-eval/score.py --task retrieval --tier medium --input <report>`：独立评分进程，保留200/177/23及全部失败分母；官方token重合、原文span覆盖和回答正确性分别报告。
 - `eval/score_dense.py`：评分专用进程调用未改动的 R01 `replay.score`，读取原题 gold 计算原文 span 覆盖；运行器与生产检索不导入它。
 
-实际命令、环境、冻结代码hash、失败轮次和最终结果见R10实施记录。Linux、宿主Agent、完整恢复/GC/Hybrid/Rerank和最终质量门槛尚不由R10宣布通过。
+运行环境与正式测试命令见[环境与验证命令](environment-command-matrix.md)。

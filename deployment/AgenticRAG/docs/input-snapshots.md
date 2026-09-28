@@ -49,7 +49,7 @@ Windows 使用 CreateFileW(GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING)，句�
 
 `get_input_manifest/get_input_items` 重开可读取固定原清单和终态结果；`verify_inputs` 返回原 ProcessingSnapshot 及每项有效性视图，不修改历史。`read_input` 对实际返回字节核对大小/hash，只读归档。源文件后改、删除、移动或目录新增均不影响本批结果。归档丢失/损坏/不可读返回 CHECKPOINT_INVALID，不读取最新源修补。
 
-旧进程死亡后先沿 R06 协议识别并由调用方明确接管；新的 epoch 下 `capture_inputs` 仅把旧 pending 项登记为 CHECKPOINT_INVALID，不重新采集源文件。已完整归档但尚未登记结果的对象是孤儿，也不能凭文件存在冒充检查点。即便原源文件现在看起来相同，R07 也不实现修补；用户恢复/新批处理与等 hash 修复方案由 R14 承接。schema1 历史批次只有清单 hash 时，明确报告“无持久输入清单”，不补造输入范围。
+旧进程死亡后先沿 R06 协议识别并由调用方明确接管；新的 epoch 下 `capture_inputs` 仅把旧 pending 项登记为 CHECKPOINT_INVALID，不重新采集源文件。已完整归档但尚未登记结果的对象是孤儿，也不能凭文件存在冒充检查点。即便原源文件现在看起来相同，R07 也不实现修补；用户恢复、新批处理与等 hash 修复见[手动恢复](manual-recovery.md)。schema1 历史批次只有清单 hash 时，明确报告“无持久输入清单”，不补造输入范围。
 
 变化只对照本批基准发布 revision 的 member 和该版实际处理配置。未发布/失败 attempt 的原件不是线上基准。分类为 new/content_changed/source_changed/encoding_changed/index_changed/unchanged；编码变化另给 requires_rebuild_confirmation（包括向已有库新增文档时），不执行确认或重建。相同原件但解析/分块/模型身份改变不能判 unchanged；只改无关预算可保持处理兼容。测试中的 READY/member 是明确的合成元数据夹具，不代表 Milvus 或生产发布。测试配置中的 parser 名/version 只表达实验身份，不声称该 parser 已实现。
 

@@ -41,9 +41,8 @@ uv build deployment/AgenticRAG --out-dir <绝对产物目录>
 
 ## 文档
 
-- [本轮执行方案](docs/production-simplification-plan-20260927.md)
 - [配置与兼容](docs/domain-and-configuration.md)
 - [存储与并发](docs/storage-and-concurrency.md)、[输入快照](docs/input-snapshots.md)、[解析与来源映射](docs/parsing-and-source-maps.md)
 - [首次发布](docs/first-publication.md)、[普通增删改](docs/ordinary-mutations.md)、[恢复](docs/manual-recovery.md)、[索引生命周期](docs/index-lifetimes.md)
 - [模型 worker](docs/local-model-worker.md)、[模型切换](docs/model-switching.md)
-- [验收与清理结果](docs/production-simplification-acceptance-20260927.md)
+- [环境与验证命令](docs/environment-command-matrix.md)

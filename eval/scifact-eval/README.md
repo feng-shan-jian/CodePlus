@@ -48,38 +48,42 @@ pwsh -File eval/scifact-eval/run.ps1 -Check
 该环境还需安装同一修订的 CodePlus 宿主，正文选择使用的 SourceTextMeter 由宿主适配器导入。
 
 ```powershell
-& $RuntimePython -B -X utf8 eval/scifact-eval/retrieval_runner.py build --index-name <new-index> --endpoint <milvus-uri> --model-cache <models>
-& $RuntimePython -B -X utf8 eval/scifact-eval/retrieval_runner.py query --index-name <same-index> --endpoint <same-milvus-uri> --model-cache <models> --split development --run-name baseline
-& eval/scifact-eval/.venv/Scripts/python.exe -B eval/scifact-eval/summarize_retrieval.py --source eval/scifact-eval/.state/<same-index>/retrieval/baseline --run-name baseline
+# 先将 $RuntimePython 和 $Models 设为本机检索环境与模型缓存的绝对路径。
+$Endpoint = 'http://127.0.0.1:19556'
+$IndexName = 'scifact-baseline'
+$DevelopmentRun = 'development-01'
+$TestRun = 'test-01'
+$ScorePython = (Resolve-Path 'eval/scifact-eval/.venv/Scripts/python.exe').Path
+& $RuntimePython -B -X utf8 eval/scifact-eval/retrieval_runner.py build --index-name $IndexName --endpoint $Endpoint --model-cache $Models
 ```
 
 选定生产配置保持 512/64 分块和原模型标题/query 指令，Dense/BM25 各最多 50、RRF `k=10`、精排候选最多 24、`min_score=0.001`。由现有 `assemble_configuration` 合并[选定配置](../../deployment/AgenticRAG/docs/retrieval-selected.json)。先完整精排及响应校验，再过滤低分结果，再截取评测窗口；不补齐，允许空结果。5/10 是评分窗口，不是生产固定返回数。
 
 第一遍完成召回和融合，第二遍对冻结候选调用生产 `_rerank`，保留实际输入、批次、完整评分和终态。最后将过滤后完整排名交给生产 SourceSession，记录单次 `context_chunks/context_tokens`、裁切和去重后的实际正文。此阶段不再次调用模型，也不创建真实答案交付回执。首题与生产公开 search 对齐。
 
-本次接入修改复用既有索引与发布版，不需要重新建库。query 记录索引的原始源码/config 身份和本次源码/config 身份；生产读取继续验证版本、成员和编码兼容。所有生产修改结束后再运行，运行中源码变化会使结果不可验收。
+query 记录索引的原始源码/config 身份和本次源码/config 身份；生产读取继续验证版本、成员和编码兼容。运行前须按上节命令准备本组索引，或指定仍有效的已有索引；旧运行目录不随源码分发。运行中源码变化会使结果不可验收。
 
 ```powershell
-# 复用现有 SciFact 专属索引；先执行全部 development，再执行固定方案的一次 test
-& $RuntimePython -B -X utf8 eval/scifact-eval/retrieval_runner.py query --index-name baseline-20260927 --endpoint http://127.0.0.1:19556 --model-cache $Models --split development --run-name production-20260927
-& $ScorePython -B -X utf8 eval/scifact-eval/summarize_retrieval.py --source eval/scifact-eval/.state/baseline-20260927/retrieval/production-20260927 --run-name production-20260927
-& $ScorePython -B -X utf8 eval/scifact-eval/score_evidence.py score --run-name production-20260927 --baseline eval/scifact-eval/runs/development/optimizations-20260927/evidence-details.json
+# 使用已准备的 SciFact 专属索引；先执行全部 development，再执行固定方案的一次 test
+& $RuntimePython -B -X utf8 eval/scifact-eval/retrieval_runner.py query --index-name $IndexName --endpoint $Endpoint --model-cache $Models --split development --run-name $DevelopmentRun
+& $ScorePython -B -X utf8 eval/scifact-eval/summarize_retrieval.py --source "eval/scifact-eval/.state/$IndexName/retrieval/$DevelopmentRun" --run-name $DevelopmentRun
+& $ScorePython -B -X utf8 eval/scifact-eval/score_evidence.py score --run-name $DevelopmentRun
 
-& $RuntimePython -B -X utf8 eval/scifact-eval/retrieval_runner.py query --index-name baseline-20260927 --endpoint http://127.0.0.1:19556 --model-cache $Models --split test --run-name production-test-20260927
-& $ScorePython -B -X utf8 eval/scifact-eval/summarize_retrieval.py --source eval/scifact-eval/.state/baseline-20260927/retrieval/production-test-20260927 --run-name production-test-20260927
+& $RuntimePython -B -X utf8 eval/scifact-eval/retrieval_runner.py query --index-name $IndexName --endpoint $Endpoint --model-cache $Models --split test --run-name $TestRun
+& $ScorePython -B -X utf8 eval/scifact-eval/summarize_retrieval.py --source "eval/scifact-eval/.state/$IndexName/retrieval/$TestRun" --run-name $TestRun
 ```
 
-端点、索引名和模型目录必须对应现有本组资源。`$ScorePython` 使用下述 Python 3.12 评分环境。运行失败不自动重试，同名输出不覆盖；失败题保留在全部 split 分母中。
+`$Endpoint`、`$IndexName` 和 `$Models` 必须对应已准备的本组资源；`$DevelopmentRun` 与 `$TestRun` 分别设置为新的运行名称。`$ScorePython` 使用下述 Python 3.12 评分环境。运行失败不自动重试，同名输出不覆盖；失败题保留在全部 split 分母中。
 
 ## development 对照与证据覆盖
 
-既有选定 RRF10 的 development 文档 Recall@5/@10 为 83.14%/89.38%。505 道有句子标注题的完整证据覆盖为 96.67%/98.35%；其余 302 题没有句子标注，不进入该指标分母。这是本轮实施前的检索对照，最终答案质量另测。新路径运行结果以对应 completion/summary 为准。
+development 中 505 道题有句子标注；其余 302 题不进入完整证据指标分母。检索运行结果以对应 completion/summary 为准，最终答案质量另测。
 
 `score_evidence.py` 保持官方完整可替代证据组规则：最终窗口中同文档区间并集完整包含任意一个证据组的全部句子，才计该文档覆盖；半句和区间空隙不计入。文档 Recall 与完整证据覆盖分别报告。它不预测支持/反驳标签，不是官方 SciFact 分类成绩。
 
 原始标注归档、哈希和既有偏移映射位于 `runs/annotations/scifact-20260927/`，检索运行侧禁止读取。`score_evidence.py prepare` 仅核验这些冻结输入，不再依赖已退役的算法实验库存。`score` 使用新结果自身保存的原文坐标，对融合、精排和实际工具正文分别计分；可选 `--baseline` 保留与既有选定 RRF10 的逐题配对差值和相同分组 bootstrap。
 
-旧运行和旧状态按清理清单 D10/D11 处理：新对照完成前保留。`runs/annotations/`、`runtime/`、题目、Gold、划分和上游数据是 P01，清理不得连带删除。已结束的多算法实验脚本退役，正式检索和评分入口保留。
+`runs/annotations/` 是纳入版本管理的正式评分输入；`runtime/`、题目、Gold、划分和上游数据也属于评测集。`.state/` 与 `runs/development/`、`runs/test/` 保存本地索引状态和运行产物，清理前确认对应运行已结束，并保留仍需复用的索引与对照结果。
 
 ## 检索输出与评分
 

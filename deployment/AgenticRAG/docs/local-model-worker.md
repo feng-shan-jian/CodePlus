@@ -4,7 +4,7 @@ R09 提供独立包真实 Embedding/Rerank 和本机进程生命周期。Windows
 
 ## 安装与配置
 
-核心环境安装普通 wheel；CUDA 环境显式安装依赖和同一 wheel。生产启动使用目标解释器 `-I -B -m agentic_rag.models.worker`，不依赖 cwd/PYTHONPATH、editable 或 probes，不自动安装/下载。先准备与包内 `agentic_rag.models/models.lock.json` hash 一致的固定 revision 缓存；R03 探针旧锁是历史取证副本。
+核心环境安装普通 wheel；CUDA 环境显式安装依赖和同一 wheel。生产启动使用目标解释器 `-I -B -m agentic_rag.models.worker`，不依赖 cwd/PYTHONPATH、editable 或 probes，不自动安装/下载。先准备与包内 `agentic_rag.models/models.lock.json` hash 一致的固定 revision 缓存。
 
 ```powershell
 uv venv <CUDA环境绝对路径> --python <Python3.14解释器绝对路径>
