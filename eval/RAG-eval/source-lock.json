@@ -1,55 +1,27 @@
 {
-  "retrieved_at": "2026-09-21",
-  "sources": [
-    {
-      "id": "crud",
-      "name": "CRUD-RAG",
-      "url": "https://github.com/IAAR-Shanghai/CRUD_RAG",
-      "revision": "1aace383994e1f68efa12cf2a8e2dadfb4102ceb",
-      "file": "crud-split.json",
-      "upstream_path": "data/crud_split/split_merged.json",
-      "license": "No explicit dataset license found in the inspected repository. Local evaluation snapshot; no redistribution permission inferred.",
-      "download_sha256": "b199fb281ac526c1c8da7364cad7ea22b7f6fe1d4167e511edbdda8ad3bd943a"
+  "dataset": "yixuantt/MultiHopRAG",
+  "dataset_revision": "71ac0d0bd1f951d2d6b70311f7d2ae404e1ffa82",
+  "evaluator_revision": "c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8",
+  "upstream_repository": "https://github.com/yixuantt/MultiHop-RAG",
+  "license": "ODC-BY",
+  "license_url": "https://opendatacommons.org/licenses/by/1-0/",
+  "files": {
+    "upstream/MultiHopRAG.json": {
+      "url": "https://huggingface.co/datasets/yixuantt/MultiHopRAG/resolve/71ac0d0bd1f951d2d6b70311f7d2ae404e1ffa82/MultiHopRAG.json",
+      "sha256": "03cfb4926461f868684903aadc8024447bdda5bb3f6804741424cce338515bff"
     },
-    {
-      "id": "multihop",
-      "name": "MultiHop-RAG",
-      "url": "https://huggingface.co/datasets/yixuantt/MultiHopRAG",
-      "revision": "71ac0d0bd1f951d2d6b70311f7d2ae404e1ffa82",
-      "file": "multihop-questions.json",
-      "upstream_path": "MultiHopRAG.json",
-      "license": "ODC-BY (dataset); retain original news source attribution",
-      "download_sha256": "03cfb4926461f868684903aadc8024447bdda5bb3f6804741424cce338515bff"
+    "upstream/corpus.json": {
+      "url": "https://huggingface.co/datasets/yixuantt/MultiHopRAG/resolve/71ac0d0bd1f951d2d6b70311f7d2ae404e1ffa82/corpus.json",
+      "sha256": "20b61b5ab84de84a927420c5d265b7ec8d859ae49980699958a787ade9e4d28f"
     },
-    {
-      "id": "openrag",
-      "name": "Open RAG Benchmark",
-      "url": "https://huggingface.co/datasets/vectara/open_ragbench",
-      "revision": "63f6b052ff83508b08e242db42263ee708815c26",
-      "file": "openrag-queries.json",
-      "upstream_path": "pdf/arxiv/queries.json",
-      "license": "CC BY-NC 4.0 (dataset); individual papers retain their respective licenses",
-      "download_sha256": "13822fc7efd6889eaf20a6809adfff1cf040699ec2254131a897850b922cac6f"
+    "upstream/retrieval_evaluate.py": {
+      "url": "https://raw.githubusercontent.com/yixuantt/MultiHop-RAG/c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8/retrieval_evaluate.py",
+      "sha256": "6734516f0d5f9385076f76bf4e08d54968541fdb05f519f1cf687c0b65ae0f90"
     },
-    {
-      "id": "rgb",
-      "name": "RGB",
-      "url": "https://github.com/chen700564/RGB",
-      "revision": "65ec39e40e7dc9abb50e9bf1b4f32be3f6f16615",
-      "file": "rgb-zh.json",
-      "upstream_path": "data/zh_refine.json",
-      "license": "CC BY-NC-SA 4.0",
-      "download_sha256": "7a5c7547dcfa1b83429b53a41644453508f820f502d3817312cbf8051afb4563"
+    "upstream/qa_evaluate.py": {
+      "url": "https://raw.githubusercontent.com/yixuantt/MultiHop-RAG/c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8/qa_evaluate.py",
+      "sha256": "a518bc37d94d2e84cc9012b41a758567e308dceea92aba14cda44a1364626ae7"
     }
-  ],
-  "auxiliary_inputs": {
-    "multihop-corpus.json": "20b61b5ab84de84a927420c5d265b7ec8d859ae49980699958a787ade9e4d28f",
-    "openrag-answers.json": "2ab51b9e773ed10259043ad869789aa1621af601591da73d34db3551a2d662bd",
-    "openrag-qrels.json": "c2ad02c5461402e643cb363e7ae562b7bba4a3f5a4e7a5149707365c82848580",
-    "openrag-pdfurls.json": "e67b8246918ef1e92250b9c0b58cd830a58d68f9bc288dda01db53cdbc8d4298"
   },
-  "pdf_versions": "Original arXiv versioned URLs and per-file SHA256 are recorded in full/openrag/dataset.json.",
-  "original_definition": "New fictional source documents plus questions derived solely from those documents, created for targeted product behaviors. No personal WorkBin corpus or legacy answer keys used.",
-  "selection": "seed 20260921; deterministic candidate screening then source-grounding review; eight CRUD exclusions replaced using seed 20260922; MultiHop completion seed 20260923; no system scores used for selection",
-  "adaptations": "Archive/paper scope; source-grounded question and answer repairs recorded per item and in quality-review.json; bounded source spans; citation requirements; reviewed RGB context subsets. Local derivatives, not official leaderboard reproductions."
+  "policy": "Official source files are byte-exact. No question, answer, evidence or corpus edits. Tiers select original record indices only."
 }

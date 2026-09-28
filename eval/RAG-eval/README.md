@@ -1,39 +1,65 @@
-# 历史 RAG 分场景评测说明
+# MultiHop-RAG 评测集
 
-以下为旧分场景题库的历史说明，保留已有数据叙述；不再作为当前引擎运行指南。旧 RAG 实现及宿主入口已移除，新核心状态见 [AgenticRAG](../../deployment/AgenticRAG/README.md)，评测接缝见 [正式评测入口](../../deployment/AgenticRAG/eval/README.md)。
+本目录只使用官方 [MultiHop-RAG](https://github.com/yixuantt/MultiHop-RAG)：**2,556 道原题、609 篇英文新闻语料、6,084 条原始证据**。问题、答案、题型与语料正文均保留上游内容。没有原创题、中文改写、额外干扰文档或来自其他题库的拼接。新增的 [BEIR–SciFact](../scifact-eval/README.md) 单独存放与评分，不加入本组语料、题目或索引。
 
-原题库：**300 道静态题＋20 组三轮会话＋20 组状态流程**。其中 260 道静态题来自公开数据集，40 道为有针对性的原创虚构题。32 题 smoke 是其中的开发子集，不额外累计题量。完整设计见 [评测设计](design.md)。
+这套数据集中评测跨文档检索与回答，按官方题型分别报告比较、推断、时间关系和信息不足。它不覆盖中文效果、PDF/OCR 解析、多轮会话、知识库增删改或 Agent 流程；这些功能继续由产品测试验证，不能从本题库分数推断其质量。
 
-功能单元测试使用各自的最小夹具，不充当质量题库。检索 CLI 的详细参数见 [benchmark 说明](benchmark.md)。
+## 三个题量档位
 
-## 已落地内容
+| 档位 | 比较 | 推断 | 时间关系 | 信息不足 | 总题数 | 检索计分题数 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| lite | 17 | 16 | 11 | 6 | **50** | 44 |
+| medium | 67 | 64 | 46 | 23 | **200** | 177 |
+| full | 856 | 816 | 583 | 301 | **2,556** | 2,255 |
 
-| 数据分区 | 题数 | 资料数 | 协议 |
-| --- | ---: | ---: | --- |
-| original | 40 | 22 | 原创 MD/PDF/DOCX；实际检索 |
-| crud | 90 | 2,020 | 固定新闻池与精确 QA 原件版本；实际检索 |
-| multihop | 100 | 609 | 完整官方语料；80 多文档题＋20 引用派生题；实际检索 |
-| openrag | 20 | 20 | 20 份原始论文 PDF；实际检索，文本题 |
-| rgb | 50 | 230 | 逐题给定上下文；20 拒答、30 噪声题 |
+三个档位始终使用同一份完整 **609 篇语料**。lite ⊂ medium ⊂ full；按官方题型比例分配名额，以固定种子和 SHA256 排序选题，再恢复上游顺序。具体题号固定于 [tiers.json](tiers.json)，不能根据系统表现换题。
 
-静态题按家族划分开发 60、保留验收 240。会话与流程分别按 4/16 划分。保留集答案仅供评测器核对；禁止把题目、答案、gold、rubrics、设计文档或冻结 text 入库。仅导入所选分区的 `corpus/`。公开题可能被预训练见过，本地保留集不等同于模型从未见过的秘密盲测。
+lite 用于日常回归，medium 用于方案对照，full 用于完整报告。它们是本地抽样档位，不是官方发布的 lite/medium 版本，也不是训练/验证/测试切分。小档位减少查询和评分耗时，初次建库开销不变；不可将小样本分数冒充官方全量结果。已用来调参的题也不能再宣称为未见测试题。
 
-## 引擎清理后的入口
+## 文件与来源
 
-旧 `/knowledge`、`codeplus.knowledge benchmark/evaluate` 和 `knowledge` extra 已移除。原在线参数会准确报错；离线数据校验及原生报告回放的当前契约见 [正式评测入口](../../deployment/AgenticRAG/eval/README.md)。普通 Agent 与知识工具的接入及验证边界见[验收记录](../../deployment/AgenticRAG/docs/production-simplification-acceptance-20260927.md)。
+- [upstream/MultiHopRAG.json](upstream/MultiHopRAG.json)、[upstream/corpus.json](upstream/corpus.json)：官方原始 JSON，字节未改。
+- `corpus/`：609 个 Markdown 导入文件，每篇附原有标题、来源、日期、URL；正文逐字保留。**仅导入此目录**，不要将题目、答案或 upstream 文件入库。
+- [dataset.json](dataset.json)、[questions.json](questions.json)：CodePlus 所需的无损适配。题号 `MH-0001` 对应上游第 1 条；`upstream_index` 从 0 开始。gold 为原始 fact 在对应文章中的精确字符位置，不删证据、不补答案。
+- [source-lock.json](source-lock.json)、[NOTICE.md](NOTICE.md)：固定版本、下载链接、SHA256 与署名。
+- `upstream/*_evaluate.py`：官方评分代码原样冻结；[score.py](score.py) 校验题目身份后调用其中的评分函数。
+- [prepare.py](prepare.py)：可重复生成适配文件；`--check` 只比较字节。[check.py](check.py) 同时校验来源、全部证据及三档题号。
 
-## 质量与判分
+当前版本完全替代旧 RAG 题库。旧题库、数据副本及专用说明已移除，旧报告不能与此版本直接比较；应新建仅包含这 609 篇语料的评测库。SWE-bench 的固定 15 题仍单独位于 `../coding-agent-eval/`。
 
-- `dataset.json`、`questions.json`：原件/冻结解析哈希、原始题目 ID、改写说明、答案和可定位证据。偏移为 Unicode 字符位置，左闭右开。
-- `rubrics.json`：预期行为和引用要求，证据引用对应同题 `gold[].id`。允许有依据的等价答案与其他有效来源，须经复核。
-- `sessions.json`：20 个独立会话、60 轮输入，配套资料位于 sessions/corpus；真实保留历史，不以单轮改写替代。
-- `workflows.json`：20 个状态流程，包含原件、替换资料、操作、断言及仅清理自建库的范围；故障点需由集成执行器绑定。
-- `source-lock.json`、`NOTICE.md`：上游版本、许可及来源；`selection-exclusions.json` 记录候选排除。
-- `quality-review.json`：来源语义复核、修订数量和典型错误记录；独立人工复审仍待完成。
-- `validation.json`：实际离线校验结果，包含分区及全套规则/流程指纹；不代表系统质量通过。
+## 使用
 
-已进行来源对照、精简无关证据、剔除日期/范围错误候选、精确与近重复筛选，以及文档家族和标准证据原件跨集检查。论文证据由官方相关章节核对后映射到原始 PDF 的实际解析文本；复杂公式/图表题未收入。多文档题保留上游题目编号、原问题和 2–4 个来源；62 题修正问法或答案，改为有证据支撑的跨文档比较、归纳或推理。RGB 另修订 15 题范围/答案并更换 8 段上下文，避免负例泄漏或关系支撑不足。独立人工审核仍待完成，数据包状态为 `curated_candidate`。
+在项目根目录运行，先安装 Windows 环境 `uv sync --locked`。
 
-检索只报告证据覆盖、找齐题数与错误率；250 道检索题中 247 道有标准证据，3 道拒答/澄清题不进入召回分母。RGB 50 题另评，其中 20 道拒答；全套共 23 道无标准证据题。回答正确、部分回答、拒答、澄清、冲突披露与引用支持必须另评。RGB 段落证据和句子证据分开说明，不把整段返回率当作语义引用正确率。
+```powershell
+# 离线完整性检查，不加载模型、不连接 Milvus
+pwsh -File eval/RAG-eval/run.ps1 -Tier lite -Check
+pwsh -File eval/RAG-eval/run.ps1 -Tier medium -Check
+pwsh -File eval/RAG-eval/run.ps1 -Tier full -Check
+```
 
-未执行真实检索、回答、连续会话或状态流程，因此没有策略排名和通过率。更改资料、问题、解析结果或判分规则须更新版本及指纹。旧 `evaluate` 索引实验接口已移除；本段历史数据说明不表示当前引擎或质量验收状态。
+旧检索引擎及其宿主入口已移除；本历史评测脚本仍不提供在线入口。`-KbId`、`-Mode` 和 `-ManagedLocal` 保留参数解析，但在线调用会在访问旧模块或生成报告前明确报错。当前检索及普通 Agent 评测见 [正式评测入口](../../deployment/AgenticRAG/eval/README.md)，测试入口见 [环境与验证命令](../../deployment/AgenticRAG/docs/environment-command-matrix.md)。
+
+`-Dataset all` 和 `-Dataset multihop` 指向同一数据集；默认 `-Tier full`。Check、Answers、Replay 保留 R01 离线协议；输入路径相对调用者目录解析，Replay 仍写入原生 `report.json`、`report.md` 和 `upstream-retrieval.json`，保留 evidence_recall、失败题分母和非零失败退出码。
+
+```powershell
+# 只能按原报告的同一档位重算，不连接模型或数据库
+pwsh -File eval/RAG-eval/run.ps1 -Tier lite -Replay eval/RAG-eval/runs/<run>/report.json
+
+# 对已有的回答输出进行离线评分，不会自动生成回答
+pwsh -File eval/RAG-eval/run.ps1 -Tier lite -Answers <answers.json>
+```
+
+`answers.json` 是 JSON 数组，每项包含原题 `query` 和字符串 `model_answer`，可附 `id`、`status`。必须完整覆盖所选档位且无重复；请求失败保留该题并写 `status: "error", model_answer: ""`，不得漏题。输入的 `gold_answer`、`question_type` 不参与评分，以冻结题库为准。
+
+## 分数的含义
+
+| 输出 | 实际衡量内容 | 边界 |
+| --- | --- | --- |
+| `report.json` 的 evidence_recall | CodePlus 原文范围完整覆盖 | 本地诊断指标，不是官方 Hits/MAP |
+| `upstream-retrieval.json` | 官方函数的 Hits@4、Hits@10、MAP@10、MRR@10 | Top-10 文本匹配原始 fact；按上游排除 null_query |
+| `-Answers` 输出 | 官方函数的 `upstream_word_overlap_accuracy`，含全部四类题 | 只要预测与答案有一个小写空白分词相同就算命中；不是语义正确率，也不验证引用 |
+
+保留上游 MAP 公式的原始实现，不替换为另一种 MAP 定义。这里对齐的是官方数据和固定版本评分函数，CodePlus 的分块、嵌入与检索配置仍可能不同于论文，因此不能声称已复现论文分数。答案指标过于宽松，实际回答质量仍需额外人工审查；当前未添加新的自动评委或自编题。
+
+[validation.json](validation.json) 记录离线校验结果。**本离线入口不执行真实检索、答案生成或模型效果评测**，离线完整性通过不代表 RAG 效果达标。

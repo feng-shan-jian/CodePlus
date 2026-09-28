@@ -1,4 +1,5 @@
-# Frozen datasets use byte hashes; preserve their original line endings.
+# Keep official downloads and deterministic exports byte-exact on every platform.
 * -text
-*.pdf binary
-*.docx binary
+# Preserve whitespace in official source bytes and their lossless corpus exports.
+corpus/*.md -whitespace
+upstream/* -whitespace

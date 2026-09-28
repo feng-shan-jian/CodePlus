@@ -1,0 +1,95 @@
+# Shohei Ohtani rumors tracker: Latest news, updates on free agent's MLB future
+
+Source: Sporting News
+Published: 2023-11-27T21:20:11+00:00
+URL: https://www.sportingnews.com/us/mlb/news/shohei-ohtani-rumors-tracker-latest-news-updates-free-agent/6593aa54c999febe209052e3
+
+The Hot Stove dominoes have started to fall, but everyone who loves baseball — fans, players, coaches, front-office types and everyone else — is waiting for free agent Shohei Ohtani’s decision. Where will the global superstar sign his next contract?
+
+He’s played his entire six-year MLB career with the Angels, but his teams haven’t even sniffed the postseason and Ohtani’s made his desire to win crystal clear, so he won’t be back. Will he chase every dollar possible, going solely by the highest offer? That seems unlikely, too. Remember, Ohtani wants to win.
+
+Lots of teams can meet Ohtani in that middle ground, offering both lots of money — he will absolutely sign the largest contract in baseball history — and lots of chances to compete for a World Series title (or two or three). It’s a long list.
+
+MORE: Ranking 15 possible destinations for Shoehei Ohtani
+
+So, the baseball world waits for news. We have been promised very little of that, though. ESPN’s Jeff Passan reported this: “If visits between Ohtani and a team are reported publicly, it will be held against the team.”
+
+So, yeah. Probably won’t hear a ton, but that won’t stop the speculation. And it won’t stop us from passing along what precious few nuggets that are scattered about.
+
+MORE: Way-too-early MLB Power Rankings for 2024
+
+Shohei Ohtani free agent rumors and updates
+
+Ohtani has an 'affinity' for Boston, it seems
+
+Date: Nov. 27
+
+Source: Jeff Passan, ESPN
+
+Hope everyone enjoyed the Thanksgiving holiday. Us baseball writers are pleased that Ohtani didn't decide to sign while the turkey was still warm. This isn't exactly "breaking news" because rumors have been swirling, but it's an aside from an in-the-know reporter that just might give one fan base a little too much hope and excitement.
+
+Passan wrote a piece about 10 teams to watch the rest of the offseason, and he threw this little note in the section about the Red Sox, and how they needed to sign Yoshinobu Yamamoto.
+
+Boston's bats are good, or good enough at least, to avoid having to spend like mad in a down year for free agent hitters -- unless, of course, it's for Ohtani, who has an affinity for Boston. If the Red Sox don't hit that jackpot, they're backfilled nicely with a system that includes outfielder Roman Anthony, shortstop Marcelo Mayer and catcher Kyle Teel, among the best trios of offensive prospects in baseball.
+
+It's cool when the best player in the world is a free agent and has an "affinity" for your town.
+
+'Money's great, but winning's better'
+
+Date: Nov. 21
+
+Source: Max Scherzer, Rangers pitcher on Foul Territory
+
+OK, so this isn't necessarily a rumor, but an example of how much players would love for Ohtani to join their team. Scherzer was a guest on Foul Territory on Monday.
+
+"Money's great, but winning's better."
+
+
+
+Max Scherzer shares his pitch for Shohei Ohtani to join the @Rangers 🏆
+
+
+
+▶️ https://t.co/6KoSRqSgk2 pic.twitter.com/PHW2jHWj6C — Foul Territory (@FoulTerritoryTV) November 20, 2023
+
+Maybe Ohtani won’t sign quite so soon after all
+
+Date: Nov. 20
+
+Source: Ken Rosenthal, The Athletic
+
+Buried at the bottom of Rosenthal’s piece on what an Ohtani contract might look like — incentives, opt-outs and all sorts of stuff — is this little bit of reporting:
+
+An agreement at the winter meetings in Nashville the first week of December would be the ideal outcome for MLB, but not necessarily for Ohtani. He perhaps will be better off waiting for the signing of Japanese righty Yoshinobu Yamamoto, who is expected to be posted for free agency as soon as Monday, triggering a 45-day window for teams to negotiate with him. Losing out on the 25-year-old Yamamoto, who could command more than $200 million, might put certain teams on tilt, improving the landscape for Ohtani.
+
+Interesting, certainly.
+
+Mariners out of the Ohtani chase?
+
+Date: Nov. 17
+
+Source: Daniel Kramer, MLB.com
+
+Here’s the key piece of the article: “Industry sources told MLB.com this week that landing Ohtani doesn’t appear to be within the Mariners’ realistic agenda this offseason.”
+
+In a way, that’s surprising. The Mariners seem to check a lot of boxes for Ohtani. They’re set up to win for a long time with a bunch of young starting pitchers and a co-superstar in Julio Rodriguez. Plus, Ohtani would get to be part of the quest for the franchise’s first World Series title, he’d get to wear the same uniform as his baseball hero, Ichiro, and he’s lived there in the offseason. So it must be about the money, and Seattle’s reluctance to even get in the conversation. That’s gotta be super disappointing for Mariners fans starved for a title, right?
+
+On the other hand, maybe the M’s know all about Ohtani’s desire to keep the rumor mill quiet, and leaking “news” like this would please Ohtani and his camp.
+
+‘Timing could be right for a Cubs-Ohtani union’
+
+Date: Nov. 16
+
+Source: Jesse Rogers, ESPN
+
+The Cubs were one of the seven finalists for Ohtani the first time around, but lack of the DH in the NL at the time made it hard for Ohtani to choose Chicago. His primary goal was showing he could both hit and pitch at a high level for an MLB team, and trying to play the outfield instead of just DHing would have been too much, even for Ohtani.
+
+Now, though? The NL has the DH, and the Cubs are itching to make a sport-shaking signing. Well, another sport-shaking signing. They already poached Craig Counsell from the rival Brewers to be their new manager, and it would be shocking if they didn’t make a corresponding player-acquisition move. Ohtani’s at the top of the list.
+
+Ohtani could potentially sign before Winter Meetings
+
+Date: Nov. 11
+
+Source: Alden Gonzalez, ESPN
+
+Pretty much everyone in baseball would LOVE for this to happen. The team that winds up signing him, of course, will kick the Ohtani hype machine into gear ASAP. Not only is there merchandise to sell, but the front office will use that signing to help lure other potential free agents, maybe even for a “play with Ohtani” discount. But even for the other teams, knowing that Ohtani is off the board relatively soon into the offseason would allow them to shift to other priorities, like trading for Juan Soto or deciding which free-agent pitchers to pursue with the money that might have been earmarked for Ohtani.

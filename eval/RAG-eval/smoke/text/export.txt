@@ -1,9 +1,0 @@
-Qinglan Export Packages
-This fictional fixture defines export limits for two packages. Limits apply per batch.
-Package
-Limit
-Solo
-Solo package uses a 12 item batch.
-Team
-Team package uses a 24 item batch.
-Only administrators may enable the Team export package.

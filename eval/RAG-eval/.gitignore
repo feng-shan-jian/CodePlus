@@ -1,2 +1,2 @@
-smoke/runs/
-full/*/runs/
+/runs/
+__pycache__/

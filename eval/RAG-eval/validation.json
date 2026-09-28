@@ -1,85 +1,51 @@
 {
+  "date": "2026-09-28",
   "status": "passed",
-  "scope": "offline_dataset_integrity_only",
-  "questions": 300,
-  "suite_sha256": "9840c20837ce710153e7a5c869867ee5862b2ac43cb7128356ae439c9d436131",
-  "artifact_sha256": {
-    "suite.json": "5ba3c1a0409bd97eaec5e259b0fb27b6a279f0387feac192d95b3ef3eb3c3d72",
-    "source-lock.json": "98ad52e2d43675710a699af2175ed17e1b5190fdcb04e8ef01e7e97a84427957",
-    "quality-review.json": "cdd4c297124ba875babcee0406daeef27fb988ac2361da0e91b3160417484649",
-    "sessions.json": "7672bcc927426b81196187ccc9585137efffcd2517594a26f0ba1ea195618a63",
-    "workflows.json": "1b4c2ea334e10c15b1784f50b193a3a99acf0380d906cc9ecc4ad4648aa274cf",
-    "check.py": "1f3045be392ac4d2064eba9c74d7aeafac717be21f83638e0e2ec2ef63d71ed5",
-    "run.ps1": "bd830bfd8817c04ccc52d89ca3039ebf06717d6fda08d67ddd493823993eb3d1",
-    "full/original/rubrics.json": "da1710033f05ab9cbd6bc705cda4adf4fb4c04bbcec5cbb3e06d226d9a319bd0",
-    "full/crud/rubrics.json": "f83d38b0416d453ad553fa59b92bf4ccf7dab14222e64ff5bd1ab8da6f8e25bc",
-    "full/multihop/rubrics.json": "003c5aed5619188e52e75b522b1bb8324e622cee62421896aefeec5cdf753960",
-    "full/openrag/rubrics.json": "38dc9bcd5ed88b4ff9109667808c6e908f9c25e2df8e17f8385e749aff7df2dd",
-    "full/rgb/rubrics.json": "02d12e225153467061413a71222058ba3e13091aaebab0663762c5c4100db845"
-  },
-  "retrieval_questions": 250,
-  "retrieval_questions_with_gold": 247,
-  "provided_context_questions": 50,
-  "source_mix": {
-    "public_derived": 260,
-    "original": 40
-  },
-  "splits": {
-    "development": 60,
-    "holdout": 240
-  },
-  "scenarios": {
-    "S01": 94,
-    "S02": 8,
-    "S03": 84,
-    "S04": 24,
-    "S05": 24,
-    "S06": 24,
-    "S07": 34,
-    "S08": 8
-  },
-  "sessions": 20,
-  "session_turns": 60,
-  "workflows": 20,
-  "datasets": [
-    {
-      "name": "original",
-      "questions": 40,
-      "documents": 22,
-      "dataset_sha256": "cd76c4eb7593efc532ead1219ccb40bb536d2ff19472577a4959db075cdd981f"
-    },
-    {
-      "name": "crud",
-      "questions": 90,
-      "documents": 2020,
-      "dataset_sha256": "777deb718194dba15075764d491e914021fe1edb895e99c57db062b8e0ca6474"
-    },
-    {
-      "name": "multihop",
-      "questions": 100,
-      "documents": 609,
-      "dataset_sha256": "c24ce5fd732e8b2e57ab2d7ef5c5fe99ed4141ca9c7a32a5c44043baab0956b7"
-    },
-    {
-      "name": "openrag",
-      "questions": 20,
-      "documents": 20,
-      "dataset_sha256": "29c9b64f5a8d12e8a0e90fdd83e7eb0542abb14f7b25859d792fa3b541968ab3"
-    },
-    {
-      "name": "rgb",
+  "scope": "offline_data_integrity_and_scoring_contracts_only",
+  "dataset": "multihop-rag-official",
+  "dataset_revision": "71ac0d0bd1f951d2d6b70311f7d2ae404e1ffa82",
+  "evaluator_revision": "c1c1287aa60a94acf9c4d20c891c9cd611a0f6e8",
+  "source_dataset_sha256": "c9cf1a90f31d7944cfa24e3ff14db2ae3fa8b875a1a1c9397f6f6f2221bc73d9",
+  "documents": 609,
+  "questions": 2556,
+  "exact_evidence_ranges": 6084,
+  "upstream_files_verified": 4,
+  "tiers": {
+    "lite": {
       "questions": 50,
-      "documents": 230,
-      "dataset_sha256": "818fdc9dece31c8620e96e5bafabfdc4613aad66f49e63b3a4ad47bafd786c9d"
+      "retrieval_scored_questions": 44,
+      "dataset_sha256": "cdcbd3c33fef2df6c5406535413df20fd31157a1052d9b05c46f3059044ba9ed"
+    },
+    "medium": {
+      "questions": 200,
+      "retrieval_scored_questions": 177,
+      "dataset_sha256": "f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898"
+    },
+    "full": {
+      "questions": 2556,
+      "retrieval_scored_questions": 2255,
+      "dataset_sha256": "c9cf1a90f31d7944cfa24e3ff14db2ae3fa8b875a1a1c9397f6f6f2221bc73d9"
     }
+  },
+  "test_files": [
+    "tests/test_multihop_evaluation.py",
+    "deployment/AgenticRAG/tests/test_evaluation_protocol.py"
   ],
-  "model_called": false,
-  "database_called": false,
-  "independent_human_review": "pending",
-  "system_evaluation": {
-    "retrieval": "not_executed",
-    "answers": "not_executed",
-    "sessions": "not_executed",
-    "workflows": "not_executed"
-  }
+  "tests": {
+    "passed": 73,
+    "skipped": 0
+  },
+  "offline_cli_checks": [
+    "All three tiers pass run.ps1 -Check with the complete corpus",
+    "prepare.py --check reproduces all 612 adapter files byte-for-byte",
+    "Synthetic retrieval replay writes native and upstream score reports",
+    "Failed synthetic query remains in the denominator and returns nonzero",
+    "Replay rejects another tier",
+    "Synthetic answer scoring includes null queries and rejects missing records",
+    "Retired dataset name is rejected"
+  ],
+  "model_evaluation": "not_executed",
+  "real_retrieval": "not_executed",
+  "answer_generation": "not_executed",
+  "paper_results_reproduction": "not_executed"
 }
