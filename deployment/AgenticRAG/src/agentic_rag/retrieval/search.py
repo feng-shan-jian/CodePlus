@@ -78,7 +78,7 @@ class RetrievalSearch:
             'selection':{'mode':config.mode, 'requested':{'strategy':strategy, 'rerank':rerank},
                          'effective':{'strategy':route, 'rerank':config.rerank}},
             'collection_name':index_versions.physical(self.catalog,self.artifact)['collection_name'],
-            'filter':index_versions.version_filter(self.catalog,self.artifact),
+            'filter':index_versions.version_filter(index_versions.origins(self.catalog,self.artifact)),
             'index':self.artifact['spec']['index'], 'index_schema_hash':self.artifact['schema_hash'],
             'parameters':{'branch_limits':limits, 'result_limit':limit, 'rrf_k':config.rrf_k,
                           'nprobe':config.nprobe, 'rerank':config.rerank,

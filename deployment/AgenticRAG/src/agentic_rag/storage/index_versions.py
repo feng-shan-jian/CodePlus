@@ -58,10 +58,9 @@ def origins(catalog, artifact):
             'WHERE m.revision_id=?', (artifact['revision_id'], root, artifact['revision_id'])))
 
 
-def version_filter(catalog, artifact, extra=''):
+def version_filter(versions, extra=''):
     # Filtering happens inside both Milvus retrieval branches, before their top K.
-    values = sorted(origins(catalog, artifact))
-    selected = 'document_version_id in ' + json.dumps(values)
+    selected = 'document_version_id in ' + json.dumps(sorted(versions))
     return f'({selected}) and ({extra})' if extra else selected
 
 

@@ -378,7 +378,7 @@ class MilvusRevisionIndex:
             # search validator accepts list/ndarray vectors on its wire boundary.
             value = list(value)
         producers = index_versions.origins(self.catalog, artifact)
-        selected = index_versions.version_filter(self.catalog, artifact, filter)
+        selected = index_versions.version_filter(producers, filter)
         hits = self._read_call(artifact, self.client.search, name, data=[value], anns_field=field, limit=limit, filter=selected,
             output_fields=list(SCALAR_FIELDS), search_params={'metric_type': 'COSINE' if field == 'dense' else 'BM25',
             'params': {'nprobe': nprobe} if field == 'dense' else {}}, consistency_level='Strong', timeout=self.timeout)[0]
@@ -400,7 +400,7 @@ class MilvusRevisionIndex:
             raise index_error('base encoded manifest has duplicate IDs')
         vectors = {}
         producers = index_versions.origins(self.catalog, artifact)
-        iterator = self._read_call(artifact, self.client.query_iterator, self._name(artifact),filter=index_versions.version_filter(self.catalog, artifact),output_fields=[*SCALAR_FIELDS,'dense'],
+        iterator = self._read_call(artifact, self.client.query_iterator, self._name(artifact),filter=index_versions.version_filter(producers),output_fields=[*SCALAR_FIELDS,'dense'],
             batch_size=256,consistency_level='Strong',timeout=self.timeout)
         try:
             while batch := self._read_call(artifact, iterator.next):
@@ -425,7 +425,7 @@ class MilvusRevisionIndex:
         by_id = {r['chunk_id']: r for r in expected}
         seen, first, max_norm_error = set(), None, 0.0
         producers = index_versions.origins(self.catalog, artifact)
-        iterator = self._read_call(artifact, self.client.query_iterator, name, filter=index_versions.version_filter(self.catalog, artifact), output_fields=[*SCALAR_FIELDS, 'dense'],
+        iterator = self._read_call(artifact, self.client.query_iterator, name, filter=index_versions.version_filter(producers), output_fields=[*SCALAR_FIELDS, 'dense'],
                     batch_size=256, consistency_level='Strong', timeout=self.timeout)
         try:
             while batch := self._read_call(artifact, iterator.next):
