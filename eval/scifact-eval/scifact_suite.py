@@ -179,11 +179,18 @@ def validate_report(report, runtime):
 def measure(qrels, ranked):
     import ir_measures as ir
     measures = [ir.Success@5, ir.Success@10, ir.R@5, ir.R@10, ir.RR@10, ir.nDCG@10, ir.P@5, ir.P@10]
-    evaluator = ir.providers.registry["pytrec_eval"].evaluator(measures, qrels)
+    provider = ir.providers.registry["pytrec_eval"]
+    # This provider supports unbounded RR only; passing RR@10 directly silently
+    # ignores the cutoff. Score RR separately on the first ten ranked documents.
+    evaluator = provider.evaluator([m for m in measures if m != ir.RR@10], qrels)
     # Keep the full qrels denominator, including queries that failed or returned nothing.
     per_query = {qid: {str(m): 0.0 for m in measures} for qid in qrels}
     for value in evaluator.iter_calc(ranked):
         per_query[value.query_id][str(value.measure)] = value.value
+    top10 = {qid: dict(sorted(documents.items(), key=lambda item: item[1], reverse=True)[:10])
+             for qid, documents in ranked.items()}
+    for value in provider.evaluator([ir.RR], qrels).iter_calc(top10):
+        per_query[value.query_id]["RR@10"] = value.value
     aggregate = {str(m): sum(row[str(m)] for row in per_query.values()) / len(per_query) for m in measures}
     return aggregate, per_query
 

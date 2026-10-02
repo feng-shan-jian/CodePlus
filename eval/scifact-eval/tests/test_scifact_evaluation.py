@@ -91,6 +91,16 @@ def test_all_failed_queries_have_zero_metrics():
     assert all(value == 0 for value in aggregate.values())
 
 
+@pytest.mark.parametrize("relevant_rank", [1, 10, 11, 20])
+def test_mrr_at_ten_excludes_later_hits(relevant_rank):
+    # Reverse insertion order so the cutoff must follow scores, not dict order.
+    ranked = {"q": {str(rank): float(21-rank) for rank in range(20, 0, -1)}}
+    aggregate, per_query = suite.measure({"q": {str(relevant_rank): 1}}, ranked)
+    expected = 1 / relevant_rank if relevant_rank <= 10 else 0.0
+    assert aggregate["RR@10"] == pytest.approx(expected)
+    assert per_query["q"]["RR@10"] == pytest.approx(expected)
+
+
 def test_storage_cannot_reuse_multihop_or_unbound_data(tmp_path):
     inputs = dict(runtime.BINDING)
     with pytest.raises(ValueError, match="namespace"):
