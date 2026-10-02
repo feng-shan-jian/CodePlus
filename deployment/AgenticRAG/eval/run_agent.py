@@ -45,6 +45,7 @@ async def run(args):
         checker = PermissionChecker(DangerousCommandDetector(), PathSandbox(str(output)), RuleEngine(),
                                     mode=PermissionMode.ACCEPT_EDITS)
         agent = Agent(client, create_default_registry(), provider.protocol, work_dir=str(output),
+                      context_window=provider.get_context_window(),
                       execution_policy=policy, permission_checker=checker)
         record = {**question, "status": "error", "model_answer": ""}
         stop = False
