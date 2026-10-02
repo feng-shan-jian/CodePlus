@@ -3,7 +3,7 @@ import asyncio
 from pathlib import Path
 import runpy
 import threading
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock, call
 from uuid import UUID
 
 from codeplus.app import CodePlusApp
@@ -68,6 +68,8 @@ def test_tui_watch_publishes_file_edits_and_stops_on_exit(user, monkeypatch):
         provider = ProviderConfig('fixture', 'openai-compat', 'https://fixture.invalid', 'fixture', 'synthetic')
         app = CodePlusApp([provider], enable_fork=False, knowledge_development_config=str(user.path))
         source = user.root/'自动更新.md'
+        messages = Mock(wraps=app.add_system_message)
+        monkeypatch.setattr(app, 'add_system_message', messages)
         source.write_text('# Guide\nOriginal telescope approval.\n', encoding='utf-8')
         try:
             async with app.run_test(size=(120, 40)) as pilot:
@@ -87,9 +89,9 @@ def test_tui_watch_publishes_file_edits_and_stops_on_exit(user, monkeypatch):
                 first = await published_after(None)
                 source.write_text('# Guide\nUpdated telescope approval.\n', encoding='utf-8')
                 await published_after(first)
-                await pilot.pause()
-                assert app.last_knowledge_sync['status']=='completed'
-                assert app.last_knowledge_sync['data']['summary']['published_updated']==1
+                async with asyncio.timeout(20):
+                    while call(f'Knowledge auto-sync: 0 new, 1 updated [{kb}].') not in messages.call_args_list:
+                        await pilot.pause(0.05)
             assert not watcher.thread.is_alive()
             assert app._knowledge_watcher is None
         finally:

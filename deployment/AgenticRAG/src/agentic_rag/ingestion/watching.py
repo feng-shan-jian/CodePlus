@@ -125,7 +125,7 @@ class _Notifications:
     def poll(self, paths):
         if self.kernel is None:
             return set()
-        directories = {str(Path(p) if Path(p).is_dir() else Path(p).parent) for p in paths}
+        directories = {str(Path(p)) for p in paths if Path(p).is_dir()}
         for path in set(self.handles)-directories:
             self.kernel.FindCloseChangeNotification(self.handles.pop(path))
         for path in directories-set(self.handles):

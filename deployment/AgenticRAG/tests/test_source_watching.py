@@ -5,6 +5,7 @@ from pathlib import Path
 import runpy
 import threading
 import time
+from unittest.mock import Mock, call
 from uuid import UUID
 
 import pytest
@@ -85,11 +86,14 @@ def test_background_change_reconciliation_restart_and_stop(user):
 
 
 @pytest.mark.skipif(__import__('os').name!='nt',reason='Windows native notifications')
-def test_native_notification_detects_save_and_atomic_replacement(tmp_path):
+@pytest.mark.parametrize('subscription', ['file', 'directory'])
+def test_notifications_detect_save_and_atomic_replacement(tmp_path, subscription):
     source=tmp_path/'watched.md';source.write_text('original',encoding='utf-8')
+    watched=str(source if subscription=='file' else tmp_path)
     watcher=_Notifications()
     try:
-        assert watcher.poll([str(source)])==set()
+        assert watcher.poll([watched])==set()
+        assert set(watcher.handles)==({watched} if subscription=='directory' else set())
         for atomic in (False,True):
             if atomic:
                 replacement=tmp_path/'temp.md';replacement.write_text('replacement',encoding='utf-8')
@@ -98,11 +102,11 @@ def test_native_notification_detects_save_and_atomic_replacement(tmp_path):
                 source.write_text('changed',encoding='utf-8')
             deadline=time.monotonic()+3
             while time.monotonic()<deadline:
-                if str(source) in watcher.poll([str(source)]):
+                if watched in watcher.poll([watched]):
                     break
                 time.sleep(0.01)
             else:
-                pytest.fail('native change notification was not delivered')
+                pytest.fail('source change was not detected')
     finally:
         watcher.close()
 
@@ -148,16 +152,17 @@ def test_remote_run_synchronizes_and_drains_watcher_on_shutdown(user, monkeypatc
         provider = ProviderConfig('fixture', 'openai-compat', 'https://fixture.invalid', 'fixture', 'synthetic')
         server = RemoteServer([provider], addr='127.0.0.1', port=0,
             config=AppConfig(providers=[provider], enable_fork=False, knowledge_development_config=str(user.path)))
+        messages = Mock(wraps=server.add_system_message)
+        monkeypatch.setattr(server, 'add_system_message', messages)
         task = asyncio.create_task(server.run())
         watcher = None
         try:
             async with asyncio.timeout(20):
-                while not getattr(server, 'last_knowledge_sync', None):
+                while call(f'Knowledge auto-sync: 1 new, 0 updated [{kb}].') not in messages.call_args_list:
                     if task.done():
                         await task
                     await asyncio.sleep(0.05)
             watcher = server._knowledge_watcher
-            assert server.last_knowledge_sync['status'] == 'completed'
             assert user.catalog.get_library(kb).current_revision_id is not None
         finally:
             task.cancel()

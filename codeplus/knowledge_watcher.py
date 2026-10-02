@@ -14,7 +14,6 @@ def start_knowledge_watcher(ui):
         loop = asyncio.get_running_loop()
 
         def deliver(result):
-            ui.last_knowledge_sync = result
             summary = result.get('data', {}).get('summary', {})
             if result['status'] == 'completed':
                 message = (f"Knowledge auto-sync: {summary.get('published_new',0)} new, "
