@@ -132,23 +132,23 @@ def test_corrupt_transport_data_is_rejected_at_its_actual_validation_boundary(se
         monkeypatch.setattr(s.backend, 'insert', write_bad_vector)
         expected_error = 'full row/source/config/text/vector hash differs'
     else:
-        stored = s.backend.collections[artifact['collection_name']][-1]
+        stored = next(r for r in s.backend.collections[s.backend._name(artifact)]
+                      if s.catalog.get_document(UUID(r['document_id'])).original_name=='b.md')
         if damage == 'reuse_dense':stored['dense'] = [0.0,1.0] + [0.0]*1022
         elif damage == 'reuse_scalar':stored['body_hash'] = 'f'*64
         elif damage == 'reuse_hash':stored['vector_hash'] = 'f'*64
         else:stored['chunk_id'] = str(uuid4())
-        expected_error = 'base vector reuse identity/source/config/float32 digest differs'
+        expected_error = ('duplicate/foreign chunk' if damage=='reuse_id' else
+                          'full row/source/config/text/vector hash differs')
     a.write_text('# A\nA changed document while testing the transport.\n', encoding='utf-8')
     stages = []
     with H['begin'](s, (a,)) as owner:
         with pytest.raises(RagError, match=expected_error) as caught:
             H['run'](s, owner, observer=lambda stage,_:stages.append(stage))
         assert caught.value.error.code == ErrorCode.INVALID_RESPONSE and caught.value.error.stage == 'index'
-        if damage == 'insert_dense':
-            assert 'inserted' in stages and 'validated' not in stages
-        else:
-            assert 'created' not in stages
-            assert_no_candidate(s, owner)
+        # In-place reuse does not transport base vectors. The final actual-index
+        # validation authenticates both retained rows and newly written rows.
+        assert 'inserted' in stages and 'validated' not in stages
         assert publication.receipt(s.catalog, owner.token.batch_id) is None
         assert publication.receipt(s.catalog, UUID(old['receipt']['batch_id'])) == old['receipt']
         assert s.catalog.get_library(s.kb).current_revision_id == old_revision

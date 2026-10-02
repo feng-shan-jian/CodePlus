@@ -173,7 +173,7 @@ def query(inputs, base, config, worker, run_name):
             write(output / "chunk-spans.json", {key: {"doc_id": chunk_docs[key],
                 "source_spans": [{"char_start": row["span_start"], "char_end": row["span_end"]}]}
                 for key, row in search.expected.items()})
-            summary["collection_name"] = search.artifact["collection_name"]
+            summary["collection_name"] = backend._name(search.artifact)
             with (output / "retrieval.jsonl").open("x", encoding="utf-8") as stream:
                 for number, question in enumerate(inputs["questions"]):
                     try:

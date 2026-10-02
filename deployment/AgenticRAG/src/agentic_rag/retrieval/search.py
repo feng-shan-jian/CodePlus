@@ -71,12 +71,14 @@ class RetrievalSearch:
             raise ValueError('branch candidate limits must be 1..16384')
         start = time.perf_counter()
         request_id = uuid4()
+        from ..storage import index_versions
         trace = {'schema_version':1, 'request_id':str(request_id), 'run_id':str(self.run_id),
             'kb_id':str(self.run.kb_id), 'revision_id':str(self.run.revision_id),
             'resolved_config_hash':self.run.resolved_config_hash, 'query':query, 'route':route,
             'selection':{'mode':config.mode, 'requested':{'strategy':strategy, 'rerank':rerank},
                          'effective':{'strategy':route, 'rerank':config.rerank}},
-            'collection_name':self.artifact['collection_name'], 'filter':'',
+            'collection_name':index_versions.physical(self.catalog,self.artifact)['collection_name'],
+            'filter':index_versions.version_filter(self.catalog,self.artifact),
             'index':self.artifact['spec']['index'], 'index_schema_hash':self.artifact['schema_hash'],
             'parameters':{'branch_limits':limits, 'result_limit':limit, 'rrf_k':config.rrf_k,
                           'nprobe':config.nprobe, 'rerank':config.rerank,

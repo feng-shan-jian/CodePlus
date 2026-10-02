@@ -79,7 +79,8 @@ def test_three_routes_one_binding_caps_scores_and_canonical_sources(tmp_path,rou
         found=RetrievalSearch(catalog,lease.run.run_id,None if route=='bm25' else model,backend).search('same query',limit=1)
         trace=found['trace']
         assert len(found['hits'])==1 and trace['parameters']['result_limit']==1
-        assert trace['query']=='same query' and trace['filter']==''
+        assert trace['query']=='same query'
+        assert set(json.loads(trace['filter'].split(' in ',1)[1]))=={r['document_version_id'] for r in rows}
         assert all(h['revision_id']==str(lease.run.revision_id) for h in found['hits'])
         assert [c['limit'] for c in calls]==({'dense':[2],'bm25':[3],'hybrid':[2,3]}[route])
         assert len(model.calls)==(0 if route=='bm25' else 1)

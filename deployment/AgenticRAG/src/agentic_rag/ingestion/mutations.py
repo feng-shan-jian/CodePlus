@@ -340,23 +340,31 @@ def _build_prepared(catalog, owner, backend, batch, snapshot, prepared, started,
     if not changed:
         value = publication._complete_no_change(catalog,owner,_operation=prepared)
         return {'receipt':None,'summary':value,'metrics':{'build_seconds':time.perf_counter()-started,'reused_vectors':0,'encoded_vectors':0}}
-    # Reuse authenticated rows from the complete immutable base Collection.
+    from ..storage import index_versions
+    _, artifact = publication._register(catalog,owner,candidate.revision_id,_operation=prepared)
+    incremental = index_versions.physical(catalog, artifact)['artifact_id'] != artifact['artifact_id']
+    # Compatible revisions keep existing vectors in place. Their complete hashes
+    # are still authenticated against actual rows by the publication validator.
     vectors = {v['chunk_id']:v for v in candidate.encoded_vectors}
+    base_rows = {r['chunk_id']:r for r in (prepared.base_expected or ())}
     reused = 0
     if any(r['chunk_id'] not in vectors for r in candidate.rows):
         catalog.retain_revision(owner,batch.base_revision_id,'vector_reuse')
         prepared.checked(catalog,owner,candidate.revision_id)
-        old_vectors = backend.read_vectors(prepared.base_artifact,prepared.base_expected)
+        old_vectors = (base_rows if incremental else
+                       backend.read_vectors(prepared.base_artifact,prepared.base_expected))
         for row in candidate.rows:
             if row['chunk_id'] not in vectors:
                 vectors[row['chunk_id']] = old_vectors[row['chunk_id']]
                 reused += 1
     _cancelled(cancelled)
-    _, artifact = publication._register(catalog,owner,candidate.revision_id,_operation=prepared)
     backend.create(artifact,owner)
     if observer:
-        observer('created',{'revision_id':str(candidate.revision_id),'collection_name':artifact['collection_name']})
+        observer('created',{'revision_id':str(candidate.revision_id),
+                           'collection_name':index_versions.physical(catalog,artifact)['collection_name']})
     expected = []
+    new_ids = {v['chunk_id'] for v in candidate.encoded_vectors}
+    written = 0
     for offset in range(0,len(candidate.rows),256):
         _cancelled(cancelled)
         rows = []
@@ -364,8 +372,11 @@ def _build_prepared(catalog, owner, backend, batch, snapshot, prepared, started,
             vector = vectors[row['chunk_id']]
             encoded = {**row,'vector_hash':vector['vector_hash']}
             expected.append(encoded)
-            rows.append({**encoded,'dense':list(vector['dense'])})
-        backend.insert(artifact,rows,owner)
+            if not incremental or row['chunk_id'] in new_ids:
+                rows.append({**encoded,'dense':list(vector['dense'])})
+        if rows:
+            backend.insert(artifact,rows,owner)
+            written += len(rows)
     publication._record_encoded(catalog,owner,candidate.revision_id,expected,_operation=prepared)
     if observer:
         observer('inserted',{'revision_id':str(candidate.revision_id),'rows':len(expected)})
@@ -379,4 +390,5 @@ def _build_prepared(catalog, owner, backend, batch, snapshot, prepared, started,
     receipt = publication.publish(catalog,owner,candidate.revision_id)
     return {'receipt':receipt,'summary':summary(catalog,batch.batch_id),'validation':proof,
             'metrics':{'build_seconds':time.perf_counter()-started,'reused_vectors':reused,
+                       'written_vectors':written,'incremental_index':incremental,
                        'encoded_vectors':len(candidate.encoded_vectors),'documents':len(candidate.members),'chunks':len(candidate.rows),**timings}}

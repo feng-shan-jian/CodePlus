@@ -6,7 +6,7 @@ import json
 from uuid import UUID, uuid4
 
 from .._schema import canonical_json
-from . import readers, recovery
+from . import readers, recovery, index_versions
 from .paths import failure
 
 TERMINAL = ('PUBLISHED', 'COMPLETED_NO_CHANGE', 'ABANDONED')
@@ -45,7 +45,8 @@ class _Claim:
                          (self.artifact_id,)).fetchone()
         if row != (self.nonce, *readers.process_identity(), *readers.lock_identity(self.lock), 'claimed'):
             raise failure('GC claim no longer belongs to this actual collector lifetime')
-        expected_path = self.catalog._directory.path('locks', f'artifact-{UUID(self.artifact_id)}.lock')
+        root = index_versions.collection_id(db, self.artifact_id)
+        expected_path = self.catalog._directory.path('locks', f'artifact-{UUID(root)}.lock')
         if self.lock.path != expected_path:
             raise failure('GC claim does not hold the artifact lifecycle lock')
         state = db.execute('SELECT a.state,r.index_state FROM index_artifacts a '
@@ -76,7 +77,7 @@ def _claim(catalog, backend, artifact, lock):
         # No network IO here; persisted create/describe proof is a prerequisite.
         proof = db.execute('SELECT i.endpoint,i.database_name,i.marker,p.description '
             'FROM artifact_creation_intents i JOIN artifact_ownership_proofs p USING(artifact_id) '
-            'WHERE artifact_id=?', (artifact['artifact_id'],)).fetchone()
+            'WHERE artifact_id=?', (index_versions.collection_id(db, artifact['artifact_id']),)).fetchone()
         if (proof is None or proof[:2] != (backend.storage.milvus_uri, backend.database_name)
                 or proof[2] != proof[3]):
             return None, 'no matching persisted physical ownership proof'
@@ -100,6 +101,7 @@ def collect(catalog, backend, artifact, *, observer=None):
     if backend.storage != snapshot.resolved_config.storage or backend.database_name != 'default':
         raise failure('GC backend differs from the complete frozen storage identity')
     result = {key: artifact[key] for key in ('artifact_id', 'revision_id', 'collection_name')}
+    result['collection_name'] = index_versions.physical(catalog, artifact)['collection_name']
     claim = None
     try:
         with backend._lifecycle(artifact) as lock:
@@ -119,7 +121,7 @@ def collect(catalog, backend, artifact, *, observer=None):
                         db.execute("UPDATE revisions SET index_state='RECLAIMED' WHERE revision_id=?", (artifact['revision_id'],))
                         db.execute("UPDATE index_gc_claims SET state='reclaimed',error=NULL,updated_at=? WHERE artifact_id=? AND owner_nonce=?",
                                    (recovery.now(), artifact['artifact_id'], claim.nonce))
-                    result.update(state='reclaimed', reason='matching physical ownership; drop acknowledged or proven absent')
+                    result.update(state='reclaimed', reason='unreferenced document versions removed; shared collection retained until its last revision')
                     if observer:
                         observer('after_receipt', dict(result))
                 except Exception as exc:
@@ -213,7 +215,7 @@ def retire_pass(catalog, backend, after, cutoff):
                 state = db.execute('SELECT state FROM mutation_batches WHERE batch_id=?', (stored['batch_id'],)).fetchone()[0]
                 if stored['state'] == 'RECLAIMED' or state not in TERMINAL or dependency(db, stored):
                     continue
-                if not db.execute('SELECT 1 FROM artifact_ownership_proofs WHERE artifact_id=?', (stored['artifact_id'],)).fetchone():
+                if not db.execute('SELECT 1 FROM artifact_ownership_proofs WHERE artifact_id=?', (index_versions.collection_id(db, stored['artifact_id']),)).fetchone():
                     continue
                 if stored['state'] == 'RECLAIMING' and not db.execute('SELECT 1 FROM index_gc_claims WHERE artifact_id=?', (stored['artifact_id'],)).fetchone():
                     continue

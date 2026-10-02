@@ -13,7 +13,7 @@ from .locks import ProcessLock
 from .paths import DataDirectory, failure
 
 APPLICATION_ID = 0x41524147
-SCHEMA_VERSION = 11
+SCHEMA_VERSION = 12
 
 
 def runtime_fingerprint() -> dict:
@@ -141,6 +141,12 @@ class Database:
                 if connection.pragma('user_version') == 10:
                     _apply_migration(connection, 11, retrieval, retrieval_hash)
                 if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=11').fetchone() != (retrieval_hash,):
+                    raise failure('schema migration fingerprint mismatch')
+                incremental = files(__package__).joinpath('incremental.sql').read_text(encoding='utf-8')
+                incremental_hash = hashlib.sha256(incremental.encode()).hexdigest()
+                if connection.pragma('user_version') == 11:
+                    _apply_migration(connection, 12, incremental, incremental_hash)
+                if connection.execute('SELECT sha256 FROM schema_migrations WHERE version=12').fetchone() != (incremental_hash,):
                     raise failure('schema migration fingerprint mismatch')
                 self._verify(connection)
             finally:

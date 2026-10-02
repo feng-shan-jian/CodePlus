@@ -18,6 +18,7 @@ from agentic_rag.ingestion import (InputSelection, begin_changes, build_changes,
                                  retry_failed, mutation_summary)
 from agentic_rag.indexes.manifest import prepare, SCALAR_FIELDS
 from agentic_rag.storage import Catalog, publication
+from agentic_rag.storage import index_versions
 
 HELPER = runpy.run_path(str(Path(__file__).with_name('publication_support.py')))
 VECTOR = HELPER['VECTOR']
@@ -39,16 +40,35 @@ class Model:
 
 
 def backend(catalog, config):
+    catalog._maintain_indexes = lambda: []  # Collection is tested with the GC transport separately.
     client = SimpleNamespace(get_server_version=lambda **kw:'3.0.1')
     value = HELPER['constructed_backend'](catalog, config, client)
     value.collections = {}
-    value.create = lambda artifact,owner: value.collections.__setitem__(artifact['collection_name'],[])
-    value.insert = lambda artifact,rows,owner: value.collections[artifact['collection_name']].extend(rows)
+    def create(artifact, owner):
+        value.collections.setdefault(value._name(artifact), [])
+        if index_versions.physical(catalog, artifact)['artifact_id'] == artifact['artifact_id']:
+            with catalog._owned(owner) as db:
+                marker = db.execute('SELECT marker FROM artifact_creation_intents WHERE artifact_id=?',
+                                    (artifact['artifact_id'],)).fetchone()[0]
+                db.execute('INSERT INTO artifact_ownership_proofs VALUES(?,?,?,?,?)',
+                           (artifact['artifact_id'], artifact['artifact_id'], '123', marker, 'controlled'))
+    value.create = create
+    value.written = []
+    def insert(artifact, rows, owner):
+        producers = index_versions.origins(catalog, artifact)
+        target = value.collections[value._name(artifact)]
+        ids = {r['chunk_id'] for r in rows}
+        target[:] = [r for r in target if r['chunk_id'] not in ids]
+        target.extend({**r,'revision_id':producers[r['document_version_id']]} for r in rows)
+        value.written.extend(r['chunk_id'] for r in rows)
+    value.insert = insert
     value.finalize = lambda *a,**kw: {}
     value.inspect = lambda artifact,count: {'controlled_transport':True,'count':count}
     def search(artifact, query, **kw):
-        return [{'id':r['chunk_id'],'distance':1.0,'entity':{k:r[k] for k in SCALAR_FIELDS}}
-                for r in value.collections[artifact['collection_name']]][:kw.get('limit',10)]
+        producers = index_versions.origins(catalog, artifact)
+        return [{'id':r['chunk_id'],'distance':1.0,
+                 'entity':index_versions.logical_row(artifact,{k:r[k] for k in SCALAR_FIELDS},producers)}
+                for r in value.collections[value._name(artifact)] if r['document_version_id'] in producers][:kw.get('limit',10)]
     value.search = search
     class Iterator:
         def __init__(self, rows): self.rows = rows
@@ -56,7 +76,11 @@ def backend(catalog, config):
             result,self.rows = self.rows,[]
             return result
         def close(self): pass
-    client.query_iterator = lambda name,**kw: Iterator(value.collections[name])
+    def iterator(name, **kw):
+        selected = kw.get('filter', '')
+        versions = json.loads(selected.split(' in ',1)[1]) if selected else None
+        return Iterator([r for r in value.collections[name] if versions is None or r['document_version_id'] in versions])
+    client.query_iterator = iterator
     client.run_analyzer = lambda **kw: [SimpleNamespace(tokens=['test'])]
     return value
 
@@ -132,7 +156,8 @@ def test_mixed_batch_complete_candidate_path_identity_and_reuse(setup,monkeypatc
         assert scans == [owner.token.batch_id] * 2  # Initial preparation and final validation.
         # Stable full candidate on every prepare invocation after publication.
         assert prepare(s.catalog,owner.token.batch_id,UUID(result['receipt']['revision_id'])).manifest_hash==result['receipt']['manifest_hash']
-    assert len(s.backend.collections)==2
+    assert len(s.backend.collections)==1
+    assert result['metrics']['written_vectors']==2
 
 
 @pytest.mark.parametrize('kind',['unchanged','parse_failed','capture_failed','empty_directory'])
@@ -183,11 +208,11 @@ def test_explicit_delete_last_document_publishes_empty_revision(setup):
     with begin(s,delete_document_ids=(identity,)) as owner:
         result=run(s,owner)
     assert result['summary']['published_deleted']==1 and result['validation']['empty_revision']
-    assert members(s)=={} and len(s.backend.collections)==2
+    assert members(s)=={} and len(s.backend.collections)==1
     assert s.catalog.archives.read(s.catalog.get_version(version).raw_hash)==path.read_bytes()
     with begin(s,delete_document_ids=(identity,)) as owner:
         assert run(s,owner)['summary']['state']=='COMPLETED_NO_CHANGE'
-    assert len(s.backend.collections)==2
+    assert len(s.backend.collections)==1
 
 
 def test_failed_explicit_move_does_not_steal_old_path_then_retry_moves_atomically(setup):
@@ -293,10 +318,11 @@ def test_old_receipt_retry_does_not_publish_again_or_rewind(setup):
 def test_corrupt_reused_float32_vector_is_library_failure(setup):
     s=setup;(a,b,c),old=initial(s)
     first=next(iter(s.backend.collections.values()))
-    first[0]['dense']=[0.0,1.0]+[0.0]*1022
+    unchanged = next(k for k in members(s) if s.catalog.get_document(UUID(k)).original_name=='b.md')
+    next(r for r in first if r['document_id']==unchanged)['dense']=[0.0,1.0]+[0.0]*1022
     a.write_text('# A\nValid update with corrupt base transport.\n',encoding='utf-8')
     with begin(s,(a,)) as owner:
-        with pytest.raises(RagError,match='digest differs'):
+        with pytest.raises(RagError,match='vector hash differs'):
             run(s,owner)
     assert s.catalog.get_library(s.kb).current_revision_id==UUID(old['receipt']['revision_id'])
 
@@ -411,7 +437,8 @@ def test_later_encoding_batch_failure_discards_complete_document_prefix(setup):
         failed=next(i for i in result['summary']['items'] if i['state']=='failed')
         assert failed['encoded_hash'] is None
         assert all(members(s)[key]==value for key,value in before.items())
-        actual=set(r['chunk_id'] for r in s.backend.collections[publication.artifact(s.catalog,UUID(result['receipt']['revision_id']))['collection_name']])
+        artifact=publication.artifact(s.catalog,UUID(result['receipt']['revision_id']))
+        actual=set(r['chunk_id'] for r in s.backend.collections[s.backend._name(artifact)])
         assert not actual.intersection(str(i.item_id) for i in calls[0])
     assert len(calls)>2
 

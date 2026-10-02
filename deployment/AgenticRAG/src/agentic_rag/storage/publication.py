@@ -9,6 +9,7 @@ from .._schema import canonical_json, fingerprint
 from ..domain import IndexArtifact, IndexState, KnowledgeRevision
 from ..indexes.manifest import collection_name, prepare, index_error
 from .paths import failure
+from . import index_versions
 
 
 def receipt(catalog, batch_id, revision_id=None):
@@ -68,6 +69,19 @@ def _register(catalog, owner, revision_id=None, *, _operation=None):
     revision_id = revision_id or (UUID(existing[0]) if existing else uuid4())
     prepared = _prepared(catalog, owner, revision_id, _operation)
     snapshot = catalog.get_snapshot(batch.processing_snapshot_id)
+    base = None
+    if batch.base_revision_id is not None:
+        from ..ingestion.mutations import request
+        if request(catalog, batch.batch_id) is not None:
+            previous = artifact(catalog, batch.base_revision_id, published=True)
+            previous_snapshot = catalog.get_snapshot(catalog.get_batch(UUID(previous['batch_id'])).processing_snapshot_id)
+            with catalog._db.transaction() as db:
+                owned_collection = db.execute('SELECT 1 FROM artifact_ownership_proofs WHERE artifact_id=?',
+                    (index_versions.collection_id(db, previous['artifact_id']),)).fetchone()
+            if (previous['schema_hash'] == prepared.schema_hash and
+                    previous_snapshot.index_fingerprint == snapshot.index_fingerprint and
+                    previous_snapshot.resolved_config.storage == snapshot.resolved_config.storage and owned_collection):
+                base = previous
     name = collection_name(snapshot.resolved_config.storage.namespace, catalog.store_id, batch.kb_id, revision_id, owner.token.owner_epoch)
     record = IndexArtifact(artifact_id=uuid4(), revision_id=revision_id, collection_name=name,
                            schema_hash=prepared.schema_hash, owner_epoch=owner.token.owner_epoch, state=IndexState.PREPARING)
@@ -90,6 +104,7 @@ def _register(catalog, owner, revision_id=None, *, _operation=None):
              record.schema_hash, record.owner_epoch, canonical_json(prepared.spec), record.state.value))
         connection.execute('INSERT INTO current_candidates VALUES(?,?,?) ON CONFLICT(batch_id) DO UPDATE SET artifact_id=excluded.artifact_id',
                            (str(batch.batch_id),str(batch.kb_id),str(record.artifact_id)))
+        index_versions.bind(connection, {'artifact_id':str(record.artifact_id),'revision_id':str(revision_id)}, base)
         connection.execute('INSERT INTO artifact_creation_intents VALUES(?,?,?,?)',
                            (str(record.artifact_id),snapshot.resolved_config.storage.milvus_uri,'default',
                             'agentic-rag-physical-v1:' + str(record.artifact_id) + ':' + uuid4().hex))

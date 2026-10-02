@@ -14,6 +14,7 @@ from .manifest import (UUID_FIELDS, HASH_FIELDS, SCALAR_FIELDS, TEXT_MAX_BYTES, 
 from .._schema import fingerprint
 from ..storage.locks import ProcessLock
 from ..storage import recovery as recovery_store
+from ..storage import index_versions
 from ..storage.readers import Reader, sdk_read
 from ..storage.paths import failure
 
@@ -97,7 +98,11 @@ class MilvusRevisionIndex:
             raise index_error('artifact is outside this installation/library/revision ownership')
         if artifact['schema_hash'] != fingerprint('milvus-schema', artifact['spec']):
             raise index_error('artifact schema fingerprint differs')
-        return expected
+        physical = index_versions.physical(self.catalog, artifact)
+        if physical['collection_name'] != collection_name(self.storage.namespace, self.store_id,
+                UUID(physical['kb_id']), UUID(physical['revision_id']), physical['owner_epoch']):
+            raise index_error('shared collection is outside this installation ownership')
+        return physical['collection_name']
 
     def _writable(self, artifact, owner):
         if self._closing:
@@ -109,13 +114,15 @@ class MilvusRevisionIndex:
         return self._name(stored)
 
     def _lifecycle(self, artifact):
-        return ProcessLock(self.catalog._directory.path('locks','artifact-' + str(UUID(artifact['artifact_id'])) + '.lock'))
+        physical = index_versions.physical(self.catalog, artifact)
+        return ProcessLock(self.catalog._directory.path('locks','artifact-' + str(UUID(physical['artifact_id'])) + '.lock'))
 
     def _ownership(self, artifact):
+        physical = index_versions.physical(self.catalog, artifact)
         with self.catalog._db.transaction() as db:
             row = db.execute('SELECT i.endpoint,i.database_name,i.marker,p.collection_id,p.created_timestamp,p.description '
                 'FROM artifact_creation_intents i LEFT JOIN artifact_ownership_proofs p ON p.artifact_id=i.artifact_id WHERE i.artifact_id=?',
-                (artifact['artifact_id'],)).fetchone()
+                (physical['artifact_id'],)).fetchone()
         if row is not None and row[:2] != (self.storage.milvus_uri,getattr(self,'database_name','default')):
             raise index_error('physical ownership endpoint/database differs')
         return row
@@ -143,8 +150,8 @@ class MilvusRevisionIndex:
 
     @contextmanager
     def _io(self, artifact, owner, kind, *, creating=False):
-        # Stable per-artifact lifetime lock serializes our own SDK calls/drop.
-        # New recovery generations use different artifact locks and names.
+        # All logical revisions serialize writes/reclamation on the physical
+        # collection lifetime lock. Per-artifact IO receipts retain uncertain work.
         with self._lifecycle(artifact):
             name = self._writable(artifact,owner)
             if not creating:
@@ -174,13 +181,24 @@ class MilvusRevisionIndex:
         if not self.client.has_collection(self._name(artifact),timeout=self.timeout):
             return
         self._verify_physical(artifact)
-        self.client.drop_collection(self._name(artifact),timeout=self.timeout)
+        with self.catalog._db.transaction() as db:
+            versions = index_versions.reclamation(db, artifact)
+        if versions is None:
+            self.client.drop_collection(self._name(artifact),timeout=self.timeout)
+        elif versions:
+            # Version IDs, rather than document IDs, cannot erase a replacement.
+            self.client.delete(self._name(artifact),
+                filter='document_version_id in ' + json.dumps(versions), timeout=self.timeout)
 
     def create(self, artifact, owner):
         from pymilvus import DataType, Function, FunctionType
         name = self._writable(artifact, owner)
         if artifact['state'] != 'PREPARING':
             raise index_error('published or failed artifacts are immutable')
+        if index_versions.physical(self.catalog, artifact)['artifact_id'] != artifact['artifact_id']:
+            with self._io(artifact, owner, 'attach'):
+                pass
+            return
         c = self.client
         intent = self._ownership(artifact)
         if intent is None or intent[3] is not None:
@@ -219,9 +237,34 @@ class MilvusRevisionIndex:
         for row in rows:
             if len(row['text'].encode('utf-8')) > TEXT_MAX_BYTES or vector_hash(row['dense']) != row['vector_hash']:
                 raise index_error('index row size/vector hash differs')
+        producers = index_versions.origins(self.catalog, artifact)
+        incremental = index_versions.physical(self.catalog, artifact)['artifact_id'] != artifact['artifact_id']
+        if incremental:
+            with self.catalog._owned(owner) as db:
+                inherited = {r[0] for r in db.execute('SELECT m.document_version_id FROM revision_members m '
+                    'JOIN revisions r ON r.base_revision_id=m.revision_id WHERE r.revision_id=?',
+                    (artifact['revision_id'],))}
+                for row in rows:
+                    identity = db.execute('SELECT kb_id,document_version_id FROM chunks WHERE chunk_id=?',
+                                          (row['chunk_id'],)).fetchone()
+                    if row['document_version_id'] in inherited or identity != (artifact['kb_id'],row['document_version_id']):
+                        raise index_error('incremental writes must use new document versions and their own chunk IDs')
+        physical_rows = []
+        for row in rows:
+            producer = producers.get(row['document_version_id'])
+            if producer is None or row['revision_id'] != artifact['revision_id']:
+                raise index_error('insert row is outside the candidate revision')
+            physical_rows.append({**row, 'revision_id':producer})
         with self._io(artifact,owner,'insert'):
-            result = self.client.insert(name, rows, timeout=self.timeout)
-        if result['insert_count'] != len(rows):
+            # A recovered document has identical chunk IDs. Upsert makes replay
+            # idempotent without deleting any previously published version.
+            if not incremental:
+                result = self.client.insert(name, physical_rows, timeout=self.timeout)
+                count = result['insert_count']
+            else:
+                result = self.client.upsert(name, physical_rows, timeout=self.timeout)
+                count = result['upsert_count']
+        if count != len(rows):
             raise index_error('Milvus did not acknowledge the full insert batch')
         return result
 
@@ -237,6 +280,11 @@ class MilvusRevisionIndex:
         start = time.perf_counter()
         c.flush(name, timeout=self.timeout)
         timings['flush_seconds'] = time.perf_counter() - start
+        if index_versions.physical(self.catalog, artifact)['artifact_id'] != artifact['artifact_id']:
+            # Existing indexes accept new segments; do not release a collection
+            # that older runs are actively querying. Strong reads validate the
+            # complete new document set before the metadata pointer can change.
+            return timings
         config = artifact['spec']['index']
         indexes = c.prepare_index_params()
         indexes.add_index(field_name='dense', index_name='dense_cosine', index_type='IVF_FLAT',
@@ -272,6 +320,7 @@ class MilvusRevisionIndex:
     @_tracked_read
     def inspect(self, artifact, count):
         name = self._name(artifact)
+        shared = index_versions.shared(self.catalog, artifact)
         self._verify_physical(artifact,required=False,reading=True)
         c = self.client
         schema = self._read_call(artifact, c.describe_collection, name, timeout=self.timeout)
@@ -302,7 +351,7 @@ class MilvusRevisionIndex:
         if (dense['index_type'] != 'IVF_FLAT' or dense['metric_type'] != 'COSINE' or int(dense['nlist']) != config['nlist'] or
                 sparse['index_type'] != 'SPARSE_INVERTED_INDEX' or sparse['metric_type'] != 'BM25' or
                 sparse['inverted_index_algo'] != 'DAAT_MAXSCORE' or float(sparse['bm25_k1']) != config['bm25_k1'] or float(sparse['bm25_b']) != config['bm25_b'] or
-                any(i['state'] != 'Finished' or i['total_rows'] != count or i['indexed_rows'] != count or i['pending_index_rows'] != 0 for i in indexes.values())):
+                (not shared and any(i['state'] != 'Finished' or i['total_rows'] != count or i['indexed_rows'] != count or i['pending_index_rows'] != 0 for i in indexes.values()))):
             raise index_error('actual Milvus index parameters or complete row counts differ')
         state = str(self._read_call(artifact, c.get_load_state, name, timeout=self.timeout)['state'])
         if state != 'Loaded':
@@ -311,7 +360,7 @@ class MilvusRevisionIndex:
                          index_name=s.index_name, index_id=s.index_id, mem_size=s.mem_size)
                     for s in self._read_call(artifact, c.list_loaded_segments, name, timeout=self.timeout)]
         unique = {s['segment_id']:s for s in segments}
-        if ((count > 0 and not unique) or sum(s['num_rows'] for s in unique.values()) != count or
+        if not shared and ((count > 0 and not unique) or sum(s['num_rows'] for s in unique.values()) != count or
                 any(s['state'] != 'Sealed' or s['index_name'] not in ('IVF_FLAT','SPARSE_INVERTED_INDEX') or s['index_id'] <= 0 for s in segments)):
             raise index_error('loaded sealed segments do not cover all indexed rows')
         return {'schema': schema, 'indexes': indexes, 'load_state': state, 'segments': segments}
@@ -328,7 +377,9 @@ class MilvusRevisionIndex:
             # ModelResult vectors are immutable tuples; PyMilvus 3.0.2's public
             # search validator accepts list/ndarray vectors on its wire boundary.
             value = list(value)
-        hits = self._read_call(artifact, self.client.search, name, data=[value], anns_field=field, limit=limit, filter=filter,
+        producers = index_versions.origins(self.catalog, artifact)
+        selected = index_versions.version_filter(self.catalog, artifact, filter)
+        hits = self._read_call(artifact, self.client.search, name, data=[value], anns_field=field, limit=limit, filter=selected,
             output_fields=list(SCALAR_FIELDS), search_params={'metric_type': 'COSINE' if field == 'dense' else 'BM25',
             'params': {'nprobe': nprobe} if field == 'dense' else {}}, consistency_level='Strong', timeout=self.timeout)[0]
         result = []
@@ -336,6 +387,7 @@ class MilvusRevisionIndex:
             row = dict(hit['entity'])
             if str(hit['chunk_id']) != row['chunk_id']:
                 raise index_error('Milvus outer primary key differs from entity chunk identity')
+            row = index_versions.logical_row(artifact, row, producers)
             result.append({'id':str(hit['chunk_id']), 'distance':float(hit['distance']), 'entity':row})
         return result
 
@@ -347,11 +399,13 @@ class MilvusRevisionIndex:
         if len(by_id) != len(expected):
             raise index_error('base encoded manifest has duplicate IDs')
         vectors = {}
-        iterator = self._read_call(artifact, self.client.query_iterator, self._name(artifact),filter='',output_fields=[*SCALAR_FIELDS,'dense'],
+        producers = index_versions.origins(self.catalog, artifact)
+        iterator = self._read_call(artifact, self.client.query_iterator, self._name(artifact),filter=index_versions.version_filter(self.catalog, artifact),output_fields=[*SCALAR_FIELDS,'dense'],
             batch_size=256,consistency_level='Strong',timeout=self.timeout)
         try:
             while batch := self._read_call(artifact, iterator.next):
                 for row in batch:
+                    row = index_versions.logical_row(artifact, row, producers)
                     identity = row['chunk_id']
                     if (identity in vectors or identity not in by_id or
                             {k:row[k] for k in SCALAR_FIELDS} != by_id[identity] or
@@ -370,11 +424,13 @@ class MilvusRevisionIndex:
         proof = self.inspect(artifact, len(expected))
         by_id = {r['chunk_id']: r for r in expected}
         seen, first, max_norm_error = set(), None, 0.0
-        iterator = self._read_call(artifact, self.client.query_iterator, name, filter='', output_fields=[*SCALAR_FIELDS, 'dense'],
+        producers = index_versions.origins(self.catalog, artifact)
+        iterator = self._read_call(artifact, self.client.query_iterator, name, filter=index_versions.version_filter(self.catalog, artifact), output_fields=[*SCALAR_FIELDS, 'dense'],
                     batch_size=256, consistency_level='Strong', timeout=self.timeout)
         try:
             while batch := self._read_call(artifact, iterator.next):
                 for row in batch:
+                    row = index_versions.logical_row(artifact, row, producers)
                     identity = row['chunk_id']
                     if identity in seen or identity not in by_id:
                         raise index_error('Milvus full iterator found duplicate/foreign chunk')
