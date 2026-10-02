@@ -1,75 +1,27 @@
-# 评测数据与离线评分协议
+# MultiHop 评测协议
 
-本协议定义 MultiHop-RAG 的冻结输入、运行侧加载边界和离线评分口径。实际检索与普通 Agent 运行入口见[开发评测](../eval/README.md)。
+使用官方 609 篇语料、2,556 道题和 6,084 条证据。各档位共用完整语料，lite 嵌套于 medium：
 
-## 冻结输入与可复现范围
+| 档位 | 题数 | 检索计分题数 |
+| --- | ---: | ---: |
+| lite | 50 | 44 |
+| medium | 200 | 177 |
+| full | 2,556 | 2,255 |
 
-冻结输入以现有 dataset、questions、tiers、source-lock 为准；`eval/RAG-eval/check.py` 校验数据身份、语料与完整证据。
+[development](../eval/development-ids.json) 为 medium 的 200 题，[acceptance](../eval/acceptance-ids.json) 为其余 2,356 题。acceptance 的历史使用情况不完整，不标作未见测试集。固定题号、指纹和划分见 [evaluation-protocol.json](../eval/evaluation-protocol.json)。
 
-官方数据保持 609 篇文档、2,556 题、6,084 条证据。corpus、dataset.json、questions.json（含答案、gold 与顺序）、tiers.json、source-lock.json 和 upstream 按冻结版本维护。`prepare.py --check` 校验适配文件的字节一致性，validation.json 记录实际执行的离线校验。
+## 输入与评分
 
-| 档位 | 问题数 | 检索分母 | 数据/题集 SHA-256 |
-| --- | ---: | ---: | --- |
-| lite | 50 | 44 | `cdcbd3c33fef2df6c5406535413df20fd31157a1052d9b05c46f3059044ba9ed` |
-| medium | 200 | 177 | `f80fc4033be6625b19da2af9529cf925d147e9ad62c95b943df2c3d08ec2e898` |
-| full | 2,556 | 2,255 | `c9cf1a90f31d7944cfa24e3ff14db2ae3fa8b875a1a1c9397f6f6f2221bc73d9` |
+运行只加载 [runtime-inputs.json](../eval/runtime-inputs.json) 中的 ID、query 和语料路径；答案、gold 和题型由独立评分进程读取。运行结果另存目录，题库保持固定。
 
-`eval/RAG-eval/dataset_io.py` 的 `load_dataset` 与 `fingerprint` 使用标准库完成数据加载、字节与证据范围校验，并以统一的 Unicode、排序和紧凑 JSON 编码计算指纹。check.py 校验冻结来源、适配文件和三档题号；score.py 校验输入身份后调用冻结的 upstream 评分函数。
+原生 evidence_recall 衡量原文区间覆盖；官方检索使用 Top-10。失败题计零并保留在分母，null_query 从检索计分中排除、在答案评分中保留。
 
-固定 JSON 的字节指纹由[eval/.gitattributes](../eval/.gitattributes) 中的 `*.json -text` 保证：Git 不对这些文件执行换行转换，避免 Windows 的 `core.autocrlf=true` 破坏运行清单的原始 SHA-256。
-
-## 开发、验收与历史暴露
-
-- [development-ids.json](../eval/development-ids.json)：medium 原序的 200 个 ID。
-- [acceptance-ids.json](../eval/acceptance-ids.json)：按 full 原序扣除 medium，2,356 个 ID。
-- 两者互斥且并集为 full；lite 50 嵌套于 medium。每档均使用全部 609 篇语料。
-- [evaluation-protocol.json](../eval/evaluation-protocol.json) 保存规则、指纹、分母和暴露声明；它是评分/实验准备材料，不传给 Agent。
-
-已知：继承适配器及全量证据已被准备/校验，R00 执行过三档完整性检查，R01 的准备、评分和测试读取全量问题、参考答案、gold，并核对全部运行 query。未知：这些题此前逐题参与模型执行、调参、人工查看或训练的历史未从现有记录中确立。完整性检查不等于模型执行；未知也不等于未暴露。因此验收子集**不能称为未见测试集**，将来 full 报告应分别列出开发/验收部分并继续记录实际使用。
-
-## 运行侧严格白名单
-
-准备阶段已导出 [runtime-inputs.json](../eval/runtime-inputs.json)。其内容仅包含：
-
-```json
-{
-  "questions": [{"id": "MH-0001", "query": "原始问题"}],
-  "corpus_paths": ["corpus/D0001.md"]
-}
-```
-
-[runtime_inputs.py](../eval/runtime_inputs.py) 只读取这份固定、带字节 SHA-256 校验的 query-only 文件。它不导入评分器、宿主或旧 knowledge，不读取 dataset/questions/tiers/source-lock/upstream。`load_runtime_inputs(suite_root, question_ids=None)` 返回同样的两个键；题目严格只有字符串 ID/query，导入路径转为 corpus 内已存在文件的绝对路径。所有额外字段、字典/列表嵌套、重复 ID/路径、未知选择、评分文件路径和路径重定向均拒绝。调用者传 ID 子集时仍保持官方题序。
-
-运行侧不是先调用全量 `load_dataset` 再删 gold。实验准备/评分进程才能读取参考答案、gold、supporting_context、answerable、题型标签；它把固定 ID 列表交给运行加载器。Agent 与 query 生成只取当前问题的 query（ID 供结果关联）；导入器只取 corpus_paths。类型标签、答案和 gold 不进入运行 payload。语料完整性检查由独立准备阶段完成，不把校验报告整包当成模型提示。
-
-正式 runner 见[评测入口](../eval/README.md)。正式子进程测试禁止所有 `codeplus` 导入，并在加载运行输入前用 Python audit hook 禁止打开整个 `eval/RAG-eval/` 下的文件，证明运行加载器不会偷读评分输入。该测试覆盖输入加载器的读取范围；宿主权限由普通 Agent 执行。
-
-## 原命令、评分语义与限制
-
-以下命令仍在 `D:/CodePlus` 的 Windows `.venv` 下执行：
+`upstream_word_overlap_accuracy` 只判断预测与参考答案是否有小写空白分词重合，不代表语义正确率。报告分别列出检索、原文覆盖和答案指标。
 
 ```powershell
 .venv/Scripts/python.exe -B eval/RAG-eval/check.py --tier full
-.venv/Scripts/python.exe -B eval/RAG-eval/score.py --task retrieval --input <report.json> --tier lite
-.venv/Scripts/python.exe -B eval/RAG-eval/score.py --task answers --input <answers.json> --tier lite
-pwsh -NoProfile -File eval/RAG-eval/run.ps1 -Tier full -Check
-pwsh -NoProfile -File eval/RAG-eval/run.ps1 -Tier lite -Replay <report.json>
-pwsh -NoProfile -File eval/RAG-eval/run.ps1 -Tier lite -Answers <answers.json>
+pwsh -File eval/RAG-eval/run.ps1 -Tier lite -Replay <report.json>
+pwsh -File eval/RAG-eval/run.ps1 -Tier lite -Answers <answers.json>
 ```
 
-`run.ps1 -Replay` 的唯一路由接点改为中立 `replay.py`，保留 `--dataset/--replay/--question-ids` 装载契约、原生 coverage/latency 算法、报告路径和 Markdown、retrieval 元数据、replayed_from、summary、status 以及有请求失败时的退出码 1。原生 source-interval 覆盖报告与官方评分是两个口径；replay.py 只保留前者，不复制 upstream 官方评分器。原 score.py 继续追加官方评分。
-
-官方检索仍强制 Top-K=10、精确 ID/query/题序和数据指纹。失败请求计零并保留在对应分母；null_query 仅从检索分母排除，在答案评分仍保留。官方答案指标是小写空白分词的任一词重合 `upstream_word_overlap_accuracy`，不能称为语义正确率、引用正确率或拒答正确率。合成报告只验证这些协议，不是模型质量结果。
-
-在线运行使用生产 retrieval_runner/run_agent；`run.ps1` 保留离线检查、重放与答案评分。
-
-## 正式验证与后续修改边界
-
-```powershell
-$env:PYTHONDONTWRITEBYTECODE = '1'
-.venv/Scripts/python.exe -B -m pytest deployment/AgenticRAG/tests/test_evaluation_protocol.py tests/test_multihop_evaluation.py -q -p no:cacheprovider
-```
-
-正式测试覆盖原三档指纹、全部证据、ID 嵌套与顺序、严格字段/路径白名单、无评分文件读取的运行子进程、禁旧模块的原命令、错误/空答案分母，以及 Replay 原生报告兼容。子进程均设 60 秒上限。测试使用合成输入，成功/失败报告都保留计分语义，生成的 runs 报告在测试结束后清理。
-
-corpus、原题/答案/Gold、tiers 与 upstream 计分算法保持冻结。运行结果写入独立输出目录，不混入评测输入。
+上述命令用于检查和离线评分。实际检索与 Agent 执行见[开发评测](../eval/README.md)，SciFact 使用[独立题库](../../../eval/scifact-eval/README.md)。

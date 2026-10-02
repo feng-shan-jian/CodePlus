@@ -1,49 +1,44 @@
-# CodePlus 知识工具接入
+# 知识功能使用
 
-`KnowledgePolicy` 是工具与资源绑定适配层。它将知识工具注册到现有 registry，保留普通工具、记忆、文件历史、协作和权限能力。Agent 使用原有流式回答、工具循环和 compact；适配层只记录来源交付与运行结果，不要求答案 JSON、不校验或修复答案、不操纵对话历史。
+先配置 `knowledge_development_config`，见[配置说明](domain-and-configuration.md)。知识工具接入普通 Agent，问答继续使用当前回答模型、文件工具、权限和会话能力。
 
-## 配置
-
-宿主 `knowledge_development_config` 为绝对路径，JSON 包含 `knowledge`、`worker`，可选 `cleanup_grace_ms`、`search_result_chunks/search_result_upper`。`DevelopmentConfig` 位于 `agentic_rag.config`。旧配置中的回答 tokenizer、输出配额及迭代控制字段只在读取时忽略；旧知识快照中的预算数据仍可读。
-
-回答模型沿用 CodePlus 当前 provider。单次工具正文使用 UTF-8 字节上界计量，计量身份为 `utf8-bytes-v1`。`context_chunks/context_tokens` 与可选 search 单次上限取较小值，不扣除此前调用。主 Agent 的上下文和 compact 规则照常执行。
-
-## CLI、TUI 与 Remote
+## 选择与查看知识库
 
 ```text
 /knowledge create 我的资料
-/knowledge import "D:\资料\手册.md" "D:\资料\记录.txt"
+/knowledge use <库UUID>
 /knowledge status
 /knowledge sources
-/knowledge ask --mode auto 这两份资料有哪些共同结论？
-/knowledge reimport <文档UUID> "D:\资料\修订手册.md"
-/knowledge remove <文档UUID>
-/knowledge open <历史引用UUID>
-/knowledge use <另一库UUID>
+/knowledge sources --revision <版本UUID>
 /knowledge off
 ```
 
-`create/use` 选择库；`status` 显示发布版、模型差异及待恢复批次。`sources --revision <版本UUID>` 查看历史成员，`open` 接受当前答案中的 evidence UUID 和旧 saved citation UUID，读取其已确认送达的归档原文。`ask/report/continue` 后的正文只作为用户问题，不再次解析为命令。
+create/use 选择知识库；status 查看发布版及待处理操作；sources 查看文档成员；off 取消当前会话的知识库选择。导入、更新和删除见[文档更新](ordinary-mutations.md)。
+
+## 问答与报告
 
 ```text
-codeplus -p "问题" --knowledge-library <库UUID> --knowledge-mode fixed --output-format stream-json
-/knowledge report --output "D:\Reports\报告.md" 比较资料并保存报告
-/knowledge continue --output "D:\Reports\补充.md" 补查未解决的问题
-/knowledge continue --run <运行UUID> 继续补查
-codeplus -p "生成报告" --knowledge-library <库UUID> --knowledge-report report.md
-codeplus -p "继续补查" --knowledge-library <库UUID> --knowledge-continue <运行UUID>
+/knowledge ask --mode auto 比较这些资料的共同结论
+/knowledge report --output "D:\Reports\报告.md" 整理资料并保存报告
+/knowledge continue --run <运行UUID> 补查未解决的问题
+codeplus -p "问题" --knowledge-library <库UUID> --knowledge-mode fixed
 ```
 
-问答、报告与继续均走普通 Agent。报告路径进入用户任务提示，由普通文件工具完成写入，遵循权限与读后覆盖规则；不存在答案审批后的专属保存分支。继续沿用会话或已保存运行线索，新一轮绑定当前发布版，历史来源不会自动变成本轮交付证据。
+report 由普通文件工具保存；continue 可沿当前会话继续，也可指定历史运行，并支持 `--output`。CLI 对应参数为 `--knowledge-report <路径>`、`--knowledge-continue <运行UUID>`。每轮使用当前发布版，策略见[检索](retrieval.md)。
 
-`fixed` 的 search 只接收 query；`auto` 还接受 `strategy: dense|bm25|hybrid` 与 `rerank: bool`，每次缺省选项使用冻结基础配置。模型不能覆盖库、版本、候选数或单次返回上限。BM25 关闭精排时无需连接模型；失败返回明确错误，由普通 Agent 决定下一步。
+## 来源同步
 
-失败文件用 `/knowledge retry <批次UUID>`，接受变化输入时追加 `--accept-input-changes`。中断导入用 `/knowledge recover <批次UUID>` 查看后选择 `--choice continue`，或 `/knowledge abandon <批次UUID>`。模型变化使用 `/knowledge model` 查看提案；`confirm/retry/keep_original` 的原确认规则保持。
+```text
+/knowledge watch "D:\资料"
+/knowledge watch
+/knowledge sync
+/knowledge unwatch "D:\资料"
+```
 
-## 绑定和交付
+watch 保存文件或目录订阅，无参数时显示订阅及最近结果。TUI/Remote 运行期间自动同步；CLI 使用 sync 核对一次。
 
-正常结束、异常或取消后，适配层卸载本轮工具并恢复原同名工具及启用状态。工具退出前先等自身线程与模型请求真实结束，再释放 worker、租约和版本 pin；取消确认不等于底层执行已结束。
+Windows 使用文件通知，合并 600ms 内变化，每 30 秒核对一次；其他系统按周期核对。仅处理 Markdown/TXT，内容 hash 未变时跳过。新增和修改走普通导入，失败保留上次成功版本；删除源文件不自动删库，改名默认新增。
 
-工具正文附带原文区间映射，随宿主真实请求传播到 DeliveryGateway。实际请求结果记录在 `host_runs.detail.model_requests`，用量汇总到运行记录；`delivery_receipts` 继续保存真实正文交付状态。此记录不控制答案结束、输出格式或重试。
+unwatch 停止指定订阅，off 只取消会话选库。宿主退出时停止监听；订阅目录须与知识库数据目录分开。
 
-TUI Ctrl-C 和 Remote 取消沿原任务取消路径执行；管理任务的发布回执、忙状态与恢复规则保持。代码及必要场景由 `test_codeplus_integration.py`、`test_request_delivery.py`、`test_user_commands.py` 验证，受控请求测试与实际供应商执行分别报告。
+中断操作见[恢复](manual-recovery.md)，更换模型见[模型切换](model-switching.md)，历史原文见[引用查看](sources-and-evidence.md)。

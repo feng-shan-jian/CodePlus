@@ -34,3 +34,4 @@ config.local.*
 /tests/test_packaging.py
 /.task/
 /需删除/
+/待删除/

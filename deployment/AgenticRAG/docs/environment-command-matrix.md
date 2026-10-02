@@ -1,16 +1,23 @@
-# 环境与验证命令
+# 构建与测试命令
 
-Windows 使用 PowerShell 7。宿主、独立 RAG 包与 CUDA worker 按实际安装环境指定 Python；Windows 与 WSL 不共用虚拟环境。
+在仓库根目录使用 PowerShell 7。Windows 与 WSL 使用各自的 Python 环境。
 
-| 范围 | 正式入口 | 验证内容 |
+## 构建和常规测试
+
+```powershell
+uv build deployment/AgenticRAG --out-dir <绝对产物目录>
+uv run --isolated --project . --locked --group dev --with-editable deployment/AgenticRAG --with pymilvus==3.0.2 --with hatchling==1.29.0 python -B -m pytest deployment/AgenticRAG/tests -q -p no:cacheprovider
+```
+
+需要局部运行时，将测试目录换成具体文件。宿主测试位于根目录 `tests/`。
+
+## 真实环境开关
+
+| 场景 | 测试文件 | 环境变量 |
 | --- | --- | --- |
-| 核心构建 | `uv build deployment/AgenticRAG --out-dir <绝对产物目录>` | wheel/sdist 安装、资源和可选依赖边界 |
-| 核心回归 | `python -B -m pytest deployment/AgenticRAG/tests -q -p no:cacheprovider` | 检索、来源、发布、恢复和宿主绑定；真实环境测试显式启用 |
-| 实际 GPU | `test_model_worker_gpu.py`，设置 `R09_REAL=1`、`R09_CUDA_PYTHON`、`R09_MODEL_CACHE` | 生产 worker、模型身份、取消和完成回执 |
-| 实际 Milvus | `test_publication_milvus.py`，设置 `R10_REAL=1` | 生产 schema、发布、错误与物理版本隔离 |
-| 宿主 | `tests/test_agent.py`、`tests/test_context.py`、`tests/test_serialization.py`、`tests/test_subagent.py` | 普通工具循环、compact、流式、权限与协作 |
-| MultiHop | `eval/RAG-eval/run.ps1 -Check/-Replay/-Answers` | 冻结数据与原计分口径 |
-| Agent 运行 | `deployment/AgenticRAG/eval/run_agent.py` | 普通 Agent 答案和实际来源交付记录 |
-| SciFact | `eval/scifact-eval/retrieval_runner.py` 与 `summarize_retrieval.py` | development/test 独立运行、阶段召回与最终正文 |
+| GPU 模型 | `test_model_worker_gpu.py` | `R09_REAL=1`、`R09_CUDA_PYTHON`、`R09_MODEL_CACHE` |
+| GPU 调度 | `test_model_scheduling_gpu.py` | `R22_REAL=1`，同上 CUDA 路径 |
+| Milvus 发布 | `test_publication_milvus.py` | `R10_REAL=1` |
+| 增量索引 | `test_incremental_index.py` | `RAG_INCREMENTAL_MILVUS=<测试服务URL>` |
 
-真实 GPU、数据库和供应商执行与受控测试分别记录。运行命令及数据要求见[开发评测](../eval/README.md)与[SciFact](../../../eval/scifact-eval/README.md)。模型缓存及用户库不用于临时测试清理。
+文件均在 [RAG tests](../tests/)；未启用的真实环境场景跳过。模型安装见[本地模型](local-model-worker.md)，检索和回答评测见[评测入口](../eval/README.md)。
