@@ -4,6 +4,7 @@ from pathlib import Path
 import runpy
 import threading
 from unittest.mock import AsyncMock
+from uuid import UUID
 
 from codeplus.app import CodePlusApp
 from codeplus.config import ProviderConfig
@@ -55,6 +56,43 @@ def test_tui_cancel_remains_busy_and_restores_selection(user, monkeypatch):
                 await pilot.pause()
         finally:
             release.set()
+            app.session.close()
+            await app.client._client.close()
+    asyncio.run(run())
+
+
+def test_tui_watch_publishes_file_edits_and_stops_on_exit(user, monkeypatch):
+    async def run():
+        monkeypatch.chdir(user.root)
+        monkeypatch.setattr('codeplus.app.resolve_context_window', AsyncMock())
+        provider = ProviderConfig('fixture', 'openai-compat', 'https://fixture.invalid', 'fixture', 'synthetic')
+        app = CodePlusApp([provider], enable_fork=False, knowledge_development_config=str(user.path))
+        source = user.root/'自动更新.md'
+        source.write_text('# Guide\nOriginal telescope approval.\n', encoding='utf-8')
+        try:
+            async with app.run_test(size=(120, 40)) as pilot:
+                watcher = app._knowledge_watcher
+                await app._dispatch_command('/knowledge create 自动更新库')
+                await app._agent_task
+                kb = UUID(str(app.knowledge_library))
+                await app._dispatch_command(f'/knowledge watch "{source}"')
+                await app._agent_task
+                async def published_after(previous):
+                    async with asyncio.timeout(20):
+                        while True:
+                            revision = user.catalog.get_library(kb).current_revision_id
+                            if revision is not None and revision != previous:
+                                return revision
+                            await pilot.pause(0.05)
+                first = await published_after(None)
+                source.write_text('# Guide\nUpdated telescope approval.\n', encoding='utf-8')
+                await published_after(first)
+                await pilot.pause()
+                assert app.last_knowledge_sync['status']=='completed'
+                assert app.last_knowledge_sync['data']['summary']['published_updated']==1
+            assert not watcher.thread.is_alive()
+            assert app._knowledge_watcher is None
+        finally:
             app.session.close()
             await app.client._client.close()
     asyncio.run(run())

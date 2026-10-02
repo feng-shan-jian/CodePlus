@@ -171,7 +171,7 @@ def test_wheel_and_sdist_install_in_isolated_environments(tmp_path):
                            ("__init__.py", "archives.py", "catalog.py", "database.py", "locks.py",
                             "ownership.py", "paths.py", "runs.py", "schema.sql", "inputs.py", "inputs.sql", "processing.py", "processing.sql", "publication.py", "publication.sql", "evidence.sql", "host_runs.sql", "mutations.sql", "recovery.py", "recovery.sql", "readers.py", "gc.py", "lifetimes.sql", "model_switches.sql", "retrieval.sql", "incremental.sql", "index_versions.py")}
         ingestion_sources = {"agentic_rag/ingestion/" + name for name in
-                             ("__init__.py", "records.py", "source.py", "selection.py", "capture.py", "parsing.py", "chunking.py", "processing.py", "build.py", "mutations.py", "encoding.py", "recovery.py")}
+                             ("__init__.py", "records.py", "source.py", "selection.py", "capture.py", "parsing.py", "chunking.py", "processing.py", "build.py", "mutations.py", "encoding.py", "recovery.py", "watching.py")}
         model_sources = {'agentic_rag/models/' + name for name in ('__init__.py', 'tokenization.py',
             'protocol.py', 'identity.py', '_windows.py', 'engine.py', 'worker.py', 'lifecycle.py', 'client.py', 'models.lock.json')}
         index_sources = {'agentic_rag/indexes/'+name for name in ('__init__.py','manifest.py','milvus.py')}

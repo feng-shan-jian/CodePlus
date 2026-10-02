@@ -75,6 +75,8 @@ def _status(catalog, settings, kb_id):
     value = library.model_dump(mode='json')
     value.update(enabled=True, default_mode=settings.knowledge.retrieval.mode,
                  desired_embedding=settings.knowledge.embedding.model_dump(mode='json'))
+    from ...ingestion.watching import subscriptions
+    value['watched_sources'] = subscriptions(catalog, kb_id)
     if library.current_revision_id:
         value['model'] = inspect_model_switch(catalog, kb_id, settings.knowledge)
     if library.pending_mutation_id:
@@ -106,6 +108,14 @@ def run_management(settings, action, kb_id=None, *, arguments=(), options=None, 
     if kb_id is None:
         raise ValueError('Select a library with /knowledge use <id>, or pass --knowledge-library with -p.')
     library = catalog.get_library(kb_id)
+    if action in {'watch','unwatch','sync'}:
+        from ...ingestion.watching import subscribe, subscriptions, synchronize
+        if action == 'sync':
+            return synchronize(catalog, settings, kb_id, cancelled=cancelled)
+        data = (subscribe(catalog, kb_id, arguments, enabled=action=='watch') if arguments else
+                subscriptions(catalog, kb_id))
+        return _result(action, {'watched_sources':data,
+            'monitor':'TUI/Remote while running; use sync for a one-shot reconciliation'})
     if action == 'use':
         return _result(action, library.model_dump(mode='json'))
     if action == 'status':

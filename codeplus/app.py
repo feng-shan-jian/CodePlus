@@ -730,6 +730,12 @@ class CodePlusApp(App):
         else:
             self.query_one("#chat-area").display = False
             self.query_one("#input-area").display = False
+        from codeplus.knowledge_watcher import start_knowledge_watcher
+        start_knowledge_watcher(self)
+
+    async def on_unmount(self) -> None:
+        from codeplus.knowledge_watcher import stop_knowledge_watcher
+        await stop_knowledge_watcher(self)
 
     def _select_provider(self, provider: ProviderConfig) -> None:
         if self._knowledge_active:
@@ -2143,6 +2149,8 @@ class CodePlusApp(App):
         self._exit_requested = True
 
         async def _cleanup() -> None:
+            from codeplus.knowledge_watcher import stop_knowledge_watcher
+            await stop_knowledge_watcher(self)
             tasks: list[asyncio.Task] = []
 
             if self.agent and self.agent.memory_manager:

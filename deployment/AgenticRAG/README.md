@@ -11,6 +11,7 @@ AgenticRAG 为 CodePlus 提供知识库管理、`knowledge_search`、`knowledge_
 ```text
 /knowledge create 我的资料
 /knowledge import "D:\资料\手册.md"
+/knowledge watch "D:\资料"
 /knowledge ask --mode auto 这份资料给出了哪些条件？
 /knowledge report --output "D:\Reports\报告.md" 比较资料中的方案并保存报告
 /knowledge continue 补查尚未解决的问题
@@ -19,6 +20,8 @@ AgenticRAG 为 CodePlus 提供知识库管理、`knowledge_search`、`knowledge_
 ```
 
 CLI 也可使用 `codeplus -p "问题" --knowledge-library <库UUID>`。报告通过普通文件工具保存，遵循宿主权限和覆盖规则。命令、切库及恢复说明见[宿主接入](docs/codeplus-integration.md)。
+
+`watch` 开启文件/目录自动同步，TUI/Remote 运行时通过文件通知与 hash 核对发现更新；CLI 使用 `/knowledge sync` 核对一次。兼容配置下只写变化文档的 chunks，发布成功后新运行使用新版，旧版本数据在旧任务结束后回收。详见[文档更新](docs/ordinary-mutations.md)。
 
 ## 检索与来源
 

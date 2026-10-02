@@ -8,6 +8,7 @@ from codeplus.commands.registry import Command, CommandType
 
 USAGE = '''/knowledge create <name> | use <library-id> | off
 /knowledge import <path>... | reimport <document-id> <path> | remove <document-id>...
+/knowledge watch [<path>...] | unwatch <path>... | sync
 /knowledge status | sources [--revision <id>] | open <citation-id>
 /knowledge retry <batch-id> [--accept-input-changes]
 /knowledge recover [<batch-id>] [--choice continue|abandon] | abandon <batch-id>
@@ -27,7 +28,7 @@ def parse_knowledge(args):
     action = tokens.pop(0) if tokens else 'help'
     allowed = {'ask': {'mode'}, 'report': {'mode', 'output'}, 'continue': {'mode', 'output', 'run'},
                'sources': {'revision'}, 'retry': {'accept-input-changes'}, 'recover': {'choice'}, 'model': {'choice'}}
-    actions = {'create', 'use', 'off', 'import', 'reimport', 'remove', 'status', 'sources', 'open',
+    actions = {'create', 'use', 'off', 'import', 'reimport', 'remove', 'status', 'sources', 'open', 'watch', 'unwatch', 'sync',
                'retry', 'recover', 'abandon', 'model', 'ask', 'report', 'continue', 'help'}
     if action not in actions:
         raise ValueError('Unknown knowledge command.\n'+USAGE)
@@ -61,6 +62,7 @@ def parse_knowledge(args):
     if action == 'model' and options.get('choice') not in {None, 'confirm', 'retry', 'keep_original'}:
         raise ValueError('Model choice must be confirm, retry or keep_original.')
     counts = {'use': (1, 1), 'off': (0, 0), 'import': (1, None), 'reimport': (2, 2), 'remove': (1, None),
+              'watch': (0, None), 'unwatch': (1, None), 'sync': (0, 0),
               'status': (0, 0), 'sources': (0, 0), 'open': (1, 1), 'retry': (1, 1),
               'recover': (0, 1), 'abandon': (1, 1), 'model': (0, 1), 'help': (0, 0)}
     lo, hi = counts.get(action, (1 if action != 'continue' else 0, None))

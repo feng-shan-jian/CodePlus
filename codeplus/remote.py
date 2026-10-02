@@ -141,6 +141,8 @@ class RemoteServer:
         print(f"\n  Remote UI: http://localhost:{self.port}\n")
 
         # websockets 的 serve 支持 process_request 回调来处理普通 HTTP
+        from codeplus.knowledge_watcher import start_knowledge_watcher, stop_knowledge_watcher
+        start_knowledge_watcher(self)
         try:
             async with websockets.serve(
                 self._ws_handler,
@@ -151,6 +153,7 @@ class RemoteServer:
             ):
                 await asyncio.Future()
         finally:
+            await stop_knowledge_watcher(self)
             self._cancel_active()
             # Finish active message handlers before closing the session.
             await asyncio.gather(*self._message_tasks, return_exceptions=True)
