@@ -801,6 +801,7 @@ class Agent:
     async def _execute_single_tool_direct(
         self, tc: ToolCallComplete
     ) -> _ToolExecResult:
+        """vibe coding：并发只读调用也执行前后 Hook，拒绝后不进入工具执行。"""
         tool = self.registry.get(tc.tool_name)
         start = time.monotonic()
 
@@ -820,6 +821,22 @@ class Agent:
                 result=ToolResult(output=f"Error: tool '{tc.tool_name}' is disabled", is_error=True),
                 elapsed=time.monotonic() - start,
             )
+
+        if self.hook_engine:
+            hook_ctx = self._build_hook_context(
+                "pre_tool_use",
+                tool_name=tc.tool_name,
+                tool_args=tc.arguments,
+                file_path=self._infer_file_path(tc.arguments),
+            )
+            rejection = await self.hook_engine.run_pre_tool_hooks(hook_ctx)
+            if rejection is not None:
+                return _ToolExecResult(
+                    tool_id=tc.tool_id,
+                    tool_name=tc.tool_name,
+                    result=ToolResult(output=f"Hook rejected: {rejection.reason}", is_error=True),
+                    elapsed=time.monotonic() - start,
+                )
 
         if self.permission_checker:
             decision = self.permission_checker.check(tool, tc.arguments)
@@ -842,6 +859,15 @@ class Agent:
         self._record_recent_tool(tc.tool_name)
         self._snapshot_for_recovery(tc, result)
 
+        if self.hook_engine:
+            hook_ctx = self._build_hook_context(
+                "post_tool_use",
+                tool_name=tc.tool_name,
+                tool_args=tc.arguments,
+                file_path=self._infer_file_path(tc.arguments),
+            )
+            await self.hook_engine.run_hooks("post_tool_use", hook_ctx)
+
         return _ToolExecResult(
             tool_id=tc.tool_id,
             tool_name=tc.tool_name,
@@ -859,6 +885,7 @@ class Agent:
     async def _execute_tool(
         self, tc: ToolCallComplete
     ) -> AsyncIterator[tuple[ToolResult, float] | PermissionRequest]:
+        """vibe coding：串行调用先执行拒绝 Hook，再进行权限确认与工具执行。"""
         tool = self.registry.get(tc.tool_name)
         start = time.monotonic()
 
@@ -879,6 +906,20 @@ class Agent:
             elapsed = time.monotonic() - start
             yield result, elapsed
             return
+
+        if self.hook_engine:
+            hook_ctx = self._build_hook_context(
+                "pre_tool_use",
+                tool_name=tc.tool_name,
+                tool_args=tc.arguments,
+                file_path=self._infer_file_path(tc.arguments),
+            )
+            rejection = await self.hook_engine.run_pre_tool_hooks(hook_ctx)
+            if rejection is not None:
+                result = ToolResult(output=f"Hook rejected: {rejection.reason}", is_error=True)
+                elapsed = time.monotonic() - start
+                yield result, elapsed
+                return
 
         # 权限检查
         if self.permission_checker:
@@ -936,6 +977,15 @@ class Agent:
 
         self._record_recent_tool(tc.tool_name)
         self._snapshot_for_recovery(tc, result)
+
+        if self.hook_engine:
+            hook_ctx = self._build_hook_context(
+                "post_tool_use",
+                tool_name=tc.tool_name,
+                tool_args=tc.arguments,
+                file_path=self._infer_file_path(tc.arguments),
+            )
+            await self.hook_engine.run_hooks("post_tool_use", hook_ctx)
 
         elapsed = time.monotonic() - start
         yield result, elapsed
