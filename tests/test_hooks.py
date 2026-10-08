@@ -4,7 +4,7 @@ from __future__ import annotations
 import asyncio
 import os
 from typing import Any, AsyncIterator
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -508,13 +508,13 @@ class TestAgentHookIntegration:
     """验证 pre_tool_use 拒绝会导致工具调用被跳过。"""
 
     @pytest.mark.asyncio
-    @pytest.mark.skipif(os.name == "nt", reason="rm 命令在 Windows 上不可用")
     async def test_pre_tool_use_reject_skips_tool(self):
+        # vibe coding：用安全命令和执行替身核验拒绝，所有平台都必须验证工具未执行。
         from codeplus.agent import Agent, ToolResultEvent
         from codeplus.client import LLMClient
         from codeplus.conversation import ConversationManager
         from codeplus.tools import create_default_registry
-        from codeplus.tools.base import StreamEnd, StreamEvent, TextDelta, ToolCallComplete
+        from codeplus.tools.base import StreamEnd, TextDelta, ToolCallComplete, ToolResult
 
         class MockClient(LLMClient):
             def __init__(self):
@@ -526,7 +526,7 @@ class TestAgentHookIntegration:
                     yield ToolCallComplete(
                         tool_id="t1",
                         tool_name="Bash",
-                        arguments={"command": "rm -rf /"},
+                        arguments={"command": "echo hook_probe"},
                     )
                     yield StreamEnd(stop_reason="tool_use", input_tokens=10, output_tokens=5)
                 else:
@@ -534,10 +534,10 @@ class TestAgentHookIntegration:
                     yield StreamEnd(stop_reason="end_turn", input_tokens=10, output_tokens=5)
 
         hook = Hook(
-            id="block-rm",
+            id="block-probe",
             event="pre_tool_use",
-            action=Action(type="command", command="echo dangerous command blocked"),
-            condition=parse_condition('tool == "Bash" && args.command =~ /rm\\s+-rf/'),
+            action=Action(type="prompt", message="command blocked"),
+            condition=parse_condition('tool == "Bash" && args.command =~ /echo\\s+hook_probe/'),
             reject=True,
         )
         engine = HookEngine([hook])
@@ -545,7 +545,7 @@ class TestAgentHookIntegration:
         client = MockClient()
         registry = create_default_registry()
         conv = ConversationManager()
-        conv.add_user_message("delete everything")
+        conv.add_user_message("run the probe")
 
         agent = Agent(
             client=client,
@@ -555,11 +555,90 @@ class TestAgentHookIntegration:
         )
 
         events = []
-        async for event in agent.run(conv):
-            events.append(event)
+        execute = AsyncMock(return_value=ToolResult("probe executed"))
+        with patch.object(registry.get("Bash"), "execute", execute):
+            async for event in agent.run(conv):
+                events.append(event)
 
         tool_results = [e for e in events if isinstance(e, ToolResultEvent)]
         assert len(tool_results) >= 1
         rejected = tool_results[0]
         assert rejected.is_error is True
         assert "Hook rejected" in rejected.output
+        execute.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("interactive", [True, False])
+    @pytest.mark.parametrize("concurrent", [False, True])
+    @pytest.mark.parametrize("outcome", ["reject", "allow", "execution_error", "validation_error"])
+    async def test_tool_hook_lifecycle(self, tmp_path, interactive, concurrent, outcome):
+        """vibe coding：串行、并发和非交互路径都遵守前置拒绝与后置通知契约。"""
+        from pydantic import BaseModel
+        from codeplus.agent import Agent, HookEvent, ToolResultEvent
+        from codeplus.client import LLMClient
+        from codeplus.conversation import ConversationManager
+        from codeplus.tools import ToolRegistry
+        from codeplus.tools.base import StreamEnd, Tool, ToolCallComplete, ToolResult
+
+        class Params(BaseModel):
+            file_path: str
+
+        executed = []
+
+        class Probe(Tool):
+            name = "Probe"
+            description = "Safe lifecycle probe"
+            params_model = Params
+            category = "read" if concurrent else "write"
+            is_concurrency_safe = concurrent
+
+            async def execute(self, params):
+                """记录实际执行，模拟成功或工具内部异常。"""
+                executed.append(params.file_path)
+                if outcome == "execution_error":
+                    raise RuntimeError("probe failed")
+                return ToolResult("probe executed")
+
+        paths = [42 if outcome == "validation_error" else "blocked.txt", "allowed.txt"]
+
+        class MockClient(LLMClient):
+            async def stream(self, conversation, system="", tools=None):
+                """单轮发出两次调用，验证条件匹配不会误拒绝其他调用。"""
+                for i, path in enumerate(paths):
+                    yield ToolCallComplete(f"t{i}", "Probe", {"file_path": path})
+                yield StreamEnd("tool_use")
+
+        engine = HookEngine([
+            Hook(id="pre", event="pre_tool_use", action=Action(type="prompt", message="before $FILE_PATH")),
+            Hook(id="reject", event="pre_tool_use", action=Action(type="prompt", message="blocked"),
+                 condition=parse_condition('args.file_path == "blocked.txt"'), reject=outcome == "reject"),
+            Hook(id="post", event="post_tool_use", action=Action(type="prompt", message="after $FILE_PATH")),
+        ])
+        registry = ToolRegistry()
+        registry.register(Probe())
+        agent = Agent(MockClient(), registry, "anthropic", work_dir=str(tmp_path),
+                      hook_engine=engine, max_iterations=1)
+        conv = ConversationManager()
+        conv.add_user_message("probe hooks")
+        events = []
+        if interactive:
+            async for event in agent.run(conv):
+                events.append(event)
+        else:
+            await agent.run_to_completion("", conversation=conv)
+
+        results = [r for message in conv.history for r in message.tool_results]
+        assert [r.tool_use_id for r in results] == ["t0", "t1"]
+        assert [r.is_error for r in results] == [outcome != "allow", outcome == "execution_error"]
+        if outcome == "reject":
+            assert "Hook rejected: blocked" in results[0].content
+        assert executed == (["allowed.txt"] if outcome in ("reject", "validation_error") else paths)
+        notes = [e for e in events if isinstance(e, HookEvent)] if interactive else engine.drain_notifications()
+        assert [n.output for n in notes if n.event == "pre_tool_use" and n.hook_id == "pre"] == [
+            f"before {path}" for path in paths
+        ]
+        assert sorted(n.output for n in notes if n.event == "post_tool_use") == sorted(
+            f"after {path}" for path in (paths[1:] if outcome == "reject" else paths)
+        )
+        if interactive:
+            assert [e.tool_id for e in events if isinstance(e, ToolResultEvent)] == ["t0", "t1"]
